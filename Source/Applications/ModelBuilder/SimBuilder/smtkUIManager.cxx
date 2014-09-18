@@ -14,8 +14,6 @@
 
 #include "smtkUIManager.h"
 
-#include "smtkModel.h"
-
 #include "smtk/view/Base.h"
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/Definition.h"
@@ -30,8 +28,8 @@
 #include "smtk/Qt/qtAttributeView.h"
 #include "smtk/Qt/qtBaseView.h"
 #include "smtk/Qt/qtSimpleExpressionView.h"
+#include "smtk/model/Model.h"
 
-#include "vtkDiscreteModel.h"
 #include "vtkDoubleArray.h"
 #include "vtkEventQtSlotConnect.h"
 #include "vtkNew.h"
@@ -40,7 +38,6 @@
 #include "vtkSMProxy.h"
 
 #include "SimBuilderCore.h"
-#include "../pqCMBModel.h"
 
 #include "pqFileDialog.h"
 
@@ -52,9 +49,7 @@ class smtkUIManagerInternals
 {
   public:
 
-    vtkSmartPointer<vtkEventQtSlotConnect> ModelConnect;
-    smtk::model::ModelPtr AttModel;
-
+  smtk::model::ModelPtr AttModel;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> > DefMap;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> >::const_iterator DefMapIt;
 };
@@ -67,7 +62,7 @@ smtkUIManager::smtkUIManager()
   this->AttManager = smtk::attribute::ManagerPtr(new smtk::attribute::Manager());
   this->qtAttManager = new smtk::attribute::qtUIManager(*(this->AttManager));
   this->Internals = new smtkUIManagerInternals;
-  this->Internals->AttModel = smtk::model::ModelPtr(new smtkModel());
+  this->Internals->AttModel = smtk::model::ModelPtr(new smtk::model::Model());
   this->AttManager->setRefModel(this->Internals->AttModel);
 
 }
@@ -75,8 +70,6 @@ smtkUIManager::smtkUIManager()
 //----------------------------------------------------------------------------
 smtkUIManager::~smtkUIManager()
 {
-  this->setupModelConnection(NULL, NULL);
-
   delete this->Internals;
 
   this->AttManager = smtk::attribute::ManagerPtr();
@@ -92,9 +85,9 @@ smtk::attribute::qtRootView* smtkUIManager::rootView()
 }
 
 //----------------------------------------------------------------------------
-smtkModel* smtkUIManager::attModel()
+smtk::model::ModelPtr smtkUIManager::attModel() const
 {
-  return dynamic_cast<smtkModel*>(this->Internals->AttModel.get());
+  return this->Internals->AttModel;
 }
 
 //----------------------------------------------------------------------------
@@ -140,50 +133,6 @@ void smtkUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
       }
     }
 
-  if (sbCore)
-    {
-    pqCMBModel* model = sbCore->getCMBModel();
-    QObject::connect(model, SIGNAL(modelEntityNameChanged(vtkModelEntity*)),
-      this, SLOT(updateModelItems()));
-    }
-}
-//----------------------------------------------------------------------------
-void smtkUIManager::setupModelConnection(vtkDiscreteModel* model,
-  vtkSMProxy* modelwrapper)
-{
-  if(this->attModel()->discreteModel() == model &&
-    this->attModel()->modelWrapper() == modelwrapper)
-    {
-    return;
-    }
-  this->attModel()->setDiscreteModel(model);
-  this->attModel()->setModelWrapper(modelwrapper);
-
-  if(model)
-    {
-    if(this->Internals->ModelConnect)
-      {
-      this->Internals->ModelConnect->Disconnect();
-      }
-    else
-      {
-      this->Internals->ModelConnect = vtkSmartPointer<vtkEventQtSlotConnect>::New();
-      }
-    this->Internals->ModelConnect->Connect(model, DomainSetCreated,
-      this, SLOT(modelCallback(vtkObject* , unsigned long , void* ,
-      void*)));
-    this->Internals->ModelConnect->Connect(model, DomainSetDestroyed,
-      this, SLOT(modelCallback(vtkObject* , unsigned long , void* ,
-      void*)));
-    this->Internals->ModelConnect->Connect(model, ModelEntityGroupCreated,
-      this, SLOT(modelCallback(vtkObject* , unsigned long , void* , void* )));
-    this->Internals->ModelConnect->Connect(model, ModelEntityGroupDestroyed,
-      this, SLOT(modelCallback(vtkObject* , unsigned long , void* , void* )));
-    }
-  else if(this->Internals->ModelConnect)
-    {
-    this->Internals->ModelConnect->Disconnect();
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -309,71 +258,7 @@ void smtkUIManager::createFunctionWithExpression(
       funcExpr, valuesText, numberOfComponents);
     }
 }
-//-----------------------------------------------------------------------------
-void smtkUIManager::loadModelItems(int groupType)
-{
-  this->attModel()->loadGroupItems(groupType);
-}
 
-//-----------------------------------------------------------------------------
-void smtkUIManager::updateModelItems(int groupType)
-{
-  this->attModel()->updateGroupItems(groupType);
-}
-
-//-----------------------------------------------------------------------------
-void smtkUIManager::clearModelItems()
-{
-  this->attModel()->clearItems();
-  this->qtManager()->updateModelViews();
-}
-
-//-----------------------------------------------------------------------------
-void smtkUIManager::updateModelItems()
-{
-  this->attModel()->updateGroupItems(vtkModelMaterialType);
-  this->attModel()->updateGroupItems(vtkDiscreteModelEntityGroupType);
-  this->qtManager()->updateModelViews();
-}
-
-//-----------------------------------------------------------------------------
-void smtkUIManager::modelCallback(
-  vtkObject* object, unsigned long e, void* /*clientData*/, void* callData)
-{
-  vtkIdType entityId = *reinterpret_cast<vtkIdType*>(callData);
-  vtkDiscreteModel* model = vtkDiscreteModel::SafeDownCast(object);
-  if(!model || model != this->attModel()->discreteModel())
-    {
-    return;
-    }
-  int grouptype = -1;
-  switch(e)
-    {
-    case DomainSetCreated:
-    case DomainSetDestroyed:
-      grouptype = vtkModelMaterialType;
-      break;
-    case ModelEntityGroupCreated:
-    case ModelEntityGroupDestroyed:
-      grouptype = vtkDiscreteModelEntityGroupType;
-      break;
-    default:
-      break;
-    }
-  if(grouptype == vtkModelMaterialType ||
-     grouptype == vtkDiscreteModelEntityGroupType)
-    {
-    if(e == DomainSetDestroyed || e == ModelEntityGroupDestroyed)
-      {
-      this->attModel()->removeModelItem(entityId);
-      }
-    else
-      {
-      this->attModel()->createModelGroupFromCMBGroup(entityId);
-      }
-    this->qtManager()->updateModelViews();
-    }
-}
 //-----------------------------------------------------------------------------
 void smtkUIManager::getAttributeDefinitions(
     QMap<QString, QList<smtk::attribute::DefinitionPtr> > &outDefMap)

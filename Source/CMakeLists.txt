@@ -186,9 +186,6 @@ add_subdirectory(CMBMeshing)
 #needs to be after CMBMeshing so that we can link to the MeshServer
 pv_process_modules()
 
-#has to be below pv_process_modules as it depends on discretemodel
-add_subdirectory(SimBuilderMesh)
-
 add_subdirectory(VTKExtensions/Client)
 add_subdirectory(VTKExtensions/Testing)
 add_subdirectory(ParaViewExtensions)

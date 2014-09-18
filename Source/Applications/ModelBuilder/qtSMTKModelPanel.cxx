@@ -44,7 +44,6 @@
 #include "pqSelectionManager.h"
 #include "vtkEventQtSlotConnect.h"
 #include "vtkSmartPointer.h"
-#include "vtkPVSMTKModelInformation.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
@@ -57,6 +56,7 @@
 #include "vtksys/SystemTools.hxx"
 
 #include "ModelManager.h"
+#include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
 
 using namespace std;

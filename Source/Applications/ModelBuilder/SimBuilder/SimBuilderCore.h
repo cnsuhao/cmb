@@ -14,12 +14,8 @@ class pqCMBSceneTree;
 class SimBuilderUIPanel;
 class pqServer;
 class pqPipelineSource;
-class pqCMBModel;
-class vtkModelEntity;
-class vtkDiscreteModel;
 class vtkSMProxy;
 class pqRenderView;
-class SimBuilderMeshManager;
 class smtkUIManager;
 class SimBuilderCustomExportDialog;
 
@@ -66,17 +62,9 @@ public:
   smtkUIManager* attributeUIManager();
   SimBuilderUIPanel* GetUIPanel();
 
-  void setCMBModel(pqCMBModel* cmbModel);
-  pqCMBModel* getCMBModel();
   bool isTemplateOnly(){return this->LoadTemplateOnly;}
   bool isLoadingScenario(){return this->LoadingScenario;}
   bool hasScenarioModelEntities(){return this->ScenarioEntitiesCreated;}
-
-  SimBuilderMeshManager* getMeshManager();
-
-  // update model related Qt attribute panels
-  void updateCMBModelItems(vtkDiscreteModel* model,
-    vtkSMProxy* modelwrapper);
 
   // Description:
   // Initialize the SimBuilder core
@@ -87,13 +75,10 @@ signals :
   void newSimFileLoaded(const char* filename);
 
 public slots:
-  void onModelEntityNameChanged(vtkModelEntity*);
   //void onModelBCGroupChanged();
   void updateSimulationModel();
 
 protected:
-
-  vtkDiscreteModel* GetEntityModel(vtkModelEntity* refEntity);
 
 private:
 
@@ -102,7 +87,6 @@ private:
   QPointer<SimBuilderUIPanel> UIPanel;
   pqServer* ActiveServer;
   pqRenderView* RenderView;
-  QPointer<pqCMBModel> CMBModel;
   bool IsSimModelLoaded;
   SimBuilderCustomExportDialog *ExportDialog;
 
@@ -114,7 +98,6 @@ private:
   bool LoadingScenario;
   bool ScenarioEntitiesCreated;
 
-  SimBuilderMeshManager* MeshManager;
   QPointer<smtkUIManager> m_attUIManager;
 
 };

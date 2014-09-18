@@ -43,7 +43,6 @@ class vtkPVModelFaceObjectInformation;
 class vtkPVMultiBlockRootObjectInfo;
 class vtkSMProxyLink;
 
-class pqCMBModel;
 class qtCMBCreateSimpleGeometry;
 class SimBuilderCore;
 class pqCMBSceneTree;
@@ -70,10 +69,6 @@ public:
   // Description
   // Setup a representation-selection toolbar
   void setupSelectionRepresentationToolbar(QToolBar* parent);
-
-  // Description
-  // returns the active pqCMBModel.
-  pqCMBModel* getCMBModel();
 
   // Description:
   // Get flag to determine how selection is performed in display

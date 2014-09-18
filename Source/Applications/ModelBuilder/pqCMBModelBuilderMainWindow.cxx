@@ -28,9 +28,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include "ui_qtCMBMainWindow.h"
 
 #include "pqCMBModelBuilderMainWindowCore.h"
-#include "qtCMBPanelWidget.h"
-#include "pqCMBRubberBandHelper.h"
-#include "ui_qtCMBPanel.h"
 #include "ui_qtCMBMainWindow.h"
 #include "pqProxyInformationWidget.h"
 
@@ -95,7 +92,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSMPropertyHelper.h"
 #include "vtkPVDataSetAttributesInformation.h"
 #include "vtkPVGenericRenderWindowInteractor.h"
-#include "vtkPVCMBModelInformation.h"
 #include "vtkPVMultiBlockRootObjectInfo.h"
 #include "vtkSelection.h"
 #include "vtkSelectionSource.h"
@@ -111,18 +107,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkCollection.h"
 
 #include "qtCMBCreateSimpleGeometry.h"
-#include "pqCMBFloatingEdge.h"
 #include "qtCMBHelpDialog.h"
-#include "pqCMBModelFace.h"
-#include "qtCMBModelTree.h"
-#include "qtCMBBoundaryConditionTree.h"
-#include "qtCMBModelEdgeTree.h"
-#include "vtkDiscreteModel.h"
-#include "vtkDiscreteModelEntityGroup.h"
 
-#include "pqCMBSceneTree.h"
 #include "SimBuilder/SimBuilderCore.h"
-#include "SimBuilder/SimBuilderMeshManager.h"
 #include "SimBuilder/smtkUIManager.h"
 
 #include "qtCMBBathymetryDialog.h"
@@ -141,6 +128,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "qtSMTKModelPanel.h"
 #include "ModelManager.h"
 #include "pqCMBColorMapWidget.h"
+#include "qtCMBTreeWidget.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -149,34 +137,18 @@ class pqCMBModelBuilderMainWindow::vtkInternal
 public:
   vtkInternal(QWidget* /*parent*/)
     {
-    this->GUIPanel = 0;
-    this->modelTree = 0;
-    this->BCSTree = 0;
-    this->LineTree = 0;
     this->SceneGeoTree = 0;
     }
 
   ~vtkInternal()
     {
-    delete this->modelTree;
-    delete this->BCSTree;
-    delete this->LineTree;
     if(this->SceneGeoTree)
       {
       delete this->SceneGeoTree;
       }
-    if(this->GUIPanel)
-      {
-      delete this->GUIPanel;
-      }
     }
 
-  qtCMBPanelWidget* GUIPanel;
   QPointer<pqProxyInformationWidget> InformationWidget;
-
-  qtCMBModelTree* modelTree;
-  qtCMBBoundaryConditionTree* BCSTree;
-  qtCMBModelEdgeTree* LineTree;
 
   QPointer<pqColorChooserButton> ColorButton;
   QPointer<QDoubleSpinBox> GrowAngleBox;
@@ -294,10 +266,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   this->getThisCore()->setupSelectionRepresentationToolbar(
     this->getMainDialog()->toolBar_Selection);
 
-//  this->setupTreeWidgets(this->getThisCore()->getCMBModel());
-
   this->Internal->SplitterSettings = new QSettings();
-  this->onSplitterHandleMoved();
 
   QObject::connect(this->getThisCore(),
     SIGNAL(newSceneLoaded()), this, SLOT(onSceneFileLoaded()));
@@ -593,7 +562,6 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
   this->getMainDialog()->actionApplyBathymetry->setEnabled(model_loaded);
   this->Internal->ChangeTextureAction->setEnabled(model_loaded);
-  ////this->Internal->GUIPanel->getGUIPanel()->informationTable->setEnabled(data_loaded);
 
   //this->Internal->ColorWidget->setEnabled(data_loaded);
   //this->Internal->RepresentationWidget->setEnabled(data_loaded);
@@ -630,51 +598,22 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     this->getMainDialog()->action_Close->setEnabled(true);
     }
 
-
-
-
-/******
-  if(data_loaded)
-    {
-    this->Internal->GUIPanel->getGUIPanel()->tab->setEnabled(data_loaded);
-    }
-  else if(isSimLoaded)
-    {
-    if(this->getThisCore()->getSimBuilder()->isTemplateOnly() ||
-      this->getThisCore()->getSimBuilder()->isLoadingScenario())
-      {
-      this->Internal->GUIPanel->getGUIPanel()->tab->setEnabled(1);
-      }
-    else
-      {
-      this->Internal->GUIPanel->getGUIPanel()->tab->setEnabled(0);
-      }
-    }
-
-  this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->
-    setEnabled(data_loaded);
-******/
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateUIByDimension()
 {
-  bool dim2D = this->getThisCore()->getCMBModel()->getModelDimension() == 2 ?
-    true : false;
-  ////this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->setTabText(0, "BC Group");
-  bool has2dEdges = this->getThisCore()->getCMBModel()->has2DEdges();
+  bool dim2D = false; /* this->getThisCore()->getCMBModel()->getModelDimension() == 2 ?
+    true : false; */
+  bool has2dEdges = false; //this->getThisCore()->getCMBModel()->has2DEdges();
   if(dim2D)
     {
-   //// this->Internal->GUIPanel->getGUIPanel()->tab_LineGroup->setEnabled(0);
-   //// this->Internal->GUIPanel->getGUIPanel()->checkBoxHideModelFaces->setVisible(1);
     this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(0);
     this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 0 );
     this->Internal->CreateModelEdgesAction->setEnabled(false);
     }
   else
     {
-  ////  this->Internal->GUIPanel->getGUIPanel()->tab_LineGroup->setEnabled(1);
-  ////  this->Internal->GUIPanel->getGUIPanel()->checkBoxHideModelFaces->setVisible(0);
     this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(1);
     this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 1 );
     this->Internal->CreateModelEdgesAction->setEnabled(!has2dEdges);
@@ -699,7 +638,6 @@ void pqCMBModelBuilderMainWindow::updateUIByDimension()
       {
       this->Internal->Model2DToolbar->setVisible(1);
       }
-////    this->Internal->GUIPanel->getGUIPanel()->tab_Mesh->setEnabled(1);
     }
   else
     {
@@ -707,45 +645,14 @@ void pqCMBModelBuilderMainWindow::updateUIByDimension()
       {
       this->Internal->Model2DToolbar->setVisible(0);
       }
-////    this->Internal->GUIPanel->getGUIPanel()->tab_Mesh->setEnabled(0);
     }
 
-/*
-  this->Internal->BCSTree->setActionsEnabled(!dim2D);
-  this->Internal->modelTree->setActionsEnabled(!dim2D);
-  this->Internal->GUIPanel->getGUIPanel()->tab_LineGroup->setVisible(!dim2D);
-  this->Internal->GUIPanel->getGUIPanel()->layoutSplitAndMerge->setEnabled(!dim2D);
-  this->Internal->GrowToolbar->setVisible(!dim2D);
-  this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->setCurrentIndex(0);
-*/
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onCMBModelModified()
 {
   this->UpdateInfoTable();
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onModelEntityNameChanged(
-  vtkModelEntity* modelEntity)
-{
-  if(modelEntity)
-    {
-    if(modelEntity->GetType() == vtkModelFaceType ||
-      modelEntity->GetType() == vtkModelEdgeType)
-      {
-      this->Internal->BCSTree->updateFaceNodeText(modelEntity);
-      }
-    else if(modelEntity->GetType() == vtkModelRegionType)
-      {
-      this->Internal->LineTree->updateRegionNodeText(modelEntity);
-      }
-////    this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-////    this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -755,153 +662,13 @@ void pqCMBModelBuilderMainWindow::onCMBModelCleared()
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onCMBModelLoaded()
-{
-  if(this->getThisCore()->getCMBModel()->
-    GetCurrentModelEntityMap().keys().count() > 0)
-    {
-    SimBuilderCore* sbCore = this->getThisCore()->getSimBuilder();
-    bool initialized = sbCore->isSimModelLoaded() &&
-      sbCore->isLoadingScenario() && sbCore->hasScenarioModelEntities();
-    if(!initialized)
-      {
-      this->initTreeWidgets();
-      }
-
-    this->getThisCore()->updateVariableToolbar(
-      this->Internal->VariableToolbar);
-    //vtkIdType faceId = this->getThisCore()->getCMBModel()->
-    //  GetCurrentModelEntityMap().keys().value(0);
-
-    this->UpdateInfoTable();
-
-    this->updateEnableState();
-    this->updateUIByDimension();
-/*
-    this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->blockSignals(true);
-    this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->clear();
-    if(pqDataRepresentation* repr =
-      this->getThisCore()->getCMBModel()->modelRepresentation())
-      {
-      QList<QVariant> rTypes = pqSMAdaptor::getEnumerationPropertyDomain(
-        repr->getProxy()->GetProperty("Representation"));
-      foreach (QVariant rtype, rTypes)
-        {
-        this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->addItem(
-          rtype.toString());
-        }
-      }
-    this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->setCurrentIndex(2);
-    this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->blockSignals(false);
-*/
-    QFileInfo fInfo(this->getThisCore()->getCMBModel()->getCurrentModelFile());
-    this->appendDatasetNameToTitle(fInfo.fileName());
-    }
-  else
-    {
-    this->clearGUI();
-    }
-}
-
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::UpdateInfoTable()
 {
-  if (!this->getThisCore()->getCMBModel()->GetCurrentModelEntityMap().count())
-    {
-    return;
-    }
-/*
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->clearContents();
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setRowCount(6);
-  int row=0;
-
-  int numMaterials = this->getThisCore()->getCMBModel()->
-    getNumberOfModelEntitiesWithType(vtkModelMaterialType);
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. of Domain Sets"));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(QString::number(numMaterials)));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. of Regions"));
-
-  int numShells = this->getThisCore()->getCMBModel()->
-    getNumberOfModelEntitiesWithType(vtkModelRegionType);
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(QString::number(numShells)));
-  int numBCs = this->getThisCore()->getCMBModel()->
-    getNumberOfModelEntitiesWithType(vtkDiscreteModelEntityGroupType);
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. of BCs"));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(QString::number(numBCs)));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. of Entities"));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(QString::number(
-    this->getThisCore()->getCMBModel()->
-    GetCurrentModelEntityMap().uniqueKeys().count())));
-
-  vtkPVCMBModelInformation *pdSourceInfo =
-    vtkPVCMBModelInformation::New();
-
-  pqPipelineSource* masterProvider = this->getThisCore()->getCMBModel()->
-    getMasterPolyProvider();
-  vtkSMSourceProxy::SafeDownCast( masterProvider->getProxy() )->UpdatePipeline();
-
-  masterProvider->getProxy()->GatherInformation(pdSourceInfo);
-
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. Of Triangles"));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(
-      QString::number(pdSourceInfo->GetNumberOfCells())));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row, 0,
-    new QTableWidgetItem("No. Of Points"));
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setItem(row++, 1,
-    new QTableWidgetItem(
-      QString::number(pdSourceInfo->GetNumberOfPoints())));
-
-  pdSourceInfo->Delete();
-
-  // make sure you can not edit items
-  int rows = this->Internal->GUIPanel->getGUIPanel()->informationTable->rowCount();
-  int cols = this->Internal->GUIPanel->getGUIPanel()->informationTable->columnCount();
-  for(int i =0; i < rows; ++i)
-    {
-    for(int j =0; j < cols; ++j)
-      {
-      this->Internal->GUIPanel->getGUIPanel()->informationTable->
-        item(i, j)->setFlags(Qt::ItemIsEnabled);
-      }
-    }
-*/
   this->updateDataInfo();
 }
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateDataInfo()
 {
-  if (!this->getThisCore()->getCMBModel()->GetCurrentModelEntityMap().count())
-    {
-    return;
-    }
-  pqPipelineSource* dataSource;
-  pqCMBModelEntity* selEntity = this->getThisCore()->
-    getCMBModel()->getFirstSelectedModelEntity();
-  if(selEntity && selEntity->getSource())
-    {
-    dataSource = selEntity->getSource();
-    }
-  else
-    {
-    dataSource = this->getThisCore()->getCMBModel()->getMasterPolyProvider();
-    }
-  dataSource->updatePipeline();
-  if(this->Internal->InformationWidget)
-    {
-    this->Internal->InformationWidget->setOutputPort(
-      dataSource->getOutputPort(0));
-    this->Internal->InformationWidget->updateInformation();
-    }
 }
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::clearSelectedPorts()
@@ -951,124 +718,21 @@ void pqCMBModelBuilderMainWindow::onZoomModeChanged(int mode)
 // method is to convert it to a "region id" selection so that we select faces.
 void pqCMBModelBuilderMainWindow::updateCMBSelection()
 {
-  int isShiftKeyDown = this->getThisCore()->activeRenderView()->
-    getRenderViewProxy()->GetInteractor()->GetShiftKey();
-
-  QMap<vtkIdType, pqCMBModelEntity*> entityMap =
-    this->getThisCore()->getCMBModel()->GetCurrentModelEntityMap();
-  QMap<vtkIdType, pqCMBModelEntity*> faceMap =
-    this->getThisCore()->getCMBModel()->GetFaceIDToFaceMap();
-
-  //this->getMainDialog()->faceParametersDock->setEnabled(false);
-  if (!entityMap.count() ||
-    this->getLastSelectionPorts().count()==0)
-    {
-    if(!isShiftKeyDown)
-      {
-      this->onClearSelection();
-      }
-    return;
-    }
-
-  QList<vtkIdType> selEntities;
-  this->getThisCore()->getCMBModel()->getSelectedModelEntities(selEntities);
-
-  if (selEntities.count()>0)
-    {
-    if(!isShiftKeyDown)
-      {
-      this->getThisCore()->getCMBModel()->clearAllEntityHighlights(false);
-      }
-    this->selectModelEntitiesByMode(selEntities, !isShiftKeyDown);
-    }
-  else if(!isShiftKeyDown)
-    {
-    this->onClearSelection();
-    }
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateCellGrowSelection()
 {
-  int isCtrlKeyDown = this->getThisCore()->activeRenderView()->
-    getRenderViewProxy()->GetInteractor()->GetControlKey();
-  int numSel = this->getLastSelectionPorts().count();
-
-  //this->getMainDialog()->faceParametersDock->setEnabled(false);
-  if (!this->getThisCore()->getCMBModel()->GetFaceIDToFaceMap().count() ||
-    numSel==0)
-    {
-    if(!isCtrlKeyDown)
-      {
-      this->getThisCore()->getCMBModel()->clearGrowResult();
-      }
-    return;
-    }
-
-  if(numSel>0)
-    {
-    if(isCtrlKeyDown)
-      {
-      this->getThisCore()->getCMBModel()->modifyCellGrowSelections(
-        this->getLastSelectionPorts());
-      }
-    else
-      {
-      this->getThisCore()->getCMBModel()->clearGrowResult();
-      if(this->multipleCellsSelected())
-        {
-        this->getThisCore()->getCMBModel()->modifyCellGrowSelections(
-          this->getLastSelectionPorts());
-        }
-      else  // Currently, this will be the case that only one port,
-        // and only one cell in that port, is selected
-        {
-        this->getThisCore()->getCMBModel()->growModelFacesWithAngle(
-          this->getLastSelectionPorts()[numSel-1],
-          this->Internal->GrowAngleBox->value());
-        }
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::mergeCellGrowSelection()
 {
-  int numSel = this->getLastSelectionPorts().count();
-  if(numSel>0)
-    {
-    if(this->multipleCellsSelected())
-      {
-      this->getThisCore()->getCMBModel()->modifyCellGrowSelections(
-        this->getLastSelectionPorts(), 1);
-      }
-    else
-      {
-      this->getThisCore()->getCMBModel()->growModelFacesWithAngle(
-        this->getLastSelectionPorts()[numSel-1],
-        this->Internal->GrowAngleBox->value(), 1);
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::removeCellGrowSelection()
 {
-  int numSel = this->getLastSelectionPorts().count();
-  if(numSel>0)
-    {
-    if(this->multipleCellsSelected())
-      {
-      this->getThisCore()->getCMBModel()->modifyCellGrowSelections(
-        this->getLastSelectionPorts(), 2);
-      }
-    else
-      {
-      this->getThisCore()->getCMBModel()->growModelFacesWithAngle(
-        this->getLastSelectionPorts()[numSel-1],
-        this->Internal->GrowAngleBox->value(), 2);
-      }
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -1123,17 +787,6 @@ int pqCMBModelBuilderMainWindow::getNumberOfSelectedCells(pqOutputPort* selPort)
 void pqCMBModelBuilderMainWindow::selectModelEntitiesByMode(
   QList<vtkIdType>& faces, int clearSelFirst)
 {
-  if (!this->getThisCore()->getCMBModel()->GetCurrentModelEntityMap().count()
-      || faces.count()==0)
-    {
-    return;
-    }
-
-  // Clear the selection on the BCS tree
-  this->Internal->BCSTree->clearSelection(true);
-
-  this->Internal->modelTree->selectModelEntitiesByMode(faces,
-    this->getThisCore()->getRubberSelectionMode(), clearSelFirst);
 }
 
 //-----------------------------------------------------------------------------
@@ -1176,44 +829,8 @@ void pqCMBModelBuilderMainWindow::clearGUI()
   pqApplicationCore::instance()->unRegisterManager(
     "COLOR_EDITOR_PANEL");
   this->Internal->CurrentDockWidgets.clear();
-/*
-  this->Internal->modelTree->clear(true);
-  this->Internal->BCSTree->clear(true);
-
-  this->Internal->GUIPanel->getGUIPanel()->groupBoxMaterial->setChecked(1);
-  this->Internal->GUIPanel->getGUIPanel()->groupBoxBCGroup->setChecked(0);
-
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->blockSignals(true);
-
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->clearContents();
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->setRowCount(0);
-  this->Internal->GUIPanel->getGUIPanel()->informationTable->blockSignals(false);
-
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxHideInternal,false);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxHideModelFaces,false);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxHideOuterBoundary,false);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxShowFaceMesh,true);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxShowEdgeMesh,true);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxShowEdgePoints,false);
-  this->SetCheckBoxStateQuiet(
-    this->Internal->GUIPanel->getGUIPanel()->checkBoxShowEdgeMeshPoints,false);
-*/
   this->updateEnableState();
   this->appendDatasetNameToTitle("");
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onMergingFaces()
-{
-  pqWaitCursor cursor;
-  this->Internal->GUIPanel->getGUIPanel()->pushButton_merge->setEnabled(false);
-  this->Internal->modelTree->mergeSelectedFaces();
 }
 
 //-----------------------------------------------------------------------------
@@ -1232,77 +849,7 @@ void pqCMBModelBuilderMainWindow::onResetState()
 void pqCMBModelBuilderMainWindow::UpdateModelState(int accepted)
 {
   pqWaitCursor cursor;
-
-  if (accepted)
-    {
-    this->getThisCore()->getCMBModel()->saveModelState();
-    }
-  else
-    {
-    this->onClearSelection();
-    this->growFinished();
-    this->getThisCore()->getCMBModel()->reloadSavedModelState();
-
-    this->UpdateInfoTable();
-    }
-
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(false);
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(false);
-
 }
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onSplitModelFaces()
-{
-  pqWaitCursor cursor;
-////  this->Internal->modelTree->splitModelFaces(
-////    this->Internal->GUIPanel->getGUIPanel()->featureAngle->value());
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::createModelEdges()
-{
-  pqWaitCursor cursor;
-////  this->Internal->modelTree->createModelEdges();
-////  this->Internal->CreateModelEdgesAction->setEnabled(false);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onEntitiesMerged(vtkIdType toFaceId,
-                                      QList<vtkIdType>& selFaceIds)
-{
-  this->Internal->modelTree->removeMergedEntityNodes(
-    toFaceId, selFaceIds);
-  this->Internal->BCSTree->removeEntitiesFromBCGroups(selFaceIds);
-
-  this->getThisCore()->getCMBModel()->removeModelEntities(selFaceIds);
-  this->getThisCore()->getCMBModel()->onLookupTableModified();
-
-  this->UpdateInfoTable();
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-////  this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onEntitiesSplit(
-  QMap< vtkIdType, QList<vtkIdType> >& splitMap, bool bEdgesFromFaceSplit)
-{
-  // If this is invoked from FaceSplit in hybrid model, which resulted in edge split,
-  // the model tree should have been updated with the new edges when this slot is invoked with
-  // FaceSplit signal.
-  if(!bEdgesFromFaceSplit)
-    {
-    this->Internal->modelTree->updateWithNewEntityNodes(splitMap);
-    }
- this->Internal->BCSTree->addNewEntitiesFromSplitToBCGroups(splitMap);
-
-  this->getThisCore()->getCMBModel()->onLookupTableModified();
-
-  this->UpdateInfoTable();
-  //// this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-  //// this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-}
-
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
@@ -1313,17 +860,9 @@ void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
       {
       this->getMainDialog()->action_Select->setChecked(false);
       }
-    this->Internal->modelTree->setSelectionMode(
-      QAbstractItemView::NoSelection);
-    this->Internal->BCSTree->setSelectionMode(
-      QAbstractItemView::NoSelection);
     }
   else
     {
-//    this->Internal->modelTree->setSelectionMode(
-//      QAbstractItemView::ExtendedSelection);
-//    this->Internal->BCSTree->setSelectionMode(
-//      QAbstractItemView::ExtendedSelection);
     }
   if(this->getMainDialog()->actionZoomToBox->isChecked())
     {
@@ -1336,32 +875,12 @@ void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onClearSelection()
 {
-  this->Internal->modelTree->clearSelection();
-  this->Internal->BCSTree->clearSelection();
-  this->Internal->LineTree->clearSelection();
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::setSolidColorOnSelections(
   const QColor& setColor)
 {
-  qtCMBTree* cmbTree = NULL;
-  if(this->Internal->modelTree->getSelectedItems().count()>0)
-    {
-    cmbTree = this->Internal->modelTree;
-    }
-  else
-    {
-    cmbTree = this->Internal->BCSTree;
-    }
-
-  int numSel = cmbTree->getSelectedItems().count();
-  if(numSel > 0)
-    {
-    cmbTree->setSolidColorOnSelections(setColor);
-    //// this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-    //// this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -1378,12 +897,6 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
     {
     this->getMainDialog()->actionZoomToBox->setChecked(0);
     this->getThisCore()->cmbRenderViewSelectionHelper()->endZoom();
-    }
-  else if(this->getThisCore()->getCMBModel()->has2DEdges() &&
-    this->getMainDialog()->action_SelectPoints->isChecked())
-    {
-    this->getThisCore()->getCMBModel()->convertSelectedNodes();
-//    this->clearSelectedPorts();
     }
   else
     {
@@ -1418,7 +931,6 @@ void pqCMBModelBuilderMainWindow::onSurfaceRubberBandSelect(bool checked)
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onConvertLatLong(bool checked)
 {
-  this->getThisCore()->getCMBModel()->convertLatLong(checked);
 }
 
 //----------------------------------------------------------------------------
@@ -1449,7 +961,6 @@ void pqCMBModelBuilderMainWindow::onConvertArcNodes(bool checked)
 {
   this->updateSelectionUI(checked);
   this->onClearSelection();
-  this->getThisCore()->getCMBModel()->setModelFacesPickable(!checked);
   this->getThisCore()->onRubberBandSelectPoints(checked);
 }
 
@@ -1482,29 +993,6 @@ void pqCMBModelBuilderMainWindow::onGrowAndRemove(bool checked)
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onAcceptGrowFacets()
 {
-  QList<vtkIdType> bcsFaces;
-  vtkModelEntity* bcEnt =
-    this->getThisCore()->getCMBModel()->acceptGrowResult(bcsFaces);
-  this->getThisCore()->getCMBModel()->clearGrowResult();
-  if(bcEnt)
-    {
-    //// this->Internal->GUIPanel->getGUIPanel()->groupBoxBCGroup->setChecked(1);
-    //// this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->setCurrentIndex(0);
-    QTreeWidgetItem* bcNode =
-      this->Internal->BCSTree->
-      createBCNodeWithEntities(bcEnt->GetUniquePersistentId(),  bcsFaces);
-
-    if(bcNode)
-      {
-      this->Internal->BCSTree->selectItem(bcNode);
-      }
-
-    this->UpdateInfoTable();
-
-    this->getThisCore()->getCMBModel()->onLookupTableModified();
-    //// this->Internal->GUIPanel->getGUIPanel()->pushButton_Reset->setEnabled(true);
-    //// this->Internal->GUIPanel->getGUIPanel()->pushButton_accept->setEnabled(true);
-    }
   this->growFinished();
 }
 
@@ -1512,8 +1000,6 @@ void pqCMBModelBuilderMainWindow::onAcceptGrowFacets()
 void pqCMBModelBuilderMainWindow::onClearGrowResult()
 {
   this->growFinished();
-  //this->updateGrowGUI(false);
-  this->getThisCore()->getCMBModel()->clearGrowResult();
 }
 
 //----------------------------------------------------------------------------
@@ -1558,192 +1044,6 @@ void pqCMBModelBuilderMainWindow::setGrowButtonsState(bool checked)
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onEnableSorting(bool enable)
-{
-  this->Internal->modelTree->setSortingEnabled(enable);
-  this->Internal->BCSTree->setSortingEnabled(enable);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onSplitterHandleMoved()
-{
-////  this->Internal->SplitterSettings->setValue("splitterSizes",
-////    this->Internal->GUIPanel->getGUIPanel()->splitterLayout->saveState());
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onUpdateTreeLayout(bool /*showTree*/)
-{
-  /*
-  int showMaterial = this->Internal->GUIPanel->getGUIPanel()->groupBoxMaterial->isChecked();
-  int showBCGroup = this->Internal->GUIPanel->getGUIPanel()->groupBoxBCGroup->isChecked();
-  int h = this->Internal->GUIPanel->getGUIPanel()->splitterLayout->height();
-  int handleW = this->Internal->GUIPanel->getGUIPanel()->splitterLayout->handleWidth();
-  QList<int> sizes;
-  int widgetH;
-  if(showMaterial && showBCGroup)
-    {
-    this->Internal->GUIPanel->getGUIPanel()->frameMaterails->show();
-    if(this->Internal->GUIPanel->getGUIPanel()->frameBCGroups->isHidden())
-      {
-      this->Internal->GUIPanel->getGUIPanel()->frameBCGroups->show();
-      this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->setCurrentIndex(0);
-      this->Internal->BCSTree->clearSelection();
-      }
-
-    if(!this->Internal->GUIPanel->getGUIPanel()->splitterLayout->restoreState(
-     this->Internal->SplitterSettings->value("splitterSizes").toByteArray()))
-      {
-      widgetH = (h-handleW)/2;
-      sizes << widgetH << widgetH;
-      this->Internal->GUIPanel->getGUIPanel()->splitterLayout->setSizes(sizes);
-      }
-    }
-  else if(showMaterial)
-    {
-    this->Internal->GUIPanel->getGUIPanel()->frameMaterails->show();
-    this->Internal->GUIPanel->getGUIPanel()->frameBCGroups->hide();
-    this->Internal->BCSTree->clearSelection();
-    widgetH = h-handleW-30;
-    sizes << widgetH << 30;
-    this->Internal->GUIPanel->getGUIPanel()->splitterLayout->setSizes(sizes);
-    }
-  else if(showBCGroup)
-    {
-    this->Internal->GUIPanel->getGUIPanel()->frameMaterails->hide();
-    this->Internal->modelTree->clearSelection();
-    this->Internal->GUIPanel->getGUIPanel()->frameBCGroups->show();
-    this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->setCurrentIndex(0);
-    widgetH = h-handleW-30;
-    sizes << 30 << widgetH;
-    this->Internal->GUIPanel->getGUIPanel()->splitterLayout->setSizes(sizes);
-    }
-  else
-    {
-    this->Internal->GUIPanel->getGUIPanel()->frameMaterails->hide();
-    this->Internal->GUIPanel->getGUIPanel()->frameBCGroups->hide();
-    this->onClearSelection();
-    }
-    */
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onDragStarted(qtCMBTree* dragTree)
-{
-  this->Internal->BCSTree->setDragFromTree(dragTree);
-  this->Internal->modelTree->setDragFromTree(dragTree);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onToggleSelectedBCSVisibility()
-{
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onTreeSelectionChanged(qtCMBTree* changedTree)
-{
-  /*
-  bool dim2D = this->getThisCore()->getCMBModel()->getModel()->GetModelDimension() == 2 ?
-    true : false;
-  bool has2dEdges = this->getThisCore()->getCMBModel()->has2DEdges();
-
-  if(changedTree == this->Internal->modelTree)
-    {
-    this->updateDataInfo();
-    this->Internal->GUIPanel->getGUIPanel()->pushButtonClearSelection->setEnabled(
-    this->Internal->modelTree->getNumberOfSelectedItems()>0 ? 1 : 0);
-    this->Internal->GUIPanel->getGUIPanel()->ZoomButton->setEnabled(
-      this->Internal->modelTree->getNumberOfSelectedItems()>0 ? 1 : 0);
-
-    this->Internal->GUIPanel->getGUIPanel()->pushButtonRemoveMaterial->setEnabled(
-      this->Internal->modelTree->getNumberOfSelectedEmptyMaterialItems()>0 ? 1 : 0);
-
-    this->Internal->GUIPanel->getGUIPanel()->pushButton_ApplyAngle->setEnabled(
-      (!dim2D && this->Internal->modelTree->getNumberOfSelectedFaces()>0) ? 1 : 0);
-
-    // Merge is only allowed on faces with same material and same shell.
-    this->Internal->GUIPanel->getGUIPanel()->pushButton_merge->setEnabled(
-      !has2dEdges && this->Internal->modelTree->getSelectedFacesMergable());
-    this->Internal->BCSTree->clearSelection(true);
-    }
-  else if(changedTree == this->Internal->BCSTree)
-    {
-    this->Internal->GUIPanel->getGUIPanel()->pushButtonClearSelection->setEnabled(
-      this->Internal->BCSTree->GetNumberOfSelectedBCS()>0 ? 1 : 0);
-    this->Internal->GUIPanel->getGUIPanel()->ZoomButton->setEnabled(
-      this->Internal->BCSTree->GetNumberOfSelectedBCS()>0 ? 1 : 0);
-
-    this->Internal->GUIPanel->getGUIPanel()->pushButtonRemoveBC->setEnabled(
-      this->Internal->BCSTree->GetNumberOfSelectedRemovableItems()>0 ? 1 : 0);
-    this->Internal->modelTree->clearSelection(true);
-    }
-  else if(changedTree == this->Internal->LineTree)
-    {
-    if(this->Internal->LineTree->getNumberOfSelectedEdges()>0)
-      {
-      this->Internal->GUIPanel->getGUIPanel()->pushButtonClearSelection->setEnabled(1);
-      }
-
-    this->Internal->GUIPanel->getGUIPanel()->page_Line->setEnabled(
-      this->Internal->LineTree->getNumberOfSelectedEdges()>0 ? 1 : 0);
-    if(this->Internal->LineTree->getNumberOfSelectedEdges()>0)
-      {
-      QList<vtkIdType> selEdges;
-      this->Internal->LineTree->getSelectedVisibleEdges(selEdges);
-      if(this->getThisCore()->getCMBModel()->Get3DFloatingEdgeId2EdgeMap().contains(selEdges.value(0)))
-        {
-        pqCMBFloatingEdge* entity = qobject_cast<pqCMBFloatingEdge*>(
-          this->getThisCore()->getCMBModel()->Get3DFloatingEdgeId2EdgeMap()[selEdges.value(0)]);
-        if(entity)
-          {
-          this->Internal->GUIPanel->getGUIPanel()->spinBoxLineRes->setValue(
-            entity->getLineResolution());
-          }
-        }
-      }
-    }
-    */
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onToggleSelectedFacesVisibility()
-{
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onCreateBCSFromSelectedModelFaces()
-{
-/*
-  QTreeWidgetItem* bcNode = this->onAddingBC();
-  this->Internal->BCSTree->setDragFromTree(
-    this->Internal->modelTree);
-  this->Internal->BCSTree->addDraggedFacesToBCNode(bcNode);
-  */
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onBCGroupTabChanged(int /*curIndex*/)
-{
-  /*
-  if(this->Internal->GUIPanel->getGUIPanel()->tabWidget_BCS->currentIndex() == 2) // Lines group
-    {
-    this->Internal->GUIPanel->getGUIPanel()->stackedWidget->setCurrentIndex(1); // show line GUI
-    }
-  else
-    {
-    this->Internal->GUIPanel->getGUIPanel()->stackedWidget->setCurrentIndex(0); // show BCS GUI
-    }
-    */
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onApplyLineResolution()
-{
-////  int res =  this->Internal->GUIPanel->getGUIPanel()->spinBoxLineRes->value();
-////  this->Internal->LineTree->setLineResolutionOnSelected(res);
-}
-
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onShowCenterAxisChanged(bool enabled)
 {
   this->getMainDialog()->actionShowCenterAxes->setEnabled(enabled);
@@ -1774,19 +1074,8 @@ pqCMBModelBuilderMainWindowCore* pqCMBModelBuilderMainWindow::getThisCore()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::initSimBuilder()
 {
-/*
-  QWidget* sbWidget = this->Internal->GUIPanel->getGUIPanel()->tab_SimBuilder;;
-  if(!sbWidget->layout())
-    {
-    QVBoxLayout* layout = new QVBoxLayout(sbWidget);
-    layout->setMargin(3);
-    }
- */
-  //this->getMainDialog()->faceParametersDock->setEnabled(1);
-  //this->Internal->GUIPanel->getGUIPanel()->tabWidget->setCurrentWidget(sbWidget);
-  //this->getThisCore()->getSimBuilder()->setupUIPanel(sbWidget);
-  this->getThisCore()->getSimBuilder()->getMeshManager()->setUIPanel(
-    this->Internal->GUIPanel);
+  //this->getThisCore()->getSimBuilder()->getMeshManager()->setUIPanel(
+  //  this->Internal->GUIPanel);
   //QObject::connect(this->getThisCore()->getSimBuilder(),
   //  SIGNAL(newSimFileLoaded()), this, SLOT(updateEnableState()));
   QObject::connect(this->getThisCore()->getSimBuilder(),
@@ -1824,8 +1113,7 @@ pqCMBSceneTree* pqCMBModelBuilderMainWindow::getpqCMBSceneTree()
 void pqCMBModelBuilderMainWindow::onNewModelCreated()
 {
   // legacy slots, should be updated later with new smtk model slots
-  // this->setupTreeWidgets(this->getThisCore()->getCMBModel());
-  // SMTK model loaded
+ // SMTK model loaded
   this->getMainDialog()->faceParametersDock->setVisible(false);
   this->updateSelectionUI(false);
   this->getMainDialog()->action_Select->setEnabled(true);
@@ -1879,7 +1167,7 @@ void pqCMBModelBuilderMainWindow::onSimFileLoaded(const char* vtkNotUsed(filenam
     && sbCore->isLoadingScenario() && sbCore->hasScenarioModelEntities();
   if(isNewScenario)
     {
-    this->initTreeWidgets();
+    // this->initTreeWidgets();
     }
   this->UpdateInfoTable();
   this->updateEnableState();
@@ -1917,46 +1205,26 @@ void pqCMBModelBuilderMainWindow::onCreateSimpleModel()
       }
     }
 }
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::initTreeWidgets()
-{
-  this->getThisCore()->clearCurrentEntityWidgets();
-  this->Internal->modelTree->initializeTree();
-  this->Internal->BCSTree->initializeTree();
-  this->Internal->LineTree->initializeTree();
-}
+
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onHideSharedEntities(bool hideShared)
 {
-  this->Internal->modelTree->setSharedEntitiesVisibility(!hideShared);
   this->getThisCore()->activeRenderView()->render();
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onHideModelFaces(bool hide)
 {
-  this->Internal->modelTree->setFacesVisibility(!hide);
   this->getThisCore()->activeRenderView()->render();
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onHideOuterModelBoundary(bool hide)
 {
-  bool dim2D = this->getThisCore()->getCMBModel()->getModelDimension() == 2 ?
-    true : false;
-  if(!dim2D)
-    {
-    this->Internal->modelTree->setFacesVisibility(!hide, true);
-    }
-  else
-    {
-    this->Internal->modelTree->setEdgesVisibility(!hide, true);
-    }
   this->getThisCore()->activeRenderView()->render();
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
 {
   this->updateEnableState();
-////  this->Internal->GUIPanel->getGUIPanel()->tabWidget_2->setCurrentIndex(1);
   // If there is no dock panel yet, this is the first time, so init
   // default panels
   this->initUIPanel(qtCMBPanelsManager::SCENE);
@@ -1974,79 +1242,17 @@ void pqCMBModelBuilderMainWindow::onDisplayBathymetryDialog()
   int dlgStatus = importer.exec();
   if(dlgStatus == QDialog::Accepted)
     {
-    this->getThisCore()->getCMBModel()->applyBathymetry(
-      importer.bathymetrySourceObject()->getSource(),
-      importer.elevationRadius(),
-      importer.useHighElevationLimit(), importer.highElevationLimit(),
-      importer.useLowElevationLimit(), importer.lowElevationLimit(),
-      importer.applyOnlyToVisibleMeshes());
     }
   else if (dlgStatus == 2) // Remove bathymetry
     {
-    this->getThisCore()->getCMBModel()->removeBathymetry();
     }
   this->getpqCMBSceneTree()->getWidget()->blockSignals(false);
   this->getpqCMBSceneTree()->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onSetFaceMeshRepresentationType()
-{
-/*
-  vtkSmartPointer<vtkCollection> selFaces = vtkSmartPointer<vtkCollection>::New();
-  this->Internal->modelTree->getSelectedMeshFaces(selFaces);
-
-  this->getThisCore()->setFaceMeshRepresentationType(
-    this->Internal->GUIPanel->getGUIPanel()->comboBoxFaceMeshRep->
-    currentText().toAscii().constData(), selFaces);
-*/
-}
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onSetMeshRepresentationColor(const QColor& color)
-{
-  vtkSmartPointer<vtkCollection> selFaces = vtkSmartPointer<vtkCollection>::New();
-  this->Internal->modelTree->getSelectedMeshFaces(selFaces);
-  vtkSmartPointer<vtkCollection> selEdges = vtkSmartPointer<vtkCollection>::New();
-  this->Internal->modelTree->getSelectedMeshEdges(selEdges);
-
-  this->getThisCore()->setMeshRepresentationColor(color, selFaces, selEdges);
-}
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::editTexture()
 {
-  if (!this->getThisCore()->getCMBModel())
-    {
-    return;
-    }
-
-  pqCMBModel* cmbModel = this->getThisCore()->getCMBModel();
-
-  this->getThisCore()->setCameraManipulationMode(1);
-  this->getThisCore()->resetViewDirection(0, 0, -1, 0, 1, 0);
-
-  pqPlanarTextureRegistrationDialog* textRegDlg =
-    new pqPlanarTextureRegistrationDialog(
-    this->MainWindowCore->getActiveServer(),
-    this->MainWindowCore->activeRenderView(),
-    QString(tr("Model Texture Registration")),
-    this);
-  double bounds[6];
-  cmbModel->getModelBounds(bounds);
-  QObject::connect(textRegDlg, SIGNAL(removeCurrentTexture()),
-    this, SLOT(unsetTextureMap()));
-  QObject::connect(textRegDlg,
-    SIGNAL(registerCurrentTexture(const QString&, int, double *)),
-    this, SLOT(setTextureMap(const QString&, int, double*)));
-
-  textRegDlg->initializeTexture(bounds,
-    this->getTextureFileNames(), cmbModel->getTextureFileName(),
-    cmbModel->getRegistrationPoints(),
-    cmbModel->getNumberOfRegistrationPoints());
-
-  textRegDlg->exec();
-
-  delete textRegDlg;
-  this->getThisCore()->resetCameraManipulationMode();
 }
 //-----------------------------------------------------------------------------
 const QStringList &pqCMBModelBuilderMainWindow::getTextureFileNames()
@@ -2057,22 +1263,11 @@ const QStringList &pqCMBModelBuilderMainWindow::getTextureFileNames()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::unsetTextureMap()
 {
-  if(this->getThisCore()->getCMBModel())
-    {
-    this->getThisCore()->getCMBModel()->unsetTextureMap();
-    this->Internal->modelTree->showTextureColumn(false);
-    }
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::setTextureMap(const QString& filename, int numberOfRegistrationPoints,
                                        double *points)
 {
-  if(this->getThisCore()->getCMBModel())
-    {
-    this->getThisCore()->getCMBModel()->setTextureMap(
-      filename.toAscii().data(), numberOfRegistrationPoints, points);
-    this->Internal->modelTree->showTextureColumn(true);
-    }
   this->addTextureFileName(filename.toAscii().data());
 }
 //-----------------------------------------------------------------------------

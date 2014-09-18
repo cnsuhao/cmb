@@ -1,12 +1,12 @@
 #ifndef __cmbForwardingBridge_h
 #define __cmbForwardingBridge_h
 
-#include "vtkCmbDiscreteModelModule.h" // For export macro
+#include "vtkCMBModelBridgeModule.h" // For export macro
 #include "smtk/model/DefaultBridge.h"
 
 class vtkSMModelManagerProxy;
 
-class VTKCMBDISCRETEMODEL_EXPORT cmbForwardingBridge : public smtk::model::DefaultBridge
+class VTKCMBMODELBRIDGE_EXPORT cmbForwardingBridge : public smtk::model::DefaultBridge
 {
 public:
   smtkTypeMacro(cmbForwardingBridge);

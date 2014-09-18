@@ -43,7 +43,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 class vtkDataSet;
 class vtkIntArray;
 class pqPipelineSource;
-class vtkModelEntity;
 class qtCMBTree;
 class pqCMBModelBuilderMainWindowCore;
 class pqCMBSceneTree;
@@ -63,17 +62,10 @@ public:
 public slots:
   // Description:
   // CMB model related slots.
-  void onCMBModelLoaded();
   void onCMBModelCleared();
   void onCMBModelModified();
   void onNewModelCreated();
   void onCreateSimpleModel();
-
-  // Description:
-  // CMB model entity related slotts.
-  void onModelEntityNameChanged(vtkModelEntity*);
-  void onEntitiesSplit(QMap< vtkIdType, QList<vtkIdType> >& splitMap, bool bEdgesFromFaceSplit=false);
-  void onEntitiesMerged(vtkIdType toFaceId, QList<vtkIdType>& selFaceIds);
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
@@ -104,8 +96,6 @@ protected slots:
 
   // Description:
   // Tree widgets interaction slots
-  void onDragStarted(qtCMBTree*);
-  void onTreeSelectionChanged(qtCMBTree*);
   void onSelectionFinished();
 
   // Description:
@@ -114,24 +104,13 @@ protected slots:
   //void onRemovingMaterial();
   //QTreeWidgetItem* onAddingBC();
   //void onRemovingBC();
-  void onSplitModelFaces();
-  void onMergingFaces();
   void onClearSelection();
   void updateSelectionUI(bool disable);
-  void onEnableSorting(bool);
-  void onBCGroupTabChanged(int);
-  void onApplyLineResolution();
-  void createModelEdges();
 
   // Description:
   // Called when the Accept/Reset buttons are clicked
   void onSaveState();
   void onResetState();
-
-  // Description:
-  // Slots for GUI layout changes
-  void onUpdateTreeLayout(bool);
-  void onSplitterHandleMoved();
 
   // Description:
   // Called when starting and external process (to disable starting another)
@@ -168,17 +147,10 @@ protected slots:
   void onHideModelFaces(bool);
   void onHideOuterModelBoundary(bool);
 
-  // Description:
-  // Slots for context menus of the tree widgets
-  void onToggleSelectedFacesVisibility();
-  void onToggleSelectedBCSVisibility();
-  void onCreateBCSFromSelectedModelFaces();
-
   void onZoomModeChanged(int mode);
   void onLoadScene();
   void onUnloadScene();
   void onSceneFileLoaded();
-  void initTreeWidgets();
   void onDisplayBathymetryDialog();
 
   // Description
@@ -189,10 +161,6 @@ protected slots:
   void loadSimulationScenario();
   void saveSimulationScenario();
   void onSimFileLoaded(const char* filename);
-
-  // 0, Model Tree; 1, Scene Tree; 2, Mesh Tree
-  void onSetFaceMeshRepresentationType();
-  void onSetMeshRepresentationColor(const QColor&);
 
 protected:
   // Description

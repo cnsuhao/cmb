@@ -1,7 +1,7 @@
 #ifndef __vtkModelManagerWrapper_h
 #define __vtkModelManagerWrapper_h
 
-#include "vtkCmbDiscreteModelModule.h" // For export macro
+#include "vtkCMBModelBridgeModule.h" // For export macro
 #include "vtkModelMultiBlockSource.h"
 
 struct cJSON;
@@ -26,7 +26,7 @@ struct cJSON;
 //
 // This model also serves as a ParaView pipeline source that
 // generates multiblock data of the model for rendering.
-class VTKCMBDISCRETEMODEL_EXPORT vtkModelManagerWrapper : public vtkModelMultiBlockSource
+class VTKCMBMODELBRIDGE_EXPORT vtkModelManagerWrapper : public vtkModelMultiBlockSource
 {
 public:
   static vtkModelManagerWrapper* New();

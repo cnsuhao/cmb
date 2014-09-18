@@ -32,4 +32,3 @@ add_subdirectory(AppCommon)
 add_subdirectory(Help)
 
 add_subdirectory(ModelBuilder)
-add_subdirectory(CommandLineExecutables)

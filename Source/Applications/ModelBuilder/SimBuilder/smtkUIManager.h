@@ -29,10 +29,8 @@
 
 class pqServer;
 class pqRenderView;
-class vtkDiscreteModel;
 class vtkObject;
 class smtkUIManagerInternals;
-class smtkModel;
 class vtkSMProxy;
 class SimBuilderCore;
 
@@ -55,15 +53,13 @@ public:
   { return this->ActiveServer; }
   void setRenderView(pqRenderView* view)
   { this->RenderView = view; }
-  void setupModelConnection(vtkDiscreteModel* model,
-    vtkSMProxy* modelwrapper);
 
   pqRenderView *renderView()
   { return this->RenderView; }
 
   smtk::attribute::qtRootView* rootView();
   void initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore);
-  smtkModel* attModel();
+  smtk::model::ModelPtr attModel() const;
 
   void getAttributeDefinitions(
            QMap<QString, QList<smtk::attribute::DefinitionPtr> > &attDefMap);
@@ -74,13 +70,6 @@ signals:
   void attAssociationChanged();
 
 public slots:
-  void modelCallback(
-    vtkObject* object, unsigned long e, void* clientData, void* callData);
-  // groupType is from vtkDiscreteModel
-  void loadModelItems(int groupType);
-  void updateModelItems(int groupType);
-  void updateModelItems();
-  void clearModelItems();
 
 protected slots:
   void onFileItemCreated(smtk::attribute::qtFileItem*);

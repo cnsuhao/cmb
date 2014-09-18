@@ -26,10 +26,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "qtRemusVolumeMesherSubmitter.h"
 
-#include "pqCMBModel.h"
-
 #include "pqSMAdaptor.h"
-#include "vtkSMOperatorProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxy.h"
 #include "vtkSMProxyManager.h"
@@ -237,7 +234,7 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
 
   //helper tag that we might need later
   submission["model_file_path"].tag("input model file location");
-
+/*
   //we have the submission and we have a connection object, so lets bundle
   //everything up and send it down to the server to send. We can't send
   //from the client as the full model is on the server
@@ -274,5 +271,6 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
     //resultingJob now becomes valid
     resultingJob = remus::proto::to_Job(serializedJob.toStdString());
     }
+*/
   return resultingJob;
 }

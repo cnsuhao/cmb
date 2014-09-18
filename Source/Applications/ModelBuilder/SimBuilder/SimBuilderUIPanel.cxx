@@ -15,11 +15,9 @@
 #include "SimBuilderUIPanel.h"
 
 #include "smtkUIManager.h"
-#include "smtkModel.h"
 
 #include "smtk/Qt/qtRootView.h"
 #include "smtk/view/Root.h"
-#include "vtkDiscreteModel.h"
 #include "vtkSMProxy.h"
 
 #include <QFrame>

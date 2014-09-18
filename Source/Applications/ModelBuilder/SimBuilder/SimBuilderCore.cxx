@@ -26,8 +26,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "SimBuilderCustomExportDialog.h"
 #include "DefaultExportTemplate.h"
 
-#include "../pqCMBModel.h"
-
 #include "pqApplicationCore.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
@@ -42,18 +40,11 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSMSourceProxy.h"
 #include "vtkPVSceneGenFileInformation.h"
 #include "vtkProcessModule.h"
-#include "vtkModelEntity.h"
-#include "vtkDiscreteModel.h"
-#include "vtkModelMaterial.h"
-#include "vtkDiscreteModelEntityGroup.h"
-#include "vtkModelUserName.h"
-#include "vtkModelItemIterator.h"
 
 #include "vtkNew.h"
 #include "vtkXMLDataElement.h"
 #include "vtkXMLDataParser.h"
 
-#include "SimBuilderMeshManager.h"
 #include "../pqCMBModelBuilderOptions.h"
 
 #include "smtk/util/Logger.h"
@@ -67,11 +58,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/Qt/qtRootView.h"
 
 #include "smtkUIManager.h"
-#include "smtkModel.h"
-
 
 #include "vtkSMProxyManager.h"
-#include "vtkSMOperatorProxy.h"
 #include "vtkClientServerStream.h"
 #include "vtkSMSession.h"
 #include "vtkSMIntVectorProperty.h"
@@ -88,11 +76,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
 {
   this->UIPanel = NULL;
-  this->CMBModel = NULL;
 
   this->SimFileVersion = "1.0";
-
-  this->MeshManager = NULL;
 
   this->Initialize();
   this->setServer(pvServer);
@@ -105,10 +90,6 @@ SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
 SimBuilderCore::~SimBuilderCore()
 {
   this->clearSimulationModel();
-  if(this->MeshManager)
-    {
-    delete this->MeshManager;
-    }
   delete this->ExportDialog;
   if(this->m_attUIManager)
     {
@@ -130,11 +111,7 @@ void SimBuilderCore::Initialize()
     }
   this->m_attUIManager = NULL;
 }
-//----------------------------------------------------------------------------
-pqCMBModel* SimBuilderCore::getCMBModel()
-{
-  return this->CMBModel;
-}
+
 //----------------------------------------------------------------------------
 int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
 {
@@ -274,10 +251,6 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
       {
       QApplication::processEvents();
       this->clearSimulationModel();
-      if(this->CMBModel && !this->CMBModel->hasGeometryEntity())
-        {
-        this->CMBModel->clearClientModel();
-        }
       this->Initialize();
       }
     }
@@ -319,7 +292,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
   //parse element, create GUI components
   this->attributeUIManager()->initializeUI(
     this->GetUIPanel()->panelWidget(), this);
-
+/*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
   if(this->LoadingScenario || (this->CMBModel && !this->CMBModel->hasGeometryEntity()))
@@ -327,10 +300,11 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     ignoreModel = true;
     }
   this->updateCMBModelWithScenario(false);
+
   this->updateCMBModelItems(model,
     this->CMBModel ? this->CMBModel->getModelWrapper() : NULL);
 
-/*
+
   int ok = xmlr.process(this->RootDataContainer, info->GetFileContents(),
     model, sceneTree, this->LoadTemplateOnly, ignoreModel);
 
@@ -541,10 +515,6 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
       {
       QApplication::processEvents();
       this->clearSimulationModel();
-      if(this->CMBModel && !this->CMBModel->hasGeometryEntity())
-        {
-        this->CMBModel->clearClientModel();
-        }
       this->Initialize();
       }
     }
@@ -617,6 +587,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   // Create GUI components
   this->attributeUIManager()->initializeUI(
     this->GetUIPanel()->panelWidget(), this);
+/*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
   if(this->LoadingScenario || (this->CMBModel && !this->CMBModel->hasGeometryEntity()))
@@ -626,7 +597,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   this->updateCMBModelWithScenario(false);
   this->updateCMBModelItems(model,
     this->CMBModel ? this->CMBModel->getModelWrapper() : NULL);
-
+*/
   if (this->IsSimModelLoaded)
     {
     emit this->newSimFileLoaded(info->GetFileName());
@@ -681,77 +652,20 @@ smtkUIManager*  SimBuilderCore::attributeUIManager()
 }
 
 //----------------------------------------------------------------------------
-void SimBuilderCore::setCMBModel(pqCMBModel* newModel)
-{
-  if(this->CMBModel == newModel)
-    {
-    return;
-    }
-  if(this->CMBModel && this->CMBModel != newModel)
-    {
-    this->clearCMBModel();
-    }
-  this->CMBModel = newModel;
-
-  if(this->CMBModel)
-    {
-    QObject::connect(this->CMBModel,
-      SIGNAL(modelEntityNameChanged(vtkModelEntity*)),
-      this, SLOT(onModelEntityNameChanged(vtkModelEntity*)));
-
-    this->updateSimulationModel();
-    this->getMeshManager()->setCMBModel(this->CMBModel);
-    }
-}
-//----------------------------------------------------------------------------
-SimBuilderMeshManager* SimBuilderCore::getMeshManager()
-{
-  if(!this->MeshManager)
-    {
-    this->MeshManager = new SimBuilderMeshManager();
-    }
-  return this->MeshManager;
-}
-
-//----------------------------------------------------------------------------
 void SimBuilderCore::updateSimBuilder(pqCMBSceneTree* /*sceneTree*/)
 {
   //vtkGenericWarningMacro("Not implemented");
 }
 
 //----------------------------------------------------------------------------
-void SimBuilderCore::onModelEntityNameChanged(vtkModelEntity* entity)
-{
-  if(!entity || !this->attributeUIManager()->rootView()
-   || !this->isSimModelLoaded())
-    {
-    return;
-    }
-  int enumEnType = entity->GetType();
-  if( enumEnType == vtkDiscreteModelEntityGroupType ||
-    enumEnType == vtkModelMaterialType)
-    {
-    std::string entname = vtkModelUserName::GetUserName(entity);
-    this->attributeUIManager()->attModel()->updateModelItemName(
-      entity->GetUniquePersistentId(), entname);
-    }
-}
-//----------------------------------------------------------------------------
 void SimBuilderCore::updateSimulationModel()
 {
-  if(this->attributeUIManager()->rootView() && this->isSimModelLoaded() && this->CMBModel)
+  if(this->attributeUIManager()->rootView() && this->isSimModelLoaded())// && this->CMBModel)
     {
     if(this->isLoadingScenario())
       {
       this->updateCMBModelWithScenario();
       }
-    else if(this->CMBModel->hasGeometryEntity())
-      {
-      vtkGenericWarningMacro("Not implemented");
-      }
-    this->updateCMBModelItems(this->CMBModel ?
-      this->CMBModel->getModel() : NULL,
-      this->CMBModel ? this->CMBModel->getModelWrapper() : NULL);
     }
 }
 
@@ -760,36 +674,14 @@ void SimBuilderCore::clearCMBModel()
 {
   if(this->isSimModelLoaded() && this->attributeUIManager()->rootView())
     {
-    this->attributeUIManager()->clearModelItems();
+//    this->attributeUIManager()->clearModelItems();
     this->ScenarioEntitiesCreated = false;
-    }
-  if(this->MeshManager)
-    {
-    this->MeshManager->setCMBModel(0);
     }
 }
 
 //----------------------------------------------------------------------------
 void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 {
-  // if we are loading a scenario, we need to add empty BCs and DomainSets referenced
-  // in scenario to the CMBModel, then update the entity info for them in scenario.
-  if(this->LoadingScenario && this->CMBModel)
-    {
-    vtkDiscreteModel* model = this->CMBModel->getModel();
-    if(model)
-      {
-      model->SetBlockEvent(true);
-      this->ScenarioEntitiesCreated = false;
-      //this->SynchronizeModelWithScenario(
-      //  this->RootDataContainer, this->ScenarioEntitiesCreated);
-      if(this->ScenarioEntitiesCreated && emitSignal)
-        {
-        this->CMBModel->onEmptyEntitiesCreated();
-        }
-      model->SetBlockEvent(false);
-      }
-    }
 }
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()
@@ -860,7 +752,7 @@ void SimBuilderCore::ExportSimFile()
         "No python script specified.");
       return;
       }
-
+/*
     // Set up proxy to server
     vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
 
@@ -881,7 +773,7 @@ void SimBuilderCore::ExportSimFile()
                            "No model available!");
       return;
       }
-
+*/
     std::string simContents;
     smtk::util::AttributeWriter xmlw;
     smtk::util::Logger logger;
@@ -907,6 +799,7 @@ void SimBuilderCore::ExportSimFile()
       std::cerr << logger.convertToString() << std::endl;
       return;
       }
+/*
     pqSMAdaptor::setElementProperty(operatorProxy->GetProperty("Script"),
                                     script.c_str());
     //pqSMAdaptor::setElementProperty(operatorProxy->GetProperty("OutputFilename"),
@@ -923,7 +816,7 @@ void SimBuilderCore::ExportSimFile()
             << exportContents
             << vtkClientServerStream::End;
 
-    model->getModelWrapper()->GetSession()->ExecuteStream(model->getModelWrapper()->GetLocation(), stream);
+//    model->getModelWrapper()->GetSession()->ExecuteStream(model->getModelWrapper()->GetLocation(), stream);
 
     // check to see if the operation succeeded on the server
     vtkSMIntVectorProperty* operateSucceeded =
@@ -943,19 +836,12 @@ void SimBuilderCore::ExportSimFile()
 
     operatorProxy->Delete();
     operatorProxy = 0;
+*/
     }
 
   return;
 }
-//----------------------------------------------------------------------------
-vtkDiscreteModel* SimBuilderCore::GetEntityModel(vtkModelEntity* refEntity)
-{
-  vtkModelItemIterator* iter = refEntity->NewIterator(vtkModelType);
-  iter->Begin();
-  vtkDiscreteModel* Model = vtkDiscreteModel::SafeDownCast(iter->GetCurrentItem());
-  iter->Delete();
-  return Model;
-}
+
 //----------------------------------------------------------------------------
 void SimBuilderCore::setServer(pqServer* server)
 {
@@ -967,25 +853,4 @@ void SimBuilderCore::setRenderView(pqRenderView* view)
 {
   this->RenderView = view;
   this->attributeUIManager()->setRenderView(view);
-}
-
-//----------------------------------------------------------------------------
-void SimBuilderCore::updateCMBModelItems(vtkDiscreteModel* model,
-  vtkSMProxy* modelwrapper)
-{
-  this->attributeUIManager()->setupModelConnection(model, modelwrapper);
-  if(model)
-    {
-    this->attributeUIManager()->loadModelItems(vtkModelMaterialType);
-    this->attributeUIManager()->loadModelItems(vtkDiscreteModelEntityGroupType);
-    }
-  else
-    {
-    this->attributeUIManager()->attModel()->removeGroupItemsByMask(smtk::model::Item::VERTEX);
-    this->attributeUIManager()->attModel()->removeGroupItemsByMask(smtk::model::Item::EDGE);
-    this->attributeUIManager()->attModel()->removeGroupItemsByMask(smtk::model::Item::FACE);
-    this->attributeUIManager()->attModel()->removeGroupItemsByMask(smtk::model::Item::REGION);
-    this->attributeUIManager()->attModel()->removeGroupItemsByMask(smtk::model::Item::MODEL_DOMAIN);
-    }
-  this->attributeUIManager()->qtManager()->updateModelViews();
 }

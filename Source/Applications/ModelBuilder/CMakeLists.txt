@@ -13,7 +13,6 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 set(UI_FORMS
   pqCMBImportShapefile.ui
   qtCMBLegacyMesherDialog.ui
-  qtCMBPanel.ui
   qtVolumeMesherSelector.ui
   pqCMBModelBuilderOptions.ui
   SimBuilder/qtSimBuilderExportADHDialog.ui
@@ -60,13 +59,7 @@ set(SimBuilder_SOURCES
   SimBuilder/SimBuilderCore.cxx
   SimBuilder/SimBuilderCustomExportDialog.cxx
   SimBuilder/SimBuilderEMSExportDialog.cxx
-  SimBuilder/SimBuilderMeshManager.cxx
   SimBuilder/SimBuilderUIPanel.cxx
-#  SimBuilder/smtkExpressionView.cxx
-  SimBuilder/smtkModel.cxx
-#  SimBuilder/smtkModelEntityView.cxx
-# SimBuilder/smtkModelGroup.cxx
-  SimBuilder/smtkModelItem.cxx
   SimBuilder/smtkUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx
   ${CMAKE_CURRENT_BINARY_DIR}/DefaultExportTemplate.h
@@ -175,33 +168,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmbModelBuilderConfig.h.in
   ESCAPE_QUOTES)
 
 set(ModelBuilder_SOURCE_FILES
-  qtCMBBoundaryConditionTree.cxx
-  qtCMBBoundaryConditionTree.h
-  pqCMBFloatingEdge.cxx
-  pqCMBFloatingEdge.h
   pqCMBLegacyMesherDialog.cxx
   pqCMBModelBuilderMainWindow.cxx
   pqCMBModelBuilderMainWindowCore.cxx
-  pqCMBModel.cxx
-  pqCMBModel.h
-  pqCMBModelEdge.cxx
-  pqCMBModelEdge.h
-  qtCMBModelEdgeTree.cxx
-  qtCMBModelEdgeTree.h
-  pqCMBModelEntity.cxx
-  pqCMBModelEntity.h
-  pqCMBModelFace.cxx
-  pqCMBModelFace.h
-  qtCMBModelTree.cxx
-  qtCMBModelTree.h
-  pqCMBModelVertex.cxx
-  pqCMBModelVertex.h
-  qtCMBPanelWidget.cxx
-  qtCMBPanelWidget.h
-  qtCMBTree.cxx
-  qtCMBTree.h
-  pqCMBTreeItem.cxx
-  pqCMBTreeItem.h
   qtRemusVolumeMesherSubmitter.h
   qtRemusVolumeMesherSubmitter.cxx
   qtRemusVolumeMesherSelector.h
@@ -250,9 +219,8 @@ add_dependencies(ModelBuilder CMBSuiteHelp)
 
 target_link_libraries(ModelBuilder
 LINK_PRIVATE
-  CMBModel_Plugin
+  vtkCMBModelBridge
   cmbAppCommon
-  SimBuilderMesh_Plugin
   QtSMTK
   RemusClient
   SMTKCore

@@ -35,8 +35,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "qtRemusVolumeMesherSubmitter.h"
 #include "qtRemusVolumeMesherSelector.h"
 
-#include "pqCMBModel.h"
-#include "pqCMBModelFace.h"
 #include "pqCMBRubberBandHelper.h"
 
 #include <QAction>
@@ -120,8 +118,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QVTKWidget.h>
 #include <vtkClientServerStream.h>
-#include <vtkCMBImportBCFileOperatorClient.h>
-#include <vtkCMBModelBuilderClient.h>
 #include "vtkCMBWriter.h"
 #include "vtkDataObject.h"
 #include "vtkCMBGeometry2DReader.h"
@@ -129,8 +125,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkGeometryRepresentation.h"
 #include "vtkHydroModelCreator.h"
 #include "vtkImageData.h"
-#include "vtkModelEdge.h"
-#include "vtkModelFace.h"
 #include "vtkMultiBlockWrapper.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkNew.h"
@@ -156,7 +150,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <vtkSMSourceProxy.h>
 #include <vtkSMStringVectorProperty.h>
 #include "vtkSMProxyProperty.h"
-#include "vtkSMOperatorProxy.h"
 
 #include <vtkToolkits.h>
 #include <algorithm>
@@ -164,8 +157,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "assert.h"
 #include <vtksys/Process.h>
 #include "vtkCollection.h"
-#include "vtkCMBModelEdgeMesh.h"
-#include "vtkCMBModelFaceMesh.h"
 #include "vtkHydroModelPolySource.h"
 #include "vtkHydroModelMultiBlockSource.h"
 #include "vtkOmicronMeshInputFilter.h"
@@ -183,17 +174,13 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSelection.h"
 #include "vtkSelectionNode.h"
 #include "vtkSMSelectionHelper.h"
-#include "vtkDiscreteModel.h"
 
 ///////////////////////////////////////////////////////////////////////////
-#include "pqCMBModel.h"
 #include "SimBuilder/SimBuilderCore.h"
 #include "pqCMBSceneTree.h"
 #include "pqCMBSceneReader.h"
 #include "vtkPVSceneGenFileInformation.h"
 #include "qtCMBSceneObjectFilterDialog.h"
-#include "SimBuilder/SimBuilderMeshManager.h"
-#include "SimBuilder/smtkModel.h"
 #include "SimBuilder/smtkUIManager.h"
 #include "pqCMBModelBuilderOptions.h"
 #include "qtCMBApplicationOptionsDialog.h"
@@ -220,8 +207,8 @@ using namespace smtk;
 
 ///////////////////////////////////////////////////////////////////////////
 #include "vtkPVPlugin.h"
-PV_PLUGIN_IMPORT_INIT(CMBModel_Plugin)
-PV_PLUGIN_IMPORT_INIT(SimBuilderMesh_Plugin)
+// PV_PLUGIN_IMPORT_INIT(CMBModel_Plugin)
+// PV_PLUGIN_IMPORT_INIT(SimBuilderMesh_Plugin)
 // PV_PLUGIN_IMPORT_INIT(SMTKModel_Plugin)
 
 ///////////////////////////////////////////////////////////////////////////
@@ -233,7 +220,6 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
   public:
     vtkInternal(QWidget* /*parent*/) :
       InCreateSource(false),
-      CMBModel(0),
       SimBuilder(0),
       SceneGeoTree(0)
       {
@@ -247,10 +233,6 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
       if(this->SimBuilder)
         {
         delete this->SimBuilder;
-        }
-      if(this->CMBModel)
-        {
-        delete this->CMBModel;
         }
       }
 
@@ -278,8 +260,6 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     ///////////////////////////////////////////////////////////////////////////
     // The Model related variables
-    QPointer<pqCMBModel> CMBModel;
-
     pqCMBRubberBandHelper cmbRenderViewSelectionHelper;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -564,17 +544,9 @@ void pqCMBModelBuilderMainWindowCore::setupVariableToolbar(QToolBar* toolbar)
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::updateVariableToolbar(QToolBar* /*toolbar*/)
 {
-  if(this->getCMBModel()->getModelDimension()==3)
-    {
-    this->Internal->ColorFaceWidget->setVisible(1);
-    this->Internal->ColorEdgeDomainWidget->setVisible(0);
-    }
-  else if(this->getCMBModel()->getModelDimension()==2)
-    {
-    this->Internal->ColorFaceWidget->setVisible(0);
-    this->Internal->ColorEdgeDomainWidget->setVisible(1);
-    }
-  bool hasEdges = this->getCMBModel()->has2DEdges();
+  this->Internal->ColorFaceWidget->setVisible(0);
+  this->Internal->ColorEdgeDomainWidget->setVisible(0);
+  bool hasEdges = false; //this->getCMBModel()->has2DEdges();
   this->Internal->ColorEdgeWidget->setVisible(hasEdges);
   this->Internal->ColorEdgeLabel->setVisible(hasEdges);
 }
@@ -594,8 +566,7 @@ void pqCMBModelBuilderMainWindowCore::updateColorByAttributeMode(int mode, bool 
 {
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
-  bool attVisible = (mode == pqCMBModelEntity::ColorByAttribute) &&
-    attManager->hasAttributes();
+  bool attVisible = false;
   if(isEdge)
     {
     this->Internal->AttEdgeColorAction->setVisible(attVisible);
@@ -620,8 +591,7 @@ void pqCMBModelBuilderMainWindowCore::updateColorDomainByAttributeMode(
 {
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
-  bool attVisible = (mode == pqCMBModelFace::PolygonFaceColorByAttribute) &&
-    attManager->hasAttributes();
+  bool attVisible = false;
   this->Internal->AttColorEdgeDomainAction->setVisible(attVisible);
   this->Internal->AttCategoryEdgeDomainAction->setVisible(attVisible);
   this->Internal->AttFaceColorLegendAction->setVisible(attVisible);
@@ -634,21 +604,18 @@ void pqCMBModelBuilderMainWindowCore::updateColorDomainByAttributeMode(
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setColorByFaceMode(int mode)
 {
-  this->getCMBModel()->setFaceColorMode(mode);
   this->updateColorByAttributeMode(mode);
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setColorByEdgeMode(int mode)
 {
-  this->getCMBModel()->setEdgeColorMode(mode);
   this->updateColorByAttributeMode(mode, true);
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setColorByEdgeDomainMode(int mode)
 {
-  this->getCMBModel()->setColorEdgeDomainMode(mode);
   this->updateColorDomainByAttributeMode(mode);
 }
 
@@ -769,10 +736,10 @@ void pqCMBModelBuilderMainWindowCore::processSceneInfo(const QString& filename,
     {
     qtCMBSceneObjectFilterDialog FilterDialog(this->parentWidget());
     double modBounds[6] = {0,-1,0,-1,0,-1};
-    if(this->Internal->CMBModel->hasGeometryEntity())
-      {
-      this->Internal->CMBModel->getModelBounds(modBounds);
-      }
+//    if(this->Internal->CMBModel->hasGeometryEntity())
+//      {
+//      this->Internal->CMBModel->getModelBounds(modBounds);
+//      }
     FilterDialog.setSceneFile(filename.toAscii().constData());
     FilterDialog.setObjectTypes(objTypes);
     FilterDialog.setBounds(modBounds);
@@ -868,6 +835,7 @@ void pqCMBModelBuilderMainWindowCore::loadMesherOutput(remus::proto::JobResult)
           "Mesher completed normally.  Load output?",
           QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
       {
+/*
       // If there is any data loaded, should close it...
       // Yumin:  how should I be testing to see if we have changed data?
       if (this->Internal->CMBModel->getCurrentModelFile().size() > 0)
@@ -877,10 +845,11 @@ void pqCMBModelBuilderMainWindowCore::loadMesherOutput(remus::proto::JobResult)
               "Any changes to the currently loaded data will be lost.  Save before closing?",
               QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::Yes)
           {
-          this->getCMBModel()->onSaveData();
+//          this->getCMBModel()->onSaveData();
           }
         this->onCloseData(true);
         }
+*/
       cmbLoadDataReaction::openFiles(QStringList( this->Internal->MesherOutputFileName ),
         QStringList(), cmbFileExtensions::ModelBuilder_ReadersMap());
       }
@@ -964,28 +933,6 @@ void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(
 }
 
 //-----------------------------------------------------------------------------
-pqCMBModel* pqCMBModelBuilderMainWindowCore::getCMBModel()
-{
-  if(!this->Internal->CMBModel)
-    {
-    this->Internal->CMBModel = new pqCMBModel(
-        this->activeRenderView(), this->getActiveServer());
-
-    QObject::connect(this->Internal->CMBModel,
-        SIGNAL(currentModelLoaded()),
-        this, SLOT(onModelLoaded()));
-    QObject::connect(this->Internal->CMBModel,
-        SIGNAL(currentVTKConnectionChanged(pqDataRepresentation*)),
-        this, SLOT(onVTKConnectionChanged(pqDataRepresentation*)));
-    QObject::connect(this->Internal->CMBModel,
-        SIGNAL(currentModelCleared()),
-        this, SLOT(onCMBModelCleared()));
-    }
-
-  return this->Internal->CMBModel;
-}
-
-//-----------------------------------------------------------------------------
 SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
 {
   if(!this->Internal->SimBuilder)
@@ -1002,45 +949,13 @@ SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onCMBModelCleared()
 {
-/*
-  if(this->getAppearanceEditor())
-    {
-    this->getAppearanceEditorContainer()->layout()->
-      removeWidget(this->getAppearanceEditor());
-    this->setAppearanceEditor(NULL);
-    }
- */
-  //if(this->Internal->ColorFaceWidget)
-  //  {
-  //  this->Internal->ColorFaceWidget->setRepresentation(0);
-  //  }
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onModelLoaded()
 {
-  if(this->Internal->CMBModel && this->Internal->CMBModel->
-      GetCurrentModelEntityMap().count())
-    {
-    bool dim2D = (this->Internal->CMBModel->getModelDimension() == 2) ? true : false;
-    this->Internal->SelectionModeBox->blockSignals(true);
-    this->Internal->SelectionModeBox->clear();
-    QStringList list;
-    if(dim2D)
-      {
-      list << "Arcs" << "Polygons" << "Domain Sets";
-      }
-    else
-      {
-      bool hasEdges = this->getCMBModel()->has2DEdges();
-      if(hasEdges)
-        {
-        list << "Arcs";
-        }
-      list << "Model Faces" << "Regions" << "Domain Sets";
-      }
-    this->Internal->SelectionModeBox->addItems(list);
-    this->Internal->SelectionModeBox->setCurrentIndex(0);
+//    this->Internal->SelectionModeBox->addItems(list);
+//    this->Internal->SelectionModeBox->setCurrentIndex(0);
 
 
     if(this->getSimBuilder()->isSimModelLoaded() &&
@@ -1049,19 +964,7 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
       this->getSimBuilder()->clearCMBModel();
       }
     // Make sure the mesh is cleared first
-    this->getSimBuilder()->getMeshManager()->clearMesh();
-    this->getSimBuilder()->getMeshManager()->setCMBModel(
-      this->Internal->CMBModel);
-
-    if(this->getSimBuilder()->getCMBModel() ==
-      this->Internal->CMBModel)
-      {
-      this->getSimBuilder()->updateSimulationModel();
-      }
-    else
-      {
-      this->getSimBuilder()->setCMBModel(this->Internal->CMBModel);
-      }
+    //this->getSimBuilder()->getMeshManager()->clearMesh();
 
     this->Internal->SelectionModeBox->blockSignals(false);
 
@@ -1069,13 +972,15 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
     this->applyColorSettings();
 
     // new attribute legends
+/*
     this->Internal->AttEdgeScalarBarWidget = new cmbScalarBarWidget(
       this->Internal->CMBModel->modelRepresentation(),NULL);
     this->Internal->AttEdgeScalarBarWidget->setPositionToRight();
     this->Internal->AttFaceScalarBarWidget = new cmbScalarBarWidget(
       this->Internal->CMBModel->modelRepresentation(),NULL);
     this->Internal->AttFaceScalarBarWidget->setPositionToLeft();
-    }
+*/
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1162,13 +1067,11 @@ void pqCMBModelBuilderMainWindowCore::onExportSimFile()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onSaveBCSs()
 {
-  this->getCMBModel()->onSaveBCSs(this->parentWidget());
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onSaveData()
 {
-  this->getCMBModel()->onSaveData(this->parentWidget());
 }
 
 //-----------------------------------------------------------------------------
@@ -1180,7 +1083,6 @@ void pqCMBModelBuilderMainWindowCore::onSaveAsData()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::zoomOnSelection()
 {
-  this->getCMBModel()->zoomOnSelection();
 }
 
 //-----------------------------------------------------------------------------
@@ -1193,8 +1095,8 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
     }
   if(this->Internal->SimBuilder)
     {
-    this->Internal->SimBuilder->getMeshManager()->clearMesh();
-    this->Internal->SimBuilder->getMeshManager()->setCMBModel(0);
+//    this->Internal->SimBuilder->getMeshManager()->clearMesh();
+//    this->Internal->SimBuilder->getMeshManager()->setCMBModel(0);
     }
 
   // destroy the new smtk model
@@ -1237,7 +1139,7 @@ void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
   if(this->Internal->SimBuilder)
     {
     this->getSimBuilder()->clearCMBModel();
-    this->getSimBuilder()->setCMBModel(0);
+//    this->getSimBuilder()->setCMBModel(0);
     this->getSimBuilder()->clearSimulationModel();
     }
 
@@ -1281,70 +1183,6 @@ FileBasedMeshingParameters
 pqCMBModelBuilderMainWindowCore::generateLegacyVolumeMesherInput()
 {
   //
-  FileBasedMeshingParameters fmp;
-  fmp.valid = false;
-
-  // setup initial volume constraint for volume meshing
-  double modelBounds[6];
-  this->Internal->CMBModel->getModel()->GetBounds( modelBounds );
-  QPointer<pqCMBLegacyMesherDialog> meshDialog =
-                      new pqCMBLegacyMesherDialog(this->getActiveServer(),
-                                              modelBounds,
-                                              this->parentWidget());
-  QFileInfo inputFinfo;
-  if (this->Internal->OmicronMeshInputFileName.size() < 1)
-    {
-    if (this->getCMBModel()->getCurrentModelFile().size() > 0)
-      {
-      inputFinfo.setFile( this->Internal->CMBModel->getCurrentModelFile() );
-      QString tempName = inputFinfo.absoluteDir().absolutePath() +
-        "/" + inputFinfo.baseName() + ".dat";
-      meshDialog->setFileName(tempName);
-      }
-    else
-      {
-      meshDialog->setFileName("defaultMeshInput.dat");
-      }
-    }
-  else
-    {
-    meshDialog->setFileName(this->Internal->OmicronMeshInputFileName);
-    }
-
-  if (!this->getCMBModel()->isShellTranslationPointsLoaded() &&
-      !this->loadOmicronModelInputData())
-    {
-    // PointInside data not present and then not (successfully) loaded by the user
-    delete meshDialog;
-    return fmp;
-    }
-
-  if (meshDialog->exec() != QDialog::Accepted)
-    {
-    delete meshDialog;
-    return fmp;
-    }
-
-  //get some information from the dialog before we delete it.
-  const QString geomName =
-                  this->saveBCSFileForOmicronInput( meshDialog->getFileName());
-
-  fmp.inputFilePath = meshDialog->getFileName();
-  fmp.geometryFileName = geomName;
-  fmp.mesherExecPath = meshDialog->getActiveMesher();
-  fmp.commandArguments = meshDialog->getTetGenOptions();
-  fmp.processExecutionDir = QFileInfo(fmp.inputFilePath).absoluteDir().absolutePath();
-
-
-
-  fmp.valid = this->getCMBModel()->writeOmicronMeshInput(
-                                    fmp.inputFilePath,
-                                    fmp.geometryFileName,
-                                    fmp.commandArguments);
-
-  //delete the mesher
-  delete meshDialog;
-  return fmp;
 }
 
 //----------------------------------------------------------------------------
@@ -1381,7 +1219,7 @@ QString pqCMBModelBuilderMainWindowCore::saveBCSFileForOmicronInput(
     outputBCSFileName =  outPath + "/" + outBCSName;
     //info.setFile(outputBCSFileName);
     }
-  this->getCMBModel()->saveBCSs(outputBCSFileName);
+  //this->getCMBModel()->saveBCSs(outputBCSFileName);
   return outBCSName;
 }
 
@@ -1515,6 +1353,7 @@ void pqCMBModelBuilderMainWindowCore::onSpawnVolumeMesher()
     }
   else
     {
+/*
     //need to propagate the local remus server enpoint to the submitter
     //so that we use the correct transport proto, ip and port.
     QPointer<qtRemusVolumeMesherSubmitter> jobSubmitter(
@@ -1538,6 +1377,7 @@ void pqCMBModelBuilderMainWindowCore::onSpawnVolumeMesher()
       QObject::connect(this, SIGNAL(remusCompletedNormally(remus::proto::JobResult)),
                        this, SLOT(loadRemusOutput(remus::proto::JobResult)));
       }
+*/
     }
 }
 
@@ -1749,7 +1589,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
 
   if(lastExt == "crf")
     {
-    this->getSimBuilder()->setCMBModel(this->getCMBModel());
+//    this->getSimBuilder()->setCMBModel(this->getCMBModel());
     this->getSimBuilder()->LoadResources(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -1769,7 +1609,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     this->clearSimBuilder();
     this->getSimBuilder()->Initialize();
 */
-    this->getSimBuilder()->setCMBModel(this->getCMBModel());
+//    this->getSimBuilder()->setCMBModel(this->getCMBModel());
     this->getSimBuilder()->LoadSimulation(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -1826,13 +1666,14 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     this->processModelInfo(filename, reader);
     return;
     }
-*/
+
   if(this->getCMBModel() &&
       this->getCMBModel()->canLoadFile(filename))
     {
     this->onCloseData(true);
     this->getCMBModel()->loadReaderSource(filename, reader);
     }
+*/
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
@@ -1842,16 +1683,13 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
 
   //import in the cmb model plugin after the common plugin(s) has been loaded
   //incase it depends on any symbols of the common plugins(s)
-  PV_PLUGIN_IMPORT(CMBModel_Plugin)
-  PV_PLUGIN_IMPORT(SimBuilderMesh_Plugin)
+//  PV_PLUGIN_IMPORT(CMBModel_Plugin)
+//  PV_PLUGIN_IMPORT(SimBuilderMesh_Plugin)
   // PV_PLUGIN_IMPORT(SMTKModel_Plugin)
 
-  if(!this->Internal->CMBModel)
-    {
-    this->getCMBModel();
-    emit this->newModelCreated();
-    }
 
+  emit this->newModelCreated();
+ 
   this->Internal->cmbRenderViewSelectionHelper.setView(this->activeRenderView());
   // Set up connection with selection helpers for all views.
   QObject::connect(
@@ -1897,11 +1735,6 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
 void pqCMBModelBuilderMainWindowCore::onRemovingServer(pqServer *server)
 {
   this->Superclass::onRemovingServer(server);
-  if(this->Internal->CMBModel)
-    {
-    delete this->Internal->CMBModel;
-    this->Internal->CMBModel = NULL;
-    }
 }
 //-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::loadBCFile(const QString& filename)
@@ -1914,7 +1747,7 @@ int pqCMBModelBuilderMainWindowCore::loadBCFile(const QString& filename)
     qCritical() << "File does not exist: " << filename;
     return 0;
     }
-
+/*
   // load the BC file
   vtkCMBImportBCFileOperatorClient* importBCOperator =
     vtkCMBImportBCFileOperatorClient::New();
@@ -1924,48 +1757,19 @@ int pqCMBModelBuilderMainWindowCore::loadBCFile(const QString& filename)
   importBCOperator->Delete();
   this->Internal->Is3DMeshCreated = retVal ? true : false;
   return retVal;
+*/
+  return 0;
 }
 
 //-----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::checkAnalysisMesh()
 {
-  int dim = this->Internal->CMBModel->getModelDimension();
-  if(dim==2 && this->Internal->SimBuilder)
-    {
-    SimBuilderMeshManager* meshManager =
-      this->Internal->SimBuilder->getMeshManager();
-    if(meshManager->hasMesh())
-      {
-      if(!meshManager->analysisMeshIsCurrent())
-        {
-        meshManager->saveAsAnalysisMesh();
-        }
-      return meshManager->analysisMeshIsCurrent();
-      }
-    }
-  else if(dim == 3 && this->Internal->Is3DMeshCreated)
-    {
-    return true;
-    }
   return false;
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::clearCurrentEntityWidgets()
 {
-  QMap<vtkIdType, pqCMBModelEntity*> entityMap =
-    this->getCMBModel()->GetCurrentModelEntityMap();
-
-  pqCMBModelEntity* entity;
-  for (QMap< vtkIdType, pqCMBModelEntity* >::iterator mapIter = entityMap.begin();
-    mapIter != entityMap.end(); ++mapIter)
-    {
-    entity = mapIter.value();
-    if(entity)
-      {
-      entity->clearWidgets();
-      }
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -1977,20 +1781,6 @@ void pqCMBModelBuilderMainWindowCore::setFaceMeshRepresentationType(
     return;
     }
 
-  QMap<vtkIdType, pqCMBModelEntity*> entityMap =
-    this->getCMBModel()->GetFaceIDToFaceMap();
-  vtkIdType faceId;
-  for(int i=0; i<selFaces->GetNumberOfItems(); i++)
-    {
-    vtkSmartPointer<vtkCMBModelFaceMesh> meshEntity =
-      vtkCMBModelFaceMesh::SafeDownCast(
-      selFaces->GetItemAsObject(i));
-    if(meshEntity)
-      {
-      faceId = meshEntity->GetModelFace()->GetUniquePersistentId();
-      entityMap[faceId]->setMeshRepresentationType(strType);
-      }
-    }
   this->activeRenderView()->render();
 }
 
@@ -1998,151 +1788,16 @@ void pqCMBModelBuilderMainWindowCore::setFaceMeshRepresentationType(
 void pqCMBModelBuilderMainWindowCore::setMeshRepresentationColor(
   const QColor& repColor, vtkCollection* selFaces, vtkCollection* selEdges)
 {
-  QMap<vtkIdType, pqCMBModelEntity*> faceMap =
-    this->getCMBModel()->GetFaceIDToFaceMap();
-  vtkIdType entId;
-  double RGBA[4];
-  repColor.getRgbF(&RGBA[0], &RGBA[1], &RGBA[2], &RGBA[3]);
-  for(int i=0; i<selFaces->GetNumberOfItems(); i++)
-    {
-    vtkSmartPointer<vtkCMBModelFaceMesh> meshEntity =
-      vtkCMBModelFaceMesh::SafeDownCast(
-      selFaces->GetItemAsObject(i));
-    if(meshEntity)
-      {
-      entId = meshEntity->GetModelFace()->GetUniquePersistentId();
-      faceMap[entId]->setMeshRepresentationColor(RGBA[0], RGBA[1], RGBA[2]);
-      }
-    }
-  QMap<vtkIdType, pqCMBModelEntity*> edgeMap =
-    this->getCMBModel()->Get2DEdgeID2EdgeMap();
-  for(int i=0; i<selEdges->GetNumberOfItems(); i++)
-    {
-    vtkSmartPointer<vtkCMBModelEdgeMesh> meshEntity =
-      vtkCMBModelEdgeMesh::SafeDownCast(
-      selEdges->GetItemAsObject(i));
-    if(meshEntity)
-      {
-      entId = meshEntity->GetModelEdge()->GetUniquePersistentId();
-      edgeMap[entId]->setMeshRepresentationColor(RGBA[0], RGBA[1], RGBA[2]);
-      }
-    }
   this->activeRenderView()->render();
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onSaveMeshToModelInfo()
 {
-  if(!this->Internal->CMBModel)
-    {
-    QMessageBox::warning(NULL, "No Model",
-      "There is no model loaded.");
-    return;
-    }
-  if(!this->checkAnalysisMesh())
-    {
-    QMessageBox::warning(NULL, "No Analysis Mesh",
-      "There is no analysis mesh generated yet.");
-    return;
-    }
-
-  // get output filename
-  QString filters = "Analysis Mesh To Model Info (*.m2m)";
-  pqFileDialog file_dialog(
-    this->getCMBModel()->getMasterPolyProvider()->getServer(),
-    this->parentWidget(), tr("Save Analysis Mesh to Model Info"), QString(), filters);
-  file_dialog.setObjectName("FileSaveDialog");
-  file_dialog.setFileMode(pqFileDialog::AnyFile);
-  QApplication::restoreOverrideCursor();
-  if (file_dialog.exec() == QDialog::Accepted)
-    {
-    QStringList files = file_dialog.getSelectedFiles();
-    vtkSMProxyManager* pxm = vtkSMProxyManager::GetProxyManager();
-    vtkSMSourceProxy* writer = vtkSMSourceProxy::SafeDownCast(
-      pxm->NewProxy("CMBSimBuilderMeshGroup", "MeshToModelWriter"));
-    if(writer)
-      {
-      vtkSMProxyProperty* proxyproperty =
-        vtkSMProxyProperty::SafeDownCast(
-        writer->GetProperty("ModelWrapper"));
-      proxyproperty->RemoveAllProxies();
-      proxyproperty->AddProxy(this->getCMBModel()->getModelWrapper());
-
-      pqSMAdaptor::setElementProperty(
-        writer->GetProperty("FileName"), files[0].toStdString().c_str());
-
-      writer->UpdateVTKObjects();
-      vtkClientServerStream stream;
-      stream  << vtkClientServerStream::Invoke
-        << VTKOBJECT(writer)
-        << "Update"
-        << vtkClientServerStream::End;
-      writer->GetSession()->ExecuteStream(writer->GetLocation(), stream);
-
-      //now that we are done writing, destroy the proxy
-      writer->Delete();
-      }
-    }
 }
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onLoadMeshToModelInfo()
 {
-  if(!this->Internal->CMBModel)
-    {
-    QMessageBox::warning(NULL, "No Model",
-      "There is no model loaded.");
-    return;
-    }
-
-  // get m2m filename
-  QString filters = "Analysis Mesh To Model Info (*.m2m)";
-  pqFileDialog file_dialog(
-    this->getCMBModel()->getMasterPolyProvider()->getServer(),
-    this->parentWidget(), tr("Load Analysis Mesh to Model Info"), QString(), filters);
-  file_dialog.setObjectName("FileOpenDialog");
-  file_dialog.setFileMode(pqFileDialog::ExistingFile);
-  QApplication::restoreOverrideCursor();
-  if (file_dialog.exec() != QDialog::Accepted)
-    {
-    return;
-    }
-
-  QStringList files = file_dialog.getSelectedFiles();
-  if (files.size() == 0)
-    {
-    return;
-    }
-  vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
-  vtkSMOperatorProxy* OperatorProxy = vtkSMOperatorProxy::SafeDownCast(
-    manager->NewProxy("CMBSimBuilderMeshGroup", "MeshToModelReadOperator"));
-  if(!OperatorProxy)
-    {
-    QMessageBox::warning(NULL, "Failure to create operator",
-      "Unable to create MeshToModelReadOperator proxy.");
-    return;
-    }
-  OperatorProxy->SetLocation(this->getCMBModel()->getModelWrapper()->GetLocation());
-
-  pqSMAdaptor::setElementProperty(
-    OperatorProxy->GetProperty("FileName"), files[0].toStdString().c_str());
-
-  OperatorProxy->Operate(this->getCMBModel()->getModel(),
-    this->getCMBModel()->getModelWrapper());
-
-  // check to see if the operation succeeded on the server
-  vtkSMIntVectorProperty* OperateSucceeded =
-    vtkSMIntVectorProperty::SafeDownCast(
-    OperatorProxy->GetProperty("OperateSucceeded"));
-  OperatorProxy->UpdatePropertyInformation();
-
-  int Succeeded = OperateSucceeded->GetElement(0);
-  OperatorProxy->Delete();
-  OperatorProxy = 0;
-  if(!Succeeded)
-    {
-    QMessageBox::warning(NULL, "Failure of server operator",
-      "Server side MeshToModelReadOperator failed.");
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -2151,15 +1806,12 @@ void pqCMBModelBuilderMainWindowCore::createRectangleModel(
 {
   this->onCloseData(true);
 
-  this->getCMBModel()->createRectangleModel(
-    boundingBox, baseResolution, heightResolution);
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::createEllipseModel(double* values, int resolution)
 {
   this->onCloseData(true);
-  this->getCMBModel()->createEllipseModel(values, resolution);
 }
 
 //-----------------------------------------------------------------------------
@@ -2202,14 +1854,6 @@ void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::applyColorSettings()
 {
-  if(this->Internal->CMBModel && this->Internal->CMBModel->getModelDimension()==2)
-    {
-    QColor ecolor = this->Internal->AppOptions->defaultEdgeColor();
-    this->getCMBModel()->setEdgesColor(ecolor);
-    QColor pcolor = this->Internal->AppOptions->defaultPolygonColor();
-    this->getCMBModel()->setFacesColor(pcolor);
-    this->activeRenderView()->render();
-    }
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onColorByAttribute()
@@ -2238,15 +1882,15 @@ void pqCMBModelBuilderMainWindowCore::onColorFaceByAttribute()
   QString currentDefType = this->Internal->AttFaceColorCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
-  this->Internal->CMBModel->setCurrentFaceAttributeColorInfo(
-    attManager, currentDefType);
+//  this->Internal->CMBModel->setCurrentFaceAttributeColorInfo(
+//    attManager, currentDefType);
   if(this->Internal->AttFaceColorLegendAction->isVisible() &&
     this->Internal->AttFaceColorLegendAction->isChecked())
     {
     this->toggleAttFaceColorLegend(true);
     }
 
-  this->Internal->CMBModel->onLookupTableModified();
+//  this->Internal->CMBModel->onLookupTableModified();
   }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onFaceAttCategoryChanged()
@@ -2298,15 +1942,15 @@ void pqCMBModelBuilderMainWindowCore::onColorEdgeByAttribute()
   QString currentDefType = this->Internal->AttEdgeColorCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
-  this->Internal->CMBModel->setCurrentEdgeAttributeColorInfo(
-    attManager, currentDefType);
+//  this->Internal->CMBModel->setCurrentEdgeAttributeColorInfo(
+//    attManager, currentDefType);
   if(this->Internal->AttEdgeColorLegendAction->isVisible() &&
     this->Internal->AttEdgeColorLegendAction->isChecked())
     {
     this->toggleAttEdgeColorLegend(true);
     }
 
-  this->Internal->CMBModel->onLookupTableModified();
+//  this->Internal->CMBModel->onLookupTableModified();
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onEdgeAttCategoryChanged()
@@ -2357,15 +2001,15 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainColorByAttribute()
   QString currentDefType = this->Internal->AttColorEdgeDomainCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
-  this->Internal->CMBModel->setCurrentDomainAttributeColorInfo(
-    attManager, currentDefType);
+//  this->Internal->CMBModel->setCurrentDomainAttributeColorInfo(
+//    attManager, currentDefType);
   if(this->Internal->AttFaceColorLegendAction->isVisible() &&
     this->Internal->AttFaceColorLegendAction->isChecked())
     {
     this->toggleAttFaceColorLegend(true);
     }
 
-  this->Internal->CMBModel->onLookupTableModified();
+//  this->Internal->CMBModel->onLookupTableModified();
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onEdgeDomainAttCategoryChanged()
@@ -2469,13 +2113,6 @@ void pqCMBModelBuilderMainWindowCore::onNumOfAttriubtesChanged()
 //-----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::canColorByAttribute()
 {
-  return this->getCMBModel() &&
-    (this->getCMBModel()->getFaceColorMode() ==
-       pqCMBModelEntity::ColorByAttribute ||
-     this->getCMBModel()->getEdgeColorMode() ==
-       pqCMBModelEntity::ColorByAttribute ||
-     this->getCMBModel()->getColorEdgeDomainMode() ==
-       pqCMBModelFace::PolygonFaceColorByAttribute);
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::toggleAttFaceColorLegend(bool show)

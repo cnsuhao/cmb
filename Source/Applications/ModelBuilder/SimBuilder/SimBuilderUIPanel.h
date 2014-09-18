@@ -22,7 +22,6 @@
 #include "cmbSystemConfig.h"
 
 class smtkUIManager;
-class vtkDiscreteModel;
 class vtkSMProxy;
 
 class SimBuilderUIPanel : public QDockWidget
