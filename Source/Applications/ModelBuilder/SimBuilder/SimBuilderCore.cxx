@@ -702,6 +702,7 @@ void SimBuilderCore::clearSimulationModel()
 //----------------------------------------------------------------------------
 void SimBuilderCore::ExportSimFile()
 {
+/*
   // Check if there is an unsaved mesh
   bool hasMesh = this->MeshManager->hasMesh();
   bool isCurrent = this->MeshManager->analysisMeshIsCurrent();
@@ -722,7 +723,7 @@ void SimBuilderCore::ExportSimFile()
       return;
       }
     }
-
+*/
   smtk::attribute::ManagerPtr attManager = this->attributeUIManager()->attManager();
   if (!attManager)
     {

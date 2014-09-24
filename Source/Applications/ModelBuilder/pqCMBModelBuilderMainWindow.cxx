@@ -28,6 +28,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //#include "ui_qtCMBMainWindow.h"
 
 #include "pqCMBModelBuilderMainWindowCore.h"
+#include "pqCMBRubberBandHelper.h"
 #include "ui_qtCMBMainWindow.h"
 #include "pqProxyInformationWidget.h"
 
