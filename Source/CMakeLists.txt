@@ -188,7 +188,6 @@ pv_process_modules()
 
 add_subdirectory(VTKExtensions/Client)
 add_subdirectory(VTKExtensions/Testing)
-add_subdirectory(ParaViewExtensions)
 add_subdirectory(Applications)
 
 option(BUILD_EXAMPLES "Build CMB Examples" ON)
