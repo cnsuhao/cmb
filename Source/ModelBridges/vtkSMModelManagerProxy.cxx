@@ -4,8 +4,8 @@
 #include "smtk/attribute/FileItem.h"
 
 #include "smtk/model/Manager.h"
-#include "smtk/model/ImportJSON.h"
-#include "smtk/model/ExportJSON.h"
+#include "smtk/io/ImportJSON.h"
+#include "smtk/io/ExportJSON.h"
 
 #include "cJSON.h"
 
@@ -14,8 +14,10 @@
 #include "vtkSMPropertyHelper.h"
 #include "cmbForwardingBridge.h"
 
-using smtk::util::UUID;
+using smtk::common::UUID;
+using namespace smtk::common;
 using namespace smtk::model;
+using namespace smtk::io;
 
 vtkStandardNewMacro(vtkSMModelManagerProxy);
 
@@ -60,7 +62,7 @@ std::vector<std::string> vtkSMModelManagerProxy::bridgeNames()
       return std::vector<std::string>();
       }
 
-    smtk::model::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
+    smtk::io::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
     cJSON_Delete(result);
     this->m_remoteBridgeNames = std::set<std::string>(
       resultVec .begin(), resultVec.end());
@@ -74,10 +76,10 @@ std::vector<std::string> vtkSMModelManagerProxy::bridgeNames()
   return resultVec;
 }
 
-smtk::util::UUID vtkSMModelManagerProxy::beginBridgeSession(const std::string& bridgeName)
+smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(const std::string& bridgeName)
 {
   if (this->m_remoteBridgeNames.find(bridgeName) == this->m_remoteBridgeNames.end())
-    return smtk::util::UUID::null();
+    return smtk::common::UUID::null();
 
   //FIXME: Sanitize bridgeName!
   std::string reqStr =
@@ -116,7 +118,7 @@ smtk::util::UUID vtkSMModelManagerProxy::beginBridgeSession(const std::string& b
       // TODO: See if result has "error" key and report it.
       if (result)
         cJSON_Delete(result);
-      return smtk::util::UUID::null();
+      return smtk::common::UUID::null();
       }
 
   // OK, construct a special "forwarding" bridge locally.
@@ -136,9 +138,9 @@ smtk::util::UUID vtkSMModelManagerProxy::beginBridgeSession(const std::string& b
   return bridgeId;
 }
 
-bool vtkSMModelManagerProxy::endBridgeSession(const smtk::util::UUID& bridgeSessionId)
+bool vtkSMModelManagerProxy::endBridgeSession(const smtk::common::UUID& bridgeSessionId)
 {
-  std::map<smtk::util::UUID,std::string>::iterator it =
+  std::map<smtk::common::UUID,std::string>::iterator it =
     this->m_remoteBridgeSessionIds.find(bridgeSessionId);
   if (it == this->m_remoteBridgeSessionIds.end())
     return false;
@@ -184,7 +186,7 @@ std::vector<std::string> vtkSMModelManagerProxy::supportedFileTypes(
     return std::vector<std::string>();
     }
 
-  smtk::model::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
+  smtk::io::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
   cJSON_Delete(result);
   return resultVec;
 }
@@ -223,7 +225,7 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     {
     actualBridgeName = bridgeName;
     }
-  std::map<smtk::util::UUID,std::string>::iterator it;
+  std::map<smtk::common::UUID,std::string>::iterator it;
   BridgePtr bridge;
   for (
     it = this->m_remoteBridgeSessionIds.begin();
@@ -241,7 +243,7 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     }
   if (!bridge)
     { // No existing bridge of that type. Create a new remote session.
-    smtk::util::UUID bridgeId = this->beginBridgeSession(actualBridgeName);
+    smtk::common::UUID bridgeId = this->beginBridgeSession(actualBridgeName);
     bridge = this->m_modelMgr->findBridgeSession(bridgeId);
     }
   if (!bridge)
@@ -275,7 +277,7 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   //return readOp->operate();
 }
 
-std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::util::UUID& bridgeSessionId)
+std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::common::UUID& bridgeSessionId)
 {
   (void)bridgeSessionId;
   std::vector<std::string> result;
@@ -283,7 +285,7 @@ std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::util:
 }
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::createOperator(
-  const smtk::util::UUID& bridgeOrModelId, const std::string& opName)
+  const smtk::common::UUID& bridgeOrModelId, const std::string& opName)
 {
   (void)opName;
   (void)bridgeOrModelId;

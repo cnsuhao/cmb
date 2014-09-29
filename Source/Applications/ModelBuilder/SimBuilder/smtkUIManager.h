@@ -19,9 +19,9 @@
 #define __smtkUIManager_h
 
 #include <QObject>
-#include "smtk/Qt/qtUIManager.h"
-#include "smtk/Qt/qtAttribute.h"
-#include "smtk/Qt/qtFileItem.h"
+#include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/extension/qt/qtAttribute.h"
+#include "smtk/extension/qt/qtFileItem.h"
 #include "cmbSystemConfig.h"
 
 #include <QMap>
@@ -59,7 +59,7 @@ public:
 
   smtk::attribute::qtRootView* rootView();
   void initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore);
-  smtk::model::ModelPtr attModel() const;
+  smtk::model::ManagerPtr attModel() const;
 
   void getAttributeDefinitions(
            QMap<QString, QList<smtk::attribute::DefinitionPtr> > &attDefMap);

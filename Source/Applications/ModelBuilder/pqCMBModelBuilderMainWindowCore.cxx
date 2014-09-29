@@ -189,8 +189,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/Manager.h"
-#include "smtk/model/Item.h"
-#include "smtk/model/Model.h"
 
 #include "remus/proto/Job.h"
 #include <QLayout>
@@ -2038,7 +2036,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainAttCategoryChanged()
         if(result.size() > 0)
           {
           // only show those defs that can be associated with domain
-          if(pDef->associatesWithRegion())
+          if(pDef->associatesWithVolume())
             {
             attDefTypes << pDef->type().c_str();
             }

@@ -16,7 +16,7 @@
 
 #include "smtkUIManager.h"
 
-#include "smtk/Qt/qtRootView.h"
+#include "smtk/extension/qt/qtRootView.h"
 #include "smtk/view/Root.h"
 #include "vtkSMProxy.h"
 

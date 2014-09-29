@@ -132,7 +132,7 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     }
 
   std::cout << "Should start bridge \"" << bridgeType << "\"\n";
-  smtk::util::UUID sessId = pxy->beginBridgeSession(bridgeType);
+  smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
   std::cout << "Started \"cmb\" session: " << sessId << "\n";
 
   smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType);

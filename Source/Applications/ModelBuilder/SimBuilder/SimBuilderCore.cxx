@@ -47,15 +47,15 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "../pqCMBModelBuilderOptions.h"
 
-#include "smtk/util/Logger.h"
-#include "smtk/util/AttributeReader.h"
-#include "smtk/util/AttributeWriter.h"
-#include "smtk/util/ResourceSet.h"
-#include "smtk/util/ResourceSetReader.h"
-#include "smtk/util/ResourceSetWriter.h"
+#include "smtk/common/ResourceSet.h"
+#include "smtk/io/Logger.h"
+#include "smtk/io/AttributeReader.h"
+#include "smtk/io/AttributeWriter.h"
+#include "smtk/io/ResourceSetReader.h"
+#include "smtk/io/ResourceSetWriter.h"
 #include "smtk/view/Root.h"
-#include "smtk/Qt/qtUIManager.h"
-#include "smtk/Qt/qtRootView.h"
+#include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/extension/qt/qtRootView.h"
 
 #include "smtkUIManager.h"
 
@@ -273,13 +273,13 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     }
 
   // We need to get the file contents from server, then load it into attributes
-  smtk::util::AttributeReader xmlr;
+  smtk::io::AttributeReader xmlr;
   std::string dirPath = finfo.dir().path().toStdString();
   std::vector<std::string> searchPaths;
   searchPaths.push_back(dirPath);
   xmlr.setSearchPaths(searchPaths);
 
-  smtk::util::Logger logger;
+  smtk::io::Logger logger;
   bool errStatus = xmlr.readContents(*(this->attributeUIManager()->attManager()),
                                      info->GetFileContents(), logger);
 
@@ -377,31 +377,31 @@ int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
     }
 
   std::string filecontents;
-  smtk::util::Logger logger;
+  smtk::io::Logger logger;
   bool errStatus;
 
   QFileInfo finfo(filename);
   if ("crf" == finfo.suffix().toLower())
     {
     // Initialize ResourceSet
-    smtk::util::ResourceSet resources;
+    smtk::common::ResourceSet resources;
     smtk::attribute::ManagerPtr simManager =
       this->attributeUIManager()->attManager();
     resources.addResource(simManager, "simbuilder", "",
-      smtk::util::ResourceSet::INSTANCE);
+      smtk::common::ResourceSet::INSTANCE);
     smtk::attribute::ManagerPtr expManager =
       this->ExportDialog->exportAttManager(true);  // use baseline atts
     resources.addResource(expManager, "export", "",
-      smtk::util::ResourceSet::TEMPLATE);
+      smtk::common::ResourceSet::TEMPLATE);
 
     // Serialize ResourceSet
-    smtk::util::ResourceSetWriter resourceWriter;
+    smtk::io::ResourceSetWriter resourceWriter;
     errStatus = resourceWriter.writeString(filecontents, resources, logger);
     }
   else
     {
     // SimBuilderWriter xmlw;
-    smtk::util::AttributeWriter xmlw;
+    smtk::io::AttributeWriter xmlw;
     errStatus = xmlw.writeContents( *(this->attributeUIManager()->attManager()),
                                          filecontents, logger);
     }
@@ -520,18 +520,18 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     }
 
   // Instantiate and initialize ResourceSet
-  smtk::util::ResourceSet resources;
+  smtk::common::ResourceSet resources;
   std::string linkStartDir = finfo.absoluteDir().path().toStdString();
   resources.setLinkStartPath(linkStartDir);
 
   // Instantiate reader and std::map for current attribute managers
-  smtk::util::ResourceSetReader resourceReader;
-  std::map<std::string, smtk::util::ResourcePtr> resourceMap;
+  smtk::io::ResourceSetReader resourceReader;
+  std::map<std::string, smtk::common::ResourcePtr> resourceMap;
   resourceMap["simbuilder"] = this->attributeUIManager()->attManager();
   //resourceMap["export"] = this->GetExportPanel()->uiManager()->attManager();
 
   // Read input
-  smtk::util::Logger logger;
+  smtk::io::Logger logger;
   bool hasErrors = resourceReader.readString(info->GetFileContents(), resources,
                                              logger, true, &resourceMap);
   if (hasErrors)
@@ -548,9 +548,9 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   //std::cout << "Number of resources loaded: " << numResources << std::endl;
 
   // If simulation attributes loaded, update ExportDialog
-  smtk::util::Resource::Type simType;
-  smtk::util::ResourceSet::ResourceRole simRole;
-  smtk::util::ResourceSet::ResourceState simState;
+  smtk::common::Resource::Type simType;
+  smtk::common::ResourceSet::ResourceRole simRole;
+  smtk::common::ResourceSet::ResourceState simState;
   std::string simLink;
   if (resources.resourceInfo("simbuilder", simType, simRole,
                              simState, simLink))
@@ -562,14 +562,14 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     }
 
   // Check if export resource loaded, and if not, load default template
-  smtk::util::Resource::Type exportType;
-  smtk::util::ResourceSet::ResourceRole exportRole;
-  smtk::util::ResourceSet::ResourceState exportState;
+  smtk::common::Resource::Type exportType;
+  smtk::common::ResourceSet::ResourceRole exportRole;
+  smtk::common::ResourceSet::ResourceState exportState;
   std::string exportLink;
   if (resources.resourceInfo("export", exportType, exportRole,
                              exportState, exportLink))
     {
-    smtk::util::ResourcePtr expResource;
+    smtk::common::ResourcePtr expResource;
     resources.get("export", expResource);
     smtk::attribute::ManagerPtr expManager =
       smtk::dynamic_pointer_cast<smtk::attribute::Manager>(expResource);
@@ -610,8 +610,8 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
 // Returns true if logger has errors
 bool SimBuilderCore::setDefaultExportTemplate()
 {
-  smtk::util::AttributeReader attributeReader;
-  smtk::util::Logger logger;
+  smtk::io::AttributeReader attributeReader;
+  smtk::io::Logger logger;
   smtk::attribute::ManagerPtr manager =
     smtk::attribute::ManagerPtr(new smtk::attribute::Manager());
   bool hasErrors = attributeReader.readContents(*manager,
@@ -776,8 +776,8 @@ void SimBuilderCore::ExportSimFile()
       }
 */
     std::string simContents;
-    smtk::util::AttributeWriter xmlw;
-    smtk::util::Logger logger;
+    smtk::io::AttributeWriter xmlw;
+    smtk::io::Logger logger;
     bool errStatus = xmlw.writeContents( *(this->attributeUIManager()->attManager()),
                                          simContents, logger);
     if(errStatus)

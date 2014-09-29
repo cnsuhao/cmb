@@ -31,11 +31,11 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/Manager.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/Qt/qtRootView.h"
-#include "smtk/Qt/qtUIManager.h"
-#include "smtk/util/AttributeReader.h"
-#include "smtk/util/AttributeWriter.h"
-#include "smtk/util/Logger.h"
+#include "smtk/extension/qt/qtRootView.h"
+#include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/io/AttributeReader.h"
+#include "smtk/io/AttributeWriter.h"
+#include "smtk/io/Logger.h"
 #include "smtk/view/Base.h"
 #include "smtk/view/Root.h"
 
@@ -272,15 +272,15 @@ void SimBuilderCustomExportDialog::updatePanel()
   this->ExportUIManager = new smtkUIManager();
 
   // Serialize export manager
-  smtk::util::Logger logger;
-  smtk::util::AttributeWriter attWriter;
+  smtk::io::Logger logger;
+  smtk::io::AttributeWriter attWriter;
   std::string serializedManager;
   bool hasError;
   hasError =
     attWriter.writeContents(*this->ExportAttManager, serializedManager, logger);
 
   // Reload into export panel
-  smtk::util::AttributeReader attReader;
+  smtk::io::AttributeReader attReader;
   hasError = attReader.readContents(*(this->ExportUIManager->attManager()),
     serializedManager, logger);
   if (hasError)

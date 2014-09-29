@@ -1,7 +1,7 @@
 #include "vtkModelManagerWrapper.h"
 
-#include "smtk/model/ImportJSON.h"
-#include "smtk/model/ExportJSON.h"
+#include "smtk/io/ImportJSON.h"
+#include "smtk/io/ExportJSON.h"
 #include "smtk/model/Operator.h"
 
 #include "vtkObjectFactory.h"
@@ -87,7 +87,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         {
         smtk::model::StringList bridgeNames = this->ModelMgr->bridgeNames();
         cJSON_AddItemToObject(result, "result",
-          smtk::model::ExportJSON::createStringArray(bridgeNames));
+          smtk::io::ExportJSON::createStringArray(bridgeNames));
         }
       else if (methStr == "bridge-filetypes")
         {
@@ -106,7 +106,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           smtk::model::StringList bridgeFileTypes =
             this->ModelMgr->bridgeFileTypes(bname->valuestring);
           cJSON_AddItemToObject(result, "result",
-            smtk::model::ExportJSON::createStringArray(bridgeFileTypes));
+            smtk::io::ExportJSON::createStringArray(bridgeFileTypes));
           }
         }
       else if (methStr == "create-bridge")
@@ -128,31 +128,21 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::BridgeConstructor bctor =
-            this->ModelMgr->bridgeConstructor(bname->valuestring);
-          if (!bctor)
+          smtk::model::BridgePtr bridge = this->ModelMgr->createAndRegisterBridge(bname->valuestring);
+          if (!bridge || bridge->sessionId().isNull())
             {
             this->GenerateError(result,
-              "Unable to obtain bridge constructor", reqIdStr);
+              "Unable to construct bridge or got NULL session ID.", reqIdStr);
             }
           else
             {
-            smtk::model::BridgePtr bridge = bctor();
-            if (!bridge || bridge->sessionId().isNull())
-              {
-              this->GenerateError(result,
-                "Unable to construct bridge or got NULL session ID.", reqIdStr);
-              }
-            else
-              {
-              this->ModelMgr->registerBridgeSession(bridge);
-              cJSON* sess = cJSON_CreateObject();
-              smtk::model::ExportJSON::forManagerBridgeSession(
-                bridge->sessionId(), sess, this->ModelMgr);
-              cJSON_AddItemToObject(result, "result", sess);
-              //cJSON_AddItemToObject(result, "result",
-              //  cJSON_CreateString(bridge->sessionId().toString().c_str()));
-              }
+            this->ModelMgr->registerBridgeSession(bridge);
+            cJSON* sess = cJSON_CreateObject();
+            smtk::io::ExportJSON::forManagerBridgeSession(
+              bridge->sessionId(), sess, this->ModelMgr);
+            cJSON_AddItemToObject(result, "result", sess);
+            //cJSON_AddItemToObject(result, "result",
+            //  cJSON_CreateString(bridge->sessionId().toString().c_str()));
             }
           }
         }
@@ -161,9 +151,9 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         cJSON* model = cJSON_CreateObject();
         // Never include bridge session list or tessellation data
         // Until someone makes us.
-        smtk::model::ExportJSON::fromModel(model, this->ModelMgr,
-          static_cast<smtk::model::JSONFlags>(
-            smtk::model::JSON_ENTITIES | smtk::model::JSON_PROPERTIES));
+        smtk::io::ExportJSON::fromModel(model, this->ModelMgr,
+          static_cast<smtk::io::JSONFlags>(
+            smtk::io::JSON_ENTITIES | smtk::io::JSON_PROPERTIES));
         cJSON_AddItemToObject(result, "result", model);
         }
       else if (methStr == "operator-able")
@@ -171,7 +161,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         smtk::model::OperatorPtr localOp;
         if (
           !param ||
-          !smtk::model::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
+          !smtk::io::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
           !localOp)
           {
           this->GenerateError(result,
@@ -189,7 +179,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         smtk::model::OperatorPtr localOp;
         if (
           !param ||
-          !smtk::model::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
+          !smtk::io::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
           !localOp)
           {
           this->GenerateError(result,
@@ -200,7 +190,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           {
           smtk::model::OperatorResult ores = localOp->operate();
           cJSON* oresult = cJSON_CreateObject();
-          smtk::model::ExportJSON::forOperatorResult(ores, oresult);
+          smtk::io::ExportJSON::forOperatorResult(ores, oresult);
           cJSON_AddItemToObject(result, "result", oresult);
           }
         }
@@ -224,7 +214,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           {
           smtk::model::BridgePtr bridge =
             this->ModelMgr->findBridgeSession(
-              smtk::util::UUID(bsess->valuestring));
+              smtk::common::UUID(bsess->valuestring));
           if (!bridge)
             {
             this->GenerateError(result, "No bridge with given session ID.", reqIdStr);

@@ -16,8 +16,8 @@ public:
 
   std::vector<std::string> bridgeNames();
 
-  smtk::util::UUID beginBridgeSession(const std::string& bridgeName);
-  bool endBridgeSession(const smtk::util::UUID& bridgeSessionId);
+  smtk::common::UUID beginBridgeSession(const std::string& bridgeName);
+  bool endBridgeSession(const smtk::common::UUID& bridgeSessionId);
 
   std::vector<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
@@ -26,10 +26,10 @@ public:
     const std::string& bridgeName = std::string());
 
   std::vector<std::string> operatorNames(const std::string& bridgeName);
-  std::vector<std::string> operatorNames(const smtk::util::UUID& bridgeSessionId);
+  std::vector<std::string> operatorNames(const smtk::common::UUID& bridgeSessionId);
 
   smtk::model::OperatorPtr createOperator(
-    const smtk::util::UUID& bridgeOrModel, const std::string& opName);
+    const smtk::common::UUID& bridgeOrModel, const std::string& opName);
   smtk::model::OperatorPtr createOperator(
     const std::string& bridgeName, const std::string& opName);
 
@@ -51,7 +51,7 @@ protected:
   smtk::model::ManagerPtr m_modelMgr;
   vtkSMProxy* m_serverSession;
   std::set<std::string> m_remoteBridgeNames;
-  std::map<smtk::util::UUID,std::string> m_remoteBridgeSessionIds;
+  std::map<smtk::common::UUID,std::string> m_remoteBridgeSessionIds;
 
 private:
   vtkSMModelManagerProxy(const vtkSMModelManagerProxy&); // Not implemented.

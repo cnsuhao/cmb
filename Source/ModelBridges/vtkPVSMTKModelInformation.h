@@ -23,7 +23,7 @@
 #include "vtkPVInformation.h"
 #include <string>
 #include <map>
-#include "smtk/util/UUID.h"
+#include "smtk/common/UUID.h"
 
 class VTK_EXPORT vtkPVSMTKModelInformation : public vtkPVInformation
 {

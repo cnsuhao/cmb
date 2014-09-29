@@ -25,9 +25,9 @@
 #include <smtk/attribute/IntItem.h>
 #include <smtk/attribute/Manager.h>
 #include <smtk/model/Model.h>
-#include <smtk/util/AttributeReader.h>
-#include <smtk/util/AttributeWriter.h>
-#include <smtk/util/Logger.h>
+#include <smtk/io/AttributeReader.h>
+#include <smtk/io/AttributeWriter.h>
+#include <smtk/io/Logger.h>
 
 #define BOOST_FILESYSTEM_VERSION 3
 #include <boost/filesystem.hpp>
@@ -135,11 +135,12 @@ std::string make_tetgenFlags( const remus::proto::JobContent& rawInstance )
   const std::string default_flags = "pzMAYY";
 
   smtk::attribute::Manager manager;
-  smtk::util::AttributeReader reader;
-  smtk::util::Logger inputLogger;
+  smtk::io::AttributeReader reader;
+  smtk::io::Logger inputLogger;
 
-  smtk::model::ModelPtr smtkModel(new smtk::model::Model());
-  manager.setRefModel(smtkModel);
+  // FIXME: There is no more smtk::model::Model
+  //smtk::model::ModelPtr smtkModel(new smtk::model::Model());
+  //manager.setRefModel(smtkModel);
 
   bool err = false;
   err = reader.readContents(manager,

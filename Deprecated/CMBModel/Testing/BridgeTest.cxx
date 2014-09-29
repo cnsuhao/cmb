@@ -13,7 +13,7 @@
 #include "smtk/model/GroupEntity.h"
 #include "smtk/model/SimpleModelSubphrases.h"
 #include "smtk/model/Manager.h"
-#include "smtk/model/ExportJSON.h"
+#include "smtk/io/ExportJSON.h"
 #include "smtk/model/Operator.h"
 #include "smtk/model/Tessellation.h"
 
@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     std::cout << "  done\n";
     }
 
-  std::string json = smtk::model::ExportJSON::fromModel(manager);
+  std::string json = smtk::io::ExportJSON::fromModel(manager);
   if (!json.empty())
     {
     std::ofstream jsonFile("/tmp/foo.json");

@@ -25,7 +25,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "vtkSMTKJsonModelReader.h"
 
-#include "smtk/model/ImportJSON.h"
+#include "smtk/io/ImportJSON.h"
 #include "smtk/model/Manager.h"
 #include "vtkModelMultiBlockSource.h"
 
@@ -37,8 +37,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSetGet.h"
 
 using smtk::shared_ptr;
+using namespace smtk::common;
 using namespace smtk::model;
-using namespace smtk::util;
+using namespace smtk::io;
 
 
 class vtkSMTKJsonModelReader::vtkInternal

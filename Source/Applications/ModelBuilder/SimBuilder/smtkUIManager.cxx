@@ -21,14 +21,13 @@
 #include "smtk/attribute/DirectoryItemDefinition.h"
 #include "smtk/attribute/FileItem.h"
 #include "smtk/attribute/FileItemDefinition.h"
-#include "smtk/Qt/qtItem.h"
-#include "smtk/Qt/qtAttribute.h"
-#include "smtk/Qt/qtFileItem.h"
-#include "smtk/Qt/qtRootView.h"
-#include "smtk/Qt/qtAttributeView.h"
-#include "smtk/Qt/qtBaseView.h"
-#include "smtk/Qt/qtSimpleExpressionView.h"
-#include "smtk/model/Model.h"
+#include "smtk/extension/qt/qtItem.h"
+#include "smtk/extension/qt/qtAttribute.h"
+#include "smtk/extension/qt/qtFileItem.h"
+#include "smtk/extension/qt/qtRootView.h"
+#include "smtk/extension/qt/qtAttributeView.h"
+#include "smtk/extension/qt/qtBaseView.h"
+#include "smtk/extension/qt/qtSimpleExpressionView.h"
 
 #include "vtkDoubleArray.h"
 #include "vtkEventQtSlotConnect.h"
@@ -49,7 +48,7 @@ class smtkUIManagerInternals
 {
   public:
 
-  smtk::model::ModelPtr AttModel;
+  smtk::model::ManagerPtr AttModel;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> > DefMap;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> >::const_iterator DefMapIt;
 };
@@ -62,8 +61,9 @@ smtkUIManager::smtkUIManager()
   this->AttManager = smtk::attribute::ManagerPtr(new smtk::attribute::Manager());
   this->qtAttManager = new smtk::attribute::qtUIManager(*(this->AttManager));
   this->Internals = new smtkUIManagerInternals;
-  this->Internals->AttModel = smtk::model::ModelPtr(new smtk::model::Model());
-  this->AttManager->setRefModel(this->Internals->AttModel);
+  // FIXME: There is no more smtk::model::Model
+  //this->Internals->AttModel = smtk::model::Manager::create();
+  //this->AttManager->setRefModelManager(this->Internals->AttModel);
 
 }
 
@@ -85,7 +85,7 @@ smtk::attribute::qtRootView* smtkUIManager::rootView()
 }
 
 //----------------------------------------------------------------------------
-smtk::model::ModelPtr smtkUIManager::attModel() const
+smtk::model::ManagerPtr smtkUIManager::attModel() const
 {
   return this->Internals->AttModel;
 }

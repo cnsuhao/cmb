@@ -6,13 +6,13 @@
  =========================================================================*/
 #include "qtSMTKModelPanel.h"
 
-#include "smtk/Qt/qtEntityItemDelegate.h"
-#include "smtk/Qt/qtEntityItemModel.h"
-#include "smtk/Qt/qtModelView.h"
-#include "smtk/Qt/qtModelPanel.h"
+#include "smtk/extension/qt/qtEntityItemDelegate.h"
+#include "smtk/extension/qt/qtEntityItemModel.h"
+#include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/qt/qtModelPanel.h"
 
-#include "smtk/model/ImportJSON.h"
-#include "smtk/model/ExportJSON.h"
+#include "smtk/io/ImportJSON.h"
+#include "smtk/io/ExportJSON.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/EntityPhrase.h"
 #include "smtk/model/EntityListPhrase.h"
@@ -131,7 +131,7 @@ void qtSMTKModelPanel::onDataUpdated()
   smtk::model::BitFlags mask = smtk::model::MODEL_ENTITY;
 
   smtk::model::ManagerPtr model = this->Internal->smtkManager->managerProxy()->modelManager();
-//  smtk::model::ImportJSON::intoModel(json.c_str(), model);
+//  smtk::io::ImportJSON::intoModel(json.c_str(), model);
 //  model->assignDefaultNames();
 
   QFileInfo fInfo(this->Internal->smtkManager->currentFile().c_str());
@@ -144,8 +144,8 @@ void qtSMTKModelPanel::onDataUpdated()
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
   QPointer<smtk::model::QEntityItemModel> qmodel = modelview->getModel();
 
-  QObject::connect(modelview, SIGNAL(entitiesSelected(const smtk::util::UUIDs& )),
-      this, SLOT(selectEntities(const smtk::util::UUIDs& )));
+  QObject::connect(modelview, SIGNAL(entitiesSelected(const smtk::common::UUIDs& )),
+      this, SLOT(selectEntities(const smtk::common::UUIDs& )));
 
   smtk::model::Cursors cursors;
   smtk::model::Cursor::CursorsFromUUIDs(
@@ -169,11 +169,11 @@ void qtSMTKModelPanel::onDataUpdated()
 
 }
 
-void qtSMTKModelPanel::selectEntities(const smtk::util::UUIDs& ids)
+void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
 {
   // create vector of selected block ids
   std::vector<vtkIdType> blockIds;
-  for(smtk::util::UUIDs::const_iterator it = ids.begin(); it != ids.end(); ++it)
+  for(smtk::common::UUIDs::const_iterator it = ids.begin(); it != ids.end(); ++it)
     {
     unsigned int flatIndex;
     if(this->Internal->ModelInfo->GetBlockId((*it).toString(), flatIndex))

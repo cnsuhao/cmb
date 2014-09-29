@@ -38,10 +38,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/Manager.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/util/Logger.h"
-#include "smtk/util/AttributeReader.h"
-#include "smtk/util/ResourceSet.h"
-#include "smtk/util/ResourceSetReader.h"
+#include "smtk/io/Logger.h"
+#include "smtk/io/AttributeReader.h"
+#include "smtk/common/ResourceSet.h"
+#include "smtk/common/ResourceSetReader.h"
 #include "smtkModel.h"
 #include "vtkCMBMeshGridRepresentationServer.h"
 #include "vtkCMBMeshToModelReadOperator.h"
@@ -275,23 +275,24 @@ int main(int argc, char *argv[])
       }
     }
 
+  // FIXME: There is no more smtk::model::Model
   // Create smtkModel and apply to Manager
-  smtkModel *smtk_model = new smtkModel();
-  smtk_model->setDiscreteModel(Model);
-  smtk_model->loadGroupItems(vtkModelMaterialType);
-  smtk_model->loadGroupItems(vtkDiscreteModelEntityGroupType);
-  smtk::model::ModelPtr smtk_model_ptr(smtk_model);
+  //smtkModel *smtk_model = new smtkModel();
+  //smtk_model->setDiscreteModel(Model);
+  //smtk_model->loadGroupItems(vtkModelMaterialType);
+  //smtk_model->loadGroupItems(vtkDiscreteModelEntityGroupType);
+  //smtk::model::ModelPtr smtk_model_ptr(smtk_model);
 
 
   // Load simulation model (attributes)
-  smtk::util::AttributeReader reader;
-  smtk::util::Logger logger;
+  smtk::io::AttributeReader reader;
+  smtk::io::Logger logger;
   smtk::attribute::ManagerPtr attman(new smtk::attribute::Manager());
   smtk::attribute::ManagerPtr expman(new smtk::attribute::Manager());
-  smtk::util::ResourceSet resources;
+  smtk::common::ResourceSet resources;
   if (!sim_path.empty())
     {
-    attman->setRefModel(smtk_model_ptr);
+    //attman->setRefModel(smtk_model_ptr);
     std::cout << "Loading simulation file: " << sim_path << std::endl;
     std::string ext = vtksys::SystemTools::GetFilenameExtension(sim_path);
     if (ext == ".sbi")
@@ -327,8 +328,8 @@ int main(int argc, char *argv[])
         in.close();
 
         // Parse string to populate ResourceSet with attman & expman
-        smtk::util::ResourceSetReader resourceReader;
-        std::map<std::string, smtk::util::ResourcePtr> resourceMap;
+        smtk::common::ResourceSetReader resourceReader;
+        std::map<std::string, smtk::common::ResourcePtr> resourceMap;
         resourceMap["simbuilder"] = attman;
         resourceMap["export"] = expman;
 

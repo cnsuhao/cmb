@@ -1,8 +1,8 @@
 #include "cmbForwardingBridge.h"
 
 #include "smtk/model/Cursor.h"
-#include "smtk/model/ImportJSON.h"
-#include "smtk/model/ExportJSON.h"
+#include "smtk/io/ImportJSON.h"
+#include "smtk/io/ExportJSON.h"
 #include "smtk/model/RemoteOperator.h"
 
 #include "vtkSMModelManagerProxy.h"
@@ -54,7 +54,7 @@ bool cmbForwardingBridge::ableToOperateDelegate(
   cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
   cJSON_AddItemToObject(req, "params", par);
   op->ensureSpecification();
-  smtk::model::ExportJSON::forOperator(op->specification(), par);
+  smtk::io::ExportJSON::forOperator(op->specification(), par);
   // Add the bridge's session ID so it can be properly instantiated on the server.
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
 
@@ -88,7 +88,7 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
   cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
   cJSON_AddItemToObject(req, "params", par);
   op->ensureSpecification();
-  smtk::model::ExportJSON::forOperator(op->specification(), par);
+  smtk::io::ExportJSON::forOperator(op->specification(), par);
   // Add the bridge's session ID so it can be properly instantiated on the server.
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
 
@@ -101,7 +101,7 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
     !resp ||
     (err = cJSON_GetObjectItem(resp, "error")) ||
     !(res = cJSON_GetObjectItem(resp, "result")) ||
-    !smtk::model::ImportJSON::ofOperatorResult(res, result, op->bridge()->operatorManager()))
+    !smtk::io::ImportJSON::ofOperatorResult(res, result, op->bridge()->operatorManager()))
     {
     return op->createResult(smtk::model::OPERATION_FAILED);
     }

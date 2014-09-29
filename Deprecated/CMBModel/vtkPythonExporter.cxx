@@ -41,9 +41,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <smtk/attribute/Manager.h>
 #include <smtk/model/Model.h>
 
-#include <smtk/util/AttributeReader.h>
-#include <smtk/util/ExportSpec.h>
-#include <smtk/util/Logger.h>
+#include <smtk/io/AttributeReader.h>
+#include <smtk/io/Logger.h>
+
+#include <smtk/simulation/ExportSpec.h>
 
 #include <algorithm>
 #include <sstream>
@@ -57,8 +58,8 @@ namespace
   void DeserializeSMTK(const char* contents,
                        smtk::attribute::Manager& manager)
   {
-    smtk::util::AttributeReader xmlr;
-    smtk::util::Logger logger;
+    smtk::io::AttributeReader xmlr;
+    smtk::io::Logger logger;
     xmlr.readContents(manager, contents, logger);
     std::vector<smtk::attribute::DefinitionPtr> definitions;
     manager.findBaseDefinitions(definitions);
@@ -94,8 +95,9 @@ void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
 
   // create the attributes from smtkContents
   smtk::attribute::Manager simManager;
-  smtk::model::ModelPtr modelPtr(new smtk::model::Model);
-  simManager.setRefModel(modelPtr);
+  // FIXME: There is no more smtk::model::Model
+  //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
+  //simManager.setRefModel(modelPtr);
   DeserializeSMTK(smtkContents, simManager);
 
   smtk::attribute::Manager exportManager;
@@ -115,8 +117,9 @@ void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
 
   // create the attributes from smtkContents
   smtk::attribute::Manager manager;
-  smtk::model::ModelPtr modelPtr(new smtk::model::Model);
-  manager.setRefModel(modelPtr);
+  // FIXME: There is no more smtk::model::Model
+  //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
+  //manager.setRefModel(modelPtr);
   DeserializeSMTK(smtkContents, manager);
 
   // Create empty export manager
@@ -216,7 +219,7 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
   smtkModel->setNativeModelName(name);
 
   // Initialize ExportSpec object
-  smtk::util::ExportSpec spec;
+  smtk::simulation::ExportSpec spec;
   spec.setSimulationAttributes(&manager);
   spec.setExportAttributes(&exportManager);
   spec.setAnalysisGridInfo(gridInfo);
@@ -235,7 +238,7 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
 
   std::string spec_address = to_hex_address(&spec);
 
-  runscript += "spec = smtk.util.ExportSpec._InternalConverterDoNotUse_('" + spec_address +"')\n";
+  runscript += "spec = smtk.simulation.ExportSpec._InternalConverterDoNotUse_('" + spec_address +"')\n";
   runscript += script + ".ExportCMB(spec)\n";
   //std::cout << "\nPython script:\n" << runscript << std::endl;
   vtkPythonInterpreter::RunSimpleString(runscript.c_str());

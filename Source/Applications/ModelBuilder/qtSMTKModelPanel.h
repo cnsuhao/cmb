@@ -8,7 +8,7 @@
 // .SECTION Description
 #include <QDockWidget>
 
-#include "smtk/util/UUID.h"
+#include "smtk/common/UUID.h"
 class ModelManager;
 
 class qtSMTKModelPanel : public QDockWidget
@@ -25,7 +25,7 @@ public slots:
   void clearUI();
 
 protected slots:
-  void selectEntities(const smtk::util::UUIDs& ids);
+  void selectEntities(const smtk::common::UUIDs& ids);
 
 private:
   class qInternal;

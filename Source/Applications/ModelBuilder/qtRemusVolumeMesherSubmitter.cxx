@@ -39,11 +39,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <smtk/attribute/Attribute.h>
 #include <smtk/attribute/Definition.h>
 #include <smtk/attribute/Manager.h>
-#include <smtk/model/Model.h>
-#include <smtk/Qt/qtUIManager.h>
-#include <smtk/util/AttributeReader.h>
-#include <smtk/util/AttributeWriter.h>
-#include <smtk/util/Logger.h>
+#include <smtk/extension/qt/qtUIManager.h>
+#include <smtk/io/AttributeReader.h>
+#include <smtk/io/AttributeWriter.h>
+#include <smtk/io/Logger.h>
 #include <smtk/view/Instanced.h>
 #include <smtk/view/Root.h>
 
@@ -159,11 +158,12 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
 
   //build up the smtk attributes
   smtk::attribute::Manager manager;
-  smtk::util::AttributeReader reader;
-  smtk::util::Logger inputLogger;
+  smtk::io::AttributeReader reader;
+  smtk::io::Logger inputLogger;
 
-  smtk::model::ModelPtr smtkModel(new smtk::model::Model());
-  manager.setRefModel(smtkModel);
+  // FIXME: There is no more smtk::model::Model
+  //smtk::model::ModelPtr smtkModel(new smtk::model::Model());
+  //manager.setRefModel(smtkModel);
 
   smtk::attribute::qtUIManager uiManager(manager);
 
@@ -205,7 +205,7 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
     return resultingJob;
     }
 
-  smtk::util::AttributeWriter writer;
+  smtk::io::AttributeWriter writer;
   std::string serializedAttributes;
 
   //yes this returns false for being a valid, and true when an error occurs

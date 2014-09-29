@@ -27,7 +27,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __smtkModelEntitySection_h
 #define __smtkModelEntitySection_h
 
-#include "smtk/Qt/qtModelEntitySection.h"
+#include "smtk/extension/qt/qtModelEntitySection.h"
 #include "cmbSystemConfig.h"
 
 class smtkModelEntitySectionInternals;
