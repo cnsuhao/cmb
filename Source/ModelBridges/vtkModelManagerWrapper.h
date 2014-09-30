@@ -2,7 +2,7 @@
 #define __vtkModelManagerWrapper_h
 
 #include "vtkCMBModelBridgeModule.h" // For export macro
-#include "vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 struct cJSON;
 
