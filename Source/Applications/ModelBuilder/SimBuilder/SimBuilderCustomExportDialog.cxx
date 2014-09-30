@@ -29,7 +29,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/FileItem.h"
 #include "smtk/attribute/Item.h"
-#include "smtk/attribute/Manager.h"
+#include "smtk/attribute/System.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/extension/qt/qtRootView.h"
 #include "smtk/extension/qt/qtUIManager.h"
@@ -159,7 +159,7 @@ int SimBuilderCustomExportDialog::exec()
 
 //-----------------------------------------------------------------------------
 // Returns absolute path to python script,
-// Obtained from export attribute manager
+// Obtained from export attribute system
 std::string
 SimBuilderCustomExportDialog::
 getPythonScript(bool warnIfMissing) const
@@ -224,32 +224,32 @@ void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
 }
 
 //-----------------------------------------------------------------------------
-// Returns the export attribute manager
+// Returns the export attribute system
 // When the baseline flag is true, return the original/initial attributes
 // loaded in the dialog, otherwise return the copy used in the export panel
 // (which might be empty, or might have been edited).
-smtk::attribute::ManagerPtr
+smtk::attribute::SystemPtr
 SimBuilderCustomExportDialog::
-exportAttManager(bool baseline) const
+exportAttSystem(bool baseline) const
 {
   if (baseline)
     {
-    return this->ExportAttManager;
+    return this->ExportAttSystem;
     }
-  return this->ExportUIManager->attManager();
+  return this->ExportUIManager->attSystem();
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setExportAttManager(smtk::attribute::ManagerPtr manager)
+void SimBuilderCustomExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
 {
-  this->ExportAttManager = manager;
+  this->ExportAttSystem = system;
   this->IsPanelSet = false;
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setSimAttManager(smtk::attribute::ManagerPtr manager)
+void SimBuilderCustomExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
 {
-  this->SimAttManager = manager;
+  this->SimAttSystem = system;
   this->IsPanelSet = false;
 }
 
@@ -260,29 +260,29 @@ void SimBuilderCustomExportDialog::setActiveServer(pqServer* server)
 }
 
 //-----------------------------------------------------------------------------
-// Rebuilds ExportManager with copy of ExportAttManager,
+// Rebuilds ExportSystem with copy of ExportAttSystem,
 // For now, does brute-force copy
 void SimBuilderCustomExportDialog::updatePanel()
 {
-  // Blow away current export manager
+  // Blow away current export system
   if(this->ExportUIManager)
     {
     delete this->ExportUIManager;
     }
   this->ExportUIManager = new smtkUIManager();
 
-  // Serialize export manager
+  // Serialize export system
   smtk::io::Logger logger;
   smtk::io::AttributeWriter attWriter;
-  std::string serializedManager;
+  std::string serializedSystem;
   bool hasError;
   hasError =
-    attWriter.writeContents(*this->ExportAttManager, serializedManager, logger);
+    attWriter.writeContents(*this->ExportAttSystem, serializedSystem, logger);
 
   // Reload into export panel
   smtk::io::AttributeReader attReader;
-  hasError = attReader.readContents(*(this->ExportUIManager->attManager()),
-    serializedManager, logger);
+  hasError = attReader.readContents(*(this->ExportUIManager->attSystem()),
+    serializedSystem, logger);
   if (hasError)
     {
     QMessageBox::critical(NULL, "Export Error",
@@ -313,7 +313,7 @@ void SimBuilderCustomExportDialog::updatePanel()
 // Rebuilds selection list of analyis types
 void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
 {
-  if (!this->SimAttManager)
+  if (!this->SimAttSystem)
     {
     // No attributes - should we warn the user?
     return;
@@ -354,9 +354,9 @@ void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
     this->AnalysisTypesWidget);
   frameLayout->addWidget(label);
 
-  // Construct list of analysis types from simulation attribute manager
+  // Construct list of analysis types from simulation attribute system
   std::map<std::string, std::set<std::string> > analysisMap =
-    this->SimAttManager->analyses();
+    this->SimAttSystem->analyses();
   if (analysisMap.empty())
     {
     return;
@@ -436,9 +436,9 @@ smtk::attribute::ItemPtr
 SimBuilderCustomExportDialog::
 getExportSpecItem(const std::string& name, bool warnIfMissing) const
 {
-  smtk::attribute::ManagerPtr manager =
-    this->ExportUIManager->attManager();
-  if (!manager)
+  smtk::attribute::SystemPtr system =
+    this->ExportUIManager->attSystem();
+  if (!system)
     {
     if (warnIfMissing)
       {
@@ -449,7 +449,7 @@ getExportSpecItem(const std::string& name, bool warnIfMissing) const
     }
 
   std::vector<smtk::attribute::AttributePtr> attList;
-  manager->findAttributes("ExportSpec", attList);
+  system->findAttributes("ExportSpec", attList);
   if (attList.size() < 1)
     {
     if (warnIfMissing)

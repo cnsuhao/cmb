@@ -188,7 +188,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/Definition.h"
-#include "smtk/attribute/Manager.h"
+#include "smtk/attribute/System.h"
 
 #include "remus/proto/Job.h"
 #include <QLayout>
@@ -563,7 +563,7 @@ void pqCMBModelBuilderMainWindowCore::setRubberSelectionMode(int mode)
 void pqCMBModelBuilderMainWindowCore::updateColorByAttributeMode(int mode, bool isEdge)
 {
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
   bool attVisible = false;
   if(isEdge)
     {
@@ -588,7 +588,7 @@ void pqCMBModelBuilderMainWindowCore::updateColorDomainByAttributeMode(
   int mode)
 {
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
   bool attVisible = false;
   this->Internal->AttColorEdgeDomainAction->setVisible(attVisible);
   this->Internal->AttCategoryEdgeDomainAction->setVisible(attVisible);
@@ -1180,7 +1180,8 @@ bool pqCMBModelBuilderMainWindowCore::loadOmicronModelInputData()
 FileBasedMeshingParameters
 pqCMBModelBuilderMainWindowCore::generateLegacyVolumeMesherInput()
 {
-  //
+  FileBasedMeshingParameters dummy; // This originally didn't return anything!
+  return dummy;
 }
 
 //----------------------------------------------------------------------------
@@ -1879,9 +1880,9 @@ void pqCMBModelBuilderMainWindowCore::onColorFaceByAttribute()
     }
   QString currentDefType = this->Internal->AttFaceColorCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentFaceAttributeColorInfo(
-//    attManager, currentDefType);
+//    attSystem, currentDefType);
   if(this->Internal->AttFaceColorLegendAction->isVisible() &&
     this->Internal->AttFaceColorLegendAction->isChecked())
     {
@@ -1899,7 +1900,7 @@ void pqCMBModelBuilderMainWindowCore::onFaceAttCategoryChanged()
   this->Internal->AttFaceColorCombo->clear();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
   QMap<QString, QList<smtk::attribute::DefinitionPtr> > attDefMap;
   simUIManager->getAttributeDefinitions(attDefMap);
@@ -1912,7 +1913,7 @@ void pqCMBModelBuilderMainWindowCore::onFaceAttCategoryChanged()
       foreach(smtk::attribute::DefinitionPtr pDef, dit.value())
         {
         std::vector<smtk::attribute::AttributePtr> result;
-        attManager->findDefinitionAttributes(pDef->type(), result);
+        attSystem->findDefinitionAttributes(pDef->type(), result);
         // if there is no attribute with the def, don't show it.
         if(result.size() > 0)
           {
@@ -1939,9 +1940,9 @@ void pqCMBModelBuilderMainWindowCore::onColorEdgeByAttribute()
     }
   QString currentDefType = this->Internal->AttEdgeColorCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentEdgeAttributeColorInfo(
-//    attManager, currentDefType);
+//    attSystem, currentDefType);
   if(this->Internal->AttEdgeColorLegendAction->isVisible() &&
     this->Internal->AttEdgeColorLegendAction->isChecked())
     {
@@ -1959,7 +1960,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeAttCategoryChanged()
   this->Internal->AttEdgeColorCombo->clear();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
   QMap<QString, QList<smtk::attribute::DefinitionPtr> > attDefMap;
   simUIManager->getAttributeDefinitions(attDefMap);
@@ -1972,7 +1973,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeAttCategoryChanged()
       foreach(smtk::attribute::DefinitionPtr pDef, dit.value())
         {
         std::vector<smtk::attribute::AttributePtr> result;
-        attManager->findDefinitionAttributes(pDef->type(), result);
+        attSystem->findDefinitionAttributes(pDef->type(), result);
         // if there is no attribute with the def, don't show it.
         if(result.size() > 0)
           {
@@ -1998,9 +1999,9 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainColorByAttribute()
     }
   QString currentDefType = this->Internal->AttColorEdgeDomainCombo->currentText();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentDomainAttributeColorInfo(
-//    attManager, currentDefType);
+//    attSystem, currentDefType);
   if(this->Internal->AttFaceColorLegendAction->isVisible() &&
     this->Internal->AttFaceColorLegendAction->isChecked())
     {
@@ -2018,7 +2019,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainAttCategoryChanged()
   this->Internal->AttColorEdgeDomainCombo->clear();
   smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
-  smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+  smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
   QMap<QString, QList<smtk::attribute::DefinitionPtr> > attDefMap;
   simUIManager->getAttributeDefinitions(attDefMap);
@@ -2031,7 +2032,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainAttCategoryChanged()
       foreach(smtk::attribute::DefinitionPtr pDef, dit.value())
         {
         std::vector<smtk::attribute::AttributePtr> result;
-        attManager->findDefinitionAttributes(pDef->type(), result);
+        attSystem->findDefinitionAttributes(pDef->type(), result);
         // if there is no attribute with the def, don't show it.
         if(result.size() > 0)
           {
@@ -2111,6 +2112,7 @@ void pqCMBModelBuilderMainWindowCore::onNumOfAttriubtesChanged()
 //-----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::canColorByAttribute()
 {
+  return false; // This originally didn't return anything
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::toggleAttFaceColorLegend(bool show)
@@ -2148,9 +2150,9 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
     if(show)
       {
       smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-      smtk::attribute::ManagerPtr attManager = simUIManager->attManager();
+      smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
       std::vector<smtk::attribute::AttributePtr> result;
-      attManager->findDefinitionAttributes(
+      attSystem->findDefinitionAttributes(
         strDefType.toStdString(), result);
 
       QList<QVariant> annotationList;

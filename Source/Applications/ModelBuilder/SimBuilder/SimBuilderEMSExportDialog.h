@@ -55,7 +55,7 @@ public:
   virtual ~SimBuilderEMSExportDialog();
 
   void setModelManager(smtk::model::ManagerPtr modelMgr);
-  void setAttManager(smtk::attribute::ManagerPtr manager);
+  void setAttSystem(smtk::attribute::SystemPtr system);
 
   QString getFileName() const;
   QString getPythonScriptName() const;
@@ -83,7 +83,7 @@ private:
   QDialog *MainDialog;
   QPointer<pqServer> ActiveServer;
   smtk::model::ManagerPtr ModelManager;
-  smtk::attribute::ManagerPtr AttManager;
+  smtk::attribute::SystemPtr AttSystem;
   static QString LastPythonScriptParsed;
   static QString SelectedAnalysis;
 };

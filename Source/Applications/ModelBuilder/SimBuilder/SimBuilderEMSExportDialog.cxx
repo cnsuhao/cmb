@@ -31,7 +31,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "SimBuilderEMSExportDialog.h"
 
 #include "ui_qtSimBuilderEMSExportDialog.h"
-#include "smtk/attribute/Manager.h"
+#include "smtk/attribute/System.h"
 
 #include <QDialogButtonBox>
 #include <QEventLoop>
@@ -140,13 +140,13 @@ void SimBuilderEMSExportDialog::setModelManager(smtk::model::ManagerPtr model)
   this->ModelManager = model;
 }
 //-----------------------------------------------------------------------------
-void SimBuilderEMSExportDialog::setAttManager(smtk::attribute::ManagerPtr manager)
+void SimBuilderEMSExportDialog::setAttSystem(smtk::attribute::SystemPtr system)
 {
-  this->AttManager = manager;
+  this->AttSystem = system;
 
   // Rebuild Analysis list
   std::map<std::string, std::set<std::string> > analysisMap =
-    this->AttManager->analyses();
+    this->AttSystem->analyses();
 
   if (analysisMap.empty())
     {

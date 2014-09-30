@@ -58,12 +58,12 @@ smtkUIManager::smtkUIManager()
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
-  this->AttManager = smtk::attribute::ManagerPtr(new smtk::attribute::Manager());
-  this->qtAttManager = new smtk::attribute::qtUIManager(*(this->AttManager));
+  this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
+  this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem));
   this->Internals = new smtkUIManagerInternals;
   // FIXME: There is no more smtk::model::Model
   //this->Internals->AttModel = smtk::model::Manager::create();
-  //this->AttManager->setRefModelManager(this->Internals->AttModel);
+  //this->AttSystem->setRefModelManager(this->Internals->AttModel);
 
 }
 
@@ -72,16 +72,16 @@ smtkUIManager::~smtkUIManager()
 {
   delete this->Internals;
 
-  this->AttManager = smtk::attribute::ManagerPtr();
-  if (this->qtAttManager != NULL)
+  this->AttSystem = smtk::attribute::SystemPtr();
+  if (this->qtAttSystem != NULL)
     {
-    delete this->qtAttManager;
+    delete this->qtAttSystem;
     }
 }
 //----------------------------------------------------------------------------
 smtk::attribute::qtRootView* smtkUIManager::rootView()
 {
-  return this->qtAttManager->rootView();
+  return this->qtAttSystem->rootView();
 }
 
 //----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ smtk::model::ManagerPtr smtkUIManager::attModel() const
 void smtkUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
 {
   this->qtManager()->disconnect();
-  QObject::connect(this->qtAttManager, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
+  QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
     this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
 
   this->qtManager()->initializeUI(parentWidget);

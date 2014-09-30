@@ -42,10 +42,10 @@ Q_OBJECT
 public:
   smtkUIManager();
   virtual ~smtkUIManager();
-  smtk::attribute::ManagerPtr attManager() const
-    {return this->AttManager;}
+  smtk::attribute::SystemPtr attSystem() const
+    {return this->AttSystem;}
   smtk::attribute::qtUIManager* qtManager() const
-    {return this->qtAttManager;}
+    {return this->qtAttSystem;}
 
   void setServer(pqServer* s)
   { this->ActiveServer = s; }
@@ -81,8 +81,8 @@ protected slots:
 protected:
   pqServer* ActiveServer;
   pqRenderView* RenderView;
-  smtk::attribute::ManagerPtr AttManager;
-  smtk::attribute::qtUIManager* qtAttManager;
+  smtk::attribute::SystemPtr AttSystem;
+  smtk::attribute::qtUIManager* qtAttSystem;
 
 private:
   static smtkUIManager* Instance;

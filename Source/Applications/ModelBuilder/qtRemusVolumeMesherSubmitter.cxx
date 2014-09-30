@@ -38,7 +38,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <smtk/attribute/Attribute.h>
 #include <smtk/attribute/Definition.h>
-#include <smtk/attribute/Manager.h>
+#include <smtk/attribute/System.h>
 #include <smtk/extension/qt/qtUIManager.h>
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/AttributeWriter.h>
@@ -55,19 +55,19 @@ remus::proto::Job make_invalidJob()
   return remus::proto::Job(boost::uuids::uuid(),
                            remus::common::MeshIOType(baseType,baseType));
 }
-void make_InstancedView(smtk::attribute::Manager& manager)
+void make_InstancedView(smtk::attribute::System& system)
 {
-  // Generate list of all concrete definitions in the manager
+  // Generate list of all concrete definitions in the system
   typedef std::vector<smtk::attribute::DefinitionPtr>::const_iterator
                                                             DefIterType;
 
   std::vector<smtk::attribute::DefinitionPtr> baseDefinitions;
-  manager.findBaseDefinitions(baseDefinitions);
+  system.findBaseDefinitions(baseDefinitions);
   for (DefIterType baseIter = baseDefinitions.begin();
        baseIter != baseDefinitions.end();baseIter++)
     {
     std::vector<smtk::attribute::DefinitionPtr> derivedDefs;
-    manager.findAllDerivedDefinitions(*baseIter, true, derivedDefs);
+    system.findAllDerivedDefinitions(*baseIter, true, derivedDefs);
 
     // Instantiate attribute for each concrete definition
     for (DefIterType defIter = derivedDefs.begin();
@@ -77,22 +77,22 @@ void make_InstancedView(smtk::attribute::Manager& manager)
           smtk::view::Instanced::New((*defIter)->type());
 
       smtk::attribute::AttributePtr instance =
-        manager.createAttribute((*defIter)->type());
+        system.createAttribute((*defIter)->type());
 
-      manager.rootView()->addSubView(view);
+      system.rootView()->addSubView(view);
       view->addInstance(instance);
       }
     }
 }
 
-void make_DefaultView(smtk::attribute::Manager& manager)
+void make_DefaultView(smtk::attribute::System& system)
 {
   typedef std::vector<smtk::attribute::DefinitionPtr> DefinitionVector;
 
   smtk::view::InstancedPtr instanced(smtk::view::Instanced::New("Default"));
 
   DefinitionVector defList;
-  manager.findBaseDefinitions(defList);
+  system.findBaseDefinitions(defList);
 
   for (DefinitionVector::const_iterator defIter = defList.begin();
        defIter != defList.end(); ++defIter)
@@ -101,19 +101,19 @@ void make_DefaultView(smtk::attribute::Manager& manager)
       {
       // For abstract definitions, retrieve all derived & concrete defs
       std::vector<smtk::attribute::DefinitionPtr> derivedList;
-      manager.findAllDerivedDefinitions(*defIter, true, derivedList);
+      system.findAllDerivedDefinitions(*defIter, true, derivedList);
       for (DefinitionVector::const_iterator derivedIter = derivedList.begin();
            derivedIter != derivedList.end(); ++derivedIter)
         {
-        instanced->addInstance(manager.createAttribute((*derivedIter)->type()));
+        instanced->addInstance(system.createAttribute((*derivedIter)->type()));
         }
       }
     else
       {
-      instanced->addInstance(manager.createAttribute((*defIter)->type()));
+      instanced->addInstance(system.createAttribute((*defIter)->type()));
       }
     }
-  manager.rootView()->addSubView(instanced);
+  system.rootView()->addSubView(instanced);
 }
 }
 
@@ -157,25 +157,25 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
     }
 
   //build up the smtk attributes
-  smtk::attribute::Manager manager;
+  smtk::attribute::System system;
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
 
   // FIXME: There is no more smtk::model::Model
   //smtk::model::ModelPtr smtkModel(new smtk::model::Model());
-  //manager.setRefModel(smtkModel);
+  //system.setRefModel(smtkModel);
 
-  smtk::attribute::qtUIManager uiManager(manager);
+  smtk::attribute::qtUIManager uiManager(system);
 
   bool err = false;
   if(reqs.sourceType() == (remus::common::ContentSource::File) )
     { //the requirements are the file name so pass that to the attribute reader
     const std::string p(reqs.requirements(), reqs.requirementsSize());
-    err = reader.read(manager, p, true, inputLogger);
+    err = reader.read(system, p, true, inputLogger);
     }
   else
     { //the requirements are in memory xml contents
-    err = reader.readContents(manager, reqs.requirements(),
+    err = reader.readContents(system, reqs.requirements(),
                               reqs.requirementsSize(), inputLogger);
     }
 
@@ -184,18 +184,18 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
     return resultingJob;
     }
 
-  // If manager contains no views, create InstancedView by default
+  // If system contains no views, create InstancedView by default
   const bool useInternalFileBrowser = true;
-  if (manager.rootView()->numberOfSubViews() == 0)
+  if (system.rootView()->numberOfSubViews() == 0)
     {
-    make_InstancedView(manager);
+    make_InstancedView(system);
     uiManager.initializeUI(this, useInternalFileBrowser);
     }
   else
     {
     //we have views so we need to create
-    make_DefaultView(manager);
-    uiManager.initializeView(this, manager.rootView(), useInternalFileBrowser);
+    make_DefaultView(system);
+    uiManager.initializeView(this, system.rootView(), useInternalFileBrowser);
     }
 
   const bool requirementsAccepted = this->exec() == QDialog::Accepted;
@@ -209,7 +209,7 @@ remus::proto::Job qtRemusVolumeMesherSubmitter::submitRequirements(
   std::string serializedAttributes;
 
   //yes this returns false for being a valid, and true when an error occurs
-  bool serialized = !writer.writeContents(manager,
+  bool serialized = !writer.writeContents(system,
                                           serializedAttributes,
                                           inputLogger);
   if(!serialized)

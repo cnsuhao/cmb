@@ -22,7 +22,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 // .NAME SimBuilderCustomExportDialog - Options for exporting CMB simulation file.
 // .SECTION Description
-// Dialog is customized by input smtk::attribute::Manager
+// Dialog is customized by input smtk::attribute::System
 // .SECTION Caveats
 
 
@@ -57,9 +57,9 @@ public:
 
   QWidget *contentWidget() const
   { return this->ContentWidget; }
-  smtk::attribute::ManagerPtr exportAttManager(bool baseline=false) const;
-  void setExportAttManager(smtk::attribute::ManagerPtr manager);
-  void setSimAttManager(smtk::attribute::ManagerPtr manager);
+  smtk::attribute::SystemPtr exportAttSystem(bool baseline=false) const;
+  void setExportAttSystem(smtk::attribute::SystemPtr system);
+  void setSimAttSystem(smtk::attribute::SystemPtr system);
 
   void setActiveServer(pqServer* server);
   int exec();
@@ -88,8 +88,8 @@ private:
   QWidget *ContentWidget;
   QButtonGroup *AnalysisButtonGroup;
   QPointer<pqServer> ActiveServer;
-  smtk::attribute::ManagerPtr SimAttManager;
-  smtk::attribute::ManagerPtr ExportAttManager;
+  smtk::attribute::SystemPtr SimAttSystem;
+  smtk::attribute::SystemPtr ExportAttSystem;
   QPointer<smtkUIManager> ExportUIManager;
   // Indicates if ExportPanel has been updated to current inputs
   bool IsPanelSet;
