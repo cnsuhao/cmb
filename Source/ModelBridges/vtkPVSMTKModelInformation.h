@@ -20,12 +20,13 @@
 #ifndef __vtkPVSMTKModelInformation_h
 #define __vtkPVSMTKModelInformation_h
 
+#include "ModelBridgeClientModule.h"
 #include "vtkPVInformation.h"
 #include <string>
 #include <map>
 #include "smtk/common/UUID.h"
 
-class VTK_EXPORT vtkPVSMTKModelInformation : public vtkPVInformation
+class MODELBRIDGECLIENT_EXPORT vtkPVSMTKModelInformation : public vtkPVInformation
 {
 public:
   static vtkPVSMTKModelInformation* New();

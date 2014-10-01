@@ -37,6 +37,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/model/Operator.h"
 #include "vtksys/SystemTools.hxx"
 
+#include <QDebug>
+
 //----------------------------------------------------------------------------
 ModelManager::ModelManager(pqServer* server) :
   m_Server(server), m_ManagerProxy(NULL), m_modelSource(NULL)
@@ -53,18 +55,24 @@ ModelManager::~ModelManager()
 //----------------------------------------------------------------------------
 void ModelManager::initialize()
 {
+  this->m_CurrentFile = "";
   if(!this->m_ManagerProxy)
     {
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
     this->m_modelSource = builder->createSource(
-      "CMBModelGroup", "ModelManager", m_Server);
-
-    this->m_ManagerProxy = vtkSMModelManagerProxy::SafeDownCast(
-      this->m_modelSource->getProxy());
+      "ModelBridge", "ModelManager", m_Server);
+    if(this->m_modelSource)
+      {
+      this->m_ManagerProxy = vtkSMModelManagerProxy::SafeDownCast(
+        this->m_modelSource->getProxy());      
+      }
+    else
+      {    
+      qCritical() << "Failed to create a Model Manager Proxy!";
+      }
     }
-  this->m_CurrentFile = "";
-}
+} 
 
 //----------------------------------------------------------------------------
 vtkSMModelManagerProxy* ModelManager::managerProxy()

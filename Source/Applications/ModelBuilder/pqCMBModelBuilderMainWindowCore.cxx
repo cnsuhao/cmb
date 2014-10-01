@@ -205,7 +205,7 @@ using namespace smtk;
 
 ///////////////////////////////////////////////////////////////////////////
 #include "vtkPVPlugin.h"
-// PV_PLUGIN_IMPORT_INIT(CMBModel_Plugin)
+PV_PLUGIN_IMPORT_INIT(ModelBridge_Plugin)
 // PV_PLUGIN_IMPORT_INIT(SimBuilderMesh_Plugin)
 // PV_PLUGIN_IMPORT_INIT(SMTKModel_Plugin)
 
@@ -1680,12 +1680,9 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   //this->Internal->SceneGeoTree->blockSignals(true);
   this->Superclass::onServerCreationFinished(server);
 
-  //import in the cmb model plugin after the common plugin(s) has been loaded
-  //incase it depends on any symbols of the common plugins(s)
-//  PV_PLUGIN_IMPORT(CMBModel_Plugin)
-//  PV_PLUGIN_IMPORT(SimBuilderMesh_Plugin)
-  // PV_PLUGIN_IMPORT(SMTKModel_Plugin)
-
+  //import in the ModelBridge plugin after the common plugin(s) has been loaded
+  //in case it depends on any symbols of the common plugins(s)
+  PV_PLUGIN_IMPORT(ModelBridge_Plugin)
 
   emit this->newModelCreated();
  

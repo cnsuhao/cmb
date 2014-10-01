@@ -503,8 +503,8 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->Internal->CreateModelEdgesAction = new QAction(this->getMainDialog()->menuEdit);
   this->Internal->CreateModelEdgesAction->setObjectName(QString::fromUtf8("action_createModelEdges"));
   this->Internal->CreateModelEdgesAction->setText(QString::fromUtf8("Create Model Edges"));
-  QObject::connect(this->Internal->CreateModelEdgesAction, SIGNAL(triggered()),
-    this, SLOT(createModelEdges()));
+//  QObject::connect(this->Internal->CreateModelEdgesAction, SIGNAL(triggered()),
+//    this, SLOT(createModelEdges()));
   this->getMainDialog()->menuEdit->insertAction(
     this->getMainDialog()->actionConvert_from_Lat_Long,
     this->Internal->CreateModelEdgesAction);

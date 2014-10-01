@@ -1,13 +1,13 @@
 #ifndef __vtkSMModelManagerProxy_h
 #define __vtkSMModelManagerProxy_h
 
-#include "vtkCMBModelBridgeModule.h" // For export macro
+#include "ModelBridgeClientModule.h"
 #include "vtkSMSourceProxy.h"
 #include "smtk/PublicPointerDefs.h"
 
 struct cJSON;
 
-class VTKCMBMODELBRIDGE_EXPORT vtkSMModelManagerProxy : public vtkSMSourceProxy
+class MODELBRIDGECLIENT_EXPORT vtkSMModelManagerProxy : public vtkSMSourceProxy
 {
 public:
   static vtkSMModelManagerProxy* New();

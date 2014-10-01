@@ -1,0 +1,27 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="ModelBridge">
+
+    <ModelManagerProxy name="ModelManager" class="vtkModelManagerWrapper">
+
+      <StringVectorProperty
+        name="JSONRequest"
+        command="SetJSONRequest"
+        number_of_elements="1">
+      </StringVectorProperty>
+      <Property
+        name="ProcessJSON"
+        command="ProcessJSONRequest">
+      </Property>
+      <StringVectorProperty
+        name="JSONResponse"
+        command="GetJSONResponse"
+        number_of_elements="1"
+        information_only="1"
+        default_values="0">
+        <SimpleStringInformationHelper />
+      </StringVectorProperty>
+
+    </ModelManagerProxy>
+
+  </ProxyGroup>
+</ServerManagerConfiguration>

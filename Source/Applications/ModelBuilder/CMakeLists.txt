@@ -219,11 +219,11 @@ add_dependencies(ModelBuilder CMBSuiteHelp)
 
 target_link_libraries(ModelBuilder
 LINK_PRIVATE
-  vtkCMBModelBridge
   cmbAppCommon
   QtSMTK
   RemusClient
   SMTKCore
+  ModelBridge_Plugin
   )
 
 #------------------------------------------------------------------------------

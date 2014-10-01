@@ -186,6 +186,9 @@ add_subdirectory(CMBMeshing)
 #needs to be after CMBMeshing so that we can link to the MeshServer
 pv_process_modules()
 
+#process ModelBridge plugin
+add_subdirectory(ModelBridges)
+
 add_subdirectory(VTKExtensions/Client)
 add_subdirectory(VTKExtensions/Testing)
 add_subdirectory(Applications)
