@@ -109,8 +109,6 @@ add_library(cmbAppCommon
   pqCMBLIDARPieceTable.h
   pqCMBLineWidget.cxx
   pqCMBLineWidget.h
-  pqCMBColorEditor.cxx
-  pqCMBColorEditor.h
   pqCMBCommonMainWindow.cxx
   pqCMBCommonMainWindow.h
   pqCMBCommonMainWindowCore.cxx

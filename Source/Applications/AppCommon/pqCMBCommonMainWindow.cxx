@@ -42,7 +42,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqActiveView.h"
 #include "pqApplicationCore.h"
-#include "pqCMBColorEditor.h"
 #include "pqDisplayColorWidget.h"
 #include "vtkMapper.h"
 #include "pqObjectBuilder.h"
@@ -315,23 +314,6 @@ QDockWidget* pqCMBCommonMainWindow::createDockWidget (QMainWindow* mw,
 }
 
 //----------------------------------------------------------------------------
-QDockWidget* pqCMBCommonMainWindow::createColorEditorDock(QWidget* p)
-{
-  QDockWidget* dw = NULL;
-  pqCMBColorEditor* colorEditor = this->MainWindowCore->colorEditor(p);
-  if(colorEditor)
-    {
-    QDockWidget* dw = this->createDockWidget(this,
-      colorEditor, "Color Editor", Qt::RightDockWidgetArea, NULL);
-
-    pqApplicationCore::instance()->registerManager(
-      "COLOR_EDITOR_PANEL", dw);
-    dw->hide();
-    }
-  return dw;
-}
-
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::appendDatasetNameToTitle(const QString& strTitle)
 {
   QString currentTitle = QApplication::applicationName().append(
@@ -572,8 +554,6 @@ void pqCMBCommonMainWindow::initMainWindowCore()
     this->Internal->LoadDataReaction->setProgramDirectory(
       this->MainWindowCore->programDirectory());
     }
-
-  this->createColorEditorDock(this);
 
   // Set up a callback to before further intialization once the application
   // event loop starts.

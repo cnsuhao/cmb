@@ -81,7 +81,6 @@ class QSize;
 class QStatusBar;
 class QToolBar;
 class QWidget;
-class pqCMBColorEditor;
 
 struct CMBAPPCOMMON_EXPORT FileBasedMeshingParameters
   {
@@ -127,9 +126,6 @@ public:
   virtual void setAppearanceEditor (pqCMBDisplayProxyEditor *displayEditor);
   pqCMBDisplayProxyEditor *getAppearanceEditor();
   QWidget *getAppearanceEditorContainer();
-
-  // color editor widget
-  pqCMBColorEditor* colorEditor(QWidget* p);
 
   /** Compares the contents of the window with the given reference image,
   returns true iff they "match" within some tolerance */

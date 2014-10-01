@@ -106,7 +106,6 @@ protected:
 
   void initProjectManager();
 
-  QDockWidget* createColorEditorDock(QWidget* p);
   QDockWidget* createDockWidget (QMainWindow* mw,
     QWidget* content, const std::string& title,
     Qt::DockWidgetArea dockarea, QDockWidget* lastdw);

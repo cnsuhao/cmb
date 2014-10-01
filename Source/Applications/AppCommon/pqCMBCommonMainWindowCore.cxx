@@ -156,7 +156,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <vtksys/Process.h>
 #include <vtksys/SystemTools.hxx>
 
-#include "pqCMBColorEditor.h"
 #include "pqCMBDisplayProxyEditor.h"
 #include "pqCMBPreviewDialog.h"
 #include "pqCMBProcessWidget.h"
@@ -281,7 +280,6 @@ public:
   qtCMBProjectServerManager* ProjectManager;
   qtCMBMeshingClient* MeshingClient;
   bool CenterFocalLinked;
-  QPointer<pqCMBColorEditor> ColorEditor;
 
 };
 
@@ -2401,11 +2399,6 @@ void pqCMBCommonMainWindowCore::setDisplayRepresentation(pqDataRepresentation* r
       this, SLOT(requestRender()));
 
     this->setAppearanceEditor(displayEditor);
-
-    if(this->Internal->ColorEditor)
-      {
-      this->Internal->ColorEditor->setDataRepresentation(rep);
-      }
     }
 }
 
@@ -2421,14 +2414,4 @@ void pqCMBCommonMainWindowCore::onViewCreated(pqView* view)
     {
     pqActiveView::instance().setCurrent(this->Internal->RenderView);
     }
-}
-
-//----------------------------------------------------------------------------
-pqCMBColorEditor* pqCMBCommonMainWindowCore::colorEditor(QWidget* p)
-{
-  if(!this->Internal->ColorEditor)
-    {
-    this->Internal->ColorEditor = new pqCMBColorEditor(p);
-    }
-  return this->Internal->ColorEditor;
 }
