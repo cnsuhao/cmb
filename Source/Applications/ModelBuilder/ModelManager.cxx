@@ -97,13 +97,28 @@ pqDataRepresentation* ModelManager::modelRepresentation()
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> ModelManager::supportedFileTypes()
+std::vector<std::string> ModelManager::supportedFileTypes(
+  const std::string& bridgeName)
 {
+  std::vector<std::string> resultVec;
   if(this->m_ManagerProxy)
     {
-    return this->m_ManagerProxy->supportedFileTypes();
+    smtk::model::StringList bftypes = this->m_ManagerProxy->supportedFileTypes(bridgeName);
+    for (smtk::model::StringList::iterator tpit = bftypes.begin();
+      tpit != bftypes.end(); ++tpit)
+      {
+      // ".cmb (Conceptual Model Builder)"
+      // we want to convert the format into Paraview format for its fileOpen dialog
+      // "Conceptual Model Builder (*.cmb)"
+      QString filetype = (*tpit).c_str();
+      int idx = filetype.indexOf('(');
+
+      QString descr = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
+      QString ext = filetype.left(filetype.indexOf('('));
+      resultVec.push_back(
+              descr.append(" (*").append(ext.simplified()).append(")").toStdString());
+      }
     }
-  std::vector<std::string> resultVec;
   return resultVec;
 }
 
@@ -242,26 +257,15 @@ void ModelManager::onPluginLoaded()
     smtk::model::StringList oldBnames = this->m_ManagerProxy->bridgeNames();
     smtk::model::StringList newBnames = this->m_ManagerProxy->bridgeNames(true);
 
-    smtk::model::StringList bnames = this->m_ManagerProxy->bridgeNames(true);
     for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
       {
       // if there is the new bridge
       if(std::find(oldBnames.begin(), oldBnames.end(), *it) == oldBnames.end())
         {
-        smtk::model::StringList bftypes = this->m_ManagerProxy->supportedFileTypes(*it);
+        smtk::model::StringList bftypes = this->supportedFileTypes(*it);
         for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
           {
-          // ".cmb (Conceptual Model Builder)"
-          // we want to convert the format into Paraview format for its fileOpen dialog
-          // "Conceptual Model Builder (*.cmb)"
-          QString filetype = (*tpit).c_str();
-          int idx = filetype.indexOf('(');
-
-          QString descr = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
-          QString ext = filetype.left(filetype.indexOf('('));
-//          std::cout << "**" << descr.toStdString().c_str() << "**\n";
-//          std::cout << "**" << ext.toStdString().c_str() << "**\n";
-          newFileTypes << descr.append(" (*").append(ext.simplified()).append(")");
+          newFileTypes << (*tpit).c_str();
           }
         }
       }

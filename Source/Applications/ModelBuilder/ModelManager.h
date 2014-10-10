@@ -25,7 +25,8 @@ public:
   virtual ~ModelManager();
   vtkSMModelManagerProxy* managerProxy();
   std::string fileSupportBridge(const std::string& filename);
-  std::vector<std::string> supportedFileTypes();
+  std::vector<std::string> supportedFileTypes(
+    const std::string& bridgeName = std::string());
   pqPipelineSource* modelSource();
   pqDataRepresentation* modelRepresentation();
   const std::string& currentFile() const

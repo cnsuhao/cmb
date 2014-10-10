@@ -287,12 +287,13 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //this->getMainDialog()->actionServerDisconnect->setEnabled(0);
   QString filters = cmbFileExtensions::ModelBuilder_FileTypes();
   std::vector<std::string> modelFileTypes = this->getThisCore()->modelManager()->supportedFileTypes();
+  QStringList modelFileExts;
   for (smtk::model::StringList::iterator it = modelFileTypes.begin(); it != modelFileTypes.end(); ++it)
     {
-    filters += ";;";
-    filters += (*it).c_str();
+    modelFileExts <<  (*it).c_str();
     }
 
+  this->loadDataReaction()->addSpecialExtensions(modelFileExts);
   this->loadDataReaction()->setSupportedFileTypes(filters);
   this->loadDataReaction()->addReaderExtensionMap(
     cmbFileExtensions::ModelBuilder_ReadersMap());
