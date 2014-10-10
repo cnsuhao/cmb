@@ -154,7 +154,7 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
   vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
   std::cout << "Should start bridge \"" << bridgeType << "\"\n";
   smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
-  std::cout << "Started \"cmb\" session: " << sessId << "\n";
+  std::cout << "Started " << bridgeType << " session: " << sessId << "\n";
 
   smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType);
   if (
