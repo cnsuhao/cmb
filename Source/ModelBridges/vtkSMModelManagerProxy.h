@@ -14,7 +14,7 @@ public:
   vtkTypeMacro(vtkSMModelManagerProxy,vtkSMSourceProxy);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  std::vector<std::string> bridgeNames();
+  std::vector<std::string> bridgeNames(bool forceFetch = false);
 
   smtk::common::UUID beginBridgeSession(const std::string& bridgeName);
   bool endBridgeSession(const smtk::common::UUID& bridgeSessionId);

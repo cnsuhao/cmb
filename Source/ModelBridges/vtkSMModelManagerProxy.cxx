@@ -4,6 +4,7 @@
 #include "smtk/attribute/FileItem.h"
 
 #include "smtk/model/Manager.h"
+#include "smtk/model/StringData.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 
@@ -41,11 +42,12 @@ void vtkSMModelManagerProxy::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 /// Return the list of bridges available on the server (not the local modelManager()'s list).
-std::vector<std::string> vtkSMModelManagerProxy::bridgeNames()
+std::vector<std::string> vtkSMModelManagerProxy::bridgeNames(bool forceFetch)
 {
   std::vector<std::string> resultVec;
-  if (this->m_remoteBridgeNames.empty())
+  if (this->m_remoteBridgeNames.empty() || forceFetch)
     {
+    this->m_remoteBridgeNames.clear();
     // Do not report our bridge names. Report those available on the server.
     std::string reqStr = "{\"jsonrpc\":\"2.0\", \"method\":\"search-bridges\", \"id\":\"1\"}";
     cJSON* result = this->jsonRPCRequest(reqStr);
@@ -167,29 +169,49 @@ bool vtkSMModelManagerProxy::endBridgeSession(const smtk::common::UUID& bridgeSe
 std::vector<std::string> vtkSMModelManagerProxy::supportedFileTypes(
   const std::string& bridgeName)
 {
-  std::vector<std::string> resultVec;
-  std::string reqStr =
-    "{\"jsonrpc\":\"2.0\", \"method\":\"bridge-filetypes\", "
-    "\"params\":{ \"bridge-name\":\"" + bridgeName + "\"}, "
-    "\"id\":\"1\"}";
-  cJSON* result = this->jsonRPCRequest(reqStr);
-  cJSON* sarr;
-  if (
-    !result ||
-    result->type != cJSON_Object ||
-    !(sarr = cJSON_GetObjectItem(result, "result")) ||
-    sarr->type != cJSON_Array)
+  smtk::model::StringList bnames;
+
+  if(bridgeName.empty())
     {
-    // TODO: See if result has "error" key and report it.
-    if (result)
-      cJSON_Delete(result);
-    return std::vector<std::string>();
+    // no bridge name is given, fetch all available bridge
+    bnames = this->bridgeNames();
+    }
+  else
+    {
+    bnames.push_back(bridgeName);
     }
 
-  smtk::io::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
-  cJSON_Delete(result);
+  smtk::model::StringList resultVec;
+  for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
+    {
+    std::cout << "Find Bridge      " << *it << "\n";
+    smtk::model::StringList bftypes;
+    std::string reqStr =
+      "{\"jsonrpc\":\"2.0\", \"method\":\"bridge-filetypes\", "
+      "\"params\":{ \"bridge-name\":\"" + *it + "\"}, "
+      "\"id\":\"1\"}";
+    cJSON* result = this->jsonRPCRequest(reqStr);
+    cJSON* sarr;
+    if (
+      !result ||
+      result->type != cJSON_Object ||
+      !(sarr = cJSON_GetObjectItem(result, "result")) ||
+      sarr->type != cJSON_Array)
+      {
+      // TODO: See if result has "error" key and report it.
+      if (result)
+        cJSON_Delete(result);
+      continue;
+      }
+
+    smtk::io::ImportJSON::getStringArrayFromJSON(sarr, bftypes);
+    resultVec.insert(resultVec.end(), bftypes.begin(), bftypes.end());
+    cJSON_Delete(result);
+    }
+
   return resultVec;
 }
+
 
 smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   const std::string& fileName,

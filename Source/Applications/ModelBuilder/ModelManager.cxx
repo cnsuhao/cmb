@@ -29,6 +29,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
+#include "pqPluginManager.h"
 #include "pqRenderView.h"
 #include "pqServer.h"
 #include "smtk/model/StringData.h"
@@ -71,6 +72,9 @@ void ModelManager::initialize()
       {    
       qCritical() << "Failed to create a Model Manager Proxy!";
       }
+    QObject::connect(pqApplicationCore::instance()->getPluginManager(),
+      SIGNAL(pluginsUpdated()),
+      this, SLOT(onPluginLoaded()));
     }
 } 
 
@@ -97,10 +101,38 @@ std::vector<std::string> ModelManager::supportedFileTypes()
 {
   if(this->m_ManagerProxy)
     {
-    return this->m_ManagerProxy->supportedFileTypes("cmb");
+    return this->m_ManagerProxy->supportedFileTypes();
     }
   std::vector<std::string> resultVec;
   return resultVec;
+}
+
+//----------------------------------------------------------------------------
+std::string ModelManager::fileSupportBridge(const std::string& filename)
+{
+  if(!this->m_ManagerProxy)
+    {
+    return "";
+    }
+
+  std::string lastExt =
+    vtksys::SystemTools::GetFilenameLastExtension(filename);
+
+  vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
+  smtk::model::StringList bnames = pxy->bridgeNames();
+  for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
+    {
+    smtk::model::StringList bftypes = pxy->supportedFileTypes(*it);
+    for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
+      {
+      if (tpit->find(lastExt) == 0)
+        {
+        return *it;
+        }
+      }
+    }
+
+  return "";
 }
 
 //----------------------------------------------------------------------------
@@ -112,33 +144,14 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     return false;
     }
 
-  std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(filename);
-  std::cout << "File        " << filename << "   ext " << lastExt << "\n";
-  std::string bridgeType;
-
-  vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
-  smtk::model::StringList bnames = pxy->bridgeNames();
-  for (smtk::model::StringList::iterator it = bnames.begin(); bridgeType.empty() && it != bnames.end(); ++it)
-    {
-    std::cout << "Bridge      " << *it << "\n";
-    smtk::model::StringList bftypes = pxy->supportedFileTypes(*it);
-    for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
-      {
-      std::cout << "  File type " << *tpit << "\n";
-      if (tpit->find(lastExt) == 0)
-        {
-        bridgeType = *it;
-        break;
-        }
-      }
-    }
+  std::string bridgeType = this->fileSupportBridge(filename);
   if (bridgeType.empty())
     {
     std::cerr << "Could not identify a modeling kernel to use.\n";
     return false;
     }
 
+  vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
   std::cout << "Should start bridge \"" << bridgeType << "\"\n";
   smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
   std::cout << "Started \"cmb\" session: " << sessId << "\n";
@@ -217,4 +230,44 @@ void ModelManager::clear()
     }
   this->m_CurrentFile = "";
   emit currentModelCleared();
+}
+
+//----------------------------------------------------------------------------
+void ModelManager::onPluginLoaded()
+{
+  // force remote server to refetch bridges incase a new bridge is loaded
+  if(this->m_ManagerProxy)
+    {
+    QStringList newFileTypes;
+    smtk::model::StringList oldBnames = this->m_ManagerProxy->bridgeNames();
+    smtk::model::StringList newBnames = this->m_ManagerProxy->bridgeNames(true);
+
+    smtk::model::StringList bnames = this->m_ManagerProxy->bridgeNames(true);
+    for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
+      {
+      // if there is the new bridge
+      if(std::find(oldBnames.begin(), oldBnames.end(), *it) == oldBnames.end())
+        {
+        smtk::model::StringList bftypes = this->m_ManagerProxy->supportedFileTypes(*it);
+        for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
+          {
+          // ".cmb (Conceptual Model Builder)"
+          // we want to convert the format into Paraview format for its fileOpen dialog
+          // "Conceptual Model Builder (*.cmb)"
+          QString filetype = (*tpit).c_str();
+          int idx = filetype.indexOf('(');
+
+          QString descr = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
+          QString ext = filetype.left(filetype.indexOf('('));
+//          std::cout << "**" << descr.toStdString().c_str() << "**\n";
+//          std::cout << "**" << ext.toStdString().c_str() << "**\n";
+          newFileTypes << descr.append(" (*").append(ext.simplified()).append(")");
+          }
+        }
+      }
+    if(newFileTypes.count() > 0)
+      {
+      emit newBridgeLoaded(newFileTypes);
+      }
+    }
 }

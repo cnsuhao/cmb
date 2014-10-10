@@ -33,7 +33,6 @@ target_link_libraries(ModelBridge_Plugin
   LINK_PRIVATE
     SMTKCore
     vtkSMTK
-    smtkCMBBridge
   )
 
 target_include_directories(ModelBridge_Plugin

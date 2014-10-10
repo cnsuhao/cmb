@@ -49,7 +49,7 @@ void cmbLoadDataReaction::addSpecialExtensions(const QStringList& exts)
 {
   foreach(QString ext, exts)
     {
-    this->Internals->CMBSpecialExtensions << ext.toLower();
+    this->Internals->CMBSpecialExtensions << ext;
     }
 }
 
@@ -109,10 +109,15 @@ bool cmbLoadDataReaction::isSpecialExtension(const QStringList& files,
     {
     QFileInfo finfo(file);
     QString s = finfo.completeSuffix().toLower();
-    if(specialExts.contains(s))
+    foreach(QString filetype, specialExts)
+      {
+      int idx = filetype.indexOf('(');
+      QString specialExt = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
+      if(specialExt.contains(s, Qt::CaseInsensitive))
         {
         return true;
         }
+      }
     }
   return false;
 }
@@ -128,6 +133,12 @@ QList<pqPipelineSource*> cmbLoadDataReaction::loadData( bool& cancelled,
   QString filters = pluginBhv ?
     pluginBhv->supportedFileTypes(server->session()) : "";
   filters = filters.isEmpty() ? fileTypes : (filters + ";;" + fileTypes);
+  // Added in special extensions that come in form bridge plugins, etc
+  foreach(QString filetype, specialExts)
+    {
+    filters += ";;";
+    filters += filetype;
+    }
   pqFileDialog fileDialog(server,
     pqCoreUtilities::mainWidget(),
     tr("Open File:"), pgmDir, filters);

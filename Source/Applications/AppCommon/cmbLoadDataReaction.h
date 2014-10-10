@@ -50,14 +50,6 @@ public:
   virtual void setMultiFiles(bool val)
   { this->m_MultiFiles = val; }
 
-  /// These extensions are handle by CMB Applications, not paraview readers.
-  /// For Example:
-  /// [cmb] is an extension for vtk discrete models
-  /// in ModelBuilder, and there is no paraview reader for that.
-  /// it is read in by an model operator.
-  /// [bc] is a legacy boundary condition file in ModelBuilder.
-  virtual void addSpecialExtensions(const QStringList& exts);
-
   /// Launch the file open dialog, which will also include
   /// file extensions from plugins if available
   /// NOTE: if files are part of cmb special extensions, this reaction
@@ -102,6 +94,14 @@ public slots:
   /// Updates the enabled state. Applications need not explicitly call
   /// this.
   virtual void updateEnableState();
+
+  /// These extensions are handled by CMB Applications
+  /// or bridge-plugins, not traditional SM vtk readers.
+  /// For Example:
+  /// [cmb] is an extension from vtk discrete model bridge loaded
+  /// in ModelBuilder, and there is no paraview reader for that.
+  /// it is read in by an model operator.
+  virtual void addSpecialExtensions(const QStringList& exts);
 
 signals:
   /// fire a signal when the files selected can not be loaded here,

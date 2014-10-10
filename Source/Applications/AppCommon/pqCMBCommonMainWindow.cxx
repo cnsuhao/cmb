@@ -125,11 +125,11 @@ public:
       {
       QFileInfo fInfo(resource.path());
 
-      QString readerGroup = resource.data("cmbmodelgroup");
-      QString readerName = resource.data("readeroperator");
+      QString readerGroup = resource.data("modelmanager");
+      QString readerName = resource.data("readoperator");
 
-      if ((!readerName.isEmpty() && !readerGroup.isEmpty()) ||
-        fInfo.suffix().toLower() == "cmb")
+      if ((!readerName.isEmpty() && !readerGroup.isEmpty()) /* ||
+        fInfo.suffix().toLower() == "cmb" */)
         {
         QStringList files;
         files << resource.path();

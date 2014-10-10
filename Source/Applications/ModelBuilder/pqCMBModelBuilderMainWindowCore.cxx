@@ -681,7 +681,8 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
     {
     QFileInfo fInfo(files[0]);
     QString lastExt = fInfo.suffix().toLower();
-    if (lastExt == "cmb")// || lastExt == "3dm")
+    if (!this->Internal->smtkModelManager->fileSupportBridge(
+        files[0].toStdString()).empty())
       {
       if(this->loadModelFile(files[0]))
         {
@@ -689,8 +690,8 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
         // Add this to the list of recent server resources ...
         pqServerResource resource = this->getActiveServer()->getResource();
         resource.setPath(files[0]);
-        resource.addData("cmbmodelgroup", "CMBModelGroup");
         resource.addData("modelmanager", "ModelManager");
+        resource.addData("readoperator", "read");
         core->recentlyUsedResources().add(resource);
         core->recentlyUsedResources().save(*core->settings());
         //resource.setScheme(QString("cmbmodel"));
@@ -1579,13 +1580,13 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     return;
     }
   QString lastExt = fInfo.suffix().toLower();
-
+/*
   if (lastExt == "cmb")
     {
     this->loadModelFile(filename);
     return;
     }
-
+*/
   if(lastExt == "crf")
     {
 //    this->getSimBuilder()->setCMBModel(this->getCMBModel());

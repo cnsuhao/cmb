@@ -34,16 +34,18 @@ namespace cmbFileExtensions
       vtkSMSessionProxyManager* pxm = session->GetSessionProxyManager();
 
       bool haveMoab = (pxm && pxm->HasDefinition("sources","CmbMoabSolidReader"));
-
+/*
       filters = "Supported files (*.cmb *.crf *.vtk *.vtu *.vtp *.2dm *.3dm *.sol *.stl *.tin *.obj *.sbt *.sbi *.sbs *.map *.poly *.smesh *.shp *.h5m *.sat *.brep *.stp *.cub);;";
-      filters += "CMB files (*.cmb);;";
+  //    filters += "CMB files (*.cmb);;";
       filters += "CMB Resource files (*.crf);;";
+  
       filters += "VTK data files (*.vtk *.vtu *.vtp);;";
       filters += "Solids (*.2dm *.3dm *.sol *.stl *.tin *.obj);;";
       filters += "SimBuilder files (*.crf *.sbt *.sbi *.sbs);;";
       filters += "Map files (*.map);;";
       filters += "Poly files (*.poly *.smesh);;";
       filters += "Shape files (*.shp);;";
+  */
       if(haveMoab)
         {
         vtkSMProxy* moabProxy = pxm->GetProxy("sources", "CmbMoabSolidReader");

@@ -6,7 +6,7 @@
 #define __ModelManager_h
 
 #include <QObject>
-#include <map>
+#include <QStringList>
 #include <vector>
 #include "cmbSystemConfig.h"
 
@@ -24,6 +24,7 @@ public:
   ModelManager(pqServer*);
   virtual ~ModelManager();
   vtkSMModelManagerProxy* managerProxy();
+  std::string fileSupportBridge(const std::string& filename);
   std::vector<std::string> supportedFileTypes();
   pqPipelineSource* modelSource();
   pqDataRepresentation* modelRepresentation();
@@ -31,13 +32,16 @@ public:
     { return this->m_CurrentFile; }
 
 signals:
-//  void currentModelLoaded();
   void currentModelCleared();
+  void newBridgeLoaded(const QStringList& fileTypes);
 
 public slots:
   void clear();
   bool loadModel(const std::string& filename,
     pqRenderView* view);
+
+protected slots:
+  void onPluginLoaded();
 
 protected:
   void initialize();

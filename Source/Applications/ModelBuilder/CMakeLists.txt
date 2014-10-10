@@ -183,6 +183,7 @@ set(ModelBuilder_SOURCE_FILES
   qtSMTKModelPanel.cxx
   ModelManager.h
   ModelManager.cxx
+
   ${RCS_SOURCES}
   ${UI_BUILT_SOURCES}
   ${EXE_RES}
@@ -206,6 +207,8 @@ build_paraview_client(ModelBuilder
   SOURCES ${ModelBuilder_SOURCE_FILES}
   COMPRESSED_HELP_FILE "${CMAKE_CURRENT_BINARY_DIR}/../Help/cmbsuite.qch"
   OPTIONAL_PLUGINS vtkCmbMoabReaderPlugin
+  OPTIONAL_PLUGINS smtkCMBBridge_Plugin
+  OPTIONAL_PLUGINS smtkCGMBridge_Plugin
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
   )

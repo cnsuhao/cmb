@@ -132,6 +132,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "qtCMBTreeWidget.h"
 
 #include <vtksys/SystemTools.hxx>
+#include "smtk/model/StringData.h"
 
 class pqCMBModelBuilderMainWindow::vtkInternal
 {
@@ -285,19 +286,25 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //this->getMainDialog()->actionServerConnect->setEnabled(0);
   //this->getMainDialog()->actionServerDisconnect->setEnabled(0);
   QString filters = cmbFileExtensions::ModelBuilder_FileTypes();
+  std::vector<std::string> modelFileTypes = this->getThisCore()->modelManager()->supportedFileTypes();
+  for (smtk::model::StringList::iterator it = modelFileTypes.begin(); it != modelFileTypes.end(); ++it)
+    {
+    filters += ";;";
+    filters += (*it).c_str();
+    }
+
   this->loadDataReaction()->setSupportedFileTypes(filters);
-  QStringList specialext;
-  specialext << "cmb" << "bc";
-  this->loadDataReaction()->addSpecialExtensions(specialext);
   this->loadDataReaction()->addReaderExtensionMap(
     cmbFileExtensions::ModelBuilder_ReadersMap());
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
   QObject::connect(this->getThisCore()->modelManager(),
+      SIGNAL(newBridgeLoaded(const QStringList&)),
+      this->loadDataReaction(), SLOT(addSpecialExtensions(const QStringList&)));
+  QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(currentModelCleared()),
       this, SLOT(onCMBModelCleared()));
-
 }
 
 //----------------------------------------------------------------------------
