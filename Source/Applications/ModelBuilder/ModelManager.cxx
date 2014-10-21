@@ -23,8 +23,13 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "ModelManager.h"
 
 #include "vtkSMModelManagerProxy.h"
+#include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
+#include "vtkSMProxyProperty.h"
+#include "vtkSMSessionProxyManager.h"
+#include "vtkSmartPointer.h"
 
+#include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"
@@ -32,18 +37,114 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqPluginManager.h"
 #include "pqRenderView.h"
 #include "pqServer.h"
+#include "vtksys/SystemTools.hxx"
+
+#include "smtk/common/UUID.h"
+#include "smtk/model/Manager.h"
+#include "smtk/model/ModelEntity.h"
+#include "smtk/model/Operator.h"
 #include "smtk/model/StringData.h"
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
-#include "smtk/model/Operator.h"
-#include "vtksys/SystemTools.hxx"
+#include "smtk/attribute/ModelEntityItem.h"
 
+#include <map>
+#include <set>
 #include <QDebug>
 
-//----------------------------------------------------------------------------
-ModelManager::ModelManager(pqServer* server) :
-  m_Server(server), m_ManagerProxy(NULL), m_modelSource(NULL)
+//-----------------------------------------------------------------------------
+class ModelManager::qInternal
 {
+public:
+
+  std::map<smtk::model::Cursor, std::set<pqPipelineSource*> > ModelSources;
+  typedef std::map<smtk::model::Cursor, std::set<pqPipelineSource*> >::iterator itModelEnt;
+  typedef std::set<pqPipelineSource*>::iterator itModelSrc;
+
+  pqServer* Server;
+  std::string CurrentFile;
+  vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
+
+  std::set<pqPipelineSource*> getModelSources(const smtk::model::Cursor& model)
+  {
+    if(this->ModelSources.find(model) == this->ModelSources.end())
+      {
+      return std::set<pqPipelineSource*>();
+      }
+    else
+      {
+      return this->ModelSources[model];
+      }
+  }
+
+  bool addModelRepresentation(const smtk::model::Cursor& model,
+    pqRenderView* view, vtkSMModelManagerProxy* smProxy)
+  {
+    if(this->ModelSources.find(model) == this->ModelSources.end())
+      {
+      pqApplicationCore* core = pqApplicationCore::instance();
+      pqObjectBuilder* builder = core->getObjectBuilder();
+      pqPipelineSource* modelSrc = builder->createSource(
+          "ModelBridge", "SMTKModelSource", this->Server);
+      if(modelSrc)
+        {
+        // ModelManagerWrapper Proxy
+        vtkSMProxyProperty* smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          modelSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
+        vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
+          model.entity().toString().c_str());
+
+        modelSrc->getProxy()->UpdateVTKObjects();
+        modelSrc->updatePipeline();
+
+        pqDataRepresentation* rep = builder->createDataRepresentation(
+          modelSrc->getOutputPort(0), view);
+        if(rep)
+          {
+          pqActiveObjects::instance().setActiveSource(modelSrc);
+          this->ModelSources[model].insert(modelSrc);
+          return true;         
+          }
+        }
+      // Should not get here.
+      qCritical() << "Failed to create a pqPipelineSource or pqRepresentation for the model: "
+        << model.entity().toString().c_str();
+      return false;
+      }
+    else
+      {
+      qCritical() << "There is already a pqPipelineSource for the model: "
+        << model.entity().toString().c_str();
+      return false;
+      }
+  }
+
+  void clear()
+  {
+    for(itModelEnt mit = this->ModelSources.begin(); mit != this->ModelSources.end(); ++mit)
+      {
+      for(itModelSrc sit = mit->second.begin(); sit != mit->second.end(); ++sit)
+        {
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(*sit);
+        }
+      }
+    this->ManagerProxy = NULL;
+    this->CurrentFile = "";
+
+  }
+
+  qInternal(pqServer* server): Server(server)
+  {
+  }
+};
+
+//----------------------------------------------------------------------------
+ModelManager::ModelManager(pqServer* server)
+{
+  this->Internal = new qInternal(server);
   this->initialize();
 }
 
@@ -56,44 +157,61 @@ ModelManager::~ModelManager()
 //----------------------------------------------------------------------------
 void ModelManager::initialize()
 {
-  this->m_CurrentFile = "";
-  if(!this->m_ManagerProxy)
+  this->Internal->CurrentFile = "";
+  if(!this->Internal->ManagerProxy)
     {
-    pqApplicationCore* core = pqApplicationCore::instance();
-    pqObjectBuilder* builder = core->getObjectBuilder();
-    this->m_modelSource = builder->createSource(
-      "ModelBridge", "ModelManager", m_Server);
-    if(this->m_modelSource)
+    // create block selection source proxy
+    vtkSMSessionProxyManager *proxyManager =
+      vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
+    vtkSMProxy* proxy = proxyManager->NewProxy("ModelBridge", "ModelManager");
+    if(proxy)
       {
-      this->m_ManagerProxy = vtkSMModelManagerProxy::SafeDownCast(
-        this->m_modelSource->getProxy());      
+      this->Internal->ManagerProxy.TakeReference(
+        vtkSMModelManagerProxy::SafeDownCast(proxy));      
+      }
+    if(!this->Internal->ManagerProxy)
+      {    
+      qCritical() << "Failed to create an Model Manager Proxy!";
       }
     else
-      {    
-      qCritical() << "Failed to create a Model Manager Proxy!";
+      {
+      QObject::connect(pqApplicationCore::instance()->getPluginManager(),
+        SIGNAL(pluginsUpdated()),
+        this, SLOT(onPluginLoaded()));
       }
-    QObject::connect(pqApplicationCore::instance()->getPluginManager(),
-      SIGNAL(pluginsUpdated()),
-      this, SLOT(onPluginLoaded()));
     }
 } 
 
 //----------------------------------------------------------------------------
 vtkSMModelManagerProxy* ModelManager::managerProxy()
 {
-  return this->m_ManagerProxy;
+  return this->Internal->ManagerProxy;
+}
+/*
+//----------------------------------------------------------------------------
+std::set<pqPipelineSource*> ModelManager::modelSources(
+  const smtk::common::UUID& uid)
+{
+
+  return this->Internal->getModelSources(uid);
+}
+*/
+//----------------------------------------------------------------------------
+pqPipelineSource* ModelManager::activeModelSource()
+{
+  return pqActiveObjects::instance().activeSource();
+}
+ 
+//----------------------------------------------------------------------------
+pqDataRepresentation* ModelManager::activeModelRepresentation()
+{
+  return pqActiveObjects::instance().activeRepresentation();
 }
 
 //----------------------------------------------------------------------------
-pqPipelineSource* ModelManager::modelSource()
-{
-  return this->m_modelSource;
-}
-
-//----------------------------------------------------------------------------
-pqDataRepresentation* ModelManager::modelRepresentation()
-{
-  return this->m_modelRepresentation;
+const std::string& ModelManager::currentFile() const
+{ 
+  return this->Internal->CurrentFile;
 }
 
 //----------------------------------------------------------------------------
@@ -101,9 +219,9 @@ std::vector<std::string> ModelManager::supportedFileTypes(
   const std::string& bridgeName)
 {
   std::vector<std::string> resultVec;
-  if(this->m_ManagerProxy)
+  if(this->Internal->ManagerProxy)
     {
-    smtk::model::StringList bftypes = this->m_ManagerProxy->supportedFileTypes(bridgeName);
+    smtk::model::StringList bftypes = this->Internal->ManagerProxy->supportedFileTypes(bridgeName);
     for (smtk::model::StringList::iterator tpit = bftypes.begin();
       tpit != bftypes.end(); ++tpit)
       {
@@ -123,9 +241,9 @@ std::vector<std::string> ModelManager::supportedFileTypes(
 }
 
 //----------------------------------------------------------------------------
-std::string ModelManager::fileSupportBridge(const std::string& filename)
+std::string ModelManager::fileModelBridge(const std::string& filename)
 {
-  if(!this->m_ManagerProxy)
+  if(!this->Internal->ManagerProxy)
     {
     return "";
     }
@@ -133,7 +251,7 @@ std::string ModelManager::fileSupportBridge(const std::string& filename)
   std::string lastExt =
     vtksys::SystemTools::GetFilenameLastExtension(filename);
 
-  vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::model::StringList bnames = pxy->bridgeNames();
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
@@ -154,32 +272,43 @@ std::string ModelManager::fileSupportBridge(const std::string& filename)
 bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
 {
   this->initialize();
-  if(!this->m_ManagerProxy)
+  if(!this->Internal->ManagerProxy)
     {
     return false;
     }
 
-  std::string bridgeType = this->fileSupportBridge(filename);
+  std::string bridgeType = this->fileModelBridge(filename);
   if (bridgeType.empty())
     {
     std::cerr << "Could not identify a modeling kernel to use.\n";
     return false;
     }
 
-  vtkSMModelManagerProxy* pxy = this->m_ManagerProxy;
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   std::cout << "Should start bridge \"" << bridgeType << "\"\n";
   smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
   std::cout << "Started " << bridgeType << " session: " << sessId << "\n";
 
   smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType);
-  if (
-    result->findInt("outcome")->value() !=
+  if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "Read operator failed\n";
     pxy->endBridgeSession(sessId);
     return false;
     }
+
+  smtk::model::ModelEntity model =
+    *(pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
+    smtk::model::MODEL_ENTITY).begin());
+//    result->findModelEntity("model")->value().as<smtk::model::ModelEntity>();
+  if (!model.isValid())
+    {
+    std::cerr << "There is no valid ModelEnity after reading\n";
+    pxy->endBridgeSession(sessId);
+    return false;
+    }
+
 /*
   smtk::model::ModelEntity model = result->findModelEntity("model")->value();
   manager->assignDefaultNames(); // should force transcription of every entity, but doesn't yet.
@@ -221,29 +350,20 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
         smtk::model::SimpleModelSubphrases::create()));
 */
 
-  pqApplicationCore* core = pqApplicationCore::instance();
-  pqObjectBuilder* builder = core->getObjectBuilder();
-  this->m_modelRepresentation = builder->createDataRepresentation(
-        this->modelSource()->getOutputPort(0), view);
-//  qobject_cast<pqPipelineRepresentation*>(modelRep)->colorByArray(
-//    "ModelFaceColor",
-//    vtkGeometryRepresentation::CELL_DATA);
-
-  this->m_CurrentFile = filename;
+  bool success = this->Internal->addModelRepresentation(
+    model, view, this->Internal->ManagerProxy);
+  if(success)
+    {
+    this->Internal->CurrentFile = filename; 
+    }
   pxy->endBridgeSession(sessId);
-  return true;
+  return success;
 }
 
 //----------------------------------------------------------------------------
 void ModelManager::clear()
 {
-  if(this->m_ManagerProxy)
-    {
-    pqApplicationCore::instance()->getObjectBuilder()->destroy(
-      this->m_modelSource);
-    this->m_ManagerProxy = 0;
-    }
-  this->m_CurrentFile = "";
+  this->Internal->clear();
   emit currentModelCleared();
 }
 
@@ -251,11 +371,11 @@ void ModelManager::clear()
 void ModelManager::onPluginLoaded()
 {
   // force remote server to refetch bridges incase a new bridge is loaded
-  if(this->m_ManagerProxy)
+  if(this->Internal->ManagerProxy)
     {
     QStringList newFileTypes;
-    smtk::model::StringList oldBnames = this->m_ManagerProxy->bridgeNames();
-    smtk::model::StringList newBnames = this->m_ManagerProxy->bridgeNames(true);
+    smtk::model::StringList oldBnames = this->Internal->ManagerProxy->bridgeNames();
+    smtk::model::StringList newBnames = this->Internal->ManagerProxy->bridgeNames(true);
 
     for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
       {

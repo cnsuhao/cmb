@@ -7,6 +7,8 @@
 
 #include <QObject>
 #include <QStringList>
+
+#include "smtk/PublicPointerDefs.h"
 #include <vector>
 #include "cmbSystemConfig.h"
 
@@ -24,13 +26,14 @@ public:
   ModelManager(pqServer*);
   virtual ~ModelManager();
   vtkSMModelManagerProxy* managerProxy();
-  std::string fileSupportBridge(const std::string& filename);
+  std::string fileModelBridge(const std::string& filename);
   std::vector<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
-  pqPipelineSource* modelSource();
-  pqDataRepresentation* modelRepresentation();
-  const std::string& currentFile() const
-    { return this->m_CurrentFile; }
+//  std::set<pqPipelineSource*> modelSources(const smtk::common::UUID&);
+  const std::string& currentFile() const;
+
+  pqPipelineSource* activeModelSource();
+  pqDataRepresentation* activeModelRepresentation();
 
 signals:
   void currentModelCleared();
@@ -48,12 +51,8 @@ protected:
   void initialize();
 
 private:
-
-  vtkSMModelManagerProxy* m_ManagerProxy;
-  pqPipelineSource* m_modelSource;
-  pqDataRepresentation* m_modelRepresentation;
-  pqServer* m_Server;
-  std::string m_CurrentFile;
+  class qInternal;
+  qInternal* Internal;
 
 };
 

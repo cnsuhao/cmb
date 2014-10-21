@@ -23,5 +23,26 @@
 
     </ModelManagerProxy>
 
+    <SourceProxy name="SMTKModelSource" class="vtkPVSMTKModelSource">
+
+      <StringVectorProperty
+        name="ModelEntityID"
+        command="SetModelEntityID"
+        number_of_elements="1">
+      </StringVectorProperty>
+
+      <ProxyProperty name="ModelManagerWrapper"
+        command="SetModelManagerWrapper"
+        label="Model Manager Wrapper">
+        <ProxyGroupDomain name="groups">
+          <Group name="ModelBridge"/>
+        </ProxyGroupDomain>
+        <Documentation>
+          Set the parameters of the contour function.
+        </Documentation>
+      </ProxyProperty>
+
+    </SourceProxy>
+
   </ProxyGroup>
 </ServerManagerConfiguration>

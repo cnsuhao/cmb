@@ -13,6 +13,7 @@ SET(CmbBridgelFiles
 
 SET(CmbBridgelServerFiles
   vtkModelManagerWrapper.cxx
+  vtkPVSMTKModelSource.cxx
 )
 
 SET_SOURCE_FILES_PROPERTIES(

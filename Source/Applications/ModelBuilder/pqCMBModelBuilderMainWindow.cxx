@@ -555,7 +555,7 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     GetCurrentModelEntityMap().keys().count() > 0) ? true : false;*/
 
   bool model_loaded = this->getThisCore()->modelManager()
-    ->modelRepresentation() != NULL;
+    ->activeModelRepresentation() != NULL;
   this->Superclass::updateEnableState(model_loaded);
 
   this->getMainDialog()->action_Save_BCSs->setEnabled(model_loaded);
@@ -1132,17 +1132,17 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->initUIPanel(qtCMBPanelsManager::INFO);
   this->initUIPanel(qtCMBPanelsManager::DISPLAY);
   this->initUIPanel(qtCMBPanelsManager::COLORMAP);
-
+/*
   pqActiveObjects::instance().blockSignals(false);
 
   pqActiveObjects::instance().setActiveSource(
-    this->getThisCore()->modelManager()->modelSource());
+    this->getThisCore()->modelManager()->activeModelSource());
   pqActiveObjects::instance().setActivePort(
-    this->getThisCore()->modelManager()->modelSource()->getOutputPort(0));
+    this->getThisCore()->modelManager()->activeModelSource()->getOutputPort(0));
   this->getInfoWidget()->setOutputPort(
-    this->getThisCore()->modelManager()->modelSource()->getOutputPort(0));
+    this->getThisCore()->modelManager()->activeModelSource()->getOutputPort(0));
   pqActiveObjects::instance().blockSignals(true);
-
+*/
   this->updateEnableState();
 }
 //-----------------------------------------------------------------------------
@@ -1300,7 +1300,7 @@ pqProxyInformationWidget* pqCMBModelBuilderMainWindow::getInfoWidget()
   if(!this->Internal->InformationWidget)
     {
     this->Internal->InformationWidget = new pqProxyInformationWidget();
-    pqActiveObjects::instance().disconnect(this->Internal->InformationWidget);
+//    pqActiveObjects::instance().disconnect(this->Internal->InformationWidget);
     }
   return this->Internal->InformationWidget;
 }
@@ -1395,7 +1395,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     case qtCMBPanelsManager::DISPLAY:
     case qtCMBPanelsManager::PROPERTIES:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->modelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
       if(rep)
         {
         //this->displayPanel()->setVisible(true);
@@ -1426,7 +1426,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
     case qtCMBPanelsManager::COLORMAP:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->modelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
       if(rep)
         {
         pqCMBColorMapWidget* colorWidget = this->colorEditor(this);

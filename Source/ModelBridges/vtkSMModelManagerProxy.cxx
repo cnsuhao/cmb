@@ -376,7 +376,7 @@ void vtkSMModelManagerProxy::fetchWholeModel()
     "{\"jsonrpc\":\"2.0\", \"id\":\"1\", \"method\":\"fetch-model\"}");
   cJSON* model;
   cJSON* topo;
-  //std::cout << " ----- \n\n\n" << cJSON_Print(response) << "\n ----- \n\n\n";
+  std::cout << " ----- \n\n\n" << cJSON_Print(response) << "\n ----- \n\n\n";
   if (
     response &&
     (model = cJSON_GetObjectItem(response, "result")) &&

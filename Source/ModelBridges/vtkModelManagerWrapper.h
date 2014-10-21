@@ -2,7 +2,9 @@
 #define __vtkModelManagerWrapper_h
 
 #include "ModelBridgeClientModule.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "vtkObject.h"
+
+#include "smtk/PublicPointerDefs.h"
 
 struct cJSON;
 
@@ -26,15 +28,20 @@ struct cJSON;
 //
 // This model also serves as a ParaView pipeline source that
 // generates multiblock data of the model for rendering.
-class MODELBRIDGECLIENT_EXPORT vtkModelManagerWrapper : public vtkModelMultiBlockSource
+class MODELBRIDGECLIENT_EXPORT vtkModelManagerWrapper : public vtkObject
 {
 public:
   static vtkModelManagerWrapper* New();
   void PrintSelf(ostream& os, vtkIndent indent);
-  vtkTypeMacro(vtkModelManagerWrapper,vtkModelMultiBlockSource);
+  vtkTypeMacro(vtkModelManagerWrapper,vtkObject);
+
+  smtk::model::ManagerPtr GetModelManager();
 
   vtkGetStringMacro(JSONRequest);
   vtkSetStringMacro(JSONRequest);
+
+  vtkGetStringMacro(ModelEntityID);
+  vtkSetStringMacro(ModelEntityID);
 
   void ProcessJSONRequest();
 
@@ -56,6 +63,10 @@ protected:
 
   char* JSONRequest;
   char* JSONResponse;
+  char* ModelEntityID;
+
+  // Instance model Manager:
+  smtk::model::ManagerPtr ModelMgr;
 
 private:
   vtkModelManagerWrapper(const vtkModelManagerWrapper&); // Not implemented.

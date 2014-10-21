@@ -681,7 +681,7 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
     {
     QFileInfo fInfo(files[0]);
     QString lastExt = fInfo.suffix().toLower();
-    if (!this->Internal->smtkModelManager->fileSupportBridge(
+    if (!this->Internal->smtkModelManager->fileModelBridge(
         files[0].toStdString()).empty())
       {
       if(this->loadModelFile(files[0]))
@@ -973,10 +973,10 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
     // new attribute legends
 /*
     this->Internal->AttEdgeScalarBarWidget = new cmbScalarBarWidget(
-      this->Internal->CMBModel->modelRepresentation(),NULL);
+      this->Internal->CMBModel->activeModelRepresentation(),NULL);
     this->Internal->AttEdgeScalarBarWidget->setPositionToRight();
     this->Internal->AttFaceScalarBarWidget = new cmbScalarBarWidget(
-      this->Internal->CMBModel->modelRepresentation(),NULL);
+      this->Internal->CMBModel->activeModelRepresentation(),NULL);
     this->Internal->AttFaceScalarBarWidget->setPositionToLeft();
 */
 
@@ -1725,8 +1725,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->smtkModelManager = new ModelManager(this->getActiveServer());
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
-  pqActiveObjects::instance().disconnect(this->activeRenderView());
-  pqActiveObjects::instance().blockSignals(true);
+//  pqActiveObjects::instance().disconnect(this->activeRenderView());
+//  pqActiveObjects::instance().blockSignals(true);
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onRemovingServer(pqServer *server)

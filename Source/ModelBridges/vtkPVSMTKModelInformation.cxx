@@ -8,7 +8,7 @@
 #include "vtkAlgorithm.h"
 #include "vtkCompositeDataIterator.h"
 
-#include "vtkModelManagerWrapper.h"
+#include "vtkPVSMTKModelSource.h"
 
 vtkStandardNewMacro(vtkPVSMTKModelInformation);
 
@@ -33,15 +33,15 @@ void vtkPVSMTKModelInformation::PrintSelf(ostream &os, vtkIndent indent)
 void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 {
   this->UUID2BlockIdMap.clear();
-  vtkModelManagerWrapper *modelwrapper = vtkModelManagerWrapper::SafeDownCast( obj );
+  vtkPVSMTKModelSource *modelsource = vtkPVSMTKModelSource::SafeDownCast( obj );
 
-  if (!modelwrapper)
+  if (!modelsource)
     {
-    vtkErrorMacro("Object is not a SMTK Model Wrapper!");
+    vtkErrorMacro("Object is not a vtkPVSMTKModelSource!");
     return;
     }
 
-  modelwrapper->GetUUID2BlockIdMap(this->UUID2BlockIdMap);
+  modelsource->GetUUID2BlockIdMap(this->UUID2BlockIdMap);
   this->BlockId2UUIDMap.clear();
   std::map<std::string, unsigned int>::iterator it =
     this->UUID2BlockIdMap.begin();

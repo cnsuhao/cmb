@@ -15,20 +15,29 @@ vtkModelManagerWrapper::vtkModelManagerWrapper()
   this->ModelMgr = smtk::model::Manager::create();
   this->JSONRequest = NULL;
   this->JSONResponse = NULL;
+  this->ModelEntityID = NULL;
 }
 
 vtkModelManagerWrapper::~vtkModelManagerWrapper()
 {
   this->SetJSONRequest(NULL);
   this->SetJSONResponse(NULL);
+  this->SetModelEntityID(NULL);
 }
 
 void vtkModelManagerWrapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "JSONRequest:" << this->JSONRequest << "\n";
+  os << indent << "ModelEntityID:" << this->ModelEntityID << "\n";
   os << indent << "JSONResponse:" << this->JSONResponse << "\n";
   os << indent << "ModelMgr:" << this->ModelMgr.get() << "\n";
+}
+
+/// Get the SMTK model being displayed.
+smtk::model::ManagerPtr vtkModelManagerWrapper::GetModelManager()
+{
+  return this->ModelMgr;
 }
 
 /**\brief Evalate a JSON-RPC 2.0 request.

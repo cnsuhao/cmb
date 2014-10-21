@@ -158,7 +158,8 @@ void qtSMTKModelPanel::onDataUpdated()
         smtk::model::SimpleModelSubphrases::create()));
 
   this->Internal->ModelLoaded = true;
-  this->Internal->smtkManager->managerProxy()->GatherInformation(this->Internal->ModelInfo.GetPointer());
+  this->Internal->smtkManager->activeModelSource()->getProxy()->
+    GatherInformation(this->Internal->ModelInfo.GetPointer());
 
   // create block selection source proxy
   vtkSMSessionProxyManager *proxyManager =
@@ -196,7 +197,7 @@ void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
 
   vtkSMSourceProxy *selectionSourceProxy =
     vtkSMSourceProxy::SafeDownCast(selectionSource);
-  pqPipelineSource* source = this->Internal->smtkManager->modelSource();
+  pqPipelineSource* source = this->Internal->smtkManager->activeModelSource();
   pqOutputPort* outport = source->getOutputPort(0);
   if(outport)
     {
@@ -225,7 +226,7 @@ void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
 
 void qtSMTKModelPanel::updateTreeSelection()
 {
-  pqPipelineSource *source = this->Internal->smtkManager->modelSource();
+  pqPipelineSource *source = this->Internal->smtkManager->activeModelSource();
   if(!source)
     {
     return;

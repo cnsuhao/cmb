@@ -2,16 +2,16 @@
 #define __vtkSMModelManagerProxy_h
 
 #include "ModelBridgeClientModule.h"
-#include "vtkSMSourceProxy.h"
+#include "vtkSMProxy.h"
 #include "smtk/PublicPointerDefs.h"
 
 struct cJSON;
 
-class MODELBRIDGECLIENT_EXPORT vtkSMModelManagerProxy : public vtkSMSourceProxy
+class MODELBRIDGECLIENT_EXPORT vtkSMModelManagerProxy : public vtkSMProxy
 {
 public:
   static vtkSMModelManagerProxy* New();
-  vtkTypeMacro(vtkSMModelManagerProxy,vtkSMSourceProxy);
+  vtkTypeMacro(vtkSMModelManagerProxy,vtkSMProxy);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
   std::vector<std::string> bridgeNames(bool forceFetch = false);
