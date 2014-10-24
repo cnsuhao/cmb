@@ -73,6 +73,19 @@ std::string vtkPVSMTKModelInformation::GetModelEntityId(unsigned int bid)
 }
 
 //----------------------------------------------------------------------------
+smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
+{
+  smtk::common::UUIDs uids;
+  std::map<std::string, unsigned int>::const_iterator it =
+    this->UUID2BlockIdMap.begin();
+  for(; it != this->UUID2BlockIdMap.end(); ++it)
+    {
+    uids.insert(smtk::common::UUID(it->first));
+    }
+  return uids;
+}
+
+//----------------------------------------------------------------------------
 void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVSMTKModelInformation *modelInfo =

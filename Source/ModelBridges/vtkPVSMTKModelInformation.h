@@ -49,6 +49,10 @@ public:
   virtual bool GetBlockId(std::string uuid, unsigned int& bid);
   virtual std::string GetModelEntityId(unsigned int bid);
 
+  // Description:
+  // return UUIDs for all blocks
+  virtual smtk::common::UUIDs GetBlockUUIDs() const;
+
   //BTX
 protected:
   vtkPVSMTKModelInformation();

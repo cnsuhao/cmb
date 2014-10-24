@@ -555,7 +555,7 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     GetCurrentModelEntityMap().keys().count() > 0) ? true : false;*/
 
   bool model_loaded = this->getThisCore()->modelManager()
-    ->activeModelRepresentation() != NULL;
+    ->numberOfModels() > 0;
   this->Superclass::updateEnableState(model_loaded);
 
   this->getMainDialog()->action_Save_BCSs->setEnabled(model_loaded);
@@ -1132,17 +1132,7 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->initUIPanel(qtCMBPanelsManager::INFO);
   this->initUIPanel(qtCMBPanelsManager::DISPLAY);
   this->initUIPanel(qtCMBPanelsManager::COLORMAP);
-/*
-  pqActiveObjects::instance().blockSignals(false);
 
-  pqActiveObjects::instance().setActiveSource(
-    this->getThisCore()->modelManager()->activeModelSource());
-  pqActiveObjects::instance().setActivePort(
-    this->getThisCore()->modelManager()->activeModelSource()->getOutputPort(0));
-  this->getInfoWidget()->setOutputPort(
-    this->getThisCore()->modelManager()->activeModelSource()->getOutputPort(0));
-  pqActiveObjects::instance().blockSignals(true);
-*/
   this->updateEnableState();
 }
 //-----------------------------------------------------------------------------

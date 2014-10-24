@@ -22,12 +22,14 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ModelManager.h"
 
+#include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMProxyProperty.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSmartPointer.h"
+#include "vtkSMSourceProxy.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -40,6 +42,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtksys/SystemTools.hxx"
 
 #include "smtk/common/UUID.h"
+#include "smtk/model/CellEntity.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/ModelEntity.h"
 #include "smtk/model/Operator.h"
@@ -52,35 +55,51 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <set>
 #include <QDebug>
 
+//----------------------------------------------------------------------------
+void cmbSMTKModelInfo::init(
+  pqPipelineSource* source, pqDataRepresentation* rep, const std::string& filename)
+{
+  this->Source = source;
+  this->FileName = filename;
+  this->Representation = rep;
+  this->Info = vtkSmartPointer<vtkPVSMTKModelInformation>::New();
+  this->Source->getProxy()->GatherInformation(this->Info);
+
+  // create block selection source proxy
+  vtkSMSessionProxyManager *proxyManager =
+    vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
+
+  this->SelectionSource.TakeReference(
+    proxyManager->NewProxy("sources", "BlockSelectionSource"));
+
+}
+/// Copy constructor.
+cmbSMTKModelInfo::cmbSMTKModelInfo(const cmbSMTKModelInfo& other)
+{
+  this->Source = other.Source;
+  this->FileName = other.FileName;
+  this->Representation = other.Representation;
+  this->Info = other.Info;
+  this->SelectionSource = other.SelectionSource;
+}
+
 //-----------------------------------------------------------------------------
 class ModelManager::qInternal
 {
 public:
 
-  std::map<smtk::model::Cursor, std::set<pqPipelineSource*> > ModelSources;
-  typedef std::map<smtk::model::Cursor, std::set<pqPipelineSource*> >::iterator itModelEnt;
-  typedef std::set<pqPipelineSource*>::iterator itModelSrc;
+  // <ModelEnity, modelInfo>
+  std::map<smtk::common::UUID, cmbSMTKModelInfo> Models;
+  typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelEnt;
 
   pqServer* Server;
-  std::string CurrentFile;
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
 
-  std::set<pqPipelineSource*> getModelSources(const smtk::model::Cursor& model)
-  {
-    if(this->ModelSources.find(model) == this->ModelSources.end())
-      {
-      return std::set<pqPipelineSource*>();
-      }
-    else
-      {
-      return this->ModelSources[model];
-      }
-  }
-
   bool addModelRepresentation(const smtk::model::Cursor& model,
-    pqRenderView* view, vtkSMModelManagerProxy* smProxy)
+    pqRenderView* view, vtkSMModelManagerProxy* smProxy,
+    const std::string& filename)
   {
-    if(this->ModelSources.find(model) == this->ModelSources.end())
+    if(this->Models.find(model.entity()) == this->Models.end())
       {
       pqApplicationCore* core = pqApplicationCore::instance();
       pqObjectBuilder* builder = core->getObjectBuilder();
@@ -104,9 +123,14 @@ public:
           modelSrc->getOutputPort(0), view);
         if(rep)
           {
-          pqActiveObjects::instance().setActiveSource(modelSrc);
-          this->ModelSources[model].insert(modelSrc);
-          return true;         
+          //cmbSMTKModelInfo modinfo;
+          //modinfo.init(modelSrc, rep, filename);
+           std::cout << "Add model: " << model.entity().toString().c_str() << "\n";
+
+          this->Models[model.entity()].init(modelSrc, rep, filename);
+          /*.insert(std::pair<smtk::common::UUID, cmbSMTKModelInfo&>(
+                              model.entity(), modinfo));*/
+         return true;         
           }
         }
       // Should not get here.
@@ -124,16 +148,11 @@ public:
 
   void clear()
   {
-    for(itModelEnt mit = this->ModelSources.begin(); mit != this->ModelSources.end(); ++mit)
+    for(itModelEnt mit = this->Models.begin(); mit != this->Models.end(); ++mit)
       {
-      for(itModelSrc sit = mit->second.begin(); sit != mit->second.end(); ++sit)
-        {
-        pqApplicationCore::instance()->getObjectBuilder()->destroy(*sit);
-        }
+      pqApplicationCore::instance()->getObjectBuilder()->destroy(mit->second.Source);
       }
     this->ManagerProxy = NULL;
-    this->CurrentFile = "";
-
   }
 
   qInternal(pqServer* server): Server(server)
@@ -157,7 +176,6 @@ ModelManager::~ModelManager()
 //----------------------------------------------------------------------------
 void ModelManager::initialize()
 {
-  this->Internal->CurrentFile = "";
   if(!this->Internal->ManagerProxy)
     {
     // create block selection source proxy
@@ -187,31 +205,76 @@ vtkSMModelManagerProxy* ModelManager::managerProxy()
 {
   return this->Internal->ManagerProxy;
 }
-/*
-//----------------------------------------------------------------------------
-std::set<pqPipelineSource*> ModelManager::modelSources(
-  const smtk::common::UUID& uid)
-{
 
-  return this->Internal->getModelSources(uid);
-}
-*/
 //----------------------------------------------------------------------------
-pqPipelineSource* ModelManager::activeModelSource()
+cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::common::UUID& uid)
 {
-  return pqActiveObjects::instance().activeSource();
+/*
+  smtk::model::Cursor entity(this->managerProxy()->modelManager(), uid);
+  smtk::model::ModelEntity modelEntity = entity.isModelEntity() ?
+      entity.as<smtk::model::ModelEntity>() : entity.owningModel();
+*/
+  /*    (entity.isCellEntity() ? entity.as<smtk::model::CellEntity>().model() :
+       entity.owningModel());*/
+/*
+  std::cout << "modelInfo Id: " << uid.toString().c_str() << std::endl;
+  std::cout << "Model is valid? " << modelEntity.isValid() << std::endl;
+
+  if(modelEntity.isValid() && this->Internal->Models.find(modelEntity.entity()) !=
+    this->Internal->Models.end())
+    {
+    return &this->Internal->Models[modelEntity.entity()];
+    }
+*/
+  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
+      mit != this->Internal->Models.end(); ++mit)
+    {
+    if(!mit->second.Info)
+      {
+      continue;
+      }
+
+    smtk::common::UUIDs ids = mit->second.Info->GetBlockUUIDs();
+    if(std::find(ids.begin(), ids.end(), uid) != ids.end())
+      {
+      return &(mit->second);
+      }
+    }
+  return NULL;
 }
- 
+
+//----------------------------------------------------------------------------
+QList<cmbSMTKModelInfo*>  ModelManager::selectedModels()
+{
+  QList<cmbSMTKModelInfo*> selModels;
+  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
+      mit != this->Internal->Models.end(); ++mit)
+    {
+    if(!mit->second.Source)
+      {
+      continue;
+      }
+
+    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
+      mit->second.Source->getProxy());
+    if(smSource && smSource->GetSelectionInput(0))
+      {
+      selModels.append(&mit->second);
+      }
+    }
+  return selModels;
+}
+
+//----------------------------------------------------------------------------
+int ModelManager::numberOfModels()
+{
+  return (int)this->Internal->Models.size();
+}
+
 //----------------------------------------------------------------------------
 pqDataRepresentation* ModelManager::activeModelRepresentation()
 {
   return pqActiveObjects::instance().activeRepresentation();
-}
-
-//----------------------------------------------------------------------------
-const std::string& ModelManager::currentFile() const
-{ 
-  return this->Internal->CurrentFile;
 }
 
 //----------------------------------------------------------------------------
@@ -298,15 +361,19 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     return false;
     }
 
-  smtk::model::ModelEntity model =
-    *(pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
-    smtk::model::MODEL_ENTITY).begin());
-//    result->findModelEntity("model")->value().as<smtk::model::ModelEntity>();
-  if (!model.isValid())
+  smtk::model::ModelEntities modelEnts =
+    pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
+    smtk::model::MODEL_ENTITY);
+  bool success = false;
+  for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
+      it != modelEnts.end(); ++it)
     {
-    std::cerr << "There is no valid ModelEnity after reading\n";
-    pxy->endBridgeSession(sessId);
-    return false;
+    if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
+      this->Internal->Models.end())
+      {
+      success = this->Internal->addModelRepresentation(
+        *it, view, this->Internal->ManagerProxy, filename);
+      }
     }
 
 /*
@@ -349,13 +416,6 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
       ->setDelegate(
         smtk::model::SimpleModelSubphrases::create()));
 */
-
-  bool success = this->Internal->addModelRepresentation(
-    model, view, this->Internal->ManagerProxy);
-  if(success)
-    {
-    this->Internal->CurrentFile = filename; 
-    }
   pxy->endBridgeSession(sessId);
   return success;
 }
