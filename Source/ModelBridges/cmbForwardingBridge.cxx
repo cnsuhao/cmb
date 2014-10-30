@@ -109,6 +109,7 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
   return result;
 }
 
-static const char* cmbNoFileTypes[] = { NULL };
-
-smtkImplementsModelingKernel(cmb_forwarding,cmbNoFileTypes,cmbForwardingBridge);
+smtkImplementsModelingKernel(cmb_forwarding,
+                             "",
+                             smtk::model::BridgeHasNoStaticSetup,
+                             cmbForwardingBridge);
