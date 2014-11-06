@@ -23,8 +23,7 @@
 #include <smtk/attribute/Definition.h>
 #include <smtk/attribute/DoubleItem.h>
 #include <smtk/attribute/IntItem.h>
-#include <smtk/attribute/Manager.h>
-#include <smtk/model/Model.h>
+#include <smtk/attribute/System.h>
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/AttributeWriter.h>
 #include <smtk/io/Logger.h>
@@ -134,13 +133,9 @@ std::string make_tetgenFlags( const remus::proto::JobContent& rawInstance )
   //YY Preserve Surface Mesh
   const std::string default_flags = "pzMAYY";
 
-  smtk::attribute::Manager manager;
+  smtk::attribute::System manager;
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
-
-  // FIXME: There is no more smtk::model::Model
-  //smtk::model::ModelPtr smtkModel(new smtk::model::Model());
-  //manager.setRefModel(smtkModel);
 
   bool err = false;
   err = reader.readContents(manager,
