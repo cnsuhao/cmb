@@ -1393,7 +1393,7 @@ int pqCMBModelBuilderMainWindowCore::loadRemusOutput(remus::proto::JobResult res
     {
     //We need to set MesherOutputFileName now as slots that
     //are connected to previewWindow expect MesherOutputFileName to be set
-    const std::string meshOutputFName(result.data());
+    const std::string meshOutputFName(result.data(), result.dataSize());
     this->Internal->MesherOutputFileName =
                             QString::fromStdString(meshOutputFName);
     }
@@ -1686,7 +1686,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   PV_PLUGIN_IMPORT(ModelBridge_Plugin)
 
   emit this->newModelCreated();
- 
+
   this->Internal->cmbRenderViewSelectionHelper.setView(this->activeRenderView());
   // Set up connection with selection helpers for all views.
   QObject::connect(
