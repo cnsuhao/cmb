@@ -313,7 +313,10 @@ bool cmbFaceMesherInterface::buildFaceMesh(vtkCMBMeshServerLauncher* activeServe
       {
       remus::proto::JobResult result = client.retrieveResults(job);
       // rip the data back into the data structures we expect.
-      this->unPackData(result.data(), faceId, zValue);
+      this->unPackData(result.data(),
+                       result.dataSize(),
+                       faceId,
+                       zValue);
       valid = true;
       }
     else
@@ -369,12 +372,13 @@ bool cmbFaceMesherInterface::PackData(std::string& rawData)
 }
 
 //----------------------------------------------------------------------------
-bool cmbFaceMesherInterface::unPackData(const std::string& rawData,
+bool cmbFaceMesherInterface::unPackData(const char* rawData,
+                                        std::size_t dataSize,
                                         const long &faceId,
                                         const double &zValue)
 {
   int numPoints, numTriangles, numLines;
-  std::stringstream buffer(rawData);
+  std::stringstream buffer( std::string(rawData, dataSize) );
   buffer >> numPoints;
   buffer >> numLines;
   buffer >> numTriangles;

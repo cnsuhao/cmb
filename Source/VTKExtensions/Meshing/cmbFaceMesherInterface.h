@@ -89,7 +89,8 @@ protected:
   void InitDataStructures();
 
   bool PackData(std::string& rawData);
-  bool unPackData(const std::string& rawData, const long &faceId, const double &zValue);
+  bool unPackData(const char* rawData, std::size_t rawDataSize,
+                  const long &faceId, const double &zValue);
 
   vtkPolyData *OutputMesh;
 
