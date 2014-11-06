@@ -341,7 +341,7 @@ void TriangleWorker::meshJob()
 
   //send the data back to the server
   remus::proto::JobResult results = parms.results(job);
-  this->returnMeshResults(results);
+  this->returnResult(results);
 
   return;
 }

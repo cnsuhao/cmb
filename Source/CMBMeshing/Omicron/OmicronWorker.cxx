@@ -131,7 +131,7 @@ void OmicronWorker::meshJob()
     //the omicron worker doesn't have any real results to send back
     remus::proto::JobResult results =
               remus::proto::make_JobResult(job.id(),"FAKE RESULTS");
-    this->returnMeshResults(results);
+    this->returnResult(results);
     }
 
   this->cleanlyExitOmicron();

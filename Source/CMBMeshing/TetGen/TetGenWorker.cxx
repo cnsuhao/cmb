@@ -579,5 +579,5 @@ void TetGenWorker::meshJob()
 
   //return the results
   detail::send_jobProgress(this,j,"Sending Results");
-  this->returnMeshResults(result);
+  this->returnResult(result);
 }
