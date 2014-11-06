@@ -37,6 +37,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <vtksys/SystemTools.hxx>
 
 #include <remus/server/Server.h>
+#include <remus/server/WorkerFactory.h>
 
 namespace resources
 {
