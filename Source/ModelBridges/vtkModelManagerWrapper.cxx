@@ -112,10 +112,17 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::StringList bridgeFileTypes =
+          cJSON* typeObj = cJSON_CreateObject();
+          smtk::model::StringData bridgeFileTypes =
             this->ModelMgr->bridgeFileTypes(bname->valuestring);
-          cJSON_AddItemToObject(result, "result",
-            smtk::io::ExportJSON::createStringArray(bridgeFileTypes));
+          for(smtk::model::PropertyNameWithStrings it = bridgeFileTypes.begin();
+              it != bridgeFileTypes.end(); ++it)
+            {
+            if(it->second.size())
+              cJSON_AddItemToObject(typeObj, it->first.c_str(),
+                smtk::io::ExportJSON::createStringArray(it->second));
+            }
+          cJSON_AddItemToObject(result, "result", typeObj);
           }
         }
       else if (methStr == "create-bridge")

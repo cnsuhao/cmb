@@ -677,30 +677,17 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
 {
   // This handles the special extensions of "cmb" and "bc", which do not
   // have readers. These extension are handled by model operators.
-  if(files.size()>0)
+  if(files.size()>0 && this->loadModelFile(files[0]))
     {
-    QFileInfo fInfo(files[0]);
-    QString lastExt = fInfo.suffix().toLower();
-    if (!this->Internal->smtkModelManager->fileModelBridge(
-        files[0].toStdString()).empty())
-      {
-      if(this->loadModelFile(files[0]))
-        {
-        pqApplicationCore* core = pqApplicationCore::instance();
-        // Add this to the list of recent server resources ...
-        pqServerResource resource = this->getActiveServer()->getResource();
-        resource.setPath(files[0]);
-        resource.addData("modelmanager", "ModelManager");
-        resource.addData("readoperator", "read");
-        core->recentlyUsedResources().add(resource);
-        core->recentlyUsedResources().save(*core->settings());
-        //resource.setScheme(QString("cmbmodel"));
-        }
-      }
-    else if(lastExt == "bc")
-      {
-      this->loadBCFile(files[0]);
-      }
+    pqApplicationCore* core = pqApplicationCore::instance();
+    // Add this to the list of recent server resources ...
+    pqServerResource resource = this->getActiveServer()->getResource();
+    resource.setPath(files[0]);
+    resource.addData("modelmanager", "ModelManager");
+    resource.addData("readoperator", "read");
+    core->recentlyUsedResources().add(resource);
+    core->recentlyUsedResources().save(*core->settings());
+    //resource.setScheme(QString("cmbmodel"));
     }
 }
 

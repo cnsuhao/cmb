@@ -2,9 +2,9 @@
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/FileItem.h"
+#include "smtk/attribute/StringItem.h"
 
 #include "smtk/model/Manager.h"
-#include "smtk/model/StringData.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 
@@ -14,6 +14,7 @@
 #include "vtkClientServerStream.h"
 #include "vtkSMPropertyHelper.h"
 #include "cmbForwardingBridge.h"
+#include <vtksys/SystemTools.hxx>
 
 using smtk::common::UUID;
 using namespace smtk::common;
@@ -166,9 +167,13 @@ bool vtkSMModelManagerProxy::endBridgeSession(const smtk::common::UUID& bridgeSe
   return true;
 }
 
-std::vector<std::string> vtkSMModelManagerProxy::supportedFileTypes(
+smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
   const std::string& bridgeName)
 {
+  if(this->m_bridgeFileTypes.find(bridgeName) != this->m_bridgeFileTypes.end())
+    return this->m_bridgeFileTypes[bridgeName];
+
+  smtk::model::StringData retFileTypes;
   smtk::model::StringList bnames;
 
   if(bridgeName.empty())
@@ -181,22 +186,22 @@ std::vector<std::string> vtkSMModelManagerProxy::supportedFileTypes(
     bnames.push_back(bridgeName);
     }
 
-  smtk::model::StringList resultVec;
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
     std::cout << "Find Bridge      " << *it << "\n";
-    smtk::model::StringList bftypes;
     std::string reqStr =
       "{\"jsonrpc\":\"2.0\", \"method\":\"bridge-filetypes\", "
       "\"params\":{ \"bridge-name\":\"" + *it + "\"}, "
       "\"id\":\"1\"}";
+
+    cJSON* resObj;
     cJSON* result = this->jsonRPCRequest(reqStr);
-    cJSON* sarr;
+//    std::cout << "result File types: " << cJSON_Print(result) <<std::endl;
     if (
       !result ||
       result->type != cJSON_Object ||
-      !(sarr = cJSON_GetObjectItem(result, "result")) ||
-      sarr->type != cJSON_Array)
+      !(resObj = cJSON_GetObjectItem(result, "result")) ||
+      resObj->type != cJSON_Object)
       {
       // TODO: See if result has "error" key and report it.
       if (result)
@@ -204,20 +209,107 @@ std::vector<std::string> vtkSMModelManagerProxy::supportedFileTypes(
       continue;
       }
 
-    smtk::io::ImportJSON::getStringArrayFromJSON(sarr, bftypes);
-    resultVec.insert(resultVec.end(), bftypes.begin(), bftypes.end());
-    cJSON_Delete(result);
+    smtk::model::StringData brFileTypes;
+    for (cJSON* sarr = resObj->child; sarr; sarr = sarr->next)
+      {
+      if (sarr->type == cJSON_Array)
+        {
+        smtk::model::StringList bftypes;
+        smtk::io::ImportJSON::getStringArrayFromJSON(sarr, bftypes);
+        retFileTypes[sarr->string].insert(
+          retFileTypes[sarr->string].end(), bftypes.begin(), bftypes.end());
+        brFileTypes[sarr->string].insert(
+          brFileTypes[sarr->string].end(), bftypes.begin(), bftypes.end());
+        }
+      }
+
+    if(brFileTypes.size())
+      {
+      this->m_bridgeFileTypes[*it] = brFileTypes;
+      }
+
+    if (result)
+      cJSON_Delete(result);
+
     }
 
-  return resultVec;
+  return retFileTypes;
 }
 
+void vtkSMModelManagerProxy::initFileOperator(
+  smtk::model::OperatorPtr fileOp,
+  const std::string& fileName,
+  const std::string& engineName)
+{
+  fileOp->ensureSpecification();
+  fileOp->specification()->findFile("filename")->setValue(fileName);
+  smtk::attribute::StringItem::Ptr enginetypeItem =
+    fileOp->specification()->findString("enginetype");
+  if (enginetypeItem)
+    {
+    enginetypeItem->setValue(engineName);
+    }
+}
+
+smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
+  const std::string& fileName,
+  smtk::model::BridgePtr bridge,
+  const std::string& engineName)
+{
+  OperatorPtr readOp = bridge->op("read", this->m_modelMgr);
+  // Assuming all bridge should have a ReadOperator
+  if (!readOp)
+    {
+    std::cerr
+      << "Could not create read operator for bridge"
+      << " \"" << bridge->name() << "\""
+      << " (" << bridge->sessionId() << ")\n";
+    return smtk::model::OperatorPtr();
+    }
+
+  this->initFileOperator(readOp, fileName, engineName);
+  if ( !readOp->ableToOperate() )
+    {
+    std::cout << "Read operator can not operate with the file: "
+              << fileName.c_str() << "\n";
+    }
+  else
+    {
+    return readOp;
+    }
+  // try "import" if there is one
+  OperatorPtr importOp = bridge->op("import", this->m_modelMgr);
+  // Not all bridge should have an ImportOperator
+  if (importOp)
+    {
+    this->initFileOperator(importOp, fileName, engineName);
+    if ( importOp->ableToOperate() )
+      {
+      return importOp;
+      }
+    else
+      {
+      std::cout << "Import operator can not operate with the file: "
+                << fileName.c_str() << "\n";
+      }
+    }
+  else
+    {
+    std::cout
+      << "Could not create import operator for bridge"
+      << " \"" << bridge->name() << "\""
+      << " (" << bridge->sessionId() << ")\n";
+    }
+
+  return smtk::model::OperatorPtr();
+}
 
 smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   const std::string& fileName,
-  const std::string& bridgeName)
+  const std::string& bridgeName,
+  const std::string& engineName)
 {
-  std::string actualBridgeName;
+  std::string actualBridgeName = bridgeName, actualEngineName = engineName;
   if (bridgeName.empty())
     {
     std::set<std::string>::const_iterator bnit;
@@ -226,27 +318,29 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
       bnit != this->m_remoteBridgeNames.end() && actualBridgeName.empty();
       ++bnit)
       {
-      std::vector<std::string> fileTypesForBridge = this->supportedFileTypes(*bnit);
-      std::vector<std::string>::const_iterator fit;
-      for (fit = fileTypesForBridge.begin(); fit != fileTypesForBridge.end(); ++fit)
+      smtk::model::StringData fileTypesForBridge = this->supportedFileTypes(*bnit);
+      smtk::model::PropertyNameWithStrings typeIt;
+      for(typeIt = fileTypesForBridge.begin(); typeIt != fileTypesForBridge.end(); ++typeIt)
         {
-        std::string::size_type fEnd;
-        std::string::size_type eEnd = fit->find(' ');
-        std::string ext(*fit, 0, eEnd);
-        std::cout << "Looking for \"" << ext << "\"\n";
-        if ((fEnd = fileName.rfind(ext)) && (fileName.size() - fEnd == eEnd))
-          { // matching substring is indeed at end of fileName
-          actualBridgeName = *bnit;
-          std::cout << "Found bridge type " << actualBridgeName << " for " << fileName << "\n";
-          break;
+        std::vector<std::string>::const_iterator fit;
+        for (fit = typeIt->second.begin(); fit != typeIt->second.end(); ++fit)
+          {
+          std::string::size_type fEnd;
+          std::string::size_type eEnd = (*fit).find(' ');
+          std::string ext(*fit, 0, eEnd);
+          std::cout << "Looking for \"" << ext << "\"\n";
+          if ((fEnd = fileName.rfind(ext)) && (fileName.size() - fEnd == eEnd))
+            { // matching substring is indeed at end of fileName
+            actualBridgeName = *bnit;
+            actualEngineName = typeIt->first;
+            std::cout << "Found bridge type " << actualBridgeName << " for " << fileName << "\n";
+            break;
+            }
           }
         }
       }
     }
-  else
-    {
-    actualBridgeName = bridgeName;
-    }
+
   std::map<smtk::common::UUID,std::string>::iterator it;
   BridgePtr bridge;
   for (
@@ -274,29 +368,29 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     return OperatorResult();
     }
 
-  OperatorPtr readOp = bridge->op("read", this->m_modelMgr);
-  if (!readOp)
+//  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+//  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
+  OperatorPtr fileOp = this->findFileOperator(fileName, bridge, actualEngineName);
+  if (!fileOp)
     {
     std::cerr
-      << "Could not create read operator for bridge"
-      << " \"" << actualBridgeName << "\""
+      << "Could not create file (read or import) operator for bridge"
+      << " \"" << bridge->name() << "\""
       << " (" << bridge->sessionId() << ")\n";
     return OperatorResult();
     }
 
-  readOp->ensureSpecification();
-  readOp->specification()->findFile("filename")->setValue(fileName);
   cJSON* json = cJSON_CreateObject();
-  ExportJSON::forOperator(readOp, json);
+  ExportJSON::forOperator(fileOp, json);
   std::cout << "Found operator " << cJSON_Print(json) << ")\n";
-  OperatorResult result = readOp->operate();
+  OperatorResult result = fileOp->operate();
   json = cJSON_CreateObject();
   ExportJSON::forOperatorResult(result, json);
   std::cout << "Result " << cJSON_Print(json) << "\n";
   this->fetchWholeModel();
   this->m_modelMgr->assignDefaultNames();
+
   return result;
-  //return readOp->operate();
 }
 
 std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::common::UUID& bridgeSessionId)

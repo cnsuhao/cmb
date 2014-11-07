@@ -22,6 +22,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ModelManager.h"
 
+#include "vtkNew.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
@@ -30,14 +31,17 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkStringList.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
+#include "pqCoreUtilities.h"
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
 #include "pqPluginManager.h"
 #include "pqRenderView.h"
+#include "pqSelectReaderDialog.h"
 #include "pqServer.h"
 #include "vtksys/SystemTools.hxx"
 
@@ -46,7 +50,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/model/Manager.h"
 #include "smtk/model/ModelEntity.h"
 #include "smtk/model/Operator.h"
-#include "smtk/model/StringData.h"
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
@@ -278,57 +281,66 @@ pqDataRepresentation* ModelManager::activeModelRepresentation()
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::string> ModelManager::supportedFileTypes(
+std::set<std::string> ModelManager::supportedFileTypes(
   const std::string& bridgeName)
 {
-  std::vector<std::string> resultVec;
+  std::set<std::string> resultSet;
   if(this->Internal->ManagerProxy)
     {
-    smtk::model::StringList bftypes = this->Internal->ManagerProxy->supportedFileTypes(bridgeName);
-    for (smtk::model::StringList::iterator tpit = bftypes.begin();
-      tpit != bftypes.end(); ++tpit)
+    smtk::model::StringData bftypes = this->Internal->ManagerProxy->supportedFileTypes(bridgeName);
+    smtk::model::PropertyNameWithStrings typeIt;
+    QString filetype, descr, ext;
+    for(typeIt = bftypes.begin(); typeIt != bftypes.end(); ++typeIt)
       {
-      // ".cmb (Conceptual Model Builder)"
-      // we want to convert the format into Paraview format for its fileOpen dialog
-      // "Conceptual Model Builder (*.cmb)"
-      QString filetype = (*tpit).c_str();
-      int idx = filetype.indexOf('(');
-
-      QString descr = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
-      QString ext = filetype.left(filetype.indexOf('('));
-      resultVec.push_back(
-              descr.append(" (*").append(ext.simplified()).append(")").toStdString());
+      for (smtk::model::StringList::iterator tpit = typeIt->second.begin();
+        tpit != typeIt->second.end(); ++tpit)
+        {
+        // ".cmb (Conceptual Model Builder)"
+        // we want to convert the format into Paraview format for its fileOpen dialog
+        // "Conceptual Model Builder (*.cmb)"
+        filetype = (*tpit).c_str();
+        int idx = filetype.indexOf('(');
+        descr = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
+        ext = filetype.left(filetype.indexOf('('));
+        resultSet.insert(
+                descr.append(" (*").append(ext.simplified()).append(")").toStdString());
+        }
       }
     }
-  return resultVec;
+  return resultSet;
 }
 
 //----------------------------------------------------------------------------
-std::string ModelManager::fileModelBridge(const std::string& filename)
+smtk::model::StringData ModelManager::fileModelBridges(const std::string& filename)
 {
+  smtk::model::StringData retBrEns;
   if(!this->Internal->ManagerProxy)
     {
-    return "";
+    return retBrEns;
     }
 
   std::string lastExt =
     vtksys::SystemTools::GetFilenameLastExtension(filename);
-
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::model::StringList bnames = pxy->bridgeNames();
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
-    smtk::model::StringList bftypes = pxy->supportedFileTypes(*it);
-    for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
+    smtk::model::StringData bftypes = pxy->supportedFileTypes(*it);
+    smtk::model::PropertyNameWithStrings typeIt;
+    for(typeIt = bftypes.begin(); typeIt != bftypes.end(); ++typeIt)
       {
-      if (tpit->find(lastExt) == 0)
+      for (smtk::model::StringList::iterator tpit = typeIt->second.begin();
+        tpit != typeIt->second.end(); ++tpit)
         {
-        return *it;
+        if (tpit->find(lastExt) == 0)
+          {
+          retBrEns[*it].push_back(typeIt->first);
+          }
         }
       }
     }
 
-  return "";
+  return retBrEns;
 }
 
 //----------------------------------------------------------------------------
@@ -340,10 +352,19 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     return false;
     }
 
-  std::string bridgeType = this->fileModelBridge(filename);
-  if (bridgeType.empty())
+  smtk::model::StringData bridgeTypes = this->fileModelBridges(filename);
+  if (bridgeTypes.size() == 0)
     {
     std::cerr << "Could not identify a modeling kernel to use.\n";
+    return false;
+    }
+  // If there are more than one bridge or more than one engine on a bridge
+  // can handle this file, we need to pick the bridge and/or engine.
+  smtk::model::PropertyNameWithStrings typeIt = bridgeTypes.begin();
+  std::string bridgeType, engineType;
+  if((bridgeTypes.size() > 1 || typeIt->second.size() > 1) &&
+     !this->DetermineFileReader(filename, bridgeType, engineType, bridgeTypes))
+    {
     return false;
     }
 
@@ -352,7 +373,7 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
   smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
   std::cout << "Started " << bridgeType << " session: " << sessId << "\n";
 
-  smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType);
+  smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType, engineType);
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
@@ -420,6 +441,46 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
   return success;
 }
 
+//-----------------------------------------------------------------------------
+bool ModelManager::DetermineFileReader(
+  const std::string& filename, 
+  std::string& bridgeType,
+  std::string& engineType,
+  const smtk::model::StringData& bridgeTypes)
+{
+  QString readerType,readerGroup;
+  vtkNew<vtkStringList> list;
+  smtk::model::StringData::const_iterator typeIt;
+  std::string desc;
+  for(typeIt = bridgeTypes.begin(); typeIt != bridgeTypes.end(); ++typeIt)
+    {
+    for (smtk::model::StringList::const_iterator tpit = typeIt->second.begin();
+      tpit != typeIt->second.end(); ++tpit)
+      {
+      desc = typeIt->first;
+      list->AddString(desc.c_str()); // bridge
+      list->AddString((*tpit).c_str()); // engine
+      desc += "::";
+      desc += *tpit;
+      list->AddString(desc.c_str()); // bridge::engine
+      }
+    }
+
+  if(list->GetLength() > 3)
+    {
+    // If more than one readers found.
+    pqSelectReaderDialog prompt(filename.c_str(), NULL,
+      list.GetPointer(), pqCoreUtilities::mainWidget());
+    if (prompt.exec() == QDialog::Accepted)
+      {
+      engineType = prompt.getReader().toStdString();
+      bridgeType = prompt.getGroup().toStdString();
+      return true;
+      }
+    }
+  return false;
+}
+
 //----------------------------------------------------------------------------
 void ModelManager::clear()
 {
@@ -442,8 +503,8 @@ void ModelManager::onPluginLoaded()
       // if there is the new bridge
       if(std::find(oldBnames.begin(), oldBnames.end(), *it) == oldBnames.end())
         {
-        smtk::model::StringList bftypes = this->supportedFileTypes(*it);
-        for (smtk::model::StringList::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
+        std::set<std::string> bftypes = this->supportedFileTypes(*it);
+        for (std::set<std::string>::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
           {
           newFileTypes << (*tpit).c_str();
           }

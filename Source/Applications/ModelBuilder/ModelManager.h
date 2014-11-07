@@ -10,9 +10,10 @@
 
 #include "vtkSmartPointer.h"
 #include <QPointer>
-#include "smtk/PublicPointerDefs.h"
-#include <vector>
+#include <set>
 #include "cmbSystemConfig.h"
+#include "smtk/PublicPointerDefs.h"
+#include "smtk/model/StringData.h"
 
 class vtkPVSMTKModelInformation;
 class vtkSMModelManagerProxy;
@@ -46,8 +47,8 @@ public:
   ModelManager(pqServer*);
   virtual ~ModelManager();
   vtkSMModelManagerProxy* managerProxy();
-  std::string fileModelBridge(const std::string& filename);
-  std::vector<std::string> supportedFileTypes(
+  smtk::model::StringData fileModelBridges(const std::string& filename);
+  std::set<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
 
   cmbSMTKModelInfo* modelInfo(const smtk::common::UUID& uid);
@@ -55,6 +56,11 @@ public:
   int numberOfModels();
 
   pqDataRepresentation* activeModelRepresentation();
+  bool DetermineFileReader(
+    const std::string& filename, 
+    std::string& bridgeType,
+    std::string& engineType,
+    const smtk::model::StringData& bridgeTypes);
 
 signals:
   void currentModelCleared();
