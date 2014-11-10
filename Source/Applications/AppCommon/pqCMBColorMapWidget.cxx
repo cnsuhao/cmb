@@ -83,6 +83,7 @@ void pqCMBColorMapWidget::setDataRepresentation(pqDataRepresentation* repr)
 {
   // this method sets up hooks to ensure that when the repr's properties are
   // modified, the editor shows the correct LUT.
+  std::cout << "setting active representation: " << repr << std::endl;
   if (this->Internals->ActiveRepresentation == repr)
     {
     return;

@@ -25,7 +25,7 @@ public:
   pqCMBColorMapWidget(QWidget* parent=0);
   virtual ~pqCMBColorMapWidget();
 
-public:
+public slots:
   void setDataRepresentation(pqDataRepresentation* repr);
 
 protected slots:

@@ -49,6 +49,7 @@ class pqCMBSceneTree;
 class pqCMBModel;
 class pqProxyInformationWidget;
 class QDockWidget;
+class pqDataRepresentation;
 
 class pqCMBModelBuilderMainWindow : public pqCMBCommonMainWindow
 {
@@ -84,6 +85,7 @@ public slots:
 protected slots:
 
   void onShowCenterAxisChanged(bool enabled);
+  void onActiveRepresentationChanged(pqDataRepresentation*);
 
   // Description:
   // Updates the enable state of various menus.
@@ -212,7 +214,8 @@ protected:
 
   // init UI panels as Dock widgets
   void initUIPanels();
-  QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType);
+  QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType,
+    bool recreate=false);
   pqProxyInformationWidget* getInfoWidget();
 
   void SetCheckBoxStateQuiet(QCheckBox* box, bool state);

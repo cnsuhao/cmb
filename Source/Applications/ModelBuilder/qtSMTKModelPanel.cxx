@@ -37,6 +37,8 @@
 #include <QFileInfo>
 
 #include <pqActiveObjects.h>
+#include <pqActiveView.h>
+#include <pqRenderView.h>
 #include <pqSMAdaptor.h>
 #include <pqPipelineSource.h>
 #include <pqOutputPort.h>
@@ -162,6 +164,9 @@ void qtSMTKModelPanel::onDataUpdated()
 
 void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
 {
+  //clear current selections
+  this->Internal->smtkManager->clearModelSelections();
+
   // create vector of selected block ids
   QMap<cmbSMTKModelInfo*, std::vector<vtkIdType> > selmodelblocks;
   for(smtk::common::UUIDs::const_iterator it = ids.begin(); it != ids.end(); ++it)
@@ -207,10 +212,13 @@ void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
     if(selectionManager && outport)
       {
       selectionManager->select(outport);
-      outport->renderAllViews();
       pqActiveObjects::instance().setActiveSource(source);
+      std::cout << "set active source: " << source << std::endl;
       }    
     }
+  pqRenderView* renView = qobject_cast<pqRenderView*>(
+     pqActiveView::instance().current());
+  renView->render();
 }
 
 void qtSMTKModelPanel::updateTreeSelection()

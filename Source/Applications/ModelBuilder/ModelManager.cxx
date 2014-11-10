@@ -269,6 +269,25 @@ QList<cmbSMTKModelInfo*>  ModelManager::selectedModels()
 }
 
 //----------------------------------------------------------------------------
+void ModelManager::clearModelSelections()
+{
+  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
+    mit != this->Internal->Models.end(); ++mit)
+    {
+    if(!mit->second.Source)
+      {
+      continue;
+      }
+    pqPipelineSource* source = mit->second.Source;
+    pqOutputPort* outport = source->getOutputPort(0);
+    if(outport)
+      {
+      outport->setSelectionInput(0, 0);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 int ModelManager::numberOfModels()
 {
   return (int)this->Internal->Models.size();

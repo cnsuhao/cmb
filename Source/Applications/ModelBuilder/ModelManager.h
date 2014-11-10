@@ -68,6 +68,7 @@ signals:
 
 public slots:
   void clear();
+  void clearModelSelections();
   bool loadModel(const std::string& filename,
     pqRenderView* view);
 

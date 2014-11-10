@@ -306,6 +306,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(currentModelCleared()),
       this, SLOT(onCMBModelCleared()));
+  QObject::connect(
+    &pqActiveObjects::instance(), SIGNAL(representationChanged(pqDataRepresentation*)),
+    this, SLOT(onActiveRepresentationChanged(pqDataRepresentation*)));
 }
 
 //----------------------------------------------------------------------------
@@ -1338,11 +1341,19 @@ void pqCMBModelBuilderMainWindow::initUIPanels()
 
 //----------------------------------------------------------------------------
 QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
-  qtCMBPanelsManager::PanelType enType)
+  qtCMBPanelsManager::PanelType enType, bool recreate)
 {
   if(this->Internal->CurrentDockWidgets.contains(enType))
     {
-    return NULL;
+    if(!recreate)
+      {
+      return NULL;
+      }
+    else if(QDockWidget* existingDoc = this->Internal->CurrentDockWidgets[enType])
+      {
+      this->removeDockWidget(existingDoc);
+      existingDoc->setParent(0);
+      }
     }
   int numDocks = this->Internal->CurrentDockWidgets.count();
   QDockWidget* lastdw = numDocks > 0 ?
@@ -1394,6 +1405,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
           pwidget, qtCMBPanelsManager::type2String(enType),
           Qt::RightDockWidgetArea, lastdw);
         pwidget->filterWidgets(true);
+        pwidget->setApplyChangesImmediately(true);
         dw->show();
         //pwidget->show(dw);
         this->Internal->CurrentDockWidgets[enType] = dw;
@@ -1450,4 +1462,69 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
     }
   return dw;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
+  pqDataRepresentation* acitveRep)
+{
+  foreach(qtCMBPanelsManager::PanelType enType,
+    this->Internal->CurrentDockWidgets.keys())
+    {
+    QDockWidget* existingDoc = this->Internal->CurrentDockWidgets[enType];
+    switch(enType)
+      {
+      case qtCMBPanelsManager::DISPLAY:
+      case qtCMBPanelsManager::PROPERTIES:
+        {
+        if(existingDoc && existingDoc->widget())
+          {
+          delete existingDoc->widget();
+          }
+
+        if(acitveRep && existingDoc)
+          {
+          //this->displayPanel()->setVisible(true);
+          pqProxyWidget* pwidget = this->displayPanel(acitveRep->getProxy());
+          pwidget->filterWidgets(true);
+          pwidget->setApplyChangesImmediately(true);
+
+          QWidget* container = new QWidget();
+          container->setObjectName("dockscrollWidget");
+          container->setSizePolicy(QSizePolicy::Preferred,
+            QSizePolicy::Expanding);
+
+          QScrollArea* s = new QScrollArea(existingDoc);
+          s->setWidgetResizable(true);
+          s->setFrameShape(QFrame::NoFrame);
+          s->setObjectName("scrollArea");
+          s->setWidget(container);
+
+          QVBoxLayout* vboxlayout = new QVBoxLayout(container);
+          vboxlayout->setMargin(0);
+          vboxlayout->addWidget(pwidget);
+
+          existingDoc->setWidget(s);
+          existingDoc->show();
+          }
+        break;
+        }
+      case qtCMBPanelsManager::COLORMAP:
+        {
+        pqCMBColorMapWidget* colorWidget = this->colorEditor(this);
+        colorWidget->setDataRepresentation(acitveRep);
+        break;
+        }
+      case qtCMBPanelsManager::ATTRIBUTE:
+      case qtCMBPanelsManager::MODEL:
+      // The info widget is handling the active representation internally
+      case qtCMBPanelsManager::INFO:
+      case qtCMBPanelsManager::SCENE:
+      case qtCMBPanelsManager::MESH:
+      case qtCMBPanelsManager::RENDER:
+        break;
+      default:
+        break;
+      }
+    }
 }
