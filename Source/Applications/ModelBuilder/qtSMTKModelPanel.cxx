@@ -61,6 +61,7 @@
 #include "ModelManager.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
+#include "SimBuilder/cmbSMTKUIHelper.h"
 
 using namespace std;
 using namespace smtk::model;
@@ -129,7 +130,7 @@ void qtSMTKModelPanel::onDataUpdated()
     "FileName")).toString().toStdString();
   filename = vtksys::SystemTools::GetFilenameName(filename);
 */
-  smtk::model::BitFlags mask = smtk::model::MODEL_ENTITY;
+  smtk::model::BitFlags mask = smtk::model::BRIDGE_SESSION;
 
   smtk::model::ManagerPtr model = this->Internal->smtkManager->managerProxy()->modelManager();
 //  smtk::io::ImportJSON::intoModel(json.c_str(), model);
@@ -141,17 +142,25 @@ void qtSMTKModelPanel::onDataUpdated()
     {
     this->Internal->ModelPanel = new qtModelPanel(this);
     this->setWidget(this->Internal->ModelPanel);
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(entitiesSelected(const smtk::common::UUIDs& )),
+      this, SLOT(selectEntities(const smtk::common::UUIDs& )));
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
+      this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
+      this->Internal->smtkManager,
+      SLOT(startOperation( const smtk::model::OperatorPtr& )));
+
     }
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
   QPointer<smtk::model::QEntityItemModel> qmodel = modelview->getModel();
   qmodel->clear();
 
-  QObject::connect(modelview, SIGNAL(entitiesSelected(const smtk::common::UUIDs& )),
-      this, SLOT(selectEntities(const smtk::common::UUIDs& )));
-
   smtk::model::Cursors cursors;
   smtk::model::Cursor::CursorsFromUUIDs(
-    cursors, model, model->entitiesMatchingFlags(mask, false));
+    cursors, model, model->entitiesMatchingFlags(mask, true));
   std::cout << std::setbase(10) << "Found " << cursors.size() << " entries\n";
   qmodel->setRoot(
     smtk::model::EntityListPhrase::create()
@@ -277,4 +286,26 @@ void qtSMTKModelPanel::updateTreeSelection()
     }
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
   modelview->selectEntities(uuids);
+}
+
+//----------------------------------------------------------------------------
+void qtSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+{
+  if(fileItem)
+    {
+    QObject::connect(fileItem, SIGNAL(launchFileBrowser()),
+      this, SLOT(onLaunchFileBrowser()));
+    }
+}
+//----------------------------------------------------------------------------
+void qtSMTKModelPanel::onLaunchFileBrowser()
+{
+  smtk::attribute::qtFileItem* const fileItem =
+    qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
+  if(!fileItem)
+    {
+    return;
+    }
+  cmbSMTKUIHelper::process_smtkFileItemRequest(
+    fileItem, this->Internal->smtkManager->server(), fileItem->widget());
 }

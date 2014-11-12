@@ -17,7 +17,8 @@ public:
 
   std::vector<std::string> bridgeNames(bool forceFetch = false);
 
-  smtk::common::UUID beginBridgeSession(const std::string& bridgeName);
+  smtk::common::UUID beginBridgeSession(
+    const std::string& bridgeName, bool createNew = false);
   bool endBridgeSession(const smtk::common::UUID& bridgeSessionId);
 
   smtk::model::StringData supportedFileTypes(
@@ -36,8 +37,11 @@ public:
     const smtk::common::UUID& bridgeOrModel, const std::string& opName);
   smtk::model::OperatorPtr createOperator(
     const std::string& bridgeName, const std::string& opName);
+  void fetchWholeModel();
 
   smtk::model::ManagerPtr modelManager();
+  void endBridgeSessions();
+  bool validBridgeSession(const smtk::common::UUID& bridgeId);
 
 protected:
   friend class cmbForwardingBridge;
@@ -58,8 +62,6 @@ protected:
     const std::string& fileName,
     smtk::model::BridgePtr bridge,
     const std::string& engineName);
-
-  void fetchWholeModel();
 
   smtk::model::ManagerPtr m_modelMgr;
   vtkSMProxy* m_serverSession;

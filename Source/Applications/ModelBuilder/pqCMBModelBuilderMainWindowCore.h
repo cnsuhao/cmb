@@ -50,7 +50,7 @@ class vtkCollection;
 class cmbScalarBarWidget;
 class ModelManager;
 class qtSMTKModelPanel;
-
+#include "smtk/PublicPointerDefs.h"
 
 class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 {
@@ -267,6 +267,7 @@ public slots:
   void clearCurrentEntityWidgets();
 
   void loadJSONFile(const QString& filename);
+  bool handleOperationResult(const smtk::model::OperatorResult& result);
   void processModelInfo();
   ModelManager* modelManager();
 

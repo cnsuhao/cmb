@@ -61,22 +61,31 @@ public:
     std::string& bridgeType,
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
+  pqServer* server();
 
 signals:
   void currentModelCleared();
-  void newBridgeLoaded(const QStringList& fileTypes);
+  void newBridgeLoaded(const QStringList& bridgeNames);
+  void newFileTypesAdded(const QStringList& fileTypes);
+  void operationFinished(const smtk::model::OperatorResult&);
 
 public slots:
   void clear();
+  bool startSession(const std::string& bridgeName);
   void clearModelSelections();
   bool loadModel(const std::string& filename,
     pqRenderView* view);
+  bool startOperation(const smtk::model::OperatorPtr&);
+  bool handleOperationResult(
+    const smtk::model::OperatorResult& result,
+    const smtk::common::UUID& bridgeSessionId );
 
 protected slots:
   void onPluginLoaded();
 
 protected:
   void initialize();
+  void initOperator(smtk::model::OperatorPtr brOp);
 
 private:
   class qInternal;

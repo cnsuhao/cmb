@@ -189,6 +189,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/System.h"
+#include "smtk/attribute/IntItem.h"
+#include "smtk/model/Operator.h"
 
 #include "remus/proto/Job.h"
 #include <QLayout>
@@ -1710,6 +1712,9 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     delete this->Internal->smtkModelManager;
     }
   this->Internal->smtkModelManager = new ModelManager(this->getActiveServer());
+    QObject::connect(this->Internal->smtkModelManager,
+      SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
+      this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
 //  pqActiveObjects::instance().disconnect(this->activeRenderView());
@@ -2194,6 +2199,19 @@ void pqCMBModelBuilderMainWindowCore::loadJSONFile(const QString& filename)
 ModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 {
   return this->Internal->smtkModelManager;
+}
+
+//----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::handleOperationResult(
+  const smtk::model::OperatorResult& result)
+{
+  if (result->findInt("outcome")->value() !=
+    smtk::model::OPERATION_SUCCEEDED)
+    {
+    return false;
+    }
+  //TODO, based on operator types to do differet things.
+  this->processModelInfo();
 }
 
 //----------------------------------------------------------------------------

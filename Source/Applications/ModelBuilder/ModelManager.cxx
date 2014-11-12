@@ -34,6 +34,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkStringList.h"
 
 #include "pqActiveObjects.h"
+#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqCoreUtilities.h"
 #include "pqDataRepresentation.h"
@@ -174,6 +175,12 @@ ModelManager::ModelManager(pqServer* server)
 ModelManager::~ModelManager()
 {
   this->clear();
+}
+
+//----------------------------------------------------------------------------
+pqServer* ModelManager::server()
+{
+  return this->Internal->Server;
 }
 
 //----------------------------------------------------------------------------
@@ -377,10 +384,15 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     std::cerr << "Could not identify a modeling kernel to use.\n";
     return false;
     }
-  // If there are more than one bridge or more than one engine on a bridge
-  // can handle this file, we need to pick the bridge and/or engine.
+
   smtk::model::PropertyNameWithStrings typeIt = bridgeTypes.begin();
   std::string bridgeType, engineType;
+  bridgeType = typeIt->first.c_str();
+  if(typeIt->second.size() > 0)
+    engineType = (*typeIt->second.begin()).c_str();
+
+  // If there are more than one bridge or more than one engine on a bridge
+  // can handle this file, we need to pick the bridge and/or engine.
   if((bridgeTypes.size() > 1 || typeIt->second.size() > 1) &&
      !this->DetermineFileReader(filename, bridgeType, engineType, bridgeTypes))
     {
@@ -448,7 +460,7 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
   ModelBrowser* view = new ModelBrowser;
   smtk::model::Cursors cursors;
   smtk::model::Cursor::CursorsFromUUIDs(
-    cursors, storage, storage->entitiesMatchingFlags(mask, false));
+    cursors, storage, storage->entitiesMatchingFlags(mask, true));
   view->setup(
     storage, qmodel, qdelegate,
     smtk::model::EntityListPhrase::create()
@@ -456,7 +468,79 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
       ->setDelegate(
         smtk::model::SimpleModelSubphrases::create()));
 */
-  pxy->endBridgeSession(sessId);
+//  pxy->endBridgeSession(sessId);
+  return success;
+}
+
+//----------------------------------------------------------------------------
+bool ModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
+{
+  this->initialize();
+  if(!this->Internal->ManagerProxy || !brOp || !brOp->ableToOperate())
+    {
+    return false;
+    }
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
+  smtk::common::UUID sessId = brOp->bridge()->sessionId();
+  std::cout << "Found session: " << sessId << "\n";
+
+ // sessId = pxy->beginBridgeSession("cgm");
+
+  if(!pxy->validBridgeSession(sessId))
+    {
+    return false;
+    }
+
+  smtk::model::OperatorResult result = brOp->operate();
+  if (result->findInt("outcome")->value() !=
+    smtk::model::OPERATION_SUCCEEDED)
+    {
+    std::cerr << "operator failed: " << brOp->name() << "\n";
+    pxy->endBridgeSession(sessId);
+    return false;
+    }
+
+  bool sucess = this->handleOperationResult(result, sessId);
+  if(sucess)
+    {
+    emit this->operationFinished(result);
+    }
+//  pxy->endBridgeSession(sessId);
+  return sucess;
+}
+
+//----------------------------------------------------------------------------
+bool ModelManager::handleOperationResult(
+  const smtk::model::OperatorResult& result,
+  const smtk::common::UUID& bridgeSessionId)
+{
+  if (result->findInt("outcome")->value() !=
+    smtk::model::OPERATION_SUCCEEDED)
+    {
+    std::cerr << "operator failed\n";
+    return false;
+    }
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
+  pxy->fetchWholeModel();
+
+  smtk::model::ModelEntities modelEnts =
+    pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
+    smtk::model::MODEL_ENTITY);
+  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveView::instance().current());
+  bool success = false;
+  smtk::model::BridgePtr bridge = pxy->modelManager()->findBridgeSession(bridgeSessionId);
+  for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
+      it != modelEnts.end(); ++it)
+    {
+    if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
+      this->Internal->Models.end())
+      {
+      pxy->modelManager()->setBridgeForModel(bridge, (*it).entity());
+      success = this->Internal->addModelRepresentation(
+        *it, view, this->Internal->ManagerProxy, "");
+      }
+    }
+
   return success;
 }
 
@@ -479,6 +563,8 @@ bool ModelManager::DetermineFileReader(
       desc = typeIt->first;
       list->AddString(desc.c_str()); // bridge
       list->AddString((*tpit).c_str()); // engine
+      engineType = (*tpit).c_str();
+      bridgeType = desc.c_str();
       desc += "::";
       desc += *tpit;
       list->AddString(desc.c_str()); // bridge::engine
@@ -504,7 +590,25 @@ bool ModelManager::DetermineFileReader(
 void ModelManager::clear()
 {
   this->Internal->clear();
+  if(this->Internal->ManagerProxy)
+    this->Internal->ManagerProxy->endBridgeSessions();
   emit currentModelCleared();
+}
+
+//----------------------------------------------------------------------------
+bool ModelManager::startSession(const std::string& bridgeName)
+{
+  smtk::common::UUID bridgeId =
+    this->Internal->ManagerProxy->beginBridgeSession(bridgeName, true);
+  smtk::model::BridgePtr bridge =
+    this->managerProxy()->modelManager()->findBridgeSession(bridgeId);
+
+  if (!bridge)
+    {
+    std::cerr << "Could not start new bridge of type \"" << bridgeName << "\"\n";
+    return false;
+    }
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -514,6 +618,7 @@ void ModelManager::onPluginLoaded()
   if(this->Internal->ManagerProxy)
     {
     QStringList newFileTypes;
+    QStringList newBridgeNames;
     smtk::model::StringList oldBnames = this->Internal->ManagerProxy->bridgeNames();
     smtk::model::StringList newBnames = this->Internal->ManagerProxy->bridgeNames(true);
 
@@ -522,6 +627,7 @@ void ModelManager::onPluginLoaded()
       // if there is the new bridge
       if(std::find(oldBnames.begin(), oldBnames.end(), *it) == oldBnames.end())
         {
+        newBridgeNames << (*it).c_str();
         std::set<std::string> bftypes = this->supportedFileTypes(*it);
         for (std::set<std::string>::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
           {
@@ -529,9 +635,13 @@ void ModelManager::onPluginLoaded()
           }
         }
       }
+    if(newBridgeNames.count() > 0)
+      {
+      emit newBridgeLoaded(newBridgeNames);
+      }
     if(newFileTypes.count() > 0)
       {
-      emit newBridgeLoaded(newFileTypes);
+      emit newFileTypesAdded(newFileTypes);
       }
     }
 }

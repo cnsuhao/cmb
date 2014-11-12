@@ -38,7 +38,7 @@
 
 #include "SimBuilderCore.h"
 
-#include "pqFileDialog.h"
+#include "cmbSMTKUIHelper.h"
 
 #include <QLineEdit>
 #include <QStringList>
@@ -153,61 +153,8 @@ void smtkUIManager::onLaunchFileBrowser()
     {
     return;
     }
-  QLineEdit* lineEdit =  static_cast<QLineEdit*>(
-    fileItem->property("DataItem").value<void *>());
-  if(!lineEdit)
-    {
-    return;
-    }
-
-  QString filters;
-  bool existingFile=true;
-  if (!fileItem->isDirectory())
-    {
-    smtk::attribute::FileItemPtr fItem =
-      smtk::dynamic_pointer_cast<smtk::attribute::FileItem>(fileItem->getObject());
-    const smtk::attribute::FileItemDefinition *fItemDef =
-      dynamic_cast<const smtk::attribute::FileItemDefinition*>(fItem->definition().get());
-    filters = fItemDef->getFileFilters().c_str();
-    existingFile = fItemDef->shouldExist();
-    }
-  else
-    {
-    smtk::attribute::DirectoryItemPtr dItem =
-      smtk::dynamic_pointer_cast<smtk::attribute::DirectoryItem>(fileItem->getObject());
-    const smtk::attribute::DirectoryItemDefinition *dItemDef =
-      dynamic_cast<const smtk::attribute::DirectoryItemDefinition*>(dItem->definition().get());
-    existingFile = dItemDef->shouldExist();
-    }
-
-  QString title = fileItem->isDirectory() ? tr("Select Directory:") :
-    tr("Select File:");
-  pqFileDialog file_dialog(this->ActiveServer,
-     this->rootView()->parentWidget(),
-     title,
-     QString(),
-     filters);
-
-  if (fileItem->isDirectory())
-    {
-    file_dialog.setFileMode(pqFileDialog::Directory);
-    }
-  else if (existingFile)
-    {
-    file_dialog.setFileMode(pqFileDialog::ExistingFile);
-    }
-  else
-    {
-    file_dialog.setFileMode(pqFileDialog::AnyFile);
-    }
-  file_dialog.setObjectName("SimBuilder Select File Dialog");
-  file_dialog.setWindowModality(Qt::WindowModal);
-  if (file_dialog.exec() == QDialog::Accepted)
-    {
-    QStringList files = file_dialog.getSelectedFiles();
-    lineEdit->setText(files[0]);
-    fileItem->onInputValueChanged();
-    }
+  cmbSMTKUIHelper::process_smtkFileItemRequest(
+    fileItem, this->ActiveServer, this->rootView()->parentWidget());
 }
 //----------------------------------------------------------------------------
 void smtkUIManager::createFunctionWithExpression(

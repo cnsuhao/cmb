@@ -40,7 +40,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QtDebug>
 #include <QToolButton>
 
-#include <QBrush>
+#include <QMenu>
 #include <QDoubleSpinBox>
 #include <QDropEvent>
 #include <QHeaderView>
@@ -130,6 +130,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "ModelManager.h"
 #include "pqCMBColorMapWidget.h"
 #include "qtCMBTreeWidget.h"
+#include "vtkSMModelManagerProxy.h"
 
 #include <vtksys/SystemTools.hxx>
 #include "smtk/model/StringData.h"
@@ -166,6 +167,8 @@ public:
   QPointer<QAction> LoadMeshInfoAction;
   QPointer<QAction> CreateSimpleModelAction;
   QPointer<QAction> CreateModelEdgesAction;
+
+  QPointer<QMenu> NewModelBridgeMenu;
 
   pqPropertyLinks LineResolutionLinks;
   pqCMBSceneTree* SceneGeoTree;
@@ -300,8 +303,26 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
+  // Add "New Bridge Action", which will show all available bridges
+  this->Internal->NewModelBridgeMenu = new QMenu(this->getMainDialog()->menu_File);
+  this->Internal->NewModelBridgeMenu->setObjectName(QString::fromUtf8("menu_newbridge"));
+  this->Internal->NewModelBridgeMenu->setTitle(QString::fromUtf8("New Session..."));
+  this->getMainDialog()->menu_File->insertMenu(
+    this->getMainDialog()->action_Open_File,
+    this->Internal->NewModelBridgeMenu);
+
+  // adding bridges to the "New Session..." menu
+  smtk::model::StringList newBnames = this->getThisCore()->modelManager()->managerProxy()->bridgeNames();
+  for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
+    {
+    this->addNewBridge((*it).c_str());
+    }
+
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(newBridgeLoaded(const QStringList&)),
+      this, SLOT(addNewBridges(const QStringList&)));
+  QObject::connect(this->getThisCore()->modelManager(),
+      SIGNAL(newFileTypesAdded(const QStringList&)),
       this->loadDataReaction(), SLOT(addSpecialExtensions(const QStringList&)));
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(currentModelCleared()),
@@ -318,6 +339,37 @@ void pqCMBModelBuilderMainWindow::SetCheckBoxStateQuiet(QCheckBox* box, bool sta
   box->blockSignals(true);
   box->setChecked(state);
   box->blockSignals(false);
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::addNewBridge(const QString& brname)
+{
+  QAction* act = this->Internal->NewModelBridgeMenu->addAction(brname);
+  QObject::connect(act, SIGNAL(triggered()), this, SLOT(onCreateNewBridge()));
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::addNewBridges(const QStringList& brnames)
+{
+  foreach(QString brname, brnames)
+    {
+    this->addNewBridge(brname);
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onCreateNewBridge()
+{
+  QAction* const action = qobject_cast<QAction*>(
+    QObject::sender());
+  if(!action)
+    {
+    return;
+    }
+  std::string brName = action->text().toStdString();
+  bool started = this->getThisCore()->modelManager()->startSession(brName);
+  if(started)
+    this->getThisCore()->processModelInfo();
 }
 
 //----------------------------------------------------------------------------

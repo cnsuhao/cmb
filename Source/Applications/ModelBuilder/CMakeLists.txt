@@ -62,6 +62,7 @@ set(SimBuilder_SOURCES
   SimBuilder/SimBuilderUIPanel.cxx
   SimBuilder/smtkUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx
+  SimBuilder/cmbSMTKUIHelper.h
   ${CMAKE_CURRENT_BINARY_DIR}/DefaultExportTemplate.h
   )
 source_group("SimBuilder" FILES

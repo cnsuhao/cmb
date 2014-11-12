@@ -5,6 +5,7 @@
 #include "smtk/attribute/StringItem.h"
 
 #include "smtk/model/Manager.h"
+#include "smtk/model/ModelEntity.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 
@@ -32,6 +33,7 @@ vtkSMModelManagerProxy::vtkSMModelManagerProxy()
 
 vtkSMModelManagerProxy::~vtkSMModelManagerProxy()
 {
+  this->endBridgeSessions();
 }
 
 /// Print the state of this instance.
@@ -79,10 +81,33 @@ std::vector<std::string> vtkSMModelManagerProxy::bridgeNames(bool forceFetch)
   return resultVec;
 }
 
-smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(const std::string& bridgeName)
+bool vtkSMModelManagerProxy::validBridgeSession(
+  const smtk::common::UUID& bridgeId)
+{
+  return m_remoteBridgeSessionIds.find(bridgeId) != m_remoteBridgeSessionIds.end();
+}
+
+smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(
+  const std::string& bridgeName, bool createNew)
 {
   if (this->m_remoteBridgeNames.find(bridgeName) == this->m_remoteBridgeNames.end())
+    {
     return smtk::common::UUID::null();
+    }
+
+  if(!createNew)
+    {
+    // if there is already a bridge created, use that session.
+    std::map<smtk::common::UUID,std::string>::iterator it;
+    for (
+      it = this->m_remoteBridgeSessionIds.begin();
+      it != this->m_remoteBridgeSessionIds.end();
+      ++it)
+      {
+      if(it->second == bridgeName)
+        return it->first;
+      }  
+    }
 
   //FIXME: Sanitize bridgeName!
   std::string reqStr =
@@ -360,6 +385,8 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   if (!bridge)
     { // No existing bridge of that type. Create a new remote session.
     smtk::common::UUID bridgeId = this->beginBridgeSession(actualBridgeName);
+    std::cout << "started bridgeID: " << bridgeId.toString() <<std::endl;
+
     bridge = this->m_modelMgr->findBridgeSession(bridgeId);
     }
   if (!bridge)
@@ -382,12 +409,34 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
 
   cJSON* json = cJSON_CreateObject();
   ExportJSON::forOperator(fileOp, json);
-  std::cout << "Found operator " << cJSON_Print(json) << ")\n";
+//  std::cout << "Found operator " << cJSON_Print(json) << ")\n";
   OperatorResult result = fileOp->operate();
   json = cJSON_CreateObject();
   ExportJSON::forOperatorResult(result, json);
-  std::cout << "Result " << cJSON_Print(json) << "\n";
+//  std::cout << "Result " << cJSON_Print(json) << "\n";
+
+  smtk::common::UUIDs oldmodels =
+    this->m_modelMgr->entitiesMatchingFlags(
+      MODEL_ENTITY, true);
+
   this->fetchWholeModel();
+
+  smtk::model::ModelEntities models =
+    this->m_modelMgr->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
+      MODEL_ENTITY, true);
+
+  for (ModelEntities::iterator mit = models.begin(); mit != models.end(); ++mit)
+    {
+    if(oldmodels.find(mit->entity()) != oldmodels.end())
+      continue;
+//    std::cout << "Original bridge name " << mit->bridge()->name() << "\n";
+    if(!mit->bridge() || mit->bridge()->name() == "native") // a new model
+      {
+//      std::cout << "New bridge name " << bridge->name() << "\n";
+//      std::cout << "Client set model bridge " << mit->entity().toString() << "\n";
+      this->m_modelMgr->setBridgeForModel(bridge, mit->entity());
+      }
+    }
   this->m_modelMgr->assignDefaultNames();
 
   return result;
@@ -478,4 +527,17 @@ void vtkSMModelManagerProxy::fetchWholeModel()
     (topo = cJSON_GetObjectItem(model, "topo")))
     ImportJSON::ofManager(topo, this->m_modelMgr);
   cJSON_Delete(response);
+}
+
+void vtkSMModelManagerProxy::endBridgeSessions()
+{
+  std::map<smtk::common::UUID,std::string>::iterator it;
+  for (
+    it = this->m_remoteBridgeSessionIds.begin();
+    it != this->m_remoteBridgeSessionIds.end();
+    ++it)
+    {
+    this->endBridgeSession(it->first);
+    }
+  this->m_remoteBridgeSessionIds.clear();
 }

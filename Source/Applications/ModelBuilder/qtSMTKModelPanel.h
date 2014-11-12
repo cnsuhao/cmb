@@ -9,7 +9,14 @@
 #include <QDockWidget>
 
 #include "smtk/common/UUID.h"
+
 class ModelManager;
+
+namespace smtk {
+ namespace attribute {
+  class qtFileItem;
+ }
+}
 
 class qtSMTKModelPanel : public QDockWidget
 {
@@ -26,6 +33,8 @@ public slots:
 
 protected slots:
   void selectEntities(const smtk::common::UUIDs& ids);
+  void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
+  void onLaunchFileBrowser();
 
 private:
   class qInternal;
