@@ -33,6 +33,7 @@ class vtkObject;
 class smtkUIManagerInternals;
 class vtkSMProxy;
 class SimBuilderCore;
+class ModelManager;
 
 class smtkUIManager : public QObject
 {
@@ -59,7 +60,8 @@ public:
 
   smtk::attribute::qtRootView* rootView();
   void initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore);
-  smtk::model::ManagerPtr attModel() const;
+  smtk::model::ManagerPtr attModelManager() const;
+  void setModelManager(smtk::model::ManagerPtr);
 
   void getAttributeDefinitions(
            QMap<QString, QList<smtk::attribute::DefinitionPtr> > &attDefMap);

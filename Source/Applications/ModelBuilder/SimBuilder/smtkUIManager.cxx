@@ -28,6 +28,7 @@
 #include "smtk/extension/qt/qtAttributeView.h"
 #include "smtk/extension/qt/qtBaseView.h"
 #include "smtk/extension/qt/qtSimpleExpressionView.h"
+#include "smtk/model/Manager.h"
 
 #include "vtkDoubleArray.h"
 #include "vtkEventQtSlotConnect.h"
@@ -48,7 +49,7 @@ class smtkUIManagerInternals
 {
   public:
 
-  smtk::model::ManagerPtr AttModel;
+  smtk::model::WeakManagerPtr ModelMgr;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> > DefMap;
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> >::const_iterator DefMapIt;
 };
@@ -61,11 +62,7 @@ smtkUIManager::smtkUIManager()
   this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
   this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem));
   this->Internals = new smtkUIManagerInternals;
-  // FIXME: There is no more smtk::model::Model
-  //this->Internals->AttModel = smtk::model::Manager::create();
-  //this->AttSystem->setRefModelManager(this->Internals->AttModel);
-
-}
+ }
 
 //----------------------------------------------------------------------------
 smtkUIManager::~smtkUIManager()
@@ -78,6 +75,7 @@ smtkUIManager::~smtkUIManager()
     delete this->qtAttSystem;
     }
 }
+
 //----------------------------------------------------------------------------
 smtk::attribute::qtRootView* smtkUIManager::rootView()
 {
@@ -85,9 +83,20 @@ smtk::attribute::qtRootView* smtkUIManager::rootView()
 }
 
 //----------------------------------------------------------------------------
-smtk::model::ManagerPtr smtkUIManager::attModel() const
+smtk::model::ManagerPtr smtkUIManager::attModelManager() const
 {
-  return this->Internals->AttModel;
+  return this->Internals->ModelMgr.lock();
+}
+
+//----------------------------------------------------------------------------
+void smtkUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
+{
+  smtk::model::ManagerPtr curManager = this->Internals->ModelMgr.lock();
+  if (curManager != refModelMgr)
+    {
+    this->Internals->ModelMgr = refModelMgr;
+    this->AttSystem->setRefModelManager(refModelMgr);
+    }
 }
 
 //----------------------------------------------------------------------------

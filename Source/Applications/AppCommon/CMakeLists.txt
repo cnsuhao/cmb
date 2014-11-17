@@ -208,6 +208,8 @@ target_link_libraries(cmbAppCommon
   LINK_PUBLIC
     vtkCMBGeneral
     pqApplicationComponents
+#    vtkCMBMeshing # required by pqCMBSceneNode.cxx
+#    vtkIOXMLParser
     CMB_Plugin
   LINK_PRIVATE
     QtTesting

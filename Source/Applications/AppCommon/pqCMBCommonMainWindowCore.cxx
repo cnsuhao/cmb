@@ -179,8 +179,7 @@ using namespace RepresentationHelperFunctions;
 //we only init the cmb plugin here as it is common across all applications
 //the CMBModel_Plugin and SimbBuilderMesh_Plugin are inited in the Core of
 //each application that depends on the,
-//PV_PLUGIN_IMPORT_INIT(CMB_Plugin)
-
+PV_PLUGIN_IMPORT_INIT(CMB_Plugin)
 
 ///////////////////////////////////////////////////////////////////////////
 // pqCMBCommonMainWindowCore::vtkInternal
@@ -1089,8 +1088,7 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->RenderView->getWidget()->installEventFilter(this);
 
   // link in the cmb plugin here as all applications use it.
-  // With the new cmb_v4, The ModelBuilder does not need this yet.
-  //PV_PLUGIN_IMPORT(CMB_Plugin)
+  PV_PLUGIN_IMPORT(CMB_Plugin)
 
   // Load the plugins for the server, paraview initializer code
   // handles the client side plugins
