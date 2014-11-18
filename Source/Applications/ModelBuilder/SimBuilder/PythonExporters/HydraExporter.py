@@ -448,11 +448,13 @@ def write_plotvar_section(manager, categories, out, name):
     for att in ss_att_list:
         item = att.find('varname')
         var_item = smtk.attribute.to_concrete(item)
-        entities = att.associatedEntitiesSet()
+        entities = att.associatedEntities()
         for entity in entities:
             #out.write('    block %s\n' % get_id_from_name(entity.name()))
-            t = ('side ', get_id_from_name(entity.name()), var_item.value(0))
-            ss_tlist.append(t)
+            etyp = entity.stringProperty('exodus type')
+            if len(etyp) > 0 and etyp[0] == 'side set':
+              t = ('side ', entity.integer_property('exodus id'), var_item.value(0))
+              ss_tlist.append(t)
 
     ss_tlist.sort()
 
@@ -499,11 +501,13 @@ def write_histvar_section(manager, categories, out):
     for att in ss_att_list:
         item = att.find('varname')
         var_item = smtk.attribute.to_concrete(item)
-        entities = att.associatedEntitiesSet()
+        entities = att.associatedEntities()
         for entity in entities:
             #out.write('    block %s\n' % get_id_from_name(entity.name()))
-            t = ('side ', get_id_from_name(entity.name()), var_item.value(0))
-            ss_tlist.append(t)
+            etyp = entity.stringProperty('exodus type')
+            if len(etyp) > 0 and etyp[0] == 'side set':
+              t = ('side ', entity.integer_property('exodus id'), var_item.value(0))
+              ss_tlist.append(t)
 
     ss_tlist.sort()
 
@@ -529,10 +533,12 @@ def write_bc_section(manager, section_config, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_set = att.associatedEntitiesSet()
+        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number (is this a UserData thing?)
-        for ent in ent_set:
-            sideset = get_id_from_name(ent.name())
+        for ent in ent_arr:
+            if not ent.hasIntegerProperty('exodus id'):
+              continue
+            sideset = ent.integerProperty('exodus id')
 
             item = att.find('LoadCurve')
             lcid = get_loadcurve_id(item)
@@ -566,18 +572,22 @@ def write_distance_section(manager, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_set = att.associatedEntitiesSet()
+        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
-        for ent in ent_set:
-            sideset = get_id_from_name(ent.name())
+        for ent in ent_arr:
+            if not ent.hasIntegerProperty('exodus id'):
+              continue
+            sideset = ent.integerProperty('exodus id')
             out.write('    sideset %s -1 0.0\n' % sideset)
 
     # Then write penetration atts
     for att in plist:
-        ent_set = att.associatedEntitiesSet()
+        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
-        for ent in ent_set:
-            sideset = get_id_from_name(ent.name())
+        for ent in ent_arr:
+            if not ent.hasIntegerProperty('exodus id'):
+              continue
+            sideset = ent.integerProperty('exodus id')
 
             item = att.find('LoadCurve')
             lcid = get_loadcurve_id(item)
@@ -621,9 +631,11 @@ def write_vector_bc_section(manager, config, categories, out):
             if not att.isMemberOf(categories):
                 continue
 
-            ent_set = att.associatedEntitiesSet()
-            for ent in ent_set:
-                sideset = get_id_from_name(ent.name())
+            ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
+            for ent in ent_arr:
+                if not ent.hasIntegerProperty('exodus id'):
+                  continue
+                sideset = ent.integerProperty('exodus id')
                 ent_att_list = bc_dict.get(sideset)
                 if ent_att_list is None:
                     ent_att_list = list()
@@ -751,7 +763,7 @@ def write_body_force_section(manager, categories, out):
             if not att.isMemberOf(categories):
                 continue
 
-            if 0 == att.numberOfAssociatedEntities():
+            if 0 == len(att.associatedEntities()):
                 if unassociated_att is None:
                     unassociated_att = att
                 else:
@@ -761,11 +773,9 @@ def write_body_force_section(manager, categories, out):
                         (unassociated_att.name(), att.name())
                     print msg
             elif model is None:
-                # Retrieve set of all model domain sets
-                entities = att.associatedEntitiesSet()
-                model = entities.pop().model()
-                #print 'Retrieved model'
-                domain_sets = get_domain_sets(model)
+              # Retrieve set of all model domain sets
+              model = att.associatedEntities().pop().owningModel()
+              domain_sets = get_domain_sets(model)
 
         # Traverse again to actually write the output.
         # Keep track of which domains get output.
@@ -773,7 +783,7 @@ def write_body_force_section(manager, categories, out):
         if domain_sets is not None:
             unused_domain_sets = set(domain_sets)
         for att in att_list:
-            entities = att.associatedEntitiesSet()
+            entities = att.associatedEntities()
             for entity in entities:
                 unused_domain_sets.discard(entity)
                 write_body_force(att, entity, out)
@@ -986,9 +996,9 @@ def write_section(manager, section_config, categories, out):
         out.write('    id %i\n' % materialSetCounter)
         materialSetCounter = materialSetCounter+1
         out.write('    material %i\n' % att.materialId)
-        entities = att.associatedEntitiesSet()
+        entities = att.associatedEntities()
         for entity in entities:
-            out.write('    block %s\n' % get_id_from_name(entity.name()))
+            out.write('    block %s\n' % entity.integerProperty('exodus id'))
         out.write('  end\n')
 
     return True
@@ -1070,24 +1080,7 @@ def get_domain_sets(model):
     implemented on smtk:master as of August 2014. If this method is not
     available, this function returns None for its output.
     '''
-    # Confirm that smtk can generate the set
-    if not hasattr(smtk.model.GroupItem, 'CastTo'):
-        return None
-
-    domain_sets = set()
-    item_map = model.itemMap()
-    #print 'item_map', item_map
-    for model_item in item_map.values():
-        #print 'model_item', model_item.type(), model_item.name()
-        if (smtk.model.Item.Type.GROUP == model_item.type()):
-            model_group_item = smtk.model.GroupItem.CastTo(model_item)
-            #print 'model_group_item %s 0x%x' % (model_group_item.name(), model_group_item.entityMask())
-            mask = model_group_item.entityMask()
-            volume_mask = 0x8
-            if volume_mask == (mask & volume_mask):
-                #print 'domainset: %s %d' % (model_group_item.name(), model_group_item.id())
-                domain_sets.add(model_item)
-    return frozenset(domain_sets)
+    return frozenset([x for x in model.groups() if (x.entityFlags() & int(smtk.model.MODEL_DOMAIN))])
 
 
 def get_loadcurve_id(item):
