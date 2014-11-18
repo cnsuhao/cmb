@@ -281,7 +281,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
   smtk::model::BridgePtr bridge,
   const std::string& engineName)
 {
-  OperatorPtr readOp = bridge->op("read", this->m_modelMgr);
+  OperatorPtr readOp = bridge->op("read");
   // Assuming all bridge should have a ReadOperator
   if (!readOp)
     {
@@ -303,7 +303,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
     return readOp;
     }
   // try "import" if there is one
-  OperatorPtr importOp = bridge->op("import", this->m_modelMgr);
+  OperatorPtr importOp = bridge->op("import");
   // Not all bridge should have an ImportOperator
   if (importOp)
     {
