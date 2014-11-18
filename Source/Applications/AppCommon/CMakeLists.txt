@@ -6,6 +6,8 @@ set (dynamicHeaders)
 
 find_package(Remus REQUIRED)
 
+add_definitions("-DCMB_ENABLE_PYTHON")
+
 # Add Qt UI files here
 set(UI_FORMS
     UI/qtAboutDialog.ui
@@ -216,6 +218,11 @@ target_link_libraries(cmbAppCommon
     RemusClient
   )
 
+if (PARAVIEW_ENABLE_PYTHON)
+  target_link_libraries(cmbAppCommon
+    LINK_PRIVATE vtkUtilitiesPythonInitializer)
+endif()
+
 target_include_directories(cmbAppCommon
   PUBLIC
     ${cmbAppCommon_SOURCE_DIR}
@@ -233,6 +240,7 @@ target_include_directories(cmbAppCommon
   PRIVATE
     ${VXL_RPL_INCLUDE_DIR}
   )
+
 
 #let cmake do what qt4_wrap_cpp used to do automatically
 set_target_properties(cmbAppCommon PROPERTIES AUTOMOC TRUE)

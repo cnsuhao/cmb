@@ -63,6 +63,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkClientServerStream.h"
 #include "vtkSMSession.h"
 #include "vtkSMIntVectorProperty.h"
+#include "vtkSMProxyProperty.h"
+#include "vtkSMModelManagerProxy.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -700,7 +702,7 @@ void SimBuilderCore::clearSimulationModel()
 }
 
 //----------------------------------------------------------------------------
-void SimBuilderCore::ExportSimFile()
+void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
 {
 /*
   // Check if there is an unsaved mesh
@@ -753,28 +755,19 @@ void SimBuilderCore::ExportSimFile()
         "No python script specified.");
       return;
       }
-/*
+
     // Set up proxy to server
     vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
 
-    vtkSmartPointer<vtkSMOperatorProxy> operatorProxy(
-      vtkSMOperatorProxy::SafeDownCast(
-        manager->NewProxy("CMBModelGroup", "PythonExporter")));
-    if(!operatorProxy)
+    vtkSmartPointer<vtkSMProxy> exportProxy(
+      manager->NewProxy("ModelBridge", "PythonExporter"));
+    if(!exportProxy)
       {
-      QMessageBox::warning(NULL, "Failure to create operator",
+      QMessageBox::warning(NULL, "Failure to create PythonExporter",
         "Unable to create PythonExporter proxy.");
       return;
       }
 
-    pqCMBModel* model = this->getCMBModel();
-    if(!model)
-      {
-      QMessageBox::warning(NULL, "Export Warning!",
-                           "No model available!");
-      return;
-      }
-*/
     std::string simContents;
     smtk::io::AttributeWriter xmlw;
     smtk::io::Logger logger;
@@ -782,7 +775,7 @@ void SimBuilderCore::ExportSimFile()
                                          simContents, logger);
     if(errStatus)
       {
-      QMessageBox::warning(this->GetUIPanel(),
+      QMessageBox::warning(NULL,
                            "Problem saving SimBuilder file!",
                            logger.convertToString().c_str());
       std::cerr << logger.convertToString() << std::endl;
@@ -794,50 +787,53 @@ void SimBuilderCore::ExportSimFile()
                                    exportContents, logger);
     if(errStatus)
       {
-      QMessageBox::warning(this->GetUIPanel(),
+      QMessageBox::warning(NULL,
                            "Problem saving SimBuilder file!",
                            logger.convertToString().c_str());
       std::cerr << logger.convertToString() << std::endl;
       return;
       }
-/*
-    pqSMAdaptor::setElementProperty(operatorProxy->GetProperty("Script"),
-                                    script.c_str());
-    //pqSMAdaptor::setElementProperty(operatorProxy->GetProperty("OutputFilename"),
-    //                                exportDlg.getFileName());
-    //pqSMAdaptor::setElementProperty(operatorProxy->GetProperty("AnalysisName"),
-    //                                exportDlg.getAnalysisName());
 
-    operatorProxy->UpdateVTKObjects();
+    pqSMAdaptor::setElementProperty(exportProxy->GetProperty("Script"),
+                                    script.c_str());
+    vtkSMProxyProperty* smwrapper =
+      vtkSMProxyProperty::SafeDownCast(
+      exportProxy->GetProperty("ModelManagerWrapper"));
+    smwrapper->RemoveAllProxies();
+    smwrapper->AddProxy(mmproxy);
+//    vtkSMPropertyHelper(exportProxy, "ModelEntityID").Set(
+//      model.entity().toString().c_str());
+
+    exportProxy->UpdateVTKObjects();
     vtkClientServerStream stream;
     stream  << vtkClientServerStream::Invoke
-            << VTKOBJECT(operatorProxy) << "Operate"
-            << VTKOBJECT(model->getModelWrapper())
+            << VTKOBJECT(exportProxy) << "Operate"
+            << VTKOBJECT(mmproxy)
             << simContents
             << exportContents
             << vtkClientServerStream::End;
 
-//    model->getModelWrapper()->GetSession()->ExecuteStream(model->getModelWrapper()->GetLocation(), stream);
+    mmproxy->GetSession()->ExecuteStream(mmproxy->GetLocation(), stream);
 
     // check to see if the operation succeeded on the server
     vtkSMIntVectorProperty* operateSucceeded =
       vtkSMIntVectorProperty::SafeDownCast(
-        operatorProxy->GetProperty("OperateSucceeded"));
-    operatorProxy->UpdatePropertyInformation();
+        exportProxy->GetProperty("OperateSucceeded"));
+    exportProxy->UpdatePropertyInformation();
 
     if(operateSucceeded->GetElement(0))
       {
-      operatorProxy->UpdatePropertyInformation();
+      exportProxy->UpdatePropertyInformation();
       }
     else
       {
       QMessageBox::warning(NULL, "Failure of server operator",
-        "Server side create rectangle model failed.");
+        "Server side Export failed.");
       }
 
-    operatorProxy->Delete();
-    operatorProxy = 0;
-*/
+    exportProxy->Delete();
+    exportProxy = 0;
+
     }
 
   return;

@@ -44,5 +44,39 @@
 
     </SourceProxy>
 
+    <Proxy name="PythonExporter" class="vtkPythonExporter">
+      <StringVectorProperty name="Script"
+                            command="SetScript"
+                            number_of_elements="1">
+        <Documentation>
+          Set the Python script to run on the server.
+        </Documentation>
+      </StringVectorProperty>
+
+      <ProxyProperty name="ModelManagerWrapper"
+        command="SetModelManagerWrapper"
+        label="Model Manager Wrapper">
+        <ProxyGroupDomain name="groups">
+          <Group name="ModelBridge"/>
+        </ProxyGroupDomain>
+        <Documentation>
+          Set the parameters of the contour function.
+        </Documentation>
+      </ProxyProperty>
+
+      <IntVectorProperty
+          name="OperateSucceeded"
+          command="GetOperateSucceeded"
+          number_of_elements="1"
+          information_only="1"
+          default_values="0" >
+        <SimpleIntInformationHelper/>
+        <Documentation>
+          Return if the operation on the server was successful.
+        </Documentation>
+      </IntVectorProperty>
+      <!-- End of PythonExporter -->
+    </Proxy>
+
   </ProxyGroup>
 </ServerManagerConfiguration>

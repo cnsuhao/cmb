@@ -1049,7 +1049,8 @@ void pqCMBModelBuilderMainWindowCore::onSaveSimulation()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onExportSimFile()
 {
-  this->getSimBuilder()->ExportSimFile();
+  this->getSimBuilder()->ExportSimFile(
+    this->modelManager()->managerProxy());
 }
 
 //-----------------------------------------------------------------------------

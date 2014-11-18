@@ -14,6 +14,7 @@ SET(CmbBridgelFiles
 SET(CmbBridgelServerFiles
   vtkModelManagerWrapper.cxx
   vtkPVSMTKModelSource.cxx
+  vtkPythonExporter.cxx
 )
 
 SET_SOURCE_FILES_PROPERTIES(

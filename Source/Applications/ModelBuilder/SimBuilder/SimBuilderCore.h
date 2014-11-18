@@ -18,6 +18,7 @@ class vtkSMProxy;
 class pqRenderView;
 class smtkUIManager;
 class SimBuilderCustomExportDialog;
+class vtkSMModelManagerProxy;
 
 class SimBuilderCore : public QObject
 {
@@ -57,7 +58,7 @@ public:
   int LoadResources(pqPipelineSource* reader, pqCMBSceneTree* sceneTree);
   bool setDefaultExportTemplate();
 
-  void ExportSimFile();
+  void ExportSimFile(vtkSMModelManagerProxy* mmproxy);
 
   smtkUIManager* attributeUIManager();
   SimBuilderUIPanel* GetUIPanel();

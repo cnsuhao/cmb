@@ -1,27 +1,13 @@
-/*=========================================================================
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 
-Copyright (c) 1998-2005 Kitware Inc. 28 Corporate Drive, Suite 204,
-Clifton Park, NY, 12065, USA.
-
-All rights reserved. No part of this software may be reproduced,
-distributed,
-or modified, in any form or by any means, without permission in writing from
-Kitware Inc.
-
-IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
-DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
-OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
-EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
-INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE IS PROVIDED ON AN
-"AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO
-PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
-=========================================================================*/
 // .NAME vtkPythonExporter - Export info with a Python script.
 // .SECTION Description
 // Operator to export ModelBuilder, SimBuilder and SMTK information through
@@ -30,17 +16,16 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __vtkPythonExporter_h
 #define __vtkPythonExporter_h
 
-#include "vtkCmbDiscreteModelModule.h" // For export macro
+#include "ModelBridgeClientModule.h"
 #include <vector> // for callback method for SMTK Model
 #include <utility> // for pair in callback method for SMTK model
 #include "vtkObject.h"
-#include "smtk/attribute/Manager.h"
-#include "cmbSystemConfig.h"
+#include "smtk/attribute/System.h"
+#include "smtk/PublicPointerDefs.h"
 
-class vtkDiscreteModelWrapper;
-class vtkDiscreteModel;
+class vtkModelManagerWrapper;
 
-class VTKCMBDISCRETEMODEL_EXPORT vtkPythonExporter : public vtkObject
+class MODELBRIDGECLIENT_EXPORT vtkPythonExporter : public vtkObject
 {
 public:
   static vtkPythonExporter * New();
@@ -48,18 +33,18 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // This method is for standard paraview client-server apps
-  virtual void Operate(vtkDiscreteModelWrapper* modelWrapper,
+  virtual void Operate(vtkModelManagerWrapper *modelMgrWrapper,
                        const char* smtkContents);
 
   // This method is for *legacy* paraview client-server apps
-  virtual void Operate(vtkDiscreteModelWrapper* modelWrapper,
+  virtual void Operate(vtkModelManagerWrapper *modelMgrWrapper,
                        const char* smtkContents,
                        const char* exportContents);
 
   // This method is for standalone & test apps
-  virtual void Operate(vtkDiscreteModel* model,
-                       smtk::attribute::Manager& simulationAttributes,
-                       smtk::attribute::Manager& exportAttributes);
+  virtual void Operate(smtk::model::ManagerPtr mgr,
+                       smtk::attribute::System& simulationAttributes,
+                       smtk::attribute::System& exportAttributes);
 
   // Description:
   // Returns success (1) or failue (0) for Operation.
@@ -79,13 +64,18 @@ public:
   vtkSetStringMacro(PythonExecutable);
   vtkGetStringMacro(PythonExecutable);
 
+  // Description:
+  // Set model manager wrapper
+  void SetModelManagerWrapper(vtkModelManagerWrapper *modelManager);
+  vtkGetObjectMacro(ModelManagerWrapper, vtkModelManagerWrapper);
+
 protected:
   vtkPythonExporter();
   virtual ~vtkPythonExporter();
 
   // Description:
   // Check to see if everything is properly set for the operator.
-  virtual bool AbleToOperate(vtkDiscreteModelWrapper* modelWrapper);
+  virtual bool AbleToOperate(vtkModelManagerWrapper* modelWrapper);
 
   char *Script;
   char *PythonPath;
@@ -94,6 +84,9 @@ protected:
 private:
   vtkPythonExporter(const vtkPythonExporter&);  // Not implemented.
   void operator=(const vtkPythonExporter&);  // Not implemented.
+
+  // Reference model Manager wrapper:
+  vtkModelManagerWrapper* ModelManagerWrapper;
 
   // Description:
   // Flag to indicate that the operation on the model succeeded (1) or not (0).

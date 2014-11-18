@@ -169,6 +169,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef CMB_ENABLE_PYTHON
+#include "vtkCMBInitializePython.h"
+#endif
+
 #include "pqRepresentationHelperFunctions.h"
 using namespace RepresentationHelperFunctions;
 
@@ -280,6 +284,10 @@ public:
   qtCMBMeshingClient* MeshingClient;
   bool CenterFocalLinked;
 
+  // Set to true in InitializePythonEnvironment() if Finalize() should cleanup
+  // Python.
+  bool FinalizePython;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -352,10 +360,12 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
 
   this->Internal->VTKConnect = vtkSmartPointer<vtkEventQtSlotConnect>::New();
   this->Internal->CenterFocalLinked = false;
+  this->Internal->FinalizePython = false;
 
   //setup the override for the tab widget testing translator
   core->testUtility()->eventTranslator()->addWidgetEventTranslator(
                     new pqCMBTabWidgetTranslator( core->testUtility() ) );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -1885,6 +1895,9 @@ void pqCMBCommonMainWindowCore::applicationInitialize()
   pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
     new pqCMBTreeWidgetEventTranslator(
                       pqApplicationCore::instance()->testUtility() ));
+
+  this->InitializePythonEnvironment();
+
 }
 
 //-----------------------------------------------------------------------------
@@ -2358,6 +2371,29 @@ void pqCMBCommonMainWindowCore::applyAppSettings()
 {
   this->appSettingsDialog();
   //this->cmbAppOptions()->loadGlobalPropertiesFromSettings();
+}
+
+
+//-----------------------------------------------------------------------------
+bool pqCMBCommonMainWindowCore::InitializePythonEnvironment()
+{
+    if(!vtkPythonInterpreter::IsInitialized())
+    {
+        // If someone already initialized Python before ProcessModule was started,
+        // we don't finalize it when ProcessModule finalizes. This is for the cases
+        // where ParaView modules are directly imported in python (not pvpython).
+        //pqCMBCommonMainWindowCore::FinalizePython = true;
+        //this->FinalizePython = true;
+        this->Internal->FinalizePython = true;
+    }
+
+    std::string program_path = QApplication::applicationFilePath().toStdString();
+    std::string program_dir = QApplication::applicationDirPath().toStdString();
+    std::string program_name = QApplication::applicationName().toStdString();
+
+    vtkPythonInterpreter::SetProgramName(program_name.c_str());
+    vtkCMBPythonAppInitPrependPath(program_dir.c_str());
+    return true;
 }
 
 //-----------------------------------------------------------------------------

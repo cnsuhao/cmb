@@ -1,35 +1,15 @@
-/*=========================================================================
-
-Copyright (c) 1998-2005 Kitware Inc. 28 Corporate Drive, Suite 204,
-Clifton Park, NY, 12065, USA.
-
-All rights reserved. No part of this software may be reproduced,
-distributed,
-or modified, in any form or by any means, without permission in writing from
-Kitware Inc.
-
-IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
-DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
-OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
-EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
-INCLUDING,
-BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE IS PROVIDED ON AN
-"AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO
-PROVIDE
-MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
-
-=========================================================================*/
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 
 #include "vtkPythonExporter.h"
 
-#include <vtkDiscreteModel.h>
-#include "vtkDiscreteModelWrapper.h"
-#include "PythonExportGridInfo2D.h"
-#include "PythonExportGridInfo3D.h"
-#include <vtkModelGeneratedGridRepresentation.h>
 #include <vtkObjectFactory.h>
 #include <vtkPythonInterpreter.h>
 
@@ -38,8 +18,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <smtk/attribute/Attribute.h>
 #include <smtk/attribute/Item.h>
 #include <smtk/attribute/FileItem.h>
-#include <smtk/attribute/Manager.h>
-#include <smtk/model/Model.h>
+#include <smtk/attribute/System.h>
+#include <smtk/model/Manager.h>
 
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/Logger.h>
@@ -49,6 +29,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <algorithm>
 #include <sstream>
 
+#include "vtkModelManagerWrapper.h"
 
 namespace
 {
@@ -56,7 +37,7 @@ namespace
   // Given the attributes serialized into contents, deserialize that
   // data into manager.
   void DeserializeSMTK(const char* contents,
-                       smtk::attribute::Manager& manager)
+                       smtk::attribute::System& manager)
   {
     smtk::io::AttributeReader xmlr;
     smtk::io::Logger logger;
@@ -67,6 +48,7 @@ namespace
 }
 
 vtkStandardNewMacro(vtkPythonExporter);
+vtkCxxSetObjectMacro(vtkPythonExporter,ModelManagerWrapper,vtkModelManagerWrapper);
 
 vtkPythonExporter::vtkPythonExporter()
 {
@@ -74,6 +56,7 @@ vtkPythonExporter::vtkPythonExporter()
   this->Script = 0;
   this->PythonPath = 0;
   this->PythonExecutable = 0;
+  this->ModelManagerWrapper = NULL;
 }
 
 vtkPythonExporter::~vtkPythonExporter()
@@ -81,9 +64,10 @@ vtkPythonExporter::~vtkPythonExporter()
   this->SetScript(0);
   this->SetPythonPath(0);
   this->SetPythonExecutable(0);
+  this->SetModelManagerWrapper(NULL);
 }
 
-void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
+void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
                                 const char* smtkContents,
                                 const char* exportContents)
 {
@@ -94,19 +78,19 @@ void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
     }
 
   // create the attributes from smtkContents
-  smtk::attribute::Manager simManager;
+  smtk::attribute::System simManager;
   // FIXME: There is no more smtk::model::Model
   //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
   //simManager.setRefModel(modelPtr);
   DeserializeSMTK(smtkContents, simManager);
 
-  smtk::attribute::Manager exportManager;
+  smtk::attribute::System exportManager;
   DeserializeSMTK(exportContents, exportManager);
 
-  this->Operate(modelWrapper->GetModel(), simManager, exportManager);
+  this->Operate(modelWrapper->GetModelManager(), simManager, exportManager);
 }
 
-void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
+void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
                                 const char* smtkContents)
 {
   if(!this->AbleToOperate(modelWrapper))
@@ -116,16 +100,16 @@ void vtkPythonExporter::Operate(vtkDiscreteModelWrapper* modelWrapper,
     }
 
   // create the attributes from smtkContents
-  smtk::attribute::Manager manager;
+  smtk::attribute::System manager;
   // FIXME: There is no more smtk::model::Model
   //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
   //manager.setRefModel(modelPtr);
   DeserializeSMTK(smtkContents, manager);
 
   // Create empty export manager
-  smtk::attribute::Manager exportManager;
+  smtk::attribute::System exportManager;
 
-  this->Operate(modelWrapper->GetModel(), manager, exportManager);
+  this->Operate(modelWrapper->GetModelManager(), manager, exportManager);
 }
 
 template<class IN> std::string to_hex_address(IN* ptr)
@@ -141,9 +125,9 @@ template<class IN> std::string to_hex_address(IN* ptr)
   return address;
 }
 
-void vtkPythonExporter::Operate(vtkDiscreteModel* model,
-                                smtk::attribute::Manager& manager,
-                                smtk::attribute::Manager& exportManager)
+void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
+                                smtk::attribute::System& manager,
+                                smtk::attribute::System& exportManager)
 {
   // Check that we have a python script
   if (!this->GetScript() || strcmp(this->GetScript(),"")==0 )
@@ -195,8 +179,13 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
     vtkPythonInterpreter::RunSimpleString(pathscript.c_str());
     }
 
+///***************************************************************///
+/// NOTE: we have to figure out something for discrete/cmb bridge ///
+ /*
   // Initialize GridInfo object
   smtk::model::ModelPtr smtkModel = manager.refModel();
+
+ 
   PythonExportGridInfo *gridInfoRaw = 0x0;
   if (2 == model->GetModelDimension())
     {
@@ -208,6 +197,8 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
     }
   smtk::shared_ptr< PythonExportGridInfo > gridInfo(gridInfoRaw);
   smtkModel->setGridInfo(gridInfo);
+
+
   // Get filename from model
   std::string name = model->GetFileName();
   if (name == "")
@@ -217,12 +208,14 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
     name = mesh.GetFileName();
     }
   smtkModel->setNativeModelName(name);
+*/
+///***************************************************************///
 
   // Initialize ExportSpec object
   smtk::simulation::ExportSpec spec;
   spec.setSimulationAttributes(&manager);
   spec.setExportAttributes(&exportManager);
-  spec.setAnalysisGridInfo(gridInfo);
+//  spec.setAnalysisGridInfo(gridInfo);
 
   std::string runscript;
   std::string script = vtksys::SystemTools::GetFilenameWithoutExtension(this->Script);
@@ -246,11 +239,11 @@ void vtkPythonExporter::Operate(vtkDiscreteModel* model,
   this->OperateSucceeded = 1;
 }
 
-bool vtkPythonExporter::AbleToOperate(vtkDiscreteModelWrapper* modelWrapper)
+bool vtkPythonExporter::AbleToOperate(vtkModelManagerWrapper* modelWrapper)
 {
   if(!modelWrapper)
     {
-    vtkErrorMacro("Passed in a null model wrapper.");
+    vtkErrorMacro("Passed in a null model manager wrapper.");
     return false;
     }
   if(!this->Script)

@@ -40,8 +40,8 @@ public:
   vtkGetStringMacro(JSONRequest);
   vtkSetStringMacro(JSONRequest);
 
-  vtkGetStringMacro(ModelEntityID);
-  vtkSetStringMacro(ModelEntityID);
+//  vtkGetStringMacro(ModelEntityID);
+//  vtkSetStringMacro(ModelEntityID);
 
   void ProcessJSONRequest();
 
@@ -63,7 +63,7 @@ protected:
 
   char* JSONRequest;
   char* JSONResponse;
-  char* ModelEntityID;
+//  char* ModelEntityID;
 
   // Instance model Manager:
   smtk::model::ManagerPtr ModelMgr;

@@ -444,6 +444,12 @@ private:
 
   class vtkInternal;
   vtkInternal* const Internal;
+
+  // Helper to initialize Python environment. This doesn't initialize Python
+  // but simply sets up the environment so when Python is initialized, it can
+  // find ParaView modules. This does nothing is not build with Python support.
+  bool InitializePythonEnvironment();
+
 };
 
 
