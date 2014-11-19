@@ -454,7 +454,7 @@ def write_plotvar_section(manager, categories, out, name):
             #out.write('    block %s\n' % get_id_from_name(entity.name()))
             etyp = entity.stringProperty('exodus type')
             if len(etyp) > 0 and etyp[0] == 'side set':
-              t = ('side ', entity.integer_property('exodus id'), var_item.value(0))
+              t = ('side ', entity.integer_property('exodus id')[0], var_item.value(0))
               ss_tlist.append(t)
 
     ss_tlist.sort()
@@ -507,7 +507,7 @@ def write_histvar_section(manager, categories, out):
             #out.write('    block %s\n' % get_id_from_name(entity.name()))
             etyp = entity.stringProperty('exodus type')
             if len(etyp) > 0 and etyp[0] == 'side set':
-              t = ('side ', entity.integer_property('exodus id'), var_item.value(0))
+              t = ('side ', entity.integer_property('exodus id')[0], var_item.value(0))
               ss_tlist.append(t)
 
     ss_tlist.sort()
@@ -539,7 +539,7 @@ def write_bc_section(manager, section_config, categories, out):
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
               continue
-            sideset = ent.integerProperty('exodus id')
+            sideset = ent.integerProperty('exodus id')[0]
 
             item = att.find('LoadCurve')
             lcid = get_loadcurve_id(item)
@@ -813,7 +813,7 @@ def write_body_force(att, entity, out):
     att_type = att.type()
     out.write('\n')
     out.write('  %s\n' % att_type)
-    out.write('    set %s\n' % get_id_from_name(entity.name()))
+    out.write('    set %s\n' % entity.integerProperty('exodus id')[0])
     # Load curve item has same name as attribute (our policy)
     item = att.find(att_type)
     loadcurve_id = get_loadcurve_id(item)
@@ -999,7 +999,7 @@ def write_section(manager, section_config, categories, out):
         out.write('    material %i\n' % att.materialId)
         entities = att.associatedEntities()
         for entity in entities:
-            out.write('    block %s\n' % entity.integerProperty('exodus id'))
+            out.write('    block %s\n' % entity.integerProperty('exodus id')[0])
         out.write('  end\n')
 
     return True

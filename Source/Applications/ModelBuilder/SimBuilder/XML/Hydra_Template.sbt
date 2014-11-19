@@ -66,7 +66,7 @@
     </AttDef>
 
     <!--***  Materials Definitions ***-->
-    <AttDef Type="Material" Label="Material" BaseType="" Version="0" Unique="true" Associations="m">
+    <AttDef Type="Material" Label="Material" BaseType="" Version="0" Unique="true" Associations="g">
       <ItemDefinitions>
         <Double Name="Density" Label="Density" Version="0" AdvanceLevel="0" NumberOfRequiredValues="1">
           <BriefDescription>(material::rho)</BriefDescription>
@@ -168,7 +168,7 @@
     </AttDef>
 
     <!-- temporarily removed from the Hydra User's Manual on 12/17/2013
-         <AttDef Type="viscosity" Label="Viscosity Model" BaseType="" Version="0" Unique="true" Associations="m">
+         <AttDef Type="viscosity" Label="Viscosity Model" BaseType="" Version="0" Unique="true" Associations="g">
          <ItemDefinitions>
          <Group Name="viscosity" Label="Viscosity Model" NumberOfRequiredGroups="1">
          <ItemDefinitions>
@@ -190,8 +190,8 @@
     -->
 
     <!--*** Body force definitions ***-->
-    <AttDef Type="BodyForce" BaseType="" Abstract="1" Version="0" Unique="false" Associations="m"/>
-    <AttDef Type="GravityForce" Label="Gravity Force" BaseType="BodyForce" Version="0" Unique="true" Associations="m">
+    <AttDef Type="BodyForce" BaseType="" Abstract="1" Version="0" Unique="false" Associations="g"/>
+    <AttDef Type="GravityForce" Label="Gravity Force" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
       <ItemDefinitions>
         <Double Name="GravityForce" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(body_force::lcid)</BriefDescription>
@@ -214,7 +214,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="BoussinesqForce" Label="Boussinesq Force" BaseType="BodyForce" Version="0" Unique="true" Associations="m">
+    <AttDef Type="BoussinesqForce" Label="Boussinesq Force" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
       <ItemDefinitions>
         <Double Name="BoussinesqForce" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(boussinesqforce::lcid)</BriefDescription>
@@ -239,7 +239,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="porous_drag" Label="Porous Drag" BaseType="BodyForce" Version="0" Unique="true" Associations="m">
+    <AttDef Type="porous_drag" Label="Porous Drag" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
       <ItemDefinitions>
         <Double Name="porous_drag" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(porous_drag::lcid)</BriefDescription>
@@ -257,7 +257,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="HeatSource" Label="Heat Source" BaseType="BodyForce" Version="0" Unique="true" Associations="m">
+    <AttDef Type="HeatSource" Label="Heat Source" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
       <ItemDefinitions>
         <Double Name="HeatSource" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(heat_source::lcid)</BriefDescription>
@@ -1586,13 +1586,13 @@
     <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
     <AdvancedFontEffects Bold="0" Italic="1" />
 
-    <AttributeView Title="Materials" ModelEntityFilter="r">
+    <AttributeView Title="Materials" ModelEntityFilter="g">
       <AttributeTypes>
         <Type>Material</Type>
       </AttributeTypes>
     </AttributeView>
 
-    <AttributeView Title="Source Terms" ModelEntityFilter="r">
+    <AttributeView Title="Source Terms" ModelEntityFilter="g">
       <AttributeTypes>
         <Type>BodyForce</Type>
       </AttributeTypes>
@@ -1647,7 +1647,7 @@
       </AttributeView>
     </GroupView>
 
-    <AttributeView Title="Boundary Conditions" ModelEntityFilter="f">
+    <AttributeView Title="Boundary Conditions" ModelEntityFilter="g">
       <AttributeTypes>
         <Type>BoundaryCondition</Type>
       </AttributeTypes>
