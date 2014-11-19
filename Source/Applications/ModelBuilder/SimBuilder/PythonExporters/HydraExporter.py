@@ -527,6 +527,7 @@ def write_bc_section(manager, section_config, categories, out):
     if len(att_list) < 1:
         return True
 
+    modelmgr = manager.refModelManager()
     out.write('\n')
     out.write('  %s\n' % section_config.title)
 
@@ -624,6 +625,7 @@ def write_vector_bc_section(manager, config, categories, out):
     '''
     Internal method for writing multiple/labeled BCs in same section
     '''
+    modelmgr = manager.refModelManager()
     # Traverse all att types to generate dictionary of association info
     bc_dict = dict()  # key = sset number, value = list(att1, att2, ...)
     for att_type, label in config.attribute_types_labels:
@@ -636,7 +638,7 @@ def write_vector_bc_section(manager, config, categories, out):
             for ent in ent_arr:
                 if not ent.hasIntegerProperty('exodus id'):
                   continue
-                sideset = ent.integerProperty('exodus id')
+                sideset = ent.integerProperty('exodus id')[0]
                 ent_att_list = bc_dict.get(sideset)
                 if ent_att_list is None:
                     ent_att_list = list()
