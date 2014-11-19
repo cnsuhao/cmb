@@ -41,7 +41,7 @@ void vtkPVSMTKModelSource::SetModelEntityID(const char* entid)
 
 char* vtkPVSMTKModelSource::GetModelEntityID()
 {
-  this->Superclass::GetModelEntityID();
+  return this->Superclass::GetModelEntityID();
 }
 
 int vtkPVSMTKModelSource::RequestData(
