@@ -221,6 +221,7 @@ def ExportCMB(spec):
     '''
     manager = spec.getSimulationAttributes()
     export_manager = spec.getExportAttributes()
+    modelmgr = manager.refModelManager()
     #analysis_name = spec.getAnalysisNames()[0]  # deprecated
     #output_file_name = spec.getOutputPath()     # deprecated
 
@@ -533,7 +534,7 @@ def write_bc_section(manager, section_config, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr,x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number (is this a UserData thing?)
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
@@ -572,7 +573,7 @@ def write_distance_section(manager, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
@@ -582,7 +583,7 @@ def write_distance_section(manager, categories, out):
 
     # Then write penetration atts
     for att in plist:
-        ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
@@ -631,7 +632,7 @@ def write_vector_bc_section(manager, config, categories, out):
             if not att.isMemberOf(categories):
                 continue
 
-            ent_arr = [smtk.model.Cursor(mgr, x) for x in att.associatedModelEntityIds()]
+            ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
             for ent in ent_arr:
                 if not ent.hasIntegerProperty('exodus id'):
                   continue
