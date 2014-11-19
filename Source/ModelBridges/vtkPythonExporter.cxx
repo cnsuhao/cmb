@@ -137,6 +137,9 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
     return;
     }
 
+  manager.setRefModelManager(modelMgr);
+  exportManager.setRefModelManager(modelMgr);
+
   // Set python executable if defined
   if (this->PythonExecutable)
     {
