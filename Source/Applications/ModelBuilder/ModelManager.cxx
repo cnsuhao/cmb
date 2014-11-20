@@ -156,7 +156,7 @@ public:
       {
       pqApplicationCore::instance()->getObjectBuilder()->destroy(mit->second.Source);
       }
-    this->ManagerProxy = NULL;
+//    this->ManagerProxy = NULL;
   }
 
   qInternal(pqServer* server): Server(server)
@@ -213,6 +213,7 @@ void ModelManager::initialize()
 //----------------------------------------------------------------------------
 vtkSMModelManagerProxy* ModelManager::managerProxy()
 {
+  this->initialize();
   return this->Internal->ManagerProxy;
 }
 
@@ -592,6 +593,7 @@ void ModelManager::clear()
   this->Internal->clear();
   if(this->Internal->ManagerProxy)
     this->Internal->ManagerProxy->endBridgeSessions();
+  this->Internal->ManagerProxy = NULL;
   emit currentModelCleared();
 }
 

@@ -201,6 +201,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMainWindow>
 #include "pqActiveObjects.h"
 #include "ModelManager.h"
+#include "vtkSMModelManagerProxy.h"
 
 using namespace smtk::attribute;
 using namespace smtk;
@@ -1026,6 +1027,8 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelectPoints(bool checked)
 //-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::onLoadSimulation(bool templateOnly, bool isScenario)
 {
+  this->getSimBuilder()->attributeUIManager()->setModelManager(
+      this->modelManager()->managerProxy()->modelManager());
   int res = this->getSimBuilder()->LoadSimulation(templateOnly, isScenario);
   return res;
 }
@@ -1579,7 +1582,8 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
 */
   if(lastExt == "crf")
     {
-//    this->getSimBuilder()->setCMBModel(this->getCMBModel());
+    this->getSimBuilder()->attributeUIManager()->setModelManager(
+        this->modelManager()->managerProxy()->modelManager());
     this->getSimBuilder()->LoadResources(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -1599,7 +1603,8 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     this->clearSimBuilder();
     this->getSimBuilder()->Initialize();
 */
-//    this->getSimBuilder()->setCMBModel(this->getCMBModel());
+    this->getSimBuilder()->attributeUIManager()->setModelManager(
+        this->modelManager()->managerProxy()->modelManager());
     this->getSimBuilder()->LoadSimulation(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -1716,6 +1721,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     QObject::connect(this->Internal->smtkModelManager,
       SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
       this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
+
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
 //  pqActiveObjects::instance().disconnect(this->activeRenderView());

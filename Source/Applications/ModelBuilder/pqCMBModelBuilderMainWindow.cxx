@@ -1150,8 +1150,6 @@ void pqCMBModelBuilderMainWindow::initSimBuilder()
   QObject::connect(this->getThisCore()->getSimBuilder()->attributeUIManager(),
     SIGNAL(numOfAttriubtesChanged()),
     this->getThisCore(), SLOT(onNumOfAttriubtesChanged()));
-  this->getThisCore()->getSimBuilder()->attributeUIManager()->setModelManager(
-      this->getThisCore()->modelManager()->managerProxy()->modelManager());
 }
 
 //-----------------------------------------------------------------------------
