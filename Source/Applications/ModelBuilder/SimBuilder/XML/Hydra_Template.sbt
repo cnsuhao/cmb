@@ -66,7 +66,7 @@
     </AttDef>
 
     <!--***  Materials Definitions ***-->
-    <AttDef Type="Material" Label="Material" BaseType="" Version="0" Unique="true" Associations="g">
+    <AttDef Type="Material" Label="Material" BaseType="" Version="0" Unique="true" Associations="group|domain|volume">
       <ItemDefinitions>
         <Double Name="Density" Label="Density" Version="0" AdvanceLevel="0" NumberOfRequiredValues="1">
           <BriefDescription>(material::rho)</BriefDescription>
@@ -168,7 +168,7 @@
     </AttDef>
 
     <!-- temporarily removed from the Hydra User's Manual on 12/17/2013
-         <AttDef Type="viscosity" Label="Viscosity Model" BaseType="" Version="0" Unique="true" Associations="g">
+         <AttDef Type="viscosity" Label="Viscosity Model" BaseType="" Version="0" Unique="true" Associations="group|domain|volume">
          <ItemDefinitions>
          <Group Name="viscosity" Label="Viscosity Model" NumberOfRequiredGroups="1">
          <ItemDefinitions>
@@ -190,8 +190,8 @@
     -->
 
     <!--*** Body force definitions ***-->
-    <AttDef Type="BodyForce" BaseType="" Abstract="1" Version="0" Unique="false" Associations="g"/>
-    <AttDef Type="GravityForce" Label="Gravity Force" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
+    <AttDef Type="BodyForce" BaseType="" Abstract="1" Version="0" Unique="false" Associations="group|domain|volume"/>
+    <AttDef Type="GravityForce" Label="Gravity Force" BaseType="BodyForce" Version="0" Unique="true" Associations="group|domain|volume">
       <ItemDefinitions>
         <Double Name="GravityForce" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(body_force::lcid)</BriefDescription>
@@ -214,7 +214,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="BoussinesqForce" Label="Boussinesq Force" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
+    <AttDef Type="BoussinesqForce" Label="Boussinesq Force" BaseType="BodyForce" Version="0" Unique="true" Associations="group|domain|volume">
       <ItemDefinitions>
         <Double Name="BoussinesqForce" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(boussinesqforce::lcid)</BriefDescription>
@@ -239,7 +239,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="porous_drag" Label="Porous Drag" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
+    <AttDef Type="porous_drag" Label="Porous Drag" BaseType="BodyForce" Version="0" Unique="true" Associations="group|domain|volume">
       <ItemDefinitions>
         <Double Name="porous_drag" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(porous_drag::lcid)</BriefDescription>
@@ -257,7 +257,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="HeatSource" Label="Heat Source" BaseType="BodyForce" Version="0" Unique="true" Associations="g">
+    <AttDef Type="HeatSource" Label="Heat Source" BaseType="BodyForce" Version="0" Unique="true" Associations="group|domain|volume">
       <ItemDefinitions>
         <Double Name="HeatSource" Label="Load Curve" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(heat_source::lcid)</BriefDescription>
@@ -360,9 +360,9 @@
     </AttDef>
 
     <!--***  Boundary Condition Definitions ***-->
-    <AttDef Type="BoundaryCondition" BaseType="" Abstract="1" Version="0" Unique="false" Associations="g" />
+    <AttDef Type="BoundaryCondition" BaseType="" Abstract="1" Version="0" Unique="false" Associations="group|bdy|face" />
     <!-- BC structure to enforce uniqueness/prevent overspecification of BCs on a boundary -->
-    <AttDef Type="EnthalpyBoundaryCondition" Label="Enthalpy" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="EnthalpyBoundaryCondition" Label="Enthalpy" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(enthalpybc::sideset [loadCurveId])</BriefDescription>
@@ -379,7 +379,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="Turbulent Dissipation" Label="Turbulent Dissipation" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="Turbulent Dissipation" Label="Turbulent Dissipation" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Version="0" Label="Load Curve" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>Used with the RNG k-e turbulence model (epsbc::sideset [loadCurveId])</BriefDescription>
@@ -396,7 +396,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="distancebc" Label="Distance Function" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="distancebc" Label="Distance Function" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Version="0" Label="Load Curve" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(distancebc::sideset [loadCurveId])</BriefDescription>
@@ -413,7 +413,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="Pressure" Label="Pressure" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="Pressure" Label="Pressure" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(pressurebc::sideset [loadCurveId])</BriefDescription>
@@ -430,7 +430,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="Temperature" Label="Temperature" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="Temperature" Label="Temperature" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(temperaturebc::sideset [loadCurveId])</BriefDescription>
@@ -447,7 +447,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="TurbulentViscosity" Label="Turbulent Viscosity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+    <AttDef Type="TurbulentViscosity" Label="Turbulent Viscosity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>Used with the RNG k-e turbulence model (turbnubc::sideset [loadCurveId])</BriefDescription>
@@ -467,7 +467,7 @@
 
 
     <!-- not in the Hydra User's Manual so I'm not putting it in here yet until I better understand it
-         <AttDef Type="Wall" Label="Wall" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="false" Associations="g">
+         <AttDef Type="Wall" Label="Wall" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="false" Associations="group|bdy|face">
          <ItemDefinitions>
          <Void Name="void" Label="Not used - do not show" Version="0" NumberOfRequiredValues="0" AdvanceLevel="1">
          <Categories>
@@ -476,7 +476,7 @@
          </Void>
          </ItemDefinitions>
          </AttDef>
-         <AttDef Type="Penetration" Label="Penetration" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g">
+         <AttDef Type="Penetration" Label="Penetration" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face">
          <ItemDefinitions>
          <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
          <ExpressionType>PolyLinearFunction</ExpressionType>
@@ -494,7 +494,7 @@
     -->
 
     <!--*** Velocity boundary conditions ***-->
-    <AttDef Type="VelXBoundaryCondition" Label="X Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="VelXBoundaryCondition" Label="X Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(velocitybc::velx sideset [loadCurveId])</BriefDescription>
@@ -511,7 +511,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="VelYBoundaryCondition" Label="Y Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="VelYBoundaryCondition" Label="Y Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(velocitybc::vely sideset [loadCurveId])</BriefDescription>
@@ -528,7 +528,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="VelZBoundaryCondition" Label="Z Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="VelZBoundaryCondition" Label="Z Velocity" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(velocitybc::velz sideset [loadCurveId])</BriefDescription>
@@ -545,11 +545,11 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="SymmetryVelXBoundaryCondition" Label="X Symmetry Velocity" BaseType="VelXBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" />
-    <AttDef Type="SymmetryVelYBoundaryCondition" Label="Y Symmetry Velocity" BaseType="VelYBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" />
-    <AttDef Type="SymmetryVelZBoundaryCondition" Label="Z Symmetry Velocity" BaseType="VelZBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" />
+    <AttDef Type="SymmetryVelXBoundaryCondition" Label="X Symmetry Velocity" BaseType="VelXBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" />
+    <AttDef Type="SymmetryVelYBoundaryCondition" Label="Y Symmetry Velocity" BaseType="VelYBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" />
+    <AttDef Type="SymmetryVelZBoundaryCondition" Label="Z Symmetry Velocity" BaseType="VelZBoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" />
 
-    <AttDef Type="HeatFlux" Label="Heat Flux" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="HeatFlux" Label="Heat Flux" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Double Name="LoadCurve" Label="Load Curve" Version="0" NumberOfRequiredValues="1" AdvanceLevel="1" Optional="true" IsEnabledByDefault="false">
           <BriefDescription>(heatflux::sideset [loadCurveId])</BriefDescription>
@@ -566,7 +566,7 @@
         </Double>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="passiveoutflowbc" Label="Passive Outflow" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="passiveoutflowbc" Label="Passive Outflow" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Void Name="void" Label="Not used - do not show" Version="0" NumberOfRequiredValues="0" AdvanceLevel="1">
           <BriefDescription>(passiveoutflowbc::sideset)</BriefDescription>
@@ -576,7 +576,7 @@
         </Void>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="pressureoutflowbc" Label="Pressure Outflow" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="g" >
+    <AttDef Type="pressureoutflowbc" Label="Pressure Outflow" BaseType="BoundaryCondition" Abstract="0" Version="0" Unique="true" Associations="group|bdy|face" >
       <ItemDefinitions>
         <Void Name="void" Label="Not used - do not show" Version="0" NumberOfRequiredValues="0" AdvanceLevel="1">
           <BriefDescription>(pressureoutflowbc::sideset)</BriefDescription>
@@ -732,7 +732,7 @@
       </ItemDefinitions>
     </AttDef>
     <!-- histvar Hydra keyword for sidesets -->
-    <AttDef Type="SideSetHistVarOutput" Label="Sideset Time History Output" BaseType="VarOutput" Abstract="0" Version="0" Unique="false" Associations="g">
+    <AttDef Type="SideSetHistVarOutput" Label="Sideset Time History Output" BaseType="VarOutput" Abstract="0" Version="0" Unique="false" Associations="group|bdy|face">
       <ItemDefinitions>
         <String Name="varname" Label="Variable Name" Version="0" NumberOfRequiredValues="1">
           <DiscreteInfo>
@@ -804,7 +804,7 @@
       </ItemDefinitions>
     </AttDef>
     <!-- plotvar Hydra keyword for sidesets -->
-    <AttDef Type="SideSetPlotVarOutput" Label="Sideset Variable Output" BaseType="VarOutput" Abstract="0" Version="0" Unique="false" Associations="g">
+    <AttDef Type="SideSetPlotVarOutput" Label="Sideset Variable Output" BaseType="VarOutput" Abstract="0" Version="0" Unique="false" Associations="group|bdy|face">
       <ItemDefinitions>
         <String Name="varname" Label="Variable Name" Version="0" NumberOfRequiredValues="1">
           <DiscreteInfo>
@@ -872,7 +872,7 @@
         </String>
       </ItemDefinitions>
     </AttDef>
-    <AttDef Type="SideSetTempStatVarOutput" Label="SideSet plotstatvar" BaseType="TempStatVarOutput" Abstract="0" Version="0" Unique="false" Associations="g">
+    <AttDef Type="SideSetTempStatVarOutput" Label="SideSet plotstatvar" BaseType="TempStatVarOutput" Abstract="0" Version="0" Unique="false" Associations="group|bdy|face">
       <ItemDefinitions>
         <String Name="varname" Label="Variable Name" Version="0" NumberOfRequiredValues="1" >
           <DiscreteInfo>
@@ -1586,13 +1586,13 @@
     <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
     <AdvancedFontEffects Bold="0" Italic="1" />
 
-    <AttributeView Title="Materials" ModelEntityFilter="g">
+    <AttributeView Title="Materials" ModelEntityFilter="r">
       <AttributeTypes>
         <Type>Material</Type>
       </AttributeTypes>
     </AttributeView>
 
-    <AttributeView Title="Source Terms" ModelEntityFilter="g">
+    <AttributeView Title="Source Terms" ModelEntityFilter="r">
       <AttributeTypes>
         <Type>BodyForce</Type>
       </AttributeTypes>
@@ -1647,7 +1647,7 @@
       </AttributeView>
     </GroupView>
 
-    <AttributeView Title="Boundary Conditions" ModelEntityFilter="g">
+    <AttributeView Title="Boundary Conditions" ModelEntityFilter="f">
       <AttributeTypes>
         <Type>BoundaryCondition</Type>
       </AttributeTypes>
