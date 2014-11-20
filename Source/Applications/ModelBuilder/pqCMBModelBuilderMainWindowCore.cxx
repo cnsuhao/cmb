@@ -2219,6 +2219,7 @@ bool pqCMBModelBuilderMainWindowCore::handleOperationResult(
     }
   //TODO, based on operator types to do differet things.
   this->processModelInfo();
+  return true;
 }
 
 //----------------------------------------------------------------------------
