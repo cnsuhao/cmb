@@ -531,13 +531,7 @@ void vtkSMModelManagerProxy::fetchWholeModel()
 
 void vtkSMModelManagerProxy::endBridgeSessions()
 {
-  std::map<smtk::common::UUID,std::string>::iterator it;
-  for (
-    it = this->m_remoteBridgeSessionIds.begin();
-    it != this->m_remoteBridgeSessionIds.end();
-    ++it)
-    {
-    this->endBridgeSession(it->first);
-    }
-  this->m_remoteBridgeSessionIds.clear();
+  while (!this->m_remoteBridgeSessionIds.empty())
+    this->endBridgeSession(
+      this->m_remoteBridgeSessionIds.begin()->first);
 }
