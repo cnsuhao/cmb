@@ -308,6 +308,22 @@ pqDataRepresentation* ModelManager::activeModelRepresentation()
 }
 
 //----------------------------------------------------------------------------
+QList<pqDataRepresentation*> ModelManager::modelRepresentations()
+{
+  QList<pqDataRepresentation*> result;
+  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
+    mit != this->Internal->Models.end(); ++mit)
+    {
+    if(!mit->second.Representation)
+      {
+      continue;
+      }
+    result.append(mit->second.Representation);
+    }
+  return result;
+}
+
+//----------------------------------------------------------------------------
 std::set<std::string> ModelManager::supportedFileTypes(
   const std::string& bridgeName)
 {

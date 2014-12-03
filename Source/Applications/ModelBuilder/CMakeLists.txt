@@ -172,6 +172,8 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBLegacyMesherDialog.cxx
   pqCMBModelBuilderMainWindow.cxx
   pqCMBModelBuilderMainWindowCore.cxx
+  pqModelBuilderViewContextMenuBehavior.cxx
+  pqModelBuilderViewContextMenuBehavior.h
   qtRemusVolumeMesherSubmitter.h
   qtRemusVolumeMesherSubmitter.cxx
   qtRemusVolumeMesherSelector.h

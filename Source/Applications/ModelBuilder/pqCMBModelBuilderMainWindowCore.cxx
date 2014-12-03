@@ -202,6 +202,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqActiveObjects.h"
 #include "ModelManager.h"
 #include "vtkSMModelManagerProxy.h"
+#include "pqModelBuilderViewContextMenuBehavior.h"
 
 using namespace smtk::attribute;
 using namespace smtk;
@@ -299,7 +300,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     QPointer<qtSMTKModelPanel> ModelDock;
     QPointer<ModelManager> smtkModelManager;
-
+    QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1721,6 +1722,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     QObject::connect(this->Internal->smtkModelManager,
       SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
       this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
+  this->Internal->ViewContextBehavior->setModelManager(
+    this->Internal->smtkModelManager);
 
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
@@ -2278,3 +2281,12 @@ pqCMBDisplayProxyEditor* pqCMBModelBuilderMainWindowCore::getAppearanceEditor()
 
   return this->Superclass::getAppearanceEditor();
 }
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(
+  QObject *parent_widget)
+{
+  this->Internal->ViewContextBehavior =
+    new pqModelBuilderViewContextMenuBehavior(parent_widget);
+}
+

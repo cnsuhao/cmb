@@ -284,6 +284,9 @@ public slots:
   virtual void applyAppSettings();
   void applyColorSettings();
 
+protected:
+  virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
+
 private:
   // Description:
   // On successful completion of volume mesher, preview the mesh

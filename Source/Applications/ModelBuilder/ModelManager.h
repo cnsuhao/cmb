@@ -55,6 +55,7 @@ public:
   QList<cmbSMTKModelInfo*> selectedModels();
   int numberOfModels();
 
+  QList<pqDataRepresentation*> modelRepresentations();
   pqDataRepresentation* activeModelRepresentation();
   bool DetermineFileReader(
     const std::string& filename, 
