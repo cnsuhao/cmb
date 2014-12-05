@@ -109,7 +109,10 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
   return result;
 }
 
-smtkImplementsModelingKernel(cmb_forwarding,
-                             "",
-                             smtk::model::BridgeHasNoStaticSetup,
-                             cmbForwardingBridge);
+smtkImplementsModelingKernel(
+  cmb_forwarding,
+  "",
+  smtk::model::BridgeHasNoStaticSetup,
+  cmbForwardingBridge,
+  false /* do not inherit "universal" operators */
+);
