@@ -28,17 +28,18 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqModelBuilderViewContextMenuBehavior.h"
 
 #include "pqActiveObjects.h"
-#include "pqApplicationCore.h"
+#include "pqPVApplicationCore.h"
 #include "pqEditColorMapReaction.h"
 #include "pqMultiBlockInspectorPanel.h"
 #include "pqPipelineRepresentation.h"
-#include "pqPVApplicationCore.h"
+#include "pqApplicationCore.h"
 #include "pqRenderView.h"
 #include "pqScalarsToColors.h"
 #include "pqSelectionManager.h"
 #include "pqServerManagerModel.h"
 #include "pqSetName.h"
 #include "pqSMAdaptor.h"
+
 #include "pqUndoStack.h"
 #include "vtkDataObject.h"
 #include "vtkNew.h"
@@ -160,6 +161,13 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           pos[1] = height - pos[1];
           unsigned int blockIndex = 0;
           this->PickedRepresentation = view->pickBlock(pos, blockIndex);
+
+          // we want to select this block.
+          if(this->PickedRepresentation)
+            {
+            emit this->representationBlockPicked(this->PickedRepresentation, blockIndex);
+            }
+
           this->buildMenu(this->PickedRepresentation, blockIndex);
           this->Menu->popup(senderWidget->mapToGlobal(newPos));
           }
@@ -466,6 +474,11 @@ void pqModelBuilderViewContextMenuBehavior::hideBlock()
   pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
   if (panel)
     {
+    pqOutputPort* outport = panel->getOutputPort();
+    if(outport)
+      {
+      outport->setSelectionInput(0, 0);
+      }
     panel->setBlockVisibility(this->PickedBlocks, false);
     }
 }

@@ -65,7 +65,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqActionGroupInterface.h"
 #include "pqActiveServer.h"
 #include "pqActiveView.h"
-#include "pqApplicationCore.h"
+#include "pqPVApplicationCore.h"
 #include "pqCameraDialog.h"
 #include "pqCustomFilterDefinitionModel.h"
 #include "pqCustomFilterDefinitionWizard.h"
@@ -1719,11 +1719,15 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     delete this->Internal->smtkModelManager;
     }
   this->Internal->smtkModelManager = new ModelManager(this->getActiveServer());
-    QObject::connect(this->Internal->smtkModelManager,
-      SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
-      this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
+  QObject::connect(this->Internal->smtkModelManager,
+    SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
+    this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
+
   this->Internal->ViewContextBehavior->setModelManager(
     this->Internal->smtkModelManager);
+  QObject::connect(this->Internal->ViewContextBehavior,
+    SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
+    this, SLOT(selectRepresentationBlock( pqDataRepresentation*, unsigned int )));
 
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
@@ -2290,3 +2294,40 @@ void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(
     new pqModelBuilderViewContextMenuBehavior(parent_widget);
 }
 
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
+  pqDataRepresentation* repr, unsigned int blockIndex)
+{
+  if(!repr)
+    return;
+
+//  pqSelectionManager *selectionManager =
+//    pqPVApplicationCore::instance()->selectionManager();
+  // create block selection source proxy
+  vtkSMSessionProxyManager *proxyManager =
+    vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
+
+  vtkSmartPointer<vtkSMProxy> selectionSource;
+  selectionSource.TakeReference(
+    proxyManager->NewProxy("sources", "BlockSelectionSource"));
+  vtkSMPropertyHelper prop(selectionSource, "Blocks");
+  std::vector<vtkIdType> selIds;
+  selIds.push_back(static_cast<vtkIdType>(blockIndex));
+  // set selected blocks
+  prop.Set(&selIds[0], static_cast<unsigned int>(
+    selIds.size()));
+  selectionSource->UpdateVTKObjects();
+
+  vtkSMSourceProxy *selectionSourceProxy =
+    vtkSMSourceProxy::SafeDownCast(selectionSource);
+  pqPipelineSource* source = repr->getInput();
+  pqOutputPort* outport = source->getOutputPort(0);
+  if(outport)
+    {
+    outport->setSelectionInput(selectionSourceProxy, 0);
+    this->requestRender();
+//    selectionManager->select(outport);
+//    pqActiveObjects::instance().setActiveSource(source);
+    this->updateSMTKSelection();
+    }
+}

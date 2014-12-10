@@ -58,6 +58,9 @@ public:
 
   void setModelManager(ModelManager*);
 
+signals:
+  void representationBlockPicked(pqDataRepresentation*, unsigned int);
+
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context
   /// menu if the view is a render-view.

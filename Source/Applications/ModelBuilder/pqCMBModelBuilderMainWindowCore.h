@@ -109,6 +109,10 @@ public:
   // override the base class to give an editor by default
   virtual pqCMBDisplayProxyEditor *getAppearanceEditor();
 
+  // Description:
+  // The application's model manager
+  ModelManager* modelManager();
+
 signals:
 
   void currentDataSourceChanged();
@@ -269,7 +273,7 @@ public slots:
   void loadJSONFile(const QString& filename);
   bool handleOperationResult(const smtk::model::OperatorResult& result);
   void processModelInfo();
-  ModelManager* modelManager();
+  void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
 
   // Called to show the settings dialog.
   // Subclass should override this method to add app-specific options.
