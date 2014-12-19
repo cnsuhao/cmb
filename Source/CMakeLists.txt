@@ -154,9 +154,6 @@ include (ParaViewPlugins)
 list(APPEND CMAKE_MODULE_PATH "${VTK_MODULES_DIR}")
 
 
-#########################################################################
-set(VTK_MAKE_INSTANTIATORS TRUE CACHE INTERNAL "" FORCE)
-
 #needs to be before CMBMeshing and pv_process_modules
 pv_setup_module_environment("ConceptualModelBuilder")
 
