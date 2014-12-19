@@ -70,7 +70,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
-
+/*
 void TEST_DEM_TO_MESH(std::string fname)
 {
   vtkGDALRasterReader * GDAL = vtkGDALRasterReader::New();
@@ -91,7 +91,7 @@ void TEST_DEM_TO_MESH(std::string fname)
   writer->SetFileName("test_mesh3D.vtp");
   writer->Write();
 }
-
+*/
 //-----------------------------------------------------------------------------
 pqCMBUniformGrid::pqCMBUniformGrid() : pqCMBSceneObjectBase()
 {

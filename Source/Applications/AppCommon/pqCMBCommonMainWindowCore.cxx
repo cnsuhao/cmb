@@ -1615,7 +1615,7 @@ void pqCMBCommonMainWindowCore::setMaxRenderWindowSize(const QSize& /*size*/)
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::pickCenterOfRotation(bool begin)
 {
- if (!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()));
+ if (!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()))
     {
     return;
     }
