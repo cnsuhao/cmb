@@ -57,6 +57,7 @@ public:
   virtual ~pqModelBuilderViewContextMenuBehavior();
 
   void setModelManager(ModelManager*);
+  pqMultiBlockInspectorPanel* mbPanel();
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);

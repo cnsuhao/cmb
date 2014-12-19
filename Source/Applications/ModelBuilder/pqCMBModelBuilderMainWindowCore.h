@@ -271,8 +271,8 @@ public slots:
   void clearCurrentEntityWidgets();
 
   void loadJSONFile(const QString& filename);
-  bool handleOperationResult(const smtk::model::OperatorResult& result);
-  void processModelInfo();
+  bool processModelInfo(const smtk::model::OperatorResult& result,
+                             bool hasNewModels);
   void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
 
   // Called to show the settings dialog.

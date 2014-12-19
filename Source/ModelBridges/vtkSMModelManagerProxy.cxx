@@ -407,37 +407,13 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     return OperatorResult();
     }
 
-  cJSON* json = cJSON_CreateObject();
-  ExportJSON::forOperator(fileOp, json);
+ // cJSON* json = cJSON_CreateObject();
+ // ExportJSON::forOperator(fileOp, json);
 //  std::cout << "Found operator " << cJSON_Print(json) << ")\n";
   OperatorResult result = fileOp->operate();
-  json = cJSON_CreateObject();
-  ExportJSON::forOperatorResult(result, json);
+//  json = cJSON_CreateObject();
+//  ExportJSON::forOperatorResult(result, json);
 //  std::cout << "Result " << cJSON_Print(json) << "\n";
-
-  smtk::common::UUIDs oldmodels =
-    this->m_modelMgr->entitiesMatchingFlags(
-      MODEL_ENTITY, true);
-
-  this->fetchWholeModel();
-
-  smtk::model::ModelEntities models =
-    this->m_modelMgr->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
-      MODEL_ENTITY, true);
-
-  for (ModelEntities::iterator mit = models.begin(); mit != models.end(); ++mit)
-    {
-    if(oldmodels.find(mit->entity()) != oldmodels.end())
-      continue;
-//    std::cout << "Original bridge name " << mit->bridge()->name() << "\n";
-    if(!mit->bridge() || mit->bridge()->name() == "native") // a new model
-      {
-//      std::cout << "New bridge name " << bridge->name() << "\n";
-//      std::cout << "Client set model bridge " << mit->entity().toString() << "\n";
-      this->m_modelMgr->setBridgeForModel(bridge, mit->entity());
-      }
-    }
-  this->m_modelMgr->assignDefaultNames();
 
   return result;
 }

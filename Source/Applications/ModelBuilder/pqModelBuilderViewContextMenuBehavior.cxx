@@ -115,6 +115,12 @@ pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 }
 
 //-----------------------------------------------------------------------------
+pqMultiBlockInspectorPanel* pqModelBuilderViewContextMenuBehavior::mbPanel()
+{
+  return this->m_MBPanel;
+}
+
+//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setModelManager(ModelManager* mmgr)
 {
   this->m_ModelManager = mmgr;

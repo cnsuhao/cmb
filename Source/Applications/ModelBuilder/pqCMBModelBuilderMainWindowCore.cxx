@@ -203,6 +203,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "ModelManager.h"
 #include "vtkSMModelManagerProxy.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
+#include "vtkPVSMTKModelInformation.h"
+#include "pqMultiBlockInspectorPanel.h"
 
 using namespace smtk::attribute;
 using namespace smtk;
@@ -1530,10 +1532,10 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
 
   bool succeeded = this->Internal->smtkModelManager->loadModel(
     filename.toStdString(), this->activeRenderView());
-  if(succeeded)
-    {
-    this->processModelInfo();
-    }
+//  if(succeeded)
+//    {
+//    this->processModelInfo(true);
+//    }
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
@@ -1720,8 +1722,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     }
   this->Internal->smtkModelManager = new ModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
-    SIGNAL(operationFinished(const smtk::model::OperatorResult&)),
-    this, SLOT(handleOperationResult( const smtk::model::OperatorResult& )));
+    SIGNAL(operationFinished(const smtk::model::OperatorResult&, bool)),
+    this, SLOT(processModelInfo( const smtk::model::OperatorResult& , bool)));
 
   this->Internal->ViewContextBehavior->setModelManager(
     this->Internal->smtkModelManager);
@@ -2216,28 +2218,69 @@ ModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelBuilderMainWindowCore::handleOperationResult(
-  const smtk::model::OperatorResult& result)
+bool pqCMBModelBuilderMainWindowCore::processModelInfo(
+  const smtk::model::OperatorResult& result, bool hasNewModels)
 {
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
     return false;
     }
+
   //TODO, based on operator types to do differet things.
-  this->processModelInfo();
-  return true;
-}
+  if(hasNewModels)
+    {
+    this->activeRenderView()->resetCamera();
+    emit this->newModelCreated();
+    }
 
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindowCore::processModelInfo()
-{
-  this->activeRenderView()->resetCamera();
+  // we may need to update model representation for display properties
+  // of the list of entities that were potentially modified.
+  smtk::attribute::ModelEntityItem::Ptr resultEntities =
+    result->findModelEntity("entities");
+
+  QList<unsigned int> visBlocks;
+  QList<unsigned int> colorBlocks;
+  QColor color;
+  bool visible = true;
+  if(resultEntities && resultEntities->numberOfValues() > 0)
+    {
+    std::cout << " client associated entities " << resultEntities->numberOfValues() << std::endl;
+
+    smtk::model::CursorArray::const_iterator it;
+    for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
+      {
+      unsigned int flatIndex;
+      cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo((*it).entity());
+
+      if(minfo && minfo->Representation &&
+         minfo->Info->GetBlockId(((*it).entity()).toString(), flatIndex))
+        {
+        if((*it).hasVisibility())
+          {
+          visBlocks << flatIndex+1;
+          visible = (*it).visible();
+          }
+        if((*it).hasColor())
+          {
+          colorBlocks << flatIndex+1;
+          smtk::model::FloatList rgba = (*it).color();
+          if (rgba.size() == 3 || rgba.size() ==4)
+            color.setRgbF(rgba[0], rgba[1], rgba[2]);
+          }
+        }
+      }
+    }
+  if(visBlocks.count())
+    this->Internal->ViewContextBehavior->mbPanel()->setBlockVisibility(
+      visBlocks, visible);
+  if(colorBlocks.count() && color.isValid())
+    this->Internal->ViewContextBehavior->mbPanel()->setBlockColor(
+      colorBlocks, color);
+
   this->activeRenderView()->render();
-
   this->modelPanel()->onDataUpdated();
-
-  emit this->newModelCreated();
+  return true;
 }
 
 //----------------------------------------------------------------------------

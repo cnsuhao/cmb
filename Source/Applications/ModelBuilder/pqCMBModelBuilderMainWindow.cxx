@@ -369,7 +369,10 @@ void pqCMBModelBuilderMainWindow::onCreateNewBridge()
   std::string brName = action->text().toStdString();
   bool started = this->getThisCore()->modelManager()->startSession(brName);
   if(started)
-    this->getThisCore()->processModelInfo();
+    {
+    this->onNewModelCreated();
+    this->getThisCore()->modelPanel()->onDataUpdated();
+    }
 }
 
 //----------------------------------------------------------------------------

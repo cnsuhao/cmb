@@ -426,66 +426,16 @@ bool ModelManager::loadModel(const std::string& filename, pqRenderView* view)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "Read operator failed\n";
-    pxy->endBridgeSession(sessId);
+//    pxy->endBridgeSession(sessId);
     return false;
     }
-
-  smtk::model::ModelEntities modelEnts =
-    pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
-    smtk::model::MODEL_ENTITY);
-  bool success = false;
-  for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
-      it != modelEnts.end(); ++it)
+  bool hasNewModels = false;
+  bool success = this->handleOperationResult(result, sessId, hasNewModels);
+  if(success)
     {
-    if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
-      this->Internal->Models.end())
-      {
-      success = this->Internal->addModelRepresentation(
-        *it, view, this->Internal->ManagerProxy, filename);
-      }
+    emit this->operationFinished(result, hasNewModels);
     }
 
-/*
-  smtk::model::ModelEntity model = result->findModelEntity("model")->value();
-  manager->assignDefaultNames(); // should force transcription of every entity, but doesn't yet.
-
-  smtk::model::DescriptivePhrase::Ptr dit;
-  smtk::model::EntityPhrase::Ptr ephr = smtk::model::EntityPhrase::create()->setup(model);
-  smtk::model::SimpleModelSubphrases::Ptr spg = smtk::model::SimpleModelSubphrases::create();
-  ephr->setDelegate(spg);
-  prindent(std::cout, 0, ephr);
-
-  // List model operators
-  smtk::model::StringList opNames = model.operatorNames();
-  if (!opNames.empty())
-    {
-    std::cout << "\nFound operators:\n";
-    for (smtk::model::StringList::const_iterator it = opNames.begin(); it != opNames.end(); ++it)
-      {
-      std::cout << "  " << *it << "\n";
-      }
-    }
-*/
-
-/*
-  smtk::model::ManagerPtr storage = this->modelManager();
-  smtk::model::QEntityItemModel* qmodel =
-    new smtk::model::QEntityItemModel;
-  smtk::model::QEntityItemDelegate* qdelegate =
-    new smtk::model::QEntityItemDelegate;
-
-  ModelBrowser* view = new ModelBrowser;
-  smtk::model::Cursors cursors;
-  smtk::model::Cursor::CursorsFromUUIDs(
-    cursors, storage, storage->entitiesMatchingFlags(mask, true));
-  view->setup(
-    storage, qmodel, qdelegate,
-    smtk::model::EntityListPhrase::create()
-      ->setup(cursors)
-      ->setDelegate(
-        smtk::model::SimpleModelSubphrases::create()));
-*/
-//  pxy->endBridgeSession(sessId);
   return success;
 }
 
@@ -513,23 +463,25 @@ bool ModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "operator failed: " << brOp->name() << "\n";
-    pxy->endBridgeSession(sessId);
+//    pxy->endBridgeSession(sessId);
     return false;
     }
 
-  bool sucess = this->handleOperationResult(result, sessId);
+  bool hasNewModels = false;
+  bool sucess = this->handleOperationResult(result, sessId, hasNewModels);
   if(sucess)
     {
-    emit this->operationFinished(result);
+    emit this->operationFinished(result, hasNewModels);
     }
-//  pxy->endBridgeSession(sessId);
+
   return sucess;
 }
 
 //----------------------------------------------------------------------------
 bool ModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
-  const smtk::common::UUID& bridgeSessionId)
+  const smtk::common::UUID& bridgeSessionId,
+  bool &hadNewModels)
 {
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
@@ -544,19 +496,23 @@ bool ModelManager::handleOperationResult(
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
     smtk::model::MODEL_ENTITY);
   pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveView::instance().current());
-  bool success = false;
+  bool success = true;
+  hadNewModels = false;
   smtk::model::BridgePtr bridge = pxy->modelManager()->findBridgeSession(bridgeSessionId);
   for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-    if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
+//   if(!mit->bridge() || mit->bridge()->name() == "native") // a new model
+     if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
       this->Internal->Models.end())
       {
+      hadNewModels = true;
       pxy->modelManager()->setBridgeForModel(bridge, (*it).entity());
       success = this->Internal->addModelRepresentation(
         *it, view, this->Internal->ManagerProxy, "");
       }
     }
+  pxy->modelManager()->assignDefaultNames();
 
   return success;
 }

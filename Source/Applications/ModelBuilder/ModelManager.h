@@ -68,7 +68,7 @@ signals:
   void currentModelCleared();
   void newBridgeLoaded(const QStringList& bridgeNames);
   void newFileTypesAdded(const QStringList& fileTypes);
-  void operationFinished(const smtk::model::OperatorResult&);
+  void operationFinished(const smtk::model::OperatorResult&, bool hasNewModels);
 
 public slots:
   void clear();
@@ -79,7 +79,8 @@ public slots:
   bool startOperation(const smtk::model::OperatorPtr&);
   bool handleOperationResult(
     const smtk::model::OperatorResult& result,
-    const smtk::common::UUID& bridgeSessionId );
+    const smtk::common::UUID& bridgeSessionId,
+    bool &hadNewModels);
 
 protected slots:
   void onPluginLoaded();
