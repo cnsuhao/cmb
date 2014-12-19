@@ -2264,7 +2264,8 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
           {
           colorBlocks << flatIndex+1;
           smtk::model::FloatList rgba = (*it).color();
-          if (rgba.size() == 3 || rgba.size() ==4)
+          if ((rgba.size() == 3 || rgba.size() ==4) &&
+          !(rgba[0]+rgba[1]+rgba[2] == 0))
             color.setRgbF(rgba[0], rgba[1], rgba[2]);
           }
         }
