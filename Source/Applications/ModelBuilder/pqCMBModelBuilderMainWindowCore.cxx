@@ -2279,7 +2279,10 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       colorBlocks, color);
 
   this->activeRenderView()->render();
-  this->modelPanel()->onDataUpdated();
+  if(hasNewModels)
+    {
+    this->modelPanel()->onDataUpdated();
+    }
   return true;
 }
 

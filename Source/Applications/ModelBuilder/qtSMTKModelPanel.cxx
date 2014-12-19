@@ -87,9 +87,9 @@ qtSMTKModelPanel::qtSMTKModelPanel(ModelManager* mmgr, QWidget* p)
   this->Internal = new qtSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
-  this->Internal->VTKConnect->Connect(
-    this->Internal->smtkManager->managerProxy(), vtkCommand::UpdateDataEvent,
-    this, SLOT(onDataUpdated()));
+//  this->Internal->VTKConnect->Connect(
+//    this->Internal->smtkManager->managerProxy(), vtkCommand::UpdateDataEvent,
+//    this, SLOT(onDataUpdated()));
 
   this->onDataUpdated();
   //QSizePolicy expandPolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
