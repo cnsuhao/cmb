@@ -35,7 +35,7 @@ set(CMB_IO_SRC
     vtkCMBPolyReader.cxx
     vtkExtractRegionEdges.cxx
     vtkGAMBITWriter.cxx
-    vtkGDALRasterReader.cxx
+#    vtkGDALRasterReader.cxx
     vtkGMSSolidReader.cxx
     vtkGMSTINReader.cxx
     vtkKMLExporter.cxx
