@@ -30,7 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBSceneObjectBase.h"
 #include "pqCMBArc.h"
 
-
+#include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqObjectBuilder.h"
 #include "pqDataRepresentation.h"
@@ -40,7 +40,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqServer.h"
 #include "pqOutputPort.h"
 #include "pqServerManagerModel.h"
-#include "pqActiveView.h"
 
 #include "vtkCMBArcPolygonCreateClientOperator.h"
 
@@ -82,7 +81,7 @@ pqCMBPolygon::pqCMBPolygon(double minAngle, double edgeLength,
 
   //generate our source and make our representation
   pqApplicationCore* core = pqApplicationCore::instance();
-  pqView* view = pqActiveView::instance().current();
+  pqView* view = pqActiveObjects::instance().activeView();
   pqRenderView *rview = qobject_cast<pqRenderView*>(view);
   pqObjectBuilder* builder = core->getObjectBuilder();
   this->Source  = builder->createSource("CmbArcGroup",

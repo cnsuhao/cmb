@@ -37,7 +37,6 @@
 #include <QFileInfo>
 
 #include <pqActiveObjects.h>
-#include <pqActiveView.h>
 #include <pqRenderView.h>
 #include <pqSMAdaptor.h>
 #include <pqPipelineSource.h>
@@ -226,7 +225,7 @@ void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
       }    
     }
   pqRenderView* renView = qobject_cast<pqRenderView*>(
-     pqActiveView::instance().current());
+     pqActiveObjects::instance().activeView());
   renView->render();
 }
 

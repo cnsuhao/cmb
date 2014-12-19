@@ -40,7 +40,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QComboBox>
 #include <QTimer>
 
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqDisplayColorWidget.h"
 #include "vtkMapper.h"
@@ -207,7 +206,7 @@ Internal(new vtkInternal(this))
     this->Internal->UI.actionServerDisconnect);
 
   QObject::connect(
-    &pqActiveView::instance(), SIGNAL(changed(pqView*)),
+    &pqActiveObjects::instance(), SIGNAL(viewChanged(pqView*)),
     this, SLOT(onViewChanged()));
 
   // Setup some standard shortcuts

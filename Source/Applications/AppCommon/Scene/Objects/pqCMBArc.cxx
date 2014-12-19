@@ -29,8 +29,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqCMBPolygon.h"
 
+#include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
-#include "pqActiveView.h"
 #include "pqObjectBuilder.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
@@ -439,7 +439,7 @@ void pqCMBArc::updateRepresentation()
     }
 
   pqApplicationCore* core = pqApplicationCore::instance();
-  pqView* view = pqActiveView::instance().current();
+  pqView* view = pqActiveObjects::instance().activeView();
   pqObjectBuilder* builder = core->getObjectBuilder();
 
   //use case for this is if a person creates an invalid arc

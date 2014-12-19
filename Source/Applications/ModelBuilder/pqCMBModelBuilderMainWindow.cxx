@@ -54,7 +54,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QSettings>
 
 #include "qtCMBAboutDialog.h"
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqColorChooserButton.h"
 #include "pqDisplayColorWidget.h"
@@ -1116,7 +1115,7 @@ void pqCMBModelBuilderMainWindow::onShowCenterAxisChanged(bool enabled)
   this->getMainDialog()->actionShowCenterAxes->setEnabled(enabled);
   this->getMainDialog()->actionShowCenterAxes->blockSignals(true);
   pqRenderView* renView = qobject_cast<pqRenderView*>(
-    pqActiveView::instance().current());
+    pqActiveObjects::instance().activeView());
   this->getMainDialog()->actionShowCenterAxes->setChecked(
     renView ? renView->getCenterAxesVisibility() : false);
   this->getMainDialog()->actionShowCenterAxes->blockSignals(false);

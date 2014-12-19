@@ -28,9 +28,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "qtCMBApplicationOptions.h"
 #include "ui_qtCMBApplicationOptions.h"
 
-
 #include "pqActiveObjects.h"
-#include "pqActiveView.h"
 #include "pqAnimationScene.h"
 #include "pqApplicationCore.h"
 #include "pqFileDialog.h"
@@ -285,7 +283,7 @@ void qtCMBApplicationOptions::loadGlobalPropertiesFromSettings()
 {
 //  pqApplicationCore::instance()->loadGlobalPropertiesFromSettings();
 
-  pqView* view = pqActiveView::instance().current();
+  pqView* view = pqActiveObjects::instance().activeView();
   pqRenderView* renderView = qobject_cast<pqRenderView*>(view);
   if (renderView)
     {

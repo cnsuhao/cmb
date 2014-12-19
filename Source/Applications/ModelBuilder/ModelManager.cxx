@@ -34,7 +34,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkStringList.h"
 
 #include "pqActiveObjects.h"
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqCoreUtilities.h"
 #include "pqDataRepresentation.h"
@@ -495,7 +494,7 @@ bool ModelManager::handleOperationResult(
   smtk::model::ModelEntities modelEnts =
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
     smtk::model::MODEL_ENTITY);
-  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveView::instance().current());
+  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   bool success = true;
   hadNewModels = false;
   smtk::model::BridgePtr bridge = pxy->modelManager()->findBridgeSession(bridgeSessionId);

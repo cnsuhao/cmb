@@ -50,7 +50,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqActionGroupInterface.h"
 #include "pqActiveServer.h"
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "qtCMBApplicationOptionsDialog.h"
 #include "pqCameraDialog.h"
@@ -317,7 +316,7 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
 
   // Listen to the active render module changed signals.
   QObject::connect(
-    &pqActiveView::instance(), SIGNAL(changed(pqView*)),
+    &pqActiveObjects::instance(), SIGNAL(viewChanged(pqView*)),
     this, SLOT(onActiveViewChanged(pqView*)));
 /*
   QObject::connect(
@@ -371,7 +370,7 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
 //-----------------------------------------------------------------------------
 pqCMBCommonMainWindowCore::~pqCMBCommonMainWindowCore()
 {
-  pqActiveView::instance().setCurrent(0);
+  pqActiveObjects::instance().setActiveView(NULL);
   delete Internal;
 }
 
@@ -1078,7 +1077,7 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->RenderView->getProxy()->UpdateVTKObjects();
 
   pqActiveObjects::instance().blockSignals(true);
-  pqActiveView::instance().setCurrent(this->Internal->RenderView);
+  pqActiveObjects::instance().setActiveView(this->Internal->RenderView);
   pqActiveObjects::instance().blockSignals(false);
   this->Internal->RenderViewSelectionHelper.setView(this->Internal->RenderView);
   this->selectionManager()->setActiveView(this->Internal->RenderView);
@@ -1212,7 +1211,7 @@ pqPipelineSource* pqCMBCommonMainWindowCore::createSourceOnActiveServer(
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetCamera()
 {
-  pqRenderView* ren = qobject_cast<pqRenderView*>(pqActiveView::instance().current());
+  pqRenderView* ren = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   if (ren)
     {
     ren->resetCamera();
@@ -1616,7 +1615,7 @@ void pqCMBCommonMainWindowCore::setMaxRenderWindowSize(const QSize& /*size*/)
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::pickCenterOfRotation(bool begin)
 {
- if (!qobject_cast<pqRenderView*>(pqActiveView::instance().current()))
+ if (!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()));
     {
     return;
     }
@@ -1703,7 +1702,7 @@ void pqCMBCommonMainWindowCore::pickCenterOfRotationFinished(double x, double y,
 void pqCMBCommonMainWindowCore::setCenterOfRotation(double x, double y, double z)
 {
   pqRenderView* rm = qobject_cast<pqRenderView*>(
-    pqActiveView::instance().current());
+    pqActiveObjects::instance().activeView());
   if (!rm)
     {
     qDebug() << "No active render module. Cannot reset center of rotation.";
@@ -1764,7 +1763,7 @@ void pqCMBCommonMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 void pqCMBCommonMainWindowCore::setCenterAxesVisibility(bool visible)
 {
   pqRenderView* rm = qobject_cast<pqRenderView*>(
-    pqActiveView::instance().current());
+    pqActiveObjects::instance().activeView());
   if (!rm)
     {
     qDebug() << "No active render module. setCenterAxesVisibility failed.";
@@ -1794,7 +1793,7 @@ void pqCMBCommonMainWindowCore::onToolsManageLinks()
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onSaveScreenshot()
 {
-  if(!qobject_cast<pqRenderView*>(pqActiveView::instance().current()))
+  if(!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()))
     {
     qDebug() << "Cannot save image. No active render module.";
     return;
@@ -1822,7 +1821,7 @@ void pqCMBCommonMainWindowCore::onSaveScreenshot()
 void pqCMBCommonMainWindowCore::onSaveScreenshot(const QStringList &fileNames)
 {
   pqRenderView* const render_module = qobject_cast<pqRenderView*>(
-    pqActiveView::instance().current());
+    pqActiveObjects::instance().activeView());
   if(!render_module)
     {
     qCritical() << "Cannnot save image. No active render module.";
@@ -2446,6 +2445,6 @@ void pqCMBCommonMainWindowCore::onViewCreated(pqView* view)
   // created view, which is not desired in CMB.
   if(view != this->Internal->RenderView)
     {
-    pqActiveView::instance().setCurrent(this->Internal->RenderView);
+    pqActiveObjects::instance().setActiveView(this->Internal->RenderView);
     }
 }

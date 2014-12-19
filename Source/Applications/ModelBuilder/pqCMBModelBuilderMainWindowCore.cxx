@@ -64,7 +64,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqActionGroupInterface.h"
 #include "pqActiveServer.h"
-#include "pqActiveView.h"
 #include "pqPVApplicationCore.h"
 #include "pqCameraDialog.h"
 #include "pqCustomFilterDefinitionModel.h"
@@ -1688,7 +1687,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->cmbRenderViewSelectionHelper.setView(this->activeRenderView());
   // Set up connection with selection helpers for all views.
   QObject::connect(
-    &pqActiveView::instance(), SIGNAL(changed(pqView*)),
+    &pqActiveObjects::instance(), SIGNAL(viewChanged(pqView*)),
     &this->Internal->cmbRenderViewSelectionHelper, SLOT(setView(pqView*)));
 
   QObject::connect(
