@@ -174,7 +174,7 @@ void OmicronWorker::launchOmicron(omicronSettings& settings)
                            settings.args);
 
   //actually launch the new process
-  this->OmicronProcess->execute(remus::common::ExecuteProcess::Attached);
+  this->OmicronProcess->execute();
 
   //move back to the proper directory
   boost::filesystem::current_path(cwd);
