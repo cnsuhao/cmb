@@ -31,7 +31,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBBoreHole.h"
 
 #include "pqActiveServer.h"
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"

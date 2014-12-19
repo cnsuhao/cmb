@@ -28,7 +28,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBLIDARPieceObject.h"
 
 #include "pqActiveServer.h"
-#include "pqActiveView.h"
 #include "pqApplicationCore.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineRepresentation.h"
