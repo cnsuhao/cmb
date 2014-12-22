@@ -35,10 +35,10 @@ set(CMB_IO_SRC
     vtkCMBPolyReader.cxx
     vtkExtractRegionEdges.cxx
     vtkGAMBITWriter.cxx
-#    vtkGDALRasterReader.cxx
+#    vtkGDALRasterReader.cxx # Extents for master
     vtkGMSSolidReader.cxx
     vtkGMSTINReader.cxx
-    vtkKMLExporter.cxx
+#    vtkKMLExporter.cxx # vtkExporter for OpenGL2
     vtkKMLReader.cxx
     vtkLASReader.cxx
     vtkLIDARPtsWriter.cxx

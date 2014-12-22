@@ -9,8 +9,8 @@ set(testing_libraries
   vtkInteractionStyle
   vtkInteractionWidgets
   vtkRenderingCore
-  vtkRenderingFreeTypeOpenGL
-  vtkRenderingOpenGL
+  vtkRenderingFreeType${VTK_RENDERING_BACKEND}
+  vtkRendering${VTK_RENDERING_BACKEND}
   vtkTestingRendering
   vtksys
 )

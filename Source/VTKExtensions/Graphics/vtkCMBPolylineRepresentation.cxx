@@ -22,7 +22,9 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkPVRenderView.h"
 #include "vtkRenderer.h"
-#include "vtkShadowMapBakerPass.h"
+#ifndef VTKGL2
+# include "vtkShadowMapBakerPass.h"
+#endif
 #include "vtkSmartPointer.h"
 
 vtkStandardNewMacro(vtkCMBPolylineRepresentation);
@@ -120,6 +122,7 @@ int vtkCMBPolylineRepresentation::ProcessViewRequest(
 void vtkCMBPolylineRepresentation::UpdateColoringParameters()
 {
   this->Superclass::UpdateColoringParameters();
+#ifndef VTKGL2
   // Update shadow map properties, in case we are using shadow maps.
   if (this->Representation == SURFACE ||
     this->Representation == SURFACE_WITH_EDGES)
@@ -133,7 +136,7 @@ void vtkCMBPolylineRepresentation::UpdateColoringParameters()
     this->PolylineActor->GetPropertyKeys()->Set(vtkShadowMapBakerPass::OCCLUDER(), 0);
     this->PolylineActor->GetPropertyKeys()->Remove(vtkShadowMapBakerPass::RECEIVER());
     }
-
+#endif
 }
 //**************************************************************************
 // Forwarded to vtkCMBPolylineActor

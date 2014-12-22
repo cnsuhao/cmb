@@ -19,5 +19,9 @@ set(CMB_Graphics_SRC
   vtkSplineFunctionItem.cxx
 )
 
+if("${VTK_RENDERING_BACKEND}" STREQUAL "OpenGL2")
+  add_definitions(-DVTKGL2)
+endif()
+
 set(vtkCMBGraphics_NO_HeaderTest 1)
 vtk_module_library(vtkCMBGraphics ${CMB_Graphics_SRC})

@@ -10,8 +10,8 @@ vtk_module(vtkDiscreteModel
     vtkFiltersSources
     vtkInteractionStyle
     vtkIOXMLParser
-    vtkRenderingFreeTypeOpenGL
-    vtkRenderingOpenGL
+    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
+    vtkRendering${VTK_RENDERING_BACKEND}
     vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

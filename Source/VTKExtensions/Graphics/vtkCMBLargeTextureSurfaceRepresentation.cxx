@@ -38,7 +38,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkPVRenderView.h"
 #include "vtkQuadricClustering.h"
 #include "vtkRenderer.h"
-#include "vtkShadowMapBakerPass.h"
 #include "vtkSmartPointer.h"
 
 vtkStandardNewMacro(vtkCMBLargeTextureSurfaceRepresentation);

@@ -6,7 +6,7 @@ vtk_module(vtkCMBIO
     vtkCMBMeshing
     vtkFiltersGeometry
     vtkGeovisCore
-    vtkIOExport
+    #vtkIOExport
     vtkIOGDAL
     vtkIOParallelExodus
     vtksys
