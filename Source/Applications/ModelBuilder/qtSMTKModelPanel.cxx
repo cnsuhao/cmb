@@ -183,7 +183,7 @@ void qtSMTKModelPanel::selectEntities(const smtk::common::UUIDs& ids)
     cmbSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(*it);
     //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
 
-    if(minfo && minfo->Info->GetBlockId((*it).toString(), flatIndex))
+    if(minfo && minfo->Info->GetBlockId(*it, flatIndex))
       {
       //the flatIndex is 1 more than blockId, because the root is index 0
       selmodelblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));

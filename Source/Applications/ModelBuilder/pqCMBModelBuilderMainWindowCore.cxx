@@ -2253,7 +2253,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo((*it).entity());
 
       if(minfo && minfo->Representation &&
-         minfo->Info->GetBlockId(((*it).entity()).toString(), flatIndex))
+         minfo->Info->GetBlockId((*it).entity(), flatIndex))
         {
         if((*it).hasVisibility())
           {
