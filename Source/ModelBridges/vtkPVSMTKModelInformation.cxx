@@ -43,7 +43,7 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 
   modelsource->GetUUID2BlockIdMap(this->UUID2BlockIdMap);
   this->BlockId2UUIDMap.clear();
-  std::map<std::string, unsigned int>::iterator it =
+  std::map<smtk::common::UUID, unsigned int>::iterator it =
     this->UUID2BlockIdMap.begin();
   for(; it != this->UUID2BlockIdMap.end(); ++it)
     {
@@ -52,7 +52,8 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 }
 
 //----------------------------------------------------------------------------
-bool vtkPVSMTKModelInformation::GetBlockId(std::string uuid, unsigned int &bid)
+bool vtkPVSMTKModelInformation::GetBlockId(
+  const smtk::common::UUID& uuid, unsigned int &bid)
 {
   if(this->UUID2BlockIdMap.find(uuid) != this->UUID2BlockIdMap.end())
     {
@@ -63,20 +64,21 @@ bool vtkPVSMTKModelInformation::GetBlockId(std::string uuid, unsigned int &bid)
 }
 
 //----------------------------------------------------------------------------
-std::string vtkPVSMTKModelInformation::GetModelEntityId(unsigned int bid)
+const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelEntityId(
+  unsigned int bid)
 {
   if(this->BlockId2UUIDMap.find(bid) != this->BlockId2UUIDMap.end())
     {
     return this->BlockId2UUIDMap[bid];
     }
-  return "";
+  return this->m_dummyID;
 }
 
 //----------------------------------------------------------------------------
 smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
 {
   smtk::common::UUIDs uids;
-  std::map<std::string, unsigned int>::const_iterator it =
+  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     this->UUID2BlockIdMap.begin();
   for(; it != this->UUID2BlockIdMap.end(); ++it)
     {

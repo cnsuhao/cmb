@@ -46,8 +46,8 @@ public:
 
   // Description:
   // return the blockid given a entity UUID.
-  virtual bool GetBlockId(std::string uuid, unsigned int& bid);
-  virtual std::string GetModelEntityId(unsigned int bid);
+  virtual bool GetBlockId(const smtk::common::UUID& uuid, unsigned int& bid);
+  virtual const smtk::common::UUID&  GetModelEntityId(unsigned int bid);
 
   // Description:
   // return UUIDs for all blocks
@@ -58,13 +58,15 @@ protected:
   vtkPVSMTKModelInformation();
   ~vtkPVSMTKModelInformation();
 
-  std::map<std::string, unsigned int> UUID2BlockIdMap;
-  std::map<unsigned int, std::string> BlockId2UUIDMap;
+  std::map<smtk::common::UUID, unsigned int> UUID2BlockIdMap;
+  std::map<unsigned int, smtk::common::UUID> BlockId2UUIDMap;
 
 private:
 
   vtkPVSMTKModelInformation(const vtkPVSMTKModelInformation&); // Not implemented
   void operator=(const vtkPVSMTKModelInformation&); // Not implemented
+  
+  smtk::common::UUID m_dummyID;
   //ETX
 };
 
