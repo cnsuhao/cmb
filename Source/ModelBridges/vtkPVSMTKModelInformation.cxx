@@ -67,13 +67,16 @@ bool vtkPVSMTKModelInformation::GetBlockId(
 const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelEntityId(
   unsigned int bid)
 {
+  return this->BlockId2UUIDMap[bid];
+/*
   if(this->BlockId2UUIDMap.find(bid) != this->BlockId2UUIDMap.end())
     {
     return this->BlockId2UUIDMap[bid];
     }
   return this->m_dummyID;
+*/
 }
-
+/*
 //----------------------------------------------------------------------------
 smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
 {
@@ -82,11 +85,11 @@ smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
     this->UUID2BlockIdMap.begin();
   for(; it != this->UUID2BlockIdMap.end(); ++it)
     {
-    uids.insert(smtk::common::UUID(it->first));
+    uids.insert(it->first);
     }
   return uids;
 }
-
+*/
 //----------------------------------------------------------------------------
 void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
 {

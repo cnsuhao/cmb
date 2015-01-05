@@ -46,14 +46,18 @@ public:
 
   // Description:
   // return the blockid given a entity UUID.
+  // Caution: This will be slow if there are many blocks in the model
   virtual bool GetBlockId(const smtk::common::UUID& uuid, unsigned int& bid);
+  // return the modelentityID given a blockid.
+  // Caution: There is no valid check for this for performance reason  
   virtual const smtk::common::UUID&  GetModelEntityId(unsigned int bid);
 
   // Description:
-  // return UUIDs for all blocks
-  virtual smtk::common::UUIDs GetBlockUUIDs() const;
+  // return UUIDs to BlockId map for all blocks
+  // virtual smtk::common::UUIDs GetBlockUUIDs() const;
+  const std::map<smtk::common::UUID, unsigned int>& GetUUID2BlockIdMap() const
+  { return this->UUID2BlockIdMap; }
 
-  //BTX
 protected:
   vtkPVSMTKModelInformation();
   ~vtkPVSMTKModelInformation();
@@ -66,8 +70,8 @@ private:
   vtkPVSMTKModelInformation(const vtkPVSMTKModelInformation&); // Not implemented
   void operator=(const vtkPVSMTKModelInformation&); // Not implemented
   
-  smtk::common::UUID m_dummyID;
-  //ETX
+//  smtk::common::UUID m_dummyID;
+
 };
 
 #endif
