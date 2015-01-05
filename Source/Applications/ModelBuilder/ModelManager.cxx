@@ -84,6 +84,9 @@ void cmbSMTKModelInfo::init(
 
   this->SelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "BlockSelectionSource"));
+  smtk::model::ModelEntity modelEntity(mgr,this->Info->GetModelUUID());
+  if (modelEntity.isValid())
+    this->Bridge = modelEntity.bridge();
 
 }
 /// Copy constructor.
@@ -273,22 +276,6 @@ cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::model::Cursor& selentity)
     }
 
   return NULL;
-}
-
-//----------------------------------------------------------------------------
-smtk::model::BridgePtr ModelManager::modelBridge(
-  const smtk::common::UUID& entityid) const
-{
-  if(this->Internal->Entity2Models.find(entityid)
-    != this->Internal->Entity2Models.end())
-    {
-    smtk::model::ModelEntity modelEntity(
-      this->Internal->ManagerProxy->modelManager(),
-      this->Internal->Entity2Models[entityid]);
-    if (modelEntity.isValid())
-      return modelEntity.bridge();
-    }
-  return smtk::model::BridgePtr();
 }
 
 //----------------------------------------------------------------------------

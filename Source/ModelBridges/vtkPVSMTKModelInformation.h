@@ -52,6 +52,7 @@ public:
   // Caution: There is no valid check for this for performance reason  
   virtual const smtk::common::UUID&  GetModelEntityId(unsigned int bid);
 
+  virtual const smtk::common::UUID&  GetModelUUID();
   // Description:
   // return UUIDs to BlockId map for all blocks
   // virtual smtk::common::UUIDs GetBlockUUIDs() const;
@@ -64,6 +65,7 @@ protected:
 
   std::map<smtk::common::UUID, unsigned int> UUID2BlockIdMap;
   std::map<unsigned int, smtk::common::UUID> BlockId2UUIDMap;
+  smtk::common::UUID m_ModelUUID;
 
 private:
 

@@ -49,6 +49,7 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
     {
     this->BlockId2UUIDMap[it->second] = it->first;
     }
+  this->m_ModelUUID = smtk::common::UUID(modelsource->GetModelEntityID());
 }
 
 //----------------------------------------------------------------------------
@@ -61,6 +62,18 @@ bool vtkPVSMTKModelInformation::GetBlockId(
     return true;
     }
   return false;
+}
+//----------------------------------------------------------------------------
+const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelUUID()
+{
+  return this->m_ModelUUID;
+/*
+  if(this->BlockId2UUIDMap.find(bid) != this->BlockId2UUIDMap.end())
+    {
+    return this->BlockId2UUIDMap[bid];
+    }
+  return this->m_dummyID;
+*/
 }
 
 //----------------------------------------------------------------------------

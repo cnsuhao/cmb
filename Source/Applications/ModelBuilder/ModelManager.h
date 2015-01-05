@@ -38,6 +38,7 @@ struct cmbSMTKModelInfo
     QPointer<pqPipelineSource> Source;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
+    smtk::model::BridgePtr Bridge;
   };
 
 class ModelManager : public QObject
@@ -66,7 +67,6 @@ public:
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
 
-  smtk::model::BridgePtr modelBridge(const smtk::common::UUID& entityid) const;
 signals:
   void currentModelCleared();
   void newBridgeLoaded(const QStringList& bridgeNames);

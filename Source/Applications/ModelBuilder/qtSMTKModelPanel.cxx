@@ -17,6 +17,7 @@
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/EntityPhrase.h"
 #include "smtk/model/EntityListPhrase.h"
+#include "smtk/model/GroupEntity.h"
 #include "smtk/model/SimpleModelSubphrases.h"
 
 #include <QtGui/QApplication>
@@ -137,15 +138,15 @@ void qtSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
+  smtk::model::BridgePtr br = modInfo->Bridge;
+  if(!br)
+    return;
 
   QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
   int vis = visible ? 1 : 0;
-  smtk::model::BridgePtr br;
   foreach(unsigned int idx, blockids)
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
-    if(!br)
-      br = this->Internal->smtkManager->modelBridge(uid);
     BlockVisibilites[br].insert(uid);
     }
   this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
@@ -163,6 +164,9 @@ void qtSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
+  smtk::model::BridgePtr br = modInfo->Bridge;
+  if(!br)
+    return;
 
   QList<unsigned int> tmpList(indices);
 //  if(!tmpList.count())
@@ -171,7 +175,6 @@ void qtSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
   QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     modInfo->Info->GetUUID2BlockIdMap().begin();
-  smtk::model::BridgePtr br;
   for(; it != modInfo->Info->GetUUID2BlockIdMap().end(); ++it)
     {
     if(tmpList.count() && tmpList.contains(it->second+1))
@@ -179,9 +182,6 @@ void qtSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
       tmpList.removeAll(it->second+1);
       continue;
       }
-
-    if(!br)
-      br = this->Internal->smtkManager->modelBridge(it->first);
     BlockVisibilites[br].insert(it->first);
     }
   this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
@@ -198,20 +198,48 @@ void qtSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
+  smtk::model::BridgePtr br = modInfo->Bridge;
+  if(!br)
+    return;
 
   rep->setVisible(true);
+  smtk::model::ManagerPtr modelMan =
+    this->Internal->smtkManager->managerProxy()->modelManager();
+
+  // we want to show the whole model
   QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
+
+  smtk::model::ModelEntity modelEntity(modelMan,
+    modInfo->Info->GetModelUUID());
+
+  BlockVisibilites[br].insert(modelEntity.entity());
+
+  smtk::model::CellEntities cellents = modelEntity.cells();
+  for (smtk::model::CellEntities::const_iterator it = cellents.begin();
+    it != cellents.end(); ++it)
+    {
+    BlockVisibilites[br].insert((*it).entity());
+    }
+
+  smtk::model::GroupEntities groups = modelEntity.groups();
+  for (smtk::model::GroupEntities::iterator git = groups.begin();
+    git != groups.end(); ++git)
+    {
+    BlockVisibilites[br].insert((*git).entity());
+    }
+ 
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     modInfo->Info->GetUUID2BlockIdMap().begin();
-  smtk::model::BridgePtr br;
   for(; it != modInfo->Info->GetUUID2BlockIdMap().end(); ++it)
     {
-    if(!br)
-      br = this->Internal->smtkManager->modelBridge(it->first);
     BlockVisibilites[br].insert(it->first);
     }
+
   this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
     BlockVisibilites, 1);
+
+//  this->Internal->ModelPanel->getModelView()->syncModelVisibility(
+//    modInfo->Info->GetModelUUID(), 1);
   this->Internal->ModelPanel->update();
 }
 
@@ -225,14 +253,14 @@ void qtSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
+  smtk::model::BridgePtr br = modInfo->Bridge;
+  if(!br)
+    return;
 
   QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockColors;
-    smtk::model::BridgePtr br;
   foreach(unsigned int idx, blockids)
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
-    if(!br)
-      br = this->Internal->smtkManager->modelBridge(uid);
     BlockColors[br].insert(uid);
     }
 
