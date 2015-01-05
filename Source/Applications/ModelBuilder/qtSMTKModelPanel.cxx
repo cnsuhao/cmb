@@ -144,7 +144,6 @@ void qtSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
   foreach(unsigned int idx, blockids)
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
-    smtk::model::BridgePtr br = this->Internal->smtkManager->modelBridge(uid);
     if(!br)
       br = this->Internal->smtkManager->modelBridge(uid);
     BlockVisibilites[br].insert(uid);
