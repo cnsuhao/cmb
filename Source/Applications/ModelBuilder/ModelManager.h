@@ -30,7 +30,8 @@ struct cmbSMTKModelInfo
   public:
     cmbSMTKModelInfo(){}
     cmbSMTKModelInfo(const cmbSMTKModelInfo& other);
-    void init(pqPipelineSource*, pqDataRepresentation*, const std::string& filename);
+    void init(pqPipelineSource*, pqDataRepresentation*,
+      const std::string& filename, smtk::model::ManagerPtr);
 
     vtkSmartPointer<vtkSMProxy> SelectionSource;
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
@@ -51,7 +52,8 @@ public:
   std::set<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
 
-  cmbSMTKModelInfo* modelInfo(const smtk::common::UUID& uid);
+  cmbSMTKModelInfo* modelInfo(const smtk::model::Cursor& entity);
+  cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
   QList<cmbSMTKModelInfo*> selectedModels();
   int numberOfModels();
 
@@ -64,6 +66,7 @@ public:
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
 
+  smtk::model::BridgePtr modelBridge(const smtk::common::UUID& entityid) const;
 signals:
   void currentModelCleared();
   void newBridgeLoaded(const QStringList& bridgeNames);

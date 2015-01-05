@@ -8,9 +8,13 @@
 // .SECTION Description
 #include <QDockWidget>
 
-#include "smtk/common/UUID.h"
+#include "smtk/model/Cursor.h"
 
 class ModelManager;
+class vtkObject;
+class pqDataRepresentation;
+class vtkSMIntVectorProperty;
+class vtkSMDoubleMapProperty;
 
 namespace smtk {
  namespace attribute {
@@ -25,16 +29,34 @@ public:
   qtSMTKModelPanel(ModelManager* mmgr, QWidget* p);
   ~qtSMTKModelPanel();
 
+  ModelManager* modelManager();
+
+  void setBlockVisibility(pqDataRepresentation* rep,
+    const QList<unsigned int>& indices, bool visible);
+  void setBlockColor(pqDataRepresentation* rep,
+    const QList<unsigned int>& indices, const QColor&);
+  void showOnlyBlocks(pqDataRepresentation* rep,
+    const QList<unsigned int>& indices);
+  void showAllBlocks(pqDataRepresentation* rep);
+
 public slots:
   /// Called if the user accepts pending modifications
   void onDataUpdated();
   void updateTreeSelection();
   void clearUI();
+//  void linkRepresentations();
 
 protected slots:
-  void selectEntities(const smtk::common::UUIDs& ids);
+  void selectEntities(const smtk::model::Cursors& entities);
   void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
   void onLaunchFileBrowser();
+//  void propertyChanged(
+//    vtkObject* caller, unsigned long, void*);
+//  void linkRepresentation(pqDataRepresentation *representation);
+//  void updateEntityVisibility(vtkSMIntVectorProperty* ivp,
+//                              pqDataRepresentation* representation);
+//  void updateEntityColor(vtkSMDoubleMapProperty* dmp,
+//                         pqDataRepresentation* representation);
 
 private:
   class qInternal;

@@ -22,6 +22,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "ModelManager.h"
 
+#include "vtkDataObject.h"
 #include "vtkNew.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
@@ -41,6 +42,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqPipelineSource.h"
 #include "pqPluginManager.h"
 #include "pqRenderView.h"
+#include "pqRepresentationHelperFunctions.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
 #include "vtksys/SystemTools.hxx"
@@ -60,13 +62,21 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 //----------------------------------------------------------------------------
 void cmbSMTKModelInfo::init(
-  pqPipelineSource* source, pqDataRepresentation* rep, const std::string& filename)
+  pqPipelineSource* source, pqDataRepresentation* rep,
+  const std::string& filename, smtk::model::ManagerPtr mgr)
 {
   this->Source = source;
   this->FileName = filename;
   this->Representation = rep;
   this->Info = vtkSmartPointer<vtkPVSMTKModelInformation>::New();
   this->Source->getProxy()->GatherInformation(this->Info);
+
+  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+    this->Info->GetUUID2BlockIdMap().begin();
+  for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
+    {
+    mgr->setIntegerProperty(it->first, "block_index", it->second);
+    }
 
   // create block selection source proxy
   vtkSMSessionProxyManager *proxyManager =
@@ -92,7 +102,9 @@ class ModelManager::qInternal
 public:
 
   // <ModelEnity, modelInfo>
-  std::map<smtk::common::UUID, cmbSMTKModelInfo> Models;
+  std::map<smtk::common::UUID, cmbSMTKModelInfo> ModelInfos;
+  typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelInfo;
+  std::map<smtk::common::UUID, smtk::common::UUID> Entity2Models;
   typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelEnt;
 
   pqServer* Server;
@@ -102,7 +114,7 @@ public:
     pqRenderView* view, vtkSMModelManagerProxy* smProxy,
     const std::string& filename)
   {
-    if(this->Models.find(model.entity()) == this->Models.end())
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       {
       pqApplicationCore* core = pqApplicationCore::instance();
       pqObjectBuilder* builder = core->getObjectBuilder();
@@ -130,10 +142,19 @@ public:
           //modinfo.init(modelSrc, rep, filename);
            std::cout << "Add model: " << model.entity().toString().c_str() << "\n";
 
-          this->Models[model.entity()].init(modelSrc, rep, filename);
-          /*.insert(std::pair<smtk::common::UUID, cmbSMTKModelInfo&>(
-                              model.entity(), modinfo));*/
-         return true;         
+          this->ModelInfos[model.entity()].init(modelSrc, rep, filename,
+                                            smProxy->modelManager());
+          vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
+          std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+            pvinfo->GetUUID2BlockIdMap().begin();
+          for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
+            {
+            this->Entity2Models[it->first] = model.entity();
+            }
+          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+            rep->getProxy(), NULL, vtkDataObject::CELL);
+
+          return true;         
           }
         }
       // Should not get here.
@@ -151,10 +172,12 @@ public:
 
   void clear()
   {
-    for(itModelEnt mit = this->Models.begin(); mit != this->Models.end(); ++mit)
+    for(itModelInfo mit = this->ModelInfos.begin(); mit != this->ModelInfos.end(); ++mit)
       {
       pqApplicationCore::instance()->getObjectBuilder()->destroy(mit->second.Source);
       }
+    this->Entity2Models.clear();
+    this->ModelInfos.clear();
 //    this->ManagerProxy = NULL;
   }
 
@@ -217,12 +240,18 @@ vtkSMModelManagerProxy* ModelManager::managerProxy()
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::common::UUID& uid)
+cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::model::Cursor& selentity)
 {
 /*
-  smtk::model::Cursor entity(this->managerProxy()->modelManager(), uid);
+//  smtk::model::Cursor entity(this->managerProxy()->modelManager(), uid);
   smtk::model::ModelEntity modelEntity = entity.isModelEntity() ?
       entity.as<smtk::model::ModelEntity>() : entity.owningModel();
+
+  if(modelEntity.isValid() && this->Internal->ModelInfos.find(modelEntity.entity()) !=
+    this->Internal->ModelInfos.end())
+    {
+    return &this->Internal->ModelInfos[modelEntity.entity()];
+    }
 */
   /*    (entity.isCellEntity() ? entity.as<smtk::model::CellEntity>().model() :
        entity.owningModel());*/
@@ -230,26 +259,53 @@ cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::common::UUID& uid)
   std::cout << "modelInfo Id: " << uid.toString().c_str() << std::endl;
   std::cout << "Model is valid? " << modelEntity.isValid() << std::endl;
 
-  if(modelEntity.isValid() && this->Internal->Models.find(modelEntity.entity()) !=
-    this->Internal->Models.end())
+  if(modelEntity.isValid() && this->Internal->ModelInfos.find(modelEntity.entity()) !=
+    this->Internal->ModelInfos.end())
     {
-    return &this->Internal->Models[modelEntity.entity()];
+    return &this->Internal->ModelInfos[modelEntity.entity()];
     }
 */
-  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
-      mit != this->Internal->Models.end(); ++mit)
-    {
-    if(!mit->second.Info)
-      {
-      continue;
-      }
 
-    smtk::common::UUIDs ids = mit->second.Info->GetBlockUUIDs();
-    if(std::find(ids.begin(), ids.end(), uid) != ids.end())
+  if(this->Internal->Entity2Models.find(selentity.entity())
+    != this->Internal->Entity2Models.end())
+    {
+    return &this->Internal->ModelInfos[ this->Internal->Entity2Models[selentity.entity()] ];
+    }
+
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
+smtk::model::BridgePtr ModelManager::modelBridge(
+  const smtk::common::UUID& entityid) const
+{
+  if(this->Internal->Entity2Models.find(entityid)
+    != this->Internal->Entity2Models.end())
+    {
+    smtk::model::ModelEntity modelEntity(
+      this->Internal->ManagerProxy->modelManager(),
+      this->Internal->Entity2Models[entityid]);
+    if (modelEntity.isValid())
+      return modelEntity.bridge();
+    }
+  return smtk::model::BridgePtr();
+}
+
+//----------------------------------------------------------------------------
+cmbSMTKModelInfo* ModelManager::modelInfo(pqDataRepresentation* rep)
+{
+  if(!rep)
+    return NULL;
+
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+      mit != this->Internal->ModelInfos.end(); ++mit)
+    {
+    if(mit->second.Representation == rep)
       {
-      return &(mit->second);
+      return &mit->second;
       }
     }
+
   return NULL;
 }
 
@@ -257,8 +313,8 @@ cmbSMTKModelInfo* ModelManager::modelInfo(const smtk::common::UUID& uid)
 QList<cmbSMTKModelInfo*>  ModelManager::selectedModels()
 {
   QList<cmbSMTKModelInfo*> selModels;
-  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
-      mit != this->Internal->Models.end(); ++mit)
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+      mit != this->Internal->ModelInfos.end(); ++mit)
     {
     if(!mit->second.Source)
       {
@@ -278,8 +334,8 @@ QList<cmbSMTKModelInfo*>  ModelManager::selectedModels()
 //----------------------------------------------------------------------------
 void ModelManager::clearModelSelections()
 {
-  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
-    mit != this->Internal->Models.end(); ++mit)
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+    mit != this->Internal->ModelInfos.end(); ++mit)
     {
     if(!mit->second.Source)
       {
@@ -297,7 +353,7 @@ void ModelManager::clearModelSelections()
 //----------------------------------------------------------------------------
 int ModelManager::numberOfModels()
 {
-  return (int)this->Internal->Models.size();
+  return (int)this->Internal->ModelInfos.size();
 }
 
 //----------------------------------------------------------------------------
@@ -310,8 +366,8 @@ pqDataRepresentation* ModelManager::activeModelRepresentation()
 QList<pqDataRepresentation*> ModelManager::modelRepresentations()
 {
   QList<pqDataRepresentation*> result;
-  for(qInternal::itModelEnt mit = this->Internal->Models.begin();
-    mit != this->Internal->Models.end(); ++mit)
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+    mit != this->Internal->ModelInfos.end(); ++mit)
     {
     if(!mit->second.Representation)
       {
@@ -502,13 +558,16 @@ bool ModelManager::handleOperationResult(
       it != modelEnts.end(); ++it)
     {
 //   if(!mit->bridge() || mit->bridge()->name() == "native") // a new model
-     if((*it).isValid() && this->Internal->Models.find((*it).entity()) ==
-      this->Internal->Models.end())
+     if((*it).isValid() && this->Internal->ModelInfos.find((*it).entity()) ==
+      this->Internal->ModelInfos.end())
       {
       hadNewModels = true;
       pxy->modelManager()->setBridgeForModel(bridge, (*it).entity());
       success = this->Internal->addModelRepresentation(
         *it, view, this->Internal->ManagerProxy, "");
+      // fetch again for "block_index" property of entities, which are set
+      // while building multi-block dataset
+      // pxy->fetchWholeModel();
       }
     }
   pxy->modelManager()->assignDefaultNames();

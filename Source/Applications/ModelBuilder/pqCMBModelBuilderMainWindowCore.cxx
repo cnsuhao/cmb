@@ -1724,8 +1724,6 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     SIGNAL(operationFinished(const smtk::model::OperatorResult&, bool)),
     this, SLOT(processModelInfo( const smtk::model::OperatorResult& , bool)));
 
-  this->Internal->ViewContextBehavior->setModelManager(
-    this->Internal->smtkModelManager);
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
     this, SLOT(selectRepresentationBlock( pqDataRepresentation*, unsigned int )));
@@ -2226,15 +2224,10 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     return false;
     }
 
-  //TODO, based on operator types to do differet things.
-  if(hasNewModels)
-    {
-    this->activeRenderView()->resetCamera();
-    emit this->newModelCreated();
-    }
-
   // we may need to update model representation for display properties
   // of the list of entities that were potentially modified.
+  // FIXME, we need more info regarding what changed in the result entities,
+  // for example, is this a color change, visibility change, etc
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
     result->findModelEntity("entities");
 
@@ -2250,38 +2243,54 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       unsigned int flatIndex;
-      cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo((*it).entity());
+      //cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo((*it).entity());
 
-      if(minfo && minfo->Representation &&
-         minfo->Info->GetBlockId((*it).entity(), flatIndex))
+      //if(minfo && minfo->Representation && (*it).hasIntegerProperty("block_index"))
+      //   minfo->Info->GetBlockId((*it).entity(), flatIndex))
+      if((*it).hasIntegerProperty("block_index"))
         {
-        if((*it).hasVisibility())
+        const smtk::model::IntegerList& prop((*it).integerProperty("block_index"));
+        if(!prop.empty())
           {
-          visBlocks << flatIndex+1;
-          visible = (*it).visible();
-          }
-        if((*it).hasColor())
-          {
+          flatIndex = prop[0];
+          if((*it).hasVisibility())
+            {
+            visBlocks << flatIndex+1;
+            visible = (*it).visible();
+            }
+
           colorBlocks << flatIndex+1;
-          smtk::model::FloatList rgba = (*it).color();
-          if ((rgba.size() == 3 || rgba.size() ==4) &&
-          !(rgba[0]+rgba[1]+rgba[2] == 0))
-            color.setRgbF(rgba[0], rgba[1], rgba[2]);
+          if((*it).hasColor())
+            {
+            smtk::model::FloatList rgba = (*it).color();
+            if ((rgba.size() == 3 || rgba.size() ==4) &&
+            !(rgba[0]+rgba[1]+rgba[2] == 0))
+              color.setRgbF(rgba[0], rgba[1], rgba[2]);
+            }
           }
         }
       }
     }
-  if(visBlocks.count())
-    this->Internal->ViewContextBehavior->mbPanel()->setBlockVisibility(
-      visBlocks, visible);
-  if(colorBlocks.count() && color.isValid())
-    this->Internal->ViewContextBehavior->mbPanel()->setBlockColor(
-      colorBlocks, color);
 
-  this->activeRenderView()->render();
+  //this->modelPanel()->setIgnorePropertyChange(true);
+  if(visBlocks.count())
+    this->Internal->ViewContextBehavior->setBlockVisibility(
+      visBlocks, visible);
+  if(colorBlocks.count())
+    this->Internal->ViewContextBehavior->setBlockColor(
+      colorBlocks, color);
+  //this->modelPanel()->setIgnorePropertyChange(false);
+
   if(hasNewModels)
     {
     this->modelPanel()->onDataUpdated();
+    this->activeRenderView()->resetCamera();
+    emit this->newModelCreated();
+    }
+  else
+    {
+    this->activeRenderView()->render();
+    this->modelPanel()->update();
     }
   return true;
 }
@@ -2300,6 +2309,8 @@ qtSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     this->Internal->ModelDock = new qtSMTKModelPanel(
       this->Internal->smtkModelManager,
       this->parentWidget());
+    this->Internal->ViewContextBehavior->setModelPanel(
+      this->Internal->ModelDock);
     }
   return this->Internal->ModelDock;
 }

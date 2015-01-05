@@ -29,9 +29,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __pqModelBuilderViewContextMenuBehavior_h
 
 #include <QObject>
-#include <QPoint> // needed for QPoint.
+#include <QPoint>
 #include <QPointer>
-#include <QList> // needed for QList.
+#include <QList>
+#include <QColor>
 #include "vtkType.h"
 
 class pqDataRepresentation;
@@ -41,6 +42,7 @@ class QAction;
 class QMenu;
 class pqMultiBlockInspectorPanel;
 class ModelManager;
+class qtSMTKModelPanel;
 
 /// @ingroup Behaviors
 ///
@@ -56,8 +58,12 @@ public:
   pqModelBuilderViewContextMenuBehavior(QObject* parent=0);
   virtual ~pqModelBuilderViewContextMenuBehavior();
 
-  void setModelManager(ModelManager*);
-  pqMultiBlockInspectorPanel* mbPanel();
+  void setModelPanel(qtSMTKModelPanel*);
+
+  void setBlockVisibility(
+    const QList<unsigned int>& visBlocks, bool visible);
+  void setBlockColor(
+    const QList<unsigned int>& colorBlocks, const QColor&);
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);
@@ -81,11 +87,6 @@ protected slots:
   /// called to show all blocks.
   void showAllBlocks();
   void showAllRepresentations();
-
-  /// called to unset the visibility flag for the block. after this call the
-  /// block will inherit the visibility from its parent. the action which
-  /// emits the signal will contain the block index in its data()
-  void unsetBlockVisibility();
 
   /// called to set the color for the block. the action which emits the
   /// signal will contain the block index in its data()
@@ -132,8 +133,8 @@ protected:
   QPoint Position;
   QPointer<pqDataRepresentation> PickedRepresentation;
   QList<unsigned int> PickedBlocks;
-  pqMultiBlockInspectorPanel* m_MBPanel;
-  QPointer<ModelManager> m_ModelManager;
+  QPointer<qtSMTKModelPanel> m_ModelPanel;
+  pqMultiBlockInspectorPanel* m_DataInspector;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

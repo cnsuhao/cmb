@@ -62,6 +62,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPair>
 #include <QWidget>
 #include "ModelManager.h"
+#include "qtSMTKModelPanel.h"
 
 namespace
 {
@@ -103,27 +104,54 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
     this, SLOT(onViewAdded(pqView*)));
   this->Menu = new QMenu();
   this->Menu << pqSetName("PipelineContextMenu");
-  this->m_MBPanel = new pqMultiBlockInspectorPanel(NULL);
-  this->m_MBPanel->setVisible(false);
+  this->m_DataInspector = new pqMultiBlockInspectorPanel(NULL);
+  this->m_DataInspector->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
 pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 {
   delete this->Menu;
-  delete this->m_MBPanel;
+  delete this->m_DataInspector;
 }
 
 //-----------------------------------------------------------------------------
-pqMultiBlockInspectorPanel* pqModelBuilderViewContextMenuBehavior::mbPanel()
+void pqModelBuilderViewContextMenuBehavior::setModelPanel(qtSMTKModelPanel* panel)
 {
-  return this->m_MBPanel;
+  this->m_ModelPanel = panel;
 }
 
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::setModelManager(ModelManager* mmgr)
+void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
+    const QList<unsigned int>& visBlocks, bool visible)
 {
-  this->m_ModelManager = mmgr;
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  if (panel)
+    {
+      if(!visible)
+      {
+      pqOutputPort* outport = panel->getOutputPort();
+      if(outport)
+        {
+        outport->setSelectionInput(0, 0);
+        }     
+      }
+    panel->setBlockVisibility(visBlocks, visible);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::setBlockColor(
+    const QList<unsigned int>& colorBlocks, const QColor& color)
+{
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  if (panel)
+    {
+    if(color.isValid())
+      panel->setBlockColor(colorBlocks, color);
+    else
+      panel->clearBlockColor(colorBlocks);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -237,6 +265,8 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
   this->Menu->clear();
   if (repr)
     {
+    QAction* action;
+
     vtkPVDataInformation *info = repr->getInputDataInformation();
     vtkPVCompositeDataInformation *compositeInfo = info->GetCompositeDataInformation();
     if(compositeInfo && compositeInfo->GetDataIsComposite())
@@ -259,6 +289,9 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->connect(hideBlockAction, SIGNAL(triggered()),
                     this, SLOT(hideBlock()));
 
+//      action = this->Menu->addAction("Hide All Entities");
+//      QObject::connect(action, SIGNAL(triggered()), this, SLOT(hide()));
+
       QAction *showOnlyBlockAction =
         this->Menu->addAction(QString("Show Only Entit%1").arg(multipleBlocks ? "ies" : "y"));
       this->connect(showOnlyBlockAction, SIGNAL(triggered()),
@@ -268,13 +301,13 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
         this->Menu->addAction("Show All Entities");
       this->connect(showAllBlocksAction, SIGNAL(triggered()),
                     this, SLOT(showAllBlocks()));
-
+/*
       QAction *unsetVisibilityAction =
         this->Menu->addAction(QString("Unset Entity %1")
             .arg(multipleBlocks ? "Visibilities" : "Visibility"));
       this->connect(unsetVisibilityAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockVisibility()));
-
+*/
       this->Menu->addSeparator();
 
       QAction *setBlockColorAction =
@@ -306,9 +339,6 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->Menu->addSeparator();
       }
 
-    QAction* action;
-    action = this->Menu->addAction("Hide Model");
-    QObject::connect(action, SIGNAL(triggered()), this, SLOT(hide()));
 
     QMenu* reprMenu = this->Menu->addMenu("Representation")
       << pqSetName("Representation");
@@ -458,91 +488,70 @@ void pqModelBuilderViewContextMenuBehavior::reprTypeChanged(QAction* action)
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::hide()
 {
-  pqDataRepresentation* repr = this->PickedRepresentation;
-  if (repr)
+  QAction *action = qobject_cast<QAction *>(sender());
+  if(!action || !this->m_ModelPanel)
     {
-    BEGIN_UNDO_SET("Visibility Changed");
-    repr->setVisible(false);
-    repr->renderViewEventually();
-    END_UNDO_SET();
+    return;
     }
+  pqDataRepresentation* repr = this->PickedRepresentation;
+  QList<unsigned int> emptyList;
+  this->m_ModelPanel->showOnlyBlocks(
+    repr, emptyList);
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::hideBlock()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  if(!action || !this->m_ModelPanel)
     {
     return;
     }
-
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
-  if (panel)
-    {
-    pqOutputPort* outport = panel->getOutputPort();
-    if(outport)
-      {
-      outport->setSelectionInput(0, 0);
-      }
-    panel->setBlockVisibility(this->PickedBlocks, false);
-    }
+  this->m_ModelPanel->setBlockVisibility(
+    this->PickedRepresentation, this->PickedBlocks, false);
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  if(!action || !this->m_ModelPanel)
     {
     return;
     }
-
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
-  if (panel)
-    {
-    panel->showOnlyBlocks(this->PickedBlocks);
-    }
+  this->m_ModelPanel->showOnlyBlocks(
+    this->PickedRepresentation, this->PickedBlocks);
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
 {
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
+  QAction *action = qobject_cast<QAction *>(sender());
+  if(!action || !this->m_ModelPanel)
+    {
+    return;
+    }
+  this->m_ModelPanel->showAllBlocks(
+    this->PickedRepresentation);
+/*
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if (panel)
     {
     panel->showAllBlocks();
     }
+*/
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
 {
-  if(!this->m_ModelManager)
+  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
     return;
 
   foreach(pqDataRepresentation* repr,
-          this->m_ModelManager->modelRepresentations())
+          this->m_ModelPanel->modelManager()->modelRepresentations())
     {
-    repr->setVisible(true);
-    this->m_MBPanel->setRepresentation(repr);
-    this->m_MBPanel->showAllBlocks();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::unsetBlockVisibility()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
-    {
-    return;
-    }
-
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
-  if(panel)
-    {
-    panel->clearBlockVisibility(this->PickedBlocks);
+    this->m_ModelPanel->showAllBlocks(repr);
     }
 }
 
@@ -550,20 +559,17 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockVisibility()
 void pqModelBuilderViewContextMenuBehavior::setBlockColor()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  if(!action || !this->m_ModelPanel)
     {
     return;
     }
-
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
-  if (panel)
+  QColor color = QColorDialog::getColor(QColor(),
+    this->m_DataInspector, "Choose Block Color",
+    QColorDialog::DontUseNativeDialog);
+  if(color.isValid())
     {
-    QColor color = QColorDialog::getColor(QColor(), panel, "Choose Block Color",
-      QColorDialog::DontUseNativeDialog);
-    if(color.isValid())
-      {
-      panel->setBlockColor(this->PickedBlocks, color);
-      }
+    this->m_ModelPanel->setBlockColor(
+      this->PickedRepresentation, this->PickedBlocks, color);
     }
 }
 
@@ -571,16 +577,13 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
 void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  if(!action || !this->m_ModelPanel)
     {
     return;
     }
-
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
-  if(panel)
-    {
-    panel->clearBlockColor(this->PickedBlocks);
-    }
+  QColor invalidColor;
+  this->m_ModelPanel->setBlockColor(
+    this->PickedRepresentation, this->PickedBlocks, invalidColor);
 }
 
 //-----------------------------------------------------------------------------
@@ -592,7 +595,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockOpacity()
     return;
     }
 
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if(panel)
     {
     panel->promptAndSetBlockOpacity(this->PickedBlocks);
@@ -608,7 +611,7 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockOpacity()
     return;
     }
 
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if(panel)
     {
     panel->clearBlockOpacity(this->PickedBlocks);
@@ -618,7 +621,7 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockOpacity()
 //-----------------------------------------------------------------------------
 QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(unsigned int flatIndex) const
 {
-  pqMultiBlockInspectorPanel *panel = this->m_MBPanel;
+  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if(panel)
     {
     return panel->lookupBlockName(flatIndex);
