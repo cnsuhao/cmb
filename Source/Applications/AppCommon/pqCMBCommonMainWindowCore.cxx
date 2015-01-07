@@ -49,7 +49,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QTemporaryFile>
 
 #include "pqActionGroupInterface.h"
-#include "pqActiveServer.h"
 #include "pqApplicationCore.h"
 #include "qtCMBApplicationOptionsDialog.h"
 #include "pqCameraDialog.h"

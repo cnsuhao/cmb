@@ -30,7 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqCMBFacetedObject.h"
 
-#include "pqActiveServer.h"
+
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"

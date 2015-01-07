@@ -30,7 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqCMBTexturedObject.h"
 
-#include "pqActiveServer.h"
+
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
 #include "vtkGeometryRepresentation.h"

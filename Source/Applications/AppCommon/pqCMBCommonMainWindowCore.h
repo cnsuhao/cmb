@@ -46,7 +46,6 @@ class pqCMBPreviewDialog;
 class pqReaderFactory;
 
 class pqActionGroupInterface;
-class pqActiveServer;
 class pqDockWindowInterface;
 class pqGenericViewModule;
 //class pqMultiView;

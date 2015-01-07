@@ -30,7 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqCMBUniformGrid.h"
 
-#include "pqActiveServer.h"
+
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineRepresentation.h"

@@ -63,7 +63,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMap>
 
 #include "pqActionGroupInterface.h"
-#include "pqActiveServer.h"
+
 #include "pqPVApplicationCore.h"
 #include "pqCameraDialog.h"
 #include "pqCustomFilterDefinitionModel.h"
