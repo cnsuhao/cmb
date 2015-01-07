@@ -194,6 +194,7 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           int height = senderWidget->size().height();
           pos[1] = height - pos[1];
           unsigned int blockIndex = 0;
+          
           this->PickedRepresentation = view->pickBlock(pos, blockIndex);
 
           // we want to select this block.
@@ -222,45 +223,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 
   // get currently selected block ids
   this->PickedBlocks.clear();
-
-  bool picked_block_in_selected_blocks = false;
-  pqSelectionManager *selectionManager =
-    pqPVApplicationCore::instance()->selectionManager();
-  if(selectionManager)
-    {
-    pqOutputPort *port = selectionManager->getSelectedPort();
-    if(port)
-      {
-      vtkSMSourceProxy *activeSelection = port->getSelectionInput();
-      if(activeSelection &&
-         strcmp(activeSelection->GetXMLName(), "BlockSelectionSource") == 0)
-        {
-        vtkSMPropertyHelper blocksProp(activeSelection, "Blocks");
-        QVector <vtkIdType> vblocks;
-        vblocks.resize(blocksProp.GetNumberOfElements());
-        blocksProp.Get(&vblocks[0], blocksProp.GetNumberOfElements());
-        foreach (const vtkIdType &index, vblocks)
-          {
-          if (index >= 0)
-            {
-            if (static_cast<unsigned int>(index) == blockIndex)
-              {
-              picked_block_in_selected_blocks = true;
-              }
-            this->PickedBlocks.push_back(static_cast<unsigned int>(index));
-            }
-          }
-        }
-      }
-    }
-
-  if (!picked_block_in_selected_blocks)
-    {
-    // the block that was clicked on is not one of the currently selected
-    // block so actions should only affect that block
-    this->PickedBlocks.clear();
-    this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
-    }
+  this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
 
   this->Menu->clear();
   if (repr)

@@ -2357,16 +2357,13 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 {
   if(!repr)
     return;
+  cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(repr);
+  if(!minfo)
+    return;
 
-//  pqSelectionManager *selectionManager =
-//    pqPVApplicationCore::instance()->selectionManager();
-  // create block selection source proxy
-  vtkSMSessionProxyManager *proxyManager =
-    vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
+  this->Internal->smtkModelManager->clearModelSelections();
 
-  vtkSmartPointer<vtkSMProxy> selectionSource;
-  selectionSource.TakeReference(
-    proxyManager->NewProxy("sources", "BlockSelectionSource"));
+  vtkSMProxy* selectionSource = minfo->SelectionSource;
   vtkSMPropertyHelper prop(selectionSource, "Blocks");
   std::vector<vtkIdType> selIds;
   selIds.push_back(static_cast<vtkIdType>(blockIndex));
@@ -2379,12 +2376,18 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
     vtkSMSourceProxy::SafeDownCast(selectionSource);
   pqPipelineSource* source = repr->getInput();
   pqOutputPort* outport = source->getOutputPort(0);
-  if(outport)
+  pqSelectionManager *selectionManager =
+    qobject_cast<pqSelectionManager*>(
+      pqApplicationCore::instance()->manager("SelectionManager"));
+
+  if(outport && selectionManager)
     {
     outport->setSelectionInput(selectionSourceProxy, 0);
-    this->requestRender();
-//    selectionManager->select(outport);
-//    pqActiveObjects::instance().setActiveSource(source);
+//    this->requestRender();
     this->updateSMTKSelection();
+    selectionManager->blockSignals(true);
+    pqPVApplicationCore::instance()->selectionManager()->select(outport);
+    selectionManager->blockSignals(false);
+//    pqActiveObjects::instance().setActivePort(outport);
     }
 }

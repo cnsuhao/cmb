@@ -339,6 +339,7 @@ void qtSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
   smtk::model::ManagerPtr modelMan =
     this->Internal->smtkManager->managerProxy()->modelManager();
 
+std::cout << "client before converting to blockid" << std::endl;
   // create vector of selected block ids
   QMap<cmbSMTKModelInfo*, std::vector<vtkIdType> > selmodelblocks;
   for(smtk::model::Cursors::const_iterator it = entities.begin(); it != entities.end(); ++it)
@@ -362,7 +363,13 @@ void qtSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
         }
       }
     }
-
+std::cout << "After convert to blockid, before selecting" << std::endl;
+  // update the selection manager
+  pqSelectionManager *selectionManager =
+    qobject_cast<pqSelectionManager*>(
+      pqApplicationCore::instance()->manager("SelectionManager"));
+  pqOutputPort* outport = NULL;
+  pqPipelineSource* source = NULL;
   foreach(cmbSMTKModelInfo* modinfo, selmodelblocks.keys())
     {
     vtkSMProxy* selectionSource = modinfo->SelectionSource;
@@ -379,32 +386,38 @@ void qtSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
 
     vtkSMSourceProxy *selectionSourceProxy =
       vtkSMSourceProxy::SafeDownCast(selectionSource);
-    pqPipelineSource* source = modinfo->Source;
-    pqOutputPort* outport = source->getOutputPort(0);
+    source = modinfo->Source;
+    outport = source->getOutputPort(0);
     if(outport)
       {
       outport->setSelectionInput(selectionSourceProxy, 0);
       }
-
-    // update the selection manager
-    pqSelectionManager *selectionManager =
-      qobject_cast<pqSelectionManager*>(
-        pqApplicationCore::instance()->manager("SelectionManager"));
-    if(selectionManager && outport)
-      {
-      selectionManager->select(outport);
-      pqActiveObjects::instance().setActiveSource(source);
-      std::cout << "set active source: " << source << std::endl;
-      }    
     }
-  pqRenderView* renView = qobject_cast<pqRenderView*>(
-     pqActiveObjects::instance().activeView());
-  renView->render();
+  // use last selected port as active
+  if(selectionManager && outport)
+    {
+    selectionManager->blockSignals(true);
+    selectionManager->select(outport);
+    selectionManager->blockSignals(false);
+//    pqActiveObjects::instance().setActivePort(outport);
+//    std::cout << "set active source: " << source << std::endl;
+    }
+  else
+    {
+    pqRenderView* renView = qobject_cast<pqRenderView*>(
+       pqActiveObjects::instance().activeView());
+    renView->render();
+    }
+
+std::cout << "done selecting" << std::endl;
+
 }
 
 //-----------------------------------------------------------------------------
 void qtSMTKModelPanel::updateTreeSelection()
 {
+
+  std::cout << "update tree selection, before converting blockid to uuid" << std::endl;
   smtk::common::UUIDs uuids;
   QList<cmbSMTKModelInfo*> selModels = this->Internal->smtkManager->selectedModels();
   foreach(cmbSMTKModelInfo* modinfo, selModels)
@@ -450,9 +463,14 @@ void qtSMTKModelPanel::updateTreeSelection()
         }
       }
     }
+  std::cout << "update tree selection, after converting blockid to uuid" << std::endl;
 
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
+  modelview->blockSignals(true);
+  modelview->clearSelection();
+  modelview->blockSignals(false);
   modelview->selectEntities(uuids);
+  std::cout << "update tree selection, done" << std::endl;
 }
 
 //----------------------------------------------------------------------------
