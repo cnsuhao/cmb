@@ -39,7 +39,6 @@
 #include "vtkCellArray.h"
 #include "vtkFocalPlanePointPlacer.h"
 #include "vtkBezierContourLineInterpolator.h"
-#include "vtkOpenGL.h"
 #include "vtkSphereSource.h"
 #include "vtkIncrementalOctreePointLocator.h"
 

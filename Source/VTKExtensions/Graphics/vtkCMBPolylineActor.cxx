@@ -19,7 +19,6 @@
 #include "vtkIntArray.h"
 #include "vtkFieldData.h"
 #include "vtkProperty.h"
-#include "vtkOpenGL.h"
 
 //-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkCMBPolylineActor);
