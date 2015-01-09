@@ -154,7 +154,7 @@ public:
             {
             this->Entity2Models[it->first] = model.entity();
             }
-          vtkSMPropertyHelper(rep->getProxy(), "SuppressLOD").Set(1);
+//          vtkSMPropertyHelper(rep->getProxy(), "SuppressLOD").Set(1);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::CELL);
 
