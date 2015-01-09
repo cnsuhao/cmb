@@ -1698,7 +1698,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     &this->Internal->cmbRenderViewSelectionHelper, SLOT(DisabledPop()));
 
   pqSMAdaptor::setElementProperty(this->activeRenderView()->
-      getProxy()->GetProperty("LODThreshold"),  50);
+      getProxy()->GetProperty("LODThreshold"),  102400);
 
  //this->Internal->SceneGeoTree->blockSignals(false);
   if(this->Internal->SceneGeoTree)
