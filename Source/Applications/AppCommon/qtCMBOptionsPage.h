@@ -44,6 +44,8 @@ public slots:
   /// \sa qtCMBOptionsPage::applyChanges()
   virtual void resetChanges()=0;
 
+  virtual void restoreDefaults(){;}
+
 signals:
   /// Emitted when there are changes to be applied.
   void changesAvailable();

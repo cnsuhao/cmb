@@ -66,6 +66,9 @@ public:
   void removeOptions(qtCMBOptionsPage *options);
 
 public slots:
+  /// when OK button is clicked
+  virtual void accept();
+
   /// \brief
   ///   Sets the current options page.
   /// \param path The name of the options page to show.
@@ -76,6 +79,8 @@ public slots:
 
   /// Calls each page to reset any changes.
   void resetChanges();
+
+  void restoreDefaults();
 
 signals:
   /// Emitted before the option changes are applied.

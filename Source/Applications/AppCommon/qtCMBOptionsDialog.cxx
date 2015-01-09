@@ -323,11 +323,20 @@ qtCMBOptionsDialog::qtCMBOptionsDialog(QWidget *widgetParent)
       this, SLOT(resetChanges()));
   this->connect(this->Form->CloseButton, SIGNAL(clicked()),
       this, SLOT(accept()));
+  this->connect(this->Form->RestoreDefaults, SIGNAL(clicked()),
+      this, SLOT(restoreDefaults()));
+
 }
 
 qtCMBOptionsDialog::~qtCMBOptionsDialog()
 {
   delete this->Form;
+}
+
+void qtCMBOptionsDialog::accept()
+{
+  this->applyChanges();
+  this->QDialog::accept();
 }
 
 bool qtCMBOptionsDialog::isApplyNeeded() const
@@ -525,6 +534,17 @@ void qtCMBOptionsDialog::resetChanges()
 
     this->setApplyNeeded(false);
     }
+}
+
+void qtCMBOptionsDialog::restoreDefaults()
+{
+  QMap<QString, qtCMBOptionsPage *>::Iterator iter = this->Form->Pages.begin();
+  for( ; iter != this->Form->Pages.end(); ++iter)
+    {
+    (*iter)->restoreDefaults();
+    }
+
+  this->setApplyNeeded(true);
 }
 
 void qtCMBOptionsDialog::changeCurrentPage()

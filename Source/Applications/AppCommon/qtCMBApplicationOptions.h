@@ -55,6 +55,8 @@ public:
   virtual void applyChanges();
   // reset the changes
   virtual void resetChanges();
+  // restore the defaults
+  virtual void restoreDefaults();
 
   // tell qtCMBOptionsDialog that we want an apply button
   virtual bool isApplyUsed() const { return true; }
@@ -64,25 +66,20 @@ public:
   int maxNumberOfCloudPoints();
   std::string defaultMeshStorageDirectory();
   std::string defaultTempScratchDirectory();
-  std::string defaultRepresentationType();
-  void loadBuiltinColorPresets();
+  std::string defaultRepresentationType(){ return "Surface"; }
   void loadGlobalPropertiesFromSettings();
 
 protected slots:
-  void resetColorsToDefault();
-  void lodThresholdSliderChanged(int);
-  void outlineThresholdSliderChanged(int);
   void chooseMeshStorageDir();
   void chooseTempScratchDir();
-  void choosePresetColorTable();
+  // save the options into settings
+  virtual void saveOptions();
 
 private:
   class pqInternal;
   pqInternal* Internal;
   static qtCMBApplicationOptions* Instance;
 
-  void savePresetColorTableSettings();
-  void restorePresetColorTableSettings();
 };
 
 #endif
