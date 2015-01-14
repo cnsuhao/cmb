@@ -116,7 +116,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBSceneObjectBase.h"
 #include "pqPlanarTextureRegistrationDialog.h"
 
-#include "cmbLoadDataReaction.h"
+#include "pqLoadModelReaction.h"
 #include "vtkSMSessionProxyManager.h"
 #include "cmbFileExtensions.h"
 // panels requied includes
@@ -126,7 +126,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBSceneTree.h"
 #include <QDockWidget>
 #include "qtSMTKModelPanel.h"
-#include "ModelManager.h"
+#include "qtModelManager.h"
 #include "pqCMBColorMapWidget.h"
 #include "qtCMBTreeWidget.h"
 #include "vtkSMModelManagerProxy.h"

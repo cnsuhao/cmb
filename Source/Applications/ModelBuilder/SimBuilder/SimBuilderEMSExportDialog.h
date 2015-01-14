@@ -82,7 +82,7 @@ private:
   Ui::qtSimBuilderEMSExportDialog *Dialog;
   QDialog *MainDialog;
   QPointer<pqServer> ActiveServer;
-  smtk::model::ManagerPtr ModelManager;
+  smtk::model::ManagerPtr qtModelManager;
   smtk::attribute::SystemPtr AttSystem;
   static QString LastPythonScriptParsed;
   static QString SelectedAnalysis;

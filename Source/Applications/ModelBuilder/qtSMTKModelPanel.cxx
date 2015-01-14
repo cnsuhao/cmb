@@ -67,7 +67,7 @@
 #include "vtkSMDoubleMapProperty.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMDoubleMapPropertyIterator.h"
-#include "ModelManager.h"
+#include "qtModelManager.h"
 
 using namespace std;
 using namespace smtk::model;
@@ -79,7 +79,7 @@ public:
   QPointer<qtModelPanel> ModelPanel;
 //  vtkSmartPointer<vtkEventQtSlotConnect> VTKConnect;
   bool ModelLoaded;
-  QPointer<ModelManager> smtkManager;
+  QPointer<qtModelManager> smtkManager;
   bool ignorePropertyChange;
 
   qInternal()
@@ -90,7 +90,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qtSMTKModelPanel::qtSMTKModelPanel(ModelManager* mmgr, QWidget* p)
+qtSMTKModelPanel::qtSMTKModelPanel(qtModelManager* mmgr, QWidget* p)
 : QDockWidget(p)
 {
   this->Internal = new qtSMTKModelPanel::qInternal();
@@ -112,7 +112,7 @@ qtSMTKModelPanel::~qtSMTKModelPanel()
 }
 
 //-----------------------------------------------------------------------------
-ModelManager* qtSMTKModelPanel::modelManager()
+qtModelManager* qtSMTKModelPanel::modelManager()
 {
   return this->Internal->smtkManager;
 }
@@ -580,7 +580,7 @@ void qtSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
       vis = ivp->GetElement(i+1); // for now, we use same value for all
       }
     }
-  // the ModelManager shouldn't need to emit signal while syncing
+  // the qtModelManager shouldn't need to emit signal while syncing
   this->Internal->smtkManager->blockSignals(true);
   this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
     BlockVisibilites, vis);
@@ -616,7 +616,7 @@ void qtSMTKModelPanel::updateEntityColor(vtkSMDoubleMapProperty* dmp,
     }
   iter->Delete();
 
-  // the ModelManager shouldn't need to emit signal while syncing
+  // the qtModelManager shouldn't need to emit signal while syncing
   this->Internal->smtkManager->blockSignals(true);
   this->Internal->ModelPanel->getModelView()->syncEntityColor(
     BlockColors, newcolor);

@@ -41,7 +41,7 @@ class pqView;
 class QAction;
 class QMenu;
 class pqMultiBlockInspectorPanel;
-class ModelManager;
+class qtModelManager;
 class qtSMTKModelPanel;
 
 /// @ingroup Behaviors

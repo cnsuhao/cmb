@@ -33,7 +33,6 @@ class vtkObject;
 class smtkUIManagerInternals;
 class vtkSMProxy;
 class SimBuilderCore;
-class ModelManager;
 
 class smtkUIManager : public QObject
 {

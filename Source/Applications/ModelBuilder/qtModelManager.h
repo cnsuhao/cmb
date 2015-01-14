@@ -1,9 +1,9 @@
 
-// .NAME ModelManager -
+// .NAME qtModelManager -
 // .SECTION Description
 
-#ifndef __ModelManager_h
-#define __ModelManager_h
+#ifndef __qtModelManager_h
+#define __qtModelManager_h
 
 #include <QObject>
 #include <QStringList>
@@ -41,13 +41,13 @@ struct cmbSMTKModelInfo
     smtk::model::BridgePtr Bridge;
   };
 
-class ModelManager : public QObject
+class qtModelManager : public QObject
 {
   Q_OBJECT
 
 public:
-  ModelManager(pqServer*);
-  virtual ~ModelManager();
+  qtModelManager(pqServer*);
+  virtual ~qtModelManager();
   vtkSMModelManagerProxy* managerProxy();
   smtk::model::StringData fileModelBridges(const std::string& filename);
   std::set<std::string> supportedFileTypes(

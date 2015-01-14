@@ -1,4 +1,4 @@
-#include "cmbScalarBarWidget.h"
+#include "qtScalarBarWidget.h"
 
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
@@ -23,7 +23,7 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 
-class cmbScalarBarWidget::cmbInternals
+class qtScalarBarWidget::cmbInternals
 {
 public:
   QPointer<pqScalarBarRepresentation> ScalarBarRep;
@@ -41,20 +41,20 @@ public:
 };
 //-----------------------------------------------------------------------------
 /// constructor
-cmbScalarBarWidget::cmbScalarBarWidget(pqDataRepresentation* repr, QWidget* /*p*/)
-  : Internals(new cmbScalarBarWidget::cmbInternals(repr))
+qtScalarBarWidget::qtScalarBarWidget(pqDataRepresentation* repr, QWidget* /*p*/)
+  : Internals(new qtScalarBarWidget::cmbInternals(repr))
 {
   this->init();
 }
 
 //-----------------------------------------------------------------------------
 /// destructor
-cmbScalarBarWidget::~cmbScalarBarWidget()
+qtScalarBarWidget::~qtScalarBarWidget()
 {
   delete this->Internals;
 }
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setIndexedColors( const QList<QColor>& colors )
+void qtScalarBarWidget::setIndexedColors( const QList<QColor>& colors )
 {
   vtkSMProxy* proxy = this->Internals->LookupTableProxy;
   std::vector<vtkTuple<double, 3> > rgbColors;
@@ -81,7 +81,7 @@ void cmbScalarBarWidget::setIndexedColors( const QList<QColor>& colors )
 
 }
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setAnnotations( const QList<QVariant>& annotations )
+void qtScalarBarWidget::setAnnotations( const QList<QVariant>& annotations )
 {
   vtkSMProxy* proxy = this->Internals->LookupTableProxy;
 
@@ -91,7 +91,7 @@ void cmbScalarBarWidget::setAnnotations( const QList<QVariant>& annotations )
 }
 
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setPositionToLeft()
+void qtScalarBarWidget::setPositionToLeft()
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
   vtkSMPropertyHelper smTextPos(proxy->GetProperty("TextPosition"));
@@ -108,7 +108,7 @@ void cmbScalarBarWidget::setPositionToLeft()
 }
 
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setPositionToRight()
+void qtScalarBarWidget::setPositionToRight()
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
   vtkSMPropertyHelper smVBorder(proxy->GetProperty("ShowVerticalBorder"));
@@ -122,7 +122,7 @@ void cmbScalarBarWidget::setPositionToRight()
   proxy->UpdateVTKObjects();
 }
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setTitle(const QString& title)
+void qtScalarBarWidget::setTitle(const QString& title)
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
   vtkSMPropertyHelper smTitle(proxy->GetProperty("Title"));
@@ -131,14 +131,14 @@ void cmbScalarBarWidget::setTitle(const QString& title)
 }
 
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::setVisible(bool visible)
+void qtScalarBarWidget::setVisible(bool visible)
 {
   this->Internals->ScalarBarRep->setVisible(visible);
   vtkSMPropertyHelper(this->Internals->ScalarBarProxy, "Enabled").Set(visible);
 }
 
 //-----------------------------------------------------------------------------
-void cmbScalarBarWidget::init()
+void qtScalarBarWidget::init()
 {
   if(this->Internals->CurrentRep)
     {

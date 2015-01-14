@@ -137,7 +137,7 @@ void SimBuilderEMSExportDialog::cancel()
 //-----------------------------------------------------------------------------
 void SimBuilderEMSExportDialog::setModelManager(smtk::model::ManagerPtr model)
 {
-  this->ModelManager = model;
+  this->qtModelManager = model;
 }
 //-----------------------------------------------------------------------------
 void SimBuilderEMSExportDialog::setAttSystem(smtk::attribute::SystemPtr system)

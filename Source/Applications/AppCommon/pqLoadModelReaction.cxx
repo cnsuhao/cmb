@@ -1,4 +1,4 @@
-#include "cmbLoadDataReaction.h"
+#include "pqLoadModelReaction.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -20,7 +20,7 @@
 #include <QMapIterator>
 
 #include "vtkStringList.h"
-class cmbLoadDataReaction::cmbInternals
+class pqLoadModelReaction::cmbInternals
 {
 public:
   // These are handled by CMB Applications, not paraview readers.
@@ -28,7 +28,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-cmbLoadDataReaction::cmbLoadDataReaction(QAction* parentObject,
+pqLoadModelReaction::pqLoadModelReaction(QAction* parentObject,
   bool multiFiles) : Superclass(parentObject), m_MultiFiles(multiFiles)
 {
   this->Internals = new cmbInternals;
@@ -39,13 +39,13 @@ cmbLoadDataReaction::cmbLoadDataReaction(QAction* parentObject,
 }
 
 //-----------------------------------------------------------------------------
-cmbLoadDataReaction::~cmbLoadDataReaction()
+pqLoadModelReaction::~pqLoadModelReaction()
 {
   delete this->Internals;
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::addSpecialExtensions(const QStringList& exts)
+void pqLoadModelReaction::addSpecialExtensions(const QStringList& exts)
 {
   foreach(QString ext, exts)
     {
@@ -54,7 +54,7 @@ void cmbLoadDataReaction::addSpecialExtensions(const QStringList& exts)
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::updateEnableState()
+void pqLoadModelReaction::updateEnableState()
 {
   pqActiveObjects& activeObjects = pqActiveObjects::instance();
   bool enable_state = (activeObjects.activeServer() != NULL);
@@ -62,22 +62,22 @@ void cmbLoadDataReaction::updateEnableState()
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::setPluginIOBehavior(cmbPluginIOBehavior* pluginBhv)
+void pqLoadModelReaction::setPluginIOBehavior(qtPluginIOBehavior* pluginBhv)
 {
   this->m_pluginBehavior = pluginBhv;
 }
 //-----------------------------------------------------------------------------
-QList<pqPipelineSource*> cmbLoadDataReaction::loadData(
+QList<pqPipelineSource*> pqLoadModelReaction::loadData(
   bool& cancelled, QStringList& files)
 {
-  return cmbLoadDataReaction::loadData(cancelled, files,
+  return pqLoadModelReaction::loadData(cancelled, files,
     this->m_fileTypes, this->m_programDir,
     this->m_pluginBehavior, this->Internals->CMBSpecialExtensions,
     this->m_MultiFiles, this->m_ReaderExtensionMap);
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::onTriggered()
+void pqLoadModelReaction::onTriggered()
 {
   bool cancelled = true;
   QStringList files;
@@ -91,14 +91,14 @@ void cmbLoadDataReaction::onTriggered()
 }
 
 //-----------------------------------------------------------------------------
-bool cmbLoadDataReaction::isSpecialExtension(const QStringList& files)
+bool pqLoadModelReaction::isSpecialExtension(const QStringList& files)
 {
   return this->isSpecialExtension(
     files, this->Internals->CMBSpecialExtensions);
 }
 
 //-----------------------------------------------------------------------------
-bool cmbLoadDataReaction::isSpecialExtension(const QStringList& files,
+bool pqLoadModelReaction::isSpecialExtension(const QStringList& files,
     const QStringList& specialExts)
 {
   if(files.size() == 0 || specialExts.size() == 0)
@@ -123,11 +123,11 @@ bool cmbLoadDataReaction::isSpecialExtension(const QStringList& files,
 }
 
 //-----------------------------------------------------------------------------
-QList<pqPipelineSource*> cmbLoadDataReaction::loadData( bool& cancelled,
+QList<pqPipelineSource*> pqLoadModelReaction::loadData( bool& cancelled,
   QStringList& selfiles, const QString& fileTypes,
-  const QString& pgmDir, cmbPluginIOBehavior* pluginBhv,
+  const QString& pgmDir, qtPluginIOBehavior* pluginBhv,
   const QStringList& specialExts, bool multiFiles,
-  const cmbLoadDataReaction::FileExtMap& readerExtensionMap)
+  const pqLoadModelReaction::FileExtMap& readerExtensionMap)
 {
   pqServer* server = pqActiveObjects::instance().activeServer();
   QString filters = pluginBhv ?
@@ -156,7 +156,7 @@ QList<pqPipelineSource*> cmbLoadDataReaction::loadData( bool& cancelled,
     foreach(file,files)
       {
       selfiles = file; // only get the last file
-      pqPipelineSource* source = cmbLoadDataReaction::openFiles(
+      pqPipelineSource* source = pqLoadModelReaction::openFiles(
         file, specialExts, readerExtensionMap);
       if(source)
         {
@@ -168,11 +168,11 @@ QList<pqPipelineSource*> cmbLoadDataReaction::loadData( bool& cancelled,
 }
 
 //-----------------------------------------------------------------------------
-pqPipelineSource* cmbLoadDataReaction::openFiles(const QStringList& files,
+pqPipelineSource* pqLoadModelReaction::openFiles(const QStringList& files,
   const QStringList& specialExts,
-  const cmbLoadDataReaction::FileExtMap &readerExtensionMap)
+  const pqLoadModelReaction::FileExtMap &readerExtensionMap)
 {
-  if(cmbLoadDataReaction::isSpecialExtension(files, specialExts))
+  if(pqLoadModelReaction::isSpecialExtension(files, specialExts))
     {
 //    emit pqApplicationCore::instance()->getObjectBuilder()->readerCreated(
 //      NULL, files[0]);
@@ -185,7 +185,7 @@ pqPipelineSource* cmbLoadDataReaction::openFiles(const QStringList& files,
     QString s = finfo.completeSuffix().toLower();
     if(readerExtensionMap.keys().contains(s))
       {
-      return cmbLoadDataReaction::openFile(files,
+      return pqLoadModelReaction::openFile(files,
         readerExtensionMap[s].first,
         readerExtensionMap[s].second);
       }
@@ -200,7 +200,7 @@ pqPipelineSource* cmbLoadDataReaction::openFiles(const QStringList& files,
 }
 
 //-----------------------------------------------------------------------------
-pqPipelineSource* cmbLoadDataReaction::openFile(
+pqPipelineSource* pqLoadModelReaction::openFile(
   const QStringList& files, const QString& group, const QString& readername)
 {
   pqObjectBuilder* builder =
@@ -230,8 +230,8 @@ pqPipelineSource* cmbLoadDataReaction::openFile(
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::addReaderExtensionMap(
-  const cmbLoadDataReaction::FileExtMap &readerMap)
+void pqLoadModelReaction::addReaderExtensionMap(
+  const pqLoadModelReaction::FileExtMap &readerMap)
 {
   QMapIterator<QString, QPair<QString, QString> > it(readerMap);
   while(it.hasNext())
@@ -243,7 +243,7 @@ void cmbLoadDataReaction::addReaderExtensionMap(
 }
 
 //-----------------------------------------------------------------------------
-void cmbLoadDataReaction::addReaderExtensionMap(const QString &fileext,
+void pqLoadModelReaction::addReaderExtensionMap(const QString &fileext,
   const QString &readergroup, const QString &readername)
 {
   m_ReaderExtensionMap.insert(fileext, QPair<QString, QString>(

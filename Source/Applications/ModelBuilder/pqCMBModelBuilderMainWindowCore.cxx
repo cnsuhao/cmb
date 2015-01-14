@@ -28,7 +28,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBModelBuilderMainWindowCore.h"
 #include "pqCMBAppCommonConfig.h" // for CMB_TEST_DATA_ROOT
 
-#include "cmbScalarBarWidget.h"
+#include "qtScalarBarWidget.h"
 #include "pqCMBEnumPropertyWidget.h"
 #include "pqCMBDisplayProxyEditor.h"
 #include "pqCMBLegacyMesherDialog.h"
@@ -194,12 +194,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "remus/proto/Job.h"
 #include <QLayout>
 #include <QPushButton>
-#include "cmbLoadDataReaction.h"
+#include "pqLoadModelReaction.h"
 #include "cmbFileExtensions.h"
 #include "qtSMTKModelPanel.h"
 #include <QMainWindow>
 #include "pqActiveObjects.h"
-#include "ModelManager.h"
+#include "qtModelManager.h"
 #include "vtkSMModelManagerProxy.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
 #include "vtkPVSMTKModelInformation.h"
@@ -295,12 +295,12 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     // Legends for coloring faces or edges by Attributes
     QPointer<QAction> AttEdgeColorLegendAction;
-    QPointer<cmbScalarBarWidget> AttEdgeScalarBarWidget;
+    QPointer<qtScalarBarWidget> AttEdgeScalarBarWidget;
     QPointer<QAction> AttFaceColorLegendAction;
-    QPointer<cmbScalarBarWidget> AttFaceScalarBarWidget;
+    QPointer<qtScalarBarWidget> AttFaceScalarBarWidget;
 
     QPointer<qtSMTKModelPanel> ModelDock;
-    QPointer<ModelManager> smtkModelManager;
+    QPointer<qtModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
 };
 
@@ -676,7 +676,7 @@ void pqCMBModelBuilderMainWindowCore::onLoadScene()
 
   bool cancelled;
   QStringList files;
-  cmbLoadDataReaction::loadData(cancelled, files, filters);
+  pqLoadModelReaction::loadData(cancelled, files, filters);
 }
 
 //-----------------------------------------------------------------------------
@@ -690,7 +690,7 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
     // Add this to the list of recent server resources ...
     pqServerResource resource = this->getActiveServer()->getResource();
     resource.setPath(files[0]);
-    resource.addData("modelmanager", "ModelManager");
+    resource.addData("modelmanager", "qtModelManager");
     resource.addData("readoperator", "read");
     core->recentlyUsedResources().add(resource);
     core->recentlyUsedResources().save(*core->settings());
@@ -843,7 +843,7 @@ void pqCMBModelBuilderMainWindowCore::loadMesherOutput(remus::proto::JobResult)
         this->onCloseData(true);
         }
 */
-      cmbLoadDataReaction::openFiles(QStringList( this->Internal->MesherOutputFileName ),
+      pqLoadModelReaction::openFiles(QStringList( this->Internal->MesherOutputFileName ),
         QStringList(), cmbFileExtensions::ModelBuilder_ReadersMap());
       }
     }
@@ -966,10 +966,10 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
 
     // new attribute legends
 /*
-    this->Internal->AttEdgeScalarBarWidget = new cmbScalarBarWidget(
+    this->Internal->AttEdgeScalarBarWidget = new qtScalarBarWidget(
       this->Internal->CMBModel->activeModelRepresentation(),NULL);
     this->Internal->AttEdgeScalarBarWidget->setPositionToRight();
-    this->Internal->AttFaceScalarBarWidget = new cmbScalarBarWidget(
+    this->Internal->AttFaceScalarBarWidget = new qtScalarBarWidget(
       this->Internal->CMBModel->activeModelRepresentation(),NULL);
     this->Internal->AttFaceScalarBarWidget->setPositionToLeft();
 */
@@ -1721,7 +1721,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     {
     delete this->Internal->smtkModelManager;
     }
-  this->Internal->smtkModelManager = new ModelManager(this->getActiveServer());
+  this->Internal->smtkModelManager = new qtModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(const smtk::model::OperatorResult&, bool)),
     this, SLOT(processModelInfo( const smtk::model::OperatorResult& , bool)));
@@ -2149,7 +2149,7 @@ void pqCMBModelBuilderMainWindowCore::toggleAttEdgeColorLegend(bool show)
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
-    cmbScalarBarWidget* scalarBar, const QString& strDefType, bool show)
+    qtScalarBarWidget* scalarBar, const QString& strDefType, bool show)
 {
   if(scalarBar)
     {
@@ -2213,7 +2213,7 @@ void pqCMBModelBuilderMainWindowCore::loadJSONFile(const QString& filename)
 }
 
 //----------------------------------------------------------------------------
-ModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
+qtModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 {
   return this->Internal->smtkModelManager;
 }

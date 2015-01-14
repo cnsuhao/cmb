@@ -97,8 +97,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqSaveStateReaction.h"
 #include "pqManagePluginsReaction.h"
 
-#include "cmbLoadDataReaction.h"
-#include "cmbPluginIOBehavior.h"
+#include "pqLoadModelReaction.h"
+#include "qtPluginIOBehavior.h"
 #include "qtCMBPanelsManager.h"
 #include "pqActiveObjects.h"
 #include "pqProxyWidget.h"
@@ -167,7 +167,7 @@ public:
   QPointer<pqHelpReaction> HelpReaction;
   QPointer<pqEditCameraReaction> EditCameraReaction;
   QPointer<pqTimerLogReaction> TimerLogReaction;
-  QPointer<cmbLoadDataReaction> LoadDataReaction;
+  QPointer<pqLoadModelReaction> LoadDataReaction;
   QPointer<qtCMBPanelsManager> panelsManager;
   QPointer<pqProxyWidget> displayPanel;
   QPointer<pqCMBColorMapWidget> ColorEditor;
@@ -541,9 +541,9 @@ void pqCMBCommonMainWindow::initMainWindowCore()
 
   // new plugin io behavior to add more readers from plugin
   this->Internal->LoadDataReaction =
-    new cmbLoadDataReaction(this->Internal->UI.action_Open_File);
+    new pqLoadModelReaction(this->Internal->UI.action_Open_File);
   this->Internal->LoadDataReaction->setPluginIOBehavior(
-    new cmbPluginIOBehavior(this));
+    new qtPluginIOBehavior(this));
   if(this->MainWindowCore->programDirectory())
     {
     this->Internal->LoadDataReaction->setProgramDirectory(
@@ -568,7 +568,7 @@ QList<pqOutputPort*> &pqCMBCommonMainWindow::getLastSelectionPorts()
 }
 
 //----------------------------------------------------------------------------
-cmbLoadDataReaction* pqCMBCommonMainWindow::loadDataReaction()
+pqLoadModelReaction* pqCMBCommonMainWindow::loadDataReaction()
 {
   return this->Internal->LoadDataReaction;
 }

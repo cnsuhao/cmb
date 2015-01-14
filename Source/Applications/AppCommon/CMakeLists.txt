@@ -81,16 +81,16 @@ set(dynamicHeaders
   "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h")
 
 add_library(cmbAppCommon
-  cmbLoadDataReaction.cxx
-  cmbLoadDataReaction.h
-  cmbPluginIOBehavior.cxx
-  cmbPluginIOBehavior.h
+  pqLoadModelReaction.cxx
+  pqLoadModelReaction.h
+  qtPluginIOBehavior.cxx
+  qtPluginIOBehavior.h
   pqCMBColorMapWidget.cxx
   pqCMBColorMapWidget.h
   qtCMBPanelsManager.cxx
   qtCMBPanelsManager.h
-  cmbScalarBarWidget.cxx
-  cmbScalarBarWidget.h
+  qtScalarBarWidget.cxx
+  qtScalarBarWidget.h
   qtCMBAboutDialog.cxx
   qtCMBAboutDialog.h
   pqCMBAppCommonInit.cxx
