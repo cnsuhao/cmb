@@ -23,6 +23,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "ModelManager.h"
 
 #include "vtkDataObject.h"
+#include "vtkDiscreteLookupTable.h"
+#include "vtkModelMultiBlockSource.h"
 #include "vtkNew.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
@@ -49,6 +51,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "smtk/common/UUID.h"
 #include "smtk/model/CellEntity.h"
+#include "smtk/model/GroupEntity.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/ModelEntity.h"
 #include "smtk/model/Operator.h"
@@ -112,6 +115,8 @@ public:
 
   pqServer* Server;
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
+  vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
+  std::vector<vtkTuple<double, 3> > LUTColors;
 
   bool addModelRepresentation(const smtk::model::Cursor& model,
     pqRenderView* view, vtkSMModelManagerProxy* smProxy,
@@ -141,22 +146,76 @@ public:
           modelSrc->getOutputPort(0), view);
         if(rep)
           {
-          //cmbSMTKModelInfo modinfo;
-          //modinfo.init(modelSrc, rep, filename);
-           std::cout << "Add model: " << model.entity().toString().c_str() << "\n";
+          std::cout << "Add model: " << model.entity().toString().c_str() << "\n";
 
-          this->ModelInfos[model.entity()].init(modelSrc, rep, filename,
-                                            smProxy->modelManager());
+          smtk::model::ManagerPtr mgr = smProxy->modelManager();
+          this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
+  
+//          std::vector<vtkTuple<const char*, 2> > ent_annotations;
+//          std::vector<vtkTuple<const char*, 2> > vol_annotations;
+//          std::vector<vtkTuple<const char*, 2> > grp_annotations;
+
+          vtkNew<vtkStringList> ent_annotations;
+          vtkNew<vtkStringList> vol_annotations;
+          vtkNew<vtkStringList> grp_annotations;
+
           vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
           std::map<smtk::common::UUID, unsigned int>::const_iterator it =
             pvinfo->GetUUID2BlockIdMap().begin();
           for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
             {
             this->Entity2Models[it->first] = model.entity();
+//            const char* value[2] = {
+//                it->first.toString().c_str(),
+//                mgr->name(it->first).c_str()};
+//            ent_annotations.push_back(vtkTuple<const char*, 2>(value));
+            ent_annotations->AddString(it->first.toString().c_str());
+            ent_annotations->AddString(mgr->name(it->first).c_str());
             }
+
+          smtk::model::GroupEntities modGroups =
+            model.as<smtk::model::ModelEntity>().groups();
+          for(smtk::model::GroupEntities::iterator it = modGroups.begin();
+             it != modGroups.end(); ++it)
+            {
+//            const char* value[2] = {
+//                (*it).entity().toString().c_str(),
+//                (*it).name().c_str()};
+//            grp_annotations.push_back(vtkTuple<const char*, 2>(value));
+            grp_annotations->AddString((*it).entity().toString().c_str());
+            grp_annotations->AddString((*it).name().c_str());
+            }
+
+          smtk::model::CellEntities modVols =
+            model.as<smtk::model::ModelEntity>().cells();
+          for(smtk::model::CellEntities::iterator it = modVols.begin();
+             it != modVols.end(); ++it)
+            {
+            if((*it).isVolume())
+              {
+//              const char* value[2] = {
+//                  (*it).entity().toString().c_str(),
+//                  (*it).name().c_str()};
+//              vol_annotations.push_back(vtkTuple<const char*, 2>(value));
+              vol_annotations->AddString((*it).entity().toString().c_str());
+              vol_annotations->AddString((*it).name().c_str());
+              }
+            }
+
 //          vtkSMPropertyHelper(rep->getProxy(), "SuppressLOD").Set(1);
+          RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+            rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
+            this->LUTColors, ent_annotations.GetPointer());
+          RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+            rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
+            this->LUTColors, grp_annotations.GetPointer());
+          RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+            rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
+            this->LUTColors, vol_annotations.GetPointer());
+
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::CELL);
+
 
           return true;         
           }
@@ -187,6 +246,19 @@ public:
 
   qInternal(pqServer* server): Server(server)
   {
+    this->ModelColorLUT->Build();
+    // raw interleaved array with the layout [X1, R1, G1, B1, X2, R2, G2,
+    // B2, ..., Xn, Rn, Gn, Bn]
+    this->LUTColors.resize(this->ModelColorLUT->GetNumberOfAvailableColors());
+ //   double* rawData = this->ModelColorLUT->GetDataPointer();
+    double rgba[4];
+    for (vtkIdType i = 0; i < this->ModelColorLUT->GetNumberOfAvailableColors(); ++i)
+      {
+      this->ModelColorLUT->GetIndexedColor(i, rgba);
+      this->LUTColors[i].GetData()[0] = rgba[0];
+      this->LUTColors[i].GetData()[1] = rgba[1];
+      this->LUTColors[i].GetData()[2] = rgba[1];
+      }
   }
 };
 

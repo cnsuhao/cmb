@@ -31,6 +31,12 @@
 #include "vtkNew.h"
 #include "vtkPVArrayInformation.h"
 #include "vtkPVDataInformation.h"
+#include "vtkSMStringVectorProperty.h"
+#include "vtkSMPropertyHelper.h"
+#include "vtkSMTransferFunctionManager.h"
+#include "vtkSMSessionProxyManager.h"
+#include "vtkStringList.h"
+#include "vtkTuple.h"
 
 //BTX
 namespace RepresentationHelperFunctions
@@ -224,6 +230,57 @@ static bool CMB_COLOR_REP_BY_ARRAY(
       }
     }
   return res;
+}
+
+static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
+    vtkSMProxy* reproxy, const char* arrayname,
+    const std::vector<vtkTuple<double, 3> > &rgbColors,
+    vtkStringList* new_annotations)
+  //  std::vector<vtkTuple<const char*, 2> > new_annotations)
+{
+  // Now, setup transfer functions.
+  vtkNew<vtkSMTransferFunctionManager> mgr;
+  if (vtkSMProperty* lutProperty = reproxy->GetProperty("LookupTable"))
+    {
+    vtkSMProxy* lutProxy =
+      mgr->GetColorTransferFunction(arrayname, reproxy->GetSessionProxyManager());
+/*
+    vtkSMPropertyHelper(lutProperty).Set(lutProxy);
+
+    // Get the array information for the color array to determine transfer function properties
+    vtkPVArrayInformation* colorArrayInfo =
+      vtkSMPVRepresentationProxy::GetArrayInformationForColorArray(reproxy);
+    if (colorArrayInfo)
+      {
+      if (colorArrayInfo->GetDataType() == VTK_STRING)
+        {
+*/
+        vtkSMPropertyHelper(lutProxy, "IndexedLookup", true).Set(1);
+
+        if (new_annotations->GetLength() > 0)
+          {
+          vtkSMStringVectorProperty* svp = vtkSMStringVectorProperty::SafeDownCast(
+            lutProxy->GetProperty("Annotations"));
+          if (svp)
+            {
+            svp->SetElements(new_annotations);
+//            svp->SetElements(new_annotations[0].GetData(),
+//              static_cast<unsigned int>(new_annotations.size()*2));
+            }
+          }
+
+        if (rgbColors.size() > 0)
+          {
+          vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
+          indexedColors.Set(rgbColors[0].GetData(),
+            static_cast<unsigned int>(rgbColors.size() * 3));
+          }
+
+        lutProxy->UpdateVTKObjects();
+//        }
+//      }
+    }
+
 }
 
 }
