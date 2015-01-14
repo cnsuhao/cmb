@@ -57,8 +57,6 @@ public:
   pqCMBColorMapWidget* colorEditor(QWidget* p);
 
 public slots:
-
-  virtual void changeBackgroundColor();
   // Description:
   // 3D Selection from the scene methods
   virtual void onSelectionModeChanged(int);

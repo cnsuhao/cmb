@@ -190,10 +190,6 @@ Internal(new vtkInternal(this))
   QObject::connect(this->Internal->UI.action_Exit,
     SIGNAL(triggered()), core, SLOT(quit()));
 
-  QObject::connect(this->Internal->UI.actionChange_Background_Color,
-    SIGNAL(triggered()), this, SLOT(changeBackgroundColor()));
-
-
   QObject::connect(this->Internal->UI.action_Help,
     SIGNAL(triggered()), this, SLOT(onHelpHelp()));
 
@@ -623,31 +619,6 @@ bool pqCMBCommonMainWindow::compareView(const QString& ReferenceImage,
 {
   return this->MainWindowCore->compareView(
     ReferenceImage, Threshold, Output, TempDirectory);
-}
-
-//----------------------------------------------------------------------------
-void pqCMBCommonMainWindow::changeBackgroundColor()
-{
-  if(this->MainWindowCore->activeRenderView())
-    {
-    double color[3];
-    vtkSMRenderViewProxy *renderProxy =
-      this->MainWindowCore->activeRenderView()->getRenderViewProxy();
-    vtkSMPropertyHelper(renderProxy, "Background").Get(color, 3);
-    QColor qcolor;
-    qcolor.setRgbF(color[0], color[1], color[2]);
-    QColor result;
-    result = qtCMBColorDialog::getColor(qcolor, this);
-    if (!result.isValid())
-      {
-      return;
-      }
-    result.getRgbF(&(color[0]), &(color[1]), &(color[2]));
-    vtkSMPropertyHelper(renderProxy, "Background").Set(color, 3);
-    renderProxy->UpdateVTKObjects();
-    }
-
-  this->MainWindowCore->activeRenderView()->render();
 }
 
 //----------------------------------------------------------------------------

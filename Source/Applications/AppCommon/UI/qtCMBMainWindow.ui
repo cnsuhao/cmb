@@ -136,7 +136,6 @@
      </property>
     </widget>
     <addaction name="menu_Camera"/>
-    <addaction name="actionChange_Background_Color"/>
     <addaction name="separator"/>
     <addaction name="menuShow"/>
    </widget>
@@ -891,12 +890,12 @@
    </property>
   </action>
   <action name="actionCreateDEMMesh">
-    <property name="text">
-      <string>Generate 3D Mesh from Image</string>
-    </property>
-    <property name="toolTip">
-      <string>Generate 3D Mesh from Image</string>
-    </property>
+   <property name="text">
+    <string>Generate 3D Mesh from Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate 3D Mesh from Image</string>
+   </property>
   </action>
   <action name="actionServerConnect">
    <property name="icon">

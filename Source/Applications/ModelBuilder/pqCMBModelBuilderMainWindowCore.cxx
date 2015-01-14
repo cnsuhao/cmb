@@ -391,6 +391,7 @@ void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolB
 void pqCMBModelBuilderMainWindowCore::setupVariableToolbar(QToolBar* toolbar)
 {
   toolbar->clear();
+/*
   QComboBox* qColorFaceWidget = new QComboBox(toolbar);
   qColorFaceWidget->setObjectName("displayColor");
 //  qColorFaceWidget->setPropertyName("ModelFaceColorMode");
@@ -542,6 +543,7 @@ void pqCMBModelBuilderMainWindowCore::setupVariableToolbar(QToolBar* toolbar)
   this->Internal->AttEdgeColorCombo = qAttColorWidget;
   this->Internal->AttEdgeCategoryCombo = qAttCategoryWidget;
   toolbar->addAction(this->Internal->AttEdgeColorLegendAction);
+  */
 }
 
 //-----------------------------------------------------------------------------
@@ -1838,6 +1840,7 @@ void pqCMBModelBuilderMainWindowCore::onEditSettings()
 void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 {
   this->Superclass::applyAppSettings();
+ /*
   int index = this->Internal->ColorFaceCombo->findText(
     this->Internal->AppOptions->default3DModelFaceColorMode().c_str());
   index = (index==-1) ? 0 : index;
@@ -1851,6 +1854,7 @@ void pqCMBModelBuilderMainWindowCore::applyAppSettings()
   index = (index==-1) ? 0 : index;
   this->Internal->ColorEdgeDomainCombo->setCurrentIndex(index);
   this->applyColorSettings();
+*/
 }
 
 //-----------------------------------------------------------------------------

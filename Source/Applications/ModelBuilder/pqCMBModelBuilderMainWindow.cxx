@@ -232,9 +232,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->actionSpawn_Volume_Mesher,
     SIGNAL(triggered()), this->getThisCore(), SLOT(onSpawnVolumeMesher()));
 
-  QObject::connect(this->getMainDialog()->actionConvert_from_Lat_Long,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onConvertLatLong(bool)));
+//  QObject::connect(this->getMainDialog()->actionConvert_from_Lat_Long,
+//    SIGNAL(triggered(bool)),
+//    this, SLOT(onConvertLatLong(bool)));
   QObject::connect(this->getMainDialog()->action_Select,
     SIGNAL(triggered(bool)),
     this, SLOT(onSurfaceRubberBandSelect(bool)));
@@ -279,8 +279,8 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->action_MB_Unload_Scene,
     SIGNAL(triggered()), this, SLOT(onUnloadScene()));
 
-  QObject::connect(this->getMainDialog()->actionApplyBathymetry,
-    SIGNAL(triggered()), this, SLOT(onDisplayBathymetryDialog()));
+//  QObject::connect(this->getMainDialog()->actionApplyBathymetry,
+//    SIGNAL(triggered()), this, SLOT(onDisplayBathymetryDialog()));
 
  this->getMainDialog()->faceParametersDock->setParent(0);
   this->getMainDialog()->faceParametersDock->setVisible(false);
@@ -407,6 +407,7 @@ void pqCMBModelBuilderMainWindow::onUnloadScene()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
+/*
   // Variable toolbar
   this->Internal->VariableToolbar = new QToolBar("Active Variable Controls", this);
   this->Internal->VariableToolbar->setObjectName("variableToolbar");
@@ -446,7 +447,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
     this->getMainDialog()->actionGrow_Clear);
 
   this->insertToolBar(this->Internal->VariableToolbar,this->Internal->GrowToolbar);
-
+*/
   this->Internal->Model2DToolbar = NULL;
 
 }
@@ -537,7 +538,7 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
 
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
-
+/*
   // Create Simple Model Action
   this->Internal->CreateSimpleModelAction = new QAction(this->getMainDialog()->menu_File);
   this->Internal->CreateSimpleModelAction->setObjectName(QString::fromUtf8("action_createsimplemodel"));
@@ -550,16 +551,17 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
 
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
-
+*/
   // Add actions to "Edit" menu.
-  this->getMainDialog()->menuEdit->insertAction(
-    this->getMainDialog()->action_Select,
-    this->getMainDialog()->actionConvert_from_Lat_Long);
-  this->getMainDialog()->menuEdit->insertAction(
-    this->getMainDialog()->action_Select,
-    this->getMainDialog()->actionApplyBathymetry);
-  this->getMainDialog()->menuEdit->insertSeparator(
-    this->getMainDialog()->action_Select);
+//  this->getMainDialog()->menuEdit->insertAction(
+//    this->getMainDialog()->action_Select,
+//    this->getMainDialog()->actionConvert_from_Lat_Long);
+//  this->getMainDialog()->menuEdit->insertAction(
+//    this->getMainDialog()->action_Select,
+//    this->getMainDialog()->actionApplyBathymetry);
+//  this->getMainDialog()->menuEdit->insertSeparator(
+//    this->getMainDialog()->action_Select);
+/*
   this->getMainDialog()->menuEdit->addActions(
     this->Internal->GrowToolbar->actions());
   this->getMainDialog()->menuEdit->insertSeparator(
@@ -576,7 +578,9 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menuEdit->insertSeparator(
     this->getMainDialog()->actionConvert_from_Lat_Long);
   this->Internal->CreateModelEdgesAction->setEnabled(false);
+*/
 
+/*
   this->Internal->ChangeTextureAction = new QAction(this->getMainDialog()->menuEdit);
   this->Internal->ChangeTextureAction->setObjectName(QString::fromUtf8("action_editTexture"));
   this->Internal->ChangeTextureAction->setText(QString::fromUtf8("Edit Texture Map"));
@@ -595,7 +599,7 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->Internal->GrowAngleBox->setObjectName("growAngleBox");
   this->Internal->GrowAngleBox->setToolTip("Feature angle for grow selection");
   this->Internal->GrowToolbar->addWidget(this->Internal->GrowAngleBox);
-
+*/
   // Add actions to "Tools" menu.
   this->getMainDialog()->menu_Tools->insertAction(
     this->getMainDialog()->actionLock_View_Size,
@@ -625,14 +629,14 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
   this->setGrowButtonsState(false);
 
-  this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
-  this->getMainDialog()->actionApplyBathymetry->setEnabled(model_loaded);
-  this->Internal->ChangeTextureAction->setEnabled(model_loaded);
+//  this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
+//  this->getMainDialog()->actionApplyBathymetry->setEnabled(model_loaded);
+//  this->Internal->ChangeTextureAction->setEnabled(model_loaded);
 
   //this->Internal->ColorWidget->setEnabled(data_loaded);
   //this->Internal->RepresentationWidget->setEnabled(data_loaded);
-  this->setToolbarEnableState(this->Internal->VariableToolbar, model_loaded);
-  this->setToolbarEnableState(this->Internal->GrowToolbar, data_loaded);
+//  this->setToolbarEnableState(this->Internal->VariableToolbar, model_loaded);
+//  this->setToolbarEnableState(this->Internal->GrowToolbar, data_loaded);
 
   //this->Internal->VariableToolbar->setEnabled(data_loaded);
   //this->Internal->GrowToolbar->setEnabled(data_loaded);
@@ -676,13 +680,13 @@ void pqCMBModelBuilderMainWindow::updateUIByDimension()
     {
     this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(0);
     this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 0 );
-    this->Internal->CreateModelEdgesAction->setEnabled(false);
+//    this->Internal->CreateModelEdgesAction->setEnabled(false);
     }
   else
     {
     this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(1);
     this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 1 );
-    this->Internal->CreateModelEdgesAction->setEnabled(!has2dEdges);
+//    this->Internal->CreateModelEdgesAction->setEnabled(!has2dEdges);
     }
 
   if(has2dEdges)
@@ -698,7 +702,7 @@ void pqCMBModelBuilderMainWindow::updateUIByDimension()
         SIGNAL(triggered(bool)),
         this, SLOT(onConvertArcNodes(bool)));
 
-      this->insertToolBar(this->Internal->VariableToolbar,this->Internal->Model2DToolbar);
+//      this->insertToolBar(this->Internal->VariableToolbar,this->Internal->Model2DToolbar);
       }
     else
       {
