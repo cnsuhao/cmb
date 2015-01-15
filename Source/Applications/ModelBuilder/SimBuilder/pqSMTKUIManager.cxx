@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    smtkUIManager.cxx,v
+  Module:    pqSMTKUIManager.cxx,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#include "smtkUIManager.h"
+#include "pqSMTKUIManager.h"
 
 #include "smtk/view/Base.h"
 #include "smtk/attribute/Item.h"
@@ -39,13 +39,13 @@
 
 #include "SimBuilderCore.h"
 
-#include "cmbSMTKUIHelper.h"
+#include "pqSMTKUIHelper.h"
 
 #include <QLineEdit>
 #include <QStringList>
 
 //----------------------------------------------------------------------------
-class smtkUIManagerInternals
+class pqSMTKUIManagerInternals
 {
   public:
 
@@ -55,17 +55,17 @@ class smtkUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-smtkUIManager::smtkUIManager()
+pqSMTKUIManager::pqSMTKUIManager()
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
   this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem));
-  this->Internals = new smtkUIManagerInternals;
+  this->Internals = new pqSMTKUIManagerInternals;
  }
 
 //----------------------------------------------------------------------------
-smtkUIManager::~smtkUIManager()
+pqSMTKUIManager::~pqSMTKUIManager()
 {
   delete this->Internals;
 
@@ -77,19 +77,19 @@ smtkUIManager::~smtkUIManager()
 }
 
 //----------------------------------------------------------------------------
-smtk::attribute::qtRootView* smtkUIManager::rootView()
+smtk::attribute::qtRootView* pqSMTKUIManager::rootView()
 {
   return this->qtAttSystem->rootView();
 }
 
 //----------------------------------------------------------------------------
-smtk::model::ManagerPtr smtkUIManager::attModelManager() const
+smtk::model::ManagerPtr pqSMTKUIManager::attModelManager() const
 {
   return this->Internals->ModelMgr.lock();
 }
 
 //----------------------------------------------------------------------------
-void smtkUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
+void pqSMTKUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
 {
   smtk::model::ManagerPtr curManager = this->Internals->ModelMgr.lock();
   if (curManager != refModelMgr)
@@ -100,7 +100,7 @@ void smtkUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
 }
 
 //----------------------------------------------------------------------------
-void smtkUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
+void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
 {
   this->qtManager()->disconnect();
   QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
@@ -145,7 +145,7 @@ void smtkUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
 }
 
 //----------------------------------------------------------------------------
-void smtkUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+void pqSMTKUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
 {
   if(fileItem)
     {
@@ -154,7 +154,7 @@ void smtkUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
     }
 }
 //----------------------------------------------------------------------------
-void smtkUIManager::onLaunchFileBrowser()
+void pqSMTKUIManager::onLaunchFileBrowser()
 {
   smtk::attribute::qtFileItem* const fileItem =
     qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
@@ -162,11 +162,11 @@ void smtkUIManager::onLaunchFileBrowser()
     {
     return;
     }
-  cmbSMTKUIHelper::process_smtkFileItemRequest(
+  pqSMTKUIHelper::process_smtkFileItemRequest(
     fileItem, this->ActiveServer, this->rootView()->parentWidget());
 }
 //----------------------------------------------------------------------------
-void smtkUIManager::createFunctionWithExpression(
+void pqSMTKUIManager::createFunctionWithExpression(
   QString& funcExpr, double initVal,
   double deltaVal, int numValues)
 {
@@ -216,7 +216,7 @@ void smtkUIManager::createFunctionWithExpression(
 }
 
 //-----------------------------------------------------------------------------
-void smtkUIManager::getAttributeDefinitions(
+void pqSMTKUIManager::getAttributeDefinitions(
     QMap<QString, QList<smtk::attribute::DefinitionPtr> > &outDefMap)
 {
   QList<smtk::attribute::qtBaseView*> attsections;
@@ -229,8 +229,8 @@ void smtkUIManager::getAttributeDefinitions(
       qobject_cast<smtk::attribute::qtAttributeView*>(sec);
     if(attSec)
       {
-      const smtkUIManagerInternals::DefMap &attDefMap = attSec->attDefinitionMap();
-      smtkUIManagerInternals::DefMapIt dit = attDefMap.begin();
+      const pqSMTKUIManagerInternals::DefMap &attDefMap = attSec->attDefinitionMap();
+      pqSMTKUIManagerInternals::DefMapIt dit = attDefMap.begin();
       for(; dit != attDefMap.end(); ++dit)
         {
         outDefMap[dit.key()].append(dit.value());

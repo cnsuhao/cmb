@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    SimBuilderUIPanel.h,v
+  Module:    qtSimBuilderUIPanel.h,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -11,26 +11,23 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME SimBuilderUIPanel - a user interface panel.
+// .NAME qtSimBuilderUIPanel - a user interface panel.
 // .SECTION Description
 // .SECTION See Also
 
-#ifndef __SimBuilderUIPanel_h
-#define __SimBuilderUIPanel_h
+#ifndef __qtSimBuilderUIPanel_h
+#define __qtSimBuilderUIPanel_h
 
 #include <QDockWidget>
 #include "cmbSystemConfig.h"
 
-class smtkUIManager;
-class vtkSMProxy;
-
-class SimBuilderUIPanel : public QDockWidget
+class qtSimBuilderUIPanel : public QDockWidget
 {
   Q_OBJECT
 
 public:         
-  SimBuilderUIPanel(QWidget* pW=NULL);
-  virtual ~SimBuilderUIPanel();  
+  qtSimBuilderUIPanel(QWidget* pW=NULL);
+  virtual ~qtSimBuilderUIPanel();  
 
   QWidget* panelWidget();
   void initialize();

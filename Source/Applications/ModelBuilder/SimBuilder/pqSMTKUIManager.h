@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    smtkUIManager.h,v
+  Module:    pqSMTKUIManager.h,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -11,12 +11,12 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME smtkUIManager - a user interface manager.
+// .NAME pqSMTKUIManager - a user interface manager.
 // .SECTION Description
 // .SECTION See Also
 
-#ifndef __smtkUIManager_h
-#define __smtkUIManager_h
+#ifndef __pqSMTKUIManager_h
+#define __pqSMTKUIManager_h
 
 #include <QObject>
 #include "smtk/extension/qt/qtUIManager.h"
@@ -30,18 +30,18 @@
 class pqServer;
 class pqRenderView;
 class vtkObject;
-class smtkUIManagerInternals;
+class pqSMTKUIManagerInternals;
 class vtkSMProxy;
 class SimBuilderCore;
 
-class smtkUIManager : public QObject
+class pqSMTKUIManager : public QObject
 {
 
 Q_OBJECT
 
 public:
-  smtkUIManager();
-  virtual ~smtkUIManager();
+  pqSMTKUIManager();
+  virtual ~pqSMTKUIManager();
   smtk::attribute::SystemPtr attSystem() const
     {return this->AttSystem;}
   smtk::attribute::qtUIManager* qtManager() const
@@ -86,8 +86,8 @@ protected:
   smtk::attribute::qtUIManager* qtAttSystem;
 
 private:
-  static smtkUIManager* Instance;
-  smtkUIManagerInternals *Internals;
+  static pqSMTKUIManager* Instance;
+  pqSMTKUIManagerInternals *Internals;
 
 };
 

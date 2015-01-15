@@ -1,10 +1,10 @@
 /*=========================================================================
 
  Program:   Visualization Toolkit
- Module:    $RCSfile: qtSMTKModelPanel.h,v $
+ Module:    $RCSfile: pqSMTKModelPanel.h,v $
 
  =========================================================================*/
-// .NAME qtSMTKModelPanel - Custom object panel for vtkSMTKModelReader
+// .NAME pqSMTKModelPanel - Custom object panel for vtkSMTKModelReader
 // .SECTION Description
 #include <QDockWidget>
 
@@ -22,12 +22,12 @@ namespace smtk {
  }
 }
 
-class qtSMTKModelPanel : public QDockWidget
+class pqSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  qtSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
-  ~qtSMTKModelPanel();
+  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
+  ~pqSMTKModelPanel();
 
   pqCMBModelManager* modelManager();
 

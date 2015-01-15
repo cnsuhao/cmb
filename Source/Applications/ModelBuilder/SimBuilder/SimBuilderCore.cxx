@@ -22,7 +22,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "SimBuilderCore.h"
 
-#include "SimBuilderUIPanel.h"
+#include "qtSimBuilderUIPanel.h"
 #include "SimBuilderCustomExportDialog.h"
 #include "DefaultExportTemplate.h"
 
@@ -57,7 +57,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtRootView.h"
 
-#include "smtkUIManager.h"
+#include "pqSMTKUIManager.h"
 
 #include "vtkSMProxyManager.h"
 #include "vtkClientServerStream.h"
@@ -632,22 +632,22 @@ bool SimBuilderCore::setDefaultExportTemplate()
 }
 
 //----------------------------------------------------------------------------
-SimBuilderUIPanel* SimBuilderCore::GetUIPanel()
+qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
 {
   if (!this->UIPanel)
     {
-    this->UIPanel = new SimBuilderUIPanel();
+    this->UIPanel = new qtSimBuilderUIPanel();
     this->UIPanel->initialize();
     }
   return this->UIPanel;
 }
 
 //----------------------------------------------------------------------------
-smtkUIManager*  SimBuilderCore::attributeUIManager()
+pqSMTKUIManager*  SimBuilderCore::attributeUIManager()
 {
   if(!this->m_attUIManager)
     {
-    this->m_attUIManager = new smtkUIManager();
+    this->m_attUIManager = new pqSMTKUIManager();
     }
 
   return this->m_attUIManager;;

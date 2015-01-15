@@ -62,7 +62,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QPair>
 #include <QWidget>
 #include "pqCMBModelManager.h"
-#include "qtSMTKModelPanel.h"
+#include "pqSMTKModelPanel.h"
 
 namespace
 {
@@ -116,7 +116,7 @@ pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 }
 
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::setModelPanel(qtSMTKModelPanel* panel)
+void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* panel)
 {
   this->m_ModelPanel = panel;
 }

@@ -180,7 +180,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBSceneReader.h"
 #include "vtkPVSceneGenFileInformation.h"
 #include "qtCMBSceneObjectFilterDialog.h"
-#include "SimBuilder/smtkUIManager.h"
+#include "SimBuilder/pqSMTKUIManager.h"
 #include "pqCMBModelBuilderOptions.h"
 #include "qtCMBApplicationOptionsDialog.h"
 #include "pqCMBImportShapefile.h"
@@ -195,8 +195,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QLayout>
 #include <QPushButton>
 #include "pqCMBLoadDataReaction.h"
-#include "cmbFileExtensions.h"
-#include "qtSMTKModelPanel.h"
+#include "pqCMBFileExtensions.h"
+#include "pqSMTKModelPanel.h"
 #include <QMainWindow>
 #include "pqActiveObjects.h"
 #include "pqCMBModelManager.h"
@@ -299,7 +299,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<QAction> AttFaceColorLegendAction;
     QPointer<pqScalarBarWidget> AttFaceScalarBarWidget;
 
-    QPointer<qtSMTKModelPanel> ModelDock;
+    QPointer<pqSMTKModelPanel> ModelDock;
     QPointer<pqCMBModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
 };
@@ -569,7 +569,7 @@ void pqCMBModelBuilderMainWindowCore::setRubberSelectionMode(int mode)
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::updateColorByAttributeMode(int mode, bool isEdge)
 {
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
   bool attVisible = false;
   if(isEdge)
@@ -594,7 +594,7 @@ void pqCMBModelBuilderMainWindowCore::updateColorByAttributeMode(int mode, bool 
 void pqCMBModelBuilderMainWindowCore::updateColorDomainByAttributeMode(
   int mode)
 {
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
   bool attVisible = false;
   this->Internal->AttColorEdgeDomainAction->setVisible(attVisible);
@@ -844,7 +844,7 @@ void pqCMBModelBuilderMainWindowCore::loadMesherOutput(remus::proto::JobResult)
         }
 */
       pqCMBLoadDataReaction::openFiles(QStringList( this->Internal->MesherOutputFileName ),
-        QStringList(), cmbFileExtensions::ModelBuilder_ReadersMap());
+        QStringList(), pqCMBFileExtensions::ModelBuilder_ReadersMap());
       }
     }
 }
@@ -1546,7 +1546,7 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     if(int retVal = this->getCMBModel()->loadModelFile(filename))
       {
       // try updating the smtk entities after loading in a vtkModel.
-      smtkUIManager* simUIManager = this->getSimBuilder()->getUIManager();
+      pqSMTKUIManager* simUIManager = this->getSimBuilder()->getUIManager();
       simUIManager->attModel()->setDiscreteModel(
         this->Internal->CMBModel->getModel());
       simUIManager->updateModelItems();
@@ -1886,7 +1886,7 @@ void pqCMBModelBuilderMainWindowCore::onColorFaceByAttribute()
     return;
     }
   QString currentDefType = this->Internal->AttFaceColorCombo->currentText();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentFaceAttributeColorInfo(
 //    attSystem, currentDefType);
@@ -1905,7 +1905,7 @@ void pqCMBModelBuilderMainWindowCore::onFaceAttCategoryChanged()
   QString currentDefType = this->Internal->AttFaceColorCombo->currentText();
   QString currentCat = this->Internal->AttFaceCategoryCombo->currentText();
   this->Internal->AttFaceColorCombo->clear();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
@@ -1946,7 +1946,7 @@ void pqCMBModelBuilderMainWindowCore::onColorEdgeByAttribute()
     return;
     }
   QString currentDefType = this->Internal->AttEdgeColorCombo->currentText();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentEdgeAttributeColorInfo(
 //    attSystem, currentDefType);
@@ -1965,7 +1965,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeAttCategoryChanged()
   QString currentDefType = this->Internal->AttEdgeColorCombo->currentText();
   QString currentCat = this->Internal->AttEdgeCategoryCombo->currentText();
   this->Internal->AttEdgeColorCombo->clear();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
@@ -2005,7 +2005,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainColorByAttribute()
     return;
     }
   QString currentDefType = this->Internal->AttColorEdgeDomainCombo->currentText();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 //  this->Internal->CMBModel->setCurrentDomainAttributeColorInfo(
 //    attSystem, currentDefType);
@@ -2024,7 +2024,7 @@ void pqCMBModelBuilderMainWindowCore::onEdgeDomainAttCategoryChanged()
   QString currentDefType = this->Internal->AttColorEdgeDomainCombo->currentText();
   QString currentCat = this->Internal->AttCategoryEdgeDomainCombo->currentText();
   this->Internal->AttColorEdgeDomainCombo->clear();
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
   QStringList attDefTypes;
   smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
 
@@ -2068,7 +2068,7 @@ void pqCMBModelBuilderMainWindowCore::onNumOfAttriubtesChanged()
     return;
     }
 
-  smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+  pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
 
   QStringList categories;
   QMap<QString, QList<smtk::attribute::DefinitionPtr> > attDefMap;
@@ -2156,7 +2156,7 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
     scalarBar->setVisible(show);
     if(show)
       {
-      smtkUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+      pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
       smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
       std::vector<smtk::attribute::AttributePtr> result;
       attSystem->findDefinitionAttributes(
@@ -2306,11 +2306,11 @@ void pqCMBModelBuilderMainWindowCore::updateSMTKSelection()
 }
 
 //----------------------------------------------------------------------------
-qtSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
+pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if(!this->Internal->ModelDock)
     {
-    this->Internal->ModelDock = new qtSMTKModelPanel(
+    this->Internal->ModelDock = new pqSMTKModelPanel(
       this->Internal->smtkModelManager,
       this->parentWidget());
     this->Internal->ViewContextBehavior->setModelPanel(

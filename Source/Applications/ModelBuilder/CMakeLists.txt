@@ -59,10 +59,10 @@ set(SimBuilder_SOURCES
   SimBuilder/SimBuilderCore.cxx
   SimBuilder/SimBuilderCustomExportDialog.cxx
   SimBuilder/SimBuilderEMSExportDialog.cxx
-  SimBuilder/SimBuilderUIPanel.cxx
-  SimBuilder/smtkUIManager.cxx
+  SimBuilder/qtSimBuilderUIPanel.cxx
+  SimBuilder/pqSMTKUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx
-  SimBuilder/cmbSMTKUIHelper.h
+  SimBuilder/pqSMTKUIHelper.h
   ${CMAKE_CURRENT_BINARY_DIR}/DefaultExportTemplate.h
   )
 source_group("SimBuilder" FILES
@@ -182,8 +182,8 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h
   pqCMBImportShapefile.cxx
-  qtSMTKModelPanel.h
-  qtSMTKModelPanel.cxx
+  pqSMTKModelPanel.h
+  pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
 

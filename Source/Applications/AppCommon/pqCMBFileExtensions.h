@@ -1,9 +1,9 @@
-// .NAME cmbFileExtensions -
+// .NAME pqCMBFileExtensions -
 // .SECTION Description - File extensions for cmb applications
 //
 
-#ifndef __cmbFileExtensions_h
-#define __cmbFileExtensions_h
+#ifndef __pqCMBFileExtensions_h
+#define __pqCMBFileExtensions_h
 
 #include "cmbSystemConfig.h"
 
@@ -17,7 +17,7 @@
 #include <QPair>
 
 //BTX
-namespace cmbFileExtensions
+namespace pqCMBFileExtensions
 {
 
   typedef QMap<QString, QPair<QString, QString> > cmb_FileExtMap;

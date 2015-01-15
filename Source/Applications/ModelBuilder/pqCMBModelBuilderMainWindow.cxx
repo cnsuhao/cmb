@@ -110,7 +110,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "qtCMBHelpDialog.h"
 
 #include "SimBuilder/SimBuilderCore.h"
-#include "SimBuilder/smtkUIManager.h"
+#include "SimBuilder/pqSMTKUIManager.h"
 
 #include "qtCMBBathymetryDialog.h"
 #include "pqCMBSceneObjectBase.h"
@@ -118,14 +118,14 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "pqCMBLoadDataReaction.h"
 #include "vtkSMSessionProxyManager.h"
-#include "cmbFileExtensions.h"
+#include "pqCMBFileExtensions.h"
 // panels requied includes
 #include "pqActiveObjects.h"
 #include "pqProxyWidget.h"
-#include "SimBuilder/SimBuilderUIPanel.h"
+#include "SimBuilder/qtSimBuilderUIPanel.h"
 #include "pqCMBSceneTree.h"
 #include <QDockWidget>
-#include "qtSMTKModelPanel.h"
+#include "pqSMTKModelPanel.h"
 #include "pqCMBModelManager.h"
 #include "pqCMBColorMapWidget.h"
 #include "qtCMBTreeWidget.h"
@@ -287,7 +287,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   //this->getMainDialog()->actionServerConnect->setEnabled(0);
   //this->getMainDialog()->actionServerDisconnect->setEnabled(0);
-  QString filters = cmbFileExtensions::ModelBuilder_FileTypes();
+  QString filters = pqCMBFileExtensions::ModelBuilder_FileTypes();
   std::set<std::string> modelFileTypes = this->getThisCore()->modelManager()->supportedFileTypes();
   QStringList modelFileExts;
   for (std::set<std::string>::iterator it = modelFileTypes.begin(); it != modelFileTypes.end(); ++it)
@@ -298,7 +298,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   this->loadDataReaction()->addSpecialExtensions(modelFileExts);
   this->loadDataReaction()->setSupportedFileTypes(filters);
   this->loadDataReaction()->addReaderExtensionMap(
-    cmbFileExtensions::ModelBuilder_ReadersMap());
+    pqCMBFileExtensions::ModelBuilder_ReadersMap());
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
@@ -1422,7 +1422,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
   switch(enType)
     {
     case qtCMBPanelsManager::ATTRIBUTE:
-      // The SimBuilderUIPanel
+      // The qtSimBuilderUIPanel
       {
       dw = this->getThisCore()->getSimBuilder()->GetUIPanel();
       //uip->uiManager()->initializeUI(

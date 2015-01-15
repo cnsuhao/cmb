@@ -11,12 +11,12 @@
 #include "cmbSystemConfig.h"
 
 class pqCMBSceneTree;
-class SimBuilderUIPanel;
+class qtSimBuilderUIPanel;
 class pqServer;
 class pqPipelineSource;
 class vtkSMProxy;
 class pqRenderView;
-class smtkUIManager;
+class pqSMTKUIManager;
 class SimBuilderCustomExportDialog;
 class vtkSMModelManagerProxy;
 
@@ -60,8 +60,8 @@ public:
 
   void ExportSimFile(vtkSMModelManagerProxy* mmproxy);
 
-  smtkUIManager* attributeUIManager();
-  SimBuilderUIPanel* GetUIPanel();
+  pqSMTKUIManager* attributeUIManager();
+  qtSimBuilderUIPanel* GetUIPanel();
 
   bool isTemplateOnly(){return this->LoadTemplateOnly;}
   bool isLoadingScenario(){return this->LoadingScenario;}
@@ -85,7 +85,7 @@ private:
 
   // Description:
   // Manages all the UI
-  QPointer<SimBuilderUIPanel> UIPanel;
+  QPointer<qtSimBuilderUIPanel> UIPanel;
   pqServer* ActiveServer;
   pqRenderView* RenderView;
   bool IsSimModelLoaded;
@@ -99,7 +99,7 @@ private:
   bool LoadingScenario;
   bool ScenarioEntitiesCreated;
 
-  QPointer<smtkUIManager> m_attUIManager;
+  QPointer<pqSMTKUIManager> m_attUIManager;
 
 };
 

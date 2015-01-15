@@ -89,7 +89,7 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
   this->ContentWidget->setLayout(widgetLayout);
   layout->addWidget(this->ContentWidget);
 
-  this->ExportUIManager = new smtkUIManager();
+  this->ExportUIManager = new pqSMTKUIManager();
 
   QDialogButtonBox *buttonBox =
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -269,7 +269,7 @@ void SimBuilderCustomExportDialog::updatePanel()
     {
     delete this->ExportUIManager;
     }
-  this->ExportUIManager = new smtkUIManager();
+  this->ExportUIManager = new pqSMTKUIManager();
 
   // Serialize export system
   smtk::io::Logger logger;

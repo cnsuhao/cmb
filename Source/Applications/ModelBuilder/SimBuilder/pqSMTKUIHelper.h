@@ -1,9 +1,9 @@
-// .NAME cmbSMTKUIHelper -
+// .NAME pqSMTKUIHelper -
 // .SECTION Description - Helper for smtk::attribute::qtFileItem
 //
 
-#ifndef __cmbSMTKUIHelper_h
-#define __cmbSMTKUIHelper_h
+#ifndef __pqSMTKUIHelper_h
+#define __pqSMTKUIHelper_h
 
 #include "cmbSystemConfig.h"
 
@@ -22,7 +22,7 @@
 #include <QObject>
 
 //BTX
-namespace cmbSMTKUIHelper
+namespace pqSMTKUIHelper
 {
   //----------------------------------------------------------------------------
   static void process_smtkFileItemRequest(

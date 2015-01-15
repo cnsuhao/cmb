@@ -49,7 +49,7 @@ class pqCMBSceneTree;
 class vtkCollection;
 class pqScalarBarWidget;
 class pqCMBModelManager;
-class qtSMTKModelPanel;
+class pqSMTKModelPanel;
 #include "smtk/PublicPointerDefs.h"
 
 class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
@@ -103,7 +103,7 @@ public:
 
   // Description:
   // Get the internal smtk dockable model panel;
-  qtSMTKModelPanel* modelPanel();
+  pqSMTKModelPanel* modelPanel();
 
   // Descirption:
   // override the base class to give an editor by default

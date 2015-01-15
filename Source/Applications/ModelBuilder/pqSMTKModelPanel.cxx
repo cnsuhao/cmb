@@ -1,10 +1,10 @@
 /*=========================================================================
 
  Program:   Visualization Toolkit
- Module:    $RCSfile: qtSMTKModelPanel.cxx,v $
+ Module:    $RCSfile: pqSMTKModelPanel,v $
 
  =========================================================================*/
-#include "qtSMTKModelPanel.h"
+#include "pqSMTKModelPanel.h"
 
 #include "smtk/extension/qt/qtEntityItemDelegate.h"
 #include "smtk/extension/qt/qtEntityItemModel.h"
@@ -63,7 +63,7 @@
 
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
-#include "SimBuilder/cmbSMTKUIHelper.h"
+#include "SimBuilder/pqSMTKUIHelper.h"
 #include "vtkSMDoubleMapProperty.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMDoubleMapPropertyIterator.h"
@@ -73,7 +73,7 @@ using namespace std;
 using namespace smtk::model;
 
 //-----------------------------------------------------------------------------
-class qtSMTKModelPanel::qInternal
+class pqSMTKModelPanel::qInternal
 {
 public:
   QPointer<qtModelPanel> ModelPanel;
@@ -90,10 +90,10 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qtSMTKModelPanel::qtSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
+pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
 : QDockWidget(p)
 {
-  this->Internal = new qtSMTKModelPanel::qInternal();
+  this->Internal = new pqSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
 //  this->connect(&this->Internal->UpdateUITimer, SIGNAL(timeout()),
@@ -106,19 +106,19 @@ qtSMTKModelPanel::qtSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
 }
 
 //-----------------------------------------------------------------------------
-qtSMTKModelPanel::~qtSMTKModelPanel()
+pqSMTKModelPanel::~pqSMTKModelPanel()
 {
   delete this->Internal;
 }
 
 //-----------------------------------------------------------------------------
-pqCMBModelManager* qtSMTKModelPanel::modelManager()
+pqCMBModelManager* pqSMTKModelPanel::modelManager()
 {
   return this->Internal->smtkManager;
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::clearUI()
+void pqSMTKModelPanel::clearUI()
 {
   if(this->Internal->ModelPanel)
     {
@@ -129,7 +129,7 @@ void qtSMTKModelPanel::clearUI()
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
+void pqSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
     const QList<unsigned int>& blockids, bool visible)
 {
   if(!rep)
@@ -155,7 +155,7 @@ void qtSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
+void pqSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
     const QList<unsigned int>& indices)
 {
   if(!rep)
@@ -190,7 +190,7 @@ void qtSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
+void pqSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
 {
   if(!rep)
     return;
@@ -244,7 +244,7 @@ void qtSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
+void pqSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
     const QList<unsigned int>& blockids, const QColor& color)
 {
   if(!rep)
@@ -270,7 +270,7 @@ void qtSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::onDataUpdated()
+void pqSMTKModelPanel::onDataUpdated()
 {
   if(/*this->Internal->ModelLoaded || */!this->Internal->smtkManager)
     {
@@ -332,7 +332,7 @@ void qtSMTKModelPanel::onDataUpdated()
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
+void pqSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
 {
   //clear current selections
   this->Internal->smtkManager->clearModelSelections();
@@ -414,7 +414,7 @@ std::cout << "done selecting" << std::endl;
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::updateTreeSelection()
+void pqSMTKModelPanel::updateTreeSelection()
 {
 
   std::cout << "update tree selection, before converting blockid to uuid" << std::endl;
@@ -474,7 +474,7 @@ void qtSMTKModelPanel::updateTreeSelection()
 }
 
 //----------------------------------------------------------------------------
-void qtSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+void pqSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
 {
   if(fileItem)
     {
@@ -484,7 +484,7 @@ void qtSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
 }
 
 //----------------------------------------------------------------------------
-void qtSMTKModelPanel::onLaunchFileBrowser()
+void pqSMTKModelPanel::onLaunchFileBrowser()
 {
   smtk::attribute::qtFileItem* const fileItem =
     qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
@@ -492,12 +492,12 @@ void qtSMTKModelPanel::onLaunchFileBrowser()
     {
     return;
     }
-  cmbSMTKUIHelper::process_smtkFileItemRequest(
+  pqSMTKUIHelper::process_smtkFileItemRequest(
     fileItem, this->Internal->smtkManager->server(), fileItem->widget());
 }
 /*
 //----------------------------------------------------------------------------
-void qtSMTKModelPanel::linkRepresentations()
+void pqSMTKModelPanel::linkRepresentations()
 {
   // disconnect from previous representations
   this->Internal->VTKConnect->Disconnect();
@@ -509,7 +509,7 @@ void qtSMTKModelPanel::linkRepresentations()
 }
 
 //----------------------------------------------------------------------------
-void qtSMTKModelPanel::linkRepresentation(pqDataRepresentation *representation)
+void pqSMTKModelPanel::linkRepresentation(pqDataRepresentation *representation)
 {
   if(representation)
     {
@@ -534,7 +534,7 @@ void qtSMTKModelPanel::linkRepresentation(pqDataRepresentation *representation)
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::propertyChanged(
+void pqSMTKModelPanel::propertyChanged(
   vtkObject* caller, unsigned long, void* clientdata)
 {
   if(this->Internal->ignorePropertyChange)
@@ -557,7 +557,7 @@ void qtSMTKModelPanel::propertyChanged(
 
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
+void pqSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
   pqDataRepresentation* representation, )
 {
   if(!ivp)
@@ -588,7 +588,7 @@ void qtSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
 }
 
 //-----------------------------------------------------------------------------
-void qtSMTKModelPanel::updateEntityColor(vtkSMDoubleMapProperty* dmp,
+void pqSMTKModelPanel::updateEntityColor(vtkSMDoubleMapProperty* dmp,
   pqDataRepresentation* representation)
 {
   if(!dmp)

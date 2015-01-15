@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    SimBuilderUIPanel.cxx,v
+  Module:    qtSimBuilderUIPanel.cxx,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -12,38 +12,34 @@
 
 =========================================================================*/
 
-#include "SimBuilderUIPanel.h"
-
-#include "smtkUIManager.h"
+#include "qtSimBuilderUIPanel.h"
 
 #include "smtk/extension/qt/qtRootView.h"
-#include "smtk/view/Root.h"
-#include "vtkSMProxy.h"
 
 #include <QFrame>
 #include <QScrollArea>
 #include <QVBoxLayout>
 
 //----------------------------------------------------------------------------
-SimBuilderUIPanel::SimBuilderUIPanel(QWidget* pW) : QDockWidget(pW)
+qtSimBuilderUIPanel::qtSimBuilderUIPanel(QWidget* pW) : QDockWidget(pW)
 {
   this->ContainerWidget = NULL;
   this->setObjectName("SimBuilderDockWidget");
 }
 
 //----------------------------------------------------------------------------
-SimBuilderUIPanel::~SimBuilderUIPanel()
+qtSimBuilderUIPanel::~qtSimBuilderUIPanel()
 {
 }
 
 //----------------------------------------------------------------------------
-QWidget* SimBuilderUIPanel::panelWidget()
+QWidget* qtSimBuilderUIPanel::panelWidget()
 {  
   return this->ContainerWidget;
 }
 
 //----------------------------------------------------------------------------
-void SimBuilderUIPanel::initialize()
+void qtSimBuilderUIPanel::initialize()
 {
   if(this->ContainerWidget)
     {

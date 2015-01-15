@@ -42,7 +42,7 @@ class QAction;
 class QMenu;
 class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
-class qtSMTKModelPanel;
+class pqSMTKModelPanel;
 
 /// @ingroup Behaviors
 ///
@@ -58,7 +58,7 @@ public:
   pqModelBuilderViewContextMenuBehavior(QObject* parent=0);
   virtual ~pqModelBuilderViewContextMenuBehavior();
 
-  void setModelPanel(qtSMTKModelPanel*);
+  void setModelPanel(pqSMTKModelPanel*);
 
   void setBlockVisibility(
     const QList<unsigned int>& visBlocks, bool visible);
@@ -133,7 +133,7 @@ protected:
   QPoint Position;
   QPointer<pqDataRepresentation> PickedRepresentation;
   QList<unsigned int> PickedBlocks;
-  QPointer<qtSMTKModelPanel> m_ModelPanel;
+  QPointer<pqSMTKModelPanel> m_ModelPanel;
   pqMultiBlockInspectorPanel* m_DataInspector;
 
 private:
