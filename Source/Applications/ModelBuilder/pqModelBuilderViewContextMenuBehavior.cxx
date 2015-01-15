@@ -28,25 +28,27 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqModelBuilderViewContextMenuBehavior.h"
 
 #include "pqActiveObjects.h"
-#include "pqPVApplicationCore.h"
+#include "pqApplicationCore.h"
 #include "pqEditColorMapReaction.h"
 #include "pqMultiBlockInspectorPanel.h"
+#include "pqPVApplicationCore.h"
+#include "pqDataRepresentation.h"
 #include "pqPipelineRepresentation.h"
-#include "pqApplicationCore.h"
 #include "pqRenderView.h"
 #include "pqScalarsToColors.h"
 #include "pqSelectionManager.h"
 #include "pqServerManagerModel.h"
 #include "pqSetName.h"
 #include "pqSMAdaptor.h"
-
 #include "pqUndoStack.h"
+
 #include "vtkDataObject.h"
 #include "vtkNew.h"
 #include "vtkPVCompositeDataInformation.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVGeneralSettings.h"
 #include "vtkSMArrayListDomain.h"
+#include "vtkSMIntVectorProperty.h"
 #include "vtkSMProperty.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMPVRepresentationProxy.h"
@@ -128,15 +130,46 @@ void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if (panel)
     {
-      if(!visible)
+    pqOutputPort* outport = pqActiveObjects::instance().activePort();
+    pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
+    if(visible && visBlocks.count() && rep)
       {
-      pqOutputPort* outport = panel->getOutputPort();
+      // if one block is visible, the rep has to be visible
+      rep->setVisible(visible);
+      }
+
+    panel->setBlockVisibility(visBlocks, visible);
+
+   if(!visible)
+      {
       if(outport)
         {
         outport->setSelectionInput(0, 0);
-        }     
+        }
+       // if all blocks are off, the rep should be invisible 
+       if(rep)
+        {
+        vtkSMProxy *proxy = rep->getProxy();
+        vtkSMProperty *blockVisibilityProperty = proxy->GetProperty("BlockVisibility");
+        vtkSMIntVectorProperty *ivp = vtkSMIntVectorProperty::SafeDownCast(blockVisibilityProperty);
+
+        if(ivp)
+          {
+          bool repVisible = false;
+          vtkIdType nbElems = static_cast<vtkIdType>(ivp->GetNumberOfElements());
+          for(vtkIdType i = 0; i + 1 < nbElems; i += 2)
+            {
+            if(ivp->GetElement(i+1))
+              {
+              repVisible = true;
+              break;
+              }
+            }
+          rep->setVisible(repVisible);
+          }
+        }
       }
-    panel->setBlockVisibility(visBlocks, visible);
+
     }
 }
 
@@ -462,6 +495,10 @@ void pqModelBuilderViewContextMenuBehavior::hide()
     repr, emptyList);
 }
 
+/// This is triggered from context menu, which will set off
+/// a SetProperty op in smtk, then the application will
+/// process the op result to set visibilities through
+/// pqModelBuilderViewContextMenuBehavior::setBlockVisibility()
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::hideBlock()
 {
@@ -515,6 +552,13 @@ void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
           this->m_ModelPanel->modelManager()->modelRepresentations())
     {
     this->m_ModelPanel->showAllBlocks(repr);
+    }
+  pqRenderView* view = qobject_cast<pqRenderView*>(
+    pqActiveObjects::instance().activeView());
+  if (view)
+    {
+    view->resetCamera();
+    view->render();
     }
 }
 
