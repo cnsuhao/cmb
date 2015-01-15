@@ -1,4 +1,4 @@
-#include "qtPluginIOBehavior.h"
+#include "pqPluginIOBehavior.h"
 
 #include "pqApplicationCore.h"
 #include "pqPluginManager.h"
@@ -20,7 +20,7 @@
 
 // Mostly this is copy/paste from vtkSMReaderFactory.cxx
 
-class qtPluginIOBehavior::cmbInternals
+class pqPluginIOBehavior::cmbInternals
 {
 public:
   struct ReaderInfo
@@ -84,7 +84,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-qtPluginIOBehavior::qtPluginIOBehavior(QObject* parentObject)
+pqPluginIOBehavior::pqPluginIOBehavior(QObject* parentObject)
   : Superclass(parentObject)
 {
   this->Internals = new cmbInternals();
@@ -96,7 +96,7 @@ qtPluginIOBehavior::qtPluginIOBehavior(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-void qtPluginIOBehavior::updateResources()
+void pqPluginIOBehavior::updateResources()
 {
   vtkSMProxyManager* proxyManager = vtkSMProxyManager::GetProxyManager();
   // when we change the server we may not have a session yet. that's ok
@@ -116,7 +116,7 @@ void qtPluginIOBehavior::updateResources()
         {
         vtkPVXMLElement* hints = sessionProxyManager->GetProxyHints(
           iter->GetGroupName(), iter->GetProxyName());
-        if (qtPluginIOBehavior::isPluginReader(hints))
+        if (pqPluginIOBehavior::isPluginReader(hints))
           {
           this->Internals->addReader(
             iter->GetGroupName(), iter->GetProxyName(),
@@ -129,7 +129,7 @@ void qtPluginIOBehavior::updateResources()
 }
 
 //----------------------------------------------------------------------------
-const char* qtPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
+const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 {
   vtksys_ios::ostringstream all_types;
   size_t i=0, j=0;
@@ -167,10 +167,10 @@ const char* qtPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 }
 
 //----------------------------------------------------------------------------
-qtPluginIOBehavior::FileExtMap qtPluginIOBehavior::fileExtensionMap(
+pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
   vtkSMSession* session)
 {
-  qtPluginIOBehavior::FileExtMap readerMap;
+  pqPluginIOBehavior::FileExtMap readerMap;
   cmbInternals::ReaderType::iterator iter;
   for (iter = this->Internals->Readers.begin();
     iter != this->Internals->Readers.end(); ++iter)
@@ -189,7 +189,7 @@ qtPluginIOBehavior::FileExtMap qtPluginIOBehavior::fileExtensionMap(
 }
 
 //-----------------------------------------------------------------------------
-bool qtPluginIOBehavior::isPluginReader(vtkPVXMLElement* hints)
+bool pqPluginIOBehavior::isPluginReader(vtkPVXMLElement* hints)
 {
   return (hints && hints->FindNestedElementByName("ReaderFactory") &&
           hints->FindNestedElementByName("CMBPluginReader"));

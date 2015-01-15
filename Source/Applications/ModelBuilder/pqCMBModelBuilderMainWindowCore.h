@@ -47,8 +47,8 @@ class qtCMBCreateSimpleGeometry;
 class SimBuilderCore;
 class pqCMBSceneTree;
 class vtkCollection;
-class qtScalarBarWidget;
-class qtModelManager;
+class pqScalarBarWidget;
+class pqCMBModelManager;
 class qtSMTKModelPanel;
 #include "smtk/PublicPointerDefs.h"
 
@@ -111,7 +111,7 @@ public:
 
   // Description:
   // The application's model manager
-  qtModelManager* modelManager();
+  pqCMBModelManager* modelManager();
 
 signals:
 
@@ -252,7 +252,7 @@ public slots:
   void onEdgeDomainAttCategoryChanged();
   bool canColorByAttribute();
   void updateScalarBarWidget(
-    qtScalarBarWidget* scalarBar,
+    pqScalarBarWidget* scalarBar,
     const QString& strDefType, bool show);
 
   void hideDisplayPanelPartialComponents();

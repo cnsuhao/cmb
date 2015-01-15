@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ConceptualModelBuilder
-   Module:    qtPluginIOBehavior.h
+   Module:    pqPluginIOBehavior.h
 
    Copyright (c) Kitware Inc.
    All rights reserved.
@@ -21,13 +21,13 @@ class vtkSMSession;
 class vtkPVXMLElement;
 
 /// This behavior handles readers and writers that are loaded from plugins.
-class CMBAPPCOMMON_EXPORT qtPluginIOBehavior : public QObject
+class CMBAPPCOMMON_EXPORT pqPluginIOBehavior : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
   typedef QMap<QString, QPair<QString, QString> > FileExtMap;
 public:
-  qtPluginIOBehavior(QObject* parent=0);
+  pqPluginIOBehavior(QObject* parent=0);
 
   // Description:
   // Returns a formatted string with all supported file types.
@@ -48,7 +48,7 @@ protected slots:
   void updateResources();
 
 private:
-  Q_DISABLE_COPY(qtPluginIOBehavior)
+  Q_DISABLE_COPY(pqPluginIOBehavior)
   class cmbInternals;
   cmbInternals* Internals;
 };

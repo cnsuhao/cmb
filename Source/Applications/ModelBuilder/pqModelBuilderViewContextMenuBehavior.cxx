@@ -61,7 +61,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QMouseEvent>
 #include <QPair>
 #include <QWidget>
-#include "qtModelManager.h"
+#include "pqCMBModelManager.h"
 #include "qtSMTKModelPanel.h"
 
 namespace

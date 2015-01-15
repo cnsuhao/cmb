@@ -1,4 +1,4 @@
-// .NAME qtScalarBarWidget - a CMB color map Dialog object.
+// .NAME pqScalarBarWidget - a CMB color map Dialog object.
 // .SECTION Description
 //  This class provides a color editor dialog for the representation
 // .SECTION Caveats
@@ -14,13 +14,13 @@
 class pqDataRepresentation;
 class QDialog;
 
-class CMBAPPCOMMON_EXPORT qtScalarBarWidget : public QObject
+class CMBAPPCOMMON_EXPORT pqScalarBarWidget : public QObject
 {
   Q_OBJECT
 
 public:
-  qtScalarBarWidget(pqDataRepresentation* display, QWidget* p = NULL);
-  virtual ~qtScalarBarWidget();
+  pqScalarBarWidget(pqDataRepresentation* display, QWidget* p = NULL);
+  virtual ~pqScalarBarWidget();
 
 public:
 

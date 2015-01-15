@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: CMB
-   Module:    pqLoadModelReaction.h
+   Module:    pqCMBLoadDataReaction.h
 
    Copyright (c) Kitware Inc.
    All rights reserved.
@@ -13,7 +13,7 @@
 #include "pqReaction.h"
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
-#include "qtPluginIOBehavior.h"
+#include "pqPluginIOBehavior.h"
 #include <QStringList>
 #include <QPointer>
 #include <QMap>
@@ -23,15 +23,15 @@ class pqPipelineSource;
 
 /// @ingroup Reactions
 /// Reaction for open data files.
-class CMBAPPCOMMON_EXPORT pqLoadModelReaction : public pqReaction
+class CMBAPPCOMMON_EXPORT pqCMBLoadDataReaction : public pqReaction
 {
   Q_OBJECT
   typedef pqReaction Superclass;
   typedef QMap<QString, QPair<QString, QString> > FileExtMap;
 public:
   /// Constructor. Parent cannot be NULL.
-  pqLoadModelReaction(QAction* parent, bool multiFiles = false);
-  ~pqLoadModelReaction();
+  pqCMBLoadDataReaction(QAction* parent, bool multiFiles = false);
+  ~pqCMBLoadDataReaction();
 
   /// Set the filters for supported file types, which will be used in the
   /// file open dialog as file extensions. The format should be like this
@@ -44,7 +44,7 @@ public:
   { this->m_programDir = pgmDir; }
 
   /// Set the default directory for the file open dialog.
-  virtual void setPluginIOBehavior(qtPluginIOBehavior*);
+  virtual void setPluginIOBehavior(pqPluginIOBehavior*);
 
   /// Set option whether the file open dialog can have multiple selections
   virtual void setMultiFiles(bool val)
@@ -61,7 +61,7 @@ public:
   static QList<pqPipelineSource*> loadData(bool& cancelled, QStringList& selfiles,
     const QString& fileTypes,
     const QString& pgmDir = QString(),
-    qtPluginIOBehavior* pluginBhv = NULL,
+    pqPluginIOBehavior* pluginBhv = NULL,
     const QStringList& specialExtensions = QStringList(),
     bool multiFiles = false,
     const FileExtMap& readerExtensionMap = FileExtMap());
@@ -113,14 +113,14 @@ protected:
   virtual void onTriggered();
 
   /// Internal parameters
-  QPointer<qtPluginIOBehavior> m_pluginBehavior;
+  QPointer<pqPluginIOBehavior> m_pluginBehavior;
   QString m_fileTypes;
   QString m_programDir;
   bool m_MultiFiles;
   FileExtMap m_ReaderExtensionMap;
 
 private:
-  Q_DISABLE_COPY(pqLoadModelReaction)
+  Q_DISABLE_COPY(pqCMBLoadDataReaction)
   class cmbInternals;
   cmbInternals* Internals;
 

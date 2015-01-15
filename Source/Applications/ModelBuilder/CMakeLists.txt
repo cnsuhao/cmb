@@ -184,8 +184,8 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBImportShapefile.cxx
   qtSMTKModelPanel.h
   qtSMTKModelPanel.cxx
-  qtModelManager.h
-  qtModelManager.cxx
+  pqCMBModelManager.h
+  pqCMBModelManager.cxx
 
   ${RCS_SOURCES}
   ${UI_BUILT_SOURCES}

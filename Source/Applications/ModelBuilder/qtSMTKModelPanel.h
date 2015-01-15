@@ -10,7 +10,7 @@
 
 #include "smtk/model/Cursor.h"
 
-class qtModelManager;
+class pqCMBModelManager;
 class vtkObject;
 class pqDataRepresentation;
 class vtkSMIntVectorProperty;
@@ -26,10 +26,10 @@ class qtSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  qtSMTKModelPanel(qtModelManager* mmgr, QWidget* p);
+  qtSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
   ~qtSMTKModelPanel();
 
-  qtModelManager* modelManager();
+  pqCMBModelManager* modelManager();
 
   void setBlockVisibility(pqDataRepresentation* rep,
     const QList<unsigned int>& indices, bool visible);

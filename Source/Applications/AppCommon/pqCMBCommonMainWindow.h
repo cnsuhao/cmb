@@ -28,7 +28,7 @@ PURPOSE.  See the above copyright notice for more information.
 class pqOutputPort;
 class pqCMBCommonMainWindowCore;
 class QShortcut;
-class pqLoadModelReaction;
+class pqCMBLoadDataReaction;
 class qtCMBPanelsManager;
 class pqProxyWidget;
 class pqCMBColorMapWidget;
@@ -50,7 +50,7 @@ public:
 
   QList<pqOutputPort*> &getLastSelectionPorts();
   void appendDatasetNameToTitle(const QString& strTitle);
-  pqLoadModelReaction* loadDataReaction();
+  pqCMBLoadDataReaction* loadDataReaction();
 
   qtCMBPanelsManager* panelsManager();
   pqProxyWidget* displayPanel(vtkSMProxy* repProxy);

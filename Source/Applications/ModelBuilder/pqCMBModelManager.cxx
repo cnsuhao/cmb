@@ -20,7 +20,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 =========================================================================*/
 
-#include "qtModelManager.h"
+#include "pqCMBModelManager.h"
 
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
@@ -103,7 +103,7 @@ cmbSMTKModelInfo::cmbSMTKModelInfo(const cmbSMTKModelInfo& other)
 }
 
 //-----------------------------------------------------------------------------
-class qtModelManager::qInternal
+class pqCMBModelManager::qInternal
 {
 public:
 
@@ -263,26 +263,26 @@ public:
 };
 
 //----------------------------------------------------------------------------
-qtModelManager::qtModelManager(pqServer* server)
+pqCMBModelManager::pqCMBModelManager(pqServer* server)
 {
   this->Internal = new qInternal(server);
   this->initialize();
 }
 
 //----------------------------------------------------------------------------
-qtModelManager::~qtModelManager()
+pqCMBModelManager::~pqCMBModelManager()
 {
   this->clear();
 }
 
 //----------------------------------------------------------------------------
-pqServer* qtModelManager::server()
+pqServer* pqCMBModelManager::server()
 {
   return this->Internal->Server;
 }
 
 //----------------------------------------------------------------------------
-void qtModelManager::initialize()
+void pqCMBModelManager::initialize()
 {
   if(!this->Internal->ManagerProxy)
     {
@@ -309,14 +309,14 @@ void qtModelManager::initialize()
 } 
 
 //----------------------------------------------------------------------------
-vtkSMModelManagerProxy* qtModelManager::managerProxy()
+vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 {
   this->initialize();
   return this->Internal->ManagerProxy;
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* qtModelManager::modelInfo(const smtk::model::Cursor& selentity)
+cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::Cursor& selentity)
 {
 /*
 //  smtk::model::Cursor entity(this->managerProxy()->modelManager(), uid);
@@ -352,7 +352,7 @@ cmbSMTKModelInfo* qtModelManager::modelInfo(const smtk::model::Cursor& selentity
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* qtModelManager::modelInfo(pqDataRepresentation* rep)
+cmbSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 {
   if(!rep)
     return NULL;
@@ -370,7 +370,7 @@ cmbSMTKModelInfo* qtModelManager::modelInfo(pqDataRepresentation* rep)
 }
 
 //----------------------------------------------------------------------------
-QList<cmbSMTKModelInfo*>  qtModelManager::selectedModels()
+QList<cmbSMTKModelInfo*>  pqCMBModelManager::selectedModels()
 {
   QList<cmbSMTKModelInfo*> selModels;
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
@@ -392,7 +392,7 @@ QList<cmbSMTKModelInfo*>  qtModelManager::selectedModels()
 }
 
 //----------------------------------------------------------------------------
-void qtModelManager::clearModelSelections()
+void pqCMBModelManager::clearModelSelections()
 {
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
     mit != this->Internal->ModelInfos.end(); ++mit)
@@ -411,19 +411,19 @@ void qtModelManager::clearModelSelections()
 }
 
 //----------------------------------------------------------------------------
-int qtModelManager::numberOfModels()
+int pqCMBModelManager::numberOfModels()
 {
   return (int)this->Internal->ModelInfos.size();
 }
 
 //----------------------------------------------------------------------------
-pqDataRepresentation* qtModelManager::activeModelRepresentation()
+pqDataRepresentation* pqCMBModelManager::activeModelRepresentation()
 {
   return pqActiveObjects::instance().activeRepresentation();
 }
 
 //----------------------------------------------------------------------------
-QList<pqDataRepresentation*> qtModelManager::modelRepresentations()
+QList<pqDataRepresentation*> pqCMBModelManager::modelRepresentations()
 {
   QList<pqDataRepresentation*> result;
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
@@ -439,7 +439,7 @@ QList<pqDataRepresentation*> qtModelManager::modelRepresentations()
 }
 
 //----------------------------------------------------------------------------
-std::set<std::string> qtModelManager::supportedFileTypes(
+std::set<std::string> pqCMBModelManager::supportedFileTypes(
   const std::string& bridgeName)
 {
   std::set<std::string> resultSet;
@@ -469,7 +469,7 @@ std::set<std::string> qtModelManager::supportedFileTypes(
 }
 
 //----------------------------------------------------------------------------
-smtk::model::StringData qtModelManager::fileModelBridges(const std::string& filename)
+smtk::model::StringData pqCMBModelManager::fileModelBridges(const std::string& filename)
 {
   smtk::model::StringData retBrEns;
   if(!this->Internal->ManagerProxy)
@@ -502,7 +502,7 @@ smtk::model::StringData qtModelManager::fileModelBridges(const std::string& file
 }
 
 //----------------------------------------------------------------------------
-bool qtModelManager::loadModel(const std::string& filename, pqRenderView* view)
+bool pqCMBModelManager::loadModel(const std::string& filename, pqRenderView* view)
 {
   this->initialize();
   if(!this->Internal->ManagerProxy)
@@ -555,7 +555,7 @@ bool qtModelManager::loadModel(const std::string& filename, pqRenderView* view)
 }
 
 //----------------------------------------------------------------------------
-bool qtModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
+bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 {
   this->initialize();
   if(!this->Internal->ManagerProxy || !brOp || !brOp->ableToOperate())
@@ -593,7 +593,7 @@ bool qtModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 }
 
 //----------------------------------------------------------------------------
-bool qtModelManager::handleOperationResult(
+bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& bridgeSessionId,
   bool &hadNewModels)
@@ -636,7 +636,7 @@ bool qtModelManager::handleOperationResult(
 }
 
 //-----------------------------------------------------------------------------
-bool qtModelManager::DetermineFileReader(
+bool pqCMBModelManager::DetermineFileReader(
   const std::string& filename, 
   std::string& bridgeType,
   std::string& engineType,
@@ -678,7 +678,7 @@ bool qtModelManager::DetermineFileReader(
 }
 
 //----------------------------------------------------------------------------
-void qtModelManager::clear()
+void pqCMBModelManager::clear()
 {
   this->Internal->clear();
   if(this->Internal->ManagerProxy)
@@ -688,7 +688,7 @@ void qtModelManager::clear()
 }
 
 //----------------------------------------------------------------------------
-bool qtModelManager::startSession(const std::string& bridgeName)
+bool pqCMBModelManager::startSession(const std::string& bridgeName)
 {
   smtk::common::UUID bridgeId =
     this->Internal->ManagerProxy->beginBridgeSession(bridgeName, true);
@@ -704,7 +704,7 @@ bool qtModelManager::startSession(const std::string& bridgeName)
 }
 
 //----------------------------------------------------------------------------
-void qtModelManager::onPluginLoaded()
+void pqCMBModelManager::onPluginLoaded()
 {
   // force remote server to refetch bridges incase a new bridge is loaded
   if(this->Internal->ManagerProxy)
