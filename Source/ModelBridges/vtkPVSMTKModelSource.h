@@ -43,6 +43,7 @@ public:
   virtual void SetModelEntityID(const char*);
   virtual char* GetModelEntityID();
 
+  void MarkDirty() {this->Dirty();}
 protected:
   vtkPVSMTKModelSource();
   virtual ~vtkPVSMTKModelSource();

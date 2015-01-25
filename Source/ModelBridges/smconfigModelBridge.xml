@@ -42,6 +42,12 @@
         </Documentation>
       </ProxyProperty>
 
+      <Property
+        name="MarkDirty"
+        command="MarkDirty">
+        <Documentation>Mark Modified to rerun pipeline</Documentation>
+      </Property>
+
     </SourceProxy>
 
     <Proxy name="PythonExporter" class="vtkPythonExporter">

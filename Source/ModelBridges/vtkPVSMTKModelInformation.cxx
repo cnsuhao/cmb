@@ -113,5 +113,8 @@ void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
     this->UUID2BlockIdMap.clear();
     this->UUID2BlockIdMap.insert(
       modelInfo->UUID2BlockIdMap.begin(), modelInfo->UUID2BlockIdMap.end());
+    this->BlockId2UUIDMap.clear();
+    this->BlockId2UUIDMap.insert(
+      modelInfo->BlockId2UUIDMap.begin(), modelInfo->BlockId2UUIDMap.end());
     }
 }
