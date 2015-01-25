@@ -125,7 +125,7 @@ void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* pane
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
-    const QList<unsigned int>& visBlocks, bool visible)
+    const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if (panel)
@@ -147,16 +147,29 @@ void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
         outport->setSelectionInput(0, 0);
         }
        // if all blocks are off, the rep should be invisible 
-       if(rep)
+       if(rep && outport)
         {
         vtkSMProxy *proxy = rep->getProxy();
         vtkSMProperty *blockVisibilityProperty = proxy->GetProperty("BlockVisibility");
+        proxy->UpdatePropertyInformation(blockVisibilityProperty);
         vtkSMIntVectorProperty *ivp = vtkSMIntVectorProperty::SafeDownCast(blockVisibilityProperty);
 
         if(ivp)
           {
-          bool repVisible = false;
+/*
+          vtkPVDataInformation *info = outport->getDataInformation();
+          if(!info)
+            return;
+          vtkPVCompositeDataInformation *compositeInfo =
+            info->GetCompositeDataInformation();
+          if(!compositeInfo || !compositeInfo->GetDataIsComposite())
+            return;
+*/
           vtkIdType nbElems = static_cast<vtkIdType>(ivp->GetNumberOfElements());
+          if(nbElems/2 != numBlocks)
+            return;
+
+          bool repVisible = false;
           for(vtkIdType i = 0; i + 1 < nbElems; i += 2)
             {
             if(ivp->GetElement(i+1))

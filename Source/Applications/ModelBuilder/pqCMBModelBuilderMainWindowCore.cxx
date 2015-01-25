@@ -1139,6 +1139,7 @@ void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
     this->getSimBuilder()->clearSimulationModel();
     }
 
+/*
   this->Internal->AttFaceColorAction->setVisible(false);
   this->Internal->AttFaceCategoryAction->setVisible(false);
   this->Internal->AttEdgeColorAction->setVisible(false);
@@ -1149,6 +1150,7 @@ void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
   this->Internal->AttFaceColorLegendAction->setChecked(false);
   this->Internal->AttEdgeColorLegendAction->setVisible(false);
   this->Internal->AttFaceColorLegendAction->setVisible(false);
+*/
 }
 
 //-----------------------------------------------------------------------------
@@ -2277,15 +2279,30 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     }
 
   //this->modelPanel()->setIgnorePropertyChange(true);
-  if(visBlocks.count())
-    this->Internal->ViewContextBehavior->setBlockVisibility(
-      visBlocks, visible);
-  if(colorBlocks.count())
-    this->Internal->ViewContextBehavior->setBlockColor(
-      colorBlocks, color);
-  //this->modelPanel()->setIgnorePropertyChange(false);
+  pqDataRepresentation* repr = pqActiveObjects::instance().activeRepresentation();
+  if(repr)
+    {
+    cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(repr);
+    if(minfo)
+      {
+      if(visBlocks.count())
+        this->Internal->ViewContextBehavior->setBlockVisibility(
+          visBlocks, visible, minfo->Info->GetUUID2BlockIdMap().size());
+      if(colorBlocks.count())
+        this->Internal->ViewContextBehavior->setBlockColor(
+          colorBlocks, color);
+      }
+    }
 
-  if(hasNewModels)
+  //this->modelPanel()->setIgnorePropertyChange(false);
+  smtk::attribute::ModelEntityItem::Ptr newEntities =
+    result->findModelEntity("new entities");
+  smtk::attribute::ModelEntityItem::Ptr remEntities =
+    result->findModelEntity("removed entities");
+
+  if(hasNewModels ||
+     (newEntities && newEntities->numberOfValues() > 0) ||
+     (remEntities && remEntities->numberOfValues() > 0) )
     {
     this->modelPanel()->onDataUpdated();
     this->activeRenderView()->resetCamera();

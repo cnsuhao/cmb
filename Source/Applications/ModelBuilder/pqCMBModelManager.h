@@ -32,6 +32,7 @@ struct cmbSMTKModelInfo
     cmbSMTKModelInfo(const cmbSMTKModelInfo& other);
     void init(pqPipelineSource*, pqDataRepresentation*,
       const std::string& filename, smtk::model::ManagerPtr);
+    void updateBlockInfo(smtk::model::ManagerPtr mgr);
 
     vtkSmartPointer<vtkSMProxy> SelectionSource;
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;

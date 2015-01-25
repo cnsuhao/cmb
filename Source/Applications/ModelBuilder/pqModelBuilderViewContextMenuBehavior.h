@@ -61,7 +61,7 @@ public:
   void setModelPanel(pqSMTKModelPanel*);
 
   void setBlockVisibility(
-    const QList<unsigned int>& visBlocks, bool visible);
+    const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
   void setBlockColor(
     const QList<unsigned int>& colorBlocks, const QColor&);
 
