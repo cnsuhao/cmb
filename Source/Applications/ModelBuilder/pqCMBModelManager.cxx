@@ -59,6 +59,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
+#include "smtk/io/ImportJSON.h"
+#include "smtk/io/ExportJSON.h"
+
+#include "cJSON.h"
 
 #include <map>
 #include <set>
@@ -622,8 +626,13 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& bridgeSessionId,
-  bool &hadNewModels)
+  bool &hasNewModels)
 {
+/*
+  cJSON* json = cJSON_CreateObject();
+  smtk::io::ExportJSON::forOperatorResult(result, json);
+  std::cout << "Result " << cJSON_Print(json) << "\n";
+*/
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
@@ -636,14 +645,14 @@ bool pqCMBModelManager::handleOperationResult(
     (opType->value() == smtk::model::TESSELLATION_ENTRY);
 
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-  pxy->fetchWholeModel();
+//  pxy->fetchWholeModel();
 
   smtk::model::ModelEntities modelEnts =
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
     smtk::model::MODEL_ENTITY);
   pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   bool success = true;
-  hadNewModels = false;
+  hasNewModels = false;
   smtk::model::BridgePtr bridge = pxy->modelManager()->findBridgeSession(bridgeSessionId);
   for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
@@ -654,13 +663,10 @@ bool pqCMBModelManager::handleOperationResult(
       if(this->Internal->ModelInfos.find((*it).entity()) ==
         this->Internal->ModelInfos.end())
         {
-        hadNewModels = true;
+        hasNewModels = true;
         pxy->modelManager()->setBridgeForModel(bridge, (*it).entity());
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
-        // fetch again for "block_index" property of entities, which are set
-        // while building multi-block dataset
-        // pxy->fetchWholeModel();
         }
       else if(bGeometryChanged) // update representation
         {
@@ -669,7 +675,12 @@ bool pqCMBModelManager::handleOperationResult(
         }
       }
     }
-  pxy->modelManager()->assignDefaultNames();
+
+  smtk::attribute::ModelEntityItem::Ptr newEntities =
+    result->findModelEntity("new entities");
+  if(hasNewModels ||
+    (newEntities && newEntities->numberOfValues() > 0))
+    pxy->modelManager()->assignDefaultNames();
 
   return success;
 }
