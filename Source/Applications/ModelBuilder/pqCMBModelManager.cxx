@@ -631,7 +631,7 @@ bool pqCMBModelManager::handleOperationResult(
     return false;
     }
 
-  smtk::attribute::IntItem::Ptr opType = result->findInt("eventtype");
+  smtk::attribute::IntItem::Ptr opType = result->findInt("event type");
   bool bGeometryChanged =  opType && opType->numberOfValues() &&
     (opType->value() == smtk::model::TESSELLATION_ENTRY);
 

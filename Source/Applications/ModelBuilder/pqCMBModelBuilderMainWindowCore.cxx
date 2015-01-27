@@ -2298,7 +2298,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   smtk::attribute::ModelEntityItem::Ptr newEntities =
     result->findModelEntity("new entities");
   smtk::attribute::ModelEntityItem::Ptr remEntities =
-    result->findModelEntity("removed entities");
+    result->findModelEntity("deleted entities");
 
   if(hasNewModels ||
      (newEntities && newEntities->numberOfValues() > 0) ||
