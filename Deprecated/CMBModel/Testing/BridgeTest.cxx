@@ -145,7 +145,7 @@ int main(int argc, char* argv[])
     std::cout << "  done\n";
     }
 
-  std::string json = smtk::io::ExportJSON::fromModel(manager);
+  std::string json = smtk::io::ExportJSON::fromModelManager(manager);
   if (!json.empty())
     {
     std::ofstream jsonFile("/tmp/foo.json");

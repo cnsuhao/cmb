@@ -167,7 +167,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         cJSON* model = cJSON_CreateObject();
         // Never include bridge session list or tessellation data
         // Until someone makes us.
-        smtk::io::ExportJSON::fromModel(model, this->ModelMgr,
+        smtk::io::ExportJSON::fromModelManager(model, this->ModelMgr,
           static_cast<smtk::io::JSONFlags>(
             smtk::io::JSON_ENTITIES | smtk::io::JSON_PROPERTIES));
         cJSON_AddItemToObject(result, "result", model);

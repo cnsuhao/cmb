@@ -290,7 +290,7 @@ void pqSMTKModelPanel::onDataUpdated()
   smtk::model::BitFlags mask = smtk::model::BRIDGE_SESSION;
 
   smtk::model::ManagerPtr model = this->Internal->smtkManager->managerProxy()->modelManager();
-//  smtk::io::ImportJSON::intoModel(json.c_str(), model);
+//  smtk::io::ImportJSON::intoModelManager(json.c_str(), model);
 //  model->assignDefaultNames();
 
 //  QFileInfo fInfo(this->Internal->smtkManager->currentFile().c_str());
