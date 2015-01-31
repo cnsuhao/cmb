@@ -52,9 +52,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/common/UUID.h"
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/Events.h"
-#include "smtk/model/GroupEntity.h"
+#include "smtk/model/Group.h"
 #include "smtk/model/Manager.h"
-#include "smtk/model/ModelEntity.h"
+#include "smtk/model/Model.h"
 #include "smtk/model/Operator.h"
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
@@ -85,9 +85,9 @@ void cmbSMTKModelInfo::init(
   this->SelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "BlockSelectionSource"));
   this->updateBlockInfo(mgr);
-  smtk::model::ModelEntity modelEntity(mgr,this->Info->GetModelUUID());
+  smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())
-    this->Bridge = modelEntity.bridge();
+    this->Session = modelEntity.session();
 
 }
 
@@ -129,7 +129,7 @@ public:
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
 
-  void updateModelAnnotations(const smtk::model::Cursor& model)
+  void updateModelAnnotations(const smtk::model::EntityRef& model)
   {
     pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
@@ -149,7 +149,7 @@ public:
         }
 
       smtk::model::GroupEntities modGroups =
-        model.as<smtk::model::ModelEntity>().groups();
+        model.as<smtk::model::Model>().groups();
       for(smtk::model::GroupEntities::iterator it = modGroups.begin();
          it != modGroups.end(); ++it)
         {
@@ -158,7 +158,7 @@ public:
         }
 
       smtk::model::CellEntities modVols =
-        model.as<smtk::model::ModelEntity>().cells();
+        model.as<smtk::model::Model>().cells();
       for(smtk::model::CellEntities::iterator it = modVols.begin();
          it != modVols.end(); ++it)
         {
@@ -182,7 +182,7 @@ public:
 
   }
 
-  bool addModelRepresentation(const smtk::model::Cursor& model,
+  bool addModelRepresentation(const smtk::model::EntityRef& model,
     pqRenderView* view, vtkSMModelManagerProxy* smProxy,
     const std::string& filename)
   {
@@ -235,7 +235,7 @@ public:
       }
   }
 
-  void updateModelRepresentation(const smtk::model::Cursor& model,
+  void updateModelRepresentation(const smtk::model::EntityRef& model,
     pqRenderView* view)
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
@@ -323,10 +323,10 @@ void pqCMBModelManager::initialize()
     if(proxy)
       {
       this->Internal->ManagerProxy.TakeReference(
-        vtkSMModelManagerProxy::SafeDownCast(proxy));      
+        vtkSMModelManagerProxy::SafeDownCast(proxy));
       }
     if(!this->Internal->ManagerProxy)
-      {    
+      {
       qCritical() << "Failed to create an Model Manager Proxy!";
       }
     else
@@ -336,7 +336,7 @@ void pqCMBModelManager::initialize()
         this, SLOT(onPluginLoaded()));
       }
     }
-} 
+}
 
 //----------------------------------------------------------------------------
 vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
@@ -346,12 +346,12 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::Cursor& selentity)
+cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
 /*
-//  smtk::model::Cursor entity(this->managerProxy()->modelManager(), uid);
-  smtk::model::ModelEntity modelEntity = entity.isModelEntity() ?
-      entity.as<smtk::model::ModelEntity>() : entity.owningModel();
+//  smtk::model::EntityRef entity(this->managerProxy()->modelManager(), uid);
+  smtk::model::Model modelEntity = entity.isModel() ?
+      entity.as<smtk::model::Model>() : entity.owningModel();
 
   if(modelEntity.isValid() && this->Internal->ModelInfos.find(modelEntity.entity()) !=
     this->Internal->ModelInfos.end())
@@ -470,12 +470,12 @@ QList<pqDataRepresentation*> pqCMBModelManager::modelRepresentations()
 
 //----------------------------------------------------------------------------
 std::set<std::string> pqCMBModelManager::supportedFileTypes(
-  const std::string& bridgeName)
+  const std::string& sessionName)
 {
   std::set<std::string> resultSet;
   if(this->Internal->ManagerProxy)
     {
-    smtk::model::StringData bftypes = this->Internal->ManagerProxy->supportedFileTypes(bridgeName);
+    smtk::model::StringData bftypes = this->Internal->ManagerProxy->supportedFileTypes(sessionName);
     smtk::model::PropertyNameWithStrings typeIt;
     QString filetype, descr, ext;
     for(typeIt = bftypes.begin(); typeIt != bftypes.end(); ++typeIt)
@@ -499,7 +499,7 @@ std::set<std::string> pqCMBModelManager::supportedFileTypes(
 }
 
 //----------------------------------------------------------------------------
-smtk::model::StringData pqCMBModelManager::fileModelBridges(const std::string& filename)
+smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
   smtk::model::StringData retBrEns;
   if(!this->Internal->ManagerProxy)
@@ -510,7 +510,7 @@ smtk::model::StringData pqCMBModelManager::fileModelBridges(const std::string& f
   std::string lastExt =
     vtksys::SystemTools::GetFilenameLastExtension(filename);
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-  smtk::model::StringList bnames = pxy->bridgeNames();
+  smtk::model::StringList bnames = pxy->sessionNames();
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
     smtk::model::StringData bftypes = pxy->supportedFileTypes(*it);
@@ -540,38 +540,38 @@ bool pqCMBModelManager::loadModel(const std::string& filename, pqRenderView* vie
     return false;
     }
 
-  smtk::model::StringData bridgeTypes = this->fileModelBridges(filename);
-  if (bridgeTypes.size() == 0)
+  smtk::model::StringData sessionTypes = this->fileModelSessions(filename);
+  if (sessionTypes.size() == 0)
     {
     std::cerr << "Could not identify a modeling kernel to use.\n";
     return false;
     }
 
-  smtk::model::PropertyNameWithStrings typeIt = bridgeTypes.begin();
-  std::string bridgeType, engineType;
-  bridgeType = typeIt->first.c_str();
+  smtk::model::PropertyNameWithStrings typeIt = sessionTypes.begin();
+  std::string sessionType, engineType;
+  sessionType = typeIt->first.c_str();
   if(typeIt->second.size() > 0)
     engineType = (*typeIt->second.begin()).c_str();
 
-  // If there are more than one bridge or more than one engine on a bridge
-  // can handle this file, we need to pick the bridge and/or engine.
-  if((bridgeTypes.size() > 1 || typeIt->second.size() > 1) &&
-     !this->DetermineFileReader(filename, bridgeType, engineType, bridgeTypes))
+  // If there are more than one session or more than one engine on a session
+  // can handle this file, we need to pick the session and/or engine.
+  if((sessionTypes.size() > 1 || typeIt->second.size() > 1) &&
+     !this->DetermineFileReader(filename, sessionType, engineType, sessionTypes))
     {
     return false;
     }
 
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-  std::cout << "Should start bridge \"" << bridgeType << "\"\n";
-  smtk::common::UUID sessId = pxy->beginBridgeSession(bridgeType);
-  std::cout << "Started " << bridgeType << " session: " << sessId << "\n";
+  std::cout << "Should start session \"" << sessionType << "\"\n";
+  smtk::common::UUID sessId = pxy->beginSession(sessionType);
+  std::cout << "Started " << sessionType << " session: " << sessId << "\n";
 
-  smtk::model::OperatorResult result = pxy->readFile(filename, bridgeType, engineType);
+  smtk::model::OperatorResult result = pxy->readFile(filename, sessionType, engineType);
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "Read operator failed\n";
-//    pxy->endBridgeSession(sessId);
+//    pxy->endSession(sessId);
     return false;
     }
   bool hasNewModels = false;
@@ -593,12 +593,12 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     return false;
     }
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-  smtk::common::UUID sessId = brOp->bridge()->sessionId();
+  smtk::common::UUID sessId = brOp->session()->sessionId();
   std::cout << "Found session: " << sessId << "\n";
 
- // sessId = pxy->beginBridgeSession("cgm");
+ // sessId = pxy->beginSession("cgm");
 
-  if(!pxy->validBridgeSession(sessId))
+  if(!pxy->validSession(sessId))
     {
     return false;
     }
@@ -608,7 +608,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "operator failed: " << brOp->name() << "\n";
-//    pxy->endBridgeSession(sessId);
+//    pxy->endSession(sessId);
     return false;
     }
 
@@ -625,7 +625,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 //----------------------------------------------------------------------------
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
-  const smtk::common::UUID& bridgeSessionId,
+  const smtk::common::UUID& sessionId,
   bool &hasNewModels)
 {
 /*
@@ -653,18 +653,18 @@ bool pqCMBModelManager::handleOperationResult(
   pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   bool success = true;
   hasNewModels = false;
-  smtk::model::BridgePtr bridge = pxy->modelManager()->findBridgeSession(bridgeSessionId);
+  smtk::model::SessionPtr session = pxy->modelManager()->findSession(sessionId);
   for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-//   if(!mit->bridge() || mit->bridge()->name() == "native") // a new model
+//   if(!mit->session() || mit->session()->name() == "native") // a new model
      if((*it).isValid())
       {
       if(this->Internal->ModelInfos.find((*it).entity()) ==
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
-        pxy->modelManager()->setBridgeForModel(bridge, (*it).entity());
+        pxy->modelManager()->setSessionForModel(session, (*it).entity());
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
@@ -688,27 +688,27 @@ bool pqCMBModelManager::handleOperationResult(
 //-----------------------------------------------------------------------------
 bool pqCMBModelManager::DetermineFileReader(
   const std::string& filename, 
-  std::string& bridgeType,
+  std::string& sessionType,
   std::string& engineType,
-  const smtk::model::StringData& bridgeTypes)
+  const smtk::model::StringData& sessionTypes)
 {
   QString readerType,readerGroup;
   vtkNew<vtkStringList> list;
   smtk::model::StringData::const_iterator typeIt;
   std::string desc;
-  for(typeIt = bridgeTypes.begin(); typeIt != bridgeTypes.end(); ++typeIt)
+  for(typeIt = sessionTypes.begin(); typeIt != sessionTypes.end(); ++typeIt)
     {
     for (smtk::model::StringList::const_iterator tpit = typeIt->second.begin();
       tpit != typeIt->second.end(); ++tpit)
       {
       desc = typeIt->first;
-      list->AddString(desc.c_str()); // bridge
+      list->AddString(desc.c_str()); // session
       list->AddString((*tpit).c_str()); // engine
       engineType = (*tpit).c_str();
-      bridgeType = desc.c_str();
+      sessionType = desc.c_str();
       desc += "::";
       desc += *tpit;
-      list->AddString(desc.c_str()); // bridge::engine
+      list->AddString(desc.c_str()); // session::engine
       }
     }
 
@@ -720,7 +720,7 @@ bool pqCMBModelManager::DetermineFileReader(
     if (prompt.exec() == QDialog::Accepted)
       {
       engineType = prompt.getReader().toStdString();
-      bridgeType = prompt.getGroup().toStdString();
+      sessionType = prompt.getGroup().toStdString();
       return true;
       }
     }
@@ -732,22 +732,22 @@ void pqCMBModelManager::clear()
 {
   this->Internal->clear();
   if(this->Internal->ManagerProxy)
-    this->Internal->ManagerProxy->endBridgeSessions();
+    this->Internal->ManagerProxy->endSessions();
   this->Internal->ManagerProxy = NULL;
   emit currentModelCleared();
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelManager::startSession(const std::string& bridgeName)
+bool pqCMBModelManager::startSession(const std::string& sessionName)
 {
-  smtk::common::UUID bridgeId =
-    this->Internal->ManagerProxy->beginBridgeSession(bridgeName, true);
-  smtk::model::BridgePtr bridge =
-    this->managerProxy()->modelManager()->findBridgeSession(bridgeId);
+  smtk::common::UUID sessionId =
+    this->Internal->ManagerProxy->beginSession(sessionName, true);
+  smtk::model::SessionPtr session =
+    this->managerProxy()->modelManager()->findSession(sessionId);
 
-  if (!bridge)
+  if (!session)
     {
-    std::cerr << "Could not start new bridge of type \"" << bridgeName << "\"\n";
+    std::cerr << "Could not start new session of type \"" << sessionName << "\"\n";
     return false;
     }
   return true;
@@ -756,20 +756,20 @@ bool pqCMBModelManager::startSession(const std::string& bridgeName)
 //----------------------------------------------------------------------------
 void pqCMBModelManager::onPluginLoaded()
 {
-  // force remote server to refetch bridges incase a new bridge is loaded
+  // force remote server to refetch sessions incase a new session is loaded
   if(this->Internal->ManagerProxy)
     {
     QStringList newFileTypes;
-    QStringList newBridgeNames;
-    smtk::model::StringList oldBnames = this->Internal->ManagerProxy->bridgeNames();
-    smtk::model::StringList newBnames = this->Internal->ManagerProxy->bridgeNames(true);
+    QStringList newSessionNames;
+    smtk::model::StringList oldBnames = this->Internal->ManagerProxy->sessionNames();
+    smtk::model::StringList newBnames = this->Internal->ManagerProxy->sessionNames(true);
 
     for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
       {
-      // if there is the new bridge
+      // if there is the new session
       if(std::find(oldBnames.begin(), oldBnames.end(), *it) == oldBnames.end())
         {
-        newBridgeNames << (*it).c_str();
+        newSessionNames << (*it).c_str();
         std::set<std::string> bftypes = this->supportedFileTypes(*it);
         for (std::set<std::string>::iterator tpit = bftypes.begin(); tpit != bftypes.end(); ++tpit)
           {
@@ -777,9 +777,9 @@ void pqCMBModelManager::onPluginLoaded()
           }
         }
       }
-    if(newBridgeNames.count() > 0)
+    if(newSessionNames.count() > 0)
       {
-      emit newBridgeLoaded(newBridgeNames);
+      emit newSessionLoaded(newSessionNames);
       }
     if(newFileTypes.count() > 0)
       {

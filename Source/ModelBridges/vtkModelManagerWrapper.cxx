@@ -86,37 +86,37 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         }
 
       // I. Requests:
-      //   search-bridges (available)
-      //   list-bridges (instantiated)
-      //   create-bridge
+      //   search-session-types (available)
+      //   list-sessions (instantiated)
+      //   create-session
       //   fetch-model
       //   operator-able
       //   operator-apply
-      if (methStr == "search-bridges")
+      if (methStr == "search-session-types")
         {
-        smtk::model::StringList bridgeNames = this->ModelMgr->bridgeNames();
+        smtk::model::StringList sessionNames = this->ModelMgr->sessionNames();
         cJSON_AddItemToObject(result, "result",
-          smtk::io::ExportJSON::createStringArray(bridgeNames));
+          smtk::io::ExportJSON::createStringArray(sessionNames));
         }
-      else if (methStr == "bridge-filetypes")
+      else if (methStr == "session-filetypes")
         {
         cJSON* bname;
         if (
           !param ||
-          !(bname = cJSON_GetObjectItem(param, "bridge-name")) ||
+          !(bname = cJSON_GetObjectItem(param, "session-name")) ||
           bname->type != cJSON_String ||
           !bname->valuestring ||
           !bname->valuestring[0])
           {
-          this->GenerateError(result, "Parameters not passed or bridge-name not specified.", reqIdStr);
+          this->GenerateError(result, "Parameters not passed or session-name not specified.", reqIdStr);
           }
         else
           {
           cJSON* typeObj = cJSON_CreateObject();
-          smtk::model::StringData bridgeFileTypes =
-            this->ModelMgr->bridgeFileTypes(bname->valuestring);
-          for(smtk::model::PropertyNameWithStrings it = bridgeFileTypes.begin();
-              it != bridgeFileTypes.end(); ++it)
+          smtk::model::StringData sessionFileTypes =
+            this->ModelMgr->sessionFileTypes(bname->valuestring);
+          for(smtk::model::PropertyNameWithStrings it = sessionFileTypes.begin();
+              it != sessionFileTypes.end(); ++it)
             {
             if(it->second.size())
               cJSON_AddItemToObject(typeObj, it->first.c_str(),
@@ -125,47 +125,47 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           cJSON_AddItemToObject(result, "result", typeObj);
           }
         }
-      else if (methStr == "create-bridge")
+      else if (methStr == "create-session")
         {
-        smtk::model::StringList bridgeNames = this->ModelMgr->bridgeNames();
-        std::set<std::string> bridgeSet(bridgeNames.begin(), bridgeNames.end());
+        smtk::model::StringList sessionNames = this->ModelMgr->sessionNames();
+        std::set<std::string> sessionSet(sessionNames.begin(), sessionNames.end());
         cJSON* bname;
         if (
           !param ||
-          !(bname = cJSON_GetObjectItem(param, "bridge-name")) ||
+          !(bname = cJSON_GetObjectItem(param, "session-name")) ||
           bname->type != cJSON_String ||
           !bname->valuestring ||
           !bname->valuestring[0] ||
-          bridgeSet.find(bname->valuestring) == bridgeSet.end())
+          sessionSet.find(bname->valuestring) == sessionSet.end())
           {
           this->GenerateError(result,
-            "Parameters not passed or bridge-name not specified/invalid.",
+            "Parameters not passed or session-name not specified/invalid.",
             reqIdStr);
           }
         else
           {
-          smtk::model::BridgePtr bridge = this->ModelMgr->createAndRegisterBridge(bname->valuestring);
-          if (!bridge || bridge->sessionId().isNull())
+          smtk::model::SessionPtr session = this->ModelMgr->createAndRegisterSession(bname->valuestring);
+          if (!session || session->sessionId().isNull())
             {
             this->GenerateError(result,
-              "Unable to construct bridge or got NULL session ID.", reqIdStr);
+              "Unable to construct session or got NULL session ID.", reqIdStr);
             }
           else
             {
-            this->ModelMgr->registerBridgeSession(bridge);
+            this->ModelMgr->registerSession(session);
             cJSON* sess = cJSON_CreateObject();
-            smtk::io::ExportJSON::forManagerBridgeSession(
-              bridge->sessionId(), sess, this->ModelMgr);
+            smtk::io::ExportJSON::forManagerSession(
+              session->sessionId(), sess, this->ModelMgr);
             cJSON_AddItemToObject(result, "result", sess);
             //cJSON_AddItemToObject(result, "result",
-            //  cJSON_CreateString(bridge->sessionId().toString().c_str()));
+            //  cJSON_CreateString(session->sessionId().toString().c_str()));
             }
           }
         }
       else if (methStr == "fetch-model")
         {
         cJSON* model = cJSON_CreateObject();
-        // Never include bridge session list or tessellation data
+        // Never include session list or tessellation data
         // Until someone makes us.
         smtk::io::ExportJSON::fromModelManager(model, this->ModelMgr,
           static_cast<smtk::io::JSONFlags>(
@@ -211,8 +211,8 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         }
       // II. Notifications:
-      //   delete bridge
-      else if (methStr == "delete-bridge")
+      //   delete session
+      else if (methStr == "delete-session")
         {
         missingIdFatal &= false; // Notifications do not require an "id" member in the request.
 
@@ -228,16 +228,16 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::BridgePtr bridge =
-            this->ModelMgr->findBridgeSession(
+          smtk::model::SessionPtr session =
+            this->ModelMgr->findSession(
               smtk::common::UUID(bsess->valuestring));
-          if (!bridge)
+          if (!session)
             {
-            this->GenerateError(result, "No bridge with given session ID.", reqIdStr);
+            this->GenerateError(result, "No session with given session ID.", reqIdStr);
             }
           else
             {
-            this->ModelMgr->unregisterBridgeSession(bridge);
+            this->ModelMgr->unregisterSession(session);
             }
           }
         }

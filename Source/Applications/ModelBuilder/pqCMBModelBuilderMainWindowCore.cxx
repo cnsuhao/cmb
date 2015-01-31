@@ -2245,7 +2245,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     {
     std::cout << " client associated entities " << resultEntities->numberOfValues() << std::endl;
 
-    smtk::model::CursorArray::const_iterator it;
+    smtk::model::EntityRefArray::const_iterator it;
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       unsigned int flatIndex;

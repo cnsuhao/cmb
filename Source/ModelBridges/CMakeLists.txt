@@ -18,8 +18,8 @@ SET(CmbBridgelServerFiles
 )
 
 SET_SOURCE_FILES_PROPERTIES(
-cmbForwardingBridge.cxx
-WRAP_EXCLUDE
+  cmbForwardingSession.cxx
+  WRAP_EXCLUDE
 )
 
 add_paraview_plugin(ModelBridge_Plugin "1.0"
@@ -28,7 +28,7 @@ add_paraview_plugin(ModelBridge_Plugin "1.0"
     ${CmbBridgelServerFiles}
     ${CmbBridgelFiles}
   GUI_SOURCES
-    cmbForwardingBridge.cxx
+    cmbForwardingSession.cxx
 )
 
 target_link_libraries(ModelBridge_Plugin

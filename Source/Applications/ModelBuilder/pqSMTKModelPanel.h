@@ -8,7 +8,7 @@
 // .SECTION Description
 #include <QDockWidget>
 
-#include "smtk/model/Cursor.h"
+#include "smtk/model/EntityRef.h"
 
 class pqCMBModelManager;
 class vtkObject;
@@ -47,7 +47,7 @@ public slots:
 //  void linkRepresentations();
 
 protected slots:
-  void selectEntities(const smtk::model::Cursors& entities);
+  void selectEntities(const smtk::model::EntityRefs& entities);
   void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
   void onLaunchFileBrowser();
 //  void propertyChanged(

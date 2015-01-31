@@ -183,7 +183,7 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
     }
 
 ///***************************************************************///
-/// NOTE: we have to figure out something for discrete/cmb bridge ///
+/// NOTE: we have to figure out something for discrete/cmb session ///
  /*
   // Initialize GridInfo object
   smtk::model::ModelPtr smtkModel = manager.refModel();

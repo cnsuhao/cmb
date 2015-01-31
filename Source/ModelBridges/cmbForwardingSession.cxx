@@ -1,6 +1,6 @@
-#include "cmbForwardingBridge.h"
+#include "cmbForwardingSession.h"
 
-#include "smtk/model/Cursor.h"
+#include "smtk/model/EntityRef.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 #include "smtk/model/RemoteOperator.h"
@@ -9,17 +9,17 @@
 
 #include "cJSON.h"
 
-cmbForwardingBridge::cmbForwardingBridge()
+cmbForwardingSession::cmbForwardingSession()
 {
   this->m_proxy = NULL;
 }
 
-cmbForwardingBridge::~cmbForwardingBridge()
+cmbForwardingSession::~cmbForwardingSession()
 {
   this->setProxy(NULL);
 }
 
-void cmbForwardingBridge::setProxy(vtkSMModelManagerProxy* proxy)
+void cmbForwardingSession::setProxy(vtkSMModelManagerProxy* proxy)
 {
   // Unregister old proxy
   if (this->m_proxy)
@@ -32,16 +32,16 @@ void cmbForwardingBridge::setProxy(vtkSMModelManagerProxy* proxy)
     this->m_proxy->Register(NULL);
 }
 
-smtk::model::BridgedInfoBits cmbForwardingBridge::transcribeInternal(
-  const smtk::model::Cursor& entity, smtk::model::BridgedInfoBits flags)
+smtk::model::SessionInfoBits cmbForwardingSession::transcribeInternal(
+  const smtk::model::EntityRef& entity, smtk::model::SessionInfoBits flags)
 {
   (void)entity;
   (void)flags;
   // TODO.
-  return smtk::model::BRIDGE_NOTHING;
+  return smtk::model::SESSION_NOTHING;
 }
 
-bool cmbForwardingBridge::ableToOperateDelegate(
+bool cmbForwardingSession::ableToOperateDelegate(
   smtk::model::RemoteOperatorPtr op)
 {
   if (!op)
@@ -55,7 +55,7 @@ bool cmbForwardingBridge::ableToOperateDelegate(
   cJSON_AddItemToObject(req, "params", par);
   op->ensureSpecification();
   smtk::io::ExportJSON::forOperator(op->specification(), par);
-  // Add the bridge's session ID so it can be properly instantiated on the server.
+  // Add the session's session ID so it can be properly instantiated on the server.
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
 
   cJSON* resp = this->m_proxy->jsonRPCRequest(req); // This deletes req and par.
@@ -78,7 +78,7 @@ bool cmbForwardingBridge::ableToOperateDelegate(
   return true;
 }
 
-smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
+smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
   smtk::model::RemoteOperatorPtr op)
 {
   cJSON* req = cJSON_CreateObject();
@@ -89,7 +89,7 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
   cJSON_AddItemToObject(req, "params", par);
   op->ensureSpecification();
   smtk::io::ExportJSON::forOperator(op->specification(), par);
-  // Add the bridge's session ID so it can be properly instantiated on the server.
+  // Add the session's session ID so it can be properly instantiated on the server.
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
 
   cJSON* resp = this->m_proxy->jsonRPCRequest(req); // This deletes req and par.
@@ -112,7 +112,7 @@ smtk::model::OperatorResult cmbForwardingBridge::operateDelegate(
 smtkImplementsModelingKernel(
   cmb_forwarding,
   "",
-  smtk::model::BridgeHasNoStaticSetup,
-  cmbForwardingBridge,
+  smtk::model::SessionHasNoStaticSetup,
+  cmbForwardingSession,
   false /* do not inherit "universal" operators */
 );

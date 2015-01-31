@@ -15,36 +15,36 @@ public:
   vtkTypeMacro(vtkSMModelManagerProxy,vtkSMProxy);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
-  std::vector<std::string> bridgeNames(bool forceFetch = false);
+  std::vector<std::string> sessionNames(bool forceFetch = false);
 
-  smtk::common::UUID beginBridgeSession(
-    const std::string& bridgeName, bool createNew = false);
-  bool endBridgeSession(const smtk::common::UUID& bridgeSessionId);
+  smtk::common::UUID beginSession(
+    const std::string& sessionName, bool createNew = false);
+  bool endSession(const smtk::common::UUID& sessionId);
 
   smtk::model::StringData supportedFileTypes(
-    const std::string& bridgeName = std::string());
+    const std::string& sessionName = std::string());
   smtk::model::OperatorResult readFile(
     const std::string& fileName,
-    const std::string& bridgeName = std::string(),
+    const std::string& sessionName = std::string(),
     const std::string& engineName = std::string());
   std::vector<std::string> fileOperators(
-    const std::string& bridgeName);
+    const std::string& sessionName);
 
-  std::vector<std::string> operatorNames(const std::string& bridgeName);
-  std::vector<std::string> operatorNames(const smtk::common::UUID& bridgeSessionId);
+  std::vector<std::string> operatorNames(const std::string& sessionName);
+  std::vector<std::string> operatorNames(const smtk::common::UUID& sessionId);
 
   smtk::model::OperatorPtr createOperator(
-    const smtk::common::UUID& bridgeOrModel, const std::string& opName);
+    const smtk::common::UUID& sessionOrModel, const std::string& opName);
   smtk::model::OperatorPtr createOperator(
-    const std::string& bridgeName, const std::string& opName);
+    const std::string& sessionName, const std::string& opName);
   void fetchWholeModel();
 
   smtk::model::ManagerPtr modelManager();
-  void endBridgeSessions();
-  bool validBridgeSession(const smtk::common::UUID& bridgeId);
+  void endSessions();
+  bool validSession(const smtk::common::UUID& sessionId);
 
 protected:
-  friend class cmbForwardingBridge;
+  friend class cmbForwardingSession;
 
   vtkSMModelManagerProxy();
   virtual ~vtkSMModelManagerProxy();
@@ -60,16 +60,16 @@ protected:
     const std::string& engineName);
   smtk::model::OperatorPtr findFileOperator(
     const std::string& fileName,
-    smtk::model::BridgePtr bridge,
+    smtk::model::SessionPtr session,
     const std::string& engineName);
 
   smtk::model::ManagerPtr m_modelMgr;
   vtkSMProxy* m_serverSession;
-  std::set<std::string> m_remoteBridgeNames;
-  std::map<smtk::common::UUID,std::string> m_remoteBridgeSessionIds;
-  /// map for bridge file types
-  /// <bridgeName, <engine-name, fileTypesList> >
-  std::map<std::string, smtk::model::StringData> m_bridgeFileTypes;
+  std::set<std::string> m_remoteSessionNames;
+  std::map<smtk::common::UUID,std::string> m_remoteSessionIds;
+  /// map for session file types
+  /// <sessionName, <engine-name, fileTypesList> >
+  std::map<std::string, smtk::model::StringData> m_sessionFileTypes;
 
 private:
   vtkSMModelManagerProxy(const vtkSMModelManagerProxy&); // Not implemented.

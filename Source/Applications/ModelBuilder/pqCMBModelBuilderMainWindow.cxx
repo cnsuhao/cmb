@@ -167,7 +167,7 @@ public:
   QPointer<QAction> CreateSimpleModelAction;
   QPointer<QAction> CreateModelEdgesAction;
 
-  QPointer<QMenu> NewModelBridgeMenu;
+  QPointer<QMenu> NewModelSessionMenu;
 
   pqPropertyLinks LineResolutionLinks;
   pqCMBSceneTree* SceneGeoTree;
@@ -302,24 +302,24 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
-  // Add "New Bridge Action", which will show all available bridges
-  this->Internal->NewModelBridgeMenu = new QMenu(this->getMainDialog()->menu_File);
-  this->Internal->NewModelBridgeMenu->setObjectName(QString::fromUtf8("menu_newbridge"));
-  this->Internal->NewModelBridgeMenu->setTitle(QString::fromUtf8("New Session..."));
+  // Add "New Session Action", which will show all available sessions
+  this->Internal->NewModelSessionMenu = new QMenu(this->getMainDialog()->menu_File);
+  this->Internal->NewModelSessionMenu->setObjectName(QString::fromUtf8("menu_newsession"));
+  this->Internal->NewModelSessionMenu->setTitle(QString::fromUtf8("New Session..."));
   this->getMainDialog()->menu_File->insertMenu(
     this->getMainDialog()->action_Open_File,
-    this->Internal->NewModelBridgeMenu);
+    this->Internal->NewModelSessionMenu);
 
-  // adding bridges to the "New Session..." menu
-  smtk::model::StringList newBnames = this->getThisCore()->modelManager()->managerProxy()->bridgeNames();
+  // adding sessions to the "New Session..." menu
+  smtk::model::StringList newBnames = this->getThisCore()->modelManager()->managerProxy()->sessionNames();
   for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
     {
-    this->addNewBridge((*it).c_str());
+    this->addNewSession((*it).c_str());
     }
 
   QObject::connect(this->getThisCore()->modelManager(),
-      SIGNAL(newBridgeLoaded(const QStringList&)),
-      this, SLOT(addNewBridges(const QStringList&)));
+      SIGNAL(newSessionLoaded(const QStringList&)),
+      this, SLOT(addNewSessions(const QStringList&)));
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(newFileTypesAdded(const QStringList&)),
       this->loadDataReaction(), SLOT(addSpecialExtensions(const QStringList&)));
@@ -341,23 +341,23 @@ void pqCMBModelBuilderMainWindow::SetCheckBoxStateQuiet(QCheckBox* box, bool sta
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::addNewBridge(const QString& brname)
+void pqCMBModelBuilderMainWindow::addNewSession(const QString& brname)
 {
-  QAction* act = this->Internal->NewModelBridgeMenu->addAction(brname);
-  QObject::connect(act, SIGNAL(triggered()), this, SLOT(onCreateNewBridge()));
+  QAction* act = this->Internal->NewModelSessionMenu->addAction(brname);
+  QObject::connect(act, SIGNAL(triggered()), this, SLOT(onCreateNewSession()));
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::addNewBridges(const QStringList& brnames)
+void pqCMBModelBuilderMainWindow::addNewSessions(const QStringList& brnames)
 {
   foreach(QString brname, brnames)
     {
-    this->addNewBridge(brname);
+    this->addNewSession(brname);
     }
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onCreateNewBridge()
+void pqCMBModelBuilderMainWindow::onCreateNewSession()
 {
   QAction* const action = qobject_cast<QAction*>(
     QObject::sender());

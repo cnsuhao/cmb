@@ -39,7 +39,7 @@ struct cmbSMTKModelInfo
     QPointer<pqPipelineSource> Source;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
-    smtk::model::BridgePtr Bridge;
+    smtk::model::SessionPtr Session;
   };
 
 class pqCMBModelManager : public QObject
@@ -50,11 +50,11 @@ public:
   pqCMBModelManager(pqServer*);
   virtual ~pqCMBModelManager();
   vtkSMModelManagerProxy* managerProxy();
-  smtk::model::StringData fileModelBridges(const std::string& filename);
+  smtk::model::StringData fileModelSessions(const std::string& filename);
   std::set<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
 
-  cmbSMTKModelInfo* modelInfo(const smtk::model::Cursor& entity);
+  cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
   QList<cmbSMTKModelInfo*> selectedModels();
   int numberOfModels();
@@ -62,7 +62,7 @@ public:
   QList<pqDataRepresentation*> modelRepresentations();
   pqDataRepresentation* activeModelRepresentation();
   bool DetermineFileReader(
-    const std::string& filename, 
+    const std::string& filename,
     std::string& bridgeType,
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
@@ -70,7 +70,7 @@ public:
 
 signals:
   void currentModelCleared();
-  void newBridgeLoaded(const QStringList& bridgeNames);
+  void newSessionLoaded(const QStringList& bridgeNames);
   void newFileTypesAdded(const QStringList& fileTypes);
   void operationFinished(const smtk::model::OperatorResult&, bool hasNewModels);
 

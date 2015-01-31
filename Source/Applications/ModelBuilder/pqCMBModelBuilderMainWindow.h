@@ -86,9 +86,9 @@ protected slots:
 
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
-  void addNewBridges(const QStringList&);
-  void addNewBridge(const QString&);
-  void onCreateNewBridge();
+  void addNewSessions(const QStringList&);
+  void addNewSession(const QString&);
+  void onCreateNewSession();
 
   // Description:
   // Updates the enable state of various menus.

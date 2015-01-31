@@ -17,7 +17,7 @@
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/EntityPhrase.h"
 #include "smtk/model/EntityListPhrase.h"
-#include "smtk/model/GroupEntity.h"
+#include "smtk/model/Group.h"
 #include "smtk/model/SimpleModelSubphrases.h"
 
 #include <QtGui/QApplication>
@@ -138,11 +138,11 @@ void pqSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
-  smtk::model::BridgePtr br = modInfo->Bridge;
+  smtk::model::SessionPtr br = modInfo->Session;
   if(!br)
     return;
 
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
   int vis = visible ? 1 : 0;
   foreach(unsigned int idx, blockids)
     {
@@ -164,7 +164,7 @@ void pqSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
-  smtk::model::BridgePtr br = modInfo->Bridge;
+  smtk::model::SessionPtr br = modInfo->Session;
   if(!br)
     return;
 
@@ -172,7 +172,7 @@ void pqSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
 //  if(!tmpList.count())
 //    rep->setVisible(false);
 
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     modInfo->Info->GetUUID2BlockIdMap().begin();
   for(; it != modInfo->Info->GetUUID2BlockIdMap().end(); ++it)
@@ -198,7 +198,7 @@ void pqSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
-  smtk::model::BridgePtr br = modInfo->Bridge;
+  smtk::model::SessionPtr br = modInfo->Session;
   if(!br)
     return;
 
@@ -207,9 +207,9 @@ void pqSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
     this->Internal->smtkManager->managerProxy()->modelManager();
 
   // we want to show the whole model
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
 
-  smtk::model::ModelEntity modelEntity(modelMan,
+  smtk::model::Model modelEntity(modelMan,
     modInfo->Info->GetModelUUID());
 
   BlockVisibilites[br].insert(modelEntity.entity());
@@ -253,11 +253,11 @@ void pqSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
     this->Internal->smtkManager->modelInfo(rep);
   if(!modInfo)
     return;
-  smtk::model::BridgePtr br = modInfo->Bridge;
+  smtk::model::SessionPtr br = modInfo->Session;
   if(!br)
     return;
 
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockColors;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockColors;
   foreach(unsigned int idx, blockids)
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
@@ -287,7 +287,7 @@ void pqSMTKModelPanel::onDataUpdated()
     "FileName")).toString().toStdString();
   filename = vtksys::SystemTools::GetFilenameName(filename);
 */
-  smtk::model::BitFlags mask = smtk::model::BRIDGE_SESSION;
+  smtk::model::BitFlags mask = smtk::model::SESSION;
 
   smtk::model::ManagerPtr model = this->Internal->smtkManager->managerProxy()->modelManager();
 //  smtk::io::ImportJSON::intoModelManager(json.c_str(), model);
@@ -300,8 +300,8 @@ void pqSMTKModelPanel::onDataUpdated()
     this->Internal->ModelPanel = new qtModelPanel(this);
     this->setWidget(this->Internal->ModelPanel);
     QObject::connect(this->Internal->ModelPanel->getModelView(),
-      SIGNAL(entitiesSelected(const smtk::model::Cursors& )),
-      this, SLOT(selectEntities(const smtk::model::Cursors& )));
+      SIGNAL(entitiesSelected(const smtk::model::EntityRefs& )),
+      this, SLOT(selectEntities(const smtk::model::EntityRefs& )));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
       this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
@@ -318,8 +318,8 @@ void pqSMTKModelPanel::onDataUpdated()
   QPointer<smtk::model::QEntityItemModel> qmodel = modelview->getModel();
   qmodel->clear();
 
-  smtk::model::Cursors cursors;
-  smtk::model::Cursor::CursorsFromUUIDs(
+  smtk::model::EntityRefs cursors;
+  smtk::model::EntityRef::EntityRefsFromUUIDs(
     cursors, model, model->entitiesMatchingFlags(mask, true));
   std::cout << std::setbase(10) << "Found " << cursors.size() << " entries\n";
   qmodel->setRoot(
@@ -332,7 +332,7 @@ void pqSMTKModelPanel::onDataUpdated()
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
+void pqSMTKModelPanel::selectEntities(const smtk::model::EntityRefs& entities)
 {
   //clear current selections
   this->Internal->smtkManager->clearModelSelections();
@@ -342,7 +342,7 @@ void pqSMTKModelPanel::selectEntities(const smtk::model::Cursors& entities)
 std::cout << "client before converting to blockid" << std::endl;
   // create vector of selected block ids
   QMap<cmbSMTKModelInfo*, std::vector<vtkIdType> > selmodelblocks;
-  for(smtk::model::Cursors::const_iterator it = entities.begin(); it != entities.end(); ++it)
+  for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
     unsigned int flatIndex;
     //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
@@ -567,13 +567,13 @@ void pqSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
   if(!modInfo)
     return;
 
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockVisibilites;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
   vtkIdType nbElems = static_cast<vtkIdType>(ivp->GetNumberOfElements());
   int vis = 1;
   for(vtkIdType i = 0; i + 1 < nbElems; i += 2)
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(ivp->GetElement(i)-1);
-    smtk::model::BridgePtr br = this->Internal->smtkManager->modelBridge(uid);
+    smtk::model::SessionPtr br = this->Internal->smtkManager->modelSession(uid);
     if(br)
       {
       BlockVisibilites[br].insert(uid);
@@ -598,13 +598,13 @@ void pqSMTKModelPanel::updateEntityColor(vtkSMDoubleMapProperty* dmp,
   if(!modInfo)
     return;
 
-  QMap<smtk::model::BridgePtr, smtk::common::UUIDs> BlockColors;
+  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockColors;
   vtkSMDoubleMapPropertyIterator *iter = dmp->NewIterator();
   QColor newcolor;
   for(iter->Begin(); !iter->IsAtEnd(); iter->Next())
     {
     smtk::common::UUID uid = modInfo->Info->GetModelEntityId(iter->GetKey());
-    smtk::model::BridgePtr br = this->Internal->smtkManager->modelBridge(uid);
+    smtk::model::SessionPtr br = this->Internal->smtkManager->modelSession(uid);
     if(br)
       {
       BlockColors[br].insert(uid);

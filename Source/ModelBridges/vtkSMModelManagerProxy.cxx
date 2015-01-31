@@ -5,7 +5,7 @@
 #include "smtk/attribute/StringItem.h"
 
 #include "smtk/model/Manager.h"
-#include "smtk/model/ModelEntity.h"
+#include "smtk/model/Model.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 
@@ -14,7 +14,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkClientServerStream.h"
 #include "vtkSMPropertyHelper.h"
-#include "cmbForwardingBridge.h"
+#include "cmbForwardingSession.h"
 #include <vtksys/SystemTools.hxx>
 
 using smtk::common::UUID;
@@ -33,7 +33,7 @@ vtkSMModelManagerProxy::vtkSMModelManagerProxy()
 
 vtkSMModelManagerProxy::~vtkSMModelManagerProxy()
 {
-  this->endBridgeSessions();
+  this->endSessions();
 }
 
 /// Print the state of this instance.
@@ -44,15 +44,15 @@ void vtkSMModelManagerProxy::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ServerSession: " << this->m_serverSession << "\n"; // m_serverSession
 }
 
-/// Return the list of bridges available on the server (not the local modelManager()'s list).
-std::vector<std::string> vtkSMModelManagerProxy::bridgeNames(bool forceFetch)
+/// Return the list of session types available on the server (not the local modelManager()'s list).
+std::vector<std::string> vtkSMModelManagerProxy::sessionNames(bool forceFetch)
 {
   std::vector<std::string> resultVec;
-  if (this->m_remoteBridgeNames.empty() || forceFetch)
+  if (this->m_remoteSessionNames.empty() || forceFetch)
     {
-    this->m_remoteBridgeNames.clear();
-    // Do not report our bridge names. Report those available on the server.
-    std::string reqStr = "{\"jsonrpc\":\"2.0\", \"method\":\"search-bridges\", \"id\":\"1\"}";
+    this->m_remoteSessionNames.clear();
+    // Do not report our session names. Report those available on the server.
+    std::string reqStr = "{\"jsonrpc\":\"2.0\", \"method\":\"search-session-types\", \"id\":\"1\"}";
     cJSON* result = this->jsonRPCRequest(reqStr);
     cJSON* sarr;
     if (
@@ -69,53 +69,53 @@ std::vector<std::string> vtkSMModelManagerProxy::bridgeNames(bool forceFetch)
 
     smtk::io::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
     cJSON_Delete(result);
-    this->m_remoteBridgeNames = std::set<std::string>(
+    this->m_remoteSessionNames = std::set<std::string>(
       resultVec .begin(), resultVec.end());
     }
   else
     {
     resultVec = std::vector<std::string>(
-      this->m_remoteBridgeNames.begin(), this->m_remoteBridgeNames.end());
+      this->m_remoteSessionNames.begin(), this->m_remoteSessionNames.end());
     }
 
   return resultVec;
 }
 
-bool vtkSMModelManagerProxy::validBridgeSession(
-  const smtk::common::UUID& bridgeId)
+bool vtkSMModelManagerProxy::validSession(
+  const smtk::common::UUID& sessionId)
 {
-  return m_remoteBridgeSessionIds.find(bridgeId) != m_remoteBridgeSessionIds.end();
+  return m_remoteSessionIds.find(sessionId) != m_remoteSessionIds.end();
 }
 
-smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(
-  const std::string& bridgeName, bool createNew)
+smtk::common::UUID vtkSMModelManagerProxy::beginSession(
+  const std::string& sessionName, bool createNew)
 {
-  if (this->m_remoteBridgeNames.find(bridgeName) == this->m_remoteBridgeNames.end())
+  if (this->m_remoteSessionNames.find(sessionName) == this->m_remoteSessionNames.end())
     {
     return smtk::common::UUID::null();
     }
 
   if(!createNew)
     {
-    // if there is already a bridge created, use that session.
+    // if there is already a session created, use that session.
     std::map<smtk::common::UUID,std::string>::iterator it;
     for (
-      it = this->m_remoteBridgeSessionIds.begin();
-      it != this->m_remoteBridgeSessionIds.end();
+      it = this->m_remoteSessionIds.begin();
+      it != this->m_remoteSessionIds.end();
       ++it)
       {
-      if(it->second == bridgeName)
+      if(it->second == sessionName)
         return it->first;
       }  
     }
 
-  //FIXME: Sanitize bridgeName!
+  //FIXME: Sanitize sessionName!
   std::string reqStr =
-    "{\"jsonrpc\":\"2.0\", \"method\":\"create-bridge\", \"params\":{\"bridge-name\":\"" +
-    bridgeName + "\"}, \"id\":\"1\"}";
+    "{\"jsonrpc\":\"2.0\", \"method\":\"create-session\", \"params\":{\"session-name\":\"" +
+    sessionName + "\"}, \"id\":\"1\"}";
   cJSON* result = this->jsonRPCRequest(reqStr);
-  cJSON* bridgeObj;
-  cJSON* bridgeIdObj;
+  cJSON* sessionObj;
+  cJSON* sessionIdObj;
   cJSON* opsObj;
   cJSON* nameObj;
   if (
@@ -124,20 +124,20 @@ smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(
     // Is the result an Object (as required by JSON-RPC 2.0)?
     result->type != cJSON_Object ||
     // Does the result Object have a field named "result" (req'd by JSON-RPC)?
-    !(bridgeObj = cJSON_GetObjectItem(result, "result")) ||
+    !(sessionObj = cJSON_GetObjectItem(result, "result")) ||
     // Is the "result" field an Object with a child that is also an object?
-    bridgeObj->type != cJSON_Object ||
-    !(bridgeIdObj = bridgeObj->child) ||
-    bridgeIdObj->type != cJSON_Object ||
-    // Does the first child have a valid name? (This is the bridge session ID)
-    !bridgeIdObj->string ||
-    !bridgeIdObj->string[0] ||
+    sessionObj->type != cJSON_Object ||
+    !(sessionIdObj = sessionObj->child) ||
+    sessionIdObj->type != cJSON_Object ||
+    // Does the first child have a valid name? (This is the session ID)
+    !sessionIdObj->string ||
+    !sessionIdObj->string[0] ||
     // Does the first child have fields "name" and "ops" of type String and Array?
-    !(nameObj = cJSON_GetObjectItem(bridgeIdObj, "name")) ||
+    !(nameObj = cJSON_GetObjectItem(sessionIdObj, "name")) ||
     nameObj->type != cJSON_String ||
     !nameObj->valuestring ||
     !nameObj->valuestring[0] ||
-    !(opsObj = cJSON_GetObjectItem(bridgeIdObj, "ops")) ||
+    !(opsObj = cJSON_GetObjectItem(sessionIdObj, "ops")) ||
     opsObj->type != cJSON_String ||
     !opsObj->valuestring ||
     !opsObj->valuestring[0]
@@ -149,74 +149,74 @@ smtk::common::UUID vtkSMModelManagerProxy::beginBridgeSession(
       return smtk::common::UUID::null();
       }
 
-  // OK, construct a special "forwarding" bridge locally.
-  cmbForwardingBridge::Ptr bridge = cmbForwardingBridge::create();
-  bridge->setProxy(this);
-  // The ImportJSON registers this bridge with the model manager.
-  if (ImportJSON::ofRemoteBridgeSession(bridgeIdObj, bridge, this->m_modelMgr))
+  // OK, construct a special "forwarding" session locally.
+  cmbForwardingSession::Ptr session = cmbForwardingSession::create();
+  session->setProxy(this);
+  // The ImportJSON registers this session with the model manager.
+  if (ImportJSON::ofRemoteSession(sessionIdObj, session, this->m_modelMgr))
     {
     // Failure.
     }
-  //this->m_modelMgr->registerBridgeSession(bridge);
+  //this->m_modelMgr->registerSession(session);
 
   cJSON_Delete(result);
 
-  UUID bridgeId = bridge->sessionId();
-  this->m_remoteBridgeSessionIds[bridgeId] = bridgeName;
-  return bridgeId;
+  UUID sessionId = session->sessionId();
+  this->m_remoteSessionIds[sessionId] = sessionName;
+  return sessionId;
 }
 
-bool vtkSMModelManagerProxy::endBridgeSession(const smtk::common::UUID& bridgeSessionId)
+bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
 {
   std::map<smtk::common::UUID,std::string>::iterator it =
-    this->m_remoteBridgeSessionIds.find(bridgeSessionId);
-  if (it == this->m_remoteBridgeSessionIds.end())
+    this->m_remoteSessionIds.find(sessionId);
+  if (it == this->m_remoteSessionIds.end())
     return false;
 
-  // Unhook our local cmbForwardingBridge representing the remote.
-  smtk::model::BridgePtr bridge = this->m_modelMgr->findBridgeSession(bridgeSessionId);
-  if (bridge)
-    this->m_modelMgr->unregisterBridgeSession(bridge);
+  // Unhook our local cmbForwardingSession representing the remote.
+  smtk::model::SessionPtr session = this->m_modelMgr->findSession(sessionId);
+  if (session)
+    this->m_modelMgr->unregisterSession(session);
 
   // Tell the server to unregister this session.
   // (Since the server's model manager should hold the only shared pointer
   // to the session, this should kill it.)
   std::string note =
-    "{\"jsonrpc\":\"2.0\", \"method\":\"delete-bridge\" \"params\":{\"session-id\":\"" +
-    bridgeSessionId.toString() + "\"}}";
+    "{\"jsonrpc\":\"2.0\", \"method\":\"delete-session\" \"params\":{\"session-id\":\"" +
+    sessionId.toString() + "\"}}";
   this->jsonRPCNotification(note);
 
   // Now remove the entry from the proxy's list of sessions.
-  this->m_remoteBridgeSessionIds.erase(it);
+  this->m_remoteSessionIds.erase(it);
 
   return true;
 }
 
 smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
-  const std::string& bridgeName)
+  const std::string& sessionName)
 {
-  if(this->m_bridgeFileTypes.find(bridgeName) != this->m_bridgeFileTypes.end())
-    return this->m_bridgeFileTypes[bridgeName];
+  if(this->m_sessionFileTypes.find(sessionName) != this->m_sessionFileTypes.end())
+    return this->m_sessionFileTypes[sessionName];
 
   smtk::model::StringData retFileTypes;
   smtk::model::StringList bnames;
 
-  if(bridgeName.empty())
+  if(sessionName.empty())
     {
-    // no bridge name is given, fetch all available bridge
-    bnames = this->bridgeNames();
+    // no session name is given, fetch all available session
+    bnames = this->sessionNames();
     }
   else
     {
-    bnames.push_back(bridgeName);
+    bnames.push_back(sessionName);
     }
 
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
-    std::cout << "Find Bridge      " << *it << "\n";
+    std::cout << "Find Session      " << *it << "\n";
     std::string reqStr =
-      "{\"jsonrpc\":\"2.0\", \"method\":\"bridge-filetypes\", "
-      "\"params\":{ \"bridge-name\":\"" + *it + "\"}, "
+      "{\"jsonrpc\":\"2.0\", \"method\":\"session-filetypes\", "
+      "\"params\":{ \"session-name\":\"" + *it + "\"}, "
       "\"id\":\"1\"}";
 
     cJSON* resObj;
@@ -250,7 +250,7 @@ smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
 
     if(brFileTypes.size())
       {
-      this->m_bridgeFileTypes[*it] = brFileTypes;
+      this->m_sessionFileTypes[*it] = brFileTypes;
       }
 
     if (result)
@@ -278,17 +278,17 @@ void vtkSMModelManagerProxy::initFileOperator(
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
   const std::string& fileName,
-  smtk::model::BridgePtr bridge,
+  smtk::model::SessionPtr session,
   const std::string& engineName)
 {
-  OperatorPtr readOp = bridge->op("read");
-  // Assuming all bridge should have a ReadOperator
+  OperatorPtr readOp = session->op("read");
+  // Assuming all session should have a ReadOperator
   if (!readOp)
     {
     std::cerr
-      << "Could not create read operator for bridge"
-      << " \"" << bridge->name() << "\""
-      << " (" << bridge->sessionId() << ")\n";
+      << "Could not create read operator for session"
+      << " \"" << session->name() << "\""
+      << " (" << session->sessionId() << ")\n";
     return smtk::model::OperatorPtr();
     }
 
@@ -303,8 +303,8 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
     return readOp;
     }
   // try "import" if there is one
-  OperatorPtr importOp = bridge->op("import");
-  // Not all bridge should have an ImportOperator
+  OperatorPtr importOp = session->op("import");
+  // Not all session should have an ImportOperator
   if (importOp)
     {
     this->initFileOperator(importOp, fileName, engineName);
@@ -321,9 +321,9 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
   else
     {
     std::cout
-      << "Could not create import operator for bridge"
-      << " \"" << bridge->name() << "\""
-      << " (" << bridge->sessionId() << ")\n";
+      << "Could not create import operator for session"
+      << " \"" << session->name() << "\""
+      << " (" << session->sessionId() << ")\n";
     }
 
   return smtk::model::OperatorPtr();
@@ -331,21 +331,21 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
 
 smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   const std::string& fileName,
-  const std::string& bridgeName,
+  const std::string& sessionName,
   const std::string& engineName)
 {
-  std::string actualBridgeName = bridgeName, actualEngineName = engineName;
-  if (bridgeName.empty())
+  std::string actualSessionName = sessionName, actualEngineName = engineName;
+  if (sessionName.empty())
     {
     std::set<std::string>::const_iterator bnit;
     for (
-      bnit = this->m_remoteBridgeNames.begin();
-      bnit != this->m_remoteBridgeNames.end() && actualBridgeName.empty();
+      bnit = this->m_remoteSessionNames.begin();
+      bnit != this->m_remoteSessionNames.end() && actualSessionName.empty();
       ++bnit)
       {
-      smtk::model::StringData fileTypesForBridge = this->supportedFileTypes(*bnit);
+      smtk::model::StringData fileTypesForSession = this->supportedFileTypes(*bnit);
       smtk::model::PropertyNameWithStrings typeIt;
-      for(typeIt = fileTypesForBridge.begin(); typeIt != fileTypesForBridge.end(); ++typeIt)
+      for(typeIt = fileTypesForSession.begin(); typeIt != fileTypesForSession.end(); ++typeIt)
         {
         std::vector<std::string>::const_iterator fit;
         for (fit = typeIt->second.begin(); fit != typeIt->second.end(); ++fit)
@@ -356,9 +356,9 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
           std::cout << "Looking for \"" << ext << "\"\n";
           if ((fEnd = fileName.rfind(ext)) && (fileName.size() - fEnd == eEnd))
             { // matching substring is indeed at end of fileName
-            actualBridgeName = *bnit;
+            actualSessionName = *bnit;
             actualEngineName = typeIt->first;
-            std::cout << "Found bridge type " << actualBridgeName << " for " << fileName << "\n";
+            std::cout << "Found session type " << actualSessionName << " for " << fileName << "\n";
             break;
             }
           }
@@ -367,43 +367,43 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     }
 
   std::map<smtk::common::UUID,std::string>::iterator it;
-  BridgePtr bridge;
+  SessionPtr session;
   for (
-    it = this->m_remoteBridgeSessionIds.begin();
-    it != this->m_remoteBridgeSessionIds.end();
+    it = this->m_remoteSessionIds.begin();
+    it != this->m_remoteSessionIds.end();
     ++it)
     {
-    BridgePtr tbridge = this->m_modelMgr->findBridgeSession(it->first);
-    //if (tbridge && tbridge->name() == actualBridgeName)
-    if (tbridge && it->second == actualBridgeName)
+    SessionPtr tsession = this->m_modelMgr->findSession(it->first);
+    //if (tsession && tsession->name() == actualSessionName)
+    if (tsession && it->second == actualSessionName)
       {
-      bridge = tbridge;
-      std::cout << "Found bridge " << bridge->sessionId() << " (" << actualBridgeName << ")\n";
+      session = tsession;
+      std::cout << "Found session " << session->sessionId() << " (" << actualSessionName << ")\n";
       break;
       }
     }
-  if (!bridge)
-    { // No existing bridge of that type. Create a new remote session.
-    smtk::common::UUID bridgeId = this->beginBridgeSession(actualBridgeName);
-    std::cout << "started bridgeID: " << bridgeId.toString() <<std::endl;
+  if (!session)
+    { // No existing session of that type. Create a new remote session.
+    smtk::common::UUID sessionId = this->beginSession(actualSessionName);
+    std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
 
-    bridge = this->m_modelMgr->findBridgeSession(bridgeId);
+    session = this->m_modelMgr->findSession(sessionId);
     }
-  if (!bridge)
+  if (!session)
     {
-    std::cerr << "Could not find or create bridge of type \"" << actualBridgeName << "\"\n";
+    std::cerr << "Could not find or create session of type \"" << actualSessionName << "\"\n";
     return OperatorResult();
     }
 
 //  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
 //  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
-  OperatorPtr fileOp = this->findFileOperator(fileName, bridge, actualEngineName);
+  OperatorPtr fileOp = this->findFileOperator(fileName, session, actualEngineName);
   if (!fileOp)
     {
     std::cerr
-      << "Could not create file (read or import) operator for bridge"
-      << " \"" << bridge->name() << "\""
-      << " (" << bridge->sessionId() << ")\n";
+      << "Could not create file (read or import) operator for session"
+      << " \"" << session->name() << "\""
+      << " (" << session->sessionId() << ")\n";
     return OperatorResult();
     }
 
@@ -418,27 +418,27 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   return result;
 }
 
-std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::common::UUID& bridgeSessionId)
+std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::common::UUID& sessionId)
 {
-  (void)bridgeSessionId;
+  (void)sessionId;
   std::vector<std::string> result;
   return result;
 }
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::createOperator(
-  const smtk::common::UUID& bridgeOrModelId, const std::string& opName)
+  const smtk::common::UUID& sessionOrModelId, const std::string& opName)
 {
   (void)opName;
-  (void)bridgeOrModelId;
+  (void)sessionOrModelId;
   smtk::model::OperatorPtr empty;
   return empty;
 }
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::createOperator(
-  const std::string& bridgeName, const std::string& opName)
+  const std::string& sessionName, const std::string& opName)
 {
   (void)opName;
-  (void)bridgeName;
+  (void)sessionName;
   smtk::model::OperatorPtr empty;
   return empty;
 }
@@ -505,9 +505,9 @@ void vtkSMModelManagerProxy::fetchWholeModel()
   cJSON_Delete(response);
 }
 
-void vtkSMModelManagerProxy::endBridgeSessions()
+void vtkSMModelManagerProxy::endSessions()
 {
-  while (!this->m_remoteBridgeSessionIds.empty())
-    this->endBridgeSession(
-      this->m_remoteBridgeSessionIds.begin()->first);
+  while (!this->m_remoteSessionIds.empty())
+    this->endSession(
+      this->m_remoteSessionIds.begin()->first);
 }
