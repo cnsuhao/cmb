@@ -174,9 +174,8 @@ bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
     return false;
 
   // Unhook our local cmbForwardingSession representing the remote.
-  smtk::model::SessionPtr session = this->m_modelMgr->findSession(sessionId);
-  if (session)
-    this->m_modelMgr->unregisterSession(session);
+  smtk::model::SessionRef sref(this->m_modelMgr, sessionId);
+  sref.close();
 
   // Tell the server to unregister this session.
   // (Since the server's model manager should hold the only shared pointer
@@ -373,7 +372,7 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     it != this->m_remoteSessionIds.end();
     ++it)
     {
-    SessionPtr tsession = this->m_modelMgr->findSession(it->first);
+    SessionPtr tsession = SessionRef(this->m_modelMgr, it->first).session();
     //if (tsession && tsession->name() == actualSessionName)
     if (tsession && it->second == actualSessionName)
       {
@@ -387,7 +386,7 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
     smtk::common::UUID sessionId = this->beginSession(actualSessionName);
     std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
 
-    session = this->m_modelMgr->findSession(sessionId);
+    session = SessionRef(this->m_modelMgr, sessionId).session();
     }
   if (!session)
     {

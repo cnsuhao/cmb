@@ -87,7 +87,7 @@ void cmbSMTKModelInfo::init(
   this->updateBlockInfo(mgr);
   smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())
-    this->Session = modelEntity.session();
+    this->Session = modelEntity.session().session();
 
 }
 
@@ -148,9 +148,9 @@ public:
         ent_annotations->AddString(mgr->name(it->first).c_str());
         }
 
-      smtk::model::GroupEntities modGroups =
+      smtk::model::Groups modGroups =
         model.as<smtk::model::Model>().groups();
-      for(smtk::model::GroupEntities::iterator it = modGroups.begin();
+      for(smtk::model::Groups::iterator it = modGroups.begin();
          it != modGroups.end(); ++it)
         {
         grp_annotations->AddString((*it).entity().toString().c_str());
@@ -647,14 +647,14 @@ bool pqCMBModelManager::handleOperationResult(
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 //  pxy->fetchWholeModel();
 
-  smtk::model::ModelEntities modelEnts =
-    pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::ModelEntities>(
+  smtk::model::Models modelEnts =
+    pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
     smtk::model::MODEL_ENTITY);
   pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   bool success = true;
   hasNewModels = false;
-  smtk::model::SessionPtr session = pxy->modelManager()->findSession(sessionId);
-  for (smtk::model::ModelEntities::iterator it = modelEnts.begin();
+  smtk::model::SessionRef sref(pxy->modelManager(), sessionId);
+  for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
 //   if(!mit->session() || mit->session()->name() == "native") // a new model
@@ -664,7 +664,7 @@ bool pqCMBModelManager::handleOperationResult(
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
-        pxy->modelManager()->setSessionForModel(session, (*it).entity());
+        it->setSession(sref);
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
@@ -742,10 +742,10 @@ bool pqCMBModelManager::startSession(const std::string& sessionName)
 {
   smtk::common::UUID sessionId =
     this->Internal->ManagerProxy->beginSession(sessionName, true);
-  smtk::model::SessionPtr session =
-    this->managerProxy()->modelManager()->findSession(sessionId);
+  smtk::model::SessionRef sref(
+    this->managerProxy()->modelManager(), sessionId);
 
-  if (!session)
+  if (!sref.session())
     {
     std::cerr << "Could not start new session of type \"" << sessionName << "\"\n";
     return false;

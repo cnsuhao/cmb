@@ -94,9 +94,9 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
       //   operator-apply
       if (methStr == "search-session-types")
         {
-        smtk::model::StringList sessionNames = this->ModelMgr->sessionNames();
+        smtk::model::StringList sessionTypeNames = this->ModelMgr->sessionTypeNames();
         cJSON_AddItemToObject(result, "result",
-          smtk::io::ExportJSON::createStringArray(sessionNames));
+          smtk::io::ExportJSON::createStringArray(sessionTypeNames));
         }
       else if (methStr == "session-filetypes")
         {
@@ -127,8 +127,8 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         }
       else if (methStr == "create-session")
         {
-        smtk::model::StringList sessionNames = this->ModelMgr->sessionNames();
-        std::set<std::string> sessionSet(sessionNames.begin(), sessionNames.end());
+        smtk::model::StringList sessionTypeNames = this->ModelMgr->sessionTypeNames();
+        std::set<std::string> sessionSet(sessionTypeNames.begin(), sessionTypeNames.end());
         cJSON* bname;
         if (
           !param ||
@@ -144,18 +144,17 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::SessionPtr session = this->ModelMgr->createAndRegisterSession(bname->valuestring);
-          if (!session || session->sessionId().isNull())
+          smtk::model::SessionRef sref = this->ModelMgr->createSession(bname->valuestring);
+          if (!sref.isValid() || !sref.session())
             {
             this->GenerateError(result,
               "Unable to construct session or got NULL session ID.", reqIdStr);
             }
           else
             {
-            this->ModelMgr->registerSession(session);
             cJSON* sess = cJSON_CreateObject();
             smtk::io::ExportJSON::forManagerSession(
-              session->sessionId(), sess, this->ModelMgr);
+              sref.entity(), sess, this->ModelMgr);
             cJSON_AddItemToObject(result, "result", sess);
             //cJSON_AddItemToObject(result, "result",
             //  cJSON_CreateString(session->sessionId().toString().c_str()));
@@ -228,16 +227,16 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::SessionPtr session =
-            this->ModelMgr->findSession(
-              smtk::common::UUID(bsess->valuestring));
-          if (!session)
+          smtk::model::SessionRef sref(
+            this->ModelMgr,
+            smtk::common::UUID(bsess->valuestring));
+          if (!sref.isValid() || !sref.session())
             {
             this->GenerateError(result, "No session with given session ID.", reqIdStr);
             }
           else
             {
-            this->ModelMgr->unregisterSession(session);
+            sref.close();
             }
           }
         }

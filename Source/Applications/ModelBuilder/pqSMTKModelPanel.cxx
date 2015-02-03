@@ -221,8 +221,8 @@ void pqSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
     BlockVisibilites[br].insert((*it).entity());
     }
 
-  smtk::model::GroupEntities groups = modelEntity.groups();
-  for (smtk::model::GroupEntities::iterator git = groups.begin();
+  smtk::model::Groups groups = modelEntity.groups();
+  for (smtk::model::Groups::iterator git = groups.begin();
     git != groups.end(); ++git)
     {
     BlockVisibilites[br].insert((*git).entity());
