@@ -22,6 +22,9 @@ SET_SOURCE_FILES_PROPERTIES(
   WRAP_EXCLUDE
 )
 
+# we unset the pv-plugin variable because that will bring in stuff
+# that we don't want for client-server library initialization of this plugin
+unset(pv-plugin)
 add_paraview_plugin(ModelBridge_Plugin "1.0"
   SERVER_MANAGER_XML smconfigModelBridge.xml
   SERVER_MANAGER_SOURCES
