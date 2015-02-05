@@ -2,6 +2,10 @@
 
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
+
+#include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/IntItem.h"
+
 #include "smtk/model/Operator.h"
 
 #include "vtkObjectFactory.h"
@@ -203,6 +207,9 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
+          smtk::attribute::IntItem::Ptr ani = localOp->findInt("assign names");
+          ani->setIsEnabled(true);
+          ani->setValue(1);
           smtk::model::OperatorResult ores = localOp->operate();
           cJSON* oresult = cJSON_CreateObject();
           smtk::io::ExportJSON::forOperatorResult(ores, oresult);
