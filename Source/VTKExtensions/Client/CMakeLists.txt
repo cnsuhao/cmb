@@ -9,7 +9,6 @@ include(GenerateExportHeader)
 
 set(vtkCMBClient_INCLUDE_DIRS
   ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/smtk
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 

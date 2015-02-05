@@ -2,8 +2,10 @@ project (ModelBuilder)
 
 find_package(Remus REQUIRED)
 
-find_package(ParaView REQUIRED)
-include(${PARAVIEW_USE_FILE})
+IF(NOT ParaView_BINARY_DIR)
+  FIND_PACKAGE(ParaView REQUIRED)
+  INCLUDE(${PARAVIEW_USE_FILE})
+ENDIF(NOT ParaView_BINARY_DIR)
 
 find_package(SMTK REQUIRED)
 
