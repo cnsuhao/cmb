@@ -134,51 +134,51 @@ public:
     pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
 
-      vtkNew<vtkStringList> ent_annotations;
-      vtkNew<vtkStringList> vol_annotations;
-      vtkNew<vtkStringList> grp_annotations;
+    vtkNew<vtkStringList> ent_annotations;
+    vtkNew<vtkStringList> vol_annotations;
+    vtkNew<vtkStringList> grp_annotations;
 
-      vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
-      std::map<smtk::common::UUID, unsigned int>::const_iterator it =
-        pvinfo->GetUUID2BlockIdMap().begin();
-      for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
-        {
-        this->Entity2Models[it->first] = model.entity();
-        ent_annotations->AddString(it->first.toString().c_str());
-        ent_annotations->AddString(mgr->name(it->first).c_str());
-        }
+    vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
+    std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+      pvinfo->GetUUID2BlockIdMap().begin();
+    for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
+      {
+      this->Entity2Models[it->first] = model.entity();
+      ent_annotations->AddString(it->first.toString().c_str());
+      ent_annotations->AddString(mgr->name(it->first).c_str());
+      }
 
-      smtk::model::Groups modGroups =
-        model.as<smtk::model::Model>().groups();
-      for(smtk::model::Groups::iterator it = modGroups.begin();
-         it != modGroups.end(); ++it)
-        {
-        grp_annotations->AddString((*it).entity().toString().c_str());
-        grp_annotations->AddString((*it).name().c_str());
-        }
+    smtk::model::Groups modGroups =
+      model.as<smtk::model::Model>().groups();
+    for(smtk::model::Groups::iterator it = modGroups.begin();
+       it != modGroups.end(); ++it)
+      {
+      grp_annotations->AddString((*it).entity().toString().c_str());
+      grp_annotations->AddString((*it).name().c_str());
+      }
 
-      smtk::model::CellEntities modVols =
-        model.as<smtk::model::Model>().cells();
-      for(smtk::model::CellEntities::iterator it = modVols.begin();
-         it != modVols.end(); ++it)
+    smtk::model::CellEntities modVols =
+      model.as<smtk::model::Model>().cells();
+    for(smtk::model::CellEntities::iterator it = modVols.begin();
+       it != modVols.end(); ++it)
+      {
+      if((*it).isVolume())
         {
-        if((*it).isVolume())
-          {
-          vol_annotations->AddString((*it).entity().toString().c_str());
-          vol_annotations->AddString((*it).name().c_str());
-          }
+        vol_annotations->AddString((*it).entity().toString().c_str());
+        vol_annotations->AddString((*it).name().c_str());
         }
+      }
 
 //          vtkSMPropertyHelper(rep->getProxy(), "SuppressLOD").Set(1);
-      RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-        rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
-        this->LUTColors, ent_annotations.GetPointer());
-      RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-        rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
-        this->LUTColors, grp_annotations.GetPointer());
-      RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-        rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
-        this->LUTColors, vol_annotations.GetPointer());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
+      this->LUTColors, ent_annotations.GetPointer());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
+      this->LUTColors, grp_annotations.GetPointer());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
+      this->LUTColors, vol_annotations.GetPointer());
 
   }
 
@@ -233,6 +233,35 @@ public:
         << model.entity().toString().c_str();
       return false;
       }
+  }
+
+  void removeModelRepresentations(const smtk::common::UUIDs& modeluids,
+                                 pqRenderView* view)
+  {
+    bool modelRemoved = false;
+    for (smtk::common::UUIDs::const_iterator mit = modeluids.begin();
+        mit != modeluids.end(); ++mit)
+      {
+      if(this->ModelInfos.find(*mit) == this->ModelInfos.end())
+        {
+        continue;
+        }
+
+      pqPipelineSource* modelSrc = this->ModelInfos[*mit].Source;
+      pqApplicationCore::instance()->getObjectBuilder()->destroy(modelSrc);
+      std::map<smtk::common::UUID, unsigned int>::const_iterator it;
+
+      for(it = this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().begin();
+        it != this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().end(); ++it)
+        {
+        this->Entity2Models.erase(it->first);
+        }
+
+      this->ModelInfos.erase(*mit);
+      modelRemoved = true;
+      }
+  if(modelRemoved)
+    view->render();
   }
 
   void updateModelRepresentation(const smtk::model::EntityRef& model,
@@ -640,27 +669,61 @@ bool pqCMBModelManager::handleOperationResult(
     return false;
     }
 
+  pqRenderView* view = qobject_cast<pqRenderView*>(
+    pqActiveObjects::instance().activeView());
   smtk::attribute::IntItem::Ptr opType = result->findInt("event type");
   bool bGeometryChanged =  opType && opType->numberOfValues() &&
     (opType->value() == smtk::model::TESSELLATION_ENTRY);
 
+  smtk::common::UUIDs geometryChangedModels;
+  smtk::attribute::ModelEntityItem::Ptr remEntities =
+    result->findModelEntity("expunged");
+    smtk::model::EntityRefArray::const_iterator it;
+  for(it = remEntities->begin(); it != remEntities->end(); ++it)
+    {
+    // if this is a block index, its pv representation needs to be updated
+    if(it->hasIntegerProperty("block_index"))
+      geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
+    }
+
+  // process "entities" in result to figure out if models are changed
+  // or there are new cell entities
+  smtk::attribute::ModelEntityItem::Ptr resultEntities =
+    result->findModelEntity("entities");
+  for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
+      {
+      if(it->isModel())
+        geometryChangedModels.insert(it->entity()); // TODO: check what kind of operations on the model
+      else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
+        geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
+      }
+
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-//  pxy->fetchWholeModel();
+  smtk::common::UUIDs modelids =
+    pxy->modelManager()->entitiesMatchingFlags(
+    smtk::model::MODEL_ENTITY);
+  smtk::common::UUIDs remmodels;
+  // Clean out models that are not in the manager after operation
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+    mit != this->Internal->ModelInfos.end(); ++mit)
+    {
+    if(modelids.find(mit->first) == modelids.end())
+      remmodels.insert(mit->first);
+    }
+  this->Internal->removeModelRepresentations(remmodels, view);
 
   smtk::model::Models modelEnts =
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
     smtk::model::MODEL_ENTITY);
-  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   bool success = true;
   hasNewModels = false;
   smtk::model::SessionRef sref(pxy->modelManager(), sessionId);
   for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-//   if(!mit->session() || mit->session()->name() == "native") // a new model
-     if((*it).isValid())
+    if((*it).isValid())
       {
-      if(this->Internal->ModelInfos.find((*it).entity()) ==
+      if(this->Internal->ModelInfos.find(it->entity()) ==
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
@@ -668,7 +731,8 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
-      else if(bGeometryChanged) // update representation
+      else if(bGeometryChanged ||
+        geometryChangedModels.find(it->entity()) != geometryChangedModels.end()) // update representation
         {
         this->Internal->updateModelRepresentation(
           *it, view);
