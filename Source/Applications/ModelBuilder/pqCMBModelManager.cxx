@@ -695,7 +695,8 @@ bool pqCMBModelManager::handleOperationResult(
       if(it->isModel())
         geometryChangedModels.insert(it->entity()); // TODO: check what kind of operations on the model
       else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
-        geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
+        geometryChangedModels.insert(
+          it->as<smtk::model::CellEntity>().model().entity());
       }
 
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
