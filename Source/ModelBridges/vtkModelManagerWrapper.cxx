@@ -156,6 +156,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
             }
           else
             {
+            sref.assignDefaultName();
             cJSON* sess = cJSON_CreateObject();
             smtk::io::ExportJSON::forManagerSession(
               sref.entity(), sess, this->ModelMgr);
