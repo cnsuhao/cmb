@@ -2299,12 +2299,22 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     result->findModelEntity("new entities");
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
-
-  if(hasNewModels ||
-     (newEntities && newEntities->numberOfValues() > 0) ||
-     (remEntities && remEntities->numberOfValues() > 0) )
+  bool hasNewEntities = newEntities && newEntities->numberOfValues() > 0;
+  bool entitiesRemoved = remEntities && remEntities->numberOfValues() > 0;
+  if(hasNewModels || hasNewEntities || entitiesRemoved)
     {
-    this->modelPanel()->onDataUpdated();
+    this->modelPanel()->resetUI();
+    if(entitiesRemoved)
+      {
+      smtk::model::EntityRefs remEnts;
+      smtk::model::EntityRefArray::const_iterator it;
+      for(it = remEntities->begin(); it != remEntities->end(); ++it)
+        {
+        remEnts.insert(*it);
+        }
+      this->modelPanel()->onEntitiesExpunged(remEnts);
+      }
+
     this->activeRenderView()->resetCamera();
     emit this->newModelCreated();
     }

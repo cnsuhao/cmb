@@ -370,7 +370,7 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
   if(started)
     {
     this->onNewModelCreated();
-    this->getThisCore()->modelPanel()->onDataUpdated();
+    this->getThisCore()->modelPanel()->resetUI();
     }
 }
 

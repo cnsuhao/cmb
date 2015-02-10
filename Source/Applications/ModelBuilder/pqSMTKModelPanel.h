@@ -41,9 +41,10 @@ public:
 
 public slots:
   /// Called if the user accepts pending modifications
-  void onDataUpdated();
-  void updateTreeSelection();
+  void resetUI();
   void clearUI();
+  void updateTreeSelection();
+  void onEntitiesExpunged(const smtk::model::EntityRefs& expungedEnts);
 //  void linkRepresentations();
 
 protected slots:

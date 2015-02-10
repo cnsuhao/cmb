@@ -678,7 +678,7 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs geometryChangedModels;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
-    smtk::model::EntityRefArray::const_iterator it;
+  smtk::model::EntityRefArray::const_iterator it;
   for(it = remEntities->begin(); it != remEntities->end(); ++it)
     {
     // if this is a block index, its pv representation needs to be updated

@@ -99,7 +99,7 @@ pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
 //  this->connect(&this->Internal->UpdateUITimer, SIGNAL(timeout()),
 //                this, SLOT(updateModelTreeView()));
 
-  this->onDataUpdated();
+  this->resetUI();
   //QSizePolicy expandPolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   //this->setSizePolicy(expandPolicy);
 
@@ -270,7 +270,7 @@ void pqSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKModelPanel::onDataUpdated()
+void pqSMTKModelPanel::resetUI()
 {
   if(/*this->Internal->ModelLoaded || */!this->Internal->smtkManager)
     {
@@ -332,6 +332,15 @@ void pqSMTKModelPanel::onDataUpdated()
 }
 
 //-----------------------------------------------------------------------------
+void pqSMTKModelPanel::onEntitiesExpunged(
+  const smtk::model::EntityRefs& expungedEnts)
+{
+  if(!this->Internal->ModelPanel)
+    return;
+  this->Internal->ModelPanel->getModelView()->onEntitiesExpunged(expungedEnts);
+}
+
+//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::selectEntities(const smtk::model::EntityRefs& entities)
 {
   //clear current selections
@@ -339,7 +348,6 @@ void pqSMTKModelPanel::selectEntities(const smtk::model::EntityRefs& entities)
   smtk::model::ManagerPtr modelMan =
     this->Internal->smtkManager->managerProxy()->modelManager();
 
-std::cout << "client before converting to blockid" << std::endl;
   // create vector of selected block ids
   QMap<cmbSMTKModelInfo*, std::vector<vtkIdType> > selmodelblocks;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
@@ -363,7 +371,7 @@ std::cout << "client before converting to blockid" << std::endl;
         }
       }
     }
-std::cout << "After convert to blockid, before selecting" << std::endl;
+
   // update the selection manager
   pqSelectionManager *selectionManager =
     qobject_cast<pqSelectionManager*>(
@@ -409,15 +417,12 @@ std::cout << "After convert to blockid, before selecting" << std::endl;
     renView->render();
     }
 
-std::cout << "done selecting" << std::endl;
-
 }
 
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::updateTreeSelection()
 {
 
-  std::cout << "update tree selection, before converting blockid to uuid" << std::endl;
   smtk::common::UUIDs uuids;
   QList<cmbSMTKModelInfo*> selModels = this->Internal->smtkManager->selectedModels();
   foreach(cmbSMTKModelInfo* modinfo, selModels)
@@ -463,14 +468,12 @@ void pqSMTKModelPanel::updateTreeSelection()
         }
       }
     }
-  std::cout << "update tree selection, after converting blockid to uuid" << std::endl;
 
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
   modelview->blockSignals(true);
   modelview->clearSelection();
   modelview->blockSignals(false);
   modelview->selectEntities(uuids);
-  std::cout << "update tree selection, done" << std::endl;
 }
 
 //----------------------------------------------------------------------------
