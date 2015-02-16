@@ -23,7 +23,7 @@ public:
 
   smtk::model::StringData supportedFileTypes(
     const std::string& sessionName = std::string());
-  smtk::model::OperatorResult readFile(
+  smtk::model::OperatorPtr newFileOperator(
     const std::string& fileName,
     const std::string& sessionName = std::string(),
     const std::string& engineName = std::string());
@@ -33,10 +33,6 @@ public:
   std::vector<std::string> operatorNames(const std::string& sessionName);
   std::vector<std::string> operatorNames(const smtk::common::UUID& sessionId);
 
-  smtk::model::OperatorPtr createOperator(
-    const smtk::common::UUID& sessionOrModel, const std::string& opName);
-  smtk::model::OperatorPtr createOperator(
-    const std::string& sessionName, const std::string& opName);
   void fetchWholeModel();
 
   smtk::model::ManagerPtr modelManager();
@@ -58,7 +54,7 @@ protected:
     smtk::model::OperatorPtr fileOp,
     const std::string& fileName,
     const std::string& engineName);
-  smtk::model::OperatorPtr findFileOperator(
+  smtk::model::OperatorPtr newFileOperator(
     const std::string& fileName,
     smtk::model::SessionPtr session,
     const std::string& engineName);

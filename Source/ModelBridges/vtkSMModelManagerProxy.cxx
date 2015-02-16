@@ -2,6 +2,7 @@
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/FileItem.h"
+#include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/StringItem.h"
 
 #include "smtk/model/Manager.h"
@@ -275,7 +276,7 @@ void vtkSMModelManagerProxy::initFileOperator(
     }
 }
 
-smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
+smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
   const std::string& fileName,
   smtk::model::SessionPtr session,
   const std::string& engineName)
@@ -307,15 +308,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
   if (importOp)
     {
     this->initFileOperator(importOp, fileName, engineName);
-    if ( importOp->ableToOperate() )
-      {
-      return importOp;
-      }
-    else
-      {
-      std::cout << "Import operator can not operate with the file: "
-                << fileName.c_str() << "\n";
-      }
+    return importOp;
     }
   else
     {
@@ -328,7 +321,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::findFileOperator(
   return smtk::model::OperatorPtr();
 }
 
-smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
+smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
   const std::string& fileName,
   const std::string& sessionName,
   const std::string& engineName)
@@ -391,30 +384,13 @@ smtk::model::OperatorResult vtkSMModelManagerProxy::readFile(
   if (!session)
     {
     std::cerr << "Could not find or create session of type \"" << actualSessionName << "\"\n";
-    return OperatorResult();
+    return OperatorPtr();
     }
 
 //  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
 //  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
-  OperatorPtr fileOp = this->findFileOperator(fileName, session, actualEngineName);
-  if (!fileOp)
-    {
-    std::cerr
-      << "Could not create file (read or import) operator for session"
-      << " \"" << session->name() << "\""
-      << " (" << session->sessionId() << ")\n";
-    return OperatorResult();
-    }
-
- // cJSON* json = cJSON_CreateObject();
- // ExportJSON::forOperator(fileOp, json);
-//  std::cout << "Found operator " << cJSON_Print(json) << ")\n";
-  OperatorResult result = fileOp->operate();
-//  json = cJSON_CreateObject();
-//  ExportJSON::forOperatorResult(result, json);
-//  std::cout << "Result " << cJSON_Print(json) << "\n";
-
-  return result;
+  OperatorPtr fileOp = this->newFileOperator(fileName, session, actualEngineName);
+  return fileOp;
 }
 
 std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::common::UUID& sessionId)
@@ -422,24 +398,6 @@ std::vector<std::string> vtkSMModelManagerProxy::operatorNames(const smtk::commo
   (void)sessionId;
   std::vector<std::string> result;
   return result;
-}
-
-smtk::model::OperatorPtr vtkSMModelManagerProxy::createOperator(
-  const smtk::common::UUID& sessionOrModelId, const std::string& opName)
-{
-  (void)opName;
-  (void)sessionOrModelId;
-  smtk::model::OperatorPtr empty;
-  return empty;
-}
-
-smtk::model::OperatorPtr vtkSMModelManagerProxy::createOperator(
-  const std::string& sessionName, const std::string& opName)
-{
-  (void)opName;
-  (void)sessionName;
-  smtk::model::OperatorPtr empty;
-  return empty;
 }
 
 smtk::model::ManagerPtr vtkSMModelManagerProxy::modelManager()
