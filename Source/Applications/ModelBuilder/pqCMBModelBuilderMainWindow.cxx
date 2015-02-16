@@ -366,7 +366,7 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
     return;
     }
   std::string brName = action->text().toStdString();
-  bool started = this->getThisCore()->modelManager()->startSession(brName);
+  bool started = this->getThisCore()->modelManager()->startNewSession(brName);
   if(started)
     {
     this->onNewModelCreated();

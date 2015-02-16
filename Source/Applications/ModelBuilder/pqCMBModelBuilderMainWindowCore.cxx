@@ -119,7 +119,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <vtkClientServerStream.h>
 #include "vtkCMBWriter.h"
 #include "vtkDataObject.h"
-#include "vtkCMBGeometry2DReader.h"
 #include "vtkEventQtSlotConnect.h"
 #include "vtkGeometryRepresentation.h"
 #include "vtkHydroModelCreator.h"
@@ -190,6 +189,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/model/Operator.h"
+#include "smtk/extension/qt/qtModelView.h"
 
 #include "remus/proto/Job.h"
 #include <QLayout>
@@ -1533,12 +1533,19 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     return 0;
     }
 
-  bool succeeded = this->Internal->smtkModelManager->loadModel(
-    filename.toStdString(), this->activeRenderView());
-//  if(succeeded)
-//    {
-//    this->processModelInfo(true);
-//    }
+  smtk::model::OperatorPtr fileOp = this->Internal->smtkModelManager->
+    createFileOperator(filename.toStdString());
+  if (!fileOp)
+    {
+    qCritical()
+      << "Could not create file (read or import) operator for file: "
+      << filename << "\n";
+    return 0;
+    }
+
+  // if ableToOperate, no UI is need for this op
+  bool succeeded = this->modelPanel()->modelView()->requestOperation(
+    fileOp, !fileOp->ableToOperate());
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
@@ -1619,47 +1626,6 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     {
     this->processSceneInfo(filename, reader);
     return;
-    }
-
-  if (fInfo.suffix().toLower() == "shp")
-    {
-    pqCMBImportShapefile shapefileBdyDialog(this->getActiveServer());
-    if (shapefileBdyDialog.exec() == QDialog::Accepted)
-      {
-      int bstyle = shapefileBdyDialog.boundaryStyle();
-      int mstyle = shapefileBdyDialog.marginStyle();
-      QString boundaryFile = shapefileBdyDialog.customBoundaryFilename();
-      QString marginSpec = shapefileBdyDialog.marginSpecification();
-      switch (bstyle)
-        {
-      case vtkCMBGeometry2DReader::NONE:
-        vtkSMPropertyHelper(reader->getProxy(), "BoundaryStyle").Set(bstyle);
-        break;
-      case vtkCMBGeometry2DReader::ABSOLUTE_MARGIN:
-        vtkSMPropertyHelper(reader->getProxy(), "BoundaryStyle").Set(mstyle);
-        if (mstyle == vtkCMBGeometry2DReader::ABSOLUTE_MARGIN)
-          {
-          vtkSMPropertyHelper(reader->getProxy(), "AbsoluteMarginString").Set(marginSpec.toStdString().c_str());
-          }
-        else // (mstyle == vtkCMBGeometry2DReader::RELATIVE_MARGIN)
-          {
-          vtkSMPropertyHelper(reader->getProxy(), "RelativeMarginString").Set(marginSpec.toStdString().c_str());
-          }
-        break;
-      case vtkCMBGeometry2DReader::ABSOLUTE_BOUNDS:
-        vtkSMPropertyHelper(reader->getProxy(), "BoundaryStyle").Set(bstyle);
-        vtkSMPropertyHelper(reader->getProxy(), "AbsoluteBoundsString").Set(marginSpec.toStdString().c_str());
-        break;
-      case vtkCMBGeometry2DReader::IMPORTED_POLYGON:
-        vtkSMPropertyHelper(reader->getProxy(), "BoundaryStyle").Set(bstyle);
-        vtkSMPropertyHelper(reader->getProxy(), "BoundaryFile").Set(boundaryFile.toStdString().c_str());
-        break;
-      default:
-        cerr << "ERROR: Unknown boundary type \"" << bstyle << "\"\n";
-        break;
-        }
-      reader->getProxy()->UpdateVTKObjects();
-      }
     }
 /*
   if(fInfo.suffix().toLower() == "json")

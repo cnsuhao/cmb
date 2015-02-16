@@ -76,10 +76,9 @@ signals:
 
 public slots:
   void clear();
-  bool startSession(const std::string& bridgeName);
+  bool startNewSession(const std::string& bridgeName);
   void clearModelSelections();
-  bool loadModel(const std::string& filename,
-    pqRenderView* view);
+  smtk::model::OperatorPtr createFileOperator(const std::string& filename);
   bool startOperation(const smtk::model::OperatorPtr&);
   bool handleOperationResult(
     const smtk::model::OperatorResult& result,

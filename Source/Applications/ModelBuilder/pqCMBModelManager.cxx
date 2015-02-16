@@ -561,19 +561,20 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelManager::loadModel(const std::string& filename, pqRenderView* view)
+smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
+  const std::string& filename)
 {
   this->initialize();
   if(!this->Internal->ManagerProxy)
     {
-    return false;
+    return smtk::model::OperatorPtr();
     }
 
   smtk::model::StringData sessionTypes = this->fileModelSessions(filename);
   if (sessionTypes.size() == 0)
     {
     std::cerr << "Could not identify a modeling kernel to use.\n";
-    return false;
+    return smtk::model::OperatorPtr();
     }
 
   smtk::model::PropertyNameWithStrings typeIt = sessionTypes.begin();
@@ -587,7 +588,7 @@ bool pqCMBModelManager::loadModel(const std::string& filename, pqRenderView* vie
   if((sessionTypes.size() > 1 || typeIt->second.size() > 1) &&
      !this->DetermineFileReader(filename, sessionType, engineType, sessionTypes))
     {
-    return false;
+    return smtk::model::OperatorPtr();
     }
 
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
@@ -595,22 +596,10 @@ bool pqCMBModelManager::loadModel(const std::string& filename, pqRenderView* vie
   smtk::common::UUID sessId = pxy->beginSession(sessionType);
   std::cout << "Started " << sessionType << " session: " << sessId << "\n";
 
-  smtk::model::OperatorResult result = pxy->readFile(filename, sessionType, engineType);
-  if (result->findInt("outcome")->value() !=
-    smtk::model::OPERATION_SUCCEEDED)
-    {
-    std::cerr << "Read operator failed\n";
-//    pxy->endSession(sessId);
-    return false;
-    }
-  bool hasNewModels = false;
-  bool success = this->handleOperationResult(result, sessId, hasNewModels);
-  if(success)
-    {
-    emit this->operationFinished(result, hasNewModels);
-    }
+  smtk::model::OperatorPtr fileOp = this->managerProxy()->newFileOperator(
+    filename, sessionType, engineType);
 
-  return success;
+  return fileOp;
 }
 
 //----------------------------------------------------------------------------
@@ -803,7 +792,7 @@ void pqCMBModelManager::clear()
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelManager::startSession(const std::string& sessionName)
+bool pqCMBModelManager::startNewSession(const std::string& sessionName)
 {
   smtk::common::UUID sessionId =
     this->Internal->ManagerProxy->beginSession(sessionName, true);

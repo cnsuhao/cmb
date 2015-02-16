@@ -117,6 +117,11 @@ pqCMBModelManager* pqSMTKModelPanel::modelManager()
   return this->Internal->smtkManager;
 }
 
+smtk::model::qtModelView* pqSMTKModelPanel::modelView()
+{
+  return this->Internal->ModelPanel->getModelView();
+}
+
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::clearUI()
 {

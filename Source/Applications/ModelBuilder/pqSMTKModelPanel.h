@@ -21,6 +21,11 @@ namespace smtk {
   class qtFileItem;
  }
 }
+namespace smtk {
+ namespace model {
+  class qtModelView;
+ }
+}
 
 class pqSMTKModelPanel : public QDockWidget
 {
@@ -30,6 +35,7 @@ public:
   ~pqSMTKModelPanel();
 
   pqCMBModelManager* modelManager();
+  smtk::model::qtModelView* modelView();
 
   void setBlockVisibility(pqDataRepresentation* rep,
     const QList<unsigned int>& indices, bool visible);
