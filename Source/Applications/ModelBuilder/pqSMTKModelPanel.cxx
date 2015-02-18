@@ -360,19 +360,15 @@ void pqSMTKModelPanel::selectEntities(const smtk::model::EntityRefs& entities)
     unsigned int flatIndex;
     //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
     if(modelMan->hasIntegerProperty((*it).entity(), "block_index"))
-    //if((*it).hasIntegerProperty("block_index"))
       {
-      if (it->as<CellEntity>().isValid())
+      cmbSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(
+        *it);
+      const IntegerList& prop((*it).integerProperty("block_index"));
+      //the flatIndex is 1 more than blockId, because the root is index 0
+      if(minfo && minfo->Representation && !prop.empty())
         {
-        cmbSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(
-          *it);
-        const IntegerList& prop((*it).integerProperty("block_index"));
-        //the flatIndex is 1 more than blockId, because the root is index 0
-        if(minfo && minfo->Representation && !prop.empty())
-          {
-          flatIndex = prop[0];
-          selmodelblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));
-          }
+        flatIndex = prop[0];
+        selmodelblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));
         }
       }
     }
