@@ -24,7 +24,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
-#include "vtkModelMultiBlockSource.h"
 #include "vtkNew.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
@@ -61,6 +60,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
+#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 #include "cJSON.h"
 

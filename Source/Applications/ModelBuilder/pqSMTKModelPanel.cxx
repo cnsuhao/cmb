@@ -8,6 +8,7 @@
 
 #include "smtk/extension/qt/qtEntityItemDelegate.h"
 #include "smtk/extension/qt/qtEntityItemModel.h"
+#include "smtk/extension/qt/qtModelEntityItem.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelPanel.h"
 
@@ -19,6 +20,7 @@
 #include "smtk/model/EntityListPhrase.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/SimpleModelSubphrases.h"
+#include "smtk/model/EntityTypeBits.h" // for smtk::model::BitFlags
 
 #include <QtGui/QApplication>
 #include <QtGui/QTreeView>
@@ -306,10 +308,13 @@ void pqSMTKModelPanel::resetUI()
     this->setWidget(this->Internal->ModelPanel);
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(entitiesSelected(const smtk::model::EntityRefs& )),
-      this, SLOT(selectEntities(const smtk::model::EntityRefs& )));
+      this, SLOT(selectEntityRepresentations(const smtk::model::EntityRefs& )));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
       this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
+      this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
       this->Internal->smtkManager,
@@ -346,7 +351,7 @@ void pqSMTKModelPanel::onEntitiesExpunged(
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKModelPanel::selectEntities(const smtk::model::EntityRefs& entities)
+void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs& entities)
 {
   //clear current selections
   this->Internal->smtkManager->clearModelSelections();
@@ -470,11 +475,7 @@ void pqSMTKModelPanel::updateTreeSelection()
       }
     }
 
-  qtModelView* modelview = this->Internal->ModelPanel->getModelView();
-  modelview->blockSignals(true);
-  modelview->clearSelection();
-  modelview->blockSignals(false);
-  modelview->selectEntities(uuids);
+  this->modelView()->selectEntityItems(uuids, true); // block selection signal
 }
 
 //----------------------------------------------------------------------------
@@ -499,131 +500,36 @@ void pqSMTKModelPanel::onLaunchFileBrowser()
   pqSMTKUIHelper::process_smtkFileItemRequest(
     fileItem, this->Internal->smtkManager->server(), fileItem->widget());
 }
-/*
-//----------------------------------------------------------------------------
-void pqSMTKModelPanel::linkRepresentations()
-{
-  // disconnect from previous representations
-  this->Internal->VTKConnect->Disconnect();
-  foreach(pqDataRepresentation* repr,
-          this->Internal->smtkManager->modelRepresentations())
-    {
-    this->linkRepresentation(repr);
-    }
-}
 
 //----------------------------------------------------------------------------
-void pqSMTKModelPanel::linkRepresentation(pqDataRepresentation *representation)
+void pqSMTKModelPanel::onModelEntityItemCreated(
+  smtk::attribute::qtModelEntityItem* entItem)
 {
-  if(representation)
+  if(entItem)
     {
-    // listen to property changes
-    vtkSMProxy *proxy = representation->getProxy();
-    vtkSMProperty *visibilityProperty = proxy->GetProperty("BlockVisibility");
-    if(visibilityProperty)
-      {
-      this->Internal->VTKConnect->Connect(visibilityProperty,
-        vtkCommand::ModifiedEvent,
-        this, SLOT(propertyChanged(vtkObject*,  unsigned long, void*)), representation);
-      }
-
-    vtkSMProperty *colorProperty = proxy->GetProperty("BlockColor");
-    if(colorProperty)
-      {
-      this->Internal->VTKConnect->Connect(colorProperty,
-        vtkCommand::ModifiedEvent,
-        this, SLOT(propertyChanged(vtkObject*,  unsigned long, void*)), representation);
-      }
+    QObject::connect(entItem, SIGNAL(requestEntityAssociation()),
+      this, SLOT(onRequestEntityAssociation()));
+    QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)),
+      this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
     }
 }
 
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::propertyChanged(
-  vtkObject* caller, unsigned long, void* clientdata)
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::onRequestEntityAssociation()
 {
-  if(this->Internal->ignorePropertyChange)
-    return;
-  vtkSMProperty* prop = vtkSMProperty::SafeDownCast(caller);
-  pqDataRepresentation* representation = reinterpret_cast<pqDataRepresentation*>(clientdata);
-  if(!prop || !representation)
-    return;
-  if(strcmp(prop->GetXMLName(), "BlockVisibility") == 0)
+  smtk::attribute::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
+  if(!entItem)
     {
-    this->updateEntityVisibility(
-      vtkSMIntVectorProperty::SafeDownCast(prop), representation);
+    return;
     }
-  else if(strcmp(prop->GetXMLName(), "BlockColor") == 0)
-    {
-    this->updateEntityColor(
-      vtkSMDoubleMapProperty::SafeDownCast(prop), representation);
-    }
+
+  pqSMTKUIHelper::process_smtkModelEntityItemSelectionRequest(
+    entItem, this->modelView());
 }
 
-
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::updateEntityVisibility(vtkSMIntVectorProperty* ivp,
-  pqDataRepresentation* representation, )
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
 {
-  if(!ivp)
-    return;
-  cmbSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(representation);
-  if(!modInfo)
-    return;
-
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
-  vtkIdType nbElems = static_cast<vtkIdType>(ivp->GetNumberOfElements());
-  int vis = 1;
-  for(vtkIdType i = 0; i + 1 < nbElems; i += 2)
-    {
-    smtk::common::UUID uid = modInfo->Info->GetModelEntityId(ivp->GetElement(i)-1);
-    smtk::model::SessionPtr br = this->Internal->smtkManager->modelSession(uid);
-    if(br)
-      {
-      BlockVisibilites[br].insert(uid);
-      vis = ivp->GetElement(i+1); // for now, we use same value for all
-      }
-    }
-  // the pqCMBModelManager shouldn't need to emit signal while syncing
-  this->Internal->smtkManager->blockSignals(true);
-  this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
-    BlockVisibilites, vis);
-  this->Internal->smtkManager->blockSignals(false);
+  this->modelView()->selectEntityItems(uuids, false); // not block selection signal
 }
-
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::updateEntityColor(vtkSMDoubleMapProperty* dmp,
-  pqDataRepresentation* representation)
-{
-  if(!dmp)
-    return;
-  cmbSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(representation);
-  if(!modInfo)
-    return;
-
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockColors;
-  vtkSMDoubleMapPropertyIterator *iter = dmp->NewIterator();
-  QColor newcolor;
-  for(iter->Begin(); !iter->IsAtEnd(); iter->Next())
-    {
-    smtk::common::UUID uid = modInfo->Info->GetModelEntityId(iter->GetKey());
-    smtk::model::SessionPtr br = this->Internal->smtkManager->modelSession(uid);
-    if(br)
-      {
-      BlockColors[br].insert(uid);
-      // for now, we use same value for all
-      newcolor.setRedF(iter->GetElementComponent(0));
-      newcolor.setGreenF(iter->GetElementComponent(1));
-      newcolor.setBlueF(iter->GetElementComponent(2));
-      }
-    }
-  iter->Delete();
-
-  // the pqCMBModelManager shouldn't need to emit signal while syncing
-  this->Internal->smtkManager->blockSignals(true);
-  this->Internal->ModelPanel->getModelView()->syncEntityColor(
-    BlockColors, newcolor);
-  this->Internal->smtkManager->blockSignals(false);
-}
-*/

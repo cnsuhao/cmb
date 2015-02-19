@@ -19,6 +19,7 @@ class vtkSMDoubleMapProperty;
 namespace smtk {
  namespace attribute {
   class qtFileItem;
+  class qtModelEntityItem;
  }
 }
 namespace smtk {
@@ -54,9 +55,14 @@ public slots:
 //  void linkRepresentations();
 
 protected slots:
-  void selectEntities(const smtk::model::EntityRefs& entities);
+  void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
   void onLaunchFileBrowser();
+  void onModelEntityItemCreated(
+    smtk::attribute::qtModelEntityItem* entItem);
+  void onRequestEntityAssociation();
+  void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
+
 //  void propertyChanged(
 //    vtkObject* caller, unsigned long, void*);
 //  void linkRepresentation(pqDataRepresentation *representation);

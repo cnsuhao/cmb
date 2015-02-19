@@ -8,10 +8,14 @@
 #include "cmbSystemConfig.h"
 
 #include "smtk/extension/qt/qtFileItem.h"
+#include "smtk/extension/qt/qtModelEntityItem.h"
+#include "smtk/extension/qt/qtModelView.h"
 #include "smtk/attribute/DirectoryItem.h"
 #include "smtk/attribute/DirectoryItemDefinition.h"
 #include "smtk/attribute/FileItem.h"
 #include "smtk/attribute/FileItemDefinition.h"
+#include "smtk/attribute/ModelEntityItem.h"
+#include "smtk/attribute/ModelEntityItemDefinition.h"
 
 #include "pqServer.h"
 #include "pqFileDialog.h"
@@ -90,6 +94,30 @@ namespace pqSMTKUIHelper
       }
 
   }
+
+  //----------------------------------------------------------------------------
+  static void process_smtkModelEntityItemSelectionRequest(
+    smtk::attribute::qtModelEntityItem* entityItem,
+    smtk::model::qtModelView* modelView)
+  {
+    if(!entityItem || !modelView)
+      {
+      return;
+      }
+
+    smtk::attribute::ModelEntityItemPtr eItem =
+      smtk::dynamic_pointer_cast<smtk::attribute::ModelEntityItem>(
+      entityItem->getObject());
+    const smtk::attribute::ModelEntityItemDefinition *eItemDef =
+      dynamic_cast<const smtk::attribute::ModelEntityItemDefinition*>(
+      eItem->definition().get());
+
+    smtk::model::EntityRefs selentityrefs;
+    modelView->currentSelectionByMask(selentityrefs, eItemDef->membershipMask());
+
+    entityItem->associateEntities(selentityrefs);
+  }
+
 }
 //ETX
 #endif

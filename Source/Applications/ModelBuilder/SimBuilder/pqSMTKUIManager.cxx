@@ -105,6 +105,9 @@ void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore
   this->qtManager()->disconnect();
   QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
     this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
+//  QObject::connect(this->qtAttSystem,
+//    SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
+//    this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
 
   this->qtManager()->initializeUI(parentWidget);
   // callbacks from Expressions sections
