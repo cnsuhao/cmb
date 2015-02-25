@@ -1114,8 +1114,10 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
     this->clearpqCMBSceneTree();
     }
 
-  this->Internal->AttEdgeColorLegendAction->setVisible(false);
-  this->Internal->AttFaceColorLegendAction->setVisible(false);
+  if (this->Internal->AttEdgeColorLegendAction)
+    this->Internal->AttEdgeColorLegendAction->setVisible(false);
+  if (this->Internal->AttFaceColorLegendAction)
+    this->Internal->AttFaceColorLegendAction->setVisible(false);
 
   if(this->Internal->AttFaceScalarBarWidget)
     {
