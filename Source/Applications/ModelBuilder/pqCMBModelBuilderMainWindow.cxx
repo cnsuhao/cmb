@@ -133,6 +133,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <vtksys/SystemTools.hxx>
 #include "smtk/model/StringData.h"
+#include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/qt/qtMeshSelectionItem.h"
+#include "smtk/attribute/MeshSelectionItem.h"
 
 class pqCMBModelBuilderMainWindow::vtkInternal
 {
@@ -176,6 +179,7 @@ public:
   QStringList TextureFiles;
   QPointer<QAction> ChangeTextureAction;
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*> CurrentDockWidgets;
+
 };
 
 //----------------------------------------------------------------------------
@@ -332,15 +336,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::SetCheckBoxStateQuiet(QCheckBox* box, bool state)
-{
-  // Modify Qcheckbox status without emit signal
-  box->blockSignals(true);
-  box->setChecked(state);
-  box->blockSignals(false);
-}
-
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::addNewSession(const QString& brname)
 {
   QAction* act = this->Internal->NewModelSessionMenu->addAction(brname);
@@ -407,47 +402,6 @@ void pqCMBModelBuilderMainWindow::onUnloadScene()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
-/*
-  // Variable toolbar
-  this->Internal->VariableToolbar = new QToolBar("Active Variable Controls", this);
-  this->Internal->VariableToolbar->setObjectName("variableToolbar");
-
-  this->getThisCore()->setupVariableToolbar(this->Internal->VariableToolbar);
-  //add the color button to the variable toolbar
-  this->Internal->ColorButton = new pqColorChooserButton(
-    this->Internal->VariableToolbar)<< pqSetName("displayColorButton");
-  this->Internal->ColorButton->setToolTip("Set color on selected objects");
-  this->Internal->ColorButton->setChosenColor(Qt::white);
-  this->Internal->ColorButton->setIconRadiusHeightRatio(0.5);
-  this->Internal->VariableToolbar->addWidget(this->Internal->ColorButton);
-
-  QObject::connect(this->Internal->ColorButton,
-                   SIGNAL(validColorChosen(const QColor&)),
-                   this,
-                   SLOT(setSolidColorOnSelections(const QColor&)));
-
-  this->insertToolBar(this->getMainDialog()->toolBar_Selection,this->Internal->VariableToolbar);
-
-  // Grow toolbar
-  this->Internal->GrowToolbar = new QToolBar("Grow Operations", this);
-  this->Internal->GrowToolbar->setObjectName("growPick_Toolbar");
-  this->Internal->GrowToolbar->addAction(
-    this->getMainDialog()->actionGrow_Cell);
-  this->Internal->GrowToolbar->addAction(
-    this->getMainDialog()->actionGrowPlus);
-  this->Internal->GrowToolbar->addAction(
-    this->getMainDialog()->actionGrowMinus);
-  this->Internal->GrowToolbar->addAction(
-    this->getMainDialog()->actionGrow_Clear);
-  this->Internal->GrowToolbar->addAction(
-    this->getMainDialog()->actionGrow_Accept);
-//  this->Internal->GrowToolbar->addAction(
-//    this->getMainDialog()->actionGrow_AcceptNG);
-  this->Internal->GrowToolbar->insertSeparator(
-    this->getMainDialog()->actionGrow_Clear);
-
-  this->insertToolBar(this->Internal->VariableToolbar,this->Internal->GrowToolbar);
-*/
   this->Internal->Model2DToolbar = NULL;
 
 }
@@ -538,68 +492,6 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
 
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
-/*
-  // Create Simple Model Action
-  this->Internal->CreateSimpleModelAction = new QAction(this->getMainDialog()->menu_File);
-  this->Internal->CreateSimpleModelAction->setObjectName(QString::fromUtf8("action_createsimplemodel"));
-  this->Internal->CreateSimpleModelAction->setText(QString::fromUtf8("Create Simple Model"));
-  QObject::connect(this->Internal->CreateSimpleModelAction, SIGNAL(triggered()),
-    this, SLOT(onCreateSimpleModel()));
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Exit,
-    this->Internal->CreateSimpleModelAction);
-
-  this->getMainDialog()->menu_File->insertSeparator(
-    this->getMainDialog()->action_Exit);
-*/
-  // Add actions to "Edit" menu.
-//  this->getMainDialog()->menuEdit->insertAction(
-//    this->getMainDialog()->action_Select,
-//    this->getMainDialog()->actionConvert_from_Lat_Long);
-//  this->getMainDialog()->menuEdit->insertAction(
-//    this->getMainDialog()->action_Select,
-//    this->getMainDialog()->actionApplyBathymetry);
-//  this->getMainDialog()->menuEdit->insertSeparator(
-//    this->getMainDialog()->action_Select);
-/*
-  this->getMainDialog()->menuEdit->addActions(
-    this->Internal->GrowToolbar->actions());
-  this->getMainDialog()->menuEdit->insertSeparator(
-    this->Internal->GrowToolbar->actions().value(0));
-
-  this->Internal->CreateModelEdgesAction = new QAction(this->getMainDialog()->menuEdit);
-  this->Internal->CreateModelEdgesAction->setObjectName(QString::fromUtf8("action_createModelEdges"));
-  this->Internal->CreateModelEdgesAction->setText(QString::fromUtf8("Create Model Edges"));
-//  QObject::connect(this->Internal->CreateModelEdgesAction, SIGNAL(triggered()),
-//    this, SLOT(createModelEdges()));
-  this->getMainDialog()->menuEdit->insertAction(
-    this->getMainDialog()->actionConvert_from_Lat_Long,
-    this->Internal->CreateModelEdgesAction);
-  this->getMainDialog()->menuEdit->insertSeparator(
-    this->getMainDialog()->actionConvert_from_Lat_Long);
-  this->Internal->CreateModelEdgesAction->setEnabled(false);
-*/
-
-/*
-  this->Internal->ChangeTextureAction = new QAction(this->getMainDialog()->menuEdit);
-  this->Internal->ChangeTextureAction->setObjectName(QString::fromUtf8("action_editTexture"));
-  this->Internal->ChangeTextureAction->setText(QString::fromUtf8("Edit Texture Map"));
-  QObject::connect(this->Internal->ChangeTextureAction, SIGNAL(triggered()),
-    this, SLOT(editTexture()));
-  this->getMainDialog()->menuEdit->insertAction(
-    this->Internal->CreateModelEdgesAction,
-    this->Internal->ChangeTextureAction);
-  this->Internal->ChangeTextureAction->setEnabled(false);
-
-  // add a spin box for the Grow-Angle in the grow toolbar
-  this->Internal->GrowAngleBox = new QDoubleSpinBox(this->Internal->GrowToolbar);
-  this->Internal->GrowAngleBox->setMinimum(0.0);
-  this->Internal->GrowAngleBox->setMaximum(180.0);
-  this->Internal->GrowAngleBox->setValue(30.0);
-  this->Internal->GrowAngleBox->setObjectName("growAngleBox");
-  this->Internal->GrowAngleBox->setToolTip("Feature angle for grow selection");
-  this->Internal->GrowToolbar->addWidget(this->Internal->GrowAngleBox);
-*/
   // Add actions to "Tools" menu.
   this->getMainDialog()->menu_Tools->insertAction(
     this->getMainDialog()->actionLock_View_Size,
@@ -621,25 +513,9 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
 
   this->getMainDialog()->action_Save_BCSs->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
-  this->getMainDialog()->actionGrow_Cell->setEnabled(data_loaded);
-  this->getMainDialog()->actionGrowPlus->setEnabled(data_loaded);
-  this->getMainDialog()->actionGrowPlus->setEnabled(data_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
   this->getMainDialog()->actionConvert_from_Lat_Long->setChecked(false);
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
-  this->setGrowButtonsState(false);
-
-//  this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
-//  this->getMainDialog()->actionApplyBathymetry->setEnabled(model_loaded);
-//  this->Internal->ChangeTextureAction->setEnabled(model_loaded);
-
-  //this->Internal->ColorWidget->setEnabled(data_loaded);
-  //this->Internal->RepresentationWidget->setEnabled(data_loaded);
-//  this->setToolbarEnableState(this->Internal->VariableToolbar, model_loaded);
-//  this->setToolbarEnableState(this->Internal->GrowToolbar, data_loaded);
-
-  //this->Internal->VariableToolbar->setEnabled(data_loaded);
-  //this->Internal->GrowToolbar->setEnabled(data_loaded);
 
   // The state could be changed in updateUIByDimension()
   this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( model_loaded );
@@ -784,28 +660,6 @@ void pqCMBModelBuilderMainWindow::onZoomModeChanged(int mode)
 }
 
 //----------------------------------------------------------------------------
-// Since render view always creates an id based selection, the role of this
-// method is to convert it to a "region id" selection so that we select faces.
-void pqCMBModelBuilderMainWindow::updateCMBSelection()
-{
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::updateCellGrowSelection()
-{
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::mergeCellGrowSelection()
-{
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::removeCellGrowSelection()
-{
-}
-
-//----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindow::multipleCellsSelected()
 {
   int numSel = this->getLastSelectionPorts().count();
@@ -938,8 +792,8 @@ void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
     {
     this->getMainDialog()->actionZoomToBox->setChecked(false);
     }
-  this->getMainDialog()->actionZoomToBox->setEnabled(!disable);
-  this->getMainDialog()->toolBar_Selection->setEnabled(!disable);
+//  this->getMainDialog()->actionZoomToBox->setEnabled(!disable);
+//  this->getMainDialog()->toolBar_Selection->setEnabled(!disable);
 }
 
 //----------------------------------------------------------------------------
@@ -970,60 +824,22 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
     }
   else
     {
-    if(this->getMainDialog()->actionGrow_Cell->isChecked())
-      {
-      this->updateCellGrowSelection();
-      //this->getMainDialog()->actionGrow_Cell->setChecked(false);
-      }
-    else if(this->getMainDialog()->actionGrowPlus->isChecked())
-      {
-      this->mergeCellGrowSelection();
-      //this->getMainDialog()->actionGrowPlus->setChecked(false);
-      }
-    else if(this->getMainDialog()->actionGrowMinus->isChecked())
-      {
-      this->removeCellGrowSelection();
-      //this->getMainDialog()->actionGrowMinus->setChecked(false);
-      }
+    this->getThisCore()->modelManager()->startMeshSelectionOperation(
+      this->getLastSelectionPorts());
+/*
     this->clearSelectedPorts();
+*/
     }
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onSurfaceRubberBandSelect(bool checked)
 {
-  if(checked)
-    {
-    this->setGrowButtonsState(false);
-    }
   this->getThisCore()->onRubberBandSelect(checked);
 }
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onConvertLatLong(bool checked)
 {
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::growFinished()
-{
-  this->updateGrowGUI(false);
-  if(!this->getMainDialog()->action_Select->isChecked())
-    {
-    this->getThisCore()->onRubberBandSelectCells(false);
-    }
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onGrowFromCell(bool checked)
-{
-  if(checked)
-   {
-   //this->getMainDialog()->actionGrow_Cell->setChecked(false);
-   this->getMainDialog()->actionGrowPlus->setChecked(false);
-   this->getMainDialog()->actionGrowMinus->setChecked(false);
-   this->updateGrowGUI(true);
-   }
-  this->getThisCore()->onRubberBandSelectCells(checked);
 }
 
 //----------------------------------------------------------------------------
@@ -1035,41 +851,15 @@ void pqCMBModelBuilderMainWindow::onConvertArcNodes(bool checked)
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onGrowAndMerge(bool checked)
+void pqCMBModelBuilderMainWindow::growFinished()
 {
-  if(checked)
-   {
-   this->getMainDialog()->actionGrow_Cell->setChecked(false);
-   //this->getMainDialog()->actionGrowPlus->setChecked(false);
-   this->getMainDialog()->actionGrowMinus->setChecked(false);
-   this->updateGrowGUI(checked);
-   }
-  this->getThisCore()->onRubberBandSelectCells(checked);
-}
+  this->getThisCore()->modelManager()->setCurrentMeshSelectionItem(NULL);
 
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onGrowAndRemove(bool checked)
-{
-  if(checked)
-   {
-   this->getMainDialog()->actionGrow_Cell->setChecked(false);
-   this->getMainDialog()->actionGrowPlus->setChecked(false);
-   //this->getMainDialog()->actionGrowMinus->setChecked(false);
-   this->updateGrowGUI(checked);
-   }
-  this->getThisCore()->onRubberBandSelectCells(checked);
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onAcceptGrowFacets()
-{
-  this->growFinished();
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onClearGrowResult()
-{
-  this->growFinished();
+  this->updateGrowGUI(false);
+  if(!this->getMainDialog()->action_Select->isChecked())
+    {
+    this->getThisCore()->onRubberBandSelectCells(false);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -1086,30 +876,6 @@ void pqCMBModelBuilderMainWindow::updateGrowGUI(bool doGrow)
   if(doGrow)
     {
     this->onClearSelection();
-    }
-  else
-    {
-    this->setGrowButtonsState(doGrow);
-    }
-  this->getMainDialog()->actionGrow_Clear->setEnabled(doGrow);
-  this->getMainDialog()->actionGrow_Accept->setEnabled(doGrow);
-//  this->getMainDialog()->actionGrow_AcceptNG->setEnabled(doGrow);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::setGrowButtonsState(bool checked)
-{
-  if(this->getMainDialog()->actionGrow_Cell->isChecked() != checked)
-    {
-    this->getMainDialog()->actionGrow_Cell->setChecked(checked);
-    }
-  if(this->getMainDialog()->actionGrowPlus->isChecked() != checked)
-    {
-    this->getMainDialog()->actionGrowPlus->setChecked(checked);
-    }
-  if(this->getMainDialog()->actionGrowMinus->isChecked() != checked)
-    {
-    this->getMainDialog()->actionGrowMinus->setChecked(checked);
     }
 }
 
@@ -1187,6 +953,22 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->getMainDialog()->faceParametersDock->setVisible(false);
   this->updateSelectionUI(false);
   this->getMainDialog()->action_Select->setEnabled(true);
+
+  QObject::connect(this->getThisCore()->modelPanel()->modelView(),
+    SIGNAL(MeshSelectionItemCreated(smtk::attribute::qtModelEntityItem*,
+           const smtk::model::OperatorPtr&)),
+    this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
+               const smtk::model::OperatorPtr&)));
+
+
+  QObject::connect(this->getThisCore()->modelPanel()->modelView(),
+                  SIGNAL(requestMeshCellSelection(
+                   smtk::attribute::ModelEntityItemPtr,
+                   smtk::attribute::qtMeshSelectionItem::MeshListUpdateType)),
+    this, SIGNAL(onRequestMeshCellSelection(
+              smtk::attribute::ModelEntityItemPtr,
+              smtk::attribute::qtMeshSelectionItem::MeshListUpdateType)));
+
   // If there is no dock panel yet, this is the first time, so init
   // default panels
   this->initUIPanel(qtCMBPanelsManager::MODEL);
@@ -1584,5 +1366,58 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
       default:
         break;
       }
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
+{
+  smtk::attribute::qtMeshSelectionItem* const qMeshItem = qobject_cast<
+  smtk::attribute::qtMeshSelectionItem*>(QObject::sender());
+  this->getThisCore()->modelManager()->setCurrentMeshSelectionItem(
+    qMeshItem);
+  if(!qMeshItem)
+    {
+    return;
+    }
+  smtk::attribute::MeshSelectionItemPtr MeshSelectionItem =
+    smtk::dynamic_pointer_cast<smtk::attribute::MeshSelectionItem>(
+    qMeshItem->getObject());
+  if(!MeshSelectionItem)
+    {
+    return;
+    }
+
+  switch(MeshSelectionItem->meshSelectMode())
+  {
+    case smtk::attribute::MeshSelectionItem::ACCEPT:
+    case smtk::attribute::MeshSelectionItem::NONE:
+      this->growFinished();
+      break;
+    case smtk::attribute::MeshSelectionItem::RESET:
+    case smtk::attribute::MeshSelectionItem::MERGE:
+    case smtk::attribute::MeshSelectionItem::SUBTRACT:
+      this->getThisCore()->onRubberBandSelectCells(true);
+      break;
+    default:
+      std::cerr << "ERROR: Unrecognized MeshListUpdateType: "
+                << MeshSelectionItem->meshSelectMode() << std::endl;
+      break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onMeshSelectionItemCreated(
+  smtk::attribute::qtMeshSelectionItem* meshItem,
+  const smtk::model::OperatorPtr& op)
+{
+  if(meshItem)
+    {
+    QObject::connect(meshItem, SIGNAL(requestMeshSelection(
+                      smtk::attribute::ModelEntityItemPtr)),
+                    this, SIGNAL(onRequestSurfaceCellSelection(
+                      smtk::attribute::ModelEntityItemPtr)));
+    this->getThisCore()->modelManager()->addMeshSelectionOperation(
+      meshItem, op);
     }
 }

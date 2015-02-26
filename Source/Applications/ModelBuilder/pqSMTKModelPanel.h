@@ -9,7 +9,7 @@
 #include <QDockWidget>
 
 #include "smtk/model/EntityRef.h"
-
+#include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
 class pqCMBModelManager;
 class vtkObject;
 class pqDataRepresentation;
@@ -53,6 +53,8 @@ public slots:
   void updateTreeSelection();
   void onEntitiesExpunged(const smtk::model::EntityRefs& expungedEnts);
 //  void linkRepresentations();
+
+signals:
 
 protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);

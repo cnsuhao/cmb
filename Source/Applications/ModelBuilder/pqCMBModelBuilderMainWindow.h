@@ -32,12 +32,11 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __pqCMBModelBuilderMainWindow_h
 
 #include "pqCMBCommonMainWindow.h"
-#include <QCheckBox>
-#include <QModelIndex>
-#include <QTreeWidgetItem>
+#include "qtCMBPanelsManager.h" // for qtCMBPanelsManager::PanelType
+#include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
+#include "smtk/PublicPointerDefs.h" // for smtk item pointers
 #include <QVariant>
 #include <vtkType.h>
-#include "qtCMBPanelsManager.h"
 #include "cmbSystemConfig.h"
 
 class vtkDataSet;
@@ -50,6 +49,8 @@ class pqCMBModel;
 class pqProxyInformationWidget;
 class QDockWidget;
 class pqDataRepresentation;
+class QCheckBox;
+class QTreeWidgetItem;
 
 class pqCMBModelBuilderMainWindow : public pqCMBCommonMainWindow
 {
@@ -86,9 +87,16 @@ protected slots:
 
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
+
+  // Description:
+  // Slots for smtk related signals.  
   void addNewSessions(const QStringList&);
   void addNewSession(const QString&);
   void onCreateNewSession();
+  void onRequestMeshCellSelection();
+  void onMeshSelectionItemCreated(
+  smtk::attribute::qtMeshSelectionItem* meshItem,
+  const smtk::model::OperatorPtr& op);
 
   // Description:
   // Updates the enable state of various menus.
@@ -129,9 +137,6 @@ protected slots:
  // Description:
   // Signals when selection actions are invoked.
   void onSurfaceRubberBandSelect(bool);
-  void onGrowFromCell(bool);
-  void onGrowAndMerge(bool);
-  void onGrowAndRemove(bool);
 
   // Description:
   // Signal when convert lat-long atcion is invoked.
@@ -140,11 +145,6 @@ protected slots:
   // Description:
   // Signals when convert arc-node action is invoked for 2D model
   void onConvertArcNodes(bool);
-
-  // Description:
-  // Grow related slots
-  void onClearGrowResult();
-  void onAcceptGrowFacets();
 
   // Description:
   // Option to show/hide the shared model entities
@@ -191,9 +191,6 @@ protected:
   // Description:
   // Called whenever a cell grow is made. converts the selection to a value
   // based selection so that we can control selections of individual cells.
-  void updateCellGrowSelection();
-  void mergeCellGrowSelection();
-  void removeCellGrowSelection();
   int getNumberOfSelectedCells(pqOutputPort* selPort);
   bool multipleCellsSelected();
   void growFinished();
@@ -203,7 +200,6 @@ protected:
   // Some convenient methods
   void clearGUI();
   void updateGrowGUI(bool);
-  void setGrowButtonsState(bool);
   void UpdateInfoTable();
   void updateDataInfo();
   void UpdateModelState(int accepted);
@@ -221,7 +217,6 @@ protected:
     bool recreate=false);
   pqProxyInformationWidget* getInfoWidget();
 
-  void SetCheckBoxStateQuiet(QCheckBox* box, bool state);
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
   void operator=(const pqCMBModelBuilderMainWindow&); // Not implemented.

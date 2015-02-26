@@ -34,6 +34,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkStringList.h"
+#include "vtkSMRenderViewProxy.h"
+#include "vtkPVGenericRenderWindowInteractor.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -58,9 +60,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
+#include "smtk/attribute/MeshSelectionItem.h"
+#include "smtk/attribute/MeshSelectionItemDefinition.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/qt/qtMeshSelectionItem.h"
 
 #include "cJSON.h"
 
@@ -128,6 +133,10 @@ public:
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
+
+  QMap<smtk::attribute::qtMeshSelectionItem*,
+    smtk::model::WeakOperatorPtr> SelectionOperations;
+  QPointer<smtk::attribute::qtMeshSelectionItem> CurrentMeshSelectItem;
 
   void updateModelAnnotations(const smtk::model::EntityRef& model)
   {
@@ -841,3 +850,83 @@ void pqCMBModelManager::onPluginLoaded()
       }
     }
 }
+//----------------------------------------------------------------------------
+void pqCMBModelManager::startMeshSelectionOperation(
+  const QList<pqOutputPort*> & selPorts)
+{
+  smtk::attribute::qtMeshSelectionItem* currSelItem =
+    this->Internal->CurrentMeshSelectItem;
+  if(!currSelItem)
+    return;
+  smtk::attribute::MeshSelectionItemPtr MeshSelectionItem =
+    smtk::dynamic_pointer_cast<smtk::attribute::MeshSelectionItem>(
+    currSelItem->getObject());
+  if(!MeshSelectionItem)
+    {
+    return;
+    }
+  smtk::model::Operator::Ptr op =
+    (currSelItem && this->Internal->SelectionOperations.contains(currSelItem)) ?
+    this->Internal->SelectionOperations[currSelItem].lock() :
+    smtk::model::OperatorPtr();
+  if(!op)
+    {
+    std::cerr << "There is no active mesh seleciton operation to start.\n";
+    }
+  // expecting a ModelEntity is set for grow selection
+  const smtk::attribute::MeshSelectionItemDefinition *itemDef =
+    dynamic_cast<const smtk::attribute::MeshSelectionItemDefinition*>(MeshSelectionItem->definition().get());
+  smtk::attribute::ModelEntityItem::Ptr inputEntities =
+    currSelItem->refModelEntityItem();
+  if(!inputEntities)
+    return;
+ 
+  pqRenderView* view = qobject_cast<pqRenderView*>(
+    pqActiveObjects::instance().activeView());
+  int isCtrlKeyDown = view->
+    getRenderViewProxy()->GetInteractor()->GetControlKey();
+  currSelItem->setUsingCtrlKey(isCtrlKeyDown ? true : false);
+
+  std::vector<int> ids;
+  for(int p=0; p<selPorts.count(); p++)
+    {
+    pqOutputPort* opPort = selPorts.value(p);
+    pqPipelineSource *source = opPort? opPort->getSource() : NULL;
+    if(!source )
+      continue;
+
+    pqDataRepresentation* rep = opPort->getRepresentation(view);
+    cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+    if(!modInfo || !inputEntities->has(modInfo->Info->GetModelUUID()))
+      continue;
+
+    vtkSMSourceProxy* selSource = opPort->getSelectionInput();
+    if(selSource && selSource->GetProperty("IDs"))
+      {
+      // [composite_index, process_id, index]
+      vtkSMPropertyHelper selIDs(selSource, "IDs");
+      std::vector<int> selids = selIDs.GetIntArray();
+      ids.insert(ids.end(), selids.begin(), selids.end());
+
+//    vtkSMSourceProxy::SafeDownCast(source->getProxy())->SetSelectionInput(0, NULL, 0);
+      }
+    }
+  currSelItem->updateValues(ids);
+
+  this->startOperation(op);
+}
+//----------------------------------------------------------------------------
+void pqCMBModelManager::addMeshSelectionOperation(
+    smtk::attribute::qtMeshSelectionItem* meshItem,
+    const smtk::model::OperatorPtr& op)
+{
+  if(meshItem && op)
+    this->Internal->SelectionOperations[meshItem] = op;
+}
+//----------------------------------------------------------------------------
+void pqCMBModelManager::setCurrentMeshSelectionItem(
+    smtk::attribute::qtMeshSelectionItem* meshItem)
+{
+  this->Internal->CurrentMeshSelectItem = meshItem;
+}
+

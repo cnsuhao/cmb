@@ -7,18 +7,28 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QPointer>
+#include <QList>
 
 #include "vtkSmartPointer.h"
-#include <QPointer>
 #include <set>
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/model/StringData.h"
 
+namespace smtk
+{
+  namespace attribute
+  {
+    class qtMeshSelectionItem;
+  }
+}
+
 class vtkPVSMTKModelInformation;
 class vtkSMModelManagerProxy;
 class vtkSMProxy;
 class pqDataRepresentation;
+class pqOutputPort;
 class pqPipelineSource;
 class pqRenderView;
 class pqServer;
@@ -67,6 +77,13 @@ public:
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
+  void addMeshSelectionOperation(
+    smtk::attribute::qtMeshSelectionItem* meshItem,
+    const smtk::model::OperatorPtr& op);
+  void setCurrentMeshSelectionItem(
+    smtk::attribute::qtMeshSelectionItem* meshItem);
+  void startMeshSelectionOperation(
+    const QList<pqOutputPort*> &);
 
 signals:
   void currentModelCleared();
