@@ -887,7 +887,7 @@ void pqCMBModelManager::startMeshSelectionOperation(
     getRenderViewProxy()->GetInteractor()->GetControlKey();
   currSelItem->setUsingCtrlKey(isCtrlKeyDown ? true : false);
 
-  std::vector<int> ids;
+  std::map<smtk::common::UUID, std::set<int> >selectionValues;
   for(int p=0; p<selPorts.count(); p++)
     {
     pqOutputPort* opPort = selPorts.value(p);
@@ -899,19 +899,26 @@ void pqCMBModelManager::startMeshSelectionOperation(
     cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
     if(!modInfo || !inputEntities->has(modInfo->Info->GetModelUUID()))
       continue;
-
+    smtk::common::UUID entid;
     vtkSMSourceProxy* selSource = opPort->getSelectionInput();
     if(selSource && selSource->GetProperty("IDs"))
       {
       // [composite_index, process_id, index]
       vtkSMPropertyHelper selIDs(selSource, "IDs");
       std::vector<int> selids = selIDs.GetIntArray();
-      ids.insert(ids.end(), selids.begin(), selids.end());
+      std::vector<int>::const_iterator it;
+      for(it = selids.begin(); it != selids.end(); it+3)
+        {
+        entid = modInfo->Info->GetModelEntityId((*it) - 1);
+        selectionValues[entid].insert(*(it+2));
+        }
 
 //    vtkSMSourceProxy::SafeDownCast(source->getProxy())->SetSelectionInput(0, NULL, 0);
       }
     }
-  currSelItem->updateValues(ids);
+  smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
+  for(mapIt = selectionValues.begin(); mapIt != selectionValues.end(); ++mapIt)
+    currSelItem->setSelection(mapIt->first, mapIt->second);
 
   this->startOperation(op);
 }

@@ -156,10 +156,8 @@ public:
   QPointer<pqProxyInformationWidget> InformationWidget;
 
   QPointer<pqColorChooserButton> ColorButton;
-  QPointer<QDoubleSpinBox> GrowAngleBox;
 
   QPointer<QSettings> SplitterSettings;
-  QPointer<QToolBar> GrowToolbar;
   QPointer<QToolBar> Model2DToolbar;
   QPointer<QToolBar> VariableToolbar;
 
@@ -242,20 +240,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->action_Select,
     SIGNAL(triggered(bool)),
     this, SLOT(onSurfaceRubberBandSelect(bool)));
-
-  QObject::connect(this->getMainDialog()->actionGrow_Cell,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onGrowFromCell(bool)));
-  QObject::connect(this->getMainDialog()->actionGrowPlus,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onGrowAndMerge(bool)));
-  QObject::connect(this->getMainDialog()->actionGrowMinus,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onGrowAndRemove(bool)));
-  QObject::connect(this->getMainDialog()->actionGrow_Clear,
-    SIGNAL(triggered()),this, SLOT(onClearGrowResult()));
-  QObject::connect(this->getMainDialog()->actionGrow_Accept,
-    SIGNAL(triggered()),this, SLOT(onAcceptGrowFacets()));
 
   QObject::connect(this->getThisCore()->cmbRenderViewSelectionHelper(),
     SIGNAL(selectionFinished(int, int, int, int)),
@@ -955,19 +939,10 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->getMainDialog()->action_Select->setEnabled(true);
 
   QObject::connect(this->getThisCore()->modelPanel()->modelView(),
-    SIGNAL(MeshSelectionItemCreated(smtk::attribute::qtModelEntityItem*,
+    SIGNAL(meshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
            const smtk::model::OperatorPtr&)),
     this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
                const smtk::model::OperatorPtr&)));
-
-
-  QObject::connect(this->getThisCore()->modelPanel()->modelView(),
-                  SIGNAL(requestMeshCellSelection(
-                   smtk::attribute::ModelEntityItemPtr,
-                   smtk::attribute::qtMeshSelectionItem::MeshListUpdateType)),
-    this, SIGNAL(onRequestMeshCellSelection(
-              smtk::attribute::ModelEntityItemPtr,
-              smtk::attribute::qtMeshSelectionItem::MeshListUpdateType)));
 
   // If there is no dock panel yet, this is the first time, so init
   // default panels
