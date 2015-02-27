@@ -37,9 +37,13 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QDialog>
 #include <QVariant>
 
-#include <remus/client/ServerConnection.h>
-#include <remus/proto/Job.h>
-#include <remus/proto/JobRequirements.h>
+//Don't let QMOC see remus headers that include boost headers
+//or bad things happen
+#ifndef Q_MOC_RUN
+  #include <remus/client/ServerConnection.h>
+  #include <remus/proto/Job.h>
+  #include <remus/proto/JobRequirements.h>
+#endif
 
 class pqCMBModel;
 
