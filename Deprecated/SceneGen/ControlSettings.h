@@ -1,0 +1,23 @@
+// ControlSettings.h:  This file contains the definitions for multiplatform compilation
+//                created 10-06-2006
+//////////////////////////////////////////////////////////////////////////////////
+
+#if !defined(ControlSettings_H)
+#define ControlSettings_H
+
+///////////////////////////////////////////////////////////
+//quick definition of Alpha values for controls
+///////////////////////////////////////////////////////////
+//#define LO_ALPHA 0.25
+//#define HI_ALPHA 0.35
+//#define XH_ALPHA 0.45
+#define LO_ALPHA 0.35
+#define HI_ALPHA 0.65
+#define XH_ALPHA 1.00
+
+///////////////////////////////////////////////////////////
+//drop shadows for controls?
+///////////////////////////////////////////////////////////
+#define DROP_SHADOWS 1
+
+#endif // !defined(ControlSettings_H)

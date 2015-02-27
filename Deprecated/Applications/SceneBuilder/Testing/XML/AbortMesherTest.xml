@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_As" />
+  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/packageScene.sg" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionPackageScene" />
+  <pqevent object="qtCMBMainWindow/Package Scene Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/packageScene.sg" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,-4,12,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,-4,12,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,3,0,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,3,0,/0:0" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Create" command="activate" arguments="actionCreate_VOI" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,8,59" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,15,318" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,15,318" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Position/LineEdit0" command="set_string" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Position/LineEdit0" command="set_string" arguments="11" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Position/LineEdit0" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Position/LineEdit1" command="set_string" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Position/LineEdit1" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit0" command="set_string" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit0" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit1" command="set_string" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit1" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit2" command="set_string" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit2" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionCreate_CMB_Model" />
+  <pqevent object="qtCMBSceneMesherDialog/frame/VOI" command="set_string" arguments="VOI 0" />
+  <pqevent object="qtCMBSceneMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/statusbar/1pqCMBProcessWidget0/AbortButton" command="activate" arguments="" />
+
+</pqevents>

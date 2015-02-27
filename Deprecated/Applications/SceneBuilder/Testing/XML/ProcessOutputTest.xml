@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/statusbar/1pqCMBProcessWidget0/OutputButton" command="activate" arguments="" />
+  <pqevent object="processOutputDialog/clearButton" command="activate" arguments="" />
+  <pqevent object="processOutputDialog/closeButton" command="activate" arguments="" />
+</pqevents>

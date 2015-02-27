@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/temptestmodel.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="cancelled" arguments="" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_As" />
+  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/packageScene.sg" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionPackageScene" />
+  <pqevent object="qtCMBMainWindow/Package Scene Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/packageScene.sg" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionCreate_CMB_Model" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="2000" />
+  <pqevent object="qtCMBSceneMesherDialog/frame/Mesher" command="set_string" arguments="Internal Mesher" />
+  <pqevent object="qtCMBSceneMesherDialog/frame/MeshLength" command="set_double" arguments="0.05" />
+  <pqevent object="qtCMBSceneMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/statusbar/1pqCMBProcessWidget0/OutputButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="processOutputDialog/clearButton" command="activate" arguments="" />
+  <pqevent object="processOutputDialog/closeButton" command="activate" arguments="" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Outline" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Points" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Wireframe" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Surface" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Surface With Edges" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation" command="mousePress" arguments="1,1,0,148,29" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation" command="mouseRelease" arguments="1,0,0,148,29" />
+  <pqevent object="pqCMBPreviewDialog" command="mousePress" arguments="1,1,0,185,-6" />
+  <pqevent object="pqCMBPreviewDialog" command="mouseMove" arguments="1,0,0,202,-3" />
+  <pqevent object="pqCMBPreviewDialog" command="mouseRelease" arguments="1,0,0,202,-3" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Surface" />
+  <pqevent object="pqCMBPreviewDialog/OkButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/CMBExportDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/temptestmodel.cmb" />
+
+</pqevents>

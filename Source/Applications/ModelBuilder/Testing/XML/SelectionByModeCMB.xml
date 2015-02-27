@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,8,6,/0:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,8,6,/0:1" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.330508,0.0939716,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.57385,0.386525,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.57385,0.386525,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,25,6,/1:0/0:0/0:3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,25,6,/1:0/0:0/0:3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/pushButton_ApplyAngle" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.807506,0.886525,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.70339,0.776596,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.70339,0.776596,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Regions" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.569007,0.457447,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.768765,0.828014,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.768765,0.828014,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.594431,0.368794,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.323245,0.072695,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.323245,0.072695,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Domain Sets" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.119855,0.411348,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.743341,0.828014,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.743341,0.828014,1,0,0)" />
+</pqevents>

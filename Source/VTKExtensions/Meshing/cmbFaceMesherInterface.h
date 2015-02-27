@@ -1,0 +1,115 @@
+/*=========================================================================
+
+Copyright (c) 1998-2005 Kitware Inc. 28 Corporate Drive, Suite 204,
+Clifton Park, NY, 12065, USA.
+
+All rights reserved. No part of this software may be reproduced,
+distributed,
+or modified, in any form or by any means, without permission in writing from
+Kitware Inc.
+
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
+EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE IS PROVIDED ON AN
+"AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO
+PROVIDE
+MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+=========================================================================*/
+// .NAME cmbFaceMesherInterface
+// .SECTION Description
+// Wraps the Triangle library with an easy to use class
+
+
+
+#ifndef __cmbFaceMesherInterface_h
+#define __cmbFaceMesherInterface_h
+
+#include "vtkCMBMeshingModule.h" // For export macro
+#include <string> //for std string
+#include "vtkABI.h"
+#include "cmbSystemConfig.h"
+class vtkPolyData;
+class vtkCMBMeshServerLauncher;
+
+class VTKCMBMESHING_EXPORT cmbFaceMesherInterface
+{
+public:
+  cmbFaceMesherInterface();
+  cmbFaceMesherInterface(const int &numPoints,const int &numSegments,
+                         const int &numHoles=0, const int& numRegions=0,
+                         const bool &preserveEdgesAndNodes=false);
+  ~cmbFaceMesherInterface();
+
+  void setUseMinAngle(const bool &useMin){MinAngleOn=useMin;}
+  void setMinAngle(const double &angle){MinAngle=angle;}
+
+  void setUseMaxArea(const bool &useMin){MaxAreaOn=useMin;}
+  void setMaxArea(const double &inArea){MaxArea=inArea;}
+
+  void setPreserveBoundaries(const bool& preserve){PreserveBoundaries=preserve;}
+
+  void setVerboseOutput(const bool& verbose){VerboseOutput=verbose;}
+
+  void setOutputMesh(vtkPolyData *mesh);
+
+  bool setPoint(const int index, const double &x, const double &y, const int& nodeId=-1);
+
+  bool setSegment(const int index, const int &pId1, const int &pId2, const int &arcId=0);
+
+  bool setHole(const int index, const double &x, const double &y);
+
+  bool setRegion(const int index, const double &x, const double &y, const double &attribute, const double& max_area);
+
+  //returns the area of the bounds
+  double area( ) const;
+
+  //returns the bounds in the order of:
+  //xmin,ymin,xmax,ymax
+  void bounds(double bounds[4]) const;
+
+  //if preserveEdges is set to true VTK_LINES
+  //will be set in the output mesh and ElementIds
+  //will be set for each edge
+  //Uses the given server connection instead of creating it own.
+  bool buildFaceMesh(vtkCMBMeshServerLauncher* activeServer,
+                     const long &faceId, const double &zValue=0);
+
+  //if preserveEdges is set to true VTK_LINES
+  //will be set in the output mesh and ElementIds
+  //will be set for each edge
+  bool buildFaceMesh(const long &faceId, const double &zValue=0);
+protected:
+  void InitDataStructures();
+
+  bool PackData(std::string& rawData);
+  bool unPackData(const std::string& rawData, const long &faceId, const double &zValue);
+
+  vtkPolyData *OutputMesh;
+
+private:
+  bool MinAngleOn;
+  bool MaxAreaOn;
+  double MaxArea;
+  double MinAngle;
+  bool PreserveBoundaries;
+  bool PreserveEdgesAndNodes;
+  bool VerboseOutput;
+
+  const int NumberOfPoints;
+  const int NumberOfSegments;
+  const int NumberOfHoles;
+  const int NumberOfRegions;
+  int NumberOfNodes; //Set implicitly by adding points with ids
+  //BTX
+  struct TriangleInput;
+  TriangleInput *Ti;
+  //ETX
+};
+#endif

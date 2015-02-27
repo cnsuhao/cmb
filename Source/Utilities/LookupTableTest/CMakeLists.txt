@@ -1,0 +1,14 @@
+PROJECT (LookupTableTest)
+
+INCLUDE (${CMAKE_ROOT}/Modules/FindVTK.cmake)
+IF (USE_VTK_FILE)
+  INCLUDE(${USE_VTK_FILE})
+ENDIF (USE_VTK_FILE)
+
+LINK_LIBRARIES(
+  vtkHybrid
+)
+
+ADD_EXECUTABLE(LookupTableTest MACOSX_BUNDLE LookupTableTest.cxx)
+
+

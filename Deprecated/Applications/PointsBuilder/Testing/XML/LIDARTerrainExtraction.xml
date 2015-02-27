@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/extractOutput_00.pts" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/clipped5Subset.pts" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabExtractTerrain/TerrainOptionsFrame/ResolutionGroup/detailedResolutionButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabExtractTerrain/TerrainOptionsFrame/autoSaveExtractionGroup/autoSaveFileButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/extractOutput.pts" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabExtractTerrain/TerrainOptionsFrame/processFullExtraction" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/1QMessageBox0/qt_msgbox_buttonbox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,57,-12" />
+  <pqevent object="qtCMBMainWindow" command="mouseRelease" arguments="1,0,0,57,-12" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="0" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/extractOutput_00.pts" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mousePress" arguments="1,1,0,17,10" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mouseRelease" arguments="1,0,0,17,10" />
+</pqevents>

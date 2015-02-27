@@ -1,0 +1,1109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1128</width>
+    <height>675</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Conceptual Model Builder</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../Resources/Resources.qrc">
+    <normaloff>:/cmb/Icon.png</normaloff>:/cmb/Icon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1128</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menu_Camera">
+     <property name="title">
+      <string>&amp;Camera</string>
+     </property>
+     <addaction name="actionReset_Camera"/>
+     <addaction name="actionView_Positive_X"/>
+     <addaction name="actionView_Negative_X"/>
+     <addaction name="actionView_Positive_Y"/>
+     <addaction name="actionView_Negative_Y"/>
+     <addaction name="actionView_Positive_Z"/>
+     <addaction name="actionView_Negative_Z"/>
+     <addaction name="separator"/>
+     <addaction name="actionShowCenterAxes"/>
+     <addaction name="actionResetCenter"/>
+     <addaction name="actionPickCenter"/>
+    </widget>
+    <addaction name="menu_Camera"/>
+    <addaction name="separator"/>
+    <addaction name="actionChange_Background_Color"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About"/>
+    <addaction name="action_Help"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuRecentFiles">
+     <property name="title">
+      <string>&amp;Recent Files</string>
+     </property>
+    </widget>
+    <addaction name="action_Load_Solid"/>
+    <addaction name="menuRecentFiles"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save_Data"/>
+    <addaction name="action_Close"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save_BCSs"/>
+    <addaction name="action_Generate_Omicron_Input"/>
+    <addaction name="separator"/>
+    <addaction name="action_Create_Simple_Model"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionSpawn_Surface_Mesher"/>
+    <addaction name="actionSpawn_Volume_Mesher"/>
+    <addaction name="separator"/>
+    <addaction name="actionToolsRecordTest"/>
+    <addaction name="actionToolsRecordTestScreenshot"/>
+    <addaction name="actionToolsPlayTest"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_View"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Load_Solid"/>
+   <addaction name="action_Save_Data"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_View">
+   <property name="windowTitle">
+    <string>Camera Controls</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionReset_Camera"/>
+   <addaction name="actionView_Positive_X"/>
+   <addaction name="actionView_Negative_X"/>
+   <addaction name="actionView_Positive_Y"/>
+   <addaction name="actionView_Negative_Y"/>
+   <addaction name="actionView_Positive_Z"/>
+   <addaction name="actionView_Negative_Z"/>
+   <addaction name="separator"/>
+   <addaction name="actionShowCenterAxes"/>
+   <addaction name="actionResetCenter"/>
+   <addaction name="actionPickCenter"/>
+  </widget>
+  <widget class="QToolBar" name="variableToolbar">
+   <property name="windowTitle">
+    <string>Active Variable Controls</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="growPick_Toolbar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Grow Operations</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionGrow_Cell"/>
+   <addaction name="actionGrowPlus"/>
+   <addaction name="actionGrowMinus"/>
+   <addaction name="separator"/>
+   <addaction name="actionGrow_Clear"/>
+   <addaction name="actionGrow_Accept"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Selection">
+   <property name="windowTitle">
+    <string>Selection Controls</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Select"/>
+  </widget>
+  <widget class="QDockWidget" name="faceParametersDock">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Face Inspector</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="margin">
+      <number>9</number>
+     </property>
+     <item>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Properties</string>
+        </attribute>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="margin">
+          <number>9</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="checkBoxSorting">
+           <property name="text">
+            <string>Enable Sorting by Column</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSplitter" name="splitterLayout">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="childrenCollapsible">
+            <bool>false</bool>
+           </property>
+           <widget class="QGroupBox" name="groupBoxMaterial">
+            <property name="title">
+             <string>Show Materials and Shells</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QGridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>6</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QFrame" name="frameMaterails">
+               <property name="minimumSize">
+                <size>
+                 <width>16</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <layout class="QGridLayout">
+                <property name="horizontalSpacing">
+                 <number>0</number>
+                </property>
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <item row="2" column="0">
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QLabel" name="label">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>Angle:</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="pqDoubleSpinBox" name="featureAngle">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="suffix">
+                     <string/>
+                    </property>
+                    <property name="minimum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="maximum">
+                     <double>180.000000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>70.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_ApplyAngle">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="toolTip">
+                     <string>Detect faces with the new feature angle</string>
+                    </property>
+                    <property name="text">
+                     <string>Split</string>
+                    </property>
+                    <property name="icon">
+                     <iconset>
+                      <normaloff/>
+                     </iconset>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_merge">
+                    <property name="text">
+                     <string>Merge</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item row="1" column="0">
+                 <layout class="QHBoxLayout">
+                  <item>
+                   <widget class="QPushButton" name="pushButtonAddMaterial">
+                    <property name="text">
+                     <string>Add Material</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButtonRemoveMaterial">
+                    <property name="text">
+                     <string>Remove Material</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QFrame" name="frameMaterialTree">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Raised</enum>
+                  </property>
+                  <property name="lineWidth">
+                   <number>0</number>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QGroupBox" name="groupBoxBCGroup">
+            <property name="title">
+             <string>Show Defined Groups</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <layout class="QGridLayout">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>3</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QFrame" name="frameBCGroups">
+               <property name="minimumSize">
+                <size>
+                 <width>16</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <layout class="QVBoxLayout">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QTabWidget" name="tabWidget_BCS">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <widget class="QWidget" name="tab_FacetBCS">
+                   <attribute name="title">
+                    <string>Facet Group</string>
+                   </attribute>
+                   <layout class="QGridLayout">
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="tab_NodalBCS">
+                   <attribute name="title">
+                    <string>Nodal Group</string>
+                   </attribute>
+                   <layout class="QGridLayout">
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="tab_LineGroup">
+                   <attribute name="title">
+                    <string>Hard Pts</string>
+                   </attribute>
+                  </widget>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QStackedWidget" name="stackedWidget">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>10</width>
+                    <height>10</height>
+                   </size>
+                  </property>
+                  <property name="currentIndex">
+                   <number>0</number>
+                  </property>
+                  <widget class="QWidget" name="page_BCS">
+                   <layout class="QHBoxLayout">
+                    <item>
+                     <widget class="QPushButton" name="pushButtonAddBC">
+                      <property name="text">
+                       <string>Add BC</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonRemoveBC">
+                      <property name="text">
+                       <string>Delete</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                  <widget class="QWidget" name="page_Line">
+                   <layout class="QHBoxLayout">
+                    <item>
+                     <widget class="QLabel" name="label_2">
+                      <property name="text">
+                       <string>Line Resolution: </string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QSpinBox" name="spinBoxLineRes">
+                      <property name="minimum">
+                       <number>1</number>
+                      </property>
+                      <property name="maximum">
+                       <number>999999</number>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButtonApplyRes">
+                      <property name="text">
+                       <string>Apply</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="margin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pushButton_accept">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Save Current Material and Model Faces as a temparory reset-to state.</string>
+             </property>
+             <property name="text">
+              <string>Save State</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_Reset">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Reverse the Material and Model Faces to last saved reset-to state.</string>
+             </property>
+             <property name="text">
+              <string>Reset State</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout">
+           <item>
+            <widget class="QPushButton" name="ZoomButton">
+             <property name="text">
+              <string>Zoom on Selection</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonClearSelection">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Clear Selection</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_2">
+        <attribute name="title">
+         <string>Display</string>
+        </attribute>
+        <layout class="QVBoxLayout">
+         <property name="spacing">
+          <number>6</number>
+         </property>
+         <property name="margin">
+          <number>9</number>
+         </property>
+         <item>
+          <widget class="QFrame" name="appearanceFrame">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="tab_3">
+        <attribute name="title">
+         <string>Data Info</string>
+        </attribute>
+        <layout class="QVBoxLayout">
+         <item>
+          <widget class="QTableWidget" name="informationTable">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>255</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <column>
+            <property name="text">
+             <string>Properties</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Values</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_3">
+   <property name="windowTitle">
+    <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="toolBar_2">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="toolBar_4">
+   <property name="windowTitle">
+    <string>toolBar_4</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <action name="action_Save_Data">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSave32.png</normaloff>:/cmb/pqSave32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Data</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="action_Help">
+   <property name="text">
+    <string>&amp;Help</string>
+   </property>
+  </action>
+  <action name="action_Close">
+   <property name="text">
+    <string>&amp;Close Data</string>
+   </property>
+   <property name="iconText">
+    <string>Close Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Data</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_Select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSelect32.png</normaloff>:/cmb/pqSelect32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Objects</string>
+   </property>
+  </action>
+  <action name="action_Merge_Faces">
+   <property name="text">
+    <string>&amp;Merge Faces</string>
+   </property>
+  </action>
+  <action name="actionReset_Camera">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqResetCamera32.png</normaloff>:/cmb/pqResetCamera32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset Camera</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_X">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqXPlus32.png</normaloff>:/cmb/pqXPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive X</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +X</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_X">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqXMinus32.png</normaloff>:/cmb/pqXMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative X</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -X</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_Y">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqYPlus32.png</normaloff>:/cmb/pqYPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +Y</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_Y">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqYMinus32.png</normaloff>:/cmb/pqYMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -Y</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_Z">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZPlus32.png</normaloff>:/cmb/pqZPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +Z</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_Z">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZMinus32.png</normaloff>:/cmb/pqZMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -Z</string>
+   </property>
+  </action>
+  <action name="actionShowCenterAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqShowCenterAxes24.png</normaloff>:/cmb/pqShowCenterAxes24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Show/Hide center of rotation</string>
+   </property>
+  </action>
+  <action name="actionResetCenter">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqResetCenter24.png</normaloff>:/cmb/pqResetCenter24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset center of rotation</string>
+   </property>
+  </action>
+  <action name="actionPickCenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqPickCenter24.png</normaloff>:/cmb/pqPickCenter24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pick Center</string>
+   </property>
+   <property name="iconText">
+    <string>Pick Center</string>
+   </property>
+   <property name="toolTip">
+    <string>Pick Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Mouse press to pick center of rotation</string>
+   </property>
+  </action>
+  <action name="action_Generate_Omicron_Input">
+   <property name="text">
+    <string>Generate Omicron Input22</string>
+   </property>
+  </action>
+  <action name="action_Load_Model_Faces">
+   <property name="text">
+    <string>Load Model Faces</string>
+   </property>
+  </action>
+  <action name="action_Load_Solid">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqOpen32.png</normaloff>:/cmb/pqOpen32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="iconText">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="action_Save_BCSs">
+   <property name="text">
+    <string>Export BCS File</string>
+   </property>
+   <property name="iconText">
+    <string>Export BCS File</string>
+   </property>
+   <property name="toolTip">
+    <string>Export BCS File</string>
+   </property>
+  </action>
+  <action name="actionScalarBarVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqScalarBar24.png</normaloff>:/cmb/pqScalarBar24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Color Legend</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Color Legend Visibility</string>
+   </property>
+   <property name="statusTip">
+    <string>Toggle Color Legend Visibility</string>
+   </property>
+  </action>
+  <action name="actionToolsRecordTest">
+   <property name="text">
+    <string>&amp;Record Test</string>
+   </property>
+  </action>
+  <action name="actionToolsPlayTest">
+   <property name="text">
+    <string>&amp;Play Test</string>
+   </property>
+  </action>
+  <action name="actionToolsRecordTestScreenshot">
+   <property name="text">
+    <string>Record Test &amp;Screenshot</string>
+   </property>
+  </action>
+  <action name="actionSpawn_Surface_Mesher">
+   <property name="text">
+    <string>S&amp;pawn Surface Mesher</string>
+   </property>
+  </action>
+  <action name="actionSpawn_Volume_Mesher">
+   <property name="text">
+    <string>Spawn Volume Mesher</string>
+   </property>
+  </action>
+  <action name="actionGrow_Cell">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCell32.png</normaloff>:/cmb/pqGrowCell32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Grow From Mesh Facet</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow from Mesh Facet (Hold Shift key to rotate in grow-mode; Hold Ctrl or Cmd key to add to or remove from current selection)</string>
+   </property>
+  </action>
+  <action name="actionGrow_Clear">
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqCancel48.png</normaloff>:/cmb/pqCancel48.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Grow Result</string>
+   </property>
+  </action>
+  <action name="actionGrow_Accept">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqAccept48.png</normaloff>:/cmb/pqAccept48.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New BCS from Grow</string>
+   </property>
+  </action>
+  <action name="actionGrowPlus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCellPlus32.png</normaloff>:/cmb/pqGrowCellPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>GrowPlus</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow then Merge the Result with Current Grow Selection (Hold Shift key to rotate in grow-mode)</string>
+   </property>
+  </action>
+  <action name="actionGrowMinus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCellMinus32.png</normaloff>:/cmb/pqGrowCellMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>GrowMinus</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow then Remove the Result from Current Grow Selection (Hold Shift key to rotate in grow-mode)</string>
+   </property>
+  </action>
+  <action name="actionChange_Background_Color">
+   <property name="text">
+    <string>Change Background Color</string>
+   </property>
+  </action>
+  <action name="action_Create_Simple_Model">
+   <property name="text">
+    <string>Create Simple Model</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>pqDoubleSpinBox</class>
+   <extends>QDoubleSpinBox</extends>
+   <header>pqDoubleSpinBox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../Resources/Resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

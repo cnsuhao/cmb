@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/HardpointsTest/mesh_hardpoints_test.3dm" />
+  <pqevent object="qtCMBMainWindow/actionSelect_Contour_Surface_Point" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.253315,0.16537,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.253315,0.16537,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.253315,0.16537,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.260991,0.249027,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.260991,0.249027,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.260991,0.249027,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.323098,0.251946,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.323098,0.25,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.323098,0.25,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.321005,0.168288,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.321005,0.168288,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.321005,0.168288,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.253315,0.163424,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.253315,0.163424,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.253315,0.163424,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/actionMove_Selected_Contour_Points" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/toolBar_View/cameraManipulationModeBox" command="set_string" arguments="3D Manipulation" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.346127,0.235409,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.347523,0.26751,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.347523,0.26751,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.258897,0.237354,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.210049,0.223735,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.210049,0.223735,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.328681,0.293774,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.517097,0.255837,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.517097,0.255837,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.695743,0.125486,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.713887,0.0700389,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.713887,0.0700389,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.695045,0.276265,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.57083,0.343385,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.57083,0.343385,1,0,0)" />
+</pqevents>

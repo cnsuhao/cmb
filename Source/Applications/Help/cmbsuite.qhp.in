@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>paraview.org</namespace>
+    <virtualFolder>cmbsuite</virtualFolder>
+    <filterSection>
+        <toc>
+		    <section title="About CMBSuite" ref="about.html"/>
+            <section title="CMBSuite Applications Release Notes" ref="index.html">
+			    <section title="CMBSuite Applications" ref="CMBSuite_README.html"/>
+                <section title="ProjectManager Application" ref="ProjectManager_README.html"/>
+                <section title="PointsBuilder Application" ref="PointsBuilder_README.html"/>
+				<section title="SceneBuilder Application" ref="SceneBuilder_README.html"/>
+				<section title="ModelBuilder Application" ref="ModelBuilder_README.html"/>
+				<section title="MeshViewer Application" ref="MeshViewer_README.html"/>
+				<section title="LIDAR Tool" ref="LIDAR_README.html"/>
+			</section>
+        </toc>
+        <keywords>
+            <keyword name="ModelBuilder Release Notes" ref="ModelBuilder_README.html" id="ModelBuilder::ModelBuilder Release Notes"/>
+	    </keywords>
+        <files>
+          <!-- CMake will automatically set this DOCUMENTATION_FILES variable to
+               list all the files in the documentation directory. We need to
+               ensure that those get added here. Custom apps are ofcourse free
+               to create this list on their own
+          -->
+          @DOCUMENTATION_FILES@
+        </files>
+    </filterSection>
+</QtHelpProject>

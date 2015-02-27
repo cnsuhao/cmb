@@ -1,0 +1,9 @@
+vtk_module(vtkCMBMeshing
+  DEPENDS
+    vtkCMBGeneral
+  PRIVATE_DEPENDS
+    vtkFiltersGeneral
+    vtkFiltersGeometry
+    vtksys
+  EXCLUDE_FROM_WRAP_HIERARCHY
+)

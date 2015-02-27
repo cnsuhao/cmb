@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="FileOpenDialog" command="remove" arguments="tempExport2DFaceMesh.2dm" />
+  <pqevent object="FileOpenDialog" command="cancelled" arguments="" />
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshMinAngle" command="set_string" arguments="30" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshGlobalLen" command="key" arguments="46" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshGlobalLen" command="set_string" arguments="0.5" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/pushButton_MeshApply" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Polygons" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.262357,0.438898,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.366286,0.580034,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.366286,0.580034,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalMinAngle" command="set_string" arguments="20" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalLen" command="key" arguments="46" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalLen" command="set_string" arguments="0.3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/pushButton_MeshApply" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/frameMeshTree/frameHideEntity/checkBoxHideModelFaces" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Arcs" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.498099,0.32358,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.591888,0.483649,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.591888,0.483649,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalLen" command="key" arguments="46" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.475285,0.304647,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.585551,0.407917,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.585551,0.407917,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalLen" command="key" arguments="46" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshLocal/lineEdit_MeshLocalLen" command="set_string" arguments="0.1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/pushButton_MeshApply" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/pushButtonSaveAnalysisMesh" command="activate" arguments="" />
+  <pqevent object="1QMessageBox0/qt_msgbox_buttonbox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="FileSaveDialog" command="filesSelected" arguments="tempExport2DFaceMesh.2dm" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="tempExport2DFaceMesh.2dm" />
+
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="FileOpenDialog" command="remove" arguments="tempExport2DFaceMesh.2dm" />
+  <pqevent object="FileOpenDialog" command="cancelled" arguments="" />
+
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Polygons" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.0899873,0.0946644,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.929024,0.920826,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.929024,0.920826,1,0,0)" />
+
+  </pqevents>

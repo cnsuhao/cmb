@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/JercSite_100x40_30.bin" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mousePress" arguments="1,1,0,80,6" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mouseRelease" arguments="1,0,0,80,6" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="Edit Points" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/addLineButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.498285,0.958852,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.498285,0.958852,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.498285,0.958852,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.499142,0.661244,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.499142,0.661244,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.499142,0.661244,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.511149,0.315789,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.511149,0.315789,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.511149,0.315789,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.541166,0.0794258,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.540309,0.0784689,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.540309,0.0784689,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ArcControlArea/qt_scrollarea_viewport/CmbSceneContourWidget/Finished" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ModifyArcTable" command="mousePress" arguments="1,1,0,25,6,/0:3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ModifyArcTable" command="mouseMove" arguments="1,0,0,26,8,/0:3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ModifyArcTable" command="mouseRelease" arguments="1,0,0,26,8,/0:3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ApplyAgain" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ApplyAgain" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ApplyAgain" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ApplyAgain" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="LIDAR Pieces" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_X" command="activate" arguments="" />
+</pqevents>

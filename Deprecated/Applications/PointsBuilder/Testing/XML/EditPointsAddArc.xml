@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/JercSite_100x40_30.bin" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mousePress" arguments="1,1,0,77,8" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mouseRelease" arguments="1,0,0,77,8" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="Edit Points" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/addLineButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.559177,0.945455,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.559177,0.945455,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.559177,0.945455,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.454545,0.826794,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.454545,0.826794,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.454545,0.826794,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.554889,0.772249,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.554889,0.772249,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.554889,0.772249,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.468268,0.688995,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.468268,0.688038,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.468268,0.688038,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.549743,0.632536,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.549743,0.632536,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.549743,0.632536,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.469983,0.559809,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.469983,0.559809,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.469983,0.559809,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.563465,0.498565,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.563465,0.498565,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.563465,0.498565,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.47084,0.403828,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.471698,0.403828,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.471698,0.403828,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.560892,0.348325,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.560892,0.348325,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.560892,0.348325,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.473413,0.277512,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.473413,0.278469,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.473413,0.278469,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.563465,0.22488,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.563465,0.22488,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.563465,0.22488,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.471698,0.167464,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.472556,0.167464,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.472556,0.167464,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.571184,0.136842,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.571184,0.136842,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.571184,0.136842,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.469983,0.0574163,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.469983,0.0574163,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.469983,0.0574163,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabModifyPoints/qtArcFunctionControl/ArcControlTabs/qt_tabwidget_stackedwidget/tab/ArcControlArea/qt_scrollarea_viewport/CmbSceneContourWidget/Finished" command="activate" arguments="" />
+</pqevents>

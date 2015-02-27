@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionNew" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCurrent" arguments="0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCheckState" arguments="0.0,0" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionImport_Object_File" />
+  <pqevent object="qtCMBSceneObjectImport" command="pause" arguments="1000" />
+  <pqevent object="qtCMBSceneObjectImport/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtCMBSceneObjectImport" command="pause" arguments="1000" />
+  <pqevent object="qtCMBSceneObjectImport/FileImportDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/TINHigh.vtk" />
+  <pqevent object="qtCMBSceneObjectImport/groupBox_Object/ObjectTypes" command="set_string" arguments="-TIN" />
+  <pqevent object="qtCMBSceneObjectImport/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="expand" arguments="0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCurrent" arguments="0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCheckState" arguments="0.0.0.0,0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/ZoomButton" command="activate" arguments="" />
+</pqevents>

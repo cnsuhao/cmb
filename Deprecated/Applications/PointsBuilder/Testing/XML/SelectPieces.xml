@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/LIDARTest.pts" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,11,11,/0:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,11,11,/0:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,11,25,/1:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,11,25,/1:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,10,25,/2:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,10,25,/2:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,15,21,/3:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,15,21,/3:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/advancedCheckBox" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,12,18,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,12,18,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,8,17,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,8,17,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,8,14,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,8,14,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,8,19,/2:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,8,19,/2:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,9,17,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,9,17,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,10,9,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,10,9,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,11,10,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,11,10,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame_5/UncheckAllButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame_5/CheckAllButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame_5/showSelectedButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mousePress" arguments="1,1,0,29,25,/1:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/PieceVisibilityTable" command="mouseRelease" arguments="1,0,0,29,25,/1:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame_5/zoomSelection" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame_5/clearSelection" command="activate" arguments="" />
+</pqevents>

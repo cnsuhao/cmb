@@ -1,0 +1,246 @@
+project (cmbAppCommon)
+
+# Any build configured headers should be added to this
+# variable so that they also get installed.
+set (dynamicHeaders)
+
+find_package(Remus REQUIRED)
+
+# Add Qt UI files here
+set(UI_FORMS
+    UI/qtAboutDialog.ui
+    UI/qtArcFunctionControl.ui
+    UI/qtCMBArcModifierInputDialog.ui
+    UI/qtCMBApplicationOptions.ui
+    UI/qtCMBBathymetryDialog.ui
+    UI/qtCMBConicalSourceDialog.ui
+    UI/qtCMBCreateSimpleGeometry.ui
+    UI/qtCMBOptionsDialog.ui
+    UI/qtCMBArcEditWidget.ui
+    UI/qtCMBSceneArcPolygonMeshingDialog.ui
+    UI/qtCMBSceneArcSnappingDialog.ui
+    UI/qtCMBGenerateContoursDialog.ui
+    UI/qtCMBSceneMesherDialog.ui
+    UI/qtCMBSceneObjectDuplicate.ui
+    UI/qtCMBSceneObjectImportNoUnits.ui
+    UI/qtCMBSceneSurfaceMesherDialog.ui
+    UI/qtCMBTINStitcherDialog.ui
+    UI/qtContourWidget.ui
+    UI/qtDefineGroundPlane.ui
+    UI/qtDefineVOI.ui
+    UI/qtEnumPropertyWidget.ui
+    UI/qtCMBMainWindow.ui
+    UI/qtHelpDialog.ui
+    UI/qtLIDARNumberOfPointsDialog.ui
+    UI/qtModifierArcDialog.ui
+    UI/qtNewSceneUnits.ui
+    UI/qtObjectPlacementConstraint.ui
+    UI/qtObjectTypeDialog.ui
+    UI/qtPreviewDialog.ui
+    UI/qtCMBSceneObjectFilterDialog.ui
+    UI/qtCMBStackedTINDialog.ui
+    )
+
+qt4_wrap_ui(UI_BUILT_SOURCES
+  ${UI_FORMS}
+  )
+
+# Add Qt resource files here
+set(UI_RESOURCES
+  ../Resources/Resources.qrc
+  )
+
+qt4_add_resources(RCS_SOURCES
+  ${UI_RESOURCES}
+  )
+
+source_group("Resources" FILES
+  ${UI_RESOURCES}
+  ${UI_FORMS}
+  )
+
+source_group("Generated" FILES
+  # ${MOC_BUILT_SOURCES}
+  ${RCS_SOURCES}
+  ${UI_BUILT_SOURCES}
+  )
+
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pqCMBAppCommonConfig.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/pqCMBAppCommonConfig.h
+  ESCAPE_QUOTES)
+set(dynamicHeaders
+  "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/pqCMBAppCommonConfig.h")
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmbAppCommonExport.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h
+  ESCAPE_QUOTES)
+set(dynamicHeaders
+  "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h")
+
+add_library(cmbAppCommon
+  cmbLoadDataReaction.cxx
+  cmbLoadDataReaction.h
+  cmbPluginIOBehavior.cxx
+  cmbPluginIOBehavior.h
+  pqCMBColorMapWidget.cxx
+  pqCMBColorMapWidget.h
+  qtCMBPanelsManager.cxx
+  qtCMBPanelsManager.h
+  cmbScalarBarWidget.cxx
+  cmbScalarBarWidget.h
+  qtCMBAboutDialog.cxx
+  qtCMBAboutDialog.h
+  pqCMBAppCommonInit.cxx
+  pqCMBAppCommonInit.h
+  pqCMBColorMapDialog.cxx
+  pqCMBColorMapDialog.h
+  pqCMBDisplayProxyEditor.cxx
+  pqCMBDisplayProxyEditor.h
+  pqCMBEnumPropertyWidget.cxx
+  pqCMBEnumPropertyWidget.h
+  qtCMBHelpDialog.cxx
+  qtCMBHelpDialog.h
+  vtkCMBInteractorStyleRubberBand.cxx
+  vtkCMBInteractorStyleRubberBand.h
+  pqCMBLIDARPieceObject.cxx
+  pqCMBLIDARPieceObject.h
+  pqCMBLIDARPieceTable.cxx
+  pqCMBLIDARPieceTable.h
+  pqCMBLineWidget.cxx
+  pqCMBLineWidget.h
+  pqCMBColorEditor.cxx
+  pqCMBColorEditor.h
+  pqCMBCommonMainWindow.cxx
+  pqCMBCommonMainWindow.h
+  pqCMBCommonMainWindowCore.cxx
+  pqCMBCommonMainWindowCore.h
+  pqCMBPreviewDialog.cxx
+  pqCMBPreviewDialog.h
+  pqCMBProcessWidget.cxx
+  pqCMBProcessWidget.h
+  pqCMBRubberBandHelper.cxx
+  pqCMBRubberBandHelper.h
+  qtCMBProgressWidget.cxx
+  qtCMBProgressWidget.h
+  qtCMBTableWidget.cxx
+  qtCMBTableWidget.h
+  pqCMBTreeWidgetEventTranslator.cxx
+  pqCMBTreeWidgetEventTranslator.h
+  vtkQtCMBConnectComboBox.cxx
+  vtkQtCMBConnectComboBox.h
+  pqCMBModifierArcManager.h
+  pqCMBModifierArcManager.cxx
+  pqCMBModifierArc.h
+  pqCMBModifierArc.cxx
+  qtCMBApplicationOptions.cxx
+  qtCMBApplicationOptions.h
+  qtCMBApplicationOptionsDialog.cxx
+  qtCMBApplicationOptionsDialog.h
+  qtCMBArcWidget.cxx
+  qtCMBArcWidget.h
+  qtCMBBathymetryDialog.cxx
+  qtCMBBathymetryDialog.h
+  qtCMBColorDialog.cxx
+  qtCMBColorDialog.h
+  qtCMBConeDialog.cxx
+  qtCMBConeDialog.h
+  qtCMBContextMenuBehavior.cxx
+  qtCMBContextMenuBehavior.h
+  qtCMBCreateSimpleGeometry.cxx
+  qtCMBCreateSimpleGeometry.h
+  qtCMBMeshingClient.cxx
+  qtCMBOptionsContainer.cxx
+  qtCMBOptionsContainer.h
+  qtCMBOptionsDialog.cxx
+  qtCMBOptionsDialog.h
+  qtCMBOptionsPage.cxx
+  qtCMBOptionsPage.h
+  qtCMBProjectServerManager.cxx
+  qtCMBProjectServerManager.h
+  qtCMBTreeWidget.cxx
+  qtCMBTreeWidget.h
+  Scene/Core/cmbSceneNodeReplaceEvent.cxx
+  Scene/Core/pqCMBSceneNode.cxx
+  Scene/Core/pqCMBSceneNodeIterator.cxx
+  Scene/Core/pqCMBSceneTree.cxx
+  Scene/CMB/pqOmicronModelWriter.cxx
+  Scene/Geology/pqCMBBoreHole.cxx
+  Scene/Geology/pqCMBCrossSection.cxx
+  Scene/IO/pqCMBSceneReader.cxx
+  Scene/IO/pqCMBSceneV1Reader.cxx
+  Scene/IO/pqCMBSceneV2Reader.cxx
+  Scene/IO/pqCMBSceneV2Writer.cxx
+  Scene/Objects/cmbSceneUnits.cxx
+  Scene/Objects/pqCMBArc.cxx
+  Scene/Objects/pqCMBConicalRegion.cxx
+  Scene/Objects/pqCMBFacetedObject.cxx
+  Scene/Objects/pqCMBGlyphObject.cxx
+  Scene/Objects/pqCMBLine.cxx
+  Scene/Objects/pqCMBSceneObjectBase.cxx
+  Scene/Objects/pqCMBPlane.cxx
+  Scene/Objects/pqCMBPoints.cxx
+  Scene/Objects/pqCMBPolygon.cxx
+  Scene/Objects/pqCMBSolidMesh.cxx
+  Scene/Objects/pqCMBTexturedObject.cxx
+  Scene/Objects/pqCMBUniformGrid.cxx
+  Scene/Objects/pqCMBVOI.cxx
+  Scene/Widgets/qtCMBArcWidgetManager.cxx
+  Scene/Widgets/qtCMBArcModifierInputDialog.cxx
+  Scene/Widgets/qtCMBGroundPlaneDialog.cxx
+  Scene/Widgets/qtCMBNewSceneUnitsDialog.cxx
+  Scene/Widgets/qtCMBPlacementConstraintWidget.cxx
+  Scene/Widgets/qtCMBArcEditWidget.cxx
+  Scene/Widgets/qtCMBConeNodeDialog.cxx
+  Scene/Widgets/qtCMBGenerateContoursDialog.cxx
+  Scene/Widgets/qtCMBSceneMesherDialog.cxx
+  Scene/Widgets/qtCMBSceneObjectDuplicateDialog.cxx
+  Scene/Widgets/qtCMBSceneObjectFilterDialog.cxx
+  Scene/Widgets/qtCMBSceneObjectImporter.cxx
+  Scene/Widgets/qtCMBSceneSurfaceMesherDialog.cxx
+  Scene/Widgets/qtCMBTINStitcherDialog.cxx
+  Scene/Widgets/qtCMBStackedTINDialog.cxx
+  Scene/Widgets/qtCMBUserTypeDialog.cxx
+  Scene/Widgets/qtCMBVOIDialog.cxx
+
+  ${RCS_SOURCES}
+  ${UI_BUILT_SOURCES}
+  )
+
+target_link_libraries(cmbAppCommon
+  LINK_PUBLIC
+    vtkCMBGeneral
+    pqApplicationComponents
+    CMB_Plugin
+  LINK_PRIVATE
+    QtTesting
+    RemusClient
+    vtkDiscreteModel
+  )
+
+target_include_directories(cmbAppCommon
+  PUBLIC
+    ${cmbAppCommon_SOURCE_DIR}
+    ${cmbAppCommon_BINARY_DIR}
+    ${cmbAppCommon_SOURCE_DIR}/Resource
+    ${cmbAppCommon_SOURCE_DIR}/Scene
+    ${cmbAppCommon_SOURCE_DIR}/Scene/Core
+    ${cmbAppCommon_SOURCE_DIR}/Scene/CMB
+    ${cmbAppCommon_SOURCE_DIR}/Scene/Geology
+    ${cmbAppCommon_SOURCE_DIR}/Scene/IO
+    ${cmbAppCommon_SOURCE_DIR}/Scene/Objects
+    ${cmbAppCommon_SOURCE_DIR}/Scene/Widgets
+    ${vtkCMBMeshing_INCLUDE_DIRS}
+    ${REMUS_INCLUDE_DIRS}
+  PRIVATE
+    ${VXL_RPL_INCLUDE_DIR}
+  )
+
+#let cmake do what qt4_wrap_cpp used to do automatically
+set_target_properties(cmbAppCommon PROPERTIES AUTOMOC TRUE)
+
+
+# This ensure that the cmbsuite.qch file is generated.
+add_dependencies(cmbAppCommon CMBSuiteHelp)
+
+cmb_install_plugin(cmbAppCommon)

@@ -1,0 +1,11 @@
+#ifndef __cmbProjectManagerConfig_h
+#define __cmbProjectManagerConfig_h
+
+#define ProjectManager_VERSION_MAJOR @CMB_VERSION_MAJOR@
+#define ProjectManager_VERSION_MINOR @CMB_VERSION_MINOR@
+#define ProjectManager_VERSION_PATCH @CMB_VERSION_PATCH@
+
+#define ProjectManager_VERSION "@CMB_VERSION_MAJOR@.@CMB_VERSION_MINOR@"
+#define ProjectManager_VERSION_FULL "@CMB_VERSION_MAJOR@.@CMB_VERSION_MINOR@.@CMB_VERSION_PATCH@"
+
+#endif

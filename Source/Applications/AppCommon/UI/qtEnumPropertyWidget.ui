@@ -1,0 +1,30 @@
+<ui version="4.0" >
+ <class>qtEnumPropertyWidget</class>
+ <widget class="QWidget" name="qtEnumPropertyWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>168</width>
+    <height>53</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QComboBox" name="comboBox" >
+     <property name="minimumSize" >
+      <size>
+       <width>150</width>
+       <height>20</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

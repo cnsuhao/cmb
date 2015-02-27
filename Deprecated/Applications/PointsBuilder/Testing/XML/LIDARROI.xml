@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<pqevents>
+    <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/LIDARTest.pts" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mousePress" arguments="1,1,0,13,5" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mouseRelease" arguments="1,0,0,13,5" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/minXClip" command="set_double" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/minXClip" command="set_double" arguments="10" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/minYClip" command="set_double" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/maxYClip" command="set_double" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/maxXClip" command="set_double" arguments="7" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox/frame_ROI/maxXClip" command="set_double" arguments="70" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/updateButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/targetNumberOfPoints" command="set_int" arguments="100000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/targetNumberOfPoints" command="set_int" arguments="100000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/targetNumberOfPoints" command="set_int" arguments="100000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/targetNumberOfPoints" command="set_int" arguments="100000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/targetNumberOfPoints" command="set_int" arguments="50000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mousePress" arguments="1,1,0,19,8" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mouseRelease" arguments="1,0,0,19,8" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mousePress" arguments="1,1,0,20,7" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mouseRelease" arguments="1,0,0,20,7" />
+</pqevents>

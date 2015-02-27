@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BoreholeGeology/Ex5-ComplexHorizons.bor" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Y" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/csColorByWidget/Variables" command="set_string" arguments="Solid Color" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/bhRadiusBox" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/bhRadiusBox" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/bhRadiusBox" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/bhRadiusBox" command="spin" arguments="down" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.565826,0.0969388,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.565826,0.0969388,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.565826,0.0969388,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/bhColorByWidget/Variables" command="set_string" arguments="hgu" />
+  <pqevent object="qtCMBMainWindow/geo_Toolbar/csColorByWidget/Variables" command="set_string" arguments="MATID" />
+  <pqevent object="qtCMBMainWindow/actionEdit_Color_Map" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/pqCMBColorMapDialog/cmbColorEditor/ColorOpacityEditor/ChoosePreset" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/pqCMBColorMapDialog/cmbColorEditor/ColorOpacityEditor/pqColorPresetDialog/Gradients" command="setCurrent" arguments="1.0" />
+  <pqevent object="qtCMBMainWindow/pqCMBColorMapDialog/cmbColorEditor/ColorOpacityEditor/pqColorPresetDialog/OkButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/pqCMBColorMapDialog/1QDialogButtonBox0/1QPushButton0" command="activate" arguments="" />
+ <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+</pqevents>

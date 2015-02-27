@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<cmb-resources>
+  <!-- Include baseline template by reference -->
+  <attribute id="simbuilder" role="template">
+    <include href="ProteusPoisson.sbt" />
+  </attribute>
+
+  <!-- Template for Export Dialog -->
+  <attribute id="export" role="template">
+    <SMTK_AttributeManager Version="1">
+      <Definitions>
+        <AttDef Type="ExportSpec" BaseType="" Version="0" Unique="true">
+          <ItemDefinitions>
+            <File Name="PhysicsFile" Label="Physics output file (*_p.py)"
+                  NumberOfRequiredValues="1"
+                  FileFilters="Python files (*.py);;All files (*.*)">
+              <DefaultValue>poisson_p.py</DefaultValue>
+            </File>
+            <File Name="NumericsFile" Label="Numerics output file (*_n.py)"
+                  NumberOfRequiredValues="1"
+                  FileFilters="Python files (*.py);;All files (*.*)" >
+              <DefaultValue>poisson_n.py</DefaultValue>
+            </File>
+            <File Name="PythonScript" Label="Python script" Version="0"
+                  NumberOfRequiredValues="1"
+                  AdvanceLevel="1" ShouldExist="true"
+                  FileFilters="Python files (*.py);;All files (*.*)">
+              <DefaultValue>ProteusPoisson.py</DefaultValue>
+            </File>
+            <File Name="polyfile" Label="polyfile" Version="0"
+                  AdvanceLevel="1" NumberOfRequiredValues="1"
+                  Optional="true" IsEnabledByDefault="false"
+                  FileFilters="Piecewise Linear Complex files (*.poly);;All files (*.*)">
+            </File>
+          </ItemDefinitions>
+        </AttDef>
+      </Definitions>
+      <Attributes />
+      <RootView Title="Export">
+        <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
+        <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
+        <AdvancedFontEffects Bold="0" Italic="0" />
+
+        <InstancedView Title="ExportSpec">
+          <InstancedAttributes>
+            <Att Type="ExportSpec">Options</Att>
+          </InstancedAttributes>
+        </InstancedView>
+      </RootView>
+    </SMTK_AttributeManager>
+  </attribute>
+</cmb-resources>

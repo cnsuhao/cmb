@@ -1,0 +1,6 @@
+vtkCMBGlyphPointSource                  GetPoint        307  3
+vtkCMBGlyphPointSource                  GetScale        307  3
+vtkCMBGlyphPointSource                  GetColor        307  4
+vtkCMBGlyphPointSource                  GetDefaultColor 307  4
+vtkCMBGlyphPointSource                  GetOrientation  307  3
+vtkCMBGlyphPointSource                  GetBounds       307  6

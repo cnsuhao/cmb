@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionNew" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,22,4,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,22,4,/0:0" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionImport_Object_File" />
+  <pqevent object="qtCMBSceneObjectImport/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtCMBSceneObjectImport/FileImportDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/cyl_frame.2dm" />
+  <pqevent object="qtCMBSceneObjectImport/groupBox/RotateX" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBSceneObjectImport/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,-7,8,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,-7,8,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,12,10,/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,12,10,/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,9,128" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,-12,79" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,-12,79" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+</pqevents>

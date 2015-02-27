@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.dat" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/mesh_smooth_surface.3dm" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/mesh_smooth_surface.bc" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/mesh_smooth_surface.bcs" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_As" />
+  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.cmb" />
+
+
+
+
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-6,11,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-6,11,/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-7,9,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-7,9,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-8,4,/2:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-8,4,/2:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-12,8,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-12,8,/3:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-13,11,/4:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-13,11,/4:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,-13,11,/5:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,-13,11,/5:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab" command="mousePress" arguments="1,1,0,59,28" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab" command="mouseRelease" arguments="1,0,0,59,28" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/checkBoxSorting" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/checkBoxSorting" command="set_boolean" arguments="false" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial" command="mousePress" arguments="1,1,0,48,4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial" command="mouseRelease" arguments="1,0,0,48,4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial" command="mousePress" arguments="1,1,0,33,4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial" command="mouseRelease" arguments="1,0,0,33,4" />
+
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionSpawn_Volume_Mesher" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/MesherList" command="currentChangedbyItemName" arguments="Built In: Omicron" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLengthType" command="set_string" arguments="Absolute" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLength" command="set_string" arguments="0.229" />
+  <pqevent object="qtCMBMesherDialog/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMesherDialog/FileImportDialog" command="cancelled" arguments="" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLength" command="key" arguments="16777219" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLength" command="set_string" arguments="0.3" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLengthType" command="set_string" arguments="Absolute" />
+  <pqevent object="qtCMBMesherDialog/frame/MeshLength" command="set_string" arguments="0.182" />
+  <pqevent object="qtCMBMesherDialog/frame" command="mousePress" arguments="1,1,0,228,20" />
+  <pqevent object="qtCMBMesherDialog/frame" command="mouseRelease" arguments="1,0,0,228,20" />
+  <pqevent object="qtCMBMesherDialog/frame/Mesher" command="set_string" arguments="Internal Mesher" />
+  <pqevent object="qtCMBMesherDialog/buttonBox/1QPushButton1" command="activate" arguments="" />
+
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionSpawn_Volume_Mesher" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/MesherList" command="currentChangedbyItemName" arguments="Built In: Omicron" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/buttonBox/1QPushButton0" command="activate" arguments="" />
+
+
+  <pqevent object="qtCMBMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Outline" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Points" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Wireframe" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Surface" />
+  <pqevent object="pqCMBPreviewDialog/toolbarFrame/previewRepresentation/comboBox" command="set_string" arguments="Surface With Edges" />
+  <pqevent object="pqCMBPreviewDialog/RenderViewFrame/Viewport" command="mousePress" arguments="(0.483932,0.585139,1,1,0)" />
+  <pqevent object="pqCMBPreviewDialog/RenderViewFrame/Viewport" command="mouseMove" arguments="(0.482042,0.421053,1,0,0)" />
+  <pqevent object="pqCMBPreviewDialog/RenderViewFrame/Viewport" command="mouseRelease" arguments="(0.482042,0.421053,1,0,0)" />
+  <pqevent object="pqCMBPreviewDialog/CancelButton" command="activate" arguments="" />
+
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionSpawn_Volume_Mesher" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/qtCMBMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="30000" />
+
+  <pqevent object="pqCMBPreviewDialog/OkButton" command="activate" arguments="" />
+</pqevents>

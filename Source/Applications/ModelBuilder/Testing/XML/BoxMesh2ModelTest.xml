@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="BoxWithBCS.m2m" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="mesh_BoxWithBCS_ADH.bc" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="mesh_BoxWithBCS_m2mADH.bc" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="BoxWithBCS.dat" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="mesh_BoxWithBCS.3dm" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="mesh_BoxWithBCS.bc" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="mesh_BoxWithBCS.bcs" />
+
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="cancelled" arguments="" />
+
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/MeshToModelMapping/BoxWithBCS.cmb" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionSpawn_Volume_Mesher" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/MesherList" command="currentChangedbyItemName" arguments="Built In: Omicron" />
+  <pqevent object="qtCMBMainWindow/qtVolumeMesherSelector/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMesherDialog/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMesherDialog/FileImportDialog" command="filesSelected" arguments="BoxWithBCS.dat" />
+  <pqevent object="qtCMBMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="10000" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="3000" />
+  <pqevent object="pqCMBPreviewDialog/OkButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="10000" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_savemeshinfo" />
+  <pqevent object="FileSaveDialog" command="filesSelected" arguments="BoxWithBCS.m2m" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/../Applications/ModelBuilder/SimBuilder/XML/CTB.crf" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="3" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox0" command="set_string" arguments="TopFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox3" command="set_string" arguments="BottomFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox4" command="set_string" arguments="Boundary Nodes" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox6" command="set_string" arguments="BottomFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox7" command="set_string" arguments="Interior Nodes" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabFaces BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabFaces BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox0" command="set_string" arguments="TopFaces" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionExport_Simulation_File" />
+  <pqevent object="qtSimBuilderExportDialog/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtSimBuilderExportDialog/OutputDialog" command="filesSelected" arguments="mesh_BoxWithBCS_ADH.bc" />
+  <pqevent object="qtSimBuilderExportDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/MeshToModelMapping/BoxWithBCS.cmb" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_loadmeshinfo" />
+  <pqevent object="FileOpenDialog" command="filesSelected" arguments="BoxWithBCS.m2m" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/../Applications/ModelBuilder/SimBuilder/XML/CTB.crf" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab" arguments="4" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox0" command="set_string" arguments="TopFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox3" command="set_string" arguments="BottomFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox4" command="set_string" arguments="Boundary Nodes" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox6" command="set_string" arguments="BottomFaces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabNodes BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox7" command="set_string" arguments="Interior Nodes" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabFaces BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabAnalysis/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabFaces BC/qt_scrollarea_viewport/1QWidget0/1QFrame0/1qtCMBTableWidget0/qt_scrollarea_viewport/1QComboBox0" command="set_string" arguments="TopFaces" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionExport_Simulation_File" />
+  <pqevent object="qtSimBuilderExportDialog/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtSimBuilderExportDialog/OutputDialog" command="filesSelected" arguments="mesh_BoxWithBCS_m2mADH.bc" />
+  <pqevent object="qtSimBuilderExportDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+</pqevents>

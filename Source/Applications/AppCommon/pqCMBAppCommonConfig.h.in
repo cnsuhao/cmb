@@ -1,0 +1,42 @@
+/*=========================================================================
+
+  Program:   Visualization Toolkit
+  Module:    cmbAppCommonConfig.h.in
+
+  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+  All rights reserved.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+#ifndef __cmbAppCommonConfig_h
+#define __cmbAppCommonConfig_h
+
+#define CMB_VERSION_MAJOR @CMB_VERSION_MAJOR@
+#define CMB_VERSION_MINOR @CMB_VERSION_MINOR@
+#define CMB_VERSION_PATCH @CMB_VERSION_PATCH@
+
+#define CMB_VERSION "@CMB_VERSION_MAJOR@.@CMB_VERSION_MINOR@"
+#define CMB_VERSION_FULL "@CMB_VERSION_MAJOR@.@CMB_VERSION_MINOR@.@CMB_VERSION_PATCH@"
+
+#include "vtkPVConfig.h"
+
+//only define it if it hasn't been defined already
+#ifndef CMB_TEST_DATA_ROOT
+// For testing purpose
+#define CMB_TEST_DATA_ROOT "@CMB_TEST_DATA_ROOT@"
+#endif
+
+//erase where PVConfig has set PARAVIEW_DATA_ROOT as it will be wrong
+#ifdef PARAVIEW_DATA_ROOT
+#undef PARAVIEW_DATA_ROOT
+#endif
+
+// The pqCoreTestUtility in ParaView hardcoded "$PARAVIEW_DATA_ROOT",
+// so we have to redefine it here to make tests work in CMB
+#define PARAVIEW_DATA_ROOT "@CMB_TEST_DATA_ROOT@"
+
+#endif

@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/SceneBuilderTerrainGenerationTest/Buildings.sg" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionCreate_Surface_Mesh" />
+  <pqevent object="qtCMBSceneSurfaceMesherDialog/frame/ElevationWeightRadius" command="set_double" arguments="0.125" />
+  <pqevent object="qtCMBSceneSurfaceMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="2000" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCurrent" arguments="0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCheckState" arguments="0.0.0.0,0" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menuEdit" />
+  <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionDeleteNode" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
+</pqevents>

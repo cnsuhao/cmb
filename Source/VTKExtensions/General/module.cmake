@@ -1,0 +1,10 @@
+vtk_module(vtkCMBGeneral
+  DEPENDS
+    vtkCommonDataModel
+    vtkCommonExecutionModel
+  PRIVATE_DEPENDS
+    vtkChartsCore
+    vtksys
+    vtkFiltersSources
+  EXCLUDE_FROM_WRAP_HIERARCHY
+)

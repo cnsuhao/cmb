@@ -1,0 +1,624 @@
+<html>
+<body>
+<h1>Model Builder Application Release Notes</h1>
+
+<h2>Version 1.7.1</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added the ability to visualize the meshes of Surface Models</LI>
+  <LI>Added the ability to apply bathymetry to model faces and edges</LI>
+  <LI>Added the ability to apply bathymetry to meshes</LI>
+  <LI>Added the ability to create meshes of Surface Models. </LI>
+  <LI>Added the ability to specify meshing parameters to Surface
+  Model Faces and Arcs </LI>
+  <LI>Added the ability to change the End Nodes of Arcs </LI>
+  <LI>Added the ability to roundtrip meshes created in Model
+  Builder</LI>
+  <LI> Nodal Groups can now be defined by model edges (surface
+  domains) and model faces (volumetric domains)</LI>
+  <LI>Surface mesh entities now have their own representationb and
+  color</LI>
+  <LI>Added the ability to export specific meshes of model faces</LI>
+  <LI>Added an UI option to show the mesh vertices of a model edge
+  mesh</LI>
+  <LI>Added model information into the Data Info Panel</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Converting an End node to a normal Arc Node causes a crash
+  (Mantis: 9563)</LI>
+  <LI>Re-meshing causes a crash (Mantis: 9565)</LI>
+  <LI>Changing Meshing Parameters would cause a crash (Mantis:9502)</LI>
+  <LI>Changing an Arc to an End Node would cause a crash
+  (Mantis:9502)</LI>
+  <LI>Mesher was getting model faces with 0 area (Mantis: 9493)</LI>
+</UL>
+<h3>Simulation Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added Support for Surface Water ADH Models</LI>
+  <LI>Meshing Parameters are now stored in Sim File</LI>
+  <LI>String Properties can now contain new lines, tabs, white spaces
+  etc.. (Mantis: 9149)</LI>
+  <LI>Added support for auxillary geometric elements such as
+  sphereically distributed point sources</LI>
+  <LI>Added support for PT123</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed issue with No Analysis Mesh erroneously being reported
+  during export  (Mantis 9444)</LI>
+</UL>
+
+<h2>Version 1.6.4</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added Model Information (such as bounds) to the Info Panel </LI>
+  <LI>Changed tooltips for color by dropdowns for 2D models</LI>
+  <LI>Meshing dialog now uses absolute or relative mesh length instead of volume
+  constraints</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Assigning color to a face in a 2D model caused a crash</LI>
+  <LI>Fixed updating model entity name bug (Mantis: 9583, 9573)</LI>
+  <LI>Fixing adjacency bug between edge use and vertex use. (Mantis:)</LI>
+</UL>
+<h3>Simulation Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Updated and renamed ground water simulation template and format
+  files to be GEOTACS</LI>
+  <LI>Added OP RAY and OP MET cards in ADH Exported BC file when
+  needed (Mantis: 9682)</LI>
+  <LI>Added support for optional material properties</LI>
+  <LI>Simulation Builder can now process vegitation that is
+  represented as glyphs</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Toggling "Show Advance" would reset the Materials Tab (Mantis 9627)</LI>
+  <LI>Check boxes were not being properly initialized (Mantis 9628)</LI>
+  <LI>Removing last Boundary Condition Set caused strange behavior w/r
+  to Boundary Conditions (Mantis: 9568)</LI>
+  <LI>Function Unique IDs were not properly set</LI>
+  <LI>Some API Changes mistaken NULL as a valid entry of 0</LI>
+  <LI>Default function values were displayed as undefined (Mantis: 9626)</LI>
+  <LI>Widgets migrated during reloading (Mantis: 9624)</LI>
+  <LI>Updating UI when loading in Scene Tree(Mantis: 9529)</LI>
+  <LI>Clearing UI when a new template file is loaded(Mantis: 9584) </LI>
+  <LI>ADH format updated based on CMB feedback (Mantis: 9570) </LI>
+  <LI>ADH Exporter now produces a proper error message when there is
+  no analysis mesh</LI>
+  <LI>Fixed issue with volume meshing models with internal model
+  faces</LI>
+  <LI>Some advance options were still being displayed when Show
+  Advance is off (Mantis:9625)</LI>
+  <LI>Can not reload SBI File (Mantis:9688)</LI>
+</UL>
+
+<h2>Version 1.6.3</h2>
+<h3>Simulation Builder</h3>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Added the ability to have a #UILABEL as a SimBuilder output card
+  (See Mantis Issue 9230)</LI>
+  <LI>Now produces a warning letting the user know if the ADH output
+  did not get exported due to a missing analysis mesh</LI>
+  <LI>Fix the bug that advanced properties are shown when Show Advanced
+  checkbox is not checked. (Mantis bug# 0009298)</LI>
+  <LI>Changed the numbering of Vegetation to increment by 1 instead of 100</LI>
+</UL>
+<h2>Version 1.6.2</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added capability to load a scene file without loading an actual cmb model.</LI>
+  <LI>Added "Hide Shared Entities" checkbox so that all the shared entities can be turned on/off easily.</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed slow grow extraction and split problems for 3D.</LI>
+</UL>
+<h3>Simulation Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added multiline support.  It is not fully functional yet due to a VTK bug with the XML special characters.<br />
+    For a SimBuilder template file, it is treated as just a basic text input with the addition of a subtype. For example, the standard text input looks like:<br />
+    &nbsp;&nbsp;      &lt;ValueType Name="text"/&gt;<br />
+    and the multiline looks like:<br />
+    &nbsp;&nbsp;      &lt;ValueType Name="text" SubType="multiline text"/&gt;<br />
+    * The default value for the multiline is inline character information as well. For example:<br />
+    &nbsp;&nbsp;      &lt;DefaultValue&gt;the info starts here<br />
+    &nbsp;&nbsp;        and ends here&lt;/DefaultValue&gt;</p>
+</LI>
+</UL>
+
+<h2>Version 1.6.1</h2>
+<h3>Simulation Builder</h3>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>In Function Editor, fixed the cursor position to point to the actual syntax error
+    position in the function expression string.</LI>
+  <LI>When exporting files, whitespace in the XML format file is respected in the outputted file.</LI>
+</UL>
+<h2>Version 1.6.0</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added basic capability to load .cmb file in client-server mode.</LI>
+  <LI>Added "Import BC File" support.</LI>
+  <LI>Added logic to automatically load back .bc file generated from mesher.</LI>
+  <LI>Added feature to create Nodal group from 2d model edges.</LI>
+  <LI>Added capability of converting model coordinates from lat long to xyz and switching back.</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed the issue that in 2D model, toggling end nodes (splitting after merge) of edges will not work without a camera modified event.</LI>
+  <LI>Turned on vtkMapper's CoincidentTopologyResolution to VTK_RESOLVE_SHIFT_ZBUFFER
+    so that polylines/lines will be shown on a polygon.</LI>
+</UL>
+
+<h3>Simulation Builder:</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added new Function Editor on Functions tab.</LI>
+  <LI>Changed the "int" input from QSpinBox to QLineEdit with QIntValidator
+    so that it does not need to have a default value.</LI>
+  <LI>For 2D AdH, added in constituents, grain sizes, and sediment bed layers.</LI>
+  <LI>For 2D AdH, constraint that a material must be assigned to at most one domain set.
+    When outputting the AdH .bc file, if this isn't true copies of materials are made.</LI>
+  <LI>When outputting "edge" boundary conditions, allows the boundary condition to be
+    assigned to both internal and external model edges.</LI>
+  <LI>Created AdHShallowWater.simb.xml file for defining SimBuilder input for 2D AdH.</LI>
+  <LI>Created AdH2DFormat.xml file for format information for outputting AdH 2D .bc files.</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed the ADHExport Dialog poping up in front of file dialog
+  if a keypress event happens on file dialog.</LI>
+</UL>
+
+<h2>Version 1.5.0</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Changed Omicron input to have model region Ids instead of domain set/material ids.</LI>
+  <LI>Added MAP file reading capability along with use of Triangle to mesh the model faces from the MAP reader input.</LI>
+  <LI>Added 2D model support, which includes selection, color-by and visibility control of 2D model edges;
+    split, merge, boundary condition group operations with model edges; generic modification
+    of user names and colors for 2D model entities; one step undo-redo.</LI>
+  <LI>Added capability to load a scene (sg) file into model builder</LI>
+  <LI>New reader for .cmb file -- vtkCMBV4Reader</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fix for changes to Omicron where output mesh is now in 3dm format instead of vtk format.</LI>
+  <LI>Changes to read and write on the server instead of the client.</LI>
+</UL>
+
+<h3>Simulation Builder:</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added "Advanced" option for filtering parameters on the GUI</LI>
+  <LI>Added capability to allow users change icons for toplevel tabs.</LI>
+  <LI>Add material and function library support</LI>
+  <LI>Veg information now able to be handled in SimBuilder along with exporting proper ADH veg and ray information.</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Cleaned up the extra tabs on Analysis top level tab.</LI>
+  <LI>Fixed problem where option information wasn't getting saved in the SimBuilder file.</LI>
+  <LI>Changes to read and write on the server instead of the client.</LI>
+</UL>
+
+<h2>Version 1.3.5</h2>
+<h3>Model Builder:</h3>
+<h4> Added Features</h4>
+<UL>
+  <LI>Updated Splash and About screens</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed drag and drop issue on the Mac</LI>
+</UL>
+<h3>Simulation Builder:</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Adding the ability to specify a function as advanced when reading in from a simbuilder file.</LI>
+  <LI>Added "Advanced" option for Functions</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed bug where the simbuilder reader wasn't properly handling all advanced options.</LI>
+  <LI>Fixed some GUI issues with advanced options.</LI>
+</UL>
+
+<h2>Version 1.3.4</h2>
+<h3>Simulation Builder:</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Added in Advance option to hide certain input</LI>
+  <LI>Changed the exporter to use .bc as the default file extension</LI>
+  <LI>Changed MP MID cards to be from material index to model region unique persistent Id (e.g. MP MID &lt;materialIndex&gt; &lt;modelRegionUniquePersistentId&gt;</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Fixed issues with the drop down menus not always up-to-date</LI>
+  <LI>Added END card to signal and of the BC file</LI>
+  <LI>Updated OP TRN, OC INT, and OC ADP to work as desired as well as proper spacing for MP cards with only a single character like MP K</LI>
+  <LI>Changed input method for double values to properly show precision</LI>
+  <LI>Fixed issue with incorrect number of FCS and NDS cards from SimBuilder</LI>
+</UL>
+
+<h2>Version 1.3.3</h2>
+<h3>Model Builder</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Name changed from Conceptual Model Builder to Model Builder</LI>
+  <LI>Volume meshing dialog enhanced to allow more advanced TetGen commands</LI>
+</UL>
+<h3>Simulation Builder:</h3>
+<h4>Added Features</h4>
+<UL>
+  <LI>Better communication/linkage between Model Builder and Simulation Builder</LI>
+  <LI>Set a default value for all entries that do not require a function/sequence</LI>
+  <LI>Full ADH output including NDS and FCS cards (not verified correct yet). Exporting ADH output requires
+    the ModelBuilder model was created from a 3dm file in order to get node ids, cell ids, and cell sides correct</LI>
+  <LI>Added MP MID card to associate a SimBuilder material with a Model Builder domain set.</LI>
+  <LI>Currently numbering Model Builder domain sets consecutively to try and match up tetgen indexing with SimBuilder indexing.</LI>
+</UL>
+<h4>Fixed Bugs</h4>
+<UL>
+  <LI>Temporary fix for problem with the heat transport boundary conditions having widgets not appear properly. Currently the NB RAY heat transfer boundary condition does not ask for the correct amount of input.</LI>
+</UL>
+
+<h2>Version 1.3.2</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>APIs added to pass loaded CMB model to SimBuilder to initialize simulation parameters</LI>
+</UL>
+
+<h2>Version 1.3.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added SimBuilder as part of CMB --- "Functions" "Global Constants" " Time" "Solvers" Tabs should be working
+    now, and other tabs are being worked on.</LI>
+  <LI>There is an xml file (SimBuilder.simb.xml) in the install/package directoy that can be loaded into CMB
+    which will invoke the SimBuilder UI panel.</LI>
+  <LI>The Functions tab has copy/paste feature to function table, which interact with ClipBoard, so that it can
+ copy/paste to/from Excel application and within the function table itself.</LI>
+  <LI>The writing of the actual adh with these tabs should also be working, but currently it is not enabled from CMB GUI yet.</LI>
+</UL>
+<h3>Fixed Bugs:</h3>
+<UL>
+  <LI>If a new dataset is loaded over an existing data, the display panel may show duplicated/multiple</LI>
+</UL>
+
+<h2>Version 1.3.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added "Hover" (2D coordinates) in lower left corner of GUI when in 2D manipulation mode.</LI>
+  <LI>Setting of canonical directions no longer does a resetView; the focal point is unchanged, but the camera
+    position (based on desired view direction and "current" camera distance) and viewUp are changed. This
+    allows the view to stay focused on a region of interest. The user can click "resetView" if zooming out
+    was also desired (so extra click in that case).</LI>
+  <LI>When switching between 2D and 3D manipulation modes, set parallel scale or camera position (respectively)
+    to keep approximately the same view (of course, when switching to 2D, will be looking down a major axis
+    so it is really the apparent "distance" of the camera from the data that is kept ~constant).</LI>
+  <LI>Changed 2D controls to more closely match 3D controls (in particular, Pan as middle mouse button).</LI>
+  <LI>Added feature to create a nodal group directly from the grow result, which first does splits on model faces
+    if necessary, then creates nodal group from the selected model faces.</LI>
+  <LI>Modified the default line segment (well) representation in CMB so that it can show the points better when selected.</LI>
+  <LI>Moved to "Version 4" CMB files (with increased support for 2D models)</LI>
+</UL>
+
+<h2>Version 1.2.2</h2>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Fixed bug that was writing out incorrect information for the nodes.bc file.</LI>
+  <LI>Tried to reduce memory usage by getting rid of unneeded point, cell, and field data associated with the master polydata.</LI>
+</UL>
+
+<h2>Version 1.2.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Bug #7616: writing out only needed information in *Nodes.bc and *Faces.bc file when exporting a BCS file from a pre-generated 3dm file.</LI>
+  <LI>Bug #7225: BCS export will now work for other mesh facet types besides triangles.</LI>
+  <LI>Can switch between "2D Manipulation" and "3D Manipulation" options for camera</LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Bug #7404: CMB now retains proper surface mesh facet to 3dm mesh tet (and tet's face) for file IO.</LI>
+</UL>
+
+<h2>Version 1.0.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>New GUI tree and controls to browse and change nodal spacings of lines in CMB</LI>
+  <LI>Added "HardPointsGroups", if they are available, when writing the BCS file</LI>
+  <LI>CMB file now written in binary format instead of ASCII</LI>
+  <LI>ParaView's axes control now available</LI>
+  <LI>Faces.bc and Nodes.bc files are written when writing the BCS file, IF the data was pulled into CMB via a 3dm file</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Bug: #7267, grow-behaviour bug</LI>
+  <LI>Bug: #7225, incorrect "NumberOfValues" might be written to BCS file</LI>
+</UL>
+
+<h2>Version 0.3.3</h2>
+* Fixed Bugs:<br />
+ BUG: Unique persistent ids weren't unique, thus was some issue moving shells from<br />
+ one material to another (probably were other symptoms)<br />
+* Two-sided coloring for "multi-material" when coloring by shell or material<br />
+* CMB file version increased to 3 (but still read version 2)</p>
+
+<h2>Version 0.3.2</h2>
+* Fixed Bugs:<br />
+ BUG: coloring of individual objects and also by all faces / regions / materials<br />
+ BUG: Node selection bug when creating a new node group node<br />
+ BUG: "Zoom to Selection" not working for nodal group selection<br />
+ BUG: Previous release broke ability to read poly files into CMB<br />
+ BUG: Insufficient point precision when writing BCS file<br />
+ BUG: If meshing failed, meshing option wasn't reenabled<br />
+* Filter added to make sure all normals are pointing out (on per region basis)<br />
+ when importing data<br />
+* Shell/region completion added (right now only used when building the model from<br />
+ mesh output in SceneGen)<br />
+* "Point Inside" computed during building of the model, whether in SceneGen after<br />
+ computing the mesh or after importing a 3dm or sol file</p>
+
+<h2>Version 0.3.1</h2>
+* Duplicate faces of solid (*.sol) files are merged (and degenerate polygons are converted to lines)<br />
+* Concave polygons in *.poly files are triangulated for correct rendering<br />
+* Support for nodal groups<br />
+* Multi-material support for 3dm files</p>
+
+<h2>Version 0.3.0</h2>
+* New "model-centric" version of CMB</p>
+
+<h2>Version 0.2.8</h2>
+* Added the ability to read solid files</p>
+
+<h2>Version 0.2.7</h2>
+* Background color can be changed</p>
+
+<h2>Version 0.2.6</h2>
+* Fixed the material hardcode problem in Omicron mesher</p>
+
+<h2>Version 0.2.5</h2>
+* Added continued Grow-Merge and Grow-Remove functionality.<br />
+* Added a new filter to extract interior boundaries.<br />
+* Fixed Bugs:<br />
+ BUG: Fixed issues with modifying transformation properties from display editor for multiple selection.<br />
+ BUG: Fixed problem with VTK filters not properly cleaning up after each excecute.</p>
+
+<h2>Version 0.2.4</h2>
+* Added an checkBox to allow user enable/disable sorting by column in CMB trees.<br />
+* Converted preview dialog to be non-modal.<br />
+* Allow the user to specify a Omicron "model" file to add PointInside info to the current CMB data,<br />
+ if the CMB data doesn't contain the PointInside info required to run the volume mesher.<br />
+* Fixed Bugs:<br />
+ BUG: [6446] Adjust real estate on Face Inspector.<br />
+ BUG: [6454] problems with coloring objects.<br />
+ BUG: [6445] Highlight BC set when added in CMB;<br />
+ Same behavior is also added when adding new Material node.<br />
+ BUG: [6444] CMB ability to rearrange BC Groups<br />
+ BUG: [6443] Move "Spawn Volume Mesher" from File menu to Tool menu in CMB<br />
+ BUG: [6447] Change icons for "do not accept" button and "accept" button of "Grow" toolbar in CMB.<br />
+ BUG: [6448] Move "Zoom on Selection" button in CMB to bottom of the panel.</p>
+
+<h2>Version 0.2.3</h2>
+* Added "Zoom on Selection" button in CMB.<br />
+* Changed the Selection of a model face to use "InsideOut" property of SelectionSource<br />
+ to select all the facets on the face, which improves selection performance.<br />
+* Fixed problem with incorrect number of regions in Omicron Volume mesher input file<br />
+* Fixed issues with incorrect Material IDs in Omicron Volume mesher input file<br />
+* Added logic to automatically write out a bcs file when generating Omicron input file,<br />
+ and use this bcs file name in the Omicron input file, instead of the closed shell file name.<br />
+* Added the functionality to have shells include a translation point in CMB file.<br />
+* Added PointInside info to CMB file written from SceneGen such that executing<br />
+ Omicron "mesh" in CMB doesn't require the omicron "model" input file.<br />
+* Added a (volume) meshing dialog in CMB similar to SceneGen's surface meshing dialog.<br />
+* Added logic to see if the CMB data has the PointsInside info,<br />
+ which is required to generate input for Omicron ("mesh")...<br />
+ if not, disable both "Generate Omicron Input" and "Spawn Volume Mesher".<br />
+ NOTE: In the future, We should/will load PointsInside info from "model" input file<br />
+ if they are not present.</p>
+
+<h2>Version 0.2.2</h2>
+* Modified drag-drop behavior on the Trees in CMB so that they behave more consistently.<br />
+* Fixed some issues with *Grow* operation related Toolbar button update.<br />
+* Fixed the "Color" problem when reorganizing the tree. [Mantis Bug 0006403]<br />
+* Changed the display NOT to reset the camera when visibility of model faces are changed.<br />
+* Added new 32x32 icons for toolbars and updated the GUI to use these new icons.<br />
+* Removed some resetCamera calls, so that the display does not look very "jumpy",<br />
+ especially for mesh-facet-picking and grow.</p>
+
+<p>* Fixed problem with using the internal meshers.</p>
+
+<h2> Version 0.2.1</h2>
+* Fixed "flickering" in the display panel when the selection is changed.<br />
+* Fixed issues with the display panel when a file is closed and another is loaded.<br />
+* Fixed some cmb file-reading backward compatibility issues.<br />
+* Fixed the model face selection process - it was always missing cell 0.<br />
+* Fixed issue with clearing the selection based on growing.</p>
+
+<h2>Version 0.2.0</h2>
+<p>1. There is now the ability to export the Boundary Condition information. The file is in XML format with<br />
+descriptions included. The data that is stored is:<br />
+* node locations<br />
+* mesh facets with the number of nodes, the mesh facet's model face, and the node Ids<br />
+* model faces with the model face's shell Id and user specified name<br />
+* boundary conditions with a user specified name and Id, type (currently only face but point type in the future) and the model face Ids that the BC is applied over<br />
+* materials with specified user name and Id<br />
+* shells with User specified name and material of the shell<br />
+Note that all objects are ordered implicitly starting from zero.</p>
+
+<p>2. Grow</p>
+
+<p>2.1 There is a toolbar with three buttons (Grow, Clear-Grow, Accept-Grow) and a spinbox for changing Angles.<br />
+* Grow-button is used to start a grow-selection from a mesh facet based on the angle in the spinbox.<br />
+ After click the grow button in the toolbar, the Mouse cursor will become a "Pointing Hand" to indicate that<br />
+ we are in "Grow" mode. When we are in this mode, the regular selection toolbar is disabled,<br />
+ and the selection from the trees is also disabled. To get back to the regular selection mode, we need to either<br />
+ Clear-Grow or Accept-Grow, or uncheck the Grow-button.<br />
+* Accept-Grow will create a new BC with the grow-selection, which includes subdividing model faces if necessary, and<br />
+ create a new BC with the selected model faces.<br />
+* Clear-Grow will clear the current grow selection without generateing new BCS.<br />
+2.2 If Ctrl-Key is down, we can select/deselect individual mesh facets, to edit a current grow-selection,<br />
+ or to create a brand new selection from scratch by picking or rubber-banding mesh facets.</p>
+
+<p>***!!! Note: For each picking/grow operation, a click on Grow-button is required. !!!***</p>
+
+<p>3. Merge</p>
+
+<p>* Model faces belong to the same shell can be merged together.</p>
+
+<h2>Version 0.1.7</h2>
+<p> (A major upgrade from previous versions)</p>
+<p>1. Input</p>
+
+<p>1.1 Supported formats: "CMB files (*.cmb);;VTK data files (*.vtk *.vtu);;Solids (*.2dm)"</p>
+
+<p>2. Object Viewing and Properties Modification</p>
+
+<p>2.1 There are two tree widgets in the "Property" tab of the left GUI panel. The top tree is set up by hierarchy<br />
+Material->Shell->Model Face (MF), in which the MF is the basic *object* that all CMB operations<br />
+will operate on. The tree hierarchy can be reorganized by dragging and dropping with certain contraints.<br />
+The bottom tree is for creating/viewing/modifying boundary conditions (BC). Again drag-n-drop can be used here too<br />
+to reorganize or create new BCs. You can even drag items from the top tree into the bottom tree to create BCs.<br />
+2.2 There is a visibility column in both trees, which can be used to control visibility of different objects.<br />
+2.3 Material and Shell names can be modified by editing directly in the top tree, and BC names can be modified<br />
+directly by editing text in the bottom tree.<br />
+2.4 MFs can be split by changing the feature angles of selected MFs.<br />
+2.5 A one-step "Reset State" can reverse the modifications of Material/Shell/BC names, BCs and MFs to<br />
+the last saved state created by "Save State"</p>
+
+<p>3. Display</p>
+
+<p>3.1 There are many display related properties that can be modified from the "Display" tab of the left GUI panel,<br />
+such as changing the representation style, doing transformation, modifying lighting, edge style and annotation etc.<br />
+If there is no MF selected in the scene, the changes of display properties will be applied to all<br />
+MFs; if there are selected MFs, the changes will be applied only to those selected faces.<br />
+3.2 There are also toolbar buttons to modify camera view direction, colorby classification (Matererial,<br />
+Shell, MF, BC). The "Set color button" in the toolbar can change the solid color for those selected MFs.<br />
+3.3 Known issue. We need to work out how to preserve/modify/display colors that are saved in the CMB file.</p>
+
+<p>4. Selection</p>
+
+<p>4.1 A rubber band style selection (mousedown-n-drag or just click) is offered with a toolbar button. All the<br />
+visible MFs within the rubber band boundary will be selected. If the Shift-Key is down while doing the<br />
+rubber-band-selection, the previous selections will NOT be cleared, and the new selections are appended to<br />
+current selections, otherwise, the previous selection will be cleared, and the new selections will become the<br />
+current selection. Note, this selection mechanism is based on surface selection, so if the opacity of an MF is<br />
+less than 1, it will NOT be selected with Rubber-band-selection(it can still be selected from the trees).<br />
+This *feature* can be used to skip certain MF (such as the ground) while doing rubber-band-selection.<br />
+4.2 A "Select mode" toolbar dropdown controls what will be selected after rubber-band-selection. If Material or<br />
+Shell is the *selection mode*, the whole material or shell who contains the selected MFs will be selected.<br />
+4.3 The selection is also linked with the two tree widgets on the "Properties" tab in the left GUI panel.<br />
+4.4 The selection representation style can be changed from a toolbar drop down list.<br />
+4.5 "Clear Selection" button on the bottom of the "Properties" tab of the left GUI panel can be used to<br />
+clear selections.<br />
+4.6. Known issue: There is a *refresh* flicking on the display tab GUI when selections are changed.</p>
+
+<p>5. Output</p>
+
+<p>5.1 CMB can save out CMB Files(*.cmb).<br />
+5.2 An Omicron input file (.dat), for "mesh", can be generated. It requires specification of the "model" input.</p>
+
+<p>6. Spawn Mesher<br />
+6.1 "Spawn Surface Mesher" option and "Spawn Volume Mesher" option<br />
+ - user can select alternate executable (e.g. - if not built with the app)<br />
+ - abort button to kill the process<br />
+ - "Process Output" button to display the output from the Process<br />
+ - The progress bar for monitoring spawned processes will display messages extracted from the<br />
+ process output (indicated by "Progress: " at the start of the line of output)<br />
+ - NOTE: if click in "Process Output" window, new text added at the cursor location, even though the<br />
+ code seems to be coorect to place it at the end<br />
+ - Upon successful completion, user asked if they want to load the output<br />
+6.2 The default surface and volume meshers are remembered during a session. In other words, if you change<br />
+ which surface mesher to use (or specify which one to use becuase there is no default), the next time you<br />
+ start up the surface mesher DURING THAT SESION, the previously indicated mesher will be used.</p>
+
+<p>7. Testing<br />
+7.1 There are utilities to record and replay a test under the "Tools" menu.</p>
+
+<h2>Version 0.1.6</h2>
+
+<p>- The default surface and volume meshers are remembered during a session. In other words, if you change<br />
+ which surface mesher to use (or specify which one to use becuase there is no default), the next time you<br />
+ start up the surface mesher DURING THAT SESION, the previously indicated mesher will be used.<br />
+- The progress bar for monitoring spawned processes has been replaced by messages extracted from the<br />
+ process output (indicated by "Progress: " at the start of the line of output)</p>
+
+<h2>Version 0.1.5</h2>
+
+<p>- Issue with "Selection" noted in 0-1-4 has been fixed. Can also now "clear" selection using button in<br />
+ Save State/Restore State area<br />
+- Can now load from "Recent Files"<br />
+- "Spawn Surface Mesher" option and "Spawn Volume Mesher" option<br />
+ - user can select alternate executable (e.g. - if not built with the app)<br />
+ - progress bar indicates process is running (but not actually linked to progress)<br />
+ - abort button to kill the process<br />
+ - "Process Output" button to display the output from the Process<br />
+ - NOTE: if click in "Process Output" window, new text added at the cursor location, even though the<br />
+ code seems to be coorect to place it at the end<br />
+ - Upon successful completion, user asked if they want to load the output<br />
+- A lot of source re-organization and cleaning-up under the hood for future development.<br />
+ - Help now displays README.txt file</p>
+
+<h2>Version 0.1.4</h2>
+
+<p>1. Input</p>
+
+<p>1.1 Supported formats: "ParaView files (*.vtk *.vtu *.vtm);;Solids (*.2dm)"<br />
+1.2 After loading the geometry file, a MF (boundary condition) file, which is<br />
+associated with the geometry file, can also be loaded.<br />
+1.3 Known issue: if the MFs file does not match the geoemtry file that was loaded<br />
+(different number of "faces"/primitives) or does not have the expected information, an<br />
+"Output Messages" dialog will indicate an error, but the CMB will not crash.<br />
+1.4 Known issue: Reading .sol file is disabled because the new source class, vtkHydroModelSource,<br />
+does not handle multi-block dataset yet.</p>
+
+<p><br />
+2. Display</p>
+
+<p>2.1 There are many display related properties that can be modified from the "Display" tab of the left GUI panel,<br />
+such as selecting different cell arrays of the cell data to color,<br />
+changing the representation style, doing transformation, modifying lighting, edge style and annotation etc.<br />
+2.2 There are also toolbar buttons to modify camera view direction, colorby different cell arrays and<br />
+change view representation.</p>
+
+<p><br />
+3. Selection</p>
+
+<p>3.1 A rubber band style selection (mousedown-n-drag or just click) is offered with a toolbar button.<br />
+3.2 The selection can also be changed from the "Properties" tab in the left GUI panel by selecting rows<br />
+in the MFs table or Material/Region table.<br />
+3.3 Known Issues: There are some issues currently with refreshing the selections in the Material/Region table<br />
+and the MFs table of the left GUI panel when a selection is cleared on the display.</p>
+
+<p><br />
+4. Properties Modification</p>
+
+<p>4.1 Material IDs can be modified by selecting the regions in the Material table of the Properties tab.<br />
+4.2 MFs can be regenerated(splitted) by changing the feature angles of selected MFs.<br />
+Different faces from the same region can also be merged into one MF.<br />
+4.3 A one-step "Reset State" can reverse the modifications of Material IDs and MFs to<br />
+the last saved state created by "Save State"</p>
+
+<p><br />
+5. Output</p>
+
+<p>5.1 CMB can save out a .vtk and .2dm file. If the vtk format is selected, a MFs file will also<br />
+be saved (see 5.2). If "Save Data" as output.vtk, MFs will be save to outputBC.vtk.<br />
+5.2 A new MFs (Boundary Conditions) file can also be saved out from CMB (will indicate the<br />
+geometry file that was read in as the geometry for the faces)<br />
+5.3 An Omicron input file (.dat), for "mesh", can be generated. It requires specification of the "model" input.</p>
+</body>
+</html>

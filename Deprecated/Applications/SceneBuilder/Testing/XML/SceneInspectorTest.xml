@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+ <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_View/menuShow" command="activate" arguments="Inspector" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_View/menuShow" command="activate" arguments="Inspector" />
+  <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,87,-1" />
+  <pqevent object="qtCMBMainWindow" command="mouseRelease" arguments="1,0,0,87,-1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/1QDockWidgetTitleButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_View/menuShow" command="activate" arguments="Inspector" />
+</pqevents>

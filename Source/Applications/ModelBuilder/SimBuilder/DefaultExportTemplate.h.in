@@ -1,0 +1,7 @@
+#ifndef __DefaultExportTemplate_h
+#define __DefaultExportTemplate_h
+
+const char *defaultExportTemplateString = ""
+@QuotedTemplate@;
+
+#endif  /* __DefaultExportTemplate_h */

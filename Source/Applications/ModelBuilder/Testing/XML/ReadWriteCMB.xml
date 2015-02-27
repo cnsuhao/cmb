@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_Data" />
+  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="tempCMBfile" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="keyEvent" arguments="7:16777220:0:
+:0:1" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="tempCMBfile.cmb" />
+</pqevents>

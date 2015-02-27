@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="keyEvent" arguments="7:16777220:0::0:1" />
+  <pqevent object="qtCMBMainWindow/action_SelectPoints" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/frameHideEntity/checkBoxHideModelFaces" command="set_boolean" arguments="true" />
+
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.165062,0.300664,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.295736,0.428571,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.295736,0.428571,1,0,0)" />
+
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.0784044,0.491694,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.253095,0.621262,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.253095,0.621262,1,0,0)" />
+
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.67119,0.30719,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.783215,0.405229,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.783215,0.405229,1,0,0)" />
+
+  <!-- Select model vert 14 -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.556341,0.405316,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.636492,0.498339,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.636492,0.498339,1,0,0)" />
+
+  <!-- Select bottom right corner -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.75547,0.684641,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.85524,0.78268,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.85524,0.78268,1,0,0)" />
+
+  <!-- Select top right of hole -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.692067,0.509804,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.766514,0.581699,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.766514,0.581699,1,0,0)" />
+
+  <!-- Select bottom right of hole -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.688935,0.601307,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.762777,0.678105,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.762777,0.678105,1,0,0)" />
+
+  <!-- Select bottom left of hole -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.637349,0.604575,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.685365,0.663399,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.685365,0.663399,1,0,0)" />
+
+  <!-- Unselect bottom right of hole -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.688935,0.601307,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.752777,0.678105,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.752777,0.678105,1,0,0)" />
+
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.173315,0.318937,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.291609,0.41196,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.291609,0.41196,1,0,0)" />
+
+  <!-- Unselect bottom right corner -->
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.75547,0.684641,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.85524,0.78268,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.85524,0.78268,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/frameHideEntity/checkBoxHideModelFaces" command="set_boolean" arguments="false" />
+</pqevents>

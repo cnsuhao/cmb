@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<SMTK_AttributeManager Version="1">
+  <!--**********  Category and Analysis Infomation ***********-->
+  <Categories Default="General"/>
+  <Analyses>
+    <Analysis Type="EMS" Default="General"/>
+  </Analyses>
+  <!--**********  Attribute Definitions ***********-->
+  <Definitions>
+    <AttDef Type="Globals" BaseType="" Abstract="0" Version="0" Unique="false" Associations="">
+      <ItemDefinitions>
+        <!--***  Solvers Definitions ***-->
+        <Group Name="Solvers" Label="Solvers" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <Double Name="et_leak_rate" Label="et leak rate" Version="0" NumberOfRequiredValues="1">
+              <Categories>
+                <Cat>General</Cat>
+              </Categories>
+            </Double>
+            <Int Name="total_weeks" Label="Total weeks" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="false">0</Min>
+              </RangeInfo>
+            </Int>
+          </ItemDefinitions>
+        </Group>
+        <!--***  Output Definitions ***-->
+        <Group Name="Output" Label="Output" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <String Name="file" Label="File" Version="0" AdvanceLevel="0" NumberOfRequiredValues="1"/>
+            <String Name="type" Label="Type" Version="0" AdvanceLevel="0" NumberOfRequiredValues="1">
+              <DiscreteInfo DefaultIndex="0">
+                <Value Enum="HDF">HDF</Value>
+                <Value Enum="XML">XML</Value>
+              </DiscreteInfo>
+            </String>
+          </ItemDefinitions>
+        </Group>
+        <!--***  Weather Definitions ***-->
+        <Group Name="Weather" Label="Weather" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <String Name="file" Label="File" Version="0" AdvanceLevel="0" NumberOfRequiredValues="1"/>
+            <Double Name="rain_absorption_rate" Label="Rain absorption rate" Version="0" NumberOfRequiredValues="1"/>
+            <Double Name="rain_adjust" Label="Rain adjust" Version="0" NumberOfRequiredValues="1"/>
+          </ItemDefinitions>
+        </Group>
+      </ItemDefinitions>
+    </AttDef>
+
+    <!--**********  Agent Definitions (i.e. the living stuff) ***********-->
+    <AttDef Type="Agents" Label="Agents" BaseType="" Abstract="0" Version="0" Unique="false" Associations="">
+      <ItemDefinitions>
+        <!--**********  Salamander Definition ***********-->
+        <Group Name="Salamanders" Label="Salamanders" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <Double Name="yearly_survival_rate" Label="Yearly survival rate" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+                <Max Inclusive="true">1</Max>
+              </RangeInfo>
+            </Double>
+            <Int Name="max_per_pond" Label="Maximum per pond" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+              </RangeInfo>
+            </Int>
+            <Int Name="max_age" Label="Maximum age" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+              </RangeInfo>
+            </Int>
+            <Int Name="initial_per_pond" Label="Initial amount per pond" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+              </RangeInfo>
+            </Int>
+            <Int Name="random_number_seed" Label="Random Number Seed" Version="0" AdvanceLevel="1" Optional="true" NumberOfRequiredValues="1">
+              <DefaultValue>42</DefaultValue>
+            </Int>
+          </ItemDefinitions>
+        </Group>
+        <!--**********  Eggs Definition ***********-->
+        <Group Name="Eggs" Label="Eggs" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <Double Name="hatch_rate" Label="Hatch rate" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+                <Max Inclusive="true">1</Max>
+              </RangeInfo>
+            </Double>
+          </ItemDefinitions>
+        </Group>
+        <!--**********  Larvae Definition ***********-->
+        <Group Name="Larvae" Label="Larvae" NumberOfRequiredGroups="1">
+          <ItemDefinitions>
+            <Double Name="survival_rate" Label="Survival rate" Version="0" NumberOfRequiredValues="1">
+              <RangeInfo>
+                <Min Inclusive="true">0</Min>
+                <Max Inclusive="true">1</Max>
+              </RangeInfo>
+            </Double>
+          </ItemDefinitions>
+        </Group>
+      </ItemDefinitions>
+    </AttDef>
+
+    <AttDef Type="Pond" Label="Pond" BaseType="" Version="0" Unique="true" Associations="gf">
+      <ItemDefinitions>
+        <Double Name="watershed_m" Label="Watershed" Version="0" NumberOfRequiredValues="1" Units="meters">
+          <RangeInfo>
+            <Min Inclusive="true">0</Min>
+          </RangeInfo>
+        </Double>
+        <Double Name="max_depth" Label="Maximum depth" Version="0" NumberOfRequiredValues="1" Units="meters">
+          <RangeInfo>
+            <Min Inclusive="true">0</Min>
+          </RangeInfo>
+        </Double>
+      </ItemDefinitions>
+    </AttDef>
+
+  </Definitions>
+
+  <!--**********  Attribute Instances ***********-->
+  <Attributes>
+  </Attributes>
+
+  <!--********** Workflow Views ***********-->
+  <RootView Title="SimBuilder">
+    <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
+    <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
+
+    <InstancedView Title="Globals">
+      <InstancedAttributes>
+        <Att Type="Globals">Globals</Att>
+      </InstancedAttributes>
+    </InstancedView>
+
+    <InstancedView Title="Agents">
+      <InstancedAttributes>
+        <Att Type="Agents">Agents</Att>
+      </InstancedAttributes>
+    </InstancedView>
+
+    <AttributeView Title="Ponds" ModelEntityFilter="gf" CreateEntities="true">
+      <AttributeTypes>
+        <Type>Pond</Type>
+      </AttributeTypes>
+    </AttributeView>
+
+    <ModelEntityView Title="Domains" ModelEntityFilter="gf" Definition="Pond" />
+
+  </RootView>
+</SMTK_AttributeManager>

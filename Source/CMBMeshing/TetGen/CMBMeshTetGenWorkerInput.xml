@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--Created by XmlV1StringWriter-->
+<SMTK_AttributeManager Version="1">
+  <Definitions>
+    <AttDef Type="TetGen" Label="TetGen Options" BaseType=""
+            Version="0" Unique="true">
+      <ItemDefinitions>
+        <Double Name="VolumeConstraint" Label="Volume Constraint">
+          <DefaultValue>3.14159</DefaultValue>
+        </Double>
+
+        <!-- Void type for checkbox -->
+        <!-- Should be checked by default -->
+        <Void Name="MergeCoplanarFacets" Label="Merge Coplanar Facets"
+              Optional="true" IsEnabledByDefault="true">
+          <BriefDescription>Check to enable Merging of Coplanar Facets</BriefDescription>
+        </Void>
+
+        <!-- Int type for combo box selection -->
+        <Int Name="PreservationMode" Label="Preservation Mode">
+          <BriefDescription>Determine what surface information we should save</BriefDescription>
+          <DiscreteInfo DefaultIndex="1">
+            <Value Enum="None">0</Value>
+            <Value Enum="Entire Surface Mesh">1</Value>
+            <Value Enum="Exterior Surface Mesh">2</Value>
+          </DiscreteInfo>
+        </Int>
+
+        <!-- Void type for checkbox -->
+        <!-- Should not be checked by default -->
+        <Void Name="VerboseMode" Label="Enable Verbose Mode"
+          Optional="true" IsEnabledByDefault="false">
+          <BriefDescription>Check to enable verbose output</BriefDescription>
+        </Void>
+
+      </ItemDefinitions>
+    </AttDef>
+  </Definitions>
+</SMTK_AttributeManager>

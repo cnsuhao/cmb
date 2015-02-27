@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<pqevents>
+    <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/variableToolbar/displayColor" command="set_string" arguments="Model Face" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,40,8,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,40,8,/1:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/ZoomButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,12,8,/1:1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,12,8,/1:1" />
+</pqevents>

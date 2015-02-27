@@ -1,0 +1,13 @@
+CMB Suite @CMB_VERSION_FULL@
+<p>
+CMB Suite includes "Project Manager", "Points Builder", "Scene Builder", "Model Builder", "Mesh Viewer". The "Model Builder" also contains "SimBuilder" and "ScenarioBuilder".
+</p>
+<p>
+  Copyright (c) 2000-2010 Kitware Inc. 28 Corporate Drive, Suite 204,
+  Clifton Park, NY, 12065, USA.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
+
+  This software is distributed WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.  See the above copyright notice for more information.
+</p>

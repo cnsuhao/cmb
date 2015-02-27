@@ -1,0 +1,113 @@
+/*=========================================================================
+
+Copyright (c) 1998-2012 Kitware Inc. 28 Corporate Drive,
+Clifton Park, NY, 12065, USA.
+
+All rights reserved. No part of this software may be reproduced,
+distributed,
+or modified, in any form or by any means, without permission in writing from
+Kitware Inc.
+
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY FOR
+DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY DERIVATIVES THEREOF,
+EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING,
+BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE IS PROVIDED ON AN
+"AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO
+PROVIDE
+MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+=========================================================================*/
+// .NAME vtkFacesConnectivityFilter
+// .SECTION Description
+// This filter can be used to merge faces with different ids.
+
+#ifndef __vtkFacesConnectivityFilter_h
+#define __vtkFacesConnectivityFilter_h
+
+#include "vtkCMBFilteringModule.h" // For export macro
+#include "vtkMultiBlockDataSetAlgorithm.h"
+#include "cmbSystemConfig.h"
+#include <map>
+
+class vtkIntArray;
+class vtkIdTypeArray;
+class vtkIdList;
+
+class VTKCMBFILTERING_EXPORT vtkFacesConnectivityFilter : public vtkMultiBlockDataSetAlgorithm
+{
+public:
+  static vtkFacesConnectivityFilter* New();
+  vtkTypeMacro(vtkFacesConnectivityFilter, vtkMultiBlockDataSetAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent);
+
+  // Description:
+  // Returns a list of new block indices,
+  //vtkGetObjectMacro(NewBlockIndices, vtkIdList);
+
+  // Description:
+  // Specify the angle that defines a sharp edge. If the difference in
+  // angle across neighboring polygons is greater than this value, the
+  // shared edge is considered "sharp".
+  vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
+  vtkGetMacro(FeatureAngle,double);
+
+  // Description:
+  // Specify the face Id that will be splitted.
+  vtkSetMacro(FaceID,int);
+  vtkGetMacro(FaceID,int);
+
+  // Description:
+  // Convenience method to specify the selection connection (2nd input
+  // port)
+  //void SetSelectionConnection(vtkAlgorithmOutput* algOutput)
+  //{
+  //  this->SetInputConnection(1, algOutput);
+  //};
+
+  // Description:
+  // Obtain the number of connected faces.
+  // int GetNumberOfExtractedFaces();
+
+//BTX
+protected:
+  vtkFacesConnectivityFilter();
+  ~vtkFacesConnectivityFilter();
+
+  // Description:
+  // This is called within ProcessRequest when a request asks the algorithm
+  // to do its work. This is the method you should override to do whatever the
+  // algorithm is designed to do. This happens during the fourth pass in the
+  // pipeline execution process.
+  //virtual int RequestData(vtkInformation*,
+  //                        vtkInformationVector**,
+  //                        vtkInformationVector*);
+
+  // Usual data generation method
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int FillInputPortInformation(int port, vtkInformation *info);
+
+private:
+  vtkFacesConnectivityFilter(const vtkFacesConnectivityFilter&); // Not implemented.
+  void operator=(const vtkFacesConnectivityFilter&); // Not implemented.
+
+  void UpdateFaceIDArray(
+    int maxFaceId, vtkIdTypeArray* newRegionArray,
+    vtkIntArray* selCellIndices,
+    std::map<vtkIdType, vtkIdList*> & faceList);
+
+  double FeatureAngle;
+  int FaceID;
+  //vtkIdList* NewBlockIndices;
+
+  class vtkInternal;
+  vtkInternal* Internal;
+//ETX
+};
+
+#endif
+
+

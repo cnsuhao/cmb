@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="SimBuilder">
+    <file>Icons/Analysis.png</file>
+    <file>Icons/Domain.png</file>
+    <file>Icons/Functions.png</file>
+    <file>Icons/Globals.png</file>
+    <file>Icons/Materials.png</file>
+    <file>Icons/Ray.png</file>
+    <file>Icons/Solvers.png</file>
+    <file>Icons/Time.png</file>
+    <file>Icons/Veg.png</file>
+  </qresource>
+</RCC>

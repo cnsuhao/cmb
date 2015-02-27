@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<pqevents>
+    <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionGrow_AcceptNG" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/qt_toolbar_ext_button" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="3000" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton1" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.600243,0.280822,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.600243,0.280822,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.600243,0.280822,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup" command="mousePress" arguments="1,1,0,16,6" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup" command="mouseRelease" arguments="1,0,0,16,6" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionGrow_AcceptNG" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+</pqevents>

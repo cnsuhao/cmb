@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/kandahar_tile10_crop_A_classified.las" />
+  <pqevent object="qtCMBMainWindow/1QMessageBox0/qt_msgbox_buttonbox/1QPushButton1" command="activate" arguments="" />
+</pqevents>

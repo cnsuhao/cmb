@@ -1,0 +1,1283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qtCMBMainWindow</class>
+ <widget class="QMainWindow" name="qtCMBMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1304</width>
+    <height>701</height>
+   </rect>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::ActionsContextMenu</enum>
+  </property>
+  <property name="windowTitle">
+   <string>CMB</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../Resources/Resources.qrc">
+    <normaloff>:/cmb/Icon.png</normaloff>:/cmb/Icon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>File IO</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Open_File"/>
+   <addaction name="action_Save_Data"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_View">
+   <property name="windowTitle">
+    <string>Camera Controls</string>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionReset_Camera"/>
+   <addaction name="actionView_Positive_X"/>
+   <addaction name="actionView_Negative_X"/>
+   <addaction name="actionView_Positive_Y"/>
+   <addaction name="actionView_Negative_Y"/>
+   <addaction name="actionView_Positive_Z"/>
+   <addaction name="actionView_Negative_Z"/>
+   <addaction name="actionZoomToBox"/>
+   <addaction name="separator"/>
+   <addaction name="actionShowCenterAxes"/>
+   <addaction name="actionResetCenter"/>
+   <addaction name="actionPickCenter"/>
+   <addaction name="actionLinkCenterWithFocal"/>
+  </widget>
+  <widget class="QDockWidget" name="faceParametersDock">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Inspector</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QVBoxLayout"/>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar_Selection">
+   <property name="windowTitle">
+    <string>Selection</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Select"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1304</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menu_Camera">
+     <property name="title">
+      <string>&amp;Camera</string>
+     </property>
+     <addaction name="actionAdjustCamera"/>
+     <addaction name="separator"/>
+     <addaction name="actionReset_Camera"/>
+     <addaction name="actionView_Positive_X"/>
+     <addaction name="actionView_Negative_X"/>
+     <addaction name="actionView_Positive_Y"/>
+     <addaction name="actionView_Negative_Y"/>
+     <addaction name="actionView_Positive_Z"/>
+     <addaction name="actionView_Negative_Z"/>
+     <addaction name="actionZoomToBox"/>
+     <addaction name="separator"/>
+     <addaction name="actionShowCenterAxes"/>
+     <addaction name="actionResetCenter"/>
+     <addaction name="actionPickCenter"/>
+     <addaction name="actionLinkCenterWithFocal"/>
+    </widget>
+    <widget class="QMenu" name="menuShow">
+     <property name="title">
+      <string>Show</string>
+     </property>
+    </widget>
+    <addaction name="menu_Camera"/>
+    <addaction name="actionChange_Background_Color"/>
+    <addaction name="separator"/>
+    <addaction name="menuShow"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About"/>
+    <addaction name="action_Help"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuRecentFiles">
+     <property name="title">
+      <string>&amp;Recent Files</string>
+     </property>
+    </widget>
+    <addaction name="action_Open_File"/>
+    <addaction name="menuRecentFiles"/>
+    <addaction name="separator"/>
+    <addaction name="actionServerConnect"/>
+    <addaction name="actionServerDisconnect"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save_Data"/>
+    <addaction name="action_Save_As"/>
+    <addaction name="action_Close"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionLock_View_Size"/>
+    <addaction name="actionSaveScreenshot"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="action_Select"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menu_View"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <action name="action_Save_Data">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSave32.png</normaloff>:/cmb/pqSave32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="action_Help">
+   <property name="text">
+    <string>&amp;Help</string>
+   </property>
+  </action>
+  <action name="action_Close">
+   <property name="text">
+    <string>&amp;Close Data</string>
+   </property>
+   <property name="iconText">
+    <string>Close Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Data</string>
+   </property>
+  </action>
+  <action name="action_Exit">
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+  </action>
+  <action name="action_Select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSelect32.png</normaloff>:/cmb/pqSelect32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Object</string>
+   </property>
+  </action>
+  <action name="actionReset_Camera">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqResetCamera32.png</normaloff>:/cmb/pqResetCamera32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset Camera</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_X">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqXPlus32.png</normaloff>:/cmb/pqXPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive X</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +X</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_X">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqXMinus32.png</normaloff>:/cmb/pqXMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative X</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -X</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_Y">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqYPlus32.png</normaloff>:/cmb/pqYPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +Y</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_Y">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqYMinus32.png</normaloff>:/cmb/pqYMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative Y</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -Y</string>
+   </property>
+  </action>
+  <action name="actionView_Positive_Z">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZPlus32.png</normaloff>:/cmb/pqZPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Positive Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to +Z</string>
+   </property>
+  </action>
+  <action name="actionView_Negative_Z">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZMinus32.png</normaloff>:/cmb/pqZMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Negative Z</string>
+   </property>
+   <property name="toolTip">
+    <string>Set view direction to -Z</string>
+   </property>
+  </action>
+  <action name="actionShowCenterAxes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqShowCenterAxes24.png</normaloff>:/cmb/pqShowCenterAxes24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Show/Hide center of rotation</string>
+   </property>
+  </action>
+  <action name="actionResetCenter">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqResetCenter24.png</normaloff>:/cmb/pqResetCenter24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reset Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset center of rotation</string>
+   </property>
+  </action>
+  <action name="actionPickCenter">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqPickCenter24.png</normaloff>:/cmb/pqPickCenter24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pick Center</string>
+   </property>
+   <property name="iconText">
+    <string>Pick Center</string>
+   </property>
+   <property name="toolTip">
+    <string>Pick Center</string>
+   </property>
+   <property name="statusTip">
+    <string>Mouse press to pick center of rotation</string>
+   </property>
+  </action>
+  <action name="action_Generate_Omicron_Input">
+   <property name="text">
+    <string>Generate Omicron Input</string>
+   </property>
+  </action>
+  <action name="action_Open_File">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqOpen32.png</normaloff>:/cmb/pqOpen32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="iconText">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionScalarBarVisibility">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqScalarBar24.png</normaloff>:/cmb/pqScalarBar24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Color Legend</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Color Legend Visibility</string>
+   </property>
+   <property name="statusTip">
+    <string>Toggle Color Legend Visibility</string>
+   </property>
+  </action>
+  <action name="actionToolsRecordTest">
+   <property name="text">
+    <string>&amp;Record Test</string>
+   </property>
+  </action>
+  <action name="actionToolsPlayTest">
+   <property name="text">
+    <string>&amp;Play Test</string>
+   </property>
+  </action>
+  <action name="actionSaveScreenshot">
+   <property name="text">
+    <string>Save Screenshot...</string>
+   </property>
+  </action>
+  <action name="actionSpawn_Surface_Mesher">
+   <property name="text">
+    <string>S&amp;pawn Surface Mesher</string>
+   </property>
+  </action>
+  <action name="actionSpawn_Volume_Mesher">
+   <property name="text">
+    <string>Spawn Volume Mesher</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionCreate_VOI">
+   <property name="text">
+    <string>VOI</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a VOI</string>
+   </property>
+  </action>
+  <action name="actionFocus_on_VOI">
+   <property name="text">
+    <string>Focus on VOI</string>
+   </property>
+  </action>
+  <action name="actionOpen_Omicron_File">
+   <property name="text">
+    <string>Open Omicron File</string>
+   </property>
+  </action>
+  <action name="actionImport_Object_File">
+   <property name="text">
+    <string>Import Object File</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="action_Save_As">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSave32.png</normaloff>:/cmb/pqSave32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionCreate_Omicron_Input">
+   <property name="text">
+    <string>Create Omicron Input</string>
+   </property>
+  </action>
+  <action name="actionCreate_Surface_Mesh">
+   <property name="text">
+    <string>Generate Surface Mesh</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate surface mesh of the scene</string>
+   </property>
+  </action>
+  <action name="actionModify_With_Arc_Functions">
+   <property name="text">
+    <string>Modify Data With Arc Functions</string>
+   </property>
+   <property name="toolTip">
+    <string>Applies a function to selected data</string>
+   </property>
+  </action>
+  <action name="actionGlyph_Playback">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Glyph Playback</string>
+   </property>
+   <property name="toolTip">
+    <string>Enable/Disable glyph playback</string>
+   </property>
+  </action>
+  <action name="actionCreate_Solid_from_TINs">
+   <property name="text">
+    <string>Generate Solid from TINs</string>
+   </property>
+  </action>
+  <action name="actionAddNode">
+   <property name="text">
+    <string>Group</string>
+   </property>
+  </action>
+  <action name="actionDeleteNode">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete a Scene Object</string>
+   </property>
+  </action>
+  <action name="actionDuplicateNode">
+   <property name="text">
+    <string>Clone</string>
+   </property>
+   <property name="toolTip">
+    <string>Clone an Object once</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionSelectSnapTarget">
+   <property name="text">
+    <string>Set Snap Target</string>
+   </property>
+  </action>
+  <action name="actionSnap_Object">
+   <property name="text">
+    <string>Snap</string>
+   </property>
+   <property name="toolTip">
+    <string>Snap an Object to the Snap Target</string>
+   </property>
+  </action>
+  <action name="actionAssign_Color_to_Node">
+   <property name="text">
+    <string>Assign Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Assign Color to an Object</string>
+   </property>
+  </action>
+  <action name="actionUnassign_Color_from_Node">
+   <property name="text">
+    <string>Unassign Color</string>
+   </property>
+  </action>
+  <action name="actionDuplicate_Node_Randomly">
+   <property name="text">
+    <string>Duplicate Randomly</string>
+   </property>
+   <property name="toolTip">
+    <string>Duplicate an Object Randomly</string>
+   </property>
+  </action>
+  <action name="actionUnselectSnapTarget">
+   <property name="text">
+    <string>Unset Snap Target</string>
+   </property>
+  </action>
+  <action name="actionChange_Background_Color">
+   <property name="text">
+    <string>Change Background Color</string>
+   </property>
+  </action>
+  <action name="actionEditTextureMap">
+   <property name="text">
+    <string>Change Texture Map</string>
+   </property>
+  </action>
+  <action name="actionRemoveTextureMap">
+   <property name="text">
+    <string>Remove Texture Map</string>
+   </property>
+  </action>
+  <action name="actionCreate_Line">
+   <property name="text">
+    <string>Line</string>
+   </property>
+  </action>
+  <action name="actionChangeNumberOfPointsLoaded">
+   <property name="text">
+    <string>Change # of Points Loaded</string>
+   </property>
+  </action>
+  <action name="action_Save_BCSs">
+   <property name="text">
+    <string>Export BCS File</string>
+   </property>
+  </action>
+  <action name="actionGrow_Cell">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCell32.png</normaloff>:/cmb/pqGrowCell32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Grow From Mesh Facet</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow from Mesh Facet (Hold Shift key to rotate in grow-mode; Hold Ctrl or Cmd key to add to or remove from current selection)</string>
+   </property>
+  </action>
+  <action name="actionGrow_Clear">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqCancel48.png</normaloff>:/cmb/pqCancel48.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Grow Result</string>
+   </property>
+  </action>
+  <action name="actionGrow_Accept">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ExtractFacet24.png</normaloff>:/cmb/ExtractFacet24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New Facet Group From Grow</string>
+   </property>
+   <property name="toolTip">
+    <string>Create New Facet Group From Grow</string>
+   </property>
+  </action>
+  <action name="actionGrowPlus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCellPlus32.png</normaloff>:/cmb/pqGrowCellPlus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>GrowPlus</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow then Merge the Result with Current Grow Selection (Hold Shift key to rotate in grow-mode)</string>
+   </property>
+  </action>
+  <action name="actionGrowMinus">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqGrowCellMinus32.png</normaloff>:/cmb/pqGrowCellMinus32.png</iconset>
+   </property>
+   <property name="text">
+    <string>GrowMinus</string>
+   </property>
+   <property name="toolTip">
+    <string>Grow then Remove the Result from Current Grow Selection (Hold Shift key to rotate in grow-mode)</string>
+   </property>
+  </action>
+  <action name="actionExportSelectedSolids">
+   <property name="text">
+    <string>Export Selected Solids</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Selected Solids to CMB</string>
+   </property>
+  </action>
+  <action name="actionDefineVOI">
+   <property name="text">
+    <string>Define Selected VOI</string>
+   </property>
+   <property name="toolTip">
+    <string>Set the selected VOI coordinates</string>
+   </property>
+  </action>
+  <action name="actionContour_Widget">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourWidget24.png</normaloff>:/cmb/ContourWidget24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Arc</string>
+   </property>
+   <property name="toolTip">
+    <string>Create an Arc</string>
+   </property>
+  </action>
+  <action name="actionExport_2D_BCS_File">
+   <property name="text">
+    <string>Export 2D BCS File</string>
+   </property>
+  </action>
+  <action name="actionCreateGroundPlane">
+   <property name="text">
+    <string>Ground Plane</string>
+   </property>
+  </action>
+  <action name="actionEditGroundPlane">
+   <property name="text">
+    <string>Edit Ground Plane</string>
+   </property>
+  </action>
+  <action name="actionZoomToBox">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZoomToSelection24.png</normaloff>:/cmb/pqZoomToSelection24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom to Box</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom to Box</string>
+   </property>
+  </action>
+  <action name="actionPackageScene">
+   <property name="text">
+    <string>Package Scene</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy Scene and all related files into one directory</string>
+   </property>
+  </action>
+  <action name="actionConvert_from_Lat_Long">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Convert from Lat/Long</string>
+   </property>
+  </action>
+  <action name="actionGrow_AcceptNG">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ExtractNodes24.png</normaloff>:/cmb/ExtractNodes24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create New NG From Grow</string>
+   </property>
+   <property name="toolTip">
+    <string>Create New Nodal Group From Grow</string>
+   </property>
+  </action>
+  <action name="actionCreateStackTIN">
+   <property name="text">
+    <string>Create a TIN Stack</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a Stack of TINs</string>
+   </property>
+  </action>
+  <action name="actionDispaly">
+   <property name="text">
+    <string>display</string>
+   </property>
+   <property name="toolTip">
+    <string>display</string>
+   </property>
+  </action>
+  <action name="actionLoad_Simulation">
+   <property name="text">
+    <string>Load Simulation</string>
+   </property>
+  </action>
+  <action name="actionLoad_Simulation_Template">
+   <property name="text">
+    <string>Load Simulation Template</string>
+   </property>
+  </action>
+  <action name="actionChangeObjectsType">
+   <property name="text">
+    <string>Change Object's Type</string>
+   </property>
+   <property name="toolTip">
+    <string>Change the user defined type of an object</string>
+   </property>
+  </action>
+  <action name="actionSave_Simulation">
+   <property name="text">
+    <string>Save Simulation</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Simulation</string>
+   </property>
+  </action>
+  <action name="action_SelectPoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqSurfaceSelectionPoint24.png</normaloff>:/cmb/pqSurfaceSelectionPoint24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Modify End Nodes </string>
+   </property>
+   <property name="toolTip">
+    <string>Add or Remove End Nodes of Arcs</string>
+   </property>
+  </action>
+  <action name="action_MB_Load_Scene">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Load Scene File</string>
+   </property>
+   <property name="toolTip">
+    <string>Load Scene File</string>
+   </property>
+  </action>
+  <action name="action_MB_Unload_Scene">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Unload Scene File</string>
+   </property>
+   <property name="toolTip">
+    <string>Unload Scene File</string>
+   </property>
+  </action>
+  <action name="action_SelectThrough">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/FrustumSelectionCell.png</normaloff>:/cmb/FrustumSelectionCell.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Through</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Cells Through</string>
+   </property>
+  </action>
+  <action name="action_FindData">
+   <property name="text">
+    <string>Find Data</string>
+   </property>
+  </action>
+  <action name="actionEditContourNode">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourWidget24.png</normaloff>:/cmb/ContourWidget24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Modify Arc</string>
+   </property>
+   <property name="iconText">
+    <string>Modify Arc</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Arc Object</string>
+   </property>
+  </action>
+  <action name="actionGenerateContours">
+   <property name="text">
+    <string>Generate Arcs from Image</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate Arcs from Image</string>
+   </property>
+  </action>
+  <action name="actionCreateDEMMesh">
+    <property name="text">
+      <string>Generate 3D Mesh from Image</string>
+    </property>
+    <property name="toolTip">
+      <string>Generate 3D Mesh from Image</string>
+    </property>
+  </action>
+  <action name="actionServerConnect">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqConnect24.png</normaloff>:/cmb/pqConnect24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Co&amp;nnect Server</string>
+   </property>
+   <property name="toolTip">
+    <string>Connect Server</string>
+   </property>
+  </action>
+  <action name="actionServerDisconnect">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqDisconnect24.png</normaloff>:/cmb/pqDisconnect24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Disconnect Server</string>
+   </property>
+   <property name="toolTip">
+    <string>Disconnect Server</string>
+   </property>
+  </action>
+  <action name="actionCreatePolygon">
+   <property name="text">
+    <string>Polygon</string>
+   </property>
+   <property name="toolTip">
+    <string>Create Polygon</string>
+   </property>
+  </action>
+  <action name="action_Import_BC_File">
+   <property name="text">
+    <string>Import BC File</string>
+   </property>
+   <property name="toolTip">
+    <string>Import BC File</string>
+   </property>
+  </action>
+  <action name="actionArcSnapping">
+   <property name="text">
+    <string>Set Arc Snapping</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Arc Snapping</string>
+   </property>
+  </action>
+  <action name="actionMergeArcs">
+   <property name="text">
+    <string>Merge Arcs</string>
+   </property>
+  </action>
+  <action name="actionSplitOnEndNodes">
+   <property name="text">
+    <string>Split on End Nodes</string>
+   </property>
+  </action>
+  <action name="actionCreateConicalSolid">
+   <property name="text">
+    <string>Conical Solid</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a Conical Solid</string>
+   </property>
+  </action>
+  <action name="actionEditConicalSolid">
+   <property name="text">
+    <string>Modify Conical Solid</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit the Cone's Parameters</string>
+   </property>
+  </action>
+  <action name="actionGrowArcSelection">
+   <property name="text">
+    <string>Grow Arc Selection</string>
+   </property>
+  </action>
+  <action name="actionConvert_From_LatLong">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Convert From LatLong</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert From LatLong to XYZ Coordinate</string>
+   </property>
+  </action>
+  <action name="actionAutoConnectArcs">
+   <property name="text">
+    <string>Auto Connect Arcs</string>
+   </property>
+  </action>
+  <action name="actionAdjustCamera">
+   <property name="text">
+    <string>Adjust Camera</string>
+   </property>
+   <property name="toolTip">
+    <string>Adjust Camera</string>
+   </property>
+  </action>
+  <action name="actionLinkCenterWithFocal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/LinkCenterAndFocal.png</normaloff>:/cmb/LinkCenterAndFocal.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sync Focal Point when Pick Center</string>
+   </property>
+   <property name="iconText">
+    <string>Sync Focal Point when Pick Center</string>
+   </property>
+   <property name="toolTip">
+    <string>If checked, the camera focal point will also be changed to the rotation center when the center is set with 'Pick Center' button on left</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqUndo24.png</normaloff>:/cmb/pqUndo24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo Previous Action</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqRedo24.png</normaloff>:/cmb/pqRedo24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo a previously undone action</string>
+   </property>
+  </action>
+  <action name="actionCreate_CMB_Model">
+   <property name="text">
+    <string>Generate CMB Model</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate CMB model of the scene</string>
+   </property>
+  </action>
+  <action name="actionTimer_Log">
+   <property name="text">
+    <string>&amp;Timer Log</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Timer Log Dialog</string>
+   </property>
+  </action>
+  <action name="actionOutput_Window">
+   <property name="text">
+    <string>&amp;Output Window</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Output Window</string>
+   </property>
+  </action>
+  <action name="actionClearUndoRedoStack">
+   <property name="text">
+    <string>Clear Undo Redo Stack</string>
+   </property>
+   <property name="toolTip">
+    <string>Removed all the undone actions</string>
+   </property>
+  </action>
+  <action name="actionSelect_Contour_Surface_Point">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourSelectSurfacePoint.png</normaloff>:/cmb/ContourSelectSurfacePoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Contour Surface Point</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Surface Point with Contour Widget (2D Camera Mode)</string>
+   </property>
+  </action>
+  <action name="actionSelect_Contour_Through_Cells">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourSelectThroughPoint.png</normaloff>:/cmb/ContourSelectThroughPoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Contour Through</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Through Cells with Contour Widget (Options on Left Panel)</string>
+   </property>
+  </action>
+  <action name="actionMove_Selected_Contour_Points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourMoveSurfacePoint.png</normaloff>:/cmb/ContourMoveSurfacePoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Move Selected Contour Points</string>
+   </property>
+   <property name="toolTip">
+    <string>Move Selected Contour Points</string>
+   </property>
+  </action>
+  <action name="actionModify_Mesh_Surface_Nodes">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourModifySurfacePoint.png</normaloff>:/cmb/ContourModifySurfacePoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Modify Selected Mesh Surface Nodes</string>
+   </property>
+   <property name="toolTip">
+    <string>Modify Selected Mesh Surface Nodes</string>
+   </property>
+  </action>
+  <action name="actionExtract_Subset">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ExtractSubset24.png</normaloff>:/cmb/ExtractSubset24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Extract Subset</string>
+   </property>
+   <property name="toolTip">
+    <string>Extract Selection As Filters Input</string>
+   </property>
+  </action>
+  <action name="actionPush_Selected_Contour_Points">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourPushSurfacePoint.png</normaloff>:/cmb/ContourPushSurfacePoint.png</iconset>
+   </property>
+   <property name="text">
+    <string>Push Selected Contour Points</string>
+   </property>
+   <property name="toolTip">
+    <string>Push Selected Contour Points Along Arrow Direction</string>
+   </property>
+  </action>
+  <action name="actionSelect_Contour_Surface_Cell">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ContourSelectSurfaceCell.png</normaloff>:/cmb/ContourSelectSurfaceCell.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Contour Surface Cell</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Surface Cell with Contour Widget (2D Camera Mode)</string>
+   </property>
+  </action>
+  <action name="actionApplyBathymetry">
+   <property name="text">
+    <string>Edit Bathymetry</string>
+   </property>
+   <property name="toolTip">
+    <string>Apply or Remove Bathymetry</string>
+   </property>
+  </action>
+  <action name="actionExportSelectedPolygons">
+   <property name="text">
+    <string>Export Selected Polygons</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Selected Polygons as CMB Model</string>
+   </property>
+  </action>
+  <action name="actionSelect_Cone_Cells">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ConeSelectThroughCell24.png</normaloff>:/cmb/ConeSelectThroughCell24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Cells With Cone</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Cells with Cone (Options on Left Panel)</string>
+   </property>
+  </action>
+  <action name="actionEdit_Conical_Region">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/ConeSelectThroughCell24.png</normaloff>:/cmb/ConeSelectThroughCell24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Conical Region</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Conical Region</string>
+   </property>
+  </action>
+  <action name="actionExport_Simulation_File">
+   <property name="text">
+    <string>Export Simulation File</string>
+   </property>
+   <property name="toolTip">
+    <string>Export simulation instance file to a specific simulation format </string>
+   </property>
+  </action>
+  <action name="actionShowElevation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Elevation</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the elevation on the object</string>
+   </property>
+  </action>
+  <action name="actionEdit_Color_Map">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqEditColor24.png</normaloff>:/cmb/pqEditColor24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Color Map</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Color Map</string>
+   </property>
+  </action>
+  <action name="actionConvertToGlyphs">
+   <property name="text">
+    <string>Convert To Glyphs</string>
+   </property>
+   <property name="toolTip">
+    <string>Converts scene nodes that refer to the same file into a single glyph node.</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Application Settings</string>
+   </property>
+  </action>
+  <action name="actionLock_View_Size">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lock View Size</string>
+   </property>
+   <property name="toolTip">
+    <string>Lock the view size for testing</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../Resources/Resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

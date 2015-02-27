@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_View" command="activate" arguments="actionChange_Background_Color" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QWellArray0" command="mousePress" arguments="1,1,0,14,15" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QWellArray0" command="mouseRelease" arguments="1,0,0,14,15" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox0" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox0" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox1" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox1" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox2" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox2" command="set_int" arguments="20" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox5" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox5" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox5" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox4" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox4" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox3" command="set_int" arguments="3" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QColorShower0/1QSpinBox3" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments="" />
+</pqevents>

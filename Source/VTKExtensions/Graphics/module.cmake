@@ -1,0 +1,10 @@
+vtk_module(vtkCMBGraphics
+  DEPENDS
+    vtkCMBGeneral
+    vtkPVClientServerCoreRendering
+  PRIVATE_DEPENDS
+    vtkCMBMeshing
+    vtkFiltersFlowPaths
+    vtksys
+  EXCLUDE_FROM_WRAP_HIERARCHY
+)

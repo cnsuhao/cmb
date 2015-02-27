@@ -1,0 +1,7 @@
+{
+"ExecutableName": "@workerExecutableName@",
+"InputType": "@R_INPUT_TYPE@",
+"OutputType": "@R_OUTPUT_TYPE@",
+"File" : "@R_FILE_NAME@",
+"FileFormat" : "@R_FILE_TYPE@"
+}

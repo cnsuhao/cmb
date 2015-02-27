@@ -1,0 +1,31 @@
+<ServerManagerConfiguration>
+  <ProxyGroup name="sources">
+
+    <SourceProxy name="cmbMeshReader" class="vtkCMBMeshReader" label="CMB Mesh reader">
+      <Documentation
+       short_help="Read CMB mesh files."
+       long_help="Read CMB mesh data files">
+      </Documentation>
+      label="CMB points reader">
+
+      <StringVectorProperty
+        name="FileName"
+        command="SetFileName"
+        animateable="0"
+        number_of_elements="1">
+        <FileListDomain name="files"/>
+        <Documentation>
+          This property specifies the file name for the reader.
+        </Documentation>
+      </StringVectorProperty>
+
+      <Hints>
+        <ReaderFactory extensions="cmbmesh"
+                       file_description="CMB Mesh Files" />
+        <CMBPluginReader />
+      </Hints>
+    </SourceProxy>
+
+  </ProxyGroup>
+
+</ServerManagerConfiguration>

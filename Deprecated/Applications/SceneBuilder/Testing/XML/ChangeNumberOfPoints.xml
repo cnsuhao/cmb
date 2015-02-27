@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+<pqevents>
+    <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionNew" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCurrent" arguments="0.0" />
+
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="setCheckState" arguments="0.0,0" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionImport_Object_File" />
+  <pqevent object="qtCMBSceneObjectImport/frame/FileBrowserButton" command="activate" arguments="" />
+  <pqevent object="qtCMBSceneObjectImport/FileImportDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/JercSite_100x40_30.bin" />
+  <pqevent object="qtCMBSceneObjectImport/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="expand" arguments="0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/ZoomButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="100" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="expand" arguments="0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,0,0,/0:0/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,0,0,/0:0/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionChangeNumberOfPointsLoaded" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/targetNumberOfPoints" command="set_int" arguments="1" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/targetNumberOfPoints" command="set_int" arguments="10" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/targetNumberOfPoints" command="set_int" arguments="100" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/targetNumberOfPoints" command="set_int" arguments="1000" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/targetNumberOfPoints" command="set_int" arguments="10000" />
+  <pqevent object="qtLIDARNumberOfPointsDialog/okButton" command="activate" arguments="" />
+</pqevents>

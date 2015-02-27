@@ -1,0 +1,51 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="set_double" arguments="3" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.407767,0.33913,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.407767,0.33913,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.407767,0.33913,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton3" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="set_double" arguments="5" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.610437,0.42087,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.610437,0.42087,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.610437,0.42087,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="set_double" arguments="4" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/growAngleBox" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.370146,0.353043,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.370146,0.353043,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.370146,0.353043,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.417476,0.408696,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.417476,0.408696,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.417476,0.408696,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.394417,0.297391,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.394417,0.297391,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.394417,0.297391,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton0" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.575243,0.415652,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.575243,0.415652,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.575243,0.415652,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/growPick_Toolbar/1QToolButton4" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_stackedwidget/tab_FacetBCS/bcsTreeWidget" command="mousePress" arguments="1,1,0,3,8,/0:0/0:2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_stackedwidget/tab_FacetBCS/bcsTreeWidget" command="mouseRelease" arguments="1,0,0,3,8,/0:0/0:2" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectionRepresentation/comboBox" command="set_string" arguments="Points" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectionRepresentation/comboBox" command="set_string" arguments="Surface" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/ZoomButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Regions" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection" command="mousePress" arguments="1,1,0,96,9" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection" command="mouseRelease" arguments="1,0,0,96,9" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Domain Sets" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Regions" />
+  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Model Faces" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_stackedwidget/tab_FacetBCS/bcsTreeWidget" command="mousePress" arguments="1,1,0,27,10,/0:0/0:2" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxBCGroup/frameBCGroups/tabWidget_BCS/qt_tabwidget_stackedwidget/tab_FacetBCS/bcsTreeWidget" command="mouseRelease" arguments="1,0,0,27,10,/0:0/0:2" />
+</pqevents>

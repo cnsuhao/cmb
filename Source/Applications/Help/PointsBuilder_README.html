@@ -1,0 +1,200 @@
+<html>
+<body>
+<h1>Point Builder Application Release Notes</h1>
+
+<h2>Version 1.7.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added the ability to load in multiple point files</LI>
+  <LI>Added the ability to set the Mask Size that is useful when
+  extracting the terrain of sparse points</LI>
+  <LI>Added the ability to load and save contours which includes the
+  inside/outside property</LI>
+  <LI>Zoom on Selection and Clear Selection buttons uses text instead
+  of icons</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+</UL>
+
+<h2>Version 1.6.4</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Tab ordering in filtering panel has been changed to be more
+  consistent </LI>
+  <LI>Zoom on Selection and Clear Selection buttons uses text instead
+  of icons</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Points Builder was not saving all of the points
+  (Mantis:9661)</LI>
+  <LI>Removing the contour widget while creating a contour will leave
+  the 2D/3D manipulation mode disabled (Mantis:9694)</LI>
+</UL>
+
+<h2>Version 1.6.3</h2>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Fixed extra precision problem caused by casting a float to an
+  int (the algorithm now uses floor instead). </LI>
+  <LI>Fixed problem that sometimes the contour widget will not draw if it is
+  started when the camera is in 3D manipulation mode (Mantis bug#
+  0009356) </LI>
+</UL>
+
+<h2>Version 1.6.2</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>In 2D manipulation mode, Shift Right mouse button moves the position of camera in/out
+  relative to the focal point.  Since in 2D mode, the only visible change to user is
+  moving the near clipping plane.</LI>
+  <LI>Added new toolbutton to allow setting of focal point when setting rotation center.
+  This is an aide for creating contours.</LI>
+  <LI>Added constraint that contours can only be created when in 2D Manipulation Mode</LI>
+  <LI>"Adjust Camera" available on View menu to give access to ParaView's camera dialog</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> Intermittent crash due to progress bar update </LI>
+  <LI> Rubberband selection highlighted points instead of the piece as intended </LI>
+</UL>
+
+<h2>Version 1.6</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Modified contour widget's creation to use the camera focal point as starting point.</LI>
+</UL>
+
+<h2>Version 1.5</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Terrain Extraction multi-threaded (extraction phase only) </LI>
+  <LI> Terrain Extraction performance improvement by limiting token extraction to requested bounds (internal, not a user parameter). </LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> Internal parameter of Terrain Extraction not initialized large in some cases </LI>
+  <LI> Using an ROI to clip away all of a piece in the original input and saving as multiple pieces would cause crash </LI>
+</UL>
+
+
+
+<h2>Version 1.3.5</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Updated Splash and About screens<br />
+  <LI> Added option to determine color for extracted terrain points based on input color (if present). </LI>
+  <LI> Can read "bin.pts" and "bin" files (same format, different extension), but only write bin.pts< </LI>
+  <LI> Float precision (default output for LAS and LIDAR Pts files), not always sufficient to
+  reasonably capture the detail of the data. User is prompted if should use double precision
+  if float precision is questionable (less than 4 digits to represent the range on each axis) </LI>
+  <LI> "Preview" (with option for ElevationFilter) implemented for the terrain extraction output </LI>
+  <LI> Added progress status for appending of files (into fewer large files) after terrain extraction </LI>
+  <LI> Removed spin boxes for entry of "Target # of Points" (to load/display) and "Spacing" (for Terrain Extraction) </LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> Crashed if no tokens found for a level (which probably will only happen when very few input points) </LI>
+  <LI> Crashed if no pieces were "selected" when selecting the terrain extraction panel. </LI>
+  <LI> Terrain extraction failed if Z bounds not within -1000 and 1000 </LI>
+  <LI> Precision issue - ASCII Pts writer only wrote 7 digits of precision, which might not be
+  enough for the data. ASCII precision is increased if less than 4 digits capture the range
+  of values for each axis. </LI>
+  <LI> Reader and Writer of PTs files modified to work for pieces that have 0 points; had been
+  producing invalid files that caused crash upon reading. </LI>
+  <LI> Binary Pts format was broken on Mac and between platforms (reading would given garbage points) </LI>
+  <LI> Could load data into "main app" while on the terrain extraction panel, yet the terrain
+  extraction panel still displayed (Setup for) the old data. Can still load while on the
+  extraction panel, but now forces to the main panel and clear info from the extraction panel. </LI>
+ </UL>
+
+
+
+<h2>Version 1.3.4</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> New memory management for terrain extraction allows extraction of ~10 million input points
+  on 32-bit machines (considerably more on 64-bit with several GB of memory). The limitation
+  is due to a few more changes necessary to the token refinement code. The number of output
+  points is nearly unrestricted... as long as there is at least 0.5 GB of main/virtual memory available. </LI>
+  <LI> Dialog at completion of terrain extraction indicates it has completed. </LI>
+</UL>
+
+
+<h2>Version 1.3.3</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Name changed from LIDAR Viewer to Point Builder </LI>
+  <LI> Terrain Extraction Panel overhauled (now choose desired spacing instead of picking levels) </LI>
+  <LI> Data is automatically rotated (internally, not visible to user) to optimize terrain extraction </LI>
+</UL>
+
+
+<h2>Version 1.3.2</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> No (significant) change from previous release </LI>
+</UL>
+
+
+<h2>Version 1.3.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Added LAS reader support </LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> If a new dataset is loaded over an existing data, the display panel may show duplicated/multiple </LI>
+</UL>
+
+
+<h2>Version 1.3.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Added "Hover" (2D coordinates) in lower left corner of GUI when in 2D manipulation mode </LI>
+  <LI> Setting of canonical directions no longer does a resetView; the focal point is unchanged, but the camera
+  position (based on desired view direction and "current" camera distance) and viewUp are changed. This
+  allows the view to stay focused on a region of interest. The user can click "resetView" if zooming out
+  was also desired (so extra click in that case). </LI>
+  <LI> When switching between 2D and 3D manipulation modes, set parallel scale or camera position (respectively)
+  to keep approximately the same view (of course, when switching to 2D, will be looking down a major axis,
+  so it is really the apparent "distance" of the camera from the data that is kept ~constant). </LI>
+  <LI> Changed 2D controls to more closely match 3D controls (in particular, Pan as middle mouse button) </LI>
+  <LI> Added option under "View" to convert from Lat/Long to xyz coordinates </LI>
+  <LI> Added Elevation Filter, including controls for min and max Z to map between (initially default to data min/max) </LI>
+  <LI> Add Clip Contour option; can group mulitple contours to get either interior or exterior of group's intersection </LI>
+  <LI> Integrated Terrain Extraction functionality </LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> onRatio logic led to onRatio 1 greater than desired (if set to 2, meaning wanted half the points,
+  3 was used instead, so only a third of the points were read) for all but case of "1" (read all the points) </LI>
+  <LI> threshold filter caused crash if no color data </LI>
+</UL>
+
+
+<h2>Version 1.2.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Can switch between "2D Manipulation and "3D Manipulation" options for camera </LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI> Threshold filter now works correctly if piece transformed </LI>
+  <LI> Threshold filter did work correctly on saving if there was more than one "threshold criteria" (only the last viewed in edit dialog was used) </LI>
+</UL>
+
+
+
+<h2>Version 1.0.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI> Initial release of LIDAR Viewer, which includes a Threshold Filter</LI>
+</UL>
+</body>
+</html>

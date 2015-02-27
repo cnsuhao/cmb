@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_createsimplemodel" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/geometryType" command="set_string" arguments="Ellipse" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/xCenter" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/yCenter" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/xRadius" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/xRadius" command="spin" arguments="up" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/yRadius" command="set_double" arguments="10" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/stackedWidget/ellipsePage/ellipseResolution" command="set_int" arguments="30" />
+  <pqevent object="qtCMBMainWindow/qtCMBCreateSimpleGeometry/buttonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,18,5,/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,18,5,/0:0/0:0" />
+</pqevents>

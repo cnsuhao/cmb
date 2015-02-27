@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionCreate_Omicron_Input" />
+  <pqevent object="qtCMBMainWindow/SaveAsOmicronInputDialog" command="filesSelected" arguments="tmpOmicronTestInput" />
+  <pqevent object="qtCMBSceneMesherDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
+</pqevents>

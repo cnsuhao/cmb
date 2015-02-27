@@ -1,0 +1,11 @@
+vtk_module(vtkCMBFiltering
+  DEPENDS
+    vtkCMBIO
+    vtkFiltersCore
+    vtkFiltersExtraction
+    vtkFiltersGeometry
+  PRIVATE_DEPENDS
+    vtkIOLegacy
+    vtksys
+   EXCLUDE_FROM_WRAP_HIERARCHY
+)

@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ArcSetsTest/innerLoopHard.sg" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.230769,0.249173,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.397678,0.342889,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.397678,0.342889,1,0,0)" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionGrowArcSelection" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionGrowArcSelection" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
+</pqevents>

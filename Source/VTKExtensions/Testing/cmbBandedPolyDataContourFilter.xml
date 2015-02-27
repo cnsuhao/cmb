@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="pqClientMainWindow/menubar" command="activate" arguments="menuTools" />
+  <pqevent object="pqClientMainWindow/menubar/menuTools" command="activate" arguments="actionTesting_Window_Size" />
+  <pqevent object="pqClientMainWindow/menubar/menuSources" command="activate" arguments="ImageMandelbrotSource" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/Accept" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/centralwidget/MultiViewWidget/CoreWidget/qt_tabwidget_stackedwidget/MultiViewWidget1/Frame.0/Close" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/centralwidget/MultiViewWidget/CoreWidget/qt_tabwidget_stackedwidget/MultiViewWidget1/Frame.0/EmptyView/scrollArea/qt_scrollarea_viewport/widgetFoo/ConvertActionsFrame/RenderView" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/menubar" command="activate" arguments="menuFilters" />
+  <pqevent object="pqClientMainWindow/menubar/menuFilters/Alphabetical" command="activate" arguments="DataSetSurfaceFilter" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/Accept" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/menubar" command="activate" arguments="menuFilters" />
+  <pqevent object="pqClientMainWindow/menubar/menuFilters/Alphabetical" command="activate" arguments="BandedPolyDataContourFilter" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup1/pqSampleScalarWidget/DeleteAll" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup0/pqBandedPolyDataContourControls/Clipping" command="set_boolean" arguments="true" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup0/pqBandedPolyDataContourControls/GenerateContourEdges" command="set_boolean" arguments="false" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup0/pqBandedPolyDataContourControls/Clipping" command="set_boolean" arguments="false" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup1/pqSampleScalarWidget/NewRange" command="activate" arguments="" />
+  <pqevent object="pqSampleScalarAddRangeDialog/from" command="key" arguments="16777234" />
+  <pqevent object="pqSampleScalarAddRangeDialog/from" command="key" arguments="16777248" />
+  <pqevent object="pqSampleScalarAddRangeDialog/from" command="key" arguments="16777249" />
+  <pqevent object="pqSampleScalarAddRangeDialog/from" command="set_string" arguments="4" />
+  <pqevent object="pqSampleScalarAddRangeDialog/to" command="key" arguments="16777217" />
+  <pqevent object="pqSampleScalarAddRangeDialog/to" command="set_string" arguments="50" />
+  <pqevent object="pqSampleScalarAddRangeDialog/to" command="set_string" arguments="50" />
+  <pqevent object="pqSampleScalarAddRangeDialog/log" command="set_boolean" arguments="true" />
+  <pqevent object="pqSampleScalarAddRangeDialog/okButton" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/Accept" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup0/pqBandedPolyDataContourControls/GenerateContourEdges" command="set_boolean" arguments="true" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/Accept" command="activate" arguments="" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/ScrollArea/qt_scrollarea_viewport/PanelArea/Editor/1pqCollapsedGroup0/pqBandedPolyDataContourControls/Clipping" command="set_boolean" arguments="true" />
+  <pqevent object="pqClientMainWindow/objectInspectorDock/objectInspector/Accept" command="activate" arguments="" />
+</pqevents>

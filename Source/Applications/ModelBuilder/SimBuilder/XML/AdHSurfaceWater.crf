@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<cmb-resources>
+  <!-- Include baseline template by reference -->
+  <attribute id="simbuilder" role="template">
+    <include href="AdHSurfaceWater.sbt" />
+  </attribute>
+
+  <!-- Template for Export Dialog -->
+  <attribute id="export" role="template">
+    <SMTK_AttributeManager Version="1">
+      <Definitions>
+        <AttDef Type="ExportSpec" BaseType="" Version="0" Unique="true">
+          <ItemDefinitions>
+            <File Name="OutputFile" Label="Output file (*.bc)" Version="0" NumberOfRequiredValues="1"
+                  FileFilters="BC files (*.bc);;All files (*.*)">
+              <DefaultValue>output.bc</DefaultValue>
+            </File>
+            <String Name="AnalysisTypes" Label="Analysis Types" AdvanceLevel="99" Version="0"
+                    Extensible="true" NumberOfRequiredValues="1"/>
+            <File Name="PythonScript" Label="Python script" AdvanceLevel="1" Version="0"  NumberOfRequiredValues="1"
+                  AdvanceLevel="1" ShouldExist="true"
+                  FileFilters="Python files (*.py);;All files (*.*)">
+              <DefaultValue>AdHSurfaceWater.py</DefaultValue>
+            </File>
+          </ItemDefinitions>
+        </AttDef>
+      </Definitions>
+      <Attributes />
+      <RootView Title="Export">
+        <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
+        <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
+        <AdvancedFontEffects Bold="0" Italic="0" />
+
+        <InstancedView Title="ExportSpec">
+          <InstancedAttributes>
+            <Att Type="ExportSpec">Options</Att>
+          </InstancedAttributes>
+        </InstancedView>
+      </RootView>
+    </SMTK_AttributeManager>
+  </attribute>
+</cmb-resources>

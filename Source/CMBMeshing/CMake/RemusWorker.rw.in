@@ -1,0 +1,5 @@
+{
+"ExecutableName": "@workerExecutableName@",
+"InputType": "@R_INPUT_TYPE@",
+"OutputType": "@R_OUTPUT_TYPE@"
+}

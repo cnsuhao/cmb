@@ -1,0 +1,11 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource>
+		<file>set/48x48-open.png</file>
+		<file>set/48x48-new.png</file>
+		<file>set/48x48-cut.png</file>
+		<file>set/48x48-undo.png</file>
+		<file>set/48x48-save.png</file>
+		<file>set/48x48-exit.png</file>
+	</qresource>
+</RCC>

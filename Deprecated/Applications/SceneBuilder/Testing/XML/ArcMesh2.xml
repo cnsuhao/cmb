@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/pueblo.map" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.283019,0.0176406,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.711176,0.960309,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.711176,0.960309,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Create" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Create" command="activate" arguments="actionCreatePolygon" />
+  <pqevent object="qtCMBSceneArcPolygonMeshingDialog/okButton" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.16836,0.0705623,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.194485,0.180816,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.194485,0.180816,1,0,0)" />
+</pqevents>

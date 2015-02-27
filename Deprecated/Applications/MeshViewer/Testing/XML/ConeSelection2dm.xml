@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/test2dmesh_domainset.2dm" />
+  <pqevent object="qtCMBMainWindow/actionSelect_Cone_Cells" command="set_boolean" arguments="true" />
+  <pqevent object="1QDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.417108,0.545861,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.373016,0.549217,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.373016,0.549217,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/groupBoxContourOptions/contourPartiallyIn" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/groupBoxContourOptions/contourIntersect" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/pushButton_InvertSelection" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/pushButton_InvertSelection" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/MaterialIdEntry" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/pushButton_ChangeMaterial" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionSelect_Cone_Cells" command="set_boolean" arguments="false" />
+</pqevents>

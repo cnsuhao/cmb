@@ -1,0 +1,88 @@
+<html>
+<body>
+<h1>Mesh Viewer Application Release Notes</h1>
+
+<h2>Version 1.7.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added the ability to select sub-meshes based on conical regions</LI>
+  <LI>Added the ability to perform sculpting by moving points</LI>
+  <LI>Added the ability to locally smooth point in a mesh</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Sometimes the contour surface selection will miss some points on
+  the surface and in the result, when moving the selected surface
+  point, those missing points won't get moved. (Mantis: 9612)</LI>
+</UL>
+
+<h2>Version 1.6.4</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Change default color-by of mesh to use Region</LI>
+  <LI>After extraction, filters panel is shown and subset is selected</LI>
+  <LI>Change the subset name to Sel(N) instead of Subset</LI>
+  <LI>Moved the Visibility column to the right of the tree</LI>
+  <LI>Added a column and an icon to show Active input</LI>
+  <LI>Added an Extract_Subset tool button in selection toolbar</LI>
+  <LI>Added SelectAll and ClearSelection buttons</LI>
+  <LI>Replaced SetActive and Delete with context menu</LI>
+  <LI>New Shortcuts: E for Extract, A for Activate as input </LI>
+  <LI>Added Warning for trying selection while the active input is invisible</LI>
+  <LI>After selection, the selection panel is shown</LI>
+</UL>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Wrong cell material IDs  were changed when dealing with an
+  inverted selection</LI>
+  <LI>Fixed that Select All does not allow to change the region Id
+  (Mantis: 9592)</LI>
+  <LI>Wrong selection being displayed when changing the material ID of
+  inverted selection (Mantis: 9694)</LI>
+</UL>
+
+<h2>Version 1.6.3</h2>
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Extract selection is enabled now after an inversion of selection is
+  performed (Mantis bug# 0009232)</LI>
+  <LI>Fixed the bug that extracted selection sometimes not showing correctly
+  after being set as the active input (Mantis bug# 0009231)</LI>
+</UL>
+
+<h2>Version 1.6.2</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added options on the UI to turn on/off labels for selected mesh cells/points ID.
+</UL>
+
+<h2>Version 1.6.1</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added new features that all the subsets have their own representations, which are linked with display panel if selected; also visibility of these<br />
+ representations can be controlled directly within the list of inputs with the eyeball icons.</LI>
+</UL>
+
+<h2>Version 1.6.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>Added support for extracting selection as new input to filters --- 
+ <p>(Known issue: Invert selection of Paraview's FRUSTUM selection does not work properly, so when selection is inversed, the changeMeshMaterialId and extractSelectionAsInput are disabled)</p>
+ <p>(Note: After selection is extracted, a new "subset" will be added to the list in "Filters" tab. In order to set this new subset as filters input, it has to be selected in the list, then click on "Set Selected as Input" button on the Filters tab)</p></LI>
+</UL>
+
+<h3>Fixed Bugs</h3>
+<UL>
+  <LI>Fixed issues of disconnecting with a server in client-server mode.</LI>
+  <LI>Fixed issues with updating histogram and filters after selection.</LI>
+ </UL>
+ 
+<h2>Version 1.5.0</h2>
+<h3>Added Features</h3>
+<UL>
+  <LI>This is the first release of Mesh Viewer application. 
+  <p>This application can load a 2dm or 3dm mesh file, and automatically connects the reader with ThresholdFilter->MeshQualityFilter->HistogramFilter, so that the mesh can be examined with various statistics. Also the materialIds of the cells in the volume mesh can be modified by selecting the cells then assigining a new Id and the modified mesh can be saved saved out.</p></LI>
+ <LI>The cliet-server mode of the application is turned on, but with limited testing, so it may be unstable in Client-Server mode.</LI>
+ <LI>Since this is the first time this application is shown to the users, feedbacks will be very much appreciated.</LI>
+</body>
+</html>

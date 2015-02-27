@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/mesh_cyl_frame_2regions.3dm" />
+  <pqevent object="qtCMBMainWindow/actionSelect_Cone_Cells" command="set_boolean" arguments="true" />
+  <pqevent object="1QDialog0/ConeSourcePanel/Resolution/LineEdit" command="set_string" arguments="16" />
+  <pqevent object="1QDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Y" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.410762,0.695749,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.410762,0.686801,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.410762,0.686801,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="3" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/groupBoxContourOptions/contourPartiallyIn" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/groupBoxContourOptions/contourIntersect" command="set_boolean" arguments="true" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/pushButton_InvertSelection" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/MaterialIdEntry" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtMeshViewerPanel/tabWidget/qt_tabwidget_stackedwidget/tab_Selection/pushButton_ChangeMaterial" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/actionSelect_Cone_Cells" command="set_boolean" arguments="false" />
+</pqevents>

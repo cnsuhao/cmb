@@ -1,0 +1,16 @@
+.git*            export-ignore
+
+*.sh             crlf=input
+
+*.c              whitespace=tab-in-indent
+*.h              whitespace=tab-in-indent
+*.cxx            whitespace=tab-in-indent
+*.hxx            whitespace=tab-in-indent
+*.txx            whitespace=tab-in-indent
+*.txt            whitespace=tab-in-indent
+*.cmake          whitespace=tab-in-indent
+*.bat           -crlf
+*.cmd           -crlf
+*.jpg           -crlf
+*.pdf           -crlf
+*.png           -crlf

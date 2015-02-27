@@ -1,0 +1,70 @@
+
+#-----------------------------------------------------------------------------
+#
+# CMBConfig.cmake - CMB CMake configuration file for external projects.
+#
+# This file is configured by CMB and used by the UseCMB.cmake module
+# to load CMB's settings for an external project.
+
+
+set (CMB_CMAKE_DIR "@CMB_CMAKE_DIR@")
+set (CMB_CONFIG_TARGETS_FILE "@ConceptualModelBuilder_BINARY_DIR@/../CMBTargets.cmake")
+set (ConceptualModelBuilder_SOURCE_DIR @ConceptualModelBuilder_SOURCE_DIR@)
+set (ParaView_DIR "@ParaView_DIR@")
+set (SMTK_ROOT_DIR "@SMTK_ROOT_DIR@")
+set (SMTK_INCLUDE_DIR "@SMTK_INCLUDE_DIR@")
+set (PV_INSTALL_PLUGIN_DIR "@PV_INSTALL_PLUGIN_DIR@")
+
+#------------------------------------------------------------------------------
+# Setup the cmake search paths
+set(CMAKE_MODULE_PATH "${CMB_CMAKE_DIR}" ${CMAKE_MODULE_PATH})
+
+#------------------------------------------------------------------------------
+# Version information for CMB
+set(CMB_VERSION_MAJOR "@CMB_VERSION_MAJOR@")
+set(CMB_VERSION_MINOR "@CMB_VERSION_MINOR@")
+set(CMB_VERSION_PATCH "@CMB_VERSION_PATCH@")
+set(CMB_VERSION_FULL  "@CMB_VERSION_FULL@")
+
+#------------------------------------------------------------------------------
+# Include global directories that are needed to compile cmb.
+# for system header
+include_directories(SYSTEM ${ConceptualModelBuilder_SOURCE_DIR})
+
+#------------------------------------------------------------------------------
+# Import CMB targets.
+if(NOT TARGET vtkCMBGeneral)
+  include("${CMB_CONFIG_TARGETS_FILE}")
+endif()
+
+#------------------------------------------------------------------------------
+# we need to automatically bring in ParaView if we can
+find_package(ParaView CONFIG REQUIRED HINTS ${ParaView_DIR})
+include("${PARAVIEW_USE_FILE}")
+include (ParaViewPlugins)
+
+#------------------------------------------------------------------------------
+# we need to automatically bring in smtk if we can
+
+find_path(SMTK_ROOT_DIR
+    NAMES include/smtk/SMTKCoreExports.h
+)
+
+find_path(SMTK_INCLUDE_DIR
+    NAMES smtk/SMTKCoreExports.h
+    HINTS ${SMTK_ROOT_DIR}/include/
+)
+
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(SMTK DEFAULT_MSG
+    SMTK_INCLUDE_DIR
+)
+
+#now we create fake targets to be used
+include(${SMTK_ROOT_DIR}/lib/SMTK-targets.cmake)
+
+#helper function to install plugins
+function(cmb_install_plugin target)
+  install(TARGETS ${target} DESTINATION ${PV_INSTALL_PLUGIN_DIR} )
+endfunction()

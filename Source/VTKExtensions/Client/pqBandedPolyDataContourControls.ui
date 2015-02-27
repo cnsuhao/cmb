@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>pqBandedPolyDataContourControls</class>
+ <widget class="QWidget" name="pqBandedPolyDataContourControls">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>214</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="SelectInputScalarsLabel">
+     <property name="text">
+      <string>Contour By</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="SelectInputScalars"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="ScalarModeLabel">
+     <property name="text">
+      <string>Scalar mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="ScalarMode"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="ScalarNameLabel">
+     <property name="text">
+      <string>Scalar name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="ScalarName"/>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QCheckBox" name="GenerateContourEdges">
+     <property name="text">
+      <string>Output contour edges</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QCheckBox" name="Clipping">
+     <property name="text">
+      <string>Clip to range</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>SelectInputScalars</tabstop>
+  <tabstop>ScalarMode</tabstop>
+  <tabstop>GenerateContourEdges</tabstop>
+  <tabstop>Clipping</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
