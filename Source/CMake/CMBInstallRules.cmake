@@ -124,12 +124,12 @@ endif()
 function(cmb_install_plugin target)
   if(APPLE)
     set(PROGRAMS_TO_INSTALL_PLUGIN
-        GeologyBuilder
-        MeshViewer
+        # GeologyBuilder
+        # MeshViewer
         ModelBuilder
-        PointsBuilder
-        ProjectManager
-        SceneBuilder
+        # PointsBuilder
+        # ProjectManager
+        # SceneBuilder
         )
     foreach(app_name ${PROGRAMS_TO_INSTALL_PLUGIN})
       install(TARGETS ${target}
