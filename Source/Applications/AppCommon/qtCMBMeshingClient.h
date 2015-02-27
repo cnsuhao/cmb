@@ -21,10 +21,14 @@
 #include <QString>
 #include "cmbSystemConfig.h"
 
-#include <remus/client/ServerConnection.h>
-#include <remus/proto/Job.h>
-#include <remus/proto/JobStatus.h>
-#include <remus/proto/JobResult.h>
+//Don't let QMOC see remus headers that include boost headers
+//or bad things happen
+#ifndef Q_MOC_RUN
+  #include <remus/client/ServerConnection.h>
+  #include <remus/proto/Job.h>
+  #include <remus/proto/JobStatus.h>
+  #include <remus/proto/JobResult.h>
+#endif
 
 class vtkSMProxy;
 namespace remus{namespace client{class Client;}}
