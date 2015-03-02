@@ -96,7 +96,7 @@ protected slots:
   void onRequestMeshCellSelection();
   void onMeshSelectionItemCreated(
   smtk::attribute::qtMeshSelectionItem* meshItem,
-  const smtk::model::OperatorPtr& op);
+    const std::string& opName, const smtk::common::UUID& uuid);
 
   // Description:
   // Updates the enable state of various menus.

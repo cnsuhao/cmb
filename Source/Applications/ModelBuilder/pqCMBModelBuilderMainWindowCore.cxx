@@ -2209,7 +2209,7 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 
   this->Internal->smtkModelManager->clearModelSelections();
 
-  vtkSMProxy* selectionSource = minfo->SelectionSource;
+  vtkSMProxy* selectionSource = minfo->BlockSelectionSource;
   vtkSMPropertyHelper prop(selectionSource, "Blocks");
   std::vector<vtkIdType> selIds;
   selIds.push_back(static_cast<vtkIdType>(blockIndex));

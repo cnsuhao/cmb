@@ -10,15 +10,18 @@
 
 #include "smtk/model/EntityRef.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
-class pqCMBModelManager;
+
 class vtkObject;
+class pqCMBModelManager;
 class pqDataRepresentation;
+class pqOutputPort;
 class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
 
 namespace smtk {
  namespace attribute {
   class qtFileItem;
+  class qtMeshSelectionItem;
   class qtModelEntityItem;
  }
 }
@@ -45,6 +48,14 @@ public:
   void showOnlyBlocks(pqDataRepresentation* rep,
     const QList<unsigned int>& indices);
   void showAllBlocks(pqDataRepresentation* rep);
+
+  void addMeshSelectionOperation(
+    smtk::attribute::qtMeshSelectionItem* meshItem,
+    const std::string& opName, const smtk::common::UUID& uuid);
+  void setCurrentMeshSelectionItem(
+    smtk::attribute::qtMeshSelectionItem* meshItem);
+  void startMeshSelectionOperation(
+    const QList<pqOutputPort*> &);
 
 public slots:
   /// Called if the user accepts pending modifications

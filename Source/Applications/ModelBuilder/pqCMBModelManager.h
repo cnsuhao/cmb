@@ -44,7 +44,8 @@ struct cmbSMTKModelInfo
       const std::string& filename, smtk::model::ManagerPtr);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
 
-    vtkSmartPointer<vtkSMProxy> SelectionSource;
+    vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
+    vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
     QPointer<pqPipelineSource> Source;
     QPointer<pqDataRepresentation> Representation;
@@ -77,13 +78,6 @@ public:
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
-  void addMeshSelectionOperation(
-    smtk::attribute::qtMeshSelectionItem* meshItem,
-    const smtk::model::OperatorPtr& op);
-  void setCurrentMeshSelectionItem(
-    smtk::attribute::qtMeshSelectionItem* meshItem);
-  void startMeshSelectionOperation(
-    const QList<pqOutputPort*> &);
 
 signals:
   void currentModelCleared();

@@ -808,7 +808,7 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
     }
   else
     {
-    this->getThisCore()->modelManager()->startMeshSelectionOperation(
+    this->getThisCore()->modelPanel()->startMeshSelectionOperation(
       this->getLastSelectionPorts());
 /*
     this->clearSelectedPorts();
@@ -837,13 +837,18 @@ void pqCMBModelBuilderMainWindow::onConvertArcNodes(bool checked)
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::growFinished()
 {
-  this->getThisCore()->modelManager()->setCurrentMeshSelectionItem(NULL);
+  // finish up grow, accept or cancel
+  this->getThisCore()->modelPanel()->startMeshSelectionOperation(
+    this->getLastSelectionPorts());
+
+  this->getThisCore()->modelPanel()->setCurrentMeshSelectionItem(NULL);
 
   this->updateGrowGUI(false);
   if(!this->getMainDialog()->action_Select->isChecked())
     {
     this->getThisCore()->onRubberBandSelectCells(false);
     }
+  this->getThisCore()->modelManager()->clearModelSelections();
 }
 
 //----------------------------------------------------------------------------
@@ -940,9 +945,9 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
 
   QObject::connect(this->getThisCore()->modelPanel()->modelView(),
     SIGNAL(meshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
-           const smtk::model::OperatorPtr&)),
+           const std::string&, const smtk::common::UUID&)),
     this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
-               const smtk::model::OperatorPtr&)));
+               const std::string&, const smtk::common::UUID&)));
 
   // If there is no dock panel yet, this is the first time, so init
   // default panels
@@ -1349,7 +1354,7 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
 {
   smtk::attribute::qtMeshSelectionItem* const qMeshItem = qobject_cast<
   smtk::attribute::qtMeshSelectionItem*>(QObject::sender());
-  this->getThisCore()->modelManager()->setCurrentMeshSelectionItem(
+  this->getThisCore()->modelPanel()->setCurrentMeshSelectionItem(
     qMeshItem);
   if(!qMeshItem)
     {
@@ -1384,15 +1389,14 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onMeshSelectionItemCreated(
   smtk::attribute::qtMeshSelectionItem* meshItem,
-  const smtk::model::OperatorPtr& op)
+  const std::string& opName, const smtk::common::UUID& uuid)
 {
   if(meshItem)
     {
     QObject::connect(meshItem, SIGNAL(requestMeshSelection(
                       smtk::attribute::ModelEntityItemPtr)),
-                    this, SIGNAL(onRequestSurfaceCellSelection(
-                      smtk::attribute::ModelEntityItemPtr)));
-    this->getThisCore()->modelManager()->addMeshSelectionOperation(
-      meshItem, op);
+                    this, SLOT(onRequestMeshCellSelection()));
+    this->getThisCore()->modelPanel()->addMeshSelectionOperation(
+      meshItem, opName, uuid);
     }
 }

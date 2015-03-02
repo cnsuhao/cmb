@@ -34,8 +34,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkStringList.h"
-#include "vtkSMRenderViewProxy.h"
-#include "vtkPVGenericRenderWindowInteractor.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -87,8 +85,12 @@ void cmbSMTKModelInfo::init(
   vtkSMSessionProxyManager *proxyManager =
     vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
 
-  this->SelectionSource.TakeReference(
+  this->BlockSelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "BlockSelectionSource"));
+  // [composite_index, process_id, cell_id]
+  this->CompositeDataIdSelectionSource.TakeReference(
+    proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
+
   this->updateBlockInfo(mgr);
   smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())
@@ -115,7 +117,8 @@ cmbSMTKModelInfo::cmbSMTKModelInfo(const cmbSMTKModelInfo& other)
   this->FileName = other.FileName;
   this->Representation = other.Representation;
   this->Info = other.Info;
-  this->SelectionSource = other.SelectionSource;
+  this->BlockSelectionSource = other.BlockSelectionSource;
+  this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
 }
 
 //-----------------------------------------------------------------------------
@@ -133,10 +136,6 @@ public:
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
-
-  QMap<smtk::attribute::qtMeshSelectionItem*,
-    smtk::model::WeakOperatorPtr> SelectionOperations;
-  QPointer<smtk::attribute::qtMeshSelectionItem> CurrentMeshSelectItem;
 
   void updateModelAnnotations(const smtk::model::EntityRef& model)
   {
@@ -298,6 +297,77 @@ public:
       this->ManagerProxy->modelManager());
     this->updateModelAnnotations(model);
 
+    view->render();
+  }
+
+  void updateModelSelection(const smtk::model::EntityRef& model,
+                            smtk::attribute::MeshSelectionItemPtr meshSelItem,
+                            pqRenderView* view)
+  {
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+      {
+      return;
+      }
+    cmbSMTKModelInfo* minfo = &this->ModelInfos[model.entity()];
+    pqPipelineSource* modelSrc = minfo->Source;
+    vtkSMSourceProxy* smModelSource = vtkSMSourceProxy::SafeDownCast(
+    modelSrc->getProxy());
+
+    vtkSMProxy* selectionSource = minfo->CompositeDataIdSelectionSource;
+    smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
+
+    unsigned int flatIndex;
+    vtkIdType selCompIdx;
+    std::vector<vtkIdType> ids;
+    smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
+    for(mapIt = meshSelItem->begin(); mapIt != meshSelItem->end(); ++mapIt)
+      {
+      //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
+      if(mgr->hasIntegerProperty(mapIt->first, "block_index"))
+        {
+        smtk::model::EntityRef entRef(mgr, mapIt->first);
+        const smtk::model::IntegerList& prop(entRef.integerProperty("block_index"));
+        //the flatIndex is 1 more than blockId, because the root is index 0
+        if(!prop.empty())
+          {
+          flatIndex = prop[0];
+          selCompIdx = static_cast<vtkIdType>(flatIndex+1);
+          std::set<int>::const_iterator it;
+          for(it = mapIt->second.begin(); it != mapIt->second.end(); ++it)
+            {
+            ids.push_back(selCompIdx); // composite_index
+            ids.push_back(0); // process_id
+            ids.push_back(*it); // cell_id in block
+            }
+          }
+        }
+      }
+
+
+    vtkSMPropertyHelper newSelIDs(selectionSource, "IDs");
+    newSelIDs.Set(&ids[0], static_cast<unsigned int>(ids.size()));
+    selectionSource->UpdateVTKObjects();
+
+    smModelSource->SetSelectionInput(0,
+      vtkSMSourceProxy::SafeDownCast(selectionSource), 0);
+    smModelSource->UpdatePipeline();
+
+/*
+    pqSelectionManager *selectionManager =
+      qobject_cast<pqSelectionManager*>(
+        pqApplicationCore::instance()->manager("SelectionManager"));
+
+    if(outport && selectionManager)
+      {
+      outport->setSelectionInput(selectionSourceProxy, 0);
+  //    this->requestRender();
+      this->updateSMTKSelection();
+      selectionManager->blockSignals(true);
+      pqPVApplicationCore::instance()->selectionManager()->select(outport);
+      selectionManager->blockSignals(false);
+  //    pqActiveObjects::instance().setActivePort(outport);
+      }
+*/
     view->render();
   }
 
@@ -697,6 +767,11 @@ bool pqCMBModelManager::handleOperationResult(
           it->as<smtk::model::CellEntity>().model().entity());
       }
 
+  // check if there is "selection", such as from "grow" operator.
+  // 
+  smtk::attribute::MeshSelectionItem::Ptr meshSelections =
+    result->findMeshSelection("selection");
+  
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::common::UUIDs modelids =
     pxy->modelManager()->entitiesMatchingFlags(
@@ -730,11 +805,15 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
+      else if(meshSelections &&
+              geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+        {
+        this->Internal->updateModelSelection(*it, meshSelections, view);
+        }
       else if(bGeometryChanged ||
         geometryChangedModels.find(it->entity()) != geometryChangedModels.end()) // update representation
         {
-        this->Internal->updateModelRepresentation(
-          *it, view);
+        this->Internal->updateModelRepresentation(*it, view);
         }
       }
     }
@@ -850,90 +929,3 @@ void pqCMBModelManager::onPluginLoaded()
       }
     }
 }
-//----------------------------------------------------------------------------
-void pqCMBModelManager::startMeshSelectionOperation(
-  const QList<pqOutputPort*> & selPorts)
-{
-  smtk::attribute::qtMeshSelectionItem* currSelItem =
-    this->Internal->CurrentMeshSelectItem;
-  if(!currSelItem)
-    return;
-  smtk::attribute::MeshSelectionItemPtr MeshSelectionItem =
-    smtk::dynamic_pointer_cast<smtk::attribute::MeshSelectionItem>(
-    currSelItem->getObject());
-  if(!MeshSelectionItem)
-    {
-    return;
-    }
-  smtk::model::Operator::Ptr op =
-    (currSelItem && this->Internal->SelectionOperations.contains(currSelItem)) ?
-    this->Internal->SelectionOperations[currSelItem].lock() :
-    smtk::model::OperatorPtr();
-  if(!op)
-    {
-    std::cerr << "There is no active mesh seleciton operation to start.\n";
-    }
-  // expecting a ModelEntity is set for grow selection
-  const smtk::attribute::MeshSelectionItemDefinition *itemDef =
-    dynamic_cast<const smtk::attribute::MeshSelectionItemDefinition*>(MeshSelectionItem->definition().get());
-  smtk::attribute::ModelEntityItem::Ptr inputEntities =
-    currSelItem->refModelEntityItem();
-  if(!inputEntities)
-    return;
- 
-  pqRenderView* view = qobject_cast<pqRenderView*>(
-    pqActiveObjects::instance().activeView());
-  int isCtrlKeyDown = view->
-    getRenderViewProxy()->GetInteractor()->GetControlKey();
-  currSelItem->setUsingCtrlKey(isCtrlKeyDown ? true : false);
-
-  std::map<smtk::common::UUID, std::set<int> >selectionValues;
-  for(int p=0; p<selPorts.count(); p++)
-    {
-    pqOutputPort* opPort = selPorts.value(p);
-    pqPipelineSource *source = opPort? opPort->getSource() : NULL;
-    if(!source )
-      continue;
-
-    pqDataRepresentation* rep = opPort->getRepresentation(view);
-    cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
-    if(!modInfo || !inputEntities->has(modInfo->Info->GetModelUUID()))
-      continue;
-    smtk::common::UUID entid;
-    vtkSMSourceProxy* selSource = opPort->getSelectionInput();
-    if(selSource && selSource->GetProperty("IDs"))
-      {
-      // [composite_index, process_id, index]
-      vtkSMPropertyHelper selIDs(selSource, "IDs");
-      std::vector<int> selids = selIDs.GetIntArray();
-      std::vector<int>::const_iterator it;
-      for(it = selids.begin(); it != selids.end(); it+3)
-        {
-        entid = modInfo->Info->GetModelEntityId((*it) - 1);
-        selectionValues[entid].insert(*(it+2));
-        }
-
-//    vtkSMSourceProxy::SafeDownCast(source->getProxy())->SetSelectionInput(0, NULL, 0);
-      }
-    }
-  smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
-  for(mapIt = selectionValues.begin(); mapIt != selectionValues.end(); ++mapIt)
-    currSelItem->setSelection(mapIt->first, mapIt->second);
-
-  this->startOperation(op);
-}
-//----------------------------------------------------------------------------
-void pqCMBModelManager::addMeshSelectionOperation(
-    smtk::attribute::qtMeshSelectionItem* meshItem,
-    const smtk::model::OperatorPtr& op)
-{
-  if(meshItem && op)
-    this->Internal->SelectionOperations[meshItem] = op;
-}
-//----------------------------------------------------------------------------
-void pqCMBModelManager::setCurrentMeshSelectionItem(
-    smtk::attribute::qtMeshSelectionItem* meshItem)
-{
-  this->Internal->CurrentMeshSelectItem = meshItem;
-}
-
