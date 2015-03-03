@@ -8,7 +8,7 @@
 
 #include "smtk/extension/qt/qtEntityItemDelegate.h"
 #include "smtk/extension/qt/qtEntityItemModel.h"
-#include "smtk/extension/qt/qtMeshSelectionItem.h" 
+#include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/extension/qt/qtModelEntityItem.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelPanel.h"
@@ -584,7 +584,7 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
     currSelItem->refModelEntityItem();
   if(!inputEntities)
     return;
- 
+
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
   int isCtrlKeyDown = view->
@@ -608,7 +608,7 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
     if(selSource && selSource->GetProperty("IDs"))
       {
       // [composite_index, process_id, index]
-      vtkSMPropertyHelper selIDs(selSource, "IDs"); 
+      vtkSMPropertyHelper selIDs(selSource, "IDs");
       unsigned int count = selIDs.GetNumberOfElements();
       unsigned int flat_idx, cellid;
       for (unsigned int cc=0; cc < (count/3); cc++)

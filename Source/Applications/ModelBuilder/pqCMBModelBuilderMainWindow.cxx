@@ -1370,13 +1370,13 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
 
   switch(MeshSelectionItem->meshSelectMode())
   {
-    case smtk::attribute::MeshSelectionItem::ACCEPT:
-    case smtk::attribute::MeshSelectionItem::NONE:
+    case smtk::attribute::ACCEPT:
+    case smtk::attribute::NONE:
       this->growFinished();
       break;
-    case smtk::attribute::MeshSelectionItem::RESET:
-    case smtk::attribute::MeshSelectionItem::MERGE:
-    case smtk::attribute::MeshSelectionItem::SUBTRACT:
+    case smtk::attribute::RESET:
+    case smtk::attribute::MERGE:
+    case smtk::attribute::SUBTRACT:
       this->getThisCore()->onRubberBandSelectCells(true);
       break;
     default:

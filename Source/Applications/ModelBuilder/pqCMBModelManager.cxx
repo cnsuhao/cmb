@@ -768,10 +768,10 @@ bool pqCMBModelManager::handleOperationResult(
       }
 
   // check if there is "selection", such as from "grow" operator.
-  // 
+  //
   smtk::attribute::MeshSelectionItem::Ptr meshSelections =
     result->findMeshSelection("selection");
-  
+
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::common::UUIDs modelids =
     pxy->modelManager()->entitiesMatchingFlags(

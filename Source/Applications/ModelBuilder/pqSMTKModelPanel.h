@@ -19,16 +19,16 @@ class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
 
 namespace smtk {
- namespace attribute {
-  class qtFileItem;
-  class qtMeshSelectionItem;
-  class qtModelEntityItem;
- }
+  namespace attribute {
+    class qtFileItem;
+    class qtMeshSelectionItem;
+    class qtModelEntityItem;
+  }
 }
 namespace smtk {
- namespace model {
-  class qtModelView;
- }
+  namespace model {
+    class qtModelView;
+  }
 }
 
 class pqSMTKModelPanel : public QDockWidget
