@@ -330,6 +330,12 @@ void pqSMTKModelPanel::resetUI()
       SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
       this->Internal->smtkManager,
       SLOT(startOperation( const smtk::model::OperatorPtr& )));
+    QObject::connect(this->Internal->smtkManager,
+      SIGNAL(requestMeshSelectionUpdate(
+        const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*)),
+      this,
+      SLOT(updateMeshSelection(
+           const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*)));
 
     }
 
@@ -618,17 +624,98 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
         cellid = selIDs.GetAsInt(3*cc+2);
         selectionValues[entid].insert(cellid);
         }
-//    vtkSMSourceProxy::SafeDownCast(source->getProxy())->SetSelectionInput(0, NULL, 0);
+      opPort->setSelectionInput(NULL, 0);
       }
     }
-  // clear cached mesh selection list
-  currSelItem->clearSelection();
 
-  smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
-  for(mapIt = selectionValues.begin(); mapIt != selectionValues.end(); ++mapIt)
-    currSelItem->setSelection(mapIt->first, mapIt->second);
+  currSelItem->updateInputSelection(selectionValues);
 
-  this->modelView()->requestOperation(
-    this->Internal->SelectionOperations[currSelItem].first,
-    this->Internal->SelectionOperations[currSelItem].second, true);
+  // no need to start the operation if there is no selection at all.
+  if(MeshSelectionItem->numberOfValues() != 0)
+    this->modelView()->requestOperation(
+      this->Internal->SelectionOperations[currSelItem].first,
+      this->Internal->SelectionOperations[currSelItem].second, true);
 }
+
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::updateMeshSelection(
+  const smtk::attribute::MeshSelectionItemPtr& meshSelectionItem,
+  cmbSMTKModelInfo* minfo)
+{
+  if(!minfo)
+    return;
+
+  smtk::attribute::qtMeshSelectionItem* currSelItem =
+    this->Internal->CurrentMeshSelectItem;
+  if(!currSelItem)
+    return;
+
+  std::map<smtk::common::UUID, std::set<int> > outSelectionValues;
+  currSelItem->syncWithCachedSelection(meshSelectionItem,
+                                       outSelectionValues);
+
+  pqPipelineSource* modelSrc = minfo->Source;
+  vtkSMSourceProxy* smModelSource = vtkSMSourceProxy::SafeDownCast(
+  modelSrc->getProxy());
+
+  vtkSMProxy* selectionSource = minfo->CompositeDataIdSelectionSource;
+  smtk::model::ManagerPtr mgr =
+    this->Internal->smtkManager->managerProxy()->modelManager();
+
+  unsigned int flatIndex;
+  vtkIdType selCompIdx;
+  std::vector<vtkIdType> ids;
+  smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
+  for(mapIt = outSelectionValues.begin(); mapIt != outSelectionValues.end(); ++mapIt)
+    {
+    //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
+    if(mgr->hasIntegerProperty(mapIt->first, "block_index"))
+      {
+      smtk::model::EntityRef entRef(mgr, mapIt->first);
+      const smtk::model::IntegerList& prop(entRef.integerProperty("block_index"));
+      //the flatIndex is 1 more than blockId, because the root is index 0
+      if(!prop.empty())
+        {
+        flatIndex = prop[0];
+        selCompIdx = static_cast<vtkIdType>(flatIndex+1);
+        std::set<int>::const_iterator it;
+        for(it = mapIt->second.begin(); it != mapIt->second.end(); ++it)
+          {
+          ids.push_back(selCompIdx); // composite_index
+          ids.push_back(0); // process_id
+          ids.push_back(*it); // cell_id in block
+          }
+        }
+      }
+    }
+
+
+  vtkSMPropertyHelper newSelIDs(selectionSource, "IDs");
+  newSelIDs.Set(&ids[0], static_cast<unsigned int>(ids.size()));
+  selectionSource->UpdateVTKObjects();
+
+  smModelSource->SetSelectionInput(0,
+    vtkSMSourceProxy::SafeDownCast(selectionSource), 0);
+  smModelSource->UpdatePipeline();
+
+/*
+  pqSelectionManager *selectionManager =
+    qobject_cast<pqSelectionManager*>(
+      pqApplicationCore::instance()->manager("SelectionManager"));
+
+  if(outport && selectionManager)
+    {
+    outport->setSelectionInput(selectionSourceProxy, 0);
+//    this->requestRender();
+    this->updateSMTKSelection();
+    selectionManager->blockSignals(true);
+    pqPVApplicationCore::instance()->selectionManager()->select(outport);
+    selectionManager->blockSignals(false);
+//    pqActiveObjects::instance().setActivePort(outport);
+    }
+*/
+  pqRenderView* renView = qobject_cast<pqRenderView*>(
+     pqActiveObjects::instance().activeView());
+  renView->render();
+}
+

@@ -300,77 +300,6 @@ public:
     view->render();
   }
 
-  void updateModelSelection(const smtk::model::EntityRef& model,
-                            smtk::attribute::MeshSelectionItemPtr meshSelItem,
-                            pqRenderView* view)
-  {
-    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
-      {
-      return;
-      }
-    cmbSMTKModelInfo* minfo = &this->ModelInfos[model.entity()];
-    pqPipelineSource* modelSrc = minfo->Source;
-    vtkSMSourceProxy* smModelSource = vtkSMSourceProxy::SafeDownCast(
-    modelSrc->getProxy());
-
-    vtkSMProxy* selectionSource = minfo->CompositeDataIdSelectionSource;
-    smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
-
-    unsigned int flatIndex;
-    vtkIdType selCompIdx;
-    std::vector<vtkIdType> ids;
-    smtk::attribute::MeshSelectionItem::const_sel_map_it mapIt;
-    for(mapIt = meshSelItem->begin(); mapIt != meshSelItem->end(); ++mapIt)
-      {
-      //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
-      if(mgr->hasIntegerProperty(mapIt->first, "block_index"))
-        {
-        smtk::model::EntityRef entRef(mgr, mapIt->first);
-        const smtk::model::IntegerList& prop(entRef.integerProperty("block_index"));
-        //the flatIndex is 1 more than blockId, because the root is index 0
-        if(!prop.empty())
-          {
-          flatIndex = prop[0];
-          selCompIdx = static_cast<vtkIdType>(flatIndex+1);
-          std::set<int>::const_iterator it;
-          for(it = mapIt->second.begin(); it != mapIt->second.end(); ++it)
-            {
-            ids.push_back(selCompIdx); // composite_index
-            ids.push_back(0); // process_id
-            ids.push_back(*it); // cell_id in block
-            }
-          }
-        }
-      }
-
-
-    vtkSMPropertyHelper newSelIDs(selectionSource, "IDs");
-    newSelIDs.Set(&ids[0], static_cast<unsigned int>(ids.size()));
-    selectionSource->UpdateVTKObjects();
-
-    smModelSource->SetSelectionInput(0,
-      vtkSMSourceProxy::SafeDownCast(selectionSource), 0);
-    smModelSource->UpdatePipeline();
-
-/*
-    pqSelectionManager *selectionManager =
-      qobject_cast<pqSelectionManager*>(
-        pqApplicationCore::instance()->manager("SelectionManager"));
-
-    if(outport && selectionManager)
-      {
-      outport->setSelectionInput(selectionSourceProxy, 0);
-  //    this->requestRender();
-      this->updateSMTKSelection();
-      selectionManager->blockSignals(true);
-      pqPVApplicationCore::instance()->selectionManager()->select(outport);
-      selectionManager->blockSignals(false);
-  //    pqActiveObjects::instance().setActivePort(outport);
-      }
-*/
-    view->render();
-  }
-
   void clear()
   {
     for(itModelInfo mit = this->ModelInfos.begin(); mit != this->ModelInfos.end(); ++mit)
@@ -763,8 +692,11 @@ bool pqCMBModelManager::handleOperationResult(
       if(it->isModel())
         geometryChangedModels.insert(it->entity()); // TODO: check what kind of operations on the model
       else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
+        {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
+        bGeometryChanged = true;
+        }
       }
 
   // check if there is "selection", such as from "grow" operator.
@@ -805,15 +737,21 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
-      else if(meshSelections &&
-              geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+      else if(bGeometryChanged || (!meshSelections &&
+        (geometryChangedModels.find(it->entity()) != geometryChangedModels.end())))
+        // update representation
         {
-        this->Internal->updateModelSelection(*it, meshSelections, view);
-        }
-      else if(bGeometryChanged ||
-        geometryChangedModels.find(it->entity()) != geometryChangedModels.end()) // update representation
-        {
+        this->clearModelSelections();
         this->Internal->updateModelRepresentation(*it, view);
+        }
+      // for grow "selection" operations, the model is writen to "entities" result
+      else if(meshSelections/* && meshSelections->numberOfValues() > 0 */&&
+        geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+        {
+        // this->Internal->updateModelSelection(*it, meshSelections, view);
+        cmbSMTKModelInfo* minfo = &this->Internal->ModelInfos[it->entity()];
+        if(minfo)
+          emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
       }
     }

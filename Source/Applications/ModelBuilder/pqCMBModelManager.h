@@ -84,6 +84,8 @@ signals:
   void newSessionLoaded(const QStringList& bridgeNames);
   void newFileTypesAdded(const QStringList& fileTypes);
   void operationFinished(const smtk::model::OperatorResult&, bool hasNewModels);
+  void requestMeshSelectionUpdate(
+    const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*);
 
 public slots:
   void clear();

@@ -810,9 +810,8 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
     {
     this->getThisCore()->modelPanel()->startMeshSelectionOperation(
       this->getLastSelectionPorts());
-/*
-    this->clearSelectedPorts();
-*/
+
+//    this->clearSelectedPorts();
     }
 }
 
@@ -1371,10 +1370,17 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
   switch(MeshSelectionItem->meshSelectMode())
   {
     case smtk::attribute::ACCEPT:
-    case smtk::attribute::NONE:
       this->growFinished();
       break;
+    case smtk::attribute::NONE:
+      this->clearSelectedPorts();
+      this->growFinished();
+      this->getThisCore()->activeRenderView()->render();
+      break;
     case smtk::attribute::RESET:
+      this->getThisCore()->modelManager()->clearModelSelections();
+      this->getThisCore()->onRubberBandSelectCells(true);
+      break;
     case smtk::attribute::MERGE:
     case smtk::attribute::SUBTRACT:
       this->getThisCore()->onRubberBandSelectCells(true);
