@@ -1393,8 +1393,12 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     }
 
   // if ableToOperate, no UI is need for this op
-  bool succeeded = this->modelPanel()->modelView()->requestOperation(
-    fileOp, !fileOp->ableToOperate());
+  bool succeeded = false;
+  if(this->modelPanel()->modelView())
+    succeeded = this->modelPanel()->modelView()->requestOperation(
+      fileOp, !fileOp->ableToOperate());
+  else if(fileOp->ableToOperate())
+    succeeded = this->Internal->smtkModelManager->startOperation(fileOp);
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
