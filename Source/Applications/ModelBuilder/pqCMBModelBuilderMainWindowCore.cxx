@@ -1402,6 +1402,8 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
       fileOp, !fileOp->ableToOperate());
   else if(fileOp->ableToOperate())
     succeeded = this->Internal->smtkModelManager->startOperation(fileOp);
+  else
+    qCritical() << "No proper file operator found for: " << filename;
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
