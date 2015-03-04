@@ -1394,6 +1394,9 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
 
   // if ableToOperate, no UI is need for this op
   bool succeeded = false;
+  if(!this->modelPanel()->modelView())
+    this->modelPanel()->resetUI();
+
   if(this->modelPanel()->modelView())
     succeeded = this->modelPanel()->modelView()->requestOperation(
       fileOp, !fileOp->ableToOperate());
