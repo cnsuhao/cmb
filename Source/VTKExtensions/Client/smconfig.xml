@@ -8817,12 +8817,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
     </SourceProxy>
   </ProxyGroup>
 
-  <ProxyGroup name="cameramanipulators">
-    <Proxy name="TrackballDolly" class="vtkPVTrackballDolly" base_proxygroup="cameramanipulators"
-      base_proxyname="CameraManipulator"
-      processes="client|renderserver|dataserver" />
-  </ProxyGroup>
-
   <ProxyGroup name="CmbArcGroup">
     <SourceProxy name="ArcProvider" class="vtkCMBArcProvider">
      <IdTypeVectorProperty
