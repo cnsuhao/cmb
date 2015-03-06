@@ -13,9 +13,9 @@ if(BUILD_MESH_WORKERS)
 
   include(RemusRegisterWorker)
 
-  option(BUILD_OMICRON_MESH_WORKER "Build Omicron Mesh Worker" ON)
+  option(BUILD_OMICRON_MESH_WORKER "Build Omicron Mesh Worker" OFF)
   option(BUILD_TETGEN_MESH_WORKER "Build TetGen Mesh Worker" OFF)
-  option(BUILD_TRIANGLE_MESH_WORKER "Build Triangle Mesh Worker" ON)
+  option(BUILD_TRIANGLE_MESH_WORKER "Build Triangle Mesh Worker" OFF)
 
   if(BUILD_OMICRON_MESH_WORKER)
     add_subdirectory(Omicron)
