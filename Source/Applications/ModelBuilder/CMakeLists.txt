@@ -492,11 +492,13 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
   # the test as failed. additionally we copy the Python code
   # to the build directory to make sure we don't generate pyc
   # files in the source code.
-  file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
-    DESTINATION ${CMB_TEST_DIR} )
-  set (SIMBUILDER_TESTS_WITHOUT_BASELINES
-    Expressions
-    )
+  if (CMB_TEST_DATA_ROOT)
+    file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
+      DESTINATION ${CMB_TEST_DIR} )
+    set (SIMBUILDER_TESTS_WITHOUT_BASELINES
+      Expressions
+      )
+  endif ()
 
   foreach(test ${SIMBUILDER_TESTS_WITHOUT_BASELINES})
     add_short_test(SimBuilder${test}
@@ -513,7 +515,7 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
   endforeach(test)
 
   # All of these tests use test_with_text_file_output(), so they are all medium length tests.
-  if(BUILD_MEDIUM_TESTS)
+  if(CMB_TEST_DATA_ROOT AND BUILD_MEDIUM_TESTS)
     # SimBuilderADHExporter test
     if(WIN32)
       test_with_text_file_output(SimBuilderADHExport ${CMAKE_CURRENT_BINARY_DIR}/outputADHExport.bc
@@ -744,7 +746,7 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
       FAIL_REGULAR_EXPRESSION "ImportError"
     )
 
-  endif(BUILD_MEDIUM_TESTS)
+  endif()
 
   add_subdirectory(Testing/Cxx)
 
