@@ -19,7 +19,7 @@ ${CMB_TEST_DATA_ROOT}/test2D.cmb)
 
 #only build these tests when we have meshing turned on
 if(BUILD_MESH_WORKERS)
-  include_directories(${Omicron_BINARY_DIR}/include)
+  include_directories(${Omicron_INCLUDE_DIRS})
 
   add_executable(MeshSpeedComparison MeshSpeedComparison.cxx)
   target_link_libraries(MeshSpeedComparison

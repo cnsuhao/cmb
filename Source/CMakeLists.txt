@@ -173,9 +173,7 @@ set(USE_TL_DEBUG OFF) #we set this to off since tl_free_debug is buggy.
 
 #this must come before we add CMBMeshing as CMBMeshing depends on Triangle.h
 #being configured so it will be in the proper include paths.
-if(BUILD_MESH_WORKERS)
-  add_subdirectory(Omicron)
-endif(BUILD_MESH_WORKERS)
+find_package(Omicron REQUIRED) # XXX: really needs to export targets
 
 #configure meshing components first
 add_subdirectory(CMBMeshing)

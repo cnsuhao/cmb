@@ -65,5 +65,5 @@ endif()
 
 target_include_directories(vtkCMBMeshing PRIVATE ${REMUS_INCLUDE_DIRS})
 if(BUILD_MESH_WORKERS)
-  target_include_directories(vtkCMBMeshing PRIVATE ${Omicron_BINARY_DIR}/include)
+  target_include_directories(vtkCMBMeshing PRIVATE ${Omicron_INCLUDE_DIRS})
 endif()

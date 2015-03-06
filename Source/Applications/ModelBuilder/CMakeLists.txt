@@ -492,11 +492,13 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
   # the test as failed. additionally we copy the Python code
   # to the build directory to make sure we don't generate pyc
   # files in the source code.
-  file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
-    DESTINATION ${CMB_TEST_DIR} )
-  set (SIMBUILDER_TESTS_WITHOUT_BASELINES
-    Expressions
-    )
+  if (CMB_TEST_DATA_ROOT)
+    file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
+      DESTINATION ${CMB_TEST_DIR} )
+    set (SIMBUILDER_TESTS_WITHOUT_BASELINES
+      Expressions
+      )
+  endif ()
 
   foreach(test ${SIMBUILDER_TESTS_WITHOUT_BASELINES})
     add_short_test(SimBuilder${test}
@@ -513,7 +515,7 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
   endforeach(test)
 
   # All of these tests use test_with_text_file_output(), so they are all medium length tests.
-  if(BUILD_MEDIUM_TESTS)
+  if(CMB_TEST_DATA_ROOT AND BUILD_MEDIUM_TESTS)
     # SimBuilderADHExporter test
     if(WIN32)
       test_with_text_file_output(SimBuilderADHExport ${CMAKE_CURRENT_BINARY_DIR}/outputADHExport.bc
@@ -724,17 +726,6 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
     # AdHShallowWater extrusion test
     # Use environment var to help test find adh_2d_3d program
     set(env_python "PYTHONPATH=${PYTHON_PATH}")
-    set(env_adh2d3d "NOTUSED=notused")
-    find_program(ADH_2D_3D_EXE adh_2d_3d${CMAKE_EXECUTABLE_SUFFIX}
-      ${CMAKE_BINARY_DIR}/bin
-      ${CMAKE_INSTALL_PREFIX}/bin
-    )
-    #message("ADH_2D_3D = ${ADH_2D_3D_EXE}")
-    if (EXISTS ${ADH_2D_3D_EXE})
-      set(env_adh2d3d "ADH_2D_3D_EXE=${ADH_2D_3D_EXE}")
-    else()
-      message(WARNING "Unable to find adh_2d_3d executable")
-    endif()
 
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/SimBuilder/PythonExporters/AdHShallowWater.py
       DESTINATION ${CMB_TEST_DIR} )
@@ -751,11 +742,11 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
     endif(Q_WS_MAC)
     set_tests_properties(SimBuilderAdHExtrusion
       PROPERTIES
-      ENVIRONMENT "${env_python};${env_adh2d3d}"
+      ENVIRONMENT "${env_python}"
       FAIL_REGULAR_EXPRESSION "ImportError"
     )
 
-  endif(BUILD_MEDIUM_TESTS)
+  endif()
 
   add_subdirectory(Testing/Cxx)
 
