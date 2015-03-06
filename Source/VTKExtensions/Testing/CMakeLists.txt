@@ -211,7 +211,7 @@ add_short_test(TestSGXMLBCSWriterOutput ${CMAKE_COMMAND}
         ${CMB_TEST_DIR}/test2dbcs.bcs)
 
 if(BUILD_MESH_WORKERS)
-  include_directories(${Omicron_BINARY_DIR}/include)
+  include_directories(${Omicron_INCLUDE_DIRS})
   add_executable(vtkCMBTriangleMeshTest vtkCMBTriangleMeshTest.cxx)
   target_link_libraries(vtkCMBTriangleMeshTest ${testing_libraries})
 
