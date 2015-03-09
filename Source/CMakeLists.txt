@@ -168,12 +168,14 @@ add_subdirectory(LIDAR)
 
 #########################################################################
 # Meshing support
-option(BUILD_MESH_WORKERS "Build Mesh Workers and related meshing libraries" ON)
+option(BUILD_MESH_WORKERS "Build Mesh Workers and related meshing libraries" OFF)
 set(USE_TL_DEBUG OFF) #we set this to off since tl_free_debug is buggy.
 
 #this must come before we add CMBMeshing as CMBMeshing depends on Triangle.h
 #being configured so it will be in the proper include paths.
-find_package(Omicron REQUIRED) # XXX: really needs to export targets
+if(BUILD_MESH_WORKERS)
+  find_package(Omicron REQUIRED) # XXX: really needs to export targets
+endif()
 
 #configure meshing components first
 add_subdirectory(CMBMeshing)
