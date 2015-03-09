@@ -146,12 +146,6 @@ protected slots:
   // Signals when convert arc-node action is invoked for 2D model
   void onConvertArcNodes(bool);
 
-  // Description:
-  // Option to show/hide the shared model entities
-  void onHideSharedEntities(bool);
-  void onHideModelFaces(bool);
-  void onHideOuterModelBoundary(bool);
-
   void onZoomModeChanged(int mode);
   void onLoadScene();
   void onUnloadScene();
@@ -173,7 +167,6 @@ protected:
   void initializeApplication();
   void setupMenuActions();
   void setupToolbars();
-  void updateUIByDimension();
   void updateSMTKSelection();
 
   // Overwrite base class to use CMB's selection helper
@@ -203,12 +196,6 @@ protected:
   void UpdateInfoTable();
   void updateDataInfo();
   void UpdateModelState(int accepted);
-  void updateSourceMaterials(
-    QTreeWidgetItem* matItem, QList<QTreeWidgetItem*> shellItems);
-  void selectModelEntitiesByMode(QList<vtkIdType>& faces, int clearSelFirst);
-  void removeFacesFromBCGroups(QList<vtkIdType>&);
-  void updateCurrentModelFaces(int origFaceId, int numFaces,
-    vtkDataSet* faceData, QList<QVariant> origCellIds);
   void setToolbarEnableState(QToolBar* toolbar, bool enabled);
 
   // init UI panels as Dock widgets

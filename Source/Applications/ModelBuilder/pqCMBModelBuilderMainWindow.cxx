@@ -163,8 +163,6 @@ public:
 
   QPointer<QAction> LoadScenarioAction;
   QPointer<QAction> SaveScenarioAction;
-  QPointer<QAction> SaveMeshInfoAction;
-  QPointer<QAction> LoadMeshInfoAction;
   QPointer<QAction> CreateSimpleModelAction;
   QPointer<QAction> CreateModelEdgesAction;
 
@@ -221,18 +219,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     SIGNAL(triggered()), this->getThisCore(), SLOT(onSaveSimulation()));
   QObject::connect(this->getMainDialog()->actionExport_Simulation_File,
     SIGNAL(triggered()), this->getThisCore(), SLOT(onExportSimFile()));
-
-  QObject::connect(this->getMainDialog()->action_Generate_Omicron_Input,
-    SIGNAL(triggered()), this->getThisCore(), SLOT(onGenerateOmicronInput()));
-
-  QObject::connect(this->getMainDialog()->action_Save_BCSs,
-    SIGNAL(triggered()), this->getThisCore(), SLOT(onSaveBCSs()));
-
-  QObject::connect(this->getMainDialog()->actionSpawn_Surface_Mesher,
-    SIGNAL(triggered()), this->getThisCore(), SLOT(onSpawnSurfaceMesher()));
-
-  QObject::connect(this->getMainDialog()->actionSpawn_Volume_Mesher,
-    SIGNAL(triggered()), this->getThisCore(), SLOT(onSpawnVolumeMesher()));
 
 //  QObject::connect(this->getMainDialog()->actionConvert_from_Lat_Long,
 //    SIGNAL(triggered(bool)),
@@ -446,43 +432,6 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
     this->getMainDialog()->actionExport_Simulation_File);
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
-
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Exit,
-    this->getMainDialog()->action_Save_BCSs);
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Exit,
-    this->getMainDialog()->action_Generate_Omicron_Input);
-  this->getMainDialog()->menu_File->insertSeparator(
-    this->getMainDialog()->action_Exit);
-
-  // Load and Save Analysis Mesh Info Actions
-  this->Internal->LoadMeshInfoAction = new QAction(this->getMainDialog()->menu_File);
-  this->Internal->LoadMeshInfoAction->setObjectName(QString::fromUtf8("action_loadmeshinfo"));
-  this->Internal->LoadMeshInfoAction->setText(QString::fromUtf8("Load Analysis Mesh Info"));
-  QObject::connect(this->Internal->LoadMeshInfoAction, SIGNAL(triggered()),
-    this->getThisCore(), SLOT(onLoadMeshToModelInfo()));
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Exit,
-    this->Internal->LoadMeshInfoAction);
-  this->Internal->SaveMeshInfoAction = new QAction(this->getMainDialog()->menu_File);
-  this->Internal->SaveMeshInfoAction->setObjectName(QString::fromUtf8("action_savemeshinfo"));
-  this->Internal->SaveMeshInfoAction->setText(QString::fromUtf8("Save Analysis Mesh Info"));
-  QObject::connect(this->Internal->SaveMeshInfoAction, SIGNAL(triggered()),
-    this->getThisCore(), SLOT(onSaveMeshToModelInfo()));
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Exit,
-    this->Internal->SaveMeshInfoAction);
-
-  this->getMainDialog()->menu_File->insertSeparator(
-    this->getMainDialog()->action_Exit);
-  // Add actions to "Tools" menu.
-  this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionSpawn_Volume_Mesher);
-  this->getMainDialog()->menu_Tools->insertSeparator(
-    this->getMainDialog()->actionLock_View_Size);
-
 }
 
 //----------------------------------------------------------------------------
@@ -495,21 +444,10 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     ->numberOfModels() > 0;
   this->Superclass::updateEnableState(model_loaded);
 
-  this->getMainDialog()->action_Save_BCSs->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
   this->getMainDialog()->actionConvert_from_Lat_Long->setChecked(false);
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
-
-  // The state could be changed in updateUIByDimension()
-  this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( model_loaded );
-  this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled( model_loaded );
-
-  // always disabled for now
-  this->getMainDialog()->actionSpawn_Surface_Mesher->setEnabled( false );
-
-  this->Internal->SaveMeshInfoAction->setEnabled(model_loaded);
-  this->Internal->LoadMeshInfoAction->setEnabled(model_loaded);
 
   // this->getMainDialog()->action_MB_Load_Scene->setEnabled(data_loaded);
   this->getMainDialog()->action_MB_Unload_Scene->setEnabled(
@@ -526,55 +464,6 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     {
     this->getMainDialog()->faceParametersDock->setEnabled(true);
     this->getMainDialog()->action_Close->setEnabled(true);
-    }
-
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::updateUIByDimension()
-{
-  bool dim2D = false; /* this->getThisCore()->getCMBModel()->getModelDimension() == 2 ?
-    true : false; */
-  bool has2dEdges = false; //this->getThisCore()->getCMBModel()->has2DEdges();
-  if(dim2D)
-    {
-    this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(0);
-    this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 0 );
-//    this->Internal->CreateModelEdgesAction->setEnabled(false);
-    }
-  else
-    {
-    this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(1);
-    this->getMainDialog()->action_Generate_Omicron_Input->setEnabled( 1 );
-//    this->Internal->CreateModelEdgesAction->setEnabled(!has2dEdges);
-    }
-
-  if(has2dEdges)
-    {
-    if(!this->Internal->Model2DToolbar)
-      {
-      this->Internal->Model2DToolbar = new QToolBar("Model 2D Operations", this);
-      this->Internal->Model2DToolbar->setObjectName("model2D_Toolbar");
-      this->Internal->Model2DToolbar->addAction(
-        this->getMainDialog()->action_SelectPoints);
-
-      QObject::connect(this->getMainDialog()->action_SelectPoints,
-        SIGNAL(triggered(bool)),
-        this, SLOT(onConvertArcNodes(bool)));
-
-//      this->insertToolBar(this->Internal->VariableToolbar,this->Internal->Model2DToolbar);
-      }
-    else
-      {
-      this->Internal->Model2DToolbar->setVisible(1);
-      }
-    }
-  else
-    {
-    if(this->Internal->Model2DToolbar)
-      {
-      this->Internal->Model2DToolbar->setVisible(0);
-      }
     }
 
 }
@@ -689,12 +578,6 @@ int pqCMBModelBuilderMainWindow::getNumberOfSelectedCells(pqOutputPort* selPort)
   QList<QVariant> ids = pqSMAdaptor::getMultipleElementProperty(vp);
   int numElemsPerCommand = vp->GetNumberOfElementsPerCommand();
   return (numElemsPerCommand>0) ? (ids.size()/numElemsPerCommand) : 0;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::selectModelEntitiesByMode(
-  QList<vtkIdType>& faces, int clearSelFirst)
-{
 }
 
 //-----------------------------------------------------------------------------
@@ -1027,21 +910,6 @@ void pqCMBModelBuilderMainWindow::onCreateSimpleModel()
     }
 }
 
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onHideSharedEntities(bool hideShared)
-{
-  this->getThisCore()->activeRenderView()->render();
-}
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onHideModelFaces(bool hide)
-{
-  this->getThisCore()->activeRenderView()->render();
-}
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onHideOuterModelBoundary(bool hide)
-{
-  this->getThisCore()->activeRenderView()->render();
-}
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
 {
