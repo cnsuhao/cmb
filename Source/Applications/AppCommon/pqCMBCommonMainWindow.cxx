@@ -449,10 +449,10 @@ void pqCMBCommonMainWindow::initMainWindowCore()
 
   QAction* ssaction = this->Internal->UI.menu_Tools->addAction("Save State (Debug)")
     << pqSetName("actionToolsSaveState");
-  QAction* lsaction = this->Internal->UI.menu_Tools->addAction("Load State (Debug)")
-    << pqSetName("actionToolsLoadState");
+//  QAction* lsaction = this->Internal->UI.menu_Tools->addAction("Load State (Debug)")
+//    << pqSetName("actionToolsLoadState");
   new pqSaveStateReaction(ssaction);
-  new pqLoadStateReaction(lsaction);
+//  new pqLoadStateReaction(lsaction);
 
   QObject::connect(this->Internal->UI.actionSettings,
     SIGNAL(triggered()), this->MainWindowCore, SLOT(onEditSettings()));
