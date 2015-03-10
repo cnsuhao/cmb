@@ -18,7 +18,7 @@ add_short_test(SimBuilderMeshRelationTest ${EXECUTABLE_OUTPUT_PATH}/SimBuilderMe
 ${CMB_TEST_DATA_ROOT}/test2D.cmb)
 
 #only build these tests when we have meshing turned on
-if(BUILD_MESH_WORKERS)
+if(Omicron_FOUND AND BUILD_MESH_WORKERS)
   include_directories(${Omicron_INCLUDE_DIRS})
 
   add_executable(MeshSpeedComparison MeshSpeedComparison.cxx)

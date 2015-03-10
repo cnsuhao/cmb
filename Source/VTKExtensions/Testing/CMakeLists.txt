@@ -210,7 +210,7 @@ add_short_test(TestSGXMLBCSWriterOutput ${CMAKE_COMMAND}
         ${CMB_TEST_DATA_ROOT}/test2dbcs.bcs
         ${CMB_TEST_DIR}/test2dbcs.bcs)
 
-if(BUILD_MESH_WORKERS)
+if(Triangle_FOUND AND BUILD_MESH_WORKERS)
   include_directories(${Omicron_INCLUDE_DIRS})
   add_executable(vtkCMBTriangleMeshTest vtkCMBTriangleMeshTest.cxx)
   target_link_libraries(vtkCMBTriangleMeshTest ${testing_libraries})
@@ -220,7 +220,7 @@ if(BUILD_MESH_WORKERS)
   -D ${CMB_TEST_DATA_ROOT}
   -T ${CMB_TEST_DIR}
   -V Baseline/VTKExtensions/vtkCMBTriangleMeshTest.png)
-endif(BUILD_MESH_WORKERS)
+endif()
 
 add_short_test(vtkCMBPt123VelocityWriterTest ${EXECUTABLE_OUTPUT_PATH}/vtkCMBPt123VelocityWriterTest
   ${CMB_TEST_DATA_ROOT}
