@@ -4,7 +4,7 @@ project(CMBMeshTriangleWorker)
 #need to include the omicron directories in this exact order
 #so that the proper share_declare.h and triangle.h are found
 include_directories(
-  ${Omicron_BINARY_DIR}/include
+  ${Omicron_INCLUDE_DIRS}
   )
 
 set(Triangle_Worker

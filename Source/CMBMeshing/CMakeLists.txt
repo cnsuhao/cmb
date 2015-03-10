@@ -17,7 +17,7 @@ if(BUILD_MESH_WORKERS)
   option(BUILD_TETGEN_MESH_WORKER "Build TetGen Mesh Worker" OFF)
   option(BUILD_TRIANGLE_MESH_WORKER "Build Triangle Mesh Worker" OFF)
 
-  if(BUILD_OMICRON_MESH_WORKER)
+  if(Omicron_FOUND AND BUILD_OMICRON_MESH_WORKER)
     add_subdirectory(Omicron)
   endif()
 
@@ -25,7 +25,7 @@ if(BUILD_MESH_WORKERS)
     add_subdirectory(TetGen)
   endif()
 
-  if(BUILD_TRIANGLE_MESH_WORKER)
+  if(Omicron_FOUND AND BUILD_TRIANGLE_MESH_WORKER)
     add_subdirectory(Triangle)
   endif()
 
