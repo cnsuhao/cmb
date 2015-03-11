@@ -152,8 +152,12 @@ public:
     for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
       {
       this->Entity2Models[it->first] = model.entity();
-      ent_annotations->AddString(it->first.toString().c_str());
-      ent_annotations->AddString(mgr->name(it->first).c_str());
+      // make sure to not add Ent UUID twice
+      if(ent_annotations->GetIndex(it->first.toString().c_str()) < 0)
+        {
+        ent_annotations->AddString(it->first.toString().c_str());
+        ent_annotations->AddString(mgr->name(it->first).c_str());
+        }
       }
 
     smtk::model::Groups modGroups =
@@ -161,8 +165,12 @@ public:
     for(smtk::model::Groups::iterator it = modGroups.begin();
        it != modGroups.end(); ++it)
       {
-      grp_annotations->AddString((*it).entity().toString().c_str());
-      grp_annotations->AddString((*it).name().c_str());
+      // make sure to not add Ent UUID twice
+      if(grp_annotations->GetIndex(it->entity().toString().c_str()) < 0)
+        {
+        grp_annotations->AddString(it->entity().toString().c_str());
+        grp_annotations->AddString(it->name().c_str());
+        }
       }
 
     smtk::model::CellEntities modVols =
@@ -170,10 +178,12 @@ public:
     for(smtk::model::CellEntities::iterator it = modVols.begin();
        it != modVols.end(); ++it)
       {
-      if((*it).isVolume())
+      // make sure to not add Ent UUID twice
+      if((*it).isVolume() &&
+         vol_annotations->GetIndex(it->entity().toString().c_str()) < 0)
         {
-        vol_annotations->AddString((*it).entity().toString().c_str());
-        vol_annotations->AddString((*it).name().c_str());
+        vol_annotations->AddString(it->entity().toString().c_str());
+        vol_annotations->AddString(it->name().c_str());
         }
       }
 

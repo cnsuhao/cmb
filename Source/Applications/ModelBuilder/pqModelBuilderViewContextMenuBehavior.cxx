@@ -125,13 +125,19 @@ void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* pane
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
+    pqDataRepresentation* rep,
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
-  if (panel)
+  if (panel && rep)
     {
-    pqOutputPort* outport = pqActiveObjects::instance().activePort();
-    pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
+    pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
+    pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
+
+    pqOutputPort* outport = rep->getOutputPortFromInput();
+    panel->setOutputPort(outport);
+    panel->setRepresentation(rep);
+
     if(visible && visBlocks.count() && rep)
       {
       // if one block is visible, the rep has to be visible
@@ -183,20 +189,33 @@ void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
         }
       }
 
+    panel->setRepresentation(prevRep);
+    panel->setOutputPort(prevOutport);
+
     }
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setBlockColor(
+    pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor& color)
 {
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
-  if (panel)
+  if (panel && rep)
     {
+    pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
+    pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
+
+    panel->setRepresentation(rep);
+    panel->setOutputPort(rep->getOutputPortFromInput());
     if(color.isValid())
       panel->setBlockColor(colorBlocks, color);
     else
       panel->clearBlockColor(colorBlocks);
+
+    panel->setRepresentation(prevRep);
+    panel->setOutputPort(prevOutport);
+
     }
 }
 

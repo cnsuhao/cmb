@@ -60,9 +60,9 @@ public:
 
   void setModelPanel(pqSMTKModelPanel*);
 
-  void setBlockVisibility(
+  void setBlockVisibility(pqDataRepresentation* rep,
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
-  void setBlockColor(
+  void setBlockColor(pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor&);
 
 signals:
