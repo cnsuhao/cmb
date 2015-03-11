@@ -39,18 +39,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <vtkType.h>
 #include "cmbSystemConfig.h"
 
-class vtkDataSet;
-class vtkIntArray;
 class pqPipelineSource;
-class qtCMBTree;
 class pqCMBModelBuilderMainWindowCore;
 class pqCMBSceneTree;
-class pqCMBModel;
 class pqProxyInformationWidget;
 class QDockWidget;
 class pqDataRepresentation;
-class QCheckBox;
-class QTreeWidgetItem;
 
 class pqCMBModelBuilderMainWindow : public pqCMBCommonMainWindow
 {
@@ -67,7 +61,6 @@ public slots:
   void onCMBModelCleared();
   void onCMBModelModified();
   void onNewModelCreated();
-  void onCreateSimpleModel();
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
@@ -76,10 +69,8 @@ public slots:
 
   // Description:
   // Texture related slots
-  void editTexture();
   void setTextureMap(const QString& filename,
     int numberOfRegistrationPoints, double *points);
-  void unsetTextureMap();
   void addTextureFileName(const char *filename);
   const QStringList &getTextureFileNames();
 
@@ -113,44 +104,16 @@ protected slots:
 
   // Description:
   // Slots for Tree widgets related buttons
-  //QTreeWidgetItem* onAddingMaterial();
-  //void onRemovingMaterial();
-  //QTreeWidgetItem* onAddingBC();
-  //void onRemovingBC();
-  void onClearSelection();
   void updateSelectionUI(bool disable);
-
-  // Description:
-  // Called when the Accept/Reset buttons are clicked
-  void onSaveState();
-  void onResetState();
-
-  // Description:
-  // Called when starting and external process (to disable starting another)
-  // and when completing an external process (to re-enable)
-  void onEnableExternalProcesses(bool state);
-
-  // Description:
-  // Set the color to the selections in the tree
-  void setSolidColorOnSelections(const QColor&);
 
  // Description:
   // Signals when selection actions are invoked.
   void onSurfaceRubberBandSelect(bool);
 
-  // Description:
-  // Signal when convert lat-long atcion is invoked.
-  void onConvertLatLong(bool);
-
-  // Description:
-  // Signals when convert arc-node action is invoked for 2D model
-  void onConvertArcNodes(bool);
-
   void onZoomModeChanged(int mode);
   void onLoadScene();
   void onUnloadScene();
   void onSceneFileLoaded();
-  void onDisplayBathymetryDialog();
 
   // Description
   // Sim Builder
@@ -195,7 +158,6 @@ protected:
   void updateGrowGUI(bool);
   void UpdateInfoTable();
   void updateDataInfo();
-  void UpdateModelState(int accepted);
   void setToolbarEnableState(QToolBar* toolbar, bool enabled);
 
   // init UI panels as Dock widgets

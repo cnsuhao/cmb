@@ -27,46 +27,21 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBModelBuilderMainWindow.h"
 //#include "ui_qtCMBMainWindow.h"
 
-#include "pqCMBModelBuilderMainWindowCore.h"
-#include "pqCMBRubberBandHelper.h"
 #include "ui_qtCMBMainWindow.h"
-#include "pqProxyInformationWidget.h"
-
 #include "cmbModelBuilderConfig.h"
 
-#include <QDir>
-#include <QScrollArea>
-#include <QShortcut>
-#include <QtDebug>
-#include <QToolButton>
-
-#include <QMenu>
-#include <QDoubleSpinBox>
-#include <QDropEvent>
-#include <QHeaderView>
-#include <QIcon>
-#include <QItemSelection>
-#include <QItemSelectionModel>
-#include <QMessageBox>
-#include <QPalette>
-#include <QPixmap>
-#include <QSplitter>
-#include <QSettings>
-
-#include "qtCMBAboutDialog.h"
+#include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
-#include "pqColorChooserButton.h"
-#include "pqDisplayColorWidget.h"
+#include "pqColorToolbar.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputPort.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
 #include "pqPluginManager.h"
 #include "pqPropertyLinks.h"
+#include "pqProxyInformationWidget.h"
+#include "pqProxyWidget.h"
 #include "pqRenderView.h"
-#include "pqDisplayRepresentationWidget.h"
-#include "pqScalarBarRepresentation.h"
-#include "pqScalarsToColors.h"
 #include "pqServer.h"
 #include "pqServerResource.h"
 #include "pqSetName.h"
@@ -74,68 +49,60 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqSMProxy.h"
 #include "pqWaitCursor.h"
 
-#include "vtkCellData.h"
-#include "vtkCleanUnstructuredGrid.h"
-#include "vtkCompositeDataIterator.h"
-#include "vtkCompositeDataPipeline.h"
-#include "vtkConvertSelection.h"
-#include "vtkDataArray.h"
-#include "vtkDataSet.h"
-#include "vtkFacesConnectivityFilter.h"
-#include "vtkHydroModelPolySource.h"
-#include "vtkMapper.h"
-#include "vtkMergeFacesFilter.h"
-#include "vtkMultiBlockDataSet.h"
-#include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
 #include "vtkProcessModule.h"
 #include "vtkSMPropertyHelper.h"
-#include "vtkPVDataSetAttributesInformation.h"
-#include "vtkPVGenericRenderWindowInteractor.h"
-#include "vtkPVMultiBlockRootObjectInfo.h"
-#include "vtkSelection.h"
-#include "vtkSelectionSource.h"
 #include "vtkSMDataSourceProxy.h"
 #include "vtkSMIdTypeVectorProperty.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMPVRepresentationProxy.h"
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkSMSessionProxyManager.h"
 #include "vtkStringArray.h"
-#include "vtkUnstructuredGrid.h"
 #include "vtkVariant.h"
 #include "vtkCollection.h"
+#include "vtkSMModelManagerProxy.h"
 
 #include "qtCMBCreateSimpleGeometry.h"
 #include "qtCMBHelpDialog.h"
-
-#include "SimBuilder/SimBuilderCore.h"
-#include "SimBuilder/pqSMTKUIManager.h"
-
 #include "qtCMBBathymetryDialog.h"
+#include "qtCMBAboutDialog.h"
+#include "qtCMBTreeWidget.h"
+
 #include "pqCMBSceneObjectBase.h"
 #include "pqPlanarTextureRegistrationDialog.h"
-
 #include "pqCMBLoadDataReaction.h"
-#include "vtkSMSessionProxyManager.h"
 #include "pqCMBFileExtensions.h"
-// panels requied includes
-#include "pqActiveObjects.h"
-#include "pqProxyWidget.h"
-#include "SimBuilder/qtSimBuilderUIPanel.h"
 #include "pqCMBSceneTree.h"
-#include <QDockWidget>
 #include "pqSMTKModelPanel.h"
 #include "pqCMBModelManager.h"
 #include "pqCMBColorMapWidget.h"
-#include "qtCMBTreeWidget.h"
-#include "vtkSMModelManagerProxy.h"
+#include "pqCMBModelBuilderMainWindowCore.h"
+#include "pqCMBRubberBandHelper.h"
+
+#include "SimBuilder/SimBuilderCore.h"
+#include "SimBuilder/pqSMTKUIManager.h"
+#include "SimBuilder/qtSimBuilderUIPanel.h"
 
 #include <vtksys/SystemTools.hxx>
 #include "smtk/model/StringData.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItem.h"
+
+#include <QDir>
+#include <QDockWidget>
+#include <QScrollArea>
+#include <QShortcut>
+#include <QtDebug>
+#include <QToolButton>
+#include <QMenu>
+#include <QIcon>
+#include <QMessageBox>
+#include <QPalette>
+#include <QPixmap>
+#include <QSplitter>
+#include <QSettings>
 
 class pqCMBModelBuilderMainWindow::vtkInternal
 {
@@ -154,8 +121,6 @@ public:
     }
 
   QPointer<pqProxyInformationWidget> InformationWidget;
-
-  QPointer<pqColorChooserButton> ColorButton;
 
   QPointer<QSettings> SplitterSettings;
   QPointer<QToolBar> Model2DToolbar;
@@ -220,9 +185,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->actionExport_Simulation_File,
     SIGNAL(triggered()), this->getThisCore(), SLOT(onExportSimFile()));
 
-//  QObject::connect(this->getMainDialog()->actionConvert_from_Lat_Long,
-//    SIGNAL(triggered(bool)),
-//    this, SLOT(onConvertLatLong(bool)));
   QObject::connect(this->getMainDialog()->action_Select,
     SIGNAL(triggered(bool)),
     this, SLOT(onSurfaceRubberBandSelect(bool)));
@@ -230,10 +192,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getThisCore()->cmbRenderViewSelectionHelper(),
     SIGNAL(selectionFinished(int, int, int, int)),
     this, SLOT(onSelectionFinished()));
-
-  QObject::connect(this->getThisCore(),
-    SIGNAL(rubberSelectionModeChanged()),
-    this, SLOT(onClearSelection()));
 
   QObject::connect(this->getThisCore(),
     SIGNAL(newModelCreated()),
@@ -252,9 +210,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     SIGNAL(triggered()), this, SLOT(onLoadScene()));
   QObject::connect(this->getMainDialog()->action_MB_Unload_Scene,
     SIGNAL(triggered()), this, SLOT(onUnloadScene()));
-
-//  QObject::connect(this->getMainDialog()->actionApplyBathymetry,
-//    SIGNAL(triggered()), this, SLOT(onDisplayBathymetryDialog()));
 
  this->getMainDialog()->faceParametersDock->setParent(0);
   this->getMainDialog()->faceParametersDock->setVisible(false);
@@ -373,7 +328,11 @@ void pqCMBModelBuilderMainWindow::onUnloadScene()
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
   this->Internal->Model2DToolbar = NULL;
-
+  QToolBar* colorToolbar = new pqColorToolbar(this)
+    << pqSetName("variableToolbar");
+  colorToolbar->layout()->setSpacing(0);
+  this->addToolBar(Qt::TopToolBarArea, colorToolbar);
+  this->insertToolBarBreak(colorToolbar);
 }
 
 //----------------------------------------------------------------------------
@@ -423,7 +382,6 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
 
-
   this->getMainDialog()->menu_File->insertAction(
     this->getMainDialog()->action_Exit,
     this->getMainDialog()->actionSave_Simulation);
@@ -432,6 +390,11 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
     this->getMainDialog()->actionExport_Simulation_File);
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->action_Exit);
+
+  // The "Save" should go through "write" operation of sessions
+  this->getMainDialog()->action_Save_Data->setVisible(false);
+  this->getMainDialog()->action_Save_As->setVisible(false);
+
 }
 
 //----------------------------------------------------------------------------
@@ -446,8 +409,6 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
 
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
-  this->getMainDialog()->actionConvert_from_Lat_Long->setChecked(false);
-  this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(model_loaded);
 
   // this->getMainDialog()->action_MB_Load_Scene->setEnabled(data_loaded);
   this->getMainDialog()->action_MB_Unload_Scene->setEnabled(
@@ -624,24 +585,6 @@ void pqCMBModelBuilderMainWindow::clearGUI()
   this->appendDatasetNameToTitle("");
 }
 
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onSaveState()
-{
-  this->UpdateModelState(1);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onResetState()
-{
-  this->UpdateModelState(0);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::UpdateModelState(int accepted)
-{
-  pqWaitCursor cursor;
-}
-
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
 {
@@ -661,17 +604,6 @@ void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
     }
 //  this->getMainDialog()->actionZoomToBox->setEnabled(!disable);
 //  this->getMainDialog()->toolBar_Selection->setEnabled(!disable);
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onClearSelection()
-{
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::setSolidColorOnSelections(
-  const QColor& setColor)
-{
 }
 
 //----------------------------------------------------------------------------
@@ -703,18 +635,6 @@ void pqCMBModelBuilderMainWindow::onSurfaceRubberBandSelect(bool checked)
 {
   this->getThisCore()->onRubberBandSelect(checked);
 }
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onConvertLatLong(bool checked)
-{
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onConvertArcNodes(bool checked)
-{
-  this->updateSelectionUI(checked);
-  this->onClearSelection();
-  this->getThisCore()->onRubberBandSelectPoints(checked);
-}
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::growFinished()
@@ -733,21 +653,10 @@ void pqCMBModelBuilderMainWindow::growFinished()
   this->getThisCore()->modelManager()->clearModelSelections();
 }
 
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onEnableExternalProcesses(bool state)
-{
-//  this->getMainDialog()->actionSpawn_Surface_Mesher->setEnabled(state);
-  this->getMainDialog()->actionSpawn_Volume_Mesher->setEnabled(state);
-}
-
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateGrowGUI(bool doGrow)
 {
   this->updateSelectionUI(doGrow);
-  if(doGrow)
-    {
-    this->onClearSelection();
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -787,12 +696,6 @@ void pqCMBModelBuilderMainWindow::initSimBuilder()
   //  SIGNAL(newSimFileLoaded()), this, SLOT(updateEnableState()));
   QObject::connect(this->getThisCore()->getSimBuilder(),
     SIGNAL(newSimFileLoaded(const char*)), this, SLOT(onSimFileLoaded(const char*)));
-  QObject::connect(this->getThisCore()->getSimBuilder()->attributeUIManager(),
-    SIGNAL(attColorChanged()),
-    this->getThisCore(), SLOT(onColorByAttribute()));
-  QObject::connect(this->getThisCore()->getSimBuilder()->attributeUIManager(),
-    SIGNAL(numOfAttriubtesChanged()),
-    this->getThisCore(), SLOT(onNumOfAttriubtesChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -876,39 +779,6 @@ void pqCMBModelBuilderMainWindow::onSimFileLoaded(const char* vtkNotUsed(filenam
   this->UpdateInfoTable();
   this->updateEnableState();
 }
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onCreateSimpleModel()
-{
-  qtCMBCreateSimpleGeometry createSimpleGeometry(this);
-  createSimpleGeometry.exec();
-  if(createSimpleGeometry.result() == QDialog::Accepted)
-    {
-    switch(createSimpleGeometry.getGeometryType())
-      {
-      case 0:
-        {
-        std::vector<double> boundingBox;
-        createSimpleGeometry.getGeometryValues(boundingBox);
-        std::vector<int> resolution;
-        createSimpleGeometry.getResolutionValues(resolution);
-        this->getThisCore()->createRectangleModel(
-          &boundingBox[0], resolution[0], resolution[1]);
-        break;
-        }
-      case 1:
-        {
-        std::vector<double> values;
-        createSimpleGeometry.getGeometryValues(values);
-        std::vector<int> resolution;
-        createSimpleGeometry.getResolutionValues(resolution);
-        this->getThisCore()->createEllipseModel(&values[0], resolution[0]);
-        break;
-        }
-      default:
-        std::cerr << "pqCMBModelBuilderMainWindow: unknown geometry type\n";
-      }
-    }
-}
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
@@ -920,38 +790,10 @@ void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
 //  this->initUIPanel(qtCMBPanelsManager::INFO);
 //  this->initUIPanel(qtCMBPanelsManager::DISPLAY);
 }
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onDisplayBathymetryDialog()
-{
-  this->getpqCMBSceneTree()->blockSignals(true);
-  this->getpqCMBSceneTree()->getWidget()->blockSignals(true);
-  qtCMBBathymetryDialog importer(this->getpqCMBSceneTree());
-  importer.setMeshAndModelMode(true);
-  int dlgStatus = importer.exec();
-  if(dlgStatus == QDialog::Accepted)
-    {
-    }
-  else if (dlgStatus == 2) // Remove bathymetry
-    {
-    }
-  this->getpqCMBSceneTree()->getWidget()->blockSignals(false);
-  this->getpqCMBSceneTree()->blockSignals(false);
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::editTexture()
-{
-}
 //-----------------------------------------------------------------------------
 const QStringList &pqCMBModelBuilderMainWindow::getTextureFileNames()
 {
   return this->Internal->TextureFiles;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::unsetTextureMap()
-{
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::setTextureMap(const QString& filename, int numberOfRegistrationPoints,

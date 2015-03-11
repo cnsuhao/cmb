@@ -136,15 +136,15 @@ public:
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
+  vtkNew<vtkStringList> ent_annotations;
+  vtkNew<vtkStringList> vol_annotations;
+  vtkNew<vtkStringList> grp_annotations;
 
   void updateModelAnnotations(const smtk::model::EntityRef& model)
   {
     pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
 
-    vtkNew<vtkStringList> ent_annotations;
-    vtkNew<vtkStringList> vol_annotations;
-    vtkNew<vtkStringList> grp_annotations;
 
     vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
     std::map<smtk::common::UUID, unsigned int>::const_iterator it =
@@ -152,8 +152,12 @@ public:
     for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
       {
       this->Entity2Models[it->first] = model.entity();
-      ent_annotations->AddString(it->first.toString().c_str());
-      ent_annotations->AddString(mgr->name(it->first).c_str());
+      // make sure to not add Ent UUID twice
+      if(ent_annotations->GetIndex(it->first.toString().c_str()) < 0)
+        {
+        ent_annotations->AddString(it->first.toString().c_str());
+        ent_annotations->AddString(mgr->name(it->first).c_str());
+        }
       }
 
     smtk::model::Groups modGroups =
@@ -161,8 +165,12 @@ public:
     for(smtk::model::Groups::iterator it = modGroups.begin();
        it != modGroups.end(); ++it)
       {
-      grp_annotations->AddString((*it).entity().toString().c_str());
-      grp_annotations->AddString((*it).name().c_str());
+      // make sure to not add Ent UUID twice
+      if(grp_annotations->GetIndex(it->entity().toString().c_str()) < 0)
+        {
+        grp_annotations->AddString(it->entity().toString().c_str());
+        grp_annotations->AddString(it->name().c_str());
+        }
       }
 
     smtk::model::CellEntities modVols =
@@ -170,10 +178,12 @@ public:
     for(smtk::model::CellEntities::iterator it = modVols.begin();
        it != modVols.end(); ++it)
       {
-      if((*it).isVolume())
+      // make sure to not add Ent UUID twice
+      if((*it).isVolume() &&
+         vol_annotations->GetIndex(it->entity().toString().c_str()) < 0)
         {
-        vol_annotations->AddString((*it).entity().toString().c_str());
-        vol_annotations->AddString((*it).name().c_str());
+        vol_annotations->AddString(it->entity().toString().c_str());
+        vol_annotations->AddString(it->name().c_str());
         }
       }
 
@@ -308,6 +318,9 @@ public:
       }
     this->Entity2Models.clear();
     this->ModelInfos.clear();
+    ent_annotations->RemoveAllItems();
+    vol_annotations->RemoveAllItems();
+    grp_annotations->RemoveAllItems();
 //    this->ManagerProxy = NULL;
   }
 
@@ -385,30 +398,6 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 //----------------------------------------------------------------------------
 cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
-/*
-//  smtk::model::EntityRef entity(this->managerProxy()->modelManager(), uid);
-  smtk::model::Model modelEntity = entity.isModel() ?
-      entity.as<smtk::model::Model>() : entity.owningModel();
-
-  if(modelEntity.isValid() && this->Internal->ModelInfos.find(modelEntity.entity()) !=
-    this->Internal->ModelInfos.end())
-    {
-    return &this->Internal->ModelInfos[modelEntity.entity()];
-    }
-*/
-  /*    (entity.isCellEntity() ? entity.as<smtk::model::CellEntity>().model() :
-       entity.owningModel());*/
-/*
-  std::cout << "modelInfo Id: " << uid.toString().c_str() << std::endl;
-  std::cout << "Model is valid? " << modelEntity.isValid() << std::endl;
-
-  if(modelEntity.isValid() && this->Internal->ModelInfos.find(modelEntity.entity()) !=
-    this->Internal->ModelInfos.end())
-    {
-    return &this->Internal->ModelInfos[modelEntity.entity()];
-    }
-*/
-
   if(this->Internal->Entity2Models.find(selentity.entity())
     != this->Internal->Entity2Models.end())
     {
@@ -673,6 +662,7 @@ bool pqCMBModelManager::handleOperationResult(
     (opType->value() == smtk::model::TESSELLATION_ENTRY);
 
   smtk::common::UUIDs geometryChangedModels;
+  smtk::common::UUIDs generalModifiedModels;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
   smtk::model::EntityRefArray::const_iterator it;
@@ -690,7 +680,7 @@ bool pqCMBModelManager::handleOperationResult(
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       if(it->isModel())
-        geometryChangedModels.insert(it->entity()); // TODO: check what kind of operations on the model
+        generalModifiedModels.insert(it->entity()); // TODO: check what kind of operations on the model
       else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
         {
         geometryChangedModels.insert(
@@ -698,6 +688,26 @@ bool pqCMBModelManager::handleOperationResult(
         bGeometryChanged = true;
         }
       }
+
+  // process "new entities" in result to figure out if there are new cell entities
+  smtk::attribute::ModelEntityItem::Ptr newEntities =
+    result->findModelEntity("new entities");
+  if(newEntities)
+    for(it = newEntities->begin(); it != newEntities->end(); ++it)
+      {
+      if(it->isModel())
+        {
+        geometryChangedModels.insert(it->entity());
+        bGeometryChanged = true;
+        }
+      else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
+        {
+        geometryChangedModels.insert(
+          it->as<smtk::model::CellEntity>().model().entity());
+        bGeometryChanged = true;
+        }
+      }
+
 
   // check if there is "selection", such as from "grow" operator.
   //
@@ -737,8 +747,8 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
-      else if(bGeometryChanged || (!meshSelections &&
-        (geometryChangedModels.find(it->entity()) != geometryChangedModels.end())))
+      else if(bGeometryChanged ||
+        geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         // update representation
         {
         this->clearModelSelections();
@@ -746,7 +756,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
       // for grow "selection" operations, the model is writen to "entities" result
       else if(meshSelections/* && meshSelections->numberOfValues() > 0 */&&
-        geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+        generalModifiedModels.find(it->entity()) != generalModifiedModels.end())
         {
         // this->Internal->updateModelSelection(*it, meshSelections, view);
         cmbSMTKModelInfo* minfo = &this->Internal->ModelInfos[it->entity()];
@@ -756,8 +766,6 @@ bool pqCMBModelManager::handleOperationResult(
       }
     }
 
-  smtk::attribute::ModelEntityItem::Ptr newEntities =
-    result->findModelEntity("new entities");
   if(hasNewModels ||
     (newEntities && newEntities->numberOfValues() > 0))
     pxy->modelManager()->assignDefaultNames();
