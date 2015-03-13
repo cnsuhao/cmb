@@ -23,6 +23,7 @@
 
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/Logger.h>
+// #include <smtk/io/ExportJSON.h>
 
 #include <smtk/simulation/ExportSpec.h>
 
@@ -77,14 +78,15 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
     return;
     }
 
+  // NOTE: We need to set the model manager BEFORE deseriazlize, so that
+  // all the ModelEntityItems have associated EntityRefs properly initialized.
   // create the attributes from smtkContents
   smtk::attribute::System simManager;
-  // FIXME: There is no more smtk::model::Model
-  //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
-  //simManager.setRefModel(modelPtr);
+  simManager.setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, simManager);
 
   smtk::attribute::System exportManager;
+  exportManager.setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(exportContents, exportManager);
 
   this->Operate(modelWrapper->GetModelManager(), simManager, exportManager);
@@ -99,16 +101,16 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
     return;
     }
 
+  // NOTE: We need to set the model manager BEFORE deseriazlize, so that
+  // all the ModelEntityItems have associated EntityRefs properly initialized.
+  // create the attributes from smtkContents
   // create the attributes from smtkContents
   smtk::attribute::System manager;
-  // FIXME: There is no more smtk::model::Model
-  //smtk::model::ModelPtr modelPtr(new smtk::model::Model);
-  //manager.setRefModel(modelPtr);
+  manager.setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, manager);
 
   // Create empty export manager
   smtk::attribute::System exportManager;
-
   this->Operate(modelWrapper->GetModelManager(), manager, exportManager);
 }
 
@@ -129,6 +131,11 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
                                 smtk::attribute::System& manager,
                                 smtk::attribute::System& exportManager)
 {
+
+//  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");
+//  json << smtk::io::ExportJSON::fromModelManager(modelMgr);
+//  json.close();
+
   // Check that we have a python script
   if (!this->GetScript() || strcmp(this->GetScript(),"")==0 )
     {
@@ -140,6 +147,24 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   manager.setRefModelManager(modelMgr);
   exportManager.setRefModelManager(modelMgr);
 
+/*
+  smtk::attribute::AttributePtr att = manager.findAttribute("Material-0");
+  if(att)
+  {
+    smtk::model::EntityRefArray entarray = att->associatedModelEntities<smtk::model::EntityRefArray>();
+    std::cout << "num of entities " << entarray.size() << std::endl;
+    std::cout << "num of associations " << att->associations()->numberOfValues() << std::endl;
+  }
+
+  std::ofstream manjson("/Users/yuminyuan/Downloads/hydrafiles/afterManModelManager.json");
+  manjson << smtk::io::ExportJSON::fromModelManager(manager.refModelManager());
+  manjson.close();
+
+  std::ofstream expjson("/Users/yuminyuan/Downloads/hydrafiles/afterExpModelManager.json");
+  expjson << smtk::io::ExportJSON::fromModelManager(exportManager.refModelManager());
+  expjson.close();
+
+*/
   // Set python executable if defined
   if (this->PythonExecutable)
     {
