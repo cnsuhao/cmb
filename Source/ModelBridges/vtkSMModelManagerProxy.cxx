@@ -7,6 +7,7 @@
 
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
+#include "smtk/model/Operator.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 

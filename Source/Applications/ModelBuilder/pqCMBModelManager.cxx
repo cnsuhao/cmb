@@ -631,7 +631,8 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
   bool sucess = this->handleOperationResult(result, sessId, hasNewModels);
   if(sucess)
     {
-    emit this->operationFinished(result, hasNewModels);
+    smtk::model::SessionRef sref(pxy->modelManager(), sessId);
+    emit this->operationFinished(result, sref, hasNewModels);
     }
 
   return sucess;
@@ -657,9 +658,7 @@ bool pqCMBModelManager::handleOperationResult(
 
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
-  smtk::attribute::IntItem::Ptr opType = result->findInt("event type");
-  bool bGeometryChanged =  opType && opType->numberOfValues() &&
-    (opType->value() == smtk::model::TESSELLATION_ENTRY);
+  bool bGeometryChanged =  false;
 
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs generalModifiedModels;
@@ -673,10 +672,10 @@ bool pqCMBModelManager::handleOperationResult(
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
     }
 
-  // process "entities" in result to figure out if models are changed
+  // process "modified" in result to figure out if models are changed
   // or there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
-    result->findModelEntity("entities");
+    result->findModelEntity("modified");
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       if(it->isModel())
@@ -689,9 +688,9 @@ bool pqCMBModelManager::handleOperationResult(
         }
       }
 
-  // process "new entities" in result to figure out if there are new cell entities
+  // process "created" in result to figure out if there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr newEntities =
-    result->findModelEntity("new entities");
+    result->findModelEntity("created");
   if(newEntities)
     for(it = newEntities->begin(); it != newEntities->end(); ++it)
       {
@@ -754,7 +753,7 @@ bool pqCMBModelManager::handleOperationResult(
         this->clearModelSelections();
         this->Internal->updateModelRepresentation(*it, view);
         }
-      // for grow "selection" operations, the model is writen to "entities" result
+      // for grow "selection" operations, the model is writen to "modified" result
       else if(meshSelections/* && meshSelections->numberOfValues() > 0 */&&
         generalModifiedModels.find(it->entity()) != generalModifiedModels.end())
         {

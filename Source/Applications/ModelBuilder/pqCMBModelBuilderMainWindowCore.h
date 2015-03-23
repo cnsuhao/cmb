@@ -160,7 +160,8 @@ public slots:
   
   void loadJSONFile(const QString& filename);
   bool processModelInfo(const smtk::model::OperatorResult& result,
-                             bool hasNewModels);
+                        const smtk::model::SessionRef& sref,
+                        bool hasNewModels);
   void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
 
   // Called to show the settings dialog.
