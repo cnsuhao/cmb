@@ -858,8 +858,10 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     }
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
-    SIGNAL(operationFinished(const smtk::model::OperatorResult&, bool)),
-    this, SLOT(processModelInfo( const smtk::model::OperatorResult& , bool)));
+    SIGNAL(operationFinished(const smtk::model::OperatorResult&,
+    const smtk::model::SessionRef&, bool)),
+    this, SLOT(processModelInfo( const smtk::model::OperatorResult&,
+    const smtk::model::SessionRef&, bool)));
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
@@ -988,7 +990,8 @@ pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 
 //----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::processModelInfo(
-  const smtk::model::OperatorResult& result, bool hasNewModels)
+  const smtk::model::OperatorResult& result,
+  const smtk::model::SessionRef& sref, bool hasNewModels)
 {
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
@@ -1001,7 +1004,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   // FIXME, we need more info regarding what changed in the result entities,
   // for example, is this a color change, visibility change, etc
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
-    result->findModelEntity("entities");
+    result->findModelEntity("modified");
 
   // The result could be from multiple models.
   // For example, if Session(s) is clicked to change visibility or color,
@@ -1060,17 +1063,20 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       this->Internal->ViewContextBehavior->setBlockColor(
         minfo->Representation, colorBlocks[minfo], color);
     }
-
+/*
   //this->modelPanel()->setIgnorePropertyChange(false);
   smtk::attribute::ModelEntityItem::Ptr newEntities =
-    result->findModelEntity("new entities");
+    result->findModelEntity("created");
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
   bool hasNewEntities = newEntities && newEntities->numberOfValues() > 0;
   bool entitiesRemoved = remEntities && remEntities->numberOfValues() > 0;
-  if(hasNewModels || hasNewEntities || entitiesRemoved)
+*/
+
+  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
+  if(hasNewModels)
     {
-    this->modelPanel()->resetUI();
+    /*
     if(entitiesRemoved)
       {
       smtk::model::EntityRefs remEnts;
@@ -1081,15 +1087,15 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
         }
       this->modelPanel()->onEntitiesExpunged(remEnts);
       }
-
+    */
     this->activeRenderView()->resetCamera();
     emit this->newModelCreated();
     }
   else
     {
-    this->activeRenderView()->render();
-    this->modelPanel()->update();
+//    this->modelPanel()->update();
     }
+  this->activeRenderView()->render();
   return true;
 }
 

@@ -350,11 +350,15 @@ void pqSMTKModelPanel::resetUI()
   smtk::model::EntityRef::EntityRefsFromUUIDs(
     cursors, model, model->entitiesMatchingFlags(mask, true));
   std::cout << std::setbase(10) << "Found " << cursors.size() << " entries\n";
+
+  smtk::model::SimpleModelSubphrases::Ptr spg =
+    smtk::model::SimpleModelSubphrases::create();
+  spg->setDirectLimit(
+    std::numeric_limits<int>::max());
   qmodel->setRoot(
     smtk::model::EntityListPhrase::create()
       ->setup(cursors)
-      ->setDelegate( // set the subphrase generator:
-        smtk::model::SimpleModelSubphrases::create()));
+      ->setDelegate( spg));// set the subphrase generator
 
   this->Internal->ModelLoaded = true;
 }
