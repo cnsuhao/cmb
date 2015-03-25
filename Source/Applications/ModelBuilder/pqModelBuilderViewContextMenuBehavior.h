@@ -34,6 +34,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QList>
 #include <QColor>
 #include "vtkType.h"
+#include "smtk/PublicPointerDefs.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -60,10 +61,13 @@ public:
 
   void setModelPanel(pqSMTKModelPanel*);
 
-  void setBlockVisibility(pqDataRepresentation* rep,
+  void syncBlockVisibility(pqDataRepresentation* rep,
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
-  void setBlockColor(pqDataRepresentation* rep,
+  void syncBlockColor(pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor&);
+  virtual void onColorByModeChanged(const QString &);
+  virtual void updateColorForEntities(pqDataRepresentation* rep,
+    const QMap<smtk::model::EntityRef, QColor >& colorEntities);
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);
@@ -135,6 +139,7 @@ protected:
   QList<unsigned int> PickedBlocks;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
   pqMultiBlockInspectorPanel* m_DataInspector;
+  QString m_ColorByMode;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

@@ -51,10 +51,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/common/UUID.h"
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/Events.h"
+#include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/Operator.h"
+#include "smtk/model/Volume.h"
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
@@ -70,6 +72,33 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <map>
 #include <set>
 #include <QDebug>
+
+namespace
+{
+
+/// Fetch children for volum and group entities.
+bool _internal_ContainsGroup(
+  const smtk::common::UUID& grpId, const smtk::model::EntityRef& toplevel)
+  {
+  if(toplevel.isGroup())
+    {
+    if(grpId == toplevel.entity())
+      return true;
+    smtk::model::EntityRefs members =
+      toplevel.as<smtk::model::Group>().members<smtk::model::EntityRefs>();
+    for (smtk::model::EntityRefs::const_iterator it = members.begin();
+       it != members.end(); ++it)
+      {
+      if(it->entity() == grpId)
+        return true;
+      // Do this recursively since a group may contain other groups
+      if(_internal_ContainsGroup(grpId, *it))
+        return true;
+      }
+    }
+  return false;
+  }
+}
 
 //----------------------------------------------------------------------------
 void cmbSMTKModelInfo::init(
@@ -321,7 +350,6 @@ public:
     ent_annotations->RemoveAllItems();
     vol_annotations->RemoveAllItems();
     grp_annotations->RemoveAllItems();
-//    this->ManagerProxy = NULL;
   }
 
   qInternal(pqServer* server): Server(server)
@@ -398,11 +426,51 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 //----------------------------------------------------------------------------
 cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
-  if(this->Internal->Entity2Models.find(selentity.entity())
+  smtk::common::UUID modelId;
+  if(selentity.isModel())
+    {
+    modelId = selentity.entity();
+    }
+  else if(selentity.isVolume())
+    {
+    modelId = selentity.as<smtk::model::Volume>().model().entity();
+    }
+  else if(selentity.isGroup()) // group is tricky
+    {
+    smtk::model::Models modelEnts = this->Internal->ManagerProxy->
+      modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
+      smtk::model::MODEL_ENTITY);
+    for (smtk::model::Models::iterator it = modelEnts.begin();
+        it != modelEnts.end(); ++it)
+      {
+      if(it->isValid())
+        {
+        smtk::model::Groups modGroups = it->groups();
+        for(smtk::model::Groups::iterator grit = modGroups.begin();
+           grit != modGroups.end(); ++grit)
+          {
+          if(_internal_ContainsGroup(selentity.entity(), *grit))
+            {
+            modelId = it->entity();
+            break;
+            }
+          }
+        }
+      // if found, break;
+      if(modelId.isNull())
+        break;
+      }
+    }
+  else if(this->Internal->Entity2Models.find(selentity.entity())
     != this->Internal->Entity2Models.end())
     {
-    return &this->Internal->ModelInfos[ this->Internal->Entity2Models[selentity.entity()] ];
+    modelId = this->Internal->Entity2Models[selentity.entity()];
     }
+
+  if(!modelId.isNull() &&
+    this->Internal->ModelInfos.find(modelId) !=
+     this->Internal->ModelInfos.end())
+    return &this->Internal->ModelInfos[modelId];
 
   return NULL;
 }
@@ -522,6 +590,16 @@ std::set<std::string> pqCMBModelManager::supportedFileTypes(
       }
     }
   return resultSet;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::supportedColorByModes(QStringList& types)
+{
+  types.clear();
+  types << "None"
+        << vtkModelMultiBlockSource::GetEntityTagName()
+        << vtkModelMultiBlockSource::GetGroupTagName()
+        << vtkModelMultiBlockSource::GetVolumeTagName();
 }
 
 //----------------------------------------------------------------------------

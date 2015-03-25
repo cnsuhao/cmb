@@ -101,6 +101,7 @@ public slots:
   /// Called when a new server is connected.
   virtual void onRemovingServer(pqServer*);
   virtual void onServerCreationFinished(pqServer *server);
+  virtual void onColorByModeChanged(const QString &);
 
   virtual void onFileOpen(const QStringList& Files);
   void onCloseData(bool modelOnly=false);

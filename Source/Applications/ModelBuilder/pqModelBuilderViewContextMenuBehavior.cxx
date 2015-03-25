@@ -41,19 +41,23 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqSetName.h"
 #include "pqSMAdaptor.h"
 #include "pqUndoStack.h"
+#include "pqRepresentationHelperFunctions.h"
 
 #include "vtkDataObject.h"
 #include "vtkNew.h"
 #include "vtkPVCompositeDataInformation.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVGeneralSettings.h"
+#include "vtkPVSMTKModelInformation.h"
 #include "vtkSMArrayListDomain.h"
 #include "vtkSMIntVectorProperty.h"
+#include "vtkSMModelManagerProxy.h"
 #include "vtkSMProperty.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMPVRepresentationProxy.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkSMTransferFunctionManager.h"
+#include "vtkSMTransferFunctionProxy.h"
 #include "vtkSMViewProxy.h"
 
 #include <QAction>
@@ -65,6 +69,11 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <QWidget>
 #include "pqCMBModelManager.h"
 #include "pqSMTKModelPanel.h"
+#include "smtk/model/Face.h"
+#include "smtk/model/Group.h"
+#include "smtk/model/Model.h"
+#include "smtk/model/Volume.h"
+#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 namespace
 {
@@ -94,6 +103,72 @@ namespace
       }
     return result;
     }
+bool _internal_getBlockIndex(const smtk::model::EntityRef& eref,
+                             unsigned int& flatIndex)
+  {
+  const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
+  if(!prop.empty() && prop[0] >=0)
+    {
+    flatIndex = prop[0]+1;
+    return true;
+    }
+  return false;
+  }
+
+/// Fetch children for volum and group entities.
+void _internal_AccumulateChildGeometricEntities(
+  QSet<unsigned int>& blockIds,
+  const smtk::model::EntityRef& toplevel)
+  {
+  unsigned int bidx = -1;
+  if (toplevel.isVolume())
+    { // Add free cells
+    smtk::model::Faces faces = toplevel.as<smtk::model::Volume>().faces();
+    // Find all boundaries of all free cells
+    smtk::model::Faces::iterator fcit;
+    for (fcit = faces.begin(); fcit != faces.end(); ++fcit)
+      {
+      if(fcit->hasIntegerProperty("block_index") &&
+         _internal_getBlockIndex(*fcit, bidx))
+        blockIds.insert(bidx);
+
+      // for its edges and vertices
+      smtk::model::EntityRefs bdys = fcit->lowerDimensionalBoundaries(-1); // Get *all* boundaries.
+      smtk::model::EntityRefs::const_iterator evit;
+      for (evit = bdys.begin(); evit != bdys.end(); ++evit)
+        if(evit->hasIntegerProperty("block_index") &&
+           _internal_getBlockIndex(*evit, bidx))
+          blockIds.insert(bidx);
+      }
+    }
+  else if (toplevel.isGroup())
+    { // Add group members, but not their boundaries
+    smtk::model::EntityRefs members =
+      toplevel.as<smtk::model::Group>().members<smtk::model::EntityRefs>();
+    for (smtk::model::EntityRefs::const_iterator it = members.begin();
+       it != members.end(); ++it)
+      // Do this recursively since a group may contain other groups
+      _internal_AccumulateChildGeometricEntities(blockIds, *it);
+    }
+  else if(toplevel.hasIntegerProperty("block_index") &&
+         _internal_getBlockIndex(toplevel, bidx))
+    blockIds.insert(bidx);
+  }
+
+// only use valid color, the rest will be colored
+// randomly with CTF
+bool _internal_getValidEntityColor(QColor& color,
+  const smtk::model::EntityRef& entref)
+  {
+  smtk::model::FloatList rgba = entref.color();
+  if ((rgba.size() == 3 || rgba.size() ==4) &&
+     !(rgba[0]+rgba[1]+rgba[2] == 0))
+    {
+    color.setRgbF(rgba[0], rgba[1], rgba[2]);
+    return true;
+    }
+  return false;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -108,6 +183,7 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
   this->Menu << pqSetName("PipelineContextMenu");
   this->m_DataInspector = new pqMultiBlockInspectorPanel(NULL);
   this->m_DataInspector->setVisible(false);
+  this->m_ColorByMode = "None";
 }
 
 //-----------------------------------------------------------------------------
@@ -124,7 +200,7 @@ void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* pane
 }
 
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
+void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
     pqDataRepresentation* rep,
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
@@ -195,11 +271,149 @@ void pqModelBuilderViewContextMenuBehavior::setBlockVisibility(
     }
 }
 
+//----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
+  const QString & colorMode)
+{
+  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+    return;
+  if(this->m_ColorByMode == colorMode)
+    return;
+  QStringList list;
+  this->m_ModelPanel->modelManager()->supportedColorByModes(list);
+  if(!list.contains(colorMode))
+    return;
+  this->m_ColorByMode = colorMode;
+
+  // active rep
+  pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
+  pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
+  if (!datapanel || !activeRep)
+    return;
+  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
+  if(!minfo)
+    return;
+
+  smtk::common::UUID modelId = minfo->Info->GetModelUUID();
+  smtk::model::Model activeModel(
+    this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
+  if(!activeModel.isValid())
+    return;
+
+  // turn off the current scalar bar before switch to the new array
+  vtkSMProxy* ctfProxy = activeRep->getLookupTableProxy();
+  vtkSMProxy* sb = vtkSMTransferFunctionProxy::FindScalarBarRepresentation(
+    ctfProxy, pqActiveObjects::instance().activeView()->getProxy());
+  if(sb)
+    {
+    vtkSMPropertyHelper(sb, "Visibility").Set(0);
+    sb->UpdateVTKObjects();
+    }
+
+  // clear all colors
+  QList<unsigned int> indices;
+  std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
+    minfo->Info->GetUUID2BlockIdMap().begin();
+  for(; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
+    {
+    indices.append(uit->second + 1);
+    }
+  datapanel->clearBlockColor(indices);
+
+  QColor color;
+  QMap<smtk::model::EntityRef, QColor > colorEntities;
+  if(this->m_ColorByMode ==
+    vtkModelMultiBlockSource::GetVolumeTagName())
+    {
+    // if colorby-volume, get volumes' color,
+    smtk::model::CellEntities modVols = activeModel.cells();
+    for(smtk::model::CellEntities::iterator it = modVols.begin();
+       it != modVols.end(); ++it)
+      {
+      if(it->isVolume() && it->hasColor()
+        && _internal_getValidEntityColor(color, *it))
+        {
+        colorEntities[*it] = color;
+        }
+      }
+    }
+ else if( this->m_ColorByMode ==
+      vtkModelMultiBlockSource::GetGroupTagName())
+   {
+    // if colorby-group, get groups' color,
+    smtk::model::Groups modGroups = activeModel.groups();
+    for(smtk::model::Groups::iterator it = modGroups.begin();
+       it != modGroups.end(); ++it)
+      {
+      if(it->hasColor()
+        && _internal_getValidEntityColor(color, *it))
+        {
+        colorEntities[*it] = color;
+        }
+      }
+    }
+  else if (this->m_ColorByMode ==
+      vtkModelMultiBlockSource::GetEntityTagName())
+    {
+    // if colorby-entity, get entities' color, 
+    for(uit = minfo->Info->GetUUID2BlockIdMap().begin();
+      uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
+      {
+      smtk::model::EntityRef eref(activeModel.manager(), uit->first);
+      if(eref.hasColor()
+        && _internal_getValidEntityColor(color, eref))
+        {
+        colorEntities[eref] = color;
+        }
+      }
+    }
+
+if(colorEntities.size() > 0)
+  this->updateColorForEntities(activeRep, colorEntities);
+
+ // set rep colorByArray("...")
+ RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+   activeRep->getProxy(), this->m_ColorByMode == "None" ?
+     NULL : this->m_ColorByMode.toStdString().c_str(),
+   vtkDataObject::FIELD);
+
+  activeRep->renderViewEventually();
+}
+
+//----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(
+    pqDataRepresentation* rep,
+    const QMap<smtk::model::EntityRef, QColor >& colorEntities)
+{
+  if(this->m_ColorByMode == "None")
+    return;
+
+  foreach(const smtk::model::EntityRef& entref, colorEntities.keys())
+    {
+    QSet<unsigned int> blockIds;
+    if((entref.isVolume() && this->m_ColorByMode ==
+      vtkModelMultiBlockSource::GetVolumeTagName()) ||
+      (entref.isGroup() && this->m_ColorByMode ==
+      vtkModelMultiBlockSource::GetGroupTagName()) ||
+      (entref.hasIntegerProperty("block_index") && this->m_ColorByMode ==
+      vtkModelMultiBlockSource::GetEntityTagName()))
+      {
+      _internal_AccumulateChildGeometricEntities(blockIds, entref);
+      }
+    if(blockIds.size() > 0)
+      this->syncBlockColor(rep,
+        QList<unsigned int>::fromSet(blockIds), colorEntities[entref]);
+    }
+}
+
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::setBlockColor(
+void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
     pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor& color)
 {
+  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+    return;
+
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if (panel && rep)
     {
@@ -217,6 +431,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor(
     panel->setOutputPort(prevOutport);
 
     }
+
 }
 
 //-----------------------------------------------------------------------------

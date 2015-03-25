@@ -33,6 +33,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqColorToolbar.h"
+#include "pqEditColorMapReaction.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputPort.h"
 #include "pqDataRepresentation.h"
@@ -42,6 +43,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqProxyInformationWidget.h"
 #include "pqProxyWidget.h"
 #include "pqRenderView.h"
+#include "pqScalarBarVisibilityReaction.h"
 #include "pqServer.h"
 #include "pqServerResource.h"
 #include "pqSetName.h"
@@ -50,6 +52,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqWaitCursor.h"
 
 #include "vtkProcessModule.h"
+#include "vtkPVGeneralSettings.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMDataSourceProxy.h"
 #include "vtkSMIdTypeVectorProperty.h"
@@ -90,8 +93,10 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 
-#include <QDir>
+
+#include <QComboBox>
 #include <QDockWidget>
+#include <QLabel>
 #include <QScrollArea>
 #include <QShortcut>
 #include <QtDebug>
@@ -124,7 +129,7 @@ public:
 
   QPointer<QSettings> SplitterSettings;
   QPointer<QToolBar> Model2DToolbar;
-  QPointer<QToolBar> VariableToolbar;
+  QPointer<QToolBar> ColorByToolbar;
 
   QPointer<QAction> LoadScenarioAction;
   QPointer<QAction> SaveScenarioAction;
@@ -169,6 +174,9 @@ pqCMBModelBuilderMainWindow::~pqCMBModelBuilderMainWindow()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::initializeApplication()
 {
+//  vtkPVGeneralSettings* gsettings = vtkPVGeneralSettings::GetInstance();
+//  gsettings->SetScalarBarMode(vtkPVGeneralSettings::MANUAL_SCALAR_BARS);
+
   this->MainWindowCore = new pqCMBModelBuilderMainWindowCore(this);
   this->setWindowIcon( QIcon(QString::fromUtf8(":/cmb/ModelBuilderIcon.png")) );
   this->initMainWindowCore();
@@ -328,11 +336,38 @@ void pqCMBModelBuilderMainWindow::onUnloadScene()
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
   this->Internal->Model2DToolbar = NULL;
-  QToolBar* colorToolbar = new pqColorToolbar(this)
-    << pqSetName("variableToolbar");
+//  QToolBar* colorToolbar = new pqColorToolbar(this)
+//    << pqSetName("variableToolbar");
+  QToolBar* colorToolbar = new QToolBar(this);
+  colorToolbar->setObjectName("colorByToolbar"); 
+  QLabel* label = new QLabel("Color By ", colorToolbar);
   colorToolbar->layout()->setSpacing(0);
+  colorToolbar->addWidget(label);
+
+  QComboBox* colorbyBox = new QComboBox(colorToolbar);
+  colorbyBox->setObjectName("colorEntityByBox");
+  //toolbar->addWidget(SelectionLabel);
+  colorToolbar->addWidget(colorbyBox);
+  QStringList list;
+  this->getThisCore()->modelManager()->supportedColorByModes(list);
+
+  colorbyBox->addItems(list);
+  colorbyBox->setCurrentIndex(0);
+  QObject::connect(
+      colorbyBox, SIGNAL(currentIndexChanged(const QString &)),
+      this->getThisCore(),
+      SLOT(onColorByModeChanged(const QString &)));
+
+  colorToolbar->addAction(this->getMainDialog()->actionScalarBarVisibility);
+  new pqScalarBarVisibilityReaction(
+    this->getMainDialog()->actionScalarBarVisibility);
+//  colorToolbar->addAction(this->getMainDialog()->actionEdit_Color_Map);
+//  new pqEditColorMapReaction(
+//    this->getMainDialog()->actionEdit_Color_Map);
+
   this->addToolBar(Qt::TopToolBarArea, colorToolbar);
   this->insertToolBarBreak(colorToolbar);
+  this->Internal->ColorByToolbar = colorToolbar;
 }
 
 //----------------------------------------------------------------------------

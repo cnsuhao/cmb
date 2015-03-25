@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QPointer>
-#include <QList>
+#include <QColor>
 
 #include "vtkSmartPointer.h"
 #include <set>
@@ -64,6 +64,8 @@ public:
   smtk::model::StringData fileModelSessions(const std::string& filename);
   std::set<std::string> supportedFileTypes(
     const std::string& bridgeName = std::string());
+
+  void supportedColorByModes(QStringList& types);
 
   cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);

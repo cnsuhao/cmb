@@ -94,6 +94,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/IntItem.h"
+#include "smtk/model/Face.h"
+#include "smtk/model/Group.h"
+#include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
 #include "smtk/extension/qt/qtModelView.h"
 
@@ -207,6 +210,7 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolBar* toolbar)
 {
+/*
   this->Internal->SelectionModeBox = new QComboBox(toolbar);
   this->Internal->SelectionModeBox->setObjectName("selectByModelEntityTypeBox");
   //toolbar->addWidget(SelectionLabel);
@@ -219,7 +223,7 @@ void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolB
   QObject::connect(
       this->Internal->SelectionModeBox, SIGNAL(currentIndexChanged(int)),
       this, SLOT(setRubberSelectionMode(int)));
-
+*/
   this->Internal->SelectionRepresentationWidget = new pqCMBEnumPropertyWidget(
       toolbar)
     << pqSetName("selectionRepresentation");
@@ -483,7 +487,7 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
     // Make sure the mesh is cleared first
     //this->getSimBuilder()->getMeshManager()->clearMesh();
 
-    this->Internal->SelectionModeBox->blockSignals(false);
+//    this->Internal->SelectionModeBox->blockSignals(false);
 
 }
 
@@ -1010,9 +1014,10 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   // For example, if Session(s) is clicked to change visibility or color,
   // all models under it should change
   QMap<cmbSMTKModelInfo*, QList<unsigned int> >visBlocks;
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> >colorBlocks;
+  QMap<cmbSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
   QColor color;
   bool visible = true;
+
   if(resultEntities && resultEntities->numberOfValues() > 0)
     {
     std::cout << " client associated entities " << resultEntities->numberOfValues() << std::endl;
@@ -1020,8 +1025,23 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     smtk::model::EntityRefArray::const_iterator it;
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
-      unsigned int flatIndex;
       cmbSMTKModelInfo* minfo = NULL;
+      // take care of potential coloring related changes
+      if(it->hasColor() && (it->isVolume() || it->isGroup() ||
+         it->hasIntegerProperty("block_index")) // a geometric entity
+         && (minfo = this->Internal->smtkModelManager->modelInfo(*it)))
+        {
+        // this could also be removing colors already being set
+        smtk::model::FloatList rgba = (*it).color();
+        if ((rgba.size() == 3 || rgba.size() ==4) &&
+           !(rgba[0]+rgba[1]+rgba[2] == 0))
+          color.setRgbF(rgba[0], rgba[1], rgba[2]);
+
+        colorEntities[minfo].insert(*it, color);
+        }
+
+      // For potential visibility changes
+      unsigned int flatIndex;
       if(it->hasIntegerProperty("block_index") &&
          (minfo = this->Internal->smtkModelManager->modelInfo(*it)))
         {
@@ -1034,15 +1054,6 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
             visBlocks[minfo] << flatIndex+1;
             visible = (*it).visible();
             }
-          // this could be removing colors already set
-          colorBlocks[minfo] << flatIndex+1;
-          if(it->hasColor())
-            {
-            smtk::model::FloatList rgba = (*it).color();
-            if ((rgba.size() == 3 || rgba.size() ==4) &&
-            !(rgba[0]+rgba[1]+rgba[2] == 0))
-              color.setRgbF(rgba[0], rgba[1], rgba[2]);
-            }
           }
         }
       }
@@ -1052,51 +1063,33 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   foreach(cmbSMTKModelInfo* minfo, visBlocks.keys())
     {
     if(minfo->Representation && visBlocks[minfo].count())
-      this->Internal->ViewContextBehavior->setBlockVisibility(
+      this->Internal->ViewContextBehavior->syncBlockVisibility(
         minfo->Representation, visBlocks[minfo], visible,
         minfo->Info->GetUUID2BlockIdMap().size());
     }
   // update color
-  foreach(cmbSMTKModelInfo* minfo, colorBlocks.keys())
+  foreach(cmbSMTKModelInfo* minfo, colorEntities.keys())
     {
-    if(minfo->Representation && colorBlocks[minfo].count())
-      this->Internal->ViewContextBehavior->setBlockColor(
-        minfo->Representation, colorBlocks[minfo], color);
+    if(minfo->Representation && colorEntities[minfo].count())
+      this->Internal->ViewContextBehavior->updateColorForEntities(
+        minfo->Representation, colorEntities[minfo]);
     }
-/*
-  //this->modelPanel()->setIgnorePropertyChange(false);
-  smtk::attribute::ModelEntityItem::Ptr newEntities =
-    result->findModelEntity("created");
-  smtk::attribute::ModelEntityItem::Ptr remEntities =
-    result->findModelEntity("expunged");
-  bool hasNewEntities = newEntities && newEntities->numberOfValues() > 0;
-  bool entitiesRemoved = remEntities && remEntities->numberOfValues() > 0;
-*/
 
   this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
   if(hasNewModels)
     {
-    /*
-    if(entitiesRemoved)
-      {
-      smtk::model::EntityRefs remEnts;
-      smtk::model::EntityRefArray::const_iterator it;
-      for(it = remEntities->begin(); it != remEntities->end(); ++it)
-        {
-        remEnts.insert(*it);
-        }
-      this->modelPanel()->onEntitiesExpunged(remEnts);
-      }
-    */
     this->activeRenderView()->resetCamera();
     emit this->newModelCreated();
     }
-  else
-    {
-//    this->modelPanel()->update();
-    }
   this->activeRenderView()->render();
   return true;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::onColorByModeChanged(
+  const QString & colorMode)
+{
+  this->Internal->ViewContextBehavior->onColorByModeChanged(colorMode);
 }
 
 //----------------------------------------------------------------------------
