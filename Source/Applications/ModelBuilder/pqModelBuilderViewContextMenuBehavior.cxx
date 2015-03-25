@@ -57,6 +57,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSMPVRepresentationProxy.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkSMTransferFunctionManager.h"
+#include "vtkSMTransferFunctionProxy.h"
 #include "vtkSMViewProxy.h"
 
 #include <QAction>
@@ -289,7 +290,6 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
   pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
   if (!datapanel || !activeRep)
     return;
-
   cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
     return;
@@ -299,6 +299,16 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
     this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
   if(!activeModel.isValid())
     return;
+
+  // turn off the current scalar bar before switch to the new array
+  vtkSMProxy* ctfProxy = activeRep->getLookupTableProxy();
+  vtkSMProxy* sb = vtkSMTransferFunctionProxy::FindScalarBarRepresentation(
+    ctfProxy, pqActiveObjects::instance().activeView()->getProxy());
+  if(sb)
+    {
+    vtkSMPropertyHelper(sb, "Visibility").Set(0);
+    sb->UpdateVTKObjects();
+    }
 
   // clear all colors
   QList<unsigned int> indices;
@@ -367,6 +377,7 @@ if(colorEntities.size() > 0)
      NULL : this->m_ColorByMode.toStdString().c_str(),
    vtkDataObject::FIELD);
 
+  activeRep->renderViewEventually();
 }
 
 //----------------------------------------------------------------------------
