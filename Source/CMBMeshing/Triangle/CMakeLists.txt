@@ -1,6 +1,9 @@
 # Set project name.
 project(CMBMeshTriangleWorker)
 
+set(USE_TL_DEBUG OFF) #we set this to off since tl_free_debug is buggy.
+find_package(Omicron REQURIED)
+
 #need to include the omicron directories in this exact order
 #so that the proper share_declare.h and triangle.h are found
 include_directories(
