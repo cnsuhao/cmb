@@ -487,18 +487,20 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
     add_medium_test(${testname} ${CMAKE_COMMAND} -Dcfg=$<CONFIGURATION> -P "${CMAKE_BINARY_DIR}/Run${testname}.cmake")
   endfunction()
 
+  # This is commented out since the Expression test is currently disabled
+  # Once we have expression enabled we can add this back
   # SimBuilder tests -- we set PYTHONPATH for them automatically
   # we also check if ImportError is output and if it is we mark
   # the test as failed. additionally we copy the Python code
   # to the build directory to make sure we don't generate pyc
   # files in the source code.
-  if (CMB_TEST_DATA_ROOT)
-    file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
-      DESTINATION ${CMB_TEST_DIR} )
-    set (SIMBUILDER_TESTS_WITHOUT_BASELINES
-      Expressions
-      )
-  endif ()
+  # if (CMB_TEST_DATA_ROOT)
+  #   file(COPY ${CMB_TEST_DATA_ROOT}/SimBuilderGUI/FunctionExpressions.py
+  #     DESTINATION ${CMB_TEST_DIR} )
+  #   set (SIMBUILDER_TESTS_WITHOUT_BASELINES
+  #     Expressions
+  #     )
+  # endif ()
 
   foreach(test ${SIMBUILDER_TESTS_WITHOUT_BASELINES})
     add_short_test(SimBuilder${test}
