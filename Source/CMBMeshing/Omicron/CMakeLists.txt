@@ -1,6 +1,9 @@
 # Set project name.
 project(CMBMeshOmicronWorker)
 
+set(USE_TL_DEBUG OFF) #we set this to off since tl_free_debug is buggy.
+find_package(Omicron REQURIED)
+
 set(Surface_Worker
   OmicronWorker.cxx
   SurfaceWorker.cxx
