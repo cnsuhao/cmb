@@ -133,7 +133,7 @@ void pqPlanarTextureRegistrationDialog::initializeTexture(
     {
     QGridLayout* gridlayout = new QGridLayout(this->TextureDialog->imageframe);
     gridlayout->setMargin(0);
-    gridlayout->addWidget(this->imageRenderView->getWidget());
+    gridlayout->addWidget(this->imageRenderView->widget());
     }
 
   //setup Parallel projection and 2D manipulation

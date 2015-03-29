@@ -116,7 +116,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "vtkNew.h"
 #include <vtkProcessModule.h>
 #include <vtkPVDisplayInformation.h>
-#include "vtkPVGenericRenderWindowInteractor.h"
+#include "vtkGenericRenderWindowInteractor.h"
 #include <vtkPVOptions.h>
 #include <vtkPVXMLElement.h>
 #include <vtkPVXMLParser.h>
@@ -1093,7 +1093,7 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer *server)
 //  core->getSelectionModel()->blockSignals(false);
   this->Internal->RenderView->resetCamera();
   this->Internal->RenderView->render();
-  this->Internal->RenderView->getWidget()->installEventFilter(this);
+  this->Internal->RenderView->widget()->installEventFilter(this);
 
   // link in the cmb plugin here as all applications use it.
   PV_PLUGIN_IMPORT(CMB_Plugin)
@@ -1141,13 +1141,13 @@ void pqCMBCommonMainWindowCore::updateViewPositions()
     return;
     }
   pqRenderView* view = this->activeRenderView();
-  if (view->getWidget())
+  if (view->widget())
     {
-    QRect bounds = view->getWidget()->rect();
-    bounds.moveTo(view->getWidget()->mapToGlobal(QPoint(0,0)));
+    QRect bounds = view->widget()->rect();
+    bounds.moveTo(view->widget()->mapToGlobal(QPoint(0,0)));
     int gui_size[2] = { bounds.width(), bounds.height() };
     // position relative to the bounds of all views
-    QPoint view_pos = view->getWidget()->mapToGlobal(QPoint(0,0));
+    QPoint view_pos = view->widget()->mapToGlobal(QPoint(0,0));
     view_pos -= bounds.topLeft();
     int position[2] = { view_pos.x(), view_pos.y() };
     vtkSMPropertyHelper(view->getProxy(), "ViewPosition", true).Set(position, 2);
@@ -1828,7 +1828,7 @@ void pqCMBCommonMainWindowCore::onSaveScreenshot(const QStringList &fileNames)
     }
 
   QVTKWidget* const widget =
-    qobject_cast<QVTKWidget*>(render_module->getWidget());
+    qobject_cast<QVTKWidget*>(render_module->widget());
   assert(widget);
 
 //  this->Internal->isComparingScreenImage = true;
