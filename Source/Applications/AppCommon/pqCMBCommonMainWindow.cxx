@@ -324,7 +324,7 @@ void pqCMBCommonMainWindow::onViewChanged()
   if(this->MainWindowCore && this->MainWindowCore->activeRenderView())
     {
     this->setCentralWidget(
-      this->MainWindowCore->activeRenderView()->getWidget());
+      this->MainWindowCore->activeRenderView()->widget());
     // Allow multiple representation selection
     this->MainWindowCore->activeRenderView()->
       setUseMultipleRepresentationSelection(true);
