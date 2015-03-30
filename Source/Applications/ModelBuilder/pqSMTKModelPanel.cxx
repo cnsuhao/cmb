@@ -30,12 +30,6 @@
 #include <QtGui/QTreeView>
 #include <QtGui/QDockWidget>
 
-#include <iomanip>
-#include <iostream>
-#include <fstream>
-
-#include <stdlib.h>
-
 #include <QPointer>
 #include <QString>
 #include <QGridLayout>
@@ -76,6 +70,12 @@
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMDoubleMapPropertyIterator.h"
 #include "pqCMBModelManager.h"
+
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <limits>
+#include <stdlib.h>
 
 using namespace std;
 using namespace smtk::model;
