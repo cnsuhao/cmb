@@ -149,7 +149,7 @@ add_library(cmbAppCommon
   qtCMBContextMenuBehavior.h
   qtCMBCreateSimpleGeometry.cxx
   qtCMBCreateSimpleGeometry.h
-  qtCMBMeshingClient.cxx
+  qtCMBMeshingMonitor.cxx
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h
   qtCMBOptionsDialog.cxx

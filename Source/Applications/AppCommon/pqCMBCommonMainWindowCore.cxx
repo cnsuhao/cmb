@@ -159,7 +159,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqCMBProcessWidget.h"
 #include "qtCMBProgressWidget.h"
 #include "qtCMBContextMenuBehavior.h"
-#include "qtCMBMeshingClient.h"
+#include "qtCMBMeshingMonitor.h"
 #include "QVTKWidget.h"
 #include "qtCMBApplicationOptions.h"
 #include "pqImageUtil.h"
@@ -202,7 +202,7 @@ public:
     TimerLog(0),
     StatusBar(0),
     ProjectManager(NULL),
-    MeshingClient(NULL)
+    MeshingMonitor(NULL)
   {
   //this->MultiViewManager.setObjectName("MultiViewManager");
   this->CameraDialog = 0;
@@ -223,9 +223,9 @@ public:
       {
       delete this->PreviewDialog;
       }
-    if (this->MeshingClient)
+    if (this->MeshingMonitor)
       {
-      delete this->MeshingClient;
+      delete this->MeshingMonitor;
       }
     if ( this->ProjectManager)
       {
@@ -238,9 +238,6 @@ public:
   pqViewContextMenuManager *ViewContextMenu;
   pqCMBRubberBandHelper RenderViewSelectionHelper;
   QPointer<pqUndoStack> UndoStack;
-  QTimer *ProcessTimer;
-  pqCMBProcessWidget* ProcessBar;
-  QString ProcessExecDirectory;
 
   QToolBar* VariableToolbar;
   QPointer<QComboBox> CameraManipulationModeBox;
@@ -279,7 +276,7 @@ public:
 //  bool isComparingScreenImage;
 
   qtCMBProjectServerManager* ProjectManager;
-  qtCMBMeshingClient* MeshingClient;
+  qtCMBMeshingMonitor* MeshingMonitor;
   bool CenterFocalLinked;
 
   // Set to true in InitializePythonEnvironment() if Finalize() should cleanup
@@ -347,10 +344,6 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
   //QObject::connect(&this->Internal->RenderViewSelectionHelper,
   //  SIGNAL(selecting(bool)),
   //  this, SIGNAL(pickingCenter(bool)));
-
-  this->Internal->ProcessTimer = new QTimer;
-  connect(this->Internal->ProcessTimer, SIGNAL(timeout()),
-    this, SLOT(checkProcess()));
 
   this->Internal->PreviewDialog = new pqCMBPreviewDialog(NULL);
   QObject::connect(this->Internal->PreviewDialog, SIGNAL(accepted()), this, SLOT(onPreviewAccepted()));
@@ -636,16 +629,6 @@ const char* pqCMBCommonMainWindowCore::programDirectory()
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setupProcessBar(QStatusBar* toolbar)
-{
-  this->Internal->ProcessBar = new pqCMBProcessWidget(toolbar);
-  toolbar->addPermanentWidget(this->Internal->ProcessBar, 1);
-
-  QObject::connect(this->Internal->ProcessBar, SIGNAL(abortPressed()),
-    this, SLOT(killProcess()));
-}
-
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setupMousePositionDisplay(QStatusBar* toolbar)
 {
   QWidget *mousePositionWidget = new QWidget;
@@ -678,160 +661,52 @@ void pqCMBCommonMainWindowCore::setupMousePositionDisplay(QStatusBar* toolbar)
 }
 
 //-----------------------------------------------------------------------------
-QString&  pqCMBCommonMainWindowCore::getProcessExecDirectory() const
-{
-  return this->Internal->ProcessExecDirectory;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setProcessExecDirectory(QString execPath)
-{
-  this->Internal->ProcessExecDirectory = execPath;
-}
-
-//-----------------------------------------------------------------------------
 pqCMBPreviewDialog* pqCMBCommonMainWindowCore::previewDialog()
 {
   return this->Internal->PreviewDialog;
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::launchLocalRemusServer()
+void pqCMBCommonMainWindowCore::launchLocalMeshingService()
 {
-  if (!this->Internal->MeshingClient)
+  if (!this->Internal->MeshingMonitor)
     {
     //create the local meshserver, we keep a handle to it, so we can delete
     //it if the client throws an exception trying to connect to it
-    qtCMBMeshingClient::LocalMeshServer meshserver =
-                            qtCMBMeshingClient::launchLocalMeshServer();
+    qtCMBMeshingMonitor::LocalMeshServer meshserver =
+                            qtCMBMeshingMonitor::launchLocalMeshServer();
     try
       {
-      this->Internal->MeshingClient = new qtCMBMeshingClient(meshserver);
+      this->Internal->MeshingMonitor = new qtCMBMeshingMonitor(meshserver);
       }
     catch(...)
       {
       meshserver.LocalServerProxy->Delete();
-      if(this->Internal->MeshingClient)
+      if(this->Internal->MeshingMonitor)
         {
-        delete this->Internal->MeshingClient;
-        this->Internal->MeshingClient = NULL;
+        delete this->Internal->MeshingMonitor;
+        this->Internal->MeshingMonitor = NULL;
         }
-
-      this->Internal->ProcessBar->setMessage("Error: Failed to create Remus Server.");
       return;
       }
     }
 
 }
 
-//-----------------------------------------------------------------------------
-bool pqCMBCommonMainWindowCore::startMonitoringRemusJob(const remus::proto::Job& j)
-{
-  const bool valid = this->Internal->MeshingClient->monitorJob(j);
-
-  if(valid)
-    {
-    emit enableExternalProcesses(false);
-    this->Internal->ProcessBar->setMessage("Process started");
-    this->Internal->ProcessTimer->start(500); // check 2 a second
-    }
-  else
-    {
-    this->Internal->ProcessBar->setMessage("Process failed to launch");
-    }
-
-  this->Internal->ProcessBar->enableAbort(valid);
-  return valid;
-}
-
 //----------------------------------------------------------------------------
-QString pqCMBCommonMainWindowCore::remusServerEndpoint() const
+QString pqCMBCommonMainWindowCore::meshingServiceEndpoint() const
 {
-  if(this->Internal->MeshingClient)
+  if(this->Internal->MeshingMonitor)
     {
-    return QString::fromStdString(this->Internal->MeshingClient->endpoint());
+    return QString::fromStdString(this->Internal->MeshingMonitor->endpoint());
     }
   return QString();
 }
-//----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::checkProcess()
-{
-  if (!this->Internal->MeshingClient)
-    {
-    return;
-    }
-
-  bool newStatus=false;
-  remus::proto::JobStatus status =
-                    this->Internal->MeshingClient->jobProgress(newStatus);
-
-
-  //handle a finished or failed job first, the MeshingClient queries the status
-  //right after the job is submitted. This stops us from treating a job
-  //that always reports failed, as an ongoing job that never finishes
-  const bool jobFinished = status.finished();
-  const bool jobFailed = status.failed();
-  if(jobFinished || jobFailed)
-    {
-    this->Internal->ProcessTimer->stop();
-    this->Internal->ProcessBar->enableAbort(false);
-    if(jobFinished)
-      {
-      emit remusCompletedNormally(this->Internal->MeshingClient->jobResults());
-      }
-    else if(jobFailed)
-      {
-      this->Internal->ProcessBar->appendToOutput("Job Failed");
-      // since not emmitting remusCompletedNormally, won't
-      // get previewDialog; thus need to to re-enable external process here
-      emit enableExternalProcesses(true);
-      }
-    disconnect(this, SIGNAL(remusCompletedNormally(remus::proto::JobResult)), 0, 0);
-    }
-  else if(newStatus)
-  {
-  //the message we get from the server is actually a multiple line
-  //message for omicron.
-  //this means that we have to spend some time and strip out the
-  //last progress line to set as the message
-  QString message = QString::fromStdString(status.progress().message());
-
-  //Remus currently tacks on trailing and leading newline characters,so remove
-  message = message.trimmed();
-  if (message.size() > 0)
-    {
-    this->Internal->ProcessBar->appendToOutput(message);
-    int index = message.lastIndexOf("Progress:");
-    if(index >= 0)
-      {
-      int endOfLineIndex = message.indexOf('\n',index);
-      int len = endOfLineIndex - index;
-      this->Internal->ProcessBar->setMessage(
-            message.midRef(index,len).toString());
-      }
-    }
-  }
-}
-
 
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::killProcess()
+qtCMBMeshingMonitor* pqCMBCommonMainWindowCore::meshServiceMonitor()
 {
-  if (!this->Internal->MeshingClient)
-    {
-    return;
-    }
-
-  this->Internal->MeshingClient->terminateJob();
-
-  this->Internal->ProcessTimer->stop();
-  this->Internal->ProcessBar->enableAbort(false);
-
-  this->Internal->ProcessBar->appendToOutput("User abort!");
-  this->Internal->ProcessBar->setMessage("Process aborted!");
-
-  emit enableExternalProcesses(true);
-  disconnect(this, SIGNAL(remusCompletedNormally(remus::proto::JobResult)), 0, 0);
+  return this->Internal->MeshingMonitor;
 }
 
 //-----------------------------------------------------------------------------
