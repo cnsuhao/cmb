@@ -725,68 +725,7 @@ void pqCMBCommonMainWindowCore::launchLocalRemusServer()
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::submitRemusSurfaceJob(const QString& command)
-{
-  this->launchLocalRemusServer();
-
-  remus::meshtypes::SceneFile scene;
-  remus::meshtypes::Mesh3DSurface surface;
-  remus::common::MeshIOType mtype(scene,surface);
-
-  //the hardcoded separator that command uses
-  const QString jobData = this->Internal->ProcessExecDirectory + ";" + command;
-  remus::proto::Job j =
-                this->Internal->MeshingClient->submitJob(jobData.toStdString(),
-                                                         mtype);
-  this->monitorRemusJob(j);
-}
-
-//-----------------------------------------------------------------------------
-QString pqCMBCommonMainWindowCore::submitRemusVolumeJob(
-                                    const FileBasedMeshingParameters& params)
-{
-  if(!params.valid)
-    {
-    return QString();
-    }
-
-  //first launch the remus server if it hasn't been launched yet
-  this->launchLocalRemusServer();
-
-  //set the process execution directory for this job, this works since
-  //we only have a single remus job running at once. This is really only
-  //around because I don't have the time to refactor Scene and Geology builder
-  //to be able to handle less state info being embedded in MainWindowCore
-  this->setProcessExecDirectory(params.processExecutionDir);
-
-  //construct the expected output file name from meshing
-  //this->Internal->MesherOutputFileName
-  const QFileInfo geometryFInfo(params.geometryFileName);
-  const QString outputFileName = params.processExecutionDir + "/" +
-                                 geometryFInfo.baseName() + ".3dm";
-
-  const QString execPath = params.mesherExecPath;
-  const QString inputString = QFileInfo(params.inputFilePath).fileName().toAscii().constData();
-
-  //use ; as the hard-coded separator between args
-  const QString commandStr = params.processExecutionDir + ";" + execPath
-                              + ";" + inputString;
-
-  //setup the remus submission types
-  remus::meshtypes::SceneFile scene;
-  remus::meshtypes::Mesh3D mesh;
-  remus::common::MeshIOType mtype(scene,mesh);
-
-  remus::proto::Job j = this->Internal->MeshingClient->submitJob(
-                                                      commandStr.toStdString(),
-                                                      mtype);
-  this->monitorRemusJob(j);
-
-  return outputFileName;
-}
-
-//-----------------------------------------------------------------------------
-bool pqCMBCommonMainWindowCore::monitorRemusJob(const remus::proto::Job& j)
+bool pqCMBCommonMainWindowCore::startMonitoringRemusJob(const remus::proto::Job& j)
 {
   const bool valid = this->Internal->MeshingClient->monitorJob(j);
 

@@ -366,17 +366,6 @@ public slots:
   /// the current paraview server is located
   virtual void launchLocalRemusServer();
 
-  /// submit a 3d surface job to the remus server
-  virtual void submitRemusSurfaceJob(const QString& command);
-
-  /// submit a 3d volume job to the remus server
-  /// returns the expected out file name for the job
-  virtual QString submitRemusVolumeJob(const FileBasedMeshingParameters& parameters);
-
-  // monitor an actual remus job that has already been submitted
-  // this treats the job, as the current single
-  virtual bool monitorRemusJob(const remus::proto::Job& j);
-
   //return the remus servers endpoint information as string
   //the string form will be tcp://ip.address:port
   //Since we are passing this as a string instead of the actual type
@@ -384,6 +373,10 @@ public slots:
   //Requires that launchLocalRemusServer has been called beforehand.
   //If no server has been created will return std::string();
   QString remusServerEndpoint() const;
+
+  // monitor an actual remus job that has already been submitted
+  // this treats the job, as the current single
+  virtual bool startMonitoringRemusJob(const remus::proto::Job& j);
 
   // Description:
   // Checks the status of the progress and updates the progress bar
