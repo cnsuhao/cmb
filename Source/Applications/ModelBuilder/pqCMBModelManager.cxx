@@ -758,7 +758,8 @@ bool pqCMBModelManager::handleOperationResult(
       {
       if(it->isModel())
         generalModifiedModels.insert(it->entity()); // TODO: check what kind of operations on the model
-      else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
+      else if (it->isCellEntity() && !it->isVolume() &&
+        !it->hasIntegerProperty("block_index")) // a new entity?
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
@@ -775,9 +776,10 @@ bool pqCMBModelManager::handleOperationResult(
       if(it->isModel())
         {
         geometryChangedModels.insert(it->entity());
-        bGeometryChanged = true;
+//        bGeometryChanged = true;
         }
-      else if (it->isCellEntity() && !it->hasIntegerProperty("block_index")) // a new entity?
+      else if (it->isCellEntity() && !it->isVolume() &&
+        !it->hasIntegerProperty("block_index")) // a new entity?
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
