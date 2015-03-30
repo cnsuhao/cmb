@@ -130,6 +130,7 @@ public:
   QPointer<QSettings> SplitterSettings;
   QPointer<QToolBar> Model2DToolbar;
   QPointer<QToolBar> ColorByToolbar;
+  QPointer<QComboBox> ColorByArrayBox;
 
   QPointer<QAction> LoadScenarioAction;
   QPointer<QAction> SaveScenarioAction;
@@ -368,6 +369,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
   this->addToolBar(Qt::TopToolBarArea, colorToolbar);
   this->insertToolBarBreak(colorToolbar);
   this->Internal->ColorByToolbar = colorToolbar;
+  this->Internal->ColorByArrayBox = colorbyBox;
 }
 
 //----------------------------------------------------------------------------
@@ -1091,6 +1093,26 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
         break;
       }
     }
+
+  if(acitveRep && this->Internal->ColorByArrayBox)
+    {
+    vtkSMPropertyHelper colorArrayHelper(acitveRep->getProxy(), "ColorArrayName", true);
+    const char* arrayName = colorArrayHelper.GetInputArrayNameToProcess();
+    this->Internal->ColorByArrayBox->blockSignals(true);
+    int currIdx = -1;
+    if(arrayName != NULL)
+    for(int i=0; i<this->Internal->ColorByArrayBox->count(); ++i)
+      {
+      if(this->Internal->ColorByArrayBox->itemText(i) == arrayName)
+        {
+        currIdx = i;
+        break;
+        }
+      }
+    this->Internal->ColorByArrayBox->setCurrentIndex(currIdx);
+    this->Internal->ColorByArrayBox->blockSignals(false);
+    }
+
 }
 
 //----------------------------------------------------------------------------

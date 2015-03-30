@@ -51,7 +51,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkMath.h"
 #include "vtkMemberFunctionCommand.h"
 #include "vtkNew.h"
-#include "vtkPVGenericRenderWindowInteractor.h"
+#include "vtkGenericRenderWindowInteractor.h"
 #include "vtkPVRenderView.h"
 #include "vtkPVRenderView.h"
 #include "vtkRenderer.h"
@@ -108,7 +108,7 @@ public:
       }
   }
 
-  void AddZoomObserver(vtkPVGenericRenderWindowInteractor* proxyToObserver)
+  void AddZoomObserver(vtkRenderWindowInteractor* proxyToObserver)
   {
     this->RemoveObserver();
     this->ObservedProxy = proxyToObserver;
@@ -135,7 +135,7 @@ public:
       }
   }
 
-  void AddPickObserver(vtkPVGenericRenderWindowInteractor* proxyToObserver)
+  void AddPickObserver(vtkRenderWindowInteractor* proxyToObserver)
   {
     this->RemoveObserver();
     this->ObservedProxy = proxyToObserver;
@@ -168,8 +168,8 @@ public:
 
   void UpdatePressedPosition(vtkObject* obj, unsigned long, void*)
   {
-    vtkPVGenericRenderWindowInteractor* interactor =
-        vtkPVGenericRenderWindowInteractor::SafeDownCast(obj);
+    vtkGenericRenderWindowInteractor* interactor =
+        vtkGenericRenderWindowInteractor::SafeDownCast(obj);
     if(interactor)
       {
       interactor->GetEventPosition(this->LastPressedPosition);
@@ -634,7 +634,7 @@ void pqCMBRubberBandHelper::onPickOnClick(vtkObject*, unsigned long, void*)
   if(this->Internal->IsSamePosition(region))
     {
     // we need to flip Y.
-    int height = this->Internal->RenderView->getWidget()->size().height();
+    int height = this->Internal->RenderView->widget()->size().height();
     region[1] = height - region[1];
 
     // Need to duplicate [x,y,0,0] to be [x,y,x,y]

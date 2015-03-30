@@ -80,7 +80,7 @@ pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent/*=0*/)
   this->OutputWindow->setAttribute(Qt::WA_QuitOnClose, false);
   this->OutputWindow->setObjectName("processOutputDialog");
   this->OutputWindow->setWindowTitle(tr("Process Output"));
-  this->OutputWindow->setShowOutput(false);
+//  this->OutputWindow->setShowOutput(false);
 }
 
 

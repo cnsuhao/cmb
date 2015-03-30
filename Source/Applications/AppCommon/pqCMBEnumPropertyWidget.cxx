@@ -139,7 +139,7 @@ void pqCMBEnumPropertyWidget::updateLinks()
     GetProperty(this->RepPropertyName.toAscii().data());
   if (colorbyProperty)
     {
-    colorbyProperty->UpdateDependentDomains();
+//    colorbyProperty->UpdateDependentDomains();
     QList<QVariant> items =
       pqSMAdaptor::getEnumerationPropertyDomain(colorbyProperty);
     foreach(QVariant item, items)

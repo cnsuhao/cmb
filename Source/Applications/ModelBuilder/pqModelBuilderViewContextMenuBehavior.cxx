@@ -211,8 +211,8 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
     pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
 
     pqOutputPort* outport = rep->getOutputPortFromInput();
-    panel->setOutputPort(outport);
-    panel->setRepresentation(rep);
+    panel->onPortChanged(outport);
+    panel->onRepresentationChanged(rep);
 
     if(visible && visBlocks.count() && rep)
       {
@@ -265,8 +265,8 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
         }
       }
 
-    panel->setRepresentation(prevRep);
-    panel->setOutputPort(prevOutport);
+    panel->onRepresentationChanged(prevRep);
+    panel->onPortChanged(prevOutport);
 
     }
 }
@@ -420,15 +420,15 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
     pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
     pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
 
-    panel->setRepresentation(rep);
-    panel->setOutputPort(rep->getOutputPortFromInput());
+    panel->onRepresentationChanged(rep);
+    panel->onPortChanged(rep->getOutputPortFromInput());
     if(color.isValid())
       panel->setBlockColor(colorBlocks, color);
     else
       panel->clearBlockColor(colorBlocks);
 
-    panel->setRepresentation(prevRep);
-    panel->setOutputPort(prevOutport);
+    panel->onRepresentationChanged(prevRep);
+    panel->onPortChanged(prevOutport);
 
     }
 
@@ -440,7 +440,7 @@ void pqModelBuilderViewContextMenuBehavior::onViewAdded(pqView* view)
   if (view && view->getProxy()->IsA("vtkSMRenderViewProxy"))
     {
     // add a link view menu
-    view->getWidget()->installEventFilter(this);
+    view->widget()->installEventFilter(this);
     }
 }
 

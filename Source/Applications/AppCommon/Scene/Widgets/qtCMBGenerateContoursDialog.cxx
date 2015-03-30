@@ -152,7 +152,7 @@ qtCMBGenerateContoursDialog::qtCMBGenerateContoursDialog(
 
   QVBoxLayout* vboxlayout = new QVBoxLayout(this->InternalWidget->renderFrame);
   vboxlayout->setMargin(0);
-  vboxlayout->addWidget(this->RenderView->getWidget());
+  vboxlayout->addWidget(this->RenderView->widget());
 
   this->ContourRepresentation = 0;
   this->ContourSource = 0;

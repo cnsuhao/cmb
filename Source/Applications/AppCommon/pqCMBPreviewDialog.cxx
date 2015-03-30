@@ -111,7 +111,7 @@ void pqCMBPreviewDialog::setRepresentationAndView(
 
   QVBoxLayout* vboxlayout = new QVBoxLayout(this->Ui->RenderViewFrame);
   vboxlayout->setMargin(0);
-  vboxlayout->addWidget(renderView->getWidget());
+  vboxlayout->addWidget(renderView->widget());
 
   renderView->resetCamera();
   renderView->render();
