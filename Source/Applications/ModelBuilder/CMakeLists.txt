@@ -14,8 +14,6 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 # Add Qt UI files here
 set(UI_FORMS
   pqCMBImportShapefile.ui
-  qtCMBLegacyMesherDialog.ui
-  qtVolumeMesherSelector.ui
   pqCMBModelBuilderOptions.ui
   SimBuilder/qtSimBuilderExportADHDialog.ui
   SimBuilder/qtSimBuilderExportDialog.ui
@@ -176,10 +174,6 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBModelBuilderMainWindowCore.cxx
   pqModelBuilderViewContextMenuBehavior.cxx
   pqModelBuilderViewContextMenuBehavior.h
-  qtRemusVolumeMesherSubmitter.h
-  qtRemusVolumeMesherSubmitter.cxx
-  qtRemusVolumeMesherSelector.h
-  qtRemusVolumeMesherSelector.cxx
   pqCMBModelBuilderOptions.cxx
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h

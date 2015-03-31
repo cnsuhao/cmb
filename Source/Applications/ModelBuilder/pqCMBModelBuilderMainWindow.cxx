@@ -181,7 +181,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   this->setWindowIcon( QIcon(QString::fromUtf8(":/cmb/ModelBuilderIcon.png")) );
   this->initMainWindowCore();
 
-  this->MainWindowCore->setupProcessBar(this->statusBar());
   this->MainWindowCore->setupMousePositionDisplay(this->statusBar());
 
   QObject::connect(this->getMainDialog()->actionLoad_Simulation_Template,
@@ -339,7 +338,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
 //  QToolBar* colorToolbar = new pqColorToolbar(this)
 //    << pqSetName("variableToolbar");
   QToolBar* colorToolbar = new QToolBar(this);
-  colorToolbar->setObjectName("colorByToolbar"); 
+  colorToolbar->setObjectName("colorByToolbar");
   QLabel* label = new QLabel("Color By ", colorToolbar);
   colorToolbar->layout()->setSpacing(0);
   colorToolbar->addWidget(label);
