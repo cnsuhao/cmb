@@ -177,9 +177,9 @@ bool qtCMBMeshingMonitor::terminateJob(const remus::proto::Job& job)
 }
 
 //-----------------------------------------------------------------------------
-const std::string& qtCMBMeshingMonitor::endpoint() const
+const remus::client::ServerConnection& qtCMBMeshingMonitor::connection() const
 {
-  return this->RemusClient->connection().endpoint();
+  return this->RemusClient->connection();
 }
 
 //-----------------------------------------------------------------------------

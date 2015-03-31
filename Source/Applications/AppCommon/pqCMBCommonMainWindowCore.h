@@ -378,7 +378,7 @@ public slots:
   //the monitor emits.
   //Note Returns NULL if we haven't called launchLocalRemusServer
   //or a remote remus server hasn't been set
-  qtCMBMeshingMonitor* meshServiceMonitor();
+  QPointer<qtCMBMeshingMonitor> meshServiceMonitor();
 
   virtual void closeData();
   virtual void saveData(const QString& vtkNotUsed(filename)){}

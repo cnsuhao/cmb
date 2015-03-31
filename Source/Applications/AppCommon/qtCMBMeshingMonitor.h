@@ -110,11 +110,9 @@ public:
   //returns true if the job returns a failed status.
   bool terminateJob(const remus::proto::Job& job);
 
-  //return the remus servers endpoint information as string
-  //the string form will be tcp://ip.address:port
-  //Since we are passing this as a string instead of the actual type
-  //we lose out on the ability to use inproc connection type
-  const std::string& endpoint() const;
+  //return the information needed to connect to the remus server
+  //that we are monitoring
+  const remus::client::ServerConnection& connection() const;
 
 signals:
   //emitted every time a job status changes. This includes

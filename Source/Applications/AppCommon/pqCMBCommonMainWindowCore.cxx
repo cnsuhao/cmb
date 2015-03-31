@@ -223,10 +223,6 @@ public:
       {
       delete this->PreviewDialog;
       }
-    if (this->MeshingMonitor)
-      {
-      delete this->MeshingMonitor;
-      }
     if ( this->ProjectManager)
       {
       delete this->ProjectManager;
@@ -276,7 +272,7 @@ public:
 //  bool isComparingScreenImage;
 
   qtCMBProjectServerManager* ProjectManager;
-  qtCMBMeshingMonitor* MeshingMonitor;
+  QPointer<qtCMBMeshingMonitor> MeshingMonitor;
   bool CenterFocalLinked;
 
   // Set to true in InitializePythonEnvironment() if Finalize() should cleanup
@@ -685,7 +681,6 @@ void pqCMBCommonMainWindowCore::launchLocalMeshingService()
       if(this->Internal->MeshingMonitor)
         {
         delete this->Internal->MeshingMonitor;
-        this->Internal->MeshingMonitor = NULL;
         }
       return;
       }
@@ -698,13 +693,14 @@ QString pqCMBCommonMainWindowCore::meshingServiceEndpoint() const
 {
   if(this->Internal->MeshingMonitor)
     {
-    return QString::fromStdString(this->Internal->MeshingMonitor->endpoint());
+    std::string endp = this->Internal->MeshingMonitor->connection().endpoint();
+    return QString::fromStdString( endp );
     }
   return QString();
 }
 
 //-----------------------------------------------------------------------------
-qtCMBMeshingMonitor* pqCMBCommonMainWindowCore::meshServiceMonitor()
+QPointer<qtCMBMeshingMonitor> pqCMBCommonMainWindowCore::meshServiceMonitor()
 {
   return this->Internal->MeshingMonitor;
 }
