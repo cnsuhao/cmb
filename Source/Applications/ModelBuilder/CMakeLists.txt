@@ -15,6 +15,7 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 set(UI_FORMS
   pqCMBImportShapefile.ui
   pqCMBModelBuilderOptions.ui
+  qtMesherSelector.ui
   SimBuilder/qtSimBuilderExportADHDialog.ui
   SimBuilder/qtSimBuilderExportDialog.ui
   SimBuilder/qtSimBuilderEMSExportDialog.ui
@@ -169,7 +170,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmbModelBuilderConfig.h.in
   ESCAPE_QUOTES)
 
 set(ModelBuilder_SOURCE_FILES
-  pqCMBLegacyMesherDialog.cxx
   pqCMBModelBuilderMainWindow.cxx
   pqCMBModelBuilderMainWindowCore.cxx
   pqModelBuilderViewContextMenuBehavior.cxx
@@ -178,10 +178,14 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h
   pqCMBImportShapefile.cxx
+  pqSMTKMeshPanel.h
+  pqSMTKMeshPanel.cxx
   pqSMTKModelPanel.h
   pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
+  qtRemusMesherSelector.cxx
+  qtRemusMesherSelector.h
 
   ${RCS_SOURCES}
   ${UI_BUILT_SOURCES}

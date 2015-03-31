@@ -77,6 +77,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBLoadDataReaction.h"
 #include "pqCMBFileExtensions.h"
 #include "pqCMBSceneTree.h"
+#include "pqSMTKMeshPanel.h"
 #include "pqSMTKModelPanel.h"
 #include "pqCMBModelManager.h"
 #include "pqCMBColorMapWidget.h"
@@ -265,6 +266,10 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(
     &pqActiveObjects::instance(), SIGNAL(representationChanged(pqDataRepresentation*)),
     this, SLOT(onActiveRepresentationChanged(pqDataRepresentation*)));
+
+  //launch a local meshing server and monitor so that we can submit jobs
+  //any time
+  this->MainWindowCore->launchLocalMeshingService();
 }
 
 //----------------------------------------------------------------------------
@@ -771,6 +776,7 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   // If there is no dock panel yet, this is the first time, so init
   // default panels
   this->initUIPanel(qtCMBPanelsManager::MODEL);
+  this->initUIPanel(qtCMBPanelsManager::MESH);
   this->initUIPanel(qtCMBPanelsManager::INFO);
   this->initUIPanel(qtCMBPanelsManager::DISPLAY);
   this->initUIPanel(qtCMBPanelsManager::COLORMAP);
@@ -1008,6 +1014,18 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       }
     case qtCMBPanelsManager::MESH:
       // meshing panel
+      // The Mesh in pqCMBModelBuilderMainWindowCore
+      dw = this->getThisCore()->meshPanel();
+      dw->setParent(this);
+      dw->setWindowTitle(qtCMBPanelsManager::type2String(enType).c_str());
+      this->addDockWidget(Qt::RightDockWidgetArea, dw);
+      if(lastdw)
+        {
+        this->tabifyDockWidget(lastdw, dw);
+        }
+      dw->show();
+      this->Internal->CurrentDockWidgets[enType] = dw;
+      break;
     case qtCMBPanelsManager::RENDER:
       // in the future, we may define different render view layout
 /*
