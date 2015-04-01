@@ -17,6 +17,7 @@
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 #include "smtk/io/AttributeReader.h"
+#include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
 
 #include "smtk/view/Instanced.h"
@@ -79,7 +80,7 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 : QDockWidget(p),
   ModelManager(modelManager),
   MeshMonitor(monitor),
-  MeshSelector( new qtRemusMesherSelector(//modelManager,
+  MeshSelector( new qtRemusMesherSelector(modelManager,
                                           monitor->connection(),
                                           this ) ),
   RequirementsWidget( new QWidget(this) ),
@@ -111,13 +112,23 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
     {
     //we have found atleast a single mesher, and we don't have any connections
     //made, so lets manaully invoke displayRequirements
-    this->displayRequirements(this->MeshSelector->currentMesherName(),
+    this->displayRequirements(this->MeshSelector->currentModelUUID(),
+                              this->MeshSelector->currentMesherName(),
                               this->MeshSelector->currentMesherRequirements());
     }
 
-  QObject::connect(this->MeshSelector,
-    SIGNAL(currentMesherChanged(const QString&, const remus::proto::JobRequirements&)),
-    this, SLOT( displayRequirements(const QString&, const remus::proto::JobRequirements&) ));
+  QObject::connect(
+    this->MeshSelector,
+    SIGNAL(currentMesherChanged(const smtk::common::UUID&, const QString&, const remus::proto::JobRequirements&)),
+    this,
+    SLOT( displayRequirements(const smtk::common::UUID&, const QString&, const remus::proto::JobRequirements&) ) );
+
+  QObject::connect(
+    this,
+    SIGNAL( visibilityChanged(bool) ),
+    this->MeshSelector,
+    SLOT( rebuildModelList() ) );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -132,7 +143,8 @@ QPointer<pqCMBModelManager> pqSMTKMeshPanel::modelManager()
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKMeshPanel::displayRequirements(const QString & name,
+void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelId,
+                                          const QString & name,
                                           const remus::proto::JobRequirements& reqs)
 {
   //we need to get the raw manager
@@ -176,6 +188,62 @@ void pqSMTKMeshPanel::displayRequirements(const QString & name,
 //-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::submitMeshJob()
 {
+  smtk::io::Logger inputLogger;
+  smtk::io::AttributeWriter writer;
+  std::string serializedAttributes;
 
+  //yes this returns false for being a valid, and true when an error occurs
+  bool serialized = !writer.writeContents(*this->AttSystem,
+                                          serializedAttributes,
+                                          inputLogger);
+  if(!serialized)
+    {
+    return;
+    }
+
+  //we now invoke an operator on the client. That operator
+  //will take all the information we have built up and the
+  //serialized json model and send it to the worker
+
+  //build up the current model and session, we need to know the selected model
+  //to do anything.
+  /*
+  const smtk::common::UUID sessionUUID = this->ModelManager->currentSession();
+  smtk::model::ManagerPtr model_manager = this->ModelManager->managerProxy()->modelManager();
+  smtk::model::SessionPtr session = model_manager->findSession(sessionUUID);
+
+  smtk::model::OperatorPtr meshOp = session->op("mesh", model_manager);
+  if(!meshOp)
+    {
+    return;
+    }
+
+  meshOp->ensureSpecification();
+  smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
+  if(!meshSpecification)
+    {
+    return errorJob;
+    }
+
+  smtk::model::ModelEntity modelEnt = this->ModelManager->currentModel();
+
+  meshSpecification->findString("endpoint")->setValue(this->Connection.endpoint());
+
+  std::ostringstream buffer; buffer << reqs;
+  meshSpecification->findString("remusRequirements")->setValue( buffer.str() );
+
+  //send to the operator the serialized instance information
+  meshSpecification->findString("meshingControlInstance")->setValue(serializedAttributes);
+
+  //now invoke the operator so that we submit this as remus job
+  smtk::model::OperatorResult result = meshOp->operate();
+
+  //if the operator was valid de-serailize the resulting remus::prot::Job
+  if (result->findInt("outcome")->value() == smtk::model::OPERATION_SUCCEEDED)
+    {
+    //update resultingJob to hold the de-serailized job info
+    return remus::proto::to_Job(result->findString("job")->value());
+    }
+  */
 }
 

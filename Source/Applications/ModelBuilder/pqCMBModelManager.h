@@ -70,6 +70,8 @@ public:
   cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
   QList<cmbSMTKModelInfo*> selectedModels();
+  QList<cmbSMTKModelInfo*> allModels();
+
   int numberOfModels();
 
   QList<pqDataRepresentation*> modelRepresentations();

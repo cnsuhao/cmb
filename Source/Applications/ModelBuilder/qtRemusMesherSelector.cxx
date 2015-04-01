@@ -25,59 +25,124 @@ PROVIDE
 MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "qtRemusMesherSelector.h"
+#include "pqCMBModelManager.h"
 
 #include "ui_qtMesherSelector.h"
 
-#include <remus/client/Client.h>
+#include "smtk/model/Manager.h"
+#include "vtkSMModelManagerProxy.h"
+#include "vtkPVSMTKModelInformation.h"
 
 
 //needed to use remus requirements inside a qvariant
 Q_DECLARE_METATYPE(remus::proto::JobRequirements)
+//needed to use smtk uuid inside a qvariant
+Q_DECLARE_METATYPE(smtk::common::UUID)
+
+namespace
+{
+template<typename T>
+T fromItemData(QComboBox* cb, int index)
+  {
+  return cb->itemData(index, Qt::UserRole).value< T >();
+  }
+}
 
 //-----------------------------------------------------------------------------
 class qtRemusMesherSelector::pqInternal : public Ui::qtMesherSelector { };
 
 //-----------------------------------------------------------------------------
 qtRemusMesherSelector::qtRemusMesherSelector(
+          QPointer<pqCMBModelManager> modelManager,
           const remus::client::ServerConnection& connection,
           QWidget* parent):
   QWidget(parent),
-  Internal(new pqInternal)
+  Internal(new pqInternal),
+  ModelManager( modelManager ),
+  Client( connection ) //connect to the server using the passed in connection
 {
   this->Internal->setupUi(this);
 
-  //First we use the passed in connection endpoint, because we can't be
-  //sure that we are connecting to a local server, or even that the server
-  //is bound the default port
-  remus::client::Client c(connection);
+  connect( this->Internal->cb_models, SIGNAL(currentIndexChanged ( int )),
+           this, SLOT( modelChanged( int )) );
 
-  using namespace remus::meshtypes;
-  remus::common::MeshIOType volumeMeshingToFile( (Model()), (Mesh3D()) );
-  remus::common::MeshIOType surfaceMeshingToFile( (Model()), (Mesh2D()) );
-  remus::common::MeshIOType modelMeshing( (Model()), (Model()) );
+  connect( this->Internal->cb_meshers, SIGNAL(currentIndexChanged ( int )),
+           this, SLOT( mesherChanged( int )) );
 
-  //if the server supports volume meshes, we go forward and add an item
-  //to MesherList that is the mesher name, and set custom UserRole data
-  //to be the mesher requirements
-  const bool supportsVolumeMeshingToFile = c.canMesh(volumeMeshingToFile);
-  const bool supportsSurfaceMeshingToFile = c.canMesh(surfaceMeshingToFile);
-  const bool supportsModelMeshing = c.canMesh(modelMeshing);
-  if(supportsVolumeMeshingToFile  ||
-     supportsSurfaceMeshingToFile ||
-     supportsModelMeshing         )
+  this->rebuildModelList();
+}
+
+//-----------------------------------------------------------------------------
+void qtRemusMesherSelector::rebuildModelList()
+{
+  smtk::model::ManagerPtr mgr = this->ModelManager->managerProxy()->modelManager();
+
+  //remove any current models
+  this->Internal->cb_models->clear();
+
+  //fill the model combo box based on the contents of the model Manager.
+  //todo, everytime a new model is added/removed we need to refresh this list
+  QList<cmbSMTKModelInfo*> allModels = this->ModelManager->allModels();
+  typedef QList<cmbSMTKModelInfo*>::const_iterator cit;
+  int index = 1;
+  for(cit i=allModels.begin(); i != allModels.end(); ++i, ++index)
     {
+    const smtk::common::UUID modelId = (*i)->Info->GetModelUUID();
+    const int modelDimension = mgr->dimension(modelId);
+    std::stringstream fancyModelName;
+    fancyModelName << mgr->name( modelId ) << " (" << modelDimension << "D)";
 
-    remus::proto::JobRequirementsSet volumeWorkers =c.retrieveRequirements( volumeMeshingToFile );
-    remus::proto::JobRequirementsSet surfaceWorkers = c.retrieveRequirements( surfaceMeshingToFile );
-    remus::proto::JobRequirementsSet modelWorkers = c.retrieveRequirements( modelMeshing );
+    this->Internal->cb_models->insertItem(index,
+                                          QString::fromStdString( fancyModelName.str() ),
+                                          QVariant::fromValue(modelId) );
+    //the Variant should be the uuid?
+    }
+}
+
+//-----------------------------------------------------------------------------
+void qtRemusMesherSelector::modelChanged(int index)
+{
+  //clear any existing elements in the combo box.
+  this->Internal->cb_meshers->clear();
+
+  smtk::model::ManagerPtr mgr = this->ModelManager->managerProxy()->modelManager();
+
+  //grab the current model to determine the dimension
+  smtk::common::UUID modelId =
+      fromItemData<smtk::common::UUID>( this->Internal->cb_models, index);
+
+  int modelDimension = mgr->dimension(modelId);
+
+  remus::common::MeshIOType modelIOType( (remus::meshtypes::Model()), (remus::meshtypes::Model()) );
+  remus::common::MeshIOType meshIOType;
+  if(modelDimension == 2)
+    {
+    meshIOType = remus::common::MeshIOType( (remus::meshtypes::Mesh2D()), (remus::meshtypes::Model()));
+    }
+  else if(modelDimension == 3)
+    {
+    meshIOType = remus::common::MeshIOType( (remus::meshtypes::Mesh3D()), (remus::meshtypes::Model()));
+    }
+
+  const bool supportsModelMeshing = this->Client.canMesh(modelIOType);
+  const bool supportsMeshMeshing= meshIOType.valid() && this->Client.canMesh(meshIOType);
+
+  if(supportsModelMeshing  || supportsMeshMeshing )
+    {
 
     //combine the discrete and model works into a single list
     remus::proto::JobRequirementsSet possibleWorkers;
-    possibleWorkers.insert(volumeWorkers.begin(),volumeWorkers.end());
-    possibleWorkers.insert(surfaceWorkers.begin(),surfaceWorkers.end());
+    remus::proto::JobRequirementsSet modelWorkers = this->Client.retrieveRequirements( modelIOType );
     possibleWorkers.insert(modelWorkers.begin(),modelWorkers.end());
 
+    if(supportsMeshMeshing)
+      {
+      remus::proto::JobRequirementsSet meshWorkers = this->Client.retrieveRequirements( meshIOType );
+      possibleWorkers.insert(meshWorkers.begin(),meshWorkers.end());
+      }
+
     remus::proto::JobRequirementsSet::const_iterator i;
+
     int index = 1;
     for(i = possibleWorkers.begin(); i != possibleWorkers.end(); ++i, ++index)
       {
@@ -86,8 +151,7 @@ qtRemusMesherSelector::qtRemusMesherSelector(
                                       QVariant::fromValue(*i) );
       }
     }
-  connect( this->Internal->cb_meshers, SIGNAL(currentIndexChanged ( int )),
-           this, SLOT( mesherChanged( int )) );
+
 }
 
 //-----------------------------------------------------------------------------
@@ -97,9 +161,10 @@ qtRemusMesherSelector::~qtRemusMesherSelector()
 }
 
 //-----------------------------------------------------------------------------
-int qtRemusMesherSelector::currentIndex() const
+smtk::common::UUID qtRemusMesherSelector::currentModelUUID() const
 {
-  return this->Internal->cb_meshers->currentIndex();
+  return fromItemData<smtk::common::UUID>(this->Internal->cb_models,
+                                          this->Internal->cb_models->currentIndex());
 }
 
 //-----------------------------------------------------------------------------
@@ -112,19 +177,18 @@ QString qtRemusMesherSelector::currentMesherName() const
 remus::proto::JobRequirements
 qtRemusMesherSelector::currentMesherRequirements() const
 {
-  const int index = this->Internal->cb_meshers->currentIndex();
-  remus::proto::JobRequirements reqs  =
-      this->Internal->cb_meshers->itemData(index, Qt::UserRole).value< remus::proto::JobRequirements>();
-  return reqs;
+  return fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
+                                                     this->Internal->cb_meshers->currentIndex());
 }
 
 //-----------------------------------------------------------------------------
 void qtRemusMesherSelector::mesherChanged( int index )
 {
-  QString name = this->Internal->cb_meshers->itemText( index );
+  smtk::common::UUID modelId = this->currentModelUUID();
+  QString workerName = this->Internal->cb_meshers->itemText( index );
   remus::proto::JobRequirements reqs  =
-      this->Internal->cb_meshers->itemData(index, Qt::UserRole).value< remus::proto::JobRequirements>();
-
-  emit this->currentMesherChanged( name, reqs );
+      fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
+                                                  index);
+  emit this->currentMesherChanged( modelId, workerName, reqs );
 }
 

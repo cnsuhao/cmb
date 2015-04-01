@@ -34,37 +34,50 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __qtRemusMesherSelector_h
 
 #include <QWidget>
+#include <QPointer>
 
 #ifndef Q_MOC_RUN
-# include <remus/client/ServerConnection.h>
+# include <remus/client/Client.h>
 # include <remus/proto/JobRequirements.h>
 #endif
 
-class QListWidgetItem;
+#include "smtk/common/UUID.h"
+
+class pqCMBModelManager;
 
 class qtRemusMesherSelector : public QWidget
 {
   Q_OBJECT
 public:
-  qtRemusMesherSelector(
+  qtRemusMesherSelector(QPointer<pqCMBModelManager> modelManager,
                         const remus::client::ServerConnection& connection,
                         QWidget* parent);
 
   ~qtRemusMesherSelector();
 
-  int currentIndex() const;
+  smtk::common::UUID currentModelUUID() const;
+
   QString currentMesherName() const;
   remus::proto::JobRequirements currentMesherRequirements() const;
 
+public slots:
+  void rebuildModelList();
+
 signals:
-  void currentMesherChanged(const QString & name, const remus::proto::JobRequirements& reqs);
+  void currentMesherChanged(const smtk::common::UUID& modelId,
+                            const QString & workerName,
+                            const remus::proto::JobRequirements& reqs);
 
 protected slots:
+  void modelChanged( int index );
   void mesherChanged( int index );
 
 private:
   class pqInternal;
   pqInternal* Internal;
+
+  QPointer<pqCMBModelManager> ModelManager;
+  remus::client::Client Client;
 };
 
 #endif

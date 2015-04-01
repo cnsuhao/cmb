@@ -36,7 +36,7 @@ target_include_directories(CMBMeshTetGenWorker
                           )
 
 Register_Mesh_Worker(CMBMeshTetGenWorker
-                    INPUT_TYPE "PiecewiseLinearComplex"
-                    OUTPUT_TYPE "Mesh3D"
+                    INPUT_TYPE "Mesh3D"
+                    OUTPUT_TYPE "Model"
                     FILE_TYPE "XML"
                     FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMBMeshTetGenWorkerInput.xml")

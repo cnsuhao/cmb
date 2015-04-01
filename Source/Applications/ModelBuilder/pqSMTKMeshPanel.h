@@ -32,7 +32,9 @@ public:
   QPointer<pqCMBModelManager> modelManager();
 
 protected slots:
-  void displayRequirements(const QString & name, const remus::proto::JobRequirements& reqs);
+  void displayRequirements(const smtk::common::UUID& modelId,
+                           const QString & workerName,
+                           const remus::proto::JobRequirements& reqs);
   void submitMeshJob();
 
 private:
