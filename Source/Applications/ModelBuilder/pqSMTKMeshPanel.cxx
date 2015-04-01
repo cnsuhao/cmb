@@ -87,15 +87,14 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 : QDockWidget(p),
   ModelManager(modelManager),
   MeshMonitor(monitor),
-  MeshSelector( new qtRemusMesherSelector(modelManager,
+  MeshSelector( new qtRemusMesherSelector(modelManager->managerProxy()->modelManager(),
                                           monitor->connection(),
                                           this ) ),
   RequirementsWidget( new QWidget(this) ),
   SubmitterWidget( new QWidget(this) ),
   AttSystem(),
   AttUIManager(),
-  ActiveModelSession( ),
-  ActiveModelId(),
+  ActiveModels( ),
   ActiveRequirements()
 {
   this->setObjectName("smtkMeshDockWidget");
@@ -122,20 +121,11 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 
   this->setWidget(meshWidget);
 
-  if(!this->MeshSelector->currentMesherName().isEmpty())
-    {
-    //we have found atleast a single mesher, and we don't have any connections
-    //made, so lets manaully invoke displayRequirements
-    this->displayRequirements(this->MeshSelector->currentModelUUID(),
-                              this->MeshSelector->currentMesherName(),
-                              this->MeshSelector->currentMesherRequirements());
-    }
-
   QObject::connect(
     this->MeshSelector,
-    SIGNAL(currentMesherChanged(const smtk::common::UUID&, const QString&, const remus::proto::JobRequirements&)),
+    SIGNAL(currentMesherChanged(const std::vector<smtk::model::Model>&, const QString&, const remus::proto::JobRequirements&)),
     this,
-    SLOT( displayRequirements(const smtk::common::UUID&, const QString&, const remus::proto::JobRequirements&) ) );
+    SLOT( displayRequirements(const std::vector<smtk::model::Model>&, const QString&, const remus::proto::JobRequirements&) ) );
 
   QObject::connect(
     this,
@@ -174,31 +164,14 @@ QPointer<pqCMBModelManager> pqSMTKMeshPanel::modelManager()
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelToDisplay,
+void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>& modelsToDisplay,
                                           const QString & workerName,
                                           const remus::proto::JobRequirements& reqs)
 {
-  //determine the session that this modelId is part of
-  QList<cmbSMTKModelInfo*> allModels = this->ModelManager->allModels();
-  typedef QList<cmbSMTKModelInfo*>::const_iterator cit;
-  int index = 1;
-  for(cit i=allModels.begin(); i != allModels.end(); ++i, ++index)
-    {
-    const smtk::common::UUID currentModelId = (*i)->Info->GetModelUUID();
-    if(currentModelId == modelToDisplay)
-      {
-      this->ActiveModelSession = (*i)->Session;
-      this->ActiveModelId = modelToDisplay;
-      this->ActiveRequirements = reqs;
-      break;
-      }
-    }
-
-  if(this->ActiveModelSession.expired())
-    {
-    //we have been passed a bad modelId
-    return;
-    }
+  //determine the session that this modelId is part of.
+  //we can
+  this->ActiveModels = modelsToDisplay;
+  this->ActiveRequirements = reqs;
 
   //now that we have a requirements lets display them in the dock widget,
   //each time a new mesher is selected this needs to rebuild the UI
@@ -239,8 +212,8 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelToDispl
 //-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::clearActiveModel()
   {
-  this->ActiveModelSession = smtk::weak_ptr< smtk::model::Session >();
-  this->ActiveModelId = smtk::common::UUID();
+  this->ActiveModels = std::vector<smtk::model::Model>();
+  this->ActiveRequirements = remus::proto::JobRequirements();
   this->AttUIManager.reset();
   this->AttSystem.reset();
 
@@ -250,7 +223,7 @@ void pqSMTKMeshPanel::clearActiveModel()
 //-----------------------------------------------------------------------------
 bool pqSMTKMeshPanel::submitMeshJob()
 {
-  if(this->ActiveModelSession.expired())
+  if(this->ActiveModels.empty())
     {
     return false;
     }
@@ -268,44 +241,44 @@ bool pqSMTKMeshPanel::submitMeshJob()
     return false;
     }
 
-  //determine if this session has a mesh operator
   const std::string meshOperatorName = "mesh";
-  smtk::model::StringList validOperators = this->ActiveModelSession.lock()->operatorNames();
-  if ( std::find(validOperators.begin(), validOperators.end(), meshOperatorName) == validOperators.end())
+  const std::string serializedReqs = remus::proto::to_string(this->ActiveRequirements);
+
+  //for each model that we have, call the related sessions mesh operator
+  std::vector< smtk::model::Model >::const_iterator model_iter;
+  for( model_iter = this->ActiveModels.begin();
+       model_iter != this->ActiveModels.end();
+       ++model_iter)
     {
-    return false;
+    smtk::model::SessionRef session = model_iter->session();
+    const bool is_valid_op = session.opDef(meshOperatorName);
+    if(is_valid_op)
+      {
+      //determine if this session has a mesh operator
+      smtk::model::OperatorPtr meshOp = session.op(meshOperatorName);
+      meshOp->ensureSpecification();
+
+      smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
+
+      //send what model inside the session that we want to operate on
+      //currently we will only take the first model
+      meshSpecification->findModelEntity("model")->setValue( *model_iter );
+
+      meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
+
+
+      meshSpecification->findString("remusRequirements")->setValue( serializedReqs );
+
+      //send to the operator the serialized instance information
+      meshSpecification->findString("meshingControlInstance")->setValue(serializedAttributes);
+
+      const bool meshCreated = this->ModelManager->startOperation( meshOp );
+      if(!meshCreated)
+        {
+        return false;
+        }
+      }
     }
-
-  //we now invoke an operator on the client. That operator
-  //will take all the information we have built up and the
-  //serialized json model and send it to the worker
-  smtk::model::OperatorPtr meshOp = this->ActiveModelSession.lock()->op(meshOperatorName);
-  if(!meshOp )
-    {
-    return false;
-    }
-
-  meshOp->ensureSpecification();
-  smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
-  if(!meshSpecification)
-    {
-    return false;
-    }
-
-  //send what model inside the session that we want to operate on, this needs to be
-  //done properly, as this is the 'wrong way'
-
-  meshSpecification->findModelEntity("model")->setValue( smtk::model::EntityRef(this->ActiveModelSession.lock()->manager(),
-                                                                                this->ActiveModelId) );
-
-  meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
-
-  std::ostringstream buffer; buffer << this->ActiveRequirements;
-  meshSpecification->findString("remusRequirements")->setValue( buffer.str() );
-
-  //send to the operator the serialized instance information
-  meshSpecification->findString("meshingControlInstance")->setValue(serializedAttributes);
-
-  return this->ModelManager->startOperation( meshOp );
+  return true;
 }
 
