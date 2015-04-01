@@ -6,8 +6,9 @@
  =========================================================================*/
 #include "pqSMTKMeshPanel.h"
 
-
 #include "smtk/model/Manager.h"
+#include "smtk/model/Operator.h"
+
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/IntItem.h"
@@ -23,17 +24,23 @@
 #include "smtk/view/Instanced.h"
 #include "smtk/view/Root.h"
 #include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/extension/qt/qtRootView.h"
 
 #include <QtGui/QDockWidget>
 
 #include <QPointer>
 #include <QString>
 #include <QBoxLayout>
+#include <QGridLayout>
+#include <QPushButton>
 
 #include "vtkSMModelManagerProxy.h"
+#include "vtkPVSMTKModelInformation.h"
+
 #include "qtCMBMeshingMonitor.h"
 #include "pqCMBModelManager.h"
 #include "qtRemusMesherSelector.h"
+
 
 using namespace std;
 using namespace smtk::model;
@@ -86,7 +93,10 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
   RequirementsWidget( new QWidget(this) ),
   SubmitterWidget( new QWidget(this) ),
   AttSystem(),
-  AttUIManager()
+  AttUIManager(),
+  ActiveModelSession( ),
+  ActiveModelId(),
+  ActiveRequirements()
 {
   this->setObjectName("smtkMeshDockWidget");
 
@@ -99,8 +109,12 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 
   //The RequirementsWidget needs a layout explicitly otherwise,
   //smtk will crash when it tries to add elements
-  this->RequirementsWidget->setLayout(new QBoxLayout(QBoxLayout::TopToBottom));
+  this->RequirementsWidget->setLayout(new QVBoxLayout());
 
+  //construct a mesh button and add it to the SubmitterWidget
+  this->SubmitterWidget->setLayout(new QVBoxLayout());
+  QPushButton* meshButton = new QPushButton(QString("Mesh"));
+  this->SubmitterWidget->layout()->addWidget(meshButton);
 
   layout->addWidget(this->MeshSelector.data());
   layout->addWidget(this->RequirementsWidget.data());
@@ -129,6 +143,23 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
     this->MeshSelector,
     SLOT( rebuildModelList() ) );
 
+  QObject::connect(
+    this->MeshSelector,
+    SIGNAL( currentModelChanged( ) ),
+    this,
+    SLOT( clearActiveModel() ) );
+
+  QObject::connect(
+    this,
+    SIGNAL( meshingPossible(bool) ),
+    this->SubmitterWidget,
+    SLOT( setVisible(bool) ) );
+
+  QObject::connect(
+    meshButton,
+    SIGNAL( pressed() ),
+    this,
+    SLOT( submitMeshJob() ) );
 }
 
 //-----------------------------------------------------------------------------
@@ -143,18 +174,37 @@ QPointer<pqCMBModelManager> pqSMTKMeshPanel::modelManager()
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelId,
-                                          const QString & name,
+void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelToDisplay,
+                                          const QString & workerName,
                                           const remus::proto::JobRequirements& reqs)
 {
-  //we need to get the raw manager
-  smtk::model::ManagerPtr model_manager = this->ModelManager->managerProxy()->modelManager();
+  //determine the session that this modelId is part of
+  QList<cmbSMTKModelInfo*> allModels = this->ModelManager->allModels();
+  typedef QList<cmbSMTKModelInfo*>::const_iterator cit;
+  int index = 1;
+  for(cit i=allModels.begin(); i != allModels.end(); ++i, ++index)
+    {
+    const smtk::common::UUID currentModelId = (*i)->Info->GetModelUUID();
+    if(currentModelId == modelToDisplay)
+      {
+      this->ActiveModelSession = (*i)->Session;
+      this->ActiveModelId = modelToDisplay;
+      this->ActiveRequirements = reqs;
+      break;
+      }
+    }
+
+  if(this->ActiveModelSession.expired())
+    {
+    //we have been passed a bad modelId
+    return;
+    }
 
   //now that we have a requirements lets display them in the dock widget,
   //each time a new mesher is selected this needs to rebuild the UI
   //build up the smtk attributes.
   this->AttSystem.reset( new smtk::attribute::System() );
-  this->AttSystem->setRefModelManager(model_manager);
+  this->AttSystem->setRefModelManager( this->ModelManager->managerProxy()->modelManager() );
 
   this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem) );
   smtk::io::AttributeReader reader;
@@ -182,12 +232,29 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::common::UUID& modelId,
     }
   this->AttUIManager->initializeUI(this->RequirementsWidget.data(),
                                    useInternalFileBrowser);
+
+  emit this->meshingPossible( true );
 }
 
+//-----------------------------------------------------------------------------
+void pqSMTKMeshPanel::clearActiveModel()
+  {
+  this->ActiveModelSession = smtk::weak_ptr< smtk::model::Session >();
+  this->ActiveModelId = smtk::common::UUID();
+  this->AttUIManager.reset();
+  this->AttSystem.reset();
+
+  emit this->meshingPossible( false );
+  }
 
 //-----------------------------------------------------------------------------
-void pqSMTKMeshPanel::submitMeshJob()
+bool pqSMTKMeshPanel::submitMeshJob()
 {
+  if(this->ActiveModelSession.expired())
+    {
+    return false;
+    }
+
   smtk::io::Logger inputLogger;
   smtk::io::AttributeWriter writer;
   std::string serializedAttributes;
@@ -198,52 +265,45 @@ void pqSMTKMeshPanel::submitMeshJob()
                                           inputLogger);
   if(!serialized)
     {
-    return;
+    return false;
+    }
+
+  //determine if this session has a mesh operator
+  const std::string meshOperatorName = "mesh";
+  smtk::model::StringList validOperators = this->ActiveModelSession.lock()->operatorNames();
+  if ( std::find(validOperators.begin(), validOperators.end(), meshOperatorName) == validOperators.end())
+    {
+    return false;
     }
 
   //we now invoke an operator on the client. That operator
   //will take all the information we have built up and the
   //serialized json model and send it to the worker
-
-  //build up the current model and session, we need to know the selected model
-  //to do anything.
-  /*
-  const smtk::common::UUID sessionUUID = this->ModelManager->currentSession();
-  smtk::model::ManagerPtr model_manager = this->ModelManager->managerProxy()->modelManager();
-  smtk::model::SessionPtr session = model_manager->findSession(sessionUUID);
-
-  smtk::model::OperatorPtr meshOp = session->op("mesh", model_manager);
-  if(!meshOp)
+  smtk::model::OperatorPtr meshOp = this->ActiveModelSession.lock()->op(meshOperatorName);
+  if(!meshOp )
     {
-    return;
+    return false;
     }
 
   meshOp->ensureSpecification();
   smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
   if(!meshSpecification)
     {
-    return errorJob;
+    return false;
     }
 
-  smtk::model::ModelEntity modelEnt = this->ModelManager->currentModel();
+  //send what model inside the session that we want to operate on, this needs to be
+  //done properly, as this is the 'wrong way'
+  meshSpecification->findString("modelUUID")->setValue(this->ActiveModelId.toString());
 
-  meshSpecification->findString("endpoint")->setValue(this->Connection.endpoint());
+  meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
 
-  std::ostringstream buffer; buffer << reqs;
+  std::ostringstream buffer; buffer << this->ActiveRequirements;
   meshSpecification->findString("remusRequirements")->setValue( buffer.str() );
 
   //send to the operator the serialized instance information
   meshSpecification->findString("meshingControlInstance")->setValue(serializedAttributes);
 
-  //now invoke the operator so that we submit this as remus job
-  smtk::model::OperatorResult result = meshOp->operate();
-
-  //if the operator was valid de-serailize the resulting remus::prot::Job
-  if (result->findInt("outcome")->value() == smtk::model::OPERATION_SUCCEEDED)
-    {
-    //update resultingJob to hold the de-serailized job info
-    return remus::proto::to_Job(result->findString("job")->value());
-    }
-  */
+  return this->ModelManager->startOperation( meshOp );
 }
 

@@ -64,6 +64,9 @@ qtRemusMesherSelector::qtRemusMesherSelector(
   this->Internal->setupUi(this);
 
   connect( this->Internal->cb_models, SIGNAL(currentIndexChanged ( int )),
+           this, SIGNAL( currentModelChanged( )) );
+
+  connect( this->Internal->cb_models, SIGNAL(currentIndexChanged ( int )),
            this, SLOT( modelChanged( int )) );
 
   connect( this->Internal->cb_meshers, SIGNAL(currentIndexChanged ( int )),
@@ -184,11 +187,14 @@ qtRemusMesherSelector::currentMesherRequirements() const
 //-----------------------------------------------------------------------------
 void qtRemusMesherSelector::mesherChanged( int index )
 {
-  smtk::common::UUID modelId = this->currentModelUUID();
-  QString workerName = this->Internal->cb_meshers->itemText( index );
-  remus::proto::JobRequirements reqs  =
-      fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
+  if(index >= 0)
+    {
+    smtk::common::UUID modelId = this->currentModelUUID();
+    QString workerName = this->Internal->cb_meshers->itemText( index );
+    remus::proto::JobRequirements reqs  =
+        fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
                                                   index);
-  emit this->currentMesherChanged( modelId, workerName, reqs );
+    emit this->currentMesherChanged( modelId, workerName, reqs );
+    }
 }
 

@@ -12,6 +12,10 @@
 class pqCMBModelManager;
 class qtCMBMeshingMonitor;
 class qtRemusMesherSelector;
+struct cmbSMTKModelInfo;
+
+#include "smtk/common/UUID.h"
+
 namespace smtk { namespace  attribute { class qtUIManager; } }
 
 #include "smtk/PublicPointerDefs.h"
@@ -35,7 +39,13 @@ protected slots:
   void displayRequirements(const smtk::common::UUID& modelId,
                            const QString & workerName,
                            const remus::proto::JobRequirements& reqs);
-  void submitMeshJob();
+
+  void clearActiveModel();
+
+  bool submitMeshJob();
+
+signals:
+  void meshingPossible( bool );
 
 private:
   QPointer<pqCMBModelManager> ModelManager;
@@ -47,4 +57,8 @@ private:
 
   smtk::attribute::SystemPtr AttSystem;
   smtk::shared_ptr<smtk::attribute::qtUIManager> AttUIManager;
+
+  smtk::weak_ptr< smtk::model::Session > ActiveModelSession;
+  smtk::common::UUID ActiveModelId;
+  remus::proto::JobRequirements ActiveRequirements;
 };

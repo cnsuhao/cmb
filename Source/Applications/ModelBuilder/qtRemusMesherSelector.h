@@ -64,6 +64,8 @@ public slots:
   void rebuildModelList();
 
 signals:
+  void currentModelChanged( );
+
   void currentMesherChanged(const smtk::common::UUID& modelId,
                             const QString & workerName,
                             const remus::proto::JobRequirements& reqs);
