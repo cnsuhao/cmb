@@ -51,6 +51,10 @@ struct cmbSMTKModelInfo
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
     smtk::model::SessionPtr Session;
+    std::vector<vtkTuple<const char*, 2> > ent_annotations;
+    std::vector<vtkTuple<const char*, 2> > vol_annotations;
+    std::vector<vtkTuple<const char*, 2> > grp_annotations;
+
   };
 
 class pqCMBModelManager : public QObject

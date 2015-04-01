@@ -165,28 +165,27 @@ public:
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
-  vtkNew<vtkStringList> ent_annotations;
-  vtkNew<vtkStringList> vol_annotations;
-  vtkNew<vtkStringList> grp_annotations;
 
   void updateModelAnnotations(const smtk::model::EntityRef& model)
   {
     pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
 
+    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    vtkPVSMTKModelInformation* pvinfo = modelInfo->Info;
+    modelInfo->ent_annotations.clear();
+    modelInfo->vol_annotations.clear();
+    modelInfo->grp_annotations.clear();
 
-    vtkPVSMTKModelInformation* pvinfo = this->ModelInfos[model.entity()].Info;
     std::map<smtk::common::UUID, unsigned int>::const_iterator it =
       pvinfo->GetUUID2BlockIdMap().begin();
     for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
       {
       this->Entity2Models[it->first] = model.entity();
-      // make sure to not add Ent UUID twice
-      if(ent_annotations->GetIndex(it->first.toString().c_str()) < 0)
-        {
-        ent_annotations->AddString(it->first.toString().c_str());
-        ent_annotations->AddString(mgr->name(it->first).c_str());
-        }
+      const char* value[2] = {
+          it->first.toString().c_str()),
+          mgr->name(it->first).c_str()};
+      modelInfo->ent_annotations.push_back(vtkTuple<const char*, 2>(value));
       }
 
     smtk::model::Groups modGroups =
@@ -194,12 +193,10 @@ public:
     for(smtk::model::Groups::iterator it = modGroups.begin();
        it != modGroups.end(); ++it)
       {
-      // make sure to not add Ent UUID twice
-      if(grp_annotations->GetIndex(it->entity().toString().c_str()) < 0)
-        {
-        grp_annotations->AddString(it->entity().toString().c_str());
-        grp_annotations->AddString(it->name().c_str());
-        }
+      const char* value[2] = {
+          it->entity().toString().c_str()),
+          it->name().c_str()};
+      modelInfo->grp_annotations.push_back(vtkTuple<const char*, 2>(value));
       }
 
     smtk::model::CellEntities modVols =
@@ -207,26 +204,14 @@ public:
     for(smtk::model::CellEntities::iterator it = modVols.begin();
        it != modVols.end(); ++it)
       {
-      // make sure to not add Ent UUID twice
-      if((*it).isVolume() &&
-         vol_annotations->GetIndex(it->entity().toString().c_str()) < 0)
+      if((*it).isVolume())
         {
-        vol_annotations->AddString(it->entity().toString().c_str());
-        vol_annotations->AddString(it->name().c_str());
+        const char* value[2] = {
+            it->entity().toString().c_str()),
+            it->name().c_str()};
+        modelInfo->vol_annotations.push_back(vtkTuple<const char*, 2>(value));
         }
       }
-
-//          vtkSMPropertyHelper(rep->getProxy(), "SuppressLOD").Set(1);
-    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
-      this->LUTColors, ent_annotations.GetPointer());
-    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
-      this->LUTColors, grp_annotations.GetPointer());
-    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
-      this->LUTColors, vol_annotations.GetPointer());
-
   }
 
   bool addModelRepresentation(const smtk::model::EntityRef& model,
@@ -263,6 +248,7 @@ public:
           this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
   
           this->updateModelAnnotations(model);
+          this->updateColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::CELL);
 
@@ -335,6 +321,7 @@ public:
     this->ModelInfos[model.entity()].updateBlockInfo(
       this->ManagerProxy->modelManager());
     this->updateModelAnnotations(model);
+    this->updateColorTable(model);
 
     view->render();
   }
@@ -347,13 +334,16 @@ public:
       }
     this->Entity2Models.clear();
     this->ModelInfos.clear();
-    ent_annotations->RemoveAllItems();
-    vol_annotations->RemoveAllItems();
-    grp_annotations->RemoveAllItems();
   }
 
   qInternal(pqServer* server): Server(server)
   {
+  }
+
+  void rebuildColorTable(vtkIdType numOfColors)
+  {
+    this->ModelColorLUT->Modified();
+    this->ModelColorLUT->SetNumberOfTableValues(numOfColors);
     this->ModelColorLUT->Build();
     // raw interleaved array with the layout [X1, R1, G1, B1, X2, R2, G2,
     // B2, ..., Xn, Rn, Gn, Bn]
@@ -368,6 +358,30 @@ public:
       this->LUTColors[i].GetData()[2] = rgba[1];
       }
   }
+
+  void updateColorTable(const smtk::model::EntityRef& model)
+  {
+    pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
+    smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
+
+    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+
+    this->rebuildColorTable(modelInfo->ent_annotations.size());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
+      this->LUTColors, modelInfo->ent_annotations.GetPointer());
+
+    this->rebuildColorTable(modelInfo->grp_annotations.size());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
+      this->LUTColors, modelInfo->grp_annotations.GetPointer());
+
+    this->rebuildColorTable(modelInfo->vol_annotations.size());
+    RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
+      rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
+      this->LUTColors, modelInfo->vol_annotations.GetPointer());
+  }
+
 };
 
 //----------------------------------------------------------------------------
@@ -786,7 +800,6 @@ bool pqCMBModelManager::handleOperationResult(
         bGeometryChanged = true;
         }
       }
-
 
   // check if there is "selection", such as from "grow" operator.
   //

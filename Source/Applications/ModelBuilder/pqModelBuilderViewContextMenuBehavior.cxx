@@ -375,7 +375,7 @@ if(colorEntities.size() > 0)
  RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
    activeRep->getProxy(), this->m_ColorByMode == "None" ?
      NULL : this->m_ColorByMode.toStdString().c_str(),
-   vtkDataObject::FIELD);
+   vtkDataObject::FIELD, false);
 
   activeRep->renderViewEventually();
 }
