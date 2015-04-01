@@ -42,20 +42,20 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #endif
 
 #include "smtk/common/UUID.h"
-
-class pqCMBModelManager;
+#include "smtk/model/Manager.h"
+#include "smtk/model/Session.h"
 
 class qtRemusMesherSelector : public QWidget
 {
   Q_OBJECT
 public:
-  qtRemusMesherSelector(QPointer<pqCMBModelManager> modelManager,
+  qtRemusMesherSelector(smtk::model::ManagerPtr modelManager,
                         const remus::client::ServerConnection& connection,
                         QWidget* parent);
 
   ~qtRemusMesherSelector();
 
-  smtk::common::UUID currentModelUUID() const;
+  smtk::model::Model currentModel() const;
 
   QString currentMesherName() const;
   remus::proto::JobRequirements currentMesherRequirements() const;
@@ -66,7 +66,7 @@ public slots:
 signals:
   void currentModelChanged( );
 
-  void currentMesherChanged(const smtk::common::UUID& modelId,
+  void currentMesherChanged(const std::vector<smtk::model::Model>& models,
                             const QString & workerName,
                             const remus::proto::JobRequirements& reqs);
 
@@ -78,7 +78,7 @@ private:
   class pqInternal;
   pqInternal* Internal;
 
-  QPointer<pqCMBModelManager> ModelManager;
+  smtk::model::ManagerPtr ModelManager;
   remus::client::Client Client;
 };
 

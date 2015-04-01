@@ -25,19 +25,13 @@ PROVIDE
 MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "qtRemusMesherSelector.h"
-#include "pqCMBModelManager.h"
 
 #include "ui_qtMesherSelector.h"
 
-#include "smtk/model/Manager.h"
-#include "vtkSMModelManagerProxy.h"
-#include "vtkPVSMTKModelInformation.h"
-
-
 //needed to use remus requirements inside a qvariant
 Q_DECLARE_METATYPE(remus::proto::JobRequirements)
-//needed to use smtk uuid inside a qvariant
-Q_DECLARE_METATYPE(smtk::common::UUID)
+//needed to use smtk::model::Model inside a qvariant
+Q_DECLARE_METATYPE(smtk::model::Model)
 
 namespace
 {
@@ -53,7 +47,7 @@ class qtRemusMesherSelector::pqInternal : public Ui::qtMesherSelector { };
 
 //-----------------------------------------------------------------------------
 qtRemusMesherSelector::qtRemusMesherSelector(
-          QPointer<pqCMBModelManager> modelManager,
+          smtk::model::ManagerPtr modelManager,
           const remus::client::ServerConnection& connection,
           QWidget* parent):
   QWidget(parent),
@@ -78,27 +72,27 @@ qtRemusMesherSelector::qtRemusMesherSelector(
 //-----------------------------------------------------------------------------
 void qtRemusMesherSelector::rebuildModelList()
 {
-  smtk::model::ManagerPtr mgr = this->ModelManager->managerProxy()->modelManager();
+  smtk::model::EntityRefArray allModels =
+      this->ModelManager->findEntitiesOfType( smtk::model::MODEL_ENTITY );
 
   //remove any current models
   this->Internal->cb_models->clear();
 
   //fill the model combo box based on the contents of the model Manager.
   //todo, everytime a new model is added/removed we need to refresh this list
-  QList<cmbSMTKModelInfo*> allModels = this->ModelManager->allModels();
-  typedef QList<cmbSMTKModelInfo*>::const_iterator cit;
   int index = 1;
-  for(cit i=allModels.begin(); i != allModels.end(); ++i, ++index)
+  smtk::model::EntityRefArray::const_iterator i;
+  for(i=allModels.begin(); i != allModels.end(); ++i, ++index)
     {
-    const smtk::common::UUID modelId = (*i)->Info->GetModelUUID();
-    const int modelDimension = mgr->dimension(modelId);
-    std::stringstream fancyModelName;
-    fancyModelName << mgr->name( modelId ) << " (" << modelDimension << "D)";
-
-    this->Internal->cb_models->insertItem(index,
-                                          QString::fromStdString( fancyModelName.str() ),
-                                          QVariant::fromValue(modelId) );
-    //the Variant should be the uuid?
+    smtk::model::Model model = i->as<smtk::model::Model>();
+    if(model.isValid())
+      {
+      std::stringstream fancyModelName;
+      fancyModelName << i->name( ) << " (" << i->dimension() << "D)";
+      this->Internal->cb_models->insertItem(index,
+                                            QString::fromStdString( fancyModelName.str() ),
+                                            QVariant::fromValue(model) );
+      }
     }
 }
 
@@ -108,13 +102,11 @@ void qtRemusMesherSelector::modelChanged(int index)
   //clear any existing elements in the combo box.
   this->Internal->cb_meshers->clear();
 
-  smtk::model::ManagerPtr mgr = this->ModelManager->managerProxy()->modelManager();
-
   //grab the current model to determine the dimension
-  smtk::common::UUID modelId =
-      fromItemData<smtk::common::UUID>( this->Internal->cb_models, index);
+  smtk::model::Model model =
+      fromItemData<smtk::model::Model>( this->Internal->cb_models, index);
 
-  int modelDimension = mgr->dimension(modelId);
+  const int modelDimension = model.dimension();
 
   remus::common::MeshIOType modelIOType( (remus::meshtypes::Model()), (remus::meshtypes::Model()) );
   remus::common::MeshIOType meshIOType;
@@ -144,9 +136,8 @@ void qtRemusMesherSelector::modelChanged(int index)
       possibleWorkers.insert(meshWorkers.begin(),meshWorkers.end());
       }
 
-    remus::proto::JobRequirementsSet::const_iterator i;
-
     int index = 1;
+    remus::proto::JobRequirementsSet::const_iterator i;
     for(i = possibleWorkers.begin(); i != possibleWorkers.end(); ++i, ++index)
       {
       this->Internal->cb_meshers->insertItem(index,
@@ -164,10 +155,10 @@ qtRemusMesherSelector::~qtRemusMesherSelector()
 }
 
 //-----------------------------------------------------------------------------
-smtk::common::UUID qtRemusMesherSelector::currentModelUUID() const
+smtk::model::Model qtRemusMesherSelector::currentModel() const
 {
-  return fromItemData<smtk::common::UUID>(this->Internal->cb_models,
-                                          this->Internal->cb_models->currentIndex());
+  return fromItemData<smtk::model::Model>(this->Internal->cb_models,
+                                              this->Internal->cb_models->currentIndex());
 }
 
 //-----------------------------------------------------------------------------
@@ -189,12 +180,13 @@ void qtRemusMesherSelector::mesherChanged( int index )
 {
   if(index >= 0)
     {
-    smtk::common::UUID modelId = this->currentModelUUID();
+    std::vector<smtk::model::Model> models(1, this->currentModel());
+
     QString workerName = this->Internal->cb_meshers->itemText( index );
     remus::proto::JobRequirements reqs  =
         fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
                                                   index);
-    emit this->currentMesherChanged( modelId, workerName, reqs );
+    emit this->currentMesherChanged( models, workerName, reqs );
     }
 }
 
