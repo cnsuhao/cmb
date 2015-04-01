@@ -294,7 +294,9 @@ bool pqSMTKMeshPanel::submitMeshJob()
 
   //send what model inside the session that we want to operate on, this needs to be
   //done properly, as this is the 'wrong way'
-  meshSpecification->findString("modelUUID")->setValue(this->ActiveModelId.toString());
+
+  meshSpecification->findModelEntity("model")->setValue( smtk::model::EntityRef(this->ActiveModelSession.lock()->manager(),
+                                                                                this->ActiveModelId) );
 
   meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
 
