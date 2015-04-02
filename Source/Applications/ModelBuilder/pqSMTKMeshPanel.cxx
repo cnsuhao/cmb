@@ -270,7 +270,7 @@ bool pqSMTKMeshPanel::submitMeshJob()
       meshSpecification->findString("remusRequirements")->setValue( serializedReqs );
 
       //send to the operator the serialized instance information
-      meshSpecification->findString("meshingControlInstance")->setValue(serializedAttributes);
+      meshSpecification->findString("meshingControlAttributes")->setValue(serializedAttributes);
 
       const bool meshCreated = this->ModelManager->startOperation( meshOp );
       if(!meshCreated)
