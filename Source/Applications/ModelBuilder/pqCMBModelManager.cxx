@@ -24,7 +24,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
-#include "vtkNew.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
@@ -33,7 +32,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
-#include "vtkStringList.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -120,11 +118,35 @@ void cmbSMTKModelInfo::init(
   this->CompositeDataIdSelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
 
+
+  this->EntityLUT.TakeReference(
+    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  vtkSMPropertyHelper(this->EntityLUT, "IndexedLookup", true).Set(1);
+  this->GroupLUT.TakeReference(
+    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  vtkSMPropertyHelper(this->GroupLUT, "IndexedLookup", true).Set(1);
+  this->VolumeLUT.TakeReference(
+    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  vtkSMPropertyHelper(this->VolumeLUT, "IndexedLookup", true).Set(1);
+  this->ColorMode = "None";
   this->updateBlockInfo(mgr);
   smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())
     this->Session = modelEntity.session().session();
+/*
+  vtkSMProxy* scalarBarProxy =
+    proxyManager->NewProxy("representations", "ScalarBarWidgetRepresentation");
+  scalarBarProxy->SetPrototype(true);
+  vtkSMPropertyHelper(scalarBarProxy,"LookupTable").Set(
+    this->EntityLUT.GetPointer());
+  scalarBarProxy->UpdateVTKObjects();
+  QString actual_regname = "my_entity_color_legend";
+  actual_regname.append(scalarBarProxy->GetXMLName());
 
+  proxyManager->RegisterProxy("scalar_bars",
+    actual_regname.toAscii().data(), scalarBarProxy);
+
+*/
 }
 
 void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
@@ -173,19 +195,17 @@ public:
 
     cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     vtkPVSMTKModelInformation* pvinfo = modelInfo->Info;
-    modelInfo->ent_annotations.clear();
-    modelInfo->vol_annotations.clear();
-    modelInfo->grp_annotations.clear();
+    modelInfo->ent_annotations->RemoveAllItems();
+    modelInfo->vol_annotations->RemoveAllItems();
+    modelInfo->grp_annotations->RemoveAllItems();
 
     std::map<smtk::common::UUID, unsigned int>::const_iterator it =
       pvinfo->GetUUID2BlockIdMap().begin();
     for(; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
       {
       this->Entity2Models[it->first] = model.entity();
-      const char* value[2] = {
-          it->first.toString().c_str()),
-          mgr->name(it->first).c_str()};
-      modelInfo->ent_annotations.push_back(vtkTuple<const char*, 2>(value));
+      modelInfo->ent_annotations->AddString( it->first.toString().c_str() );
+      modelInfo->ent_annotations->AddString( mgr->name(it->first).c_str() );
       }
 
     smtk::model::Groups modGroups =
@@ -193,10 +213,8 @@ public:
     for(smtk::model::Groups::iterator it = modGroups.begin();
        it != modGroups.end(); ++it)
       {
-      const char* value[2] = {
-          it->entity().toString().c_str()),
-          it->name().c_str()};
-      modelInfo->grp_annotations.push_back(vtkTuple<const char*, 2>(value));
+      modelInfo->grp_annotations->AddString( it->entity().toString().c_str() );
+      modelInfo->grp_annotations->AddString( it->name().c_str() );
       }
 
     smtk::model::CellEntities modVols =
@@ -206,10 +224,8 @@ public:
       {
       if((*it).isVolume())
         {
-        const char* value[2] = {
-            it->entity().toString().c_str()),
-            it->name().c_str()};
-        modelInfo->vol_annotations.push_back(vtkTuple<const char*, 2>(value));
+        modelInfo->vol_annotations->AddString( it->entity().toString().c_str() );
+        modelInfo->vol_annotations->AddString( it->name().c_str() );
         }
       }
   }
@@ -248,7 +264,7 @@ public:
           this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
   
           this->updateModelAnnotations(model);
-          this->updateColorTable(model);
+          this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::CELL);
 
@@ -321,7 +337,7 @@ public:
     this->ModelInfos[model.entity()].updateBlockInfo(
       this->ManagerProxy->modelManager());
     this->updateModelAnnotations(model);
-    this->updateColorTable(model);
+    this->resetColorTable(model);
 
     view->render();
   }
@@ -338,12 +354,16 @@ public:
 
   qInternal(pqServer* server): Server(server)
   {
+    // this->rebuildColorTable(256);
   }
 
   void rebuildColorTable(vtkIdType numOfColors)
   {
-    this->ModelColorLUT->Modified();
-    this->ModelColorLUT->SetNumberOfTableValues(numOfColors);
+    if(numOfColors < 1)
+      return;
+
+//    this->ModelColorLUT->Modified();
+    this->ModelColorLUT->SetNumberOfValues(numOfColors);
     this->ModelColorLUT->Build();
     // raw interleaved array with the layout [X1, R1, G1, B1, X2, R2, G2,
     // B2, ..., Xn, Rn, Gn, Bn]
@@ -355,30 +375,38 @@ public:
       this->ModelColorLUT->GetIndexedColor(i, rgba);
       this->LUTColors[i].GetData()[0] = rgba[0];
       this->LUTColors[i].GetData()[1] = rgba[1];
-      this->LUTColors[i].GetData()[2] = rgba[1];
+      this->LUTColors[i].GetData()[2] = rgba[2];
       }
   }
 
-  void updateColorTable(const smtk::model::EntityRef& model)
+  void resetColorTable(const smtk::model::EntityRef& model)
   {
     pqDataRepresentation* rep = this->ModelInfos[model.entity()].Representation;
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
 
     cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    this->resetColorTable(modelInfo);
+  }
 
-    this->rebuildColorTable(modelInfo->ent_annotations.size());
+  void resetColorTable(cmbSMTKModelInfo* modelInfo)
+  {
+    if(!modelInfo)
+      return;
+    pqDataRepresentation* rep = modelInfo->Representation;
+
+    this->rebuildColorTable(modelInfo->ent_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetEntityTagName(),
+      rep->getProxy(), modelInfo->EntityLUT,
       this->LUTColors, modelInfo->ent_annotations.GetPointer());
 
-    this->rebuildColorTable(modelInfo->grp_annotations.size());
+    this->rebuildColorTable(modelInfo->grp_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetGroupTagName(),
+      rep->getProxy(), modelInfo->GroupLUT,
       this->LUTColors, modelInfo->grp_annotations.GetPointer());
 
-    this->rebuildColorTable(modelInfo->vol_annotations.size());
+    this->rebuildColorTable(modelInfo->vol_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
-      rep->getProxy(), vtkModelMultiBlockSource::GetVolumeTagName(),
+      rep->getProxy(), modelInfo->VolumeLUT,
       this->LUTColors, modelInfo->vol_annotations.GetPointer());
   }
 
@@ -614,6 +642,94 @@ void pqCMBModelManager::supportedColorByModes(QStringList& types)
         << vtkModelMultiBlockSource::GetEntityTagName()
         << vtkModelMultiBlockSource::GetGroupTagName()
         << vtkModelMultiBlockSource::GetVolumeTagName();
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::updateColorTable(
+  pqDataRepresentation* rep,
+  const QMap<smtk::model::EntityRef, QColor >& colorEntities,
+  const QString& colorByMode)
+{
+  if(colorEntities.count() == 0)
+    return;
+  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  if(!modInfo)
+    return;
+  vtkSMProxy* lutProxy = NULL;
+  vtkStringList* annList = NULL;
+  if(colorByMode == vtkModelMultiBlockSource::GetVolumeTagName())
+    {
+    lutProxy = modInfo->VolumeLUT;
+    annList = modInfo->vol_annotations.GetPointer();
+    }
+  else if(colorByMode == vtkModelMultiBlockSource::GetGroupTagName())
+    {
+    lutProxy = modInfo->GroupLUT;
+    annList = modInfo->grp_annotations.GetPointer();
+    }
+  else if(colorByMode == vtkModelMultiBlockSource::GetEntityTagName())
+    {
+    lutProxy = modInfo->EntityLUT;
+    annList = modInfo->ent_annotations.GetPointer();
+    }
+  if(!lutProxy || !annList)
+    return;
+  // Assuming numbers in the LUT color is equal or greater than the
+  // number of annotations, and the order of mapping from annotation
+  // to the LUT is the same while switching colorby arrays.
+  vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
+  std::vector<double> rgbColors = indexedColors.GetDoubleArray();
+  int numColors = (int)rgbColors.size()/3;
+  if(numColors < 1)
+    return;
+  int idx;
+  bool changed = false;
+  foreach(smtk::model::EntityRef entref, colorEntities.keys())
+    {
+    idx = annList->GetIndex(entref.entity().toString().c_str());
+    if(idx >= 0 && (idx%2) == 0 && (idx/2) < numColors)
+      {
+      idx = 3*idx/2;
+
+      rgbColors[idx]   = colorEntities[entref].redF();
+      rgbColors[idx+1] = colorEntities[entref].greenF();
+      rgbColors[idx+2] = colorEntities[entref].blueF();
+      changed = true;
+      }
+    }
+
+  if (changed )
+    {
+    indexedColors.Set(&rgbColors[0],
+      static_cast<unsigned int>(rgbColors.size()));
+    }
+
+  lutProxy->UpdateVTKObjects();
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::colorRepresentationBy(
+  pqDataRepresentation* rep, const QString& colorByMode, bool force)
+{
+ // set rep colorByArray("...")
+  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  if(!modInfo || (modInfo->ColorMode == colorByMode && !force))
+    return;
+
+  vtkSMProxy* lutProxy = NULL;
+  if(colorByMode == vtkModelMultiBlockSource::GetVolumeTagName())
+    lutProxy = modInfo->VolumeLUT;
+  else if(colorByMode == vtkModelMultiBlockSource::GetGroupTagName())
+    lutProxy = modInfo->GroupLUT;
+  else if(colorByMode == vtkModelMultiBlockSource::GetEntityTagName())
+    lutProxy = modInfo->EntityLUT;
+
+  RepresentationHelperFunctions::CMB_COLOR_REP_BY_INDEXED_LUT(
+    rep->getProxy(), colorByMode == "None" ?
+     NULL : colorByMode.toStdString().c_str(), lutProxy,
+    vtkDataObject::FIELD /*, pqActiveObjects::instance().activeView()->getProxy()*/);
+  modInfo->ColorMode = colorByMode;
+  rep->renderViewEventually();
 }
 
 //----------------------------------------------------------------------------

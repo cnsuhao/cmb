@@ -1111,6 +1111,8 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
       }
     this->Internal->ColorByArrayBox->setCurrentIndex(currIdx);
     this->Internal->ColorByArrayBox->blockSignals(false);
+
+//    this->getThisCore()->modelManager()->updateColorTable(acitveRep);
     }
 
 }

@@ -5,16 +5,18 @@
 #ifndef __qtModelManager_h
 #define __qtModelManager_h
 
+#include "vtkSmartPointer.h"
+#include "vtkNew.h"
+#include "vtkStringList.h"
+#include "cmbSystemConfig.h"
+#include "smtk/PublicPointerDefs.h"
+#include "smtk/model/StringData.h"
+
 #include <QObject>
 #include <QStringList>
 #include <QPointer>
 #include <QColor>
-
-#include "vtkSmartPointer.h"
 #include <set>
-#include "cmbSystemConfig.h"
-#include "smtk/PublicPointerDefs.h"
-#include "smtk/model/StringData.h"
 
 namespace smtk
 {
@@ -46,14 +48,19 @@ struct cmbSMTKModelInfo
 
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
     vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
+    vtkSmartPointer<vtkSMProxy> EntityLUT;
+    vtkSmartPointer<vtkSMProxy> GroupLUT;
+    vtkSmartPointer<vtkSMProxy> VolumeLUT;
+    QString ColorMode;
+
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
     QPointer<pqPipelineSource> Source;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
     smtk::model::SessionPtr Session;
-    std::vector<vtkTuple<const char*, 2> > ent_annotations;
-    std::vector<vtkTuple<const char*, 2> > vol_annotations;
-    std::vector<vtkTuple<const char*, 2> > grp_annotations;
+    vtkNew<vtkStringList> ent_annotations;
+    vtkNew<vtkStringList> vol_annotations;
+    vtkNew<vtkStringList> grp_annotations;
 
   };
 
@@ -70,6 +77,11 @@ public:
     const std::string& bridgeName = std::string());
 
   void supportedColorByModes(QStringList& types);
+  void updateColorTable(pqDataRepresentation* rep,
+    const QMap<smtk::model::EntityRef, QColor >& colorEntities,
+    const QString& colorByMode);
+  void colorRepresentationBy(
+    pqDataRepresentation* rep, const QString& colorByMode, bool force=false);
 
   cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
