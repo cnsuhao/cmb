@@ -5,6 +5,8 @@ project (cmbAppCommon)
 set (dynamicHeaders)
 
 find_package(Remus REQUIRED)
+find_package(SMTK REQUIRED)
+
 
 add_definitions("-DCMB_ENABLE_PYTHON")
 
@@ -237,8 +239,11 @@ target_include_directories(cmbAppCommon
     ${cmbAppCommon_SOURCE_DIR}/Scene/Widgets
     ${vtkCMBMeshing_INCLUDE_DIRS}
     ${REMUS_INCLUDE_DIRS}
+    ${SMTK_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
   PRIVATE
     ${VXL_RPL_INCLUDE_DIR}
+
   )
 
 
