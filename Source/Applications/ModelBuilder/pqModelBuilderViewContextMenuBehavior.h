@@ -67,6 +67,7 @@ public:
     const QList<unsigned int>& colorBlocks, const QColor&);
   virtual void onColorByModeChanged(const QString &);
   virtual void updateColorForEntities(pqDataRepresentation* rep,
+    const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);
 
 signals:
@@ -139,7 +140,6 @@ protected:
   QList<unsigned int> PickedBlocks;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
   pqMultiBlockInspectorPanel* m_DataInspector;
-  QString m_ColorByMode;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

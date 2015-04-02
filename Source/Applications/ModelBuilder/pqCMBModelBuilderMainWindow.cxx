@@ -54,6 +54,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkProcessModule.h"
 #include "vtkPVGeneralSettings.h"
 #include "vtkSMPropertyHelper.h"
+#include "vtkSMPropertyGroup.h"
 #include "vtkSMDataSourceProxy.h"
 #include "vtkSMIdTypeVectorProperty.h"
 #include "vtkSMProxyManager.h"
@@ -965,8 +966,27 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
       if(rep)
         {
+        // hiding color related components
+        for (size_t index = 0; index < rep->getProxy()->GetNumberOfPropertyGroups(); index++)
+          {
+          int group_tag  = static_cast<int>(index);
+          vtkSMPropertyGroup *group = rep->getProxy()->GetPropertyGroup(index);
+          if(!group)
+            continue;
+          QString grplabel = group->GetXMLLabel();
+          if (grplabel == "Coloring" || grplabel == "Scalar Coloring")
+            {
+//            for (size_t j = 0; j < group->GetNumberOfProperties(); j++)
+//              {
+//              group->GetProperty(static_cast<unsigned int>(j))->SetPanelVisibility("never");
+//              }
+            // hide the group.
+            group->SetPanelVisibility("never");
+            }
+          }
         //this->displayPanel()->setVisible(true);
         pqProxyWidget* pwidget = this->displayPanel(rep->getProxy());
+
         dw = panelManager->createDockWidget(this,
           pwidget, qtCMBPanelsManager::type2String(enType),
           Qt::RightDockWidgetArea, lastdw);
@@ -1111,6 +1131,8 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
       }
     this->Internal->ColorByArrayBox->setCurrentIndex(currIdx);
     this->Internal->ColorByArrayBox->blockSignals(false);
+
+//    this->getThisCore()->modelManager()->updateColorTable(acitveRep);
     }
 
 }

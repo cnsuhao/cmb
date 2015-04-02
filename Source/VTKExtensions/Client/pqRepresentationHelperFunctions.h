@@ -34,6 +34,7 @@
 #include "vtkSMStringVectorProperty.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMTransferFunctionManager.h"
+#include "vtkSMTransferFunctionProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkStringList.h"
 #include "vtkTuple.h"
@@ -232,55 +233,111 @@ static bool CMB_COLOR_REP_BY_ARRAY(
   return res;
 }
 
-static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
-    vtkSMProxy* reproxy, const char* arrayname,
-    const std::vector<vtkTuple<double, 3> > &rgbColors,
-    vtkStringList* new_annotations)
-  //  std::vector<vtkTuple<const char*, 2> > new_annotations)
+static bool CMB_COLOR_REP_BY_INDEXED_LUT(
+    vtkSMProxy* reproxy, const char* arrayname, vtkSMProxy* lutProxy, int attribute_type
+    /*, vtkSMProxy* view */ )
 {
-  // Now, setup transfer functions.
-  vtkNew<vtkSMTransferFunctionManager> mgr;
-  if (vtkSMProperty* lutProperty = reproxy->GetProperty("LookupTable"))
+
+  vtkSMProperty* colorArray = reproxy->GetProperty("ColorArrayName");
+  if (!colorArray)
     {
-    vtkSMProxy* lutProxy =
-      mgr->GetColorTransferFunction(arrayname, reproxy->GetSessionProxyManager());
-/*
-    vtkSMPropertyHelper(lutProperty).Set(lutProxy);
-
-    // Get the array information for the color array to determine transfer function properties
-    vtkPVArrayInformation* colorArrayInfo =
-      vtkSMPVRepresentationProxy::GetArrayInformationForColorArray(reproxy);
-    if (colorArrayInfo)
-      {
-      if (colorArrayInfo->GetDataType() == VTK_STRING)
-        {
-*/
-        vtkSMPropertyHelper(lutProxy, "IndexedLookup", true).Set(1);
-
-        if (new_annotations->GetLength() > 0)
-          {
-          vtkSMStringVectorProperty* svp = vtkSMStringVectorProperty::SafeDownCast(
-            lutProxy->GetProperty("Annotations"));
-          if (svp)
-            {
-            svp->SetElements(new_annotations);
-//            svp->SetElements(new_annotations[0].GetData(),
-//              static_cast<unsigned int>(new_annotations.size()*2));
-            }
-          }
-
-        if (rgbColors.size() > 0)
-          {
-          vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
-          indexedColors.Set(rgbColors[0].GetData(),
-            static_cast<unsigned int>(rgbColors.size() * 3));
-          }
-
-        lutProxy->UpdateVTKObjects();
-//        }
-//      }
+    return false;
     }
 
+  vtkSMPropertyHelper colorArrayHelper(colorArray);
+  colorArrayHelper.SetInputArrayToProcess(attribute_type, arrayname);
+
+  if (arrayname == NULL || arrayname[0] == '\0' || !lutProxy)
+    {
+    vtkSMPropertyHelper(reproxy, "LookupTable", true).RemoveAllValues();
+    vtkSMPropertyHelper(reproxy, "ScalarOpacityFunction", true).RemoveAllValues();
+    reproxy->UpdateVTKObjects();
+    return true;
+    }
+
+  // Now, setup transfer functions.
+  if (vtkSMProperty* lutProperty = reproxy->GetProperty("LookupTable"))
+    {
+//    vtkSMPropertyHelper(lutProperty).RemoveAllValues();
+//    reproxy->UpdateVTKObjects();
+    vtkSMPropertyHelper(lutProperty).Set(lutProxy);
+    reproxy->UpdateVTKObjects();
+
+/*
+    vtkSMPropertyHelper lutPropertyHelper(lutProperty);
+      if (lutPropertyHelper.GetNumberOfElements() > 0 &&
+        lutPropertyHelper.GetAsProxy(0) != NULL)
+      {
+      if (vtkSMProxy* sbProxy = vtkSMTransferFunctionProxy::FindScalarBarRepresentation(
+          lutPropertyHelper.GetAsProxy(), view))
+        {
+        vtkSMPropertyHelper(sbProxy, "LookupTable", true).RemoveAllValues();
+        sbProxy->UpdateVTKObjects();
+        vtkSMPropertyHelper(sbProxy, "LookupTable", true).Set(lutProxy);
+        sbProxy->UpdateVTKObjects();
+        }
+
+      }
+*/
+    }
+  return true;
+}
+
+
+static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
+    vtkSMProxy* reproxy, vtkSMProxy* lutProxy,
+    const std::vector<vtkTuple<double, 3> > &rgbColors,
+    vtkStringList* new_annotations)
+//    const std::vector<vtkTuple<const char*, 2> >& new_annotations)
+{
+  // Now, setup transfer functions.
+  // vtkNew<vtkSMTransferFunctionManager> mgr;
+  if (lutProxy && reproxy->GetProperty("LookupTable"))
+    {
+//    vtkSMProxy* lutProxy =
+//      mgr->GetColorTransferFunction(arrayname, reproxy->GetSessionProxyManager());
+    vtkSMPropertyHelper(lutProxy, "IndexedLookup", true).Set(1);
+
+    if (new_annotations->GetLength() > 0)
+      {
+      vtkSMStringVectorProperty* svp = vtkSMStringVectorProperty::SafeDownCast(
+        lutProxy->GetProperty("Annotations"));
+      if (svp)
+        {
+        svp->SetElements(new_annotations);
+//        svp->SetElements(new_annotations[0].GetData(),
+//          static_cast<unsigned int>(new_annotations.size()*2));
+        }
+
+      }
+    if (rgbColors.size() > 0)
+      {
+      vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
+      indexedColors.Set(rgbColors[0].GetData(),
+        static_cast<unsigned int>(rgbColors.size() * 3));
+      }
+
+    lutProxy->UpdateVTKObjects();
+    }
+
+}
+
+
+static void MODELBUILDER_SYNCUP_DISPLAY_LUT(
+    const char* arrayname, vtkSMProxy* lutProxy)
+{
+    // we also want to update the IndexedColor of LUT registered with transferfunction manager.
+    vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
+    std::vector<double> rgbColors = indexedColors.GetDoubleArray();
+    vtkNew<vtkSMTransferFunctionManager> mgr;
+    vtkSMProxy* displayLUTProxy =
+      mgr->GetColorTransferFunction(arrayname, lutProxy->GetSessionProxyManager());
+    if(displayLUTProxy)
+      {
+      vtkSMPropertyHelper(displayLUTProxy, "IndexedColors").Set(&rgbColors[0],
+        static_cast<unsigned int>(rgbColors.size()));
+      displayLUTProxy->UpdateVTKObjects();
+      }
 }
 
 }

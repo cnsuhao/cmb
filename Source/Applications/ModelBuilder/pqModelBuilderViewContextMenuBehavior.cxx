@@ -183,7 +183,6 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
   this->Menu << pqSetName("PipelineContextMenu");
   this->m_DataInspector = new pqMultiBlockInspectorPanel(NULL);
   this->m_DataInspector->setVisible(false);
-  this->m_ColorByMode = "None";
 }
 
 //-----------------------------------------------------------------------------
@@ -277,13 +276,6 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
 {
   if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
     return;
-  if(this->m_ColorByMode == colorMode)
-    return;
-  QStringList list;
-  this->m_ModelPanel->modelManager()->supportedColorByModes(list);
-  if(!list.contains(colorMode))
-    return;
-  this->m_ColorByMode = colorMode;
 
   // active rep
   pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
@@ -292,6 +284,12 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
     return;
   cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
+    return;
+  if(minfo->ColorMode == colorMode)
+    return;
+  QStringList list;
+  this->m_ModelPanel->modelManager()->supportedColorByModes(list);
+  if(!list.contains(colorMode))
     return;
 
   smtk::common::UUID modelId = minfo->Info->GetModelUUID();
@@ -322,7 +320,7 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
 
   QColor color;
   QMap<smtk::model::EntityRef, QColor > colorEntities;
-  if(this->m_ColorByMode ==
+  if(colorMode ==
     vtkModelMultiBlockSource::GetVolumeTagName())
     {
     // if colorby-volume, get volumes' color,
@@ -337,7 +335,7 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
         }
       }
     }
- else if( this->m_ColorByMode ==
+ else if( colorMode ==
       vtkModelMultiBlockSource::GetGroupTagName())
    {
     // if colorby-group, get groups' color,
@@ -352,7 +350,7 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
         }
       }
     }
-  else if (this->m_ColorByMode ==
+  else if (colorMode ==
       vtkModelMultiBlockSource::GetEntityTagName())
     {
     // if colorby-entity, get entities' color, 
@@ -368,34 +366,33 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
       }
     }
 
-if(colorEntities.size() > 0)
-  this->updateColorForEntities(activeRep, colorEntities);
+  if(colorEntities.size() > 0)
+    {
+    this->updateColorForEntities(activeRep, colorMode, colorEntities);
+    this->m_ModelPanel->modelManager()->updateColorTable(
+      activeRep, colorEntities, colorMode);
+    }
+  this->m_ModelPanel->modelManager()->colorRepresentationBy(
+    activeRep, colorMode);
 
- // set rep colorByArray("...")
- RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-   activeRep->getProxy(), this->m_ColorByMode == "None" ?
-     NULL : this->m_ColorByMode.toStdString().c_str(),
-   vtkDataObject::FIELD);
-
-  activeRep->renderViewEventually();
 }
 
 //----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(
-    pqDataRepresentation* rep,
+    pqDataRepresentation* rep, const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities)
 {
-  if(this->m_ColorByMode == "None")
+  if(colorMode == "None")
     return;
 
   foreach(const smtk::model::EntityRef& entref, colorEntities.keys())
     {
     QSet<unsigned int> blockIds;
-    if((entref.isVolume() && this->m_ColorByMode ==
+    if((entref.isVolume() && colorMode ==
       vtkModelMultiBlockSource::GetVolumeTagName()) ||
-      (entref.isGroup() && this->m_ColorByMode ==
+      (entref.isGroup() && colorMode ==
       vtkModelMultiBlockSource::GetGroupTagName()) ||
-      (entref.hasIntegerProperty("block_index") && this->m_ColorByMode ==
+      (entref.hasIntegerProperty("block_index") && colorMode ==
       vtkModelMultiBlockSource::GetEntityTagName()))
       {
       _internal_AccumulateChildGeometricEntities(blockIds, entref);

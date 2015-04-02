@@ -1071,8 +1071,13 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   foreach(cmbSMTKModelInfo* minfo, colorEntities.keys())
     {
     if(minfo->Representation && colorEntities[minfo].count())
+      {
       this->Internal->ViewContextBehavior->updateColorForEntities(
-        minfo->Representation, colorEntities[minfo]);
+        minfo->Representation, minfo->ColorMode, colorEntities[minfo]);
+      this->Internal->smtkModelManager->updateColorTable(
+        minfo->Representation, colorEntities[minfo], minfo->ColorMode);
+      minfo->Representation->renderViewEventually();
+      }
     }
 
   this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
