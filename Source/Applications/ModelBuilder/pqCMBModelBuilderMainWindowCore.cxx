@@ -1077,8 +1077,6 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       this->Internal->smtkModelManager->updateColorTable(
         minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
-//      this->Internal->smtkModelManager->colorRepresentationBy(
-//        minfo->Representation, minfo->ColorMode, true);
       }
     }
 

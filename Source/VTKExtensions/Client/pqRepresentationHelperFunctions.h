@@ -262,20 +262,8 @@ static bool CMB_COLOR_REP_BY_INDEXED_LUT(
 //    reproxy->UpdateVTKObjects();
     vtkSMPropertyHelper(lutProperty).Set(lutProxy);
     reproxy->UpdateVTKObjects();
-/*
-    // we also want to update the IndexedColor of LUT registered with transferfunction manager.
-    vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
-    std::vector<double> rgbColors = indexedColors.GetDoubleArray();
-    vtkNew<vtkSMTransferFunctionManager> mgr;
-    vtkSMProxy* displayLUTProxy =
-      mgr->GetColorTransferFunction(arrayname, reproxy->GetSessionProxyManager());
-    if(displayLUTProxy)
-      {
-      vtkSMPropertyHelper(displayLUTProxy, "IndexedColors").Set(&rgbColors[0],
-        static_cast<unsigned int>(rgbColors.size()));
-      displayLUTProxy->UpdateVTKObjects();
-      }
 
+/*
     vtkSMPropertyHelper lutPropertyHelper(lutProperty);
       if (lutPropertyHelper.GetNumberOfElements() > 0 &&
         lutPropertyHelper.GetAsProxy(0) != NULL)
@@ -332,6 +320,24 @@ static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
     lutProxy->UpdateVTKObjects();
     }
 
+}
+
+
+static void MODELBUILDER_SYNCUP_DISPLAY_LUT(
+    const char* arrayname, vtkSMProxy* lutProxy)
+{
+    // we also want to update the IndexedColor of LUT registered with transferfunction manager.
+    vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
+    std::vector<double> rgbColors = indexedColors.GetDoubleArray();
+    vtkNew<vtkSMTransferFunctionManager> mgr;
+    vtkSMProxy* displayLUTProxy =
+      mgr->GetColorTransferFunction(arrayname, lutProxy->GetSessionProxyManager());
+    if(displayLUTProxy)
+      {
+      vtkSMPropertyHelper(displayLUTProxy, "IndexedColors").Set(&rgbColors[0],
+        static_cast<unsigned int>(rgbColors.size()));
+      displayLUTProxy->UpdateVTKObjects();
+      }
 }
 
 }

@@ -266,7 +266,7 @@ public:
           this->updateModelAnnotations(model);
           this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-            rep->getProxy(), NULL, vtkDataObject::CELL);
+            rep->getProxy(), NULL, vtkDataObject::FIELD);
 
           return true;         
           }
@@ -392,22 +392,29 @@ public:
   {
     if(!modelInfo)
       return;
+
     pqDataRepresentation* rep = modelInfo->Representation;
 
     this->rebuildColorTable(modelInfo->ent_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
       rep->getProxy(), modelInfo->EntityLUT,
       this->LUTColors, modelInfo->ent_annotations.GetPointer());
+//    RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+//      vtkModelMultiBlockSource::GetEntityTagName(), modelInfo->EntityLUT);
 
     this->rebuildColorTable(modelInfo->grp_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
       rep->getProxy(), modelInfo->GroupLUT,
       this->LUTColors, modelInfo->grp_annotations.GetPointer());
+//    RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+//      vtkModelMultiBlockSource::GetGroupTagName(), modelInfo->GroupLUT);
 
     this->rebuildColorTable(modelInfo->vol_annotations->GetLength()/2);
     RepresentationHelperFunctions::MODELBUILDER_SETUP_CATEGORICAL_CTF(
       rep->getProxy(), modelInfo->VolumeLUT,
       this->LUTColors, modelInfo->vol_annotations.GetPointer());
+//    RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+//      vtkModelMultiBlockSource::GetVolumeTagName(), modelInfo->VolumeLUT);
   }
 
 };
@@ -702,18 +709,37 @@ void pqCMBModelManager::updateColorTable(
     {
     indexedColors.Set(&rgbColors[0],
       static_cast<unsigned int>(rgbColors.size()));
+    lutProxy->UpdateVTKObjects();
+//    RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+//      colorByMode.toStdString().c_str(), lutProxy);
     }
 
-  lutProxy->UpdateVTKObjects();
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::syncDisplayColorTable(
+  pqDataRepresentation* rep)
+{
+  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  if(!modInfo)
+    return;
+/*
+  RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+    vtkModelMultiBlockSource::GetEntityTagName(), modInfo->EntityLUT);
+  RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+    vtkModelMultiBlockSource::GetGroupTagName(), modInfo->GroupLUT);
+  RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+    vtkModelMultiBlockSource::GetVolumeTagName(), modInfo->VolumeLUT);
+*/
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelManager::colorRepresentationBy(
-  pqDataRepresentation* rep, const QString& colorByMode, bool force)
+  pqDataRepresentation* rep, const QString& colorByMode)
 {
  // set rep colorByArray("...")
   cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
-  if(!modInfo || (modInfo->ColorMode == colorByMode && !force))
+  if(!modInfo || modInfo->ColorMode == colorByMode)
     return;
 
   vtkSMProxy* lutProxy = NULL;
@@ -729,6 +755,10 @@ void pqCMBModelManager::colorRepresentationBy(
      NULL : colorByMode.toStdString().c_str(), lutProxy,
     vtkDataObject::FIELD /*, pqActiveObjects::instance().activeView()->getProxy()*/);
   modInfo->ColorMode = colorByMode;
+//  if(colorByMode != "None")
+//    RepresentationHelperFunctions::MODELBUILDER_SYNCUP_DISPLAY_LUT(
+//      colorByMode.toStdString().c_str(), lutProxy);
+
   rep->renderViewEventually();
 }
 

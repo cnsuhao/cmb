@@ -81,7 +81,8 @@ public:
     const QMap<smtk::model::EntityRef, QColor >& colorEntities,
     const QString& colorByMode);
   void colorRepresentationBy(
-    pqDataRepresentation* rep, const QString& colorByMode, bool force=false);
+    pqDataRepresentation* rep, const QString& colorByMode);
+  void syncDisplayColorTable(pqDataRepresentation* rep);
 
   cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
