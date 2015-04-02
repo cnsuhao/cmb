@@ -209,9 +209,11 @@ build_paraview_client(ModelBuilder
   APPLICATION_ICON   "${CMAKE_CURRENT_SOURCE_DIR}/cmbappico.ico"
   SOURCES ${ModelBuilder_SOURCE_FILES}
   COMPRESSED_HELP_FILE "${CMAKE_CURRENT_BINARY_DIR}/../Help/cmbsuite.qch"
-  OPTIONAL_PLUGINS smtkCGMSession_Plugin
-                   smtkDiscreteSession_Plugin
-                   smtkExodusSession_Plugin
+  OPTIONAL_PLUGINS
+        smtkCGMSession_Plugin
+        smtkDiscreteSession_Plugin
+        smtkExodusSession_Plugin
+        smtkRemusMeshOperator_Plugin
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
   )
