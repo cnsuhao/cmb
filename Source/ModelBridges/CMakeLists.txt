@@ -45,6 +45,7 @@ target_include_directories(ModelBridge_Plugin
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${SMTK_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
   )
 
 #now that the target has been created we can do the header generation

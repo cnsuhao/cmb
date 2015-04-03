@@ -42,6 +42,7 @@ class pqScalarBarWidget;
 class pqCMBSceneTree;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
+class pqSMTKMeshPanel;
 
 class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 {
@@ -79,6 +80,10 @@ public:
   // Description:
   // Get the internal smtk dockable model panel;
   pqSMTKModelPanel* modelPanel();
+
+  // Description:
+  // Get the internal smtk dockable mesh panel;
+  pqSMTKMeshPanel* meshPanel();
 
   // Descirption:
   // override the base class to give an editor by default
@@ -158,7 +163,7 @@ public slots:
     pqPipelineSource* source);
   void processMapInfo(const QString& filename,
     pqPipelineSource* source);
-  
+
   void loadJSONFile(const QString& filename);
   bool processModelInfo(const smtk::model::OperatorResult& result,
                         const smtk::model::SessionRef& sref,

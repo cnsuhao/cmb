@@ -14,9 +14,8 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 # Add Qt UI files here
 set(UI_FORMS
   pqCMBImportShapefile.ui
-  qtCMBLegacyMesherDialog.ui
-  qtVolumeMesherSelector.ui
   pqCMBModelBuilderOptions.ui
+  qtMesherSelector.ui
   SimBuilder/qtSimBuilderExportADHDialog.ui
   SimBuilder/qtSimBuilderExportDialog.ui
   SimBuilder/qtSimBuilderEMSExportDialog.ui
@@ -171,23 +170,22 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmbModelBuilderConfig.h.in
   ESCAPE_QUOTES)
 
 set(ModelBuilder_SOURCE_FILES
-  pqCMBLegacyMesherDialog.cxx
   pqCMBModelBuilderMainWindow.cxx
   pqCMBModelBuilderMainWindowCore.cxx
   pqModelBuilderViewContextMenuBehavior.cxx
   pqModelBuilderViewContextMenuBehavior.h
-  qtRemusVolumeMesherSubmitter.h
-  qtRemusVolumeMesherSubmitter.cxx
-  qtRemusVolumeMesherSelector.h
-  qtRemusVolumeMesherSelector.cxx
   pqCMBModelBuilderOptions.cxx
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h
   pqCMBImportShapefile.cxx
+  pqSMTKMeshPanel.h
+  pqSMTKMeshPanel.cxx
   pqSMTKModelPanel.h
   pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
+  qtRemusMesherSelector.cxx
+  qtRemusMesherSelector.h
 
   ${RCS_SOURCES}
   ${UI_BUILT_SOURCES}
@@ -211,9 +209,11 @@ build_paraview_client(ModelBuilder
   APPLICATION_ICON   "${CMAKE_CURRENT_SOURCE_DIR}/cmbappico.ico"
   SOURCES ${ModelBuilder_SOURCE_FILES}
   COMPRESSED_HELP_FILE "${CMAKE_CURRENT_BINARY_DIR}/../Help/cmbsuite.qch"
-  OPTIONAL_PLUGINS smtkCGMSession_Plugin
-                   smtkDiscreteSession_Plugin
-                   smtkExodusSession_Plugin
+  OPTIONAL_PLUGINS
+        smtkCGMSession_Plugin
+        smtkDiscreteSession_Plugin
+        smtkExodusSession_Plugin
+        smtkRemusMeshOperator_Plugin
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
   )

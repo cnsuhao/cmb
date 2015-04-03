@@ -70,6 +70,8 @@ class pqSettings;
 class qtCMBApplicationOptions;
 class qtCMBApplicationOptionsDialog;
 
+class qtCMBMeshingMonitor;
+
 class QAction;
 class QDockWidget;
 class QIcon;
@@ -210,9 +212,9 @@ signals:
   /** \todo Hide these private implementation details */
   void postAccept();
 
-  //We should only expect a single job to be submitted at a time
-  //so this signal will always refer to the last job submitted
-  void remusCompletedNormally(remus::proto::JobResult);
+  //returns when a job has finished
+  void remusCompletedNormally(remus::proto::Job);
+
   void enableExternalProcesses(bool);
 
   void cameraManipulationModeChangedTo2D();
@@ -321,9 +323,6 @@ public slots:
   void requestRender();
   bool checkForPreviewDialog();
 
-  // Setup a status bar for spawned processes
-  virtual void setupProcessBar(QStatusBar* toolbar);
-
   // Setup a area for displaying mouse position
   void setupMousePositionDisplay(QStatusBar* toolbar);
 
@@ -364,18 +363,7 @@ public slots:
 
   /// launches an instance of the remus server on the machine that
   /// the current paraview server is located
-  virtual void launchLocalRemusServer();
-
-  /// submit a 3d surface job to the remus server
-  virtual void submitRemusSurfaceJob(const QString& command);
-
-  /// submit a 3d volume job to the remus server
-  /// returns the expected out file name for the job
-  virtual QString submitRemusVolumeJob(const FileBasedMeshingParameters& parameters);
-
-  // monitor an actual remus job that has already been submitted
-  // this treats the job, as the current single
-  virtual bool monitorRemusJob(const remus::proto::Job& j);
+  virtual void launchLocalMeshingService();
 
   //return the remus servers endpoint information as string
   //the string form will be tcp://ip.address:port
@@ -383,15 +371,14 @@ public slots:
   //we lose out on the ability to use inproc connection type.
   //Requires that launchLocalRemusServer has been called beforehand.
   //If no server has been created will return std::string();
-  QString remusServerEndpoint() const;
+  QString meshingServiceEndpoint() const;
 
-  // Description:
-  // Checks the status of the progress and updates the progress bar
-  virtual void checkProcess();
-
-  // Description:
-  // Kill external process
-  virtual void killProcess();
+  //return the remus monitor so that applications can state what
+  //jobs to monitor, and than connect slots to the signals that
+  //the monitor emits.
+  //Note Returns NULL if we haven't called launchLocalRemusServer
+  //or a remote remus server hasn't been set
+  QPointer<qtCMBMeshingMonitor> meshServiceMonitor();
 
   virtual void closeData();
   virtual void saveData(const QString& vtkNotUsed(filename)){}

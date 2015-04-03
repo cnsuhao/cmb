@@ -79,6 +79,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBModelBuilderOptions.h"
 #include "pqCMBLoadDataReaction.h"
 #include "pqCMBFileExtensions.h"
+#include "pqSMTKMeshPanel.h"
 #include "pqSMTKModelPanel.h"
 #include "pqActiveObjects.h"
 #include "pqCMBModelManager.h"
@@ -178,6 +179,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqCMBModelBuilderOptions> AppOptions;
 
     QPointer<pqSMTKModelPanel> ModelDock;
+    QPointer<pqSMTKMeshPanel> MeshDock;
     QPointer<pqCMBModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
 };
@@ -598,8 +600,8 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
   if(this->Internal->ModelDock)
     {
     this->Internal->ModelDock->clearUI();
-//     this->Internal->ModelDock = NULL;
     }
+
   if(this->Internal->smtkModelManager)
     {
     this->Internal->smtkModelManager->clear();
@@ -1115,6 +1117,19 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
       this->Internal->ModelDock);
     }
   return this->Internal->ModelDock;
+}
+
+//----------------------------------------------------------------------------
+pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
+{
+  if(!this->Internal->MeshDock)
+    {
+    this->Internal->MeshDock = new pqSMTKMeshPanel(
+      this->Internal->smtkModelManager,
+      this->meshServiceMonitor(),
+      this->parentWidget());
+    }
+  return this->Internal->MeshDock;
 }
 
 //-----------------------------------------------------------------------------

@@ -565,6 +565,19 @@ QList<cmbSMTKModelInfo*>  pqCMBModelManager::selectedModels()
 }
 
 //----------------------------------------------------------------------------
+QList<cmbSMTKModelInfo*>  pqCMBModelManager::allModels()
+{
+  QList<cmbSMTKModelInfo*> selModels;
+  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
+      mit != this->Internal->ModelInfos.end(); ++mit)
+    {
+    selModels.append(&mit->second);
+    }
+  return selModels;
+}
+
+
+//----------------------------------------------------------------------------
 void pqCMBModelManager::clearModelSelections()
 {
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();

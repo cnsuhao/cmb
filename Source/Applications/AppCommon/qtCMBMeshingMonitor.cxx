@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    qtCMBMeshingClient.cxx
+  Module:    qtCMBMeshingMonitor.cxx
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,10 +12,9 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "qtCMBMeshingClient.h"
+#include "qtCMBMeshingMonitor.h"
 #include <QtGui>
 #include <QtConcurrentRun>
-
 
 #include "pqSMAdaptor.h"
 #include "vtkProcessModule.h"
@@ -25,6 +24,8 @@
 
 #include <remus/client/Client.h>
 #include <remus/client/ServerConnection.h>
+
+#include <algorithm>
 
 namespace{
 
@@ -55,13 +56,34 @@ remus::common::MeshIOType make_invalid_mesh_type()
   return remus::common::make_MeshIOType( remus::meshtypes::MeshTypeBase(),
                                          remus::meshtypes::MeshTypeBase() );
 }
+template<typename T>
+bool sorted_insert(std::vector<T>& v, const T& elem)
+{
+  typedef typename std::vector<T>::iterator iter;
+  iter item = std::lower_bound( v.begin(), v.end(), elem );
+  if(item == v.end() || *item != elem )
+    { //insert the element if it doesn't already exist
+    v.insert( item, elem );
+    }
+  return true;
+}
+
+template<typename T>
+typename std::vector< T >::iterator
+erase_remove(std::vector<T>& v, const T& elem)
+{
+  return v.erase( std::remove(  v.begin(), v.end(), elem ), v.end() );
+}
 
 }
 
 //-----------------------------------------------------------------------------
-qtCMBMeshingClient::qtCMBMeshingClient( const remus::client::ServerConnection& conn ):
-  CurrentJob( boost::uuids::uuid(), make_invalid_mesh_type() ),
-  LastStatusMessage(boost::uuids::uuid(), remus::INVALID_STATUS)
+qtCMBMeshingMonitor::qtCMBMeshingMonitor( const remus::client::ServerConnection& conn ):
+  RemusClient(NULL),
+  LastestStatusMessages(),
+  LocalServerProxy(NULL),
+  MeshingServerProxy(NULL),
+  Timer()
 {
 
   QFuture<bool> connected = QtConcurrent::run(createRemusClient,
@@ -72,14 +94,18 @@ qtCMBMeshingClient::qtCMBMeshingClient( const remus::client::ServerConnection& c
     throw std::exception();
     }
 
-  this->LocalServerProxy = NULL;
-  this->MeshingServerProxy = NULL;
+  QObject::connect(&this->Timer, SIGNAL(timeout()),
+                   this, SLOT(updateJobStates()) );
+  this->Timer.start(250);
 }
 
 //-----------------------------------------------------------------------------
-qtCMBMeshingClient::qtCMBMeshingClient(const LocalMeshServer& localProcessHandle):
-  CurrentJob( boost::uuids::uuid(), make_invalid_mesh_type() ),
-  LastStatusMessage( boost::uuids::uuid(), remus::INVALID_STATUS)
+qtCMBMeshingMonitor::qtCMBMeshingMonitor(const LocalMeshServer& localProcessHandle):
+  RemusClient(NULL),
+  LastestStatusMessages(),
+  LocalServerProxy(NULL),
+  MeshingServerProxy(NULL),
+  Timer()
 {
   QFuture<bool> connected = QtConcurrent::run(createRemusClient,
                                               &this->RemusClient,
@@ -90,12 +116,14 @@ qtCMBMeshingClient::qtCMBMeshingClient(const LocalMeshServer& localProcessHandle
     }
 
   this->LocalServerProxy = localProcessHandle.LocalServerProxy;
-  this->MeshingServerProxy = NULL;
+
+  QObject::connect(&this->Timer, SIGNAL(timeout()),
+                   this, SLOT(updateJobStates()) );
+  this->Timer.start(250);
 }
 
-
 //-----------------------------------------------------------------------------
-qtCMBMeshingClient::~qtCMBMeshingClient()
+qtCMBMeshingMonitor::~qtCMBMeshingMonitor()
 {
   if(this->RemusClient)
     {
@@ -114,101 +142,100 @@ qtCMBMeshingClient::~qtCMBMeshingClient()
     }
 }
 
-
 //-----------------------------------------------------------------------------
-bool qtCMBMeshingClient::isConnected() const
+bool qtCMBMeshingMonitor::isConnected() const
 {
-
   return (this->RemusClient);
 }
 
 //-----------------------------------------------------------------------------
-remus::proto::Job qtCMBMeshingClient::submitJob(const std::string &jobCommand,
-                                                remus::common::MeshIOType mType)
+bool qtCMBMeshingMonitor::monitorJob(const remus::proto::Job& job)
 {
-
-  QFuture<remus::proto::JobRequirementsSet> futureCanMesh =
-      QtConcurrent::run(this->RemusClient,
-            &remus::client::Client::retrieveRequirements, mType);
-
-  remus::proto::Job submittedJob = make_invalidJob();
-
-  if(futureCanMesh.result().size() > 0)
-    {
-    //just take the first, I only expect one worker to match currently
-    remus::proto::JobSubmission sub((*futureCanMesh.result().begin()));
-
-    sub["data"]=remus::proto::make_JobContent( jobCommand );
-
-    submittedJob = this->RemusClient->submitJob(sub);
-    }
-  return submittedJob;
-}
-
-//-----------------------------------------------------------------------------
-bool qtCMBMeshingClient::monitorJob(const remus::proto::Job& job)
-{
-  this->CurrentJob = job;
   //fetch status for the job, so we have the initial status
-  this->LastStatusMessage = this->RemusClient->jobStatus(this->CurrentJob);
-  return true;
+  MeshingJobState state(job, this->RemusClient->jobStatus(job) );
+  return sorted_insert(this->LastestStatusMessages, state);
 }
 
 //-----------------------------------------------------------------------------
-remus::proto::JobStatus qtCMBMeshingClient::jobProgress(bool& newStatus)
+bool qtCMBMeshingMonitor::terminateJob(const remus::proto::Job& job)
 {
+  remus::proto::JobStatus recvStatus = this->RemusClient->jobStatus(job);
+  if( recvStatus.failed() )
+    {
+    MeshingJobState state(job, recvStatus );
+    erase_remove(this->LastestStatusMessages, state);
+
+    emit this->jobStatus(job, recvStatus);
+    emit this->jobFailed(job, recvStatus);
+    return true;
+    }
+  //we couldn't terminate the job, could be because
+  //1. the job doesn't exist
+  //2. the job has been given to a worker, so it has to be finished
+  //3. the job has already been completed
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+const remus::client::ServerConnection& qtCMBMeshingMonitor::connection() const
+{
+  return this->RemusClient->connection();
+}
+
+//-----------------------------------------------------------------------------
+void qtCMBMeshingMonitor::updateJobStates()
+{
+  std::vector< MeshingJobState > jobsToRemove;
+
   //if the last status was finished or failed we don't need to do anything else
-  const bool jobFinished = this->LastStatusMessage.finished();
-  const bool jobFailed = this->LastStatusMessage.failed();
-  if(jobFinished || jobFailed)
+  typedef std::vector<MeshingJobState>::iterator iter;
+  for(iter i= this->LastestStatusMessages.begin();
+      i != this->LastestStatusMessages.end();
+      ++i)
     {
-    return this->LastStatusMessage;
+    remus::proto::JobStatus recvStatus = this->RemusClient->jobStatus(i->Job);
+
+    const bool jobFinished = recvStatus.finished();
+    const bool jobFailed = recvStatus.failed();
+    const bool jobStatusChanged =
+        recvStatus.status() != i->Status.status() ||
+        recvStatus.progress() != i->Status.progress();
+
+    //emit a signal if the job status is different than the previous one
+    if(jobStatusChanged)
+      {
+      emit this->jobStatus( i->Job, recvStatus);
+      i->Status = recvStatus;
+      }
+
+    //handle the use cases of finished or failed jobs, we need to mark
+    //this ids as invalid, and do a second loop to remove them from
+    //the map
+    if(jobFinished)
+      {
+      jobsToRemove.push_back( *i );
+      emit this->jobFinished(i->Job, recvStatus);
+      }
+    else if(jobFailed)
+      {
+      jobsToRemove.push_back( *i );
+      emit this->jobFailed(i->Job, recvStatus);
+      }
     }
 
-  //otherwise fetch the status
-  remus::proto::JobStatus recvStatus =
-                                this->RemusClient->jobStatus(this->CurrentJob);
-
-  if(recvStatus.id() != this->LastStatusMessage.id() ||
-     recvStatus.status() != this->LastStatusMessage.status() ||
-     recvStatus.progress() != this->LastStatusMessage.progress())
+  typedef std::vector< MeshingJobState >::const_iterator vit;
+  for(vit i=jobsToRemove.begin(); i != jobsToRemove.end(); ++i)
     {
-    newStatus = true;
-    this->LastStatusMessage = recvStatus;
+    erase_remove(this->LastestStatusMessages, *i);
     }
-
-  return this->LastStatusMessage;
 }
 
 //-----------------------------------------------------------------------------
-remus::proto::JobResult qtCMBMeshingClient::jobResults()
-{
-  remus::proto::JobResult recvResults =
-                          this->RemusClient->retrieveResults(this->CurrentJob);
-  return recvResults;
-}
-
-//-----------------------------------------------------------------------------
-bool qtCMBMeshingClient::terminateJob()
-{
-  remus::proto::JobStatus recvStatus =
-                                this->RemusClient->jobStatus(this->CurrentJob);
-  this->LastStatusMessage = recvStatus;
-  return recvStatus.failed();
-}
-
-//-----------------------------------------------------------------------------
-const std::string& qtCMBMeshingClient::endpoint() const
-{
-  return this->RemusClient->connection().endpoint();
-}
-
-//-----------------------------------------------------------------------------
-qtCMBMeshingClient::LocalMeshServer qtCMBMeshingClient::launchLocalMeshServer()
+qtCMBMeshingMonitor::LocalMeshServer qtCMBMeshingMonitor::launchLocalMeshServer()
 {
 
   //create the project manager on the data server
-  qtCMBMeshingClient::LocalMeshServer handle;
+  qtCMBMeshingMonitor::LocalMeshServer handle;
   vtkSMProxyManager* pxm = vtkSMProxyManager::GetProxyManager();
   handle.LocalServerProxy = pxm->NewProxy("utilities", "MeshServerLauncher");
   handle.LocalServerProxy->UpdateVTKObjects();
