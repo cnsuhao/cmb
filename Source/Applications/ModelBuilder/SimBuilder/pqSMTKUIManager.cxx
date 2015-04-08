@@ -40,6 +40,7 @@
 #include "SimBuilderCore.h"
 
 #include "pqSMTKUIHelper.h"
+#include "pqSMTKModelPanel.h"
 
 #include <QLineEdit>
 #include <QStringList>
@@ -98,6 +99,11 @@ void pqSMTKUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
     this->AttSystem->setRefModelManager(refModelMgr);
     }
 }
+//-----------------------------------------------------------------------------
+void pqSMTKUIManager::setModelPanel(pqSMTKModelPanel* panel)
+{
+  this->m_ModelPanel = panel;
+}
 
 //----------------------------------------------------------------------------
 void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
@@ -105,9 +111,9 @@ void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore
   this->qtManager()->disconnect();
   QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
     this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
-//  QObject::connect(this->qtAttSystem,
-//    SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
-//    this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
+  QObject::connect(this->qtAttSystem,
+    SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
+    this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
 
   this->qtManager()->initializeUI(parentWidget);
   // callbacks from Expressions sections
@@ -168,6 +174,39 @@ void pqSMTKUIManager::onLaunchFileBrowser()
   pqSMTKUIHelper::process_smtkFileItemRequest(
     fileItem, this->ActiveServer, this->rootView()->parentWidget());
 }
+
+//----------------------------------------------------------------------------
+void pqSMTKUIManager::onModelEntityItemCreated(
+  smtk::attribute::qtModelEntityItem* entItem)
+{
+  if(entItem)
+    {
+    QObject::connect(entItem, SIGNAL(requestEntityAssociation()),
+      this, SLOT(onRequestEntityAssociation()));
+    QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)),
+      this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
+    }
+}
+//----------------------------------------------------------------------------
+void pqSMTKUIManager::onRequestEntityAssociation()
+{
+  smtk::attribute::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
+  if(!entItem || !this->m_ModelPanel)
+    {
+    return;
+    }
+
+  this->m_ModelPanel->requestEntityAssociation(entItem);
+}
+
+//----------------------------------------------------------------------------
+void pqSMTKUIManager::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
+{
+  if(this->m_ModelPanel)
+    this->m_ModelPanel->requestEntitySelection(uuids);
+}
+
 //----------------------------------------------------------------------------
 void pqSMTKUIManager::createFunctionWithExpression(
   QString& funcExpr, double initVal,

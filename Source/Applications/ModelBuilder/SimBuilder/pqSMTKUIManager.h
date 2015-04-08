@@ -26,6 +26,7 @@
 
 #include <QMap>
 #include <QList>
+#include <QPointer>
 
 class pqServer;
 class pqRenderView;
@@ -33,6 +34,7 @@ class vtkObject;
 class pqSMTKUIManagerInternals;
 class vtkSMProxy;
 class SimBuilderCore;
+class pqSMTKModelPanel;
 
 class pqSMTKUIManager : public QObject
 {
@@ -61,6 +63,7 @@ public:
   void initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore);
   smtk::model::ManagerPtr attModelManager() const;
   void setModelManager(smtk::model::ManagerPtr);
+  void setModelPanel(pqSMTKModelPanel*);
 
   void getAttributeDefinitions(
            QMap<QString, QList<smtk::attribute::DefinitionPtr> > &attDefMap);
@@ -78,12 +81,17 @@ protected slots:
   void createFunctionWithExpression(
     QString& expression, double initVal,
     double deltaVal, int numVals);
+  void onModelEntityItemCreated(
+  smtk::attribute::qtModelEntityItem* entItem);
+  void onRequestEntityAssociation();
+  void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
 
 protected:
   pqServer* ActiveServer;
   pqRenderView* RenderView;
   smtk::attribute::SystemPtr AttSystem;
   smtk::attribute::qtUIManager* qtAttSystem;
+  QPointer<pqSMTKModelPanel> m_ModelPanel;
 
 private:
   static pqSMTKUIManager* Instance;

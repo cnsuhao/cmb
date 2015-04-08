@@ -64,9 +64,9 @@ public slots:
   void clearUI();
   void updateTreeSelection();
   void onEntitiesExpunged(const smtk::model::EntityRefs& expungedEnts);
-//  void linkRepresentations();
-
-signals:
+  void requestEntityAssociation(
+    smtk::attribute::qtModelEntityItem* entItem);
+  void requestEntitySelection(const smtk::common::UUIDs& uuids);
 
 protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
@@ -75,7 +75,6 @@ protected slots:
   void onModelEntityItemCreated(
     smtk::attribute::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
-  void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
   void updateMeshSelection(
     const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*);
 //  void propertyChanged(

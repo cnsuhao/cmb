@@ -532,15 +532,14 @@ void pqSMTKModelPanel::onModelEntityItemCreated(
     QObject::connect(entItem, SIGNAL(requestEntityAssociation()),
       this, SLOT(onRequestEntityAssociation()));
     QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)),
-      this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
+      this, SLOT(requestEntitySelection(const smtk::common::UUIDs&)));
     }
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKModelPanel::onRequestEntityAssociation()
+void pqSMTKModelPanel::requestEntityAssociation(
+  smtk::attribute::qtModelEntityItem* entItem)
 {
-  smtk::attribute::qtModelEntityItem* const entItem =
-    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
   if(!entItem)
     {
     return;
@@ -551,7 +550,15 @@ void pqSMTKModelPanel::onRequestEntityAssociation()
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKModelPanel::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
+void pqSMTKModelPanel::onRequestEntityAssociation()
+{
+  smtk::attribute::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
+  this->requestEntityAssociation(entItem);
+}
+
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
 {
   this->modelView()->selectEntityItems(uuids, false); // not block selection signal
 }
