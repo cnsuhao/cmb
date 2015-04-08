@@ -72,7 +72,7 @@ public:
   { return ImageSource; }
 
 protected:
-  void prepGridObject(pqServer *server, pqRenderView *view, bool updateRep);
+  void prepGridObject(pqServer *server, pqRenderView *view, bool updateRep, bool transferColor);
 
   pqPipelineSource* ImageSource;
 

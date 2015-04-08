@@ -225,6 +225,7 @@ void qtCMBSceneObjectImporter::setupObjectTypes()
 {
   this->ImportDialog->GeometricTypes->addItem("Points", pqCMBSceneObjectBase::Points);
   this->ImportDialog->GeometricTypes->addItem("Image/DEM", pqCMBSceneObjectBase::UniformGrid);
+  this->ImportDialog->GeometricTypes->addItem("Image/GeoTiff", pqCMBSceneObjectBase::UniformGrid);
   this->ImportDialog->GeometricTypes->addItem("TIN Surface", pqCMBSceneObjectBase::TIN);
   this->ImportDialog->GeometricTypes->addItem("Closed Shells", pqCMBSceneObjectBase::Solid);
   this->ImportDialog->GeometricTypes->addItem("Solid Mesh", pqCMBSceneObjectBase::SolidMesh);
@@ -327,7 +328,7 @@ void qtCMBSceneObjectImporter::accept()
     this->importLASFile(n);
     return;
     }
-  else if ((s == "vti") || (s == "flt") || (s == "hdr")|| (s == "ftw") || (s == "dem"))
+  else if ((s == "vti") || (s == "flt") || (s == "hdr")|| (s == "ftw") || (s == "dem") || (s=="tif"))
     {
     this->importUniformGrid(n);
     return;
@@ -480,6 +481,14 @@ void qtCMBSceneObjectImporter::updateDialog()
     this->ImportDialog->GeometricTypes->
           setCurrentIndex(this->ImportDialog->GeometricTypes->findText("Image/DEM"));
   }
+  else if(s == "tif")
+  {
+    this->ObjectType = pqCMBSceneObjectBase::UniformGrid;
+    this->ImportDialog->ObjectTypes->
+    setCurrentIndex(this->ImportDialog->ObjectTypes->findText("-UniformGrid"));
+    this->ImportDialog->GeometricTypes->
+    setCurrentIndex(this->ImportDialog->GeometricTypes->findText("Image/GeoTiff"));
+  }
   else if ((s == "2dm") /*|| (s == "3dm") */|| (s == "fac")|| (s == "sol"))
     {
     this->ObjectType = pqCMBSceneObjectBase::Faceted;
@@ -560,7 +569,7 @@ void qtCMBSceneObjectImporter::updateDialog()
   // we are not dealing with LIDAR then check the translateBasedOnView box by default
   if (this->Parent->getTree()->containsDataObjects() && this->ImportDialog->translateBasedOnView->isEnabled() &&
       !((s == "pts") || (s == "bin") || (s == "las") || (s == "vtk") ||
-        (s == "vti") || (s == "flt") || (s == "hdr") || (s == "ftw") || (s == "dem")))
+        (s == "vti") || (s == "flt") || (s == "hdr") || (s == "ftw") || (s == "dem") || (s == "tif")))
     {
     translateBasedOnView = true;
     }
@@ -636,7 +645,7 @@ void qtCMBSceneObjectImporter::changeObjectType()
 //-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::displayFileBrowser()
 {
-  QString filters = "All Geometry (*.2dm *.3dm *.bin *.bin.pts *.fac *.las *.obj *.pts *.sol *.tin *.vtk *.vtp *.vti *.dem *.flt *.ftw *.hdr *.shp *.bor);;LIDAR (*.pts *.bin *.bin.pts);;LAS (*.las);;CUBIT Facet (*.fac);;Wavefront Object (*.obj);;Surface Mesh (*.2dm);;Volume Mesh (*.3dm);;Solid (*.sol);;TIN (*.tin);;XML VTK Geometry (*.vtp);;Legacy VTK Geometry (*.vtk);;Image/DEM (*.vti *.flt *.ftw *.hdr *.dem);;Contour (*.shp);;Boreholes (*.bor);;All files (*)";
+  QString filters = "All Geometry (*.2dm *.3dm *.bin *.bin.pts *.fac *.las *.obj *.pts *.sol *.tin *.vtk *.vtp *.vti *.dem *.tif *.flt *.ftw *.hdr *.shp *.bor);;LIDAR (*.pts *.bin *.bin.pts);;LAS (*.las);;CUBIT Facet (*.fac);;Wavefront Object (*.obj);;Surface Mesh (*.2dm);;Volume Mesh (*.3dm);;Solid (*.sol);;TIN (*.tin);;XML VTK Geometry (*.vtp);;Legacy VTK Geometry (*.vtk);;Image/DEM (*.vti *.flt *.ftw *.hdr *.dem);;Image/GeoTiff (*.tif);;Contour (*.shp);;Boreholes (*.bor);;All files (*)";
 
   pqCMBSceneTree *tree = this->Parent->getTree();
   pqFileDialog file_dialog(tree->getCurrentServer(),
