@@ -464,6 +464,9 @@ SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
     //    this->getActiveServer(), this->activeRenderView());
     this->Internal->SimBuilder = new SimBuilderCore(
         this->getActiveServer(), this->activeRenderView());
+    if(this->Internal->ModelDock)
+      this->Internal->SimBuilder->attributeUIManager()->
+        setModelPanel(this->Internal->ModelDock);
     }
 
   return this->Internal->SimBuilder;
@@ -1115,6 +1118,9 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
       this->parentWidget());
     this->Internal->ViewContextBehavior->setModelPanel(
       this->Internal->ModelDock);
+    if(this->Internal->SimBuilder)
+      this->Internal->SimBuilder->attributeUIManager()->
+        setModelPanel(this->Internal->ModelDock);
     }
   return this->Internal->ModelDock;
 }

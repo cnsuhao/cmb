@@ -9,7 +9,7 @@ ENDIF(NOT ParaView_BINARY_DIR)
 
 find_package(SMTK REQUIRED)
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} )
 
 # Add Qt UI files here
 set(UI_FORMS
