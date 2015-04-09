@@ -113,7 +113,12 @@ namespace pqSMTKUIHelper
       eItem->definition().get());
 
     smtk::model::EntityRefs selentityrefs;
+    // search current selection
     modelView->currentSelectionByMask(selentityrefs, eItemDef->membershipMask());
+    // if current selection does not match the item mask, search the parents.
+    if(selentityrefs.size() == 0)
+      modelView->currentSelectionByMask(selentityrefs,
+        eItemDef->membershipMask(), true);
 
     entityItem->associateEntities(selentityrefs);
   }
