@@ -43,21 +43,21 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define VOID void
 #endif
 
-#ifndef TRIANGLE_REAL
+#ifndef REAL
 #ifdef SINGLE
-#define TRIANGLE_REAL float
+#define REAL float
 #else                           /* not SINGLE */
-#define TRIANGLE_REAL double
+#define REAL double
 #endif                          /* not SINGLE */
 #endif
 extern "C"
 {
 #include "triangle.h"
-#include "share_declare.h"
-void Init_triangluateio(struct triangulateio *);
-void Free_triangluateio(struct triangulateio *);
-void triangle_report_vtk(char *filename, struct triangulateio *io);
 }
+//undef triangle defines
+#undef ANSI_DECLARATORS
+#undef VOID
+#undef TRIANGLE_REAL
 // END for Triangle
 
 //simple struct that holds all the arguments to the triangle process

@@ -30,29 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <sstream>
 #include <iostream>
 #include <fstream>
-
-//#define DUMP_DEBUG_DATA
-
-#ifdef DUMP_DEBUG_DATA
-#include <time.h>
-namespace
-{
-std::string make_timestamped_name(std::string name)
-  {
-  time_t theTime = time(NULL);
-  struct tm *aTime = localtime(&theTime);
-
-
-  const int day = aTime->tm_mday;
-  const int hour = aTime->tm_hour;
-  const int min = aTime->tm_min;
-  const int sec = aTime->tm_sec;
-  std::stringstream buffer;
-  buffer << name << "-" << day << "-" << hour<< "-" << min << "-"<< sec;
-  return buffer.str();
-  }
-}
-#endif
+#include <cstdlib>
 
 namespace
 {
@@ -64,7 +42,7 @@ bool AllocFromStream(std::stringstream& buffer, T* &dest, int numElements)
     {return true;}
 
   //first we alloc dest;
-  dest = static_cast<T*>( tl_alloc(sizeof(T),numElements,0) );
+  dest = static_cast<T*>( std::malloc(sizeof(T) * numElements) );
   //now we fill it from the buffer
   char* cdest = reinterpret_cast<char*>(dest);
   const std::streamsize size = sizeof(T)*numElements;
@@ -91,6 +69,26 @@ bool WriteToStream(std::stringstream& buffer, T* src, int numElements)
   buffer << std::endl;
   return !buffer.bad();
   }
+
+void release_triangle_data(triangulateio* data)
+{
+  std::free( data->pointlist );
+  std::free( data->pointattributelist );
+  std::free( data->pointmarkerlist );
+  std::free( data->trianglelist );
+  std::free( data->triangleattributelist );
+  std::free( data->trianglearealist );
+  std::free( data->neighborlist );
+  std::free( data->segmentlist );
+  std::free( data->segmentmarkerlist );
+  std::free( data->holelist );
+  std::free( data->regionlist );
+  std::free( data->edgelist );
+  std::free( data->edgemarkerlist );
+  std::free( data->normlist );
+
+  return;
+}
 }
 
 
@@ -112,14 +110,9 @@ triangleParameters::triangleParameters(remus::worker::Job& job)
   buffer >> MaxArea;
   buffer >> MinAngle;
 
-  //for proper linking we have to call debug_initialize()
-  //so that the global variables allocated_memory and max_allocated_memory
-  //are properly defined
-  debug_initialize();
-
-  //first we allocate the input and output structures
-  Init_triangluateio(&this->in);
-  Init_triangluateio(&this->out);
+  //first we init the input and output data structures to be empty
+  std::memset(&this->in,  0, sizeof(triangulateio));
+  std::memset(&this->out, 0, sizeof(triangulateio));
 
 
   //allocate the point list
@@ -161,35 +154,34 @@ triangleParameters::triangleParameters(remus::worker::Job& job)
 //----------------------------------------------------------------------------
 triangleParameters::~triangleParameters()
 {
-  //there is a bug in triangle that the hole list is shared between
-  //the in and out structs. So we have to set the hole list to NULL before
-  //freeing the out, or the program will crash
-  bool pointListShared = (this->in.pointlist == this->out.pointlist);
-  bool segmentListShared = (this->in.segmentlist == this->out.segmentlist);
-  bool segmentMarkerListShared = (this->in.segmentmarkerlist == this->out.segmentmarkerlist);
-  bool holeListShared = (this->in.holelist == this->out.holelist);
-  bool regionListShared = (this->in.regionlist == this->out.regionlist);
-  bool pointAttributeListShared = (this->in.pointattributelist == this->out.pointattributelist);
+  //not only do we share information between the meshing_data and the
+  //input triangle data, triangle itself will share certain information between
+  //the in and out structs.
 
-  Free_triangluateio(&this->in);
+  //so to get this all to work properly we need to set certain
+  //points in the in and out triangle data structures to NULL
+  const bool pointListShared = (this->in.pointlist == this->out.pointlist);
+  const bool segmentListShared = (this->in.segmentlist == this->out.segmentlist);
+  const bool segmentMarkerListShared = (this->in.segmentmarkerlist == this->out.segmentmarkerlist);
+  const bool holeListShared = (this->in.holelist == this->out.holelist);
+  const bool regionListShared = (this->in.regionlist == this->out.regionlist);
+  const bool pointAttributeListShared = (this->in.pointattributelist == this->out.pointattributelist);
+
+  //The free on this->in will release all the shared memory
   if (pointListShared)
     {
-    //The free on TIO->in released the memory
     this->out.pointlist=NULL;
     }
   if (segmentListShared)
     {
-    //The free on TIO->in released the memory
     this->out.segmentlist=NULL;
     }
   if (segmentMarkerListShared)
     {
-    //The free on TIO->in released the memory
     this->out.segmentmarkerlist=NULL;
     }
   if (holeListShared)
     {
-    //The free on TIO->in released the memory
     this->out.holelist=NULL;
     }
   if (regionListShared)
@@ -200,7 +192,9 @@ triangleParameters::~triangleParameters()
     {
     this->out.pointattributelist=NULL;
     }
-  Free_triangluateio(&this->out);
+
+  release_triangle_data(&this->in);
+  release_triangle_data(&this->out);
 }
 
 
@@ -312,32 +306,14 @@ void TriangleWorker::meshJob()
     return;
     }
 
-#ifdef DUMP_DEBUG_DATA
-  {
-  std::string fname = make_timestamped_name("in_dump");
-  char* raw = const_cast<char*>(fname.c_str());
-  triangle_report_vtk(raw,&parms.in);
-  }
-#endif
-
-  int ret = triangulate(const_cast<char*>(options.c_str()),
-                        &parms.in,&parms.out,static_cast<struct triangulateio*>(NULL));
-
-  if ( ret != 0 )
-    {
-    //triangle failed to mesh properly
-    //C functions return not zero on failure
-    this->jobFailed(job);
-    return;
-    }
-
-#ifdef DUMP_DEBUG_DATA
-  {
-  std::string fname = make_timestamped_name("out_dump");
-  char* raw = const_cast<char*>(fname.c_str());
-  triangle_report_vtk(raw,&parms.out);
-  }
-#endif
+  //the default triangle operation really can't fail. If it hits
+  //a point where it can't mesh or fails it will just call exit which will
+  //kill this worker, which will cause the remus server to mark the job
+  //as failed.
+  triangulate(const_cast<char*>(options.c_str()),
+              &parms.in,
+              &parms.out,
+              static_cast<struct triangulateio*>(NULL));
 
   //send the data back to the server
   remus::proto::JobResult results = parms.results(job);

@@ -29,7 +29,7 @@ set(CMB_Meshing_SRC
     vtkSplitPlanarLines.cxx
     )
 
-if(Triangle_FOUND AND BUILD_MESH_WORKERS)
+if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)
   list(APPEND CMB_Meshing_SRC
       vtkMultiLayerTINStitcher.cxx
       vtkTINStitcher.cxx
@@ -43,7 +43,7 @@ set_source_files_properties(
  )
 
 set(Meshing_Libs)
-if(Omicron_FOUND AND BUILD_MESH_WORKERS)
+if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)
   list(APPEND Meshing_Libs
        omicron
        triangle_omicron

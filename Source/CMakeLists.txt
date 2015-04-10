@@ -168,9 +168,7 @@ add_subdirectory(LIDAR)
 
 #########################################################################
 # Meshing support
-option(BUILD_MESH_WORKERS "Build Mesh Workers and related meshing libraries" OFF)
-
-#configure meshing components first
+#configure meshing components before
 add_subdirectory(CMBMeshing)
 
 #needs to be after CMBMeshing so that we can link to the MeshServer
