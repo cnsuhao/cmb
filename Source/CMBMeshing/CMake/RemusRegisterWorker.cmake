@@ -6,6 +6,10 @@
 #
 #=========================================================================
 
+#setup a cmake variable that stores the location of this cmake file on disk
+#that way when other cmake files call functions found in this file, we can
+#properly determine the location on disk of where the .rw files are
+set(CMB_MESHING_CMAKE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
 #we create a text file that list this mesh worker and its type
 function(Register_Mesh_Worker workerExecutableName)
@@ -24,7 +28,7 @@ function(Register_Mesh_Worker workerExecutableName)
   if(R_FILE_TYPE AND R_FILE_PATH)
     get_filename_component(R_FILE_NAME "${R_FILE_PATH}" NAME)
 
-    configure_file(${MESHING_CMAKE_DIR}/RemusWorkerWithFile.rw.in
+    configure_file(${CMB_MESHING_CMAKE_DIR}/RemusWorkerWithFile.rw.in
                    ${EXECUTABLE_OUTPUT_PATH}/${workerExecutableName}.rw
                    @ONLY)
     file(COPY ${R_FILE_PATH} DESTINATION ${EXECUTABLE_OUTPUT_PATH})
@@ -33,7 +37,7 @@ function(Register_Mesh_Worker workerExecutableName)
     #installed
     list(APPEND files_to_install "${EXECUTABLE_OUTPUT_PATH}/${R_FILE_NAME}")
   else()
-    configure_file(${MESHING_CMAKE_DIR}/RemusWorker.rw.in
+    configure_file(${CMB_MESHING_CMAKE_DIR}/RemusWorker.rw.in
                    ${EXECUTABLE_OUTPUT_PATH}/${workerExecutableName}.rw
                    @ONLY)
   endif()
