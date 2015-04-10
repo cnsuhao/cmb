@@ -26,9 +26,6 @@
 #include "vtkCMBArcManager.h"
 #include "vtkCMBArcProvider.h"
 
-#include "cmbFaceMeshHelper.h"
-#include "cmbFaceMesherInterface.h"
-
 #include <algorithm>
 #include <stack>
 #include <set>

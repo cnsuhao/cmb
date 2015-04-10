@@ -10,7 +10,6 @@
 #include "vtkPolyFileReader.h"
 #include "vtkPolylineTriangulator.h"
 #include "vtkDiscoverRegions.h"
-#include "vtkCMBTriangleMesher.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkPassArrays.h"

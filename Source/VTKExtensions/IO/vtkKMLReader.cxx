@@ -32,7 +32,7 @@
 #include <vtkInformationVector.h>
 #include <vtkIntArray.h>
 #include <vtkLine.h>
-#include "vtkNew.h"
+#include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
@@ -51,8 +51,8 @@
 #include <vtksys/SystemTools.hxx>
 
 // VTKExtensions includes.
-#include <vtkCMBTriangleMesher.h>
-#include <vtkCMBPrepareForTriangleMesher.h>
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBTriangleMesher.h"
 
 // Import types.
 using kmldom::AbstractViewPtr;
@@ -623,7 +623,8 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
   vtkSmartPointer<vtkCellArray>tempCells;
   vtkSmartPointer<vtkPoints>   tempPoints;
 
-  vtkCMBPrepareForTriangleMesher* mapInterface = vtkCMBPrepareForTriangleMesher::New();
+  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  vtkNew<vtkPrepareForMesher> mapInterface;
 
   std::map<KMLInternalPt, vtkIdType> pt2Id; //prevent duplicate points
 
@@ -831,7 +832,6 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
       } // has_innerboundaryis()
 
   mapInterface->FinalizeNewMapInfo();
-  mapInterface->Delete();
   if(triangulate)
     {
     this->Triangulate(tempPoly);
@@ -841,8 +841,9 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
 //-----------------------------------------------------------------------------
 void vtkKMLReaderInternal::Triangulate(vtkPolyData* polyDataIn)
 {
-  vtkNew<vtkCMBTriangleMesher> cmbMapMesher;
-  cmbMapMesher->SetMaxAreaMode(vtkCMBTriangleMesher::NoMaxArea);
+  typedef smtk::bridge::discrete::vtkCMBTriangleMesher vtkTriangleMesher;
+  vtkNew<vtkTriangleMesher> cmbMapMesher;
+  cmbMapMesher->SetMaxAreaMode(vtkTriangleMesher::NoMaxArea);
   cmbMapMesher->SetInputData(polyDataIn);
   cmbMapMesher->Update();
   vtkPolyData* output = cmbMapMesher->GetOutput();

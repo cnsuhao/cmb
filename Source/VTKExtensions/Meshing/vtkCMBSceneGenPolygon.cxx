@@ -23,8 +23,8 @@
 #include "vtkPolyData.h"
 #include "vtkPolygon.h"
 
-#include "vtkCMBTriangleMesher.h"
-#include "vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBTriangleMesher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 #include <algorithm>
 #include <deque>
@@ -435,8 +435,9 @@ int vtkCMBSceneGenPolygon::RequestData(vtkInformation* /*request*/,
   //now lets mesh it
   if ( readyForMeshing )
     {
-    vtkNew<vtkCMBTriangleMesher> mesher;
-    mesher->SetMaxAreaMode(vtkCMBTriangleMesher::RelativeToBounds);
+    typedef smtk::bridge::discrete::vtkCMBTriangleMesher vtkTriangleMesher;
+    vtkNew<vtkTriangleMesher> mesher;
+    mesher->SetMaxAreaMode(vtkTriangleMesher::RelativeToBounds);
     mesher->SetMaxArea(.0005);
     mesher->SetPreserveBoundaries(true);
     mesher->SetInputData(preMesh.GetPointer());
@@ -533,7 +534,8 @@ void vtkCMBSceneGenPolygon::AppendArcSets(vtkInformationVector* input,
 //----------------------------------------------------------------------------
 bool vtkCMBSceneGenPolygon::DeterminePolygon(vtkPolyData *mesh)
 {
-  vtkCMBPrepareForTriangleMesher* mapInterface = vtkCMBPrepareForTriangleMesher::New();
+  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(mesh);
   mapInterface->InitializeNewMapInfo();
 

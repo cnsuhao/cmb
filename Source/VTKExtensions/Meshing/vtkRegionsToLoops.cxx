@@ -14,9 +14,6 @@
 #include "vtkArrayCalculator.h"
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
-#include "vtkCMBMeshServerLauncher.h"
-#include "vtkCMBPrepareForTriangleMesher.h"
-#include "vtkCMBTriangleMesher.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkNew.h"
@@ -31,6 +28,7 @@
 #include "vtkXMLPolyDataWriter.h"
 
 #include "union_find.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBMeshServerLauncher.h"
 
 #include <algorithm>
 #include <iterator>
@@ -153,7 +151,7 @@ public:
   void Generate(
     vtkIdType region, vtkPolyData* pdIn, vtkPolyData* holesIn,
     vtkPolyData* pdOut, vtkIdTypeArray* modelFace, vtkIdTypeArray* pedigreeIds,
-    vtkCMBMeshServerLauncher* lau)
+    smtk::bridge::discrete::vtkCMBMeshServerLauncher* lau)
     {
     std::set<vtkIdType> roots = this->Sets.Roots();
 
@@ -488,7 +486,8 @@ int vtkRegionsToLoops::RequestData(
   snippetsByRegion.AddContainerInfo(tabIn);
   //cout << "\n\n";
 
-  vtkNew<vtkCMBMeshServerLauncher> lau;
+  typedef smtk::bridge::discrete::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
+  vtkNew<vtkMeshServerLauncher> lau;
   // Now triangulate each region
   SnippetCollection::iterator snipIt;
   vtkNew<vtkIdTypeArray> modelFaces;

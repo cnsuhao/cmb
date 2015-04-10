@@ -14,7 +14,9 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "cmbSystemConfig.h"
 
+namespace smtk { namespace bridge { namespace discrete {
 class vtkCMBMeshServerLauncher;
+} } }
 
 /// Turn polylines describing facet boundaries into triangulated facets.
 class VTKCMBMESHING_EXPORT vtkPolylineTriangulator : public vtkPolyDataAlgorithm
@@ -43,8 +45,8 @@ public:
   // created, set, and reused on successive calls to RequestData().
   // However, if you are instantiating multiple vtkPolylineTriangulator
   // instances, performance will improve if they share a launcher.
-  virtual void SetLauncher(vtkCMBMeshServerLauncher* launcher);
-  vtkGetObjectMacro(Launcher,vtkCMBMeshServerLauncher);
+  virtual void SetLauncher(smtk::bridge::discrete::vtkCMBMeshServerLauncher* launcher);
+  vtkGetObjectMacro(Launcher,smtk::bridge::discrete::vtkCMBMeshServerLauncher);
 
 protected:
   vtkPolylineTriangulator();
@@ -59,7 +61,7 @@ protected:
     vtkInformationVector* outInfo);
 
   char* ModelFaceArrayName;
-  vtkCMBMeshServerLauncher* Launcher;
+  smtk::bridge::discrete::vtkCMBMeshServerLauncher* Launcher;
 
 private:
   vtkPolylineTriangulator(const vtkPolylineTriangulator&); // Not implemented.

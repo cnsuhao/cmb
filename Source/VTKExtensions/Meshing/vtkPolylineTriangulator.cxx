@@ -9,9 +9,9 @@
 //=========================================================================
 #include "vtkPolylineTriangulator.h"
 
-#include "vtkCMBMeshServerLauncher.h"
-#include "vtkCMBPrepareForTriangleMesher.h"
-#include "vtkCMBTriangleMesher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBMeshServerLauncher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBTriangleMesher.h"
 
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -76,7 +76,7 @@ ostream& operator << (ostream& os, const vtkTuple<T,Size>& vec)
 
 // -----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkPolylineTriangulator);
-vtkCxxSetObjectMacro(vtkPolylineTriangulator,Launcher,vtkCMBMeshServerLauncher);
+vtkCxxSetObjectMacro(vtkPolylineTriangulator,Launcher,smtk::bridge::discrete::vtkCMBMeshServerLauncher);
 
 vtkPolylineTriangulator::vtkPolylineTriangulator()
 {
@@ -639,13 +639,16 @@ static void TriangulateATriangle(
 static void TriangulateFacet(
   vtkPolyData* pdIn,
   vtkIdType modelFaceId, vtkIdType& nextPolygon, FacetLoops& facet,
-  vtkPolyData* pdOut, vtkIdTypeArray* pedigreeIds, vtkCMBMeshServerLauncher* lau)
+  vtkPolyData* pdOut, vtkIdTypeArray* pedigreeIds,
+  smtk::bridge::discrete::vtkCMBMeshServerLauncher* lau)
 {
+  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+
   vtkNew<vtkPolyData> fpoly;
   //vtkNew<vtkCellArray> verts;
   vtkNew<vtkCellArray> lines;
   vtkNew<vtkPoints> projPts;
-  vtkNew<vtkCMBPrepareForTriangleMesher> prepr;
+  vtkNew<vtkPrepareForMesher> prepr;
   fpoly->SetPoints(projPts.GetPointer());
   //fpoly->SetVerts(verts.GetPointer());
   fpoly->SetLines(lines.GetPointer());
@@ -745,10 +748,11 @@ static void TriangulateFacet(
   wri->Write();
 #endif // 1
 
-  vtkNew<vtkCMBTriangleMesher> msh;
+  typedef smtk::bridge::discrete::vtkCMBTriangleMesher vtkTriangleMesher;
+  vtkNew<vtkTriangleMesher> msh;
   msh->SetLauncher(lau);
   msh->SetInputDataObject(fpoly.GetPointer());
-  msh->SetMaxAreaMode(vtkCMBTriangleMesher::NoMaxArea);
+  msh->SetMaxAreaMode(vtkTriangleMesher::NoMaxArea);
   msh->SetPreserveEdgesAndNodes(true);
   msh->SetPreserveBoundaries(true);
   msh->VerboseOutputOn();
@@ -885,7 +889,7 @@ static void TriangulateFacet(
 static void TriangulateFacets(
   vtkPolyData* pdIn, FacetSourceType& facets,
   vtkIdTypeArray* mapArray, vtkPolyData* pdOut,
-  vtkCMBMeshServerLauncher* lau)
+  smtk::bridge::discrete::vtkCMBMeshServerLauncher* lau)
 {
   // Copy input points to output
   pdOut->SetPoints(pdIn->GetPoints());
@@ -955,11 +959,11 @@ int vtkPolylineTriangulator::RequestData(
   vtkPolyData* pdIn = vtkPolyData::GetData(inputVector[0], 0);
   vtkPolyData* pdOut = vtkPolyData::GetData(outputVector, 0);
 
-  vtkCMBMeshServerLauncher* lau;
+  smtk::bridge::discrete::vtkCMBMeshServerLauncher* lau;
   if (!this->Launcher)
     {
     // Do not call Delete as we want to own the reference:
-    this->Launcher = vtkCMBMeshServerLauncher::New();
+    this->Launcher = smtk::bridge::discrete::vtkCMBMeshServerLauncher::New();
     }
   lau = this->Launcher;
 
