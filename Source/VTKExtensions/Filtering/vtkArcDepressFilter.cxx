@@ -21,6 +21,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkKochanekSpline.h"
 
+#include <algorithm>
 #include <math.h>
 
 vtkStandardNewMacro(vtkArcDepressFilter);

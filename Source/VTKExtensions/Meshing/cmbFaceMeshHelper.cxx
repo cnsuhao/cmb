@@ -27,6 +27,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 // Convert a vtkModelFace to a triangle input for meshing.
 #include "cmbFaceMeshHelper.h"
 
+#include <algorithm> //Needed for std::max and std::min
 #include <limits> //Needed for int max
 #include "cmbFaceMesherInterface.h"
 #include "vtkArrayIteratorIncludes.h" //needed for VTK_TT
