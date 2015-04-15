@@ -26,6 +26,10 @@ IF(PARAVIEW_BUILD_QT_GUI)
       pqApplicationComponents
     LINK_PRIVATE
       vtkPVServerManagerApplicationCS
+      vtkInteractionStyle
+      vtkRendering${VTK_RENDERING_BACKEND}
+      vtkRenderingFreeType
+      vtkRenderingFreeType${VTK_RENDERING_BACKEND}
   )
 
   cmb_install_plugin(GUIMyToolBar)
