@@ -110,6 +110,7 @@ smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
 }
 
 smtkImplementsModelingKernel(
+  MODELBRIDGECLIENT_EXPORT,
   cmb_forwarding,
   "",
   smtk::model::SessionHasNoStaticSetup,

@@ -119,6 +119,7 @@ int SplitFaceOperator::fetchCMBFaceId() const
 } // namespace cmbsmtk
 
 smtkImplementsModelOperator(
+  VTKCMBDISCRETEMODEL_EXPORT,
   cmbsmtk::cmb::SplitFaceOperator,
   cmb_split_face,
   "split face",

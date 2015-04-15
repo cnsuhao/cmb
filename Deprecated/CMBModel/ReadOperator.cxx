@@ -72,6 +72,7 @@ Bridge* ReadOperator::cmbBridge() const
 } // namespace cmbsmtk
 
 smtkImplementsModelOperator(
+  VTKCMBDISCRETEMODEL_EXPORT,
   cmbsmtk::cmb::ReadOperator,
   cmb_read,
   "read",

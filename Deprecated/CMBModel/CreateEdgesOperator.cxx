@@ -68,6 +68,7 @@ Bridge* CreateEdgesOperator::cmbBridge() const
 } // namespace cmbsmtk
 
 smtkImplementsModelOperator(
+  VTKCMBDISCRETEMODEL_EXPORT,
   cmbsmtk::cmb::CreateEdgesOperator,
   cmb_create_edges,
   "create edges",

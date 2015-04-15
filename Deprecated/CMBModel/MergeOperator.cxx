@@ -90,6 +90,7 @@ int MergeOperator::fetchCMBCellId(const std::string& pname) const
 } // namespace cmbsmtk
 
 smtkImplementsModelOperator(
+  VTKCMBDISCRETEMODEL_EXPORT,
   cmbsmtk::cmb::MergeOperator,
   cmb_merge,
   "merge",
