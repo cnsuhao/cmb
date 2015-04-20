@@ -63,6 +63,10 @@ set_source_files_properties(
 
 set(Depend_LIBS
   ${KML_LIBRARIES}
+  vtkInteractionStyle
+  vtkRendering${VTK_RENDERING_BACKEND}
+  vtkRenderingFreeType
+  vtkRenderingFreeType${VTK_RENDERING_BACKEND}
   )
 
 set(vtkCMBIO_NO_HeaderTest 1)

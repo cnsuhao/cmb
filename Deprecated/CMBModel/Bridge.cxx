@@ -1156,7 +1156,7 @@ static const char* CMBFileTypes[] = {
   NULL
 };
 
-smtkImplementsModelingKernel(cmb,CMBFileTypes,cmbsmtk::cmb::Bridge);
+smtkImplementsModelingKernel(VTKCMBDISCRETEMODEL_EXPORT,cmb,CMBFileTypes,cmbsmtk::cmb::Bridge);
 
 // Force these operators to be registered whenever the bridge is used:
 smtkComponentInitMacro(smtk_cmb_read_operator);

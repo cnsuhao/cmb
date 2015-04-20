@@ -132,6 +132,8 @@ add_paraview_plugin(CMB_Plugin "1.0"
     ${PANEL_SRC}
 )
 
+target_link_libraries(CMB_Plugin PRIVATE vtkCMBGraphics)
+
 #now that the target has been created we can do the header generation
 generate_export_header(CMB_Plugin BASE_NAME vtkCMBClient
                                    EXPORT_FILE_NAME vtkCMBClientModule.h)

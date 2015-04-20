@@ -26,6 +26,10 @@ set(depend_LIBRARIES
     vtkGeovisCore
     vtkInfovisLayout
     vtksys
+    vtkInteractionStyle
+    vtkRendering${VTK_RENDERING_BACKEND}
+    vtkRenderingFreeType
+    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
 )
 
 ADD_PARAVIEW_PLUGIN(cmbPointsReaderPlugin "1.0"

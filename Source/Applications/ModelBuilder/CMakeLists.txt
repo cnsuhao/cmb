@@ -232,6 +232,7 @@ LINK_PRIVATE
   RemusClient
   SMTKCore
   ModelBridge_Plugin
+  vtkSMTK
   )
 
 #------------------------------------------------------------------------------

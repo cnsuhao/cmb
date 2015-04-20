@@ -6,5 +6,9 @@ vtk_module(vtkCMBGeneral
     vtkChartsCore
     vtksys
     vtkFiltersSources
+    vtkInteractionStyle
+    vtkRendering${VTK_RENDERING_BACKEND}
+    vtkRenderingFreeType
+    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

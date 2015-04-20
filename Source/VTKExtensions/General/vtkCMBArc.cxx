@@ -26,6 +26,8 @@
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 
+#include <algorithm>
+
 //----------------------------------------------------------------------------
 vtkIdType vtkCMBArc::NextId = 0;
 vtkStandardNewMacro(vtkCMBArc);

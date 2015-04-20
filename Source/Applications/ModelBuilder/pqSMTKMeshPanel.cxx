@@ -251,7 +251,7 @@ bool pqSMTKMeshPanel::submitMeshJob()
        ++model_iter)
     {
     smtk::model::SessionRef session = model_iter->session();
-    const bool is_valid_op = session.opDef(meshOperatorName);
+    const bool is_valid_op = !!session.opDef(meshOperatorName);
     if(is_valid_op)
       {
       //determine if this session has a mesh operator

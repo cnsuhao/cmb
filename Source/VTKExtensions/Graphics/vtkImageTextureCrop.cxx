@@ -49,6 +49,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkViewport.h"
 
+#include <algorithm>
+
 vtkStandardNewMacro(vtkImageTextureCrop);
 vtkCxxSetObjectMacro(vtkImageTextureCrop, Renderer, vtkRenderer);
 vtkCxxSetObjectMacro(vtkImageTextureCrop, TransformationMatrix, vtkMatrix4x4);
