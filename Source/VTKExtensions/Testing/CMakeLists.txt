@@ -68,6 +68,7 @@ add_short_test(PrintAllExtensions
 
 # Create a test list of all non graphical arc tests
 create_test_sourcelist(CmbArcTestSources
+  CmbArcTestsDriver.cxx
   ArcServerAutoConnectTest1.cxx
   ArcServerAutoConnectTest2.cxx
   ArcServerCreateMoveTest.cxx
