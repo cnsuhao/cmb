@@ -285,7 +285,6 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
   #Tests that don't work on Apple
 
   set (APPLE_EXCLUDE_TESTS
-    AboutDialog
     HelpDialog
     )
   set (APPLE_ONLY_TESTS
@@ -298,7 +297,6 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
     )
 
   set (TESTS_WITHOUT_BASELINES
-    AboutDialog
     HelpDialog
     )
 
