@@ -17,11 +17,11 @@
 #  SMTK_INCLUDE_DIR        The location of SMTK headers
 
 find_path(SMTK_ROOT_DIR
-    NAMES include/smtk/SMTKCoreExports.h
+    NAMES include/smtk/CoreExports.h
 )
 
 find_path(SMTK_INCLUDE_DIR
-    NAMES smtk/SMTKCoreExports.h
+    NAMES smtk/CoreExports.h
     HINTS ${SMTK_ROOT_DIR}/include/
 )
 

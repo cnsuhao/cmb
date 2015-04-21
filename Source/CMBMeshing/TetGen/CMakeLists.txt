@@ -21,7 +21,7 @@ target_link_libraries(CMBMeshTetGenWorker
                       LINK_PRIVATE
                       RemusWorker
                       RemusCommon
-                      SMTKCore
+                      smtkCore
                       vtkCommonCore
                       vtksys
                       ${Boost_LIBRARIES}
