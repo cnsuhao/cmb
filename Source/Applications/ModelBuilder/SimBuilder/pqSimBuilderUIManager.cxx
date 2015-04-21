@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    pqSMTKUIManager.cxx,v
+  Module:    pqSimBuilderUIManager.cxx,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#include "pqSMTKUIManager.h"
+#include "pqSimBuilderUIManager.h"
 
 #include "smtk/view/Base.h"
 #include "smtk/attribute/Item.h"
@@ -46,7 +46,7 @@
 #include <QStringList>
 
 //----------------------------------------------------------------------------
-class pqSMTKUIManagerInternals
+class pqSimBuilderUIManagerInternals
 {
   public:
 
@@ -56,17 +56,17 @@ class pqSMTKUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-pqSMTKUIManager::pqSMTKUIManager()
+pqSimBuilderUIManager::pqSimBuilderUIManager()
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
   this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem));
-  this->Internals = new pqSMTKUIManagerInternals;
+  this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
 //----------------------------------------------------------------------------
-pqSMTKUIManager::~pqSMTKUIManager()
+pqSimBuilderUIManager::~pqSimBuilderUIManager()
 {
   delete this->Internals;
 
@@ -78,19 +78,19 @@ pqSMTKUIManager::~pqSMTKUIManager()
 }
 
 //----------------------------------------------------------------------------
-smtk::attribute::qtRootView* pqSMTKUIManager::rootView()
+smtk::attribute::qtRootView* pqSimBuilderUIManager::rootView()
 {
   return this->qtAttSystem->rootView();
 }
 
 //----------------------------------------------------------------------------
-smtk::model::ManagerPtr pqSMTKUIManager::attModelManager() const
+smtk::model::ManagerPtr pqSimBuilderUIManager::attModelManager() const
 {
   return this->Internals->ModelMgr.lock();
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
+void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
 {
   smtk::model::ManagerPtr curManager = this->Internals->ModelMgr.lock();
   if (curManager != refModelMgr)
@@ -100,13 +100,13 @@ void pqSMTKUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
     }
 }
 //-----------------------------------------------------------------------------
-void pqSMTKUIManager::setModelPanel(pqSMTKModelPanel* panel)
+void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 {
   this->m_ModelPanel = panel;
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
+void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
 {
   this->qtManager()->disconnect();
   QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
@@ -154,7 +154,7 @@ void pqSMTKUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+void pqSimBuilderUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
 {
   if(fileItem)
     {
@@ -163,7 +163,7 @@ void pqSMTKUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
     }
 }
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::onLaunchFileBrowser()
+void pqSimBuilderUIManager::onLaunchFileBrowser()
 {
   smtk::attribute::qtFileItem* const fileItem =
     qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
@@ -176,7 +176,7 @@ void pqSMTKUIManager::onLaunchFileBrowser()
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::onModelEntityItemCreated(
+void pqSimBuilderUIManager::onModelEntityItemCreated(
   smtk::attribute::qtModelEntityItem* entItem)
 {
   if(entItem)
@@ -188,7 +188,7 @@ void pqSMTKUIManager::onModelEntityItemCreated(
     }
 }
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::onRequestEntityAssociation()
+void pqSimBuilderUIManager::onRequestEntityAssociation()
 {
   smtk::attribute::qtModelEntityItem* const entItem =
     qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
@@ -201,14 +201,14 @@ void pqSMTKUIManager::onRequestEntityAssociation()
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
+void pqSimBuilderUIManager::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
 {
   if(this->m_ModelPanel)
     this->m_ModelPanel->requestEntitySelection(uuids);
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKUIManager::createFunctionWithExpression(
+void pqSimBuilderUIManager::createFunctionWithExpression(
   QString& funcExpr, double initVal,
   double deltaVal, int numValues)
 {
@@ -258,7 +258,7 @@ void pqSMTKUIManager::createFunctionWithExpression(
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKUIManager::getAttributeDefinitions(
+void pqSimBuilderUIManager::getAttributeDefinitions(
     QMap<QString, QList<smtk::attribute::DefinitionPtr> > &outDefMap)
 {
   QList<smtk::attribute::qtBaseView*> attsections;
@@ -271,8 +271,8 @@ void pqSMTKUIManager::getAttributeDefinitions(
       qobject_cast<smtk::attribute::qtAttributeView*>(sec);
     if(attSec)
       {
-      const pqSMTKUIManagerInternals::DefMap &attDefMap = attSec->attDefinitionMap();
-      pqSMTKUIManagerInternals::DefMapIt dit = attDefMap.begin();
+      const pqSimBuilderUIManagerInternals::DefMap &attDefMap = attSec->attDefinitionMap();
+      pqSimBuilderUIManagerInternals::DefMapIt dit = attDefMap.begin();
       for(; dit != attDefMap.end(); ++dit)
         {
         outDefMap[dit.key()].append(dit.value());

@@ -30,7 +30,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #define __SimBuilderCustomExportDialog_h
 
 #include "cmbSystemConfig.h"
-#include "pqSMTKUIManager.h"
+#include "pqSimBuilderUIManager.h"
 
 #include "smtk/PublicPointerDefs.h"
 
@@ -90,7 +90,7 @@ private:
   QPointer<pqServer> ActiveServer;
   smtk::attribute::SystemPtr SimAttSystem;
   smtk::attribute::SystemPtr ExportAttSystem;
-  QPointer<pqSMTKUIManager> ExportUIManager;
+  QPointer<pqSimBuilderUIManager> ExportUIManager;
   // Indicates if ExportPanel has been updated to current inputs
   bool IsPanelSet;
   // Indicates if multiple selection of analyses is enabled

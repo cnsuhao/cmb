@@ -67,7 +67,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 ///////////////////////////////////////////////////////////////////////////
 #include "SimBuilder/SimBuilderCore.h"
-#include "SimBuilder/pqSMTKUIManager.h"
+#include "SimBuilder/pqSimBuilderUIManager.h"
 
 #include "pqCMBProcessWidget.h"
 #include "pqCMBPreviewDialog.h"
@@ -143,7 +143,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
       SimBuilder(0),
       SceneGeoTree(0)
       {
-      this->RubberSelectionMode = 0;
+      this->SelectByMode = 0;
       this->AppOptions = new pqCMBModelBuilderOptions();
       }
 
@@ -159,11 +159,11 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     QPointer<pqCMBEnumPropertyWidget> RepresentationWidget;
     QPointer<pqCMBEnumPropertyWidget> SelectionRepresentationWidget;
-    QPointer<QComboBox> SelectionModeBox;
+    QPointer<QComboBox> SelectByBox;
     QPointer<QAction> ColorFaceWidget;
     QPointer<QComboBox> ColorFaceCombo;
 
-    int RubberSelectionMode;
+    int SelectByMode;
 
     ///////////////////////////////////////////////////////////////////////////
     // The Model related variables
@@ -213,17 +213,17 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolBar* toolbar)
 {
 /*
-  this->Internal->SelectionModeBox = new QComboBox(toolbar);
-  this->Internal->SelectionModeBox->setObjectName("selectByModelEntityTypeBox");
+  this->Internal->SelectByBox = new QComboBox(toolbar);
+  this->Internal->SelectByBox->setObjectName("selectByModelEntityTypeBox");
   //toolbar->addWidget(SelectionLabel);
-  toolbar->addWidget(this->Internal->SelectionModeBox);
+  toolbar->addWidget(this->Internal->SelectByBox);
   QStringList list;
   list << "Model Faces" << "Regions" << "Domain Sets";
-  this->Internal->SelectionModeBox->addItems(list);
-  this->Internal->SelectionModeBox->setToolTip("Selection Mode");
-  this->Internal->SelectionModeBox->setCurrentIndex(0);
+  this->Internal->SelectByBox->addItems(list);
+  this->Internal->SelectByBox->setToolTip("Selection Mode");
+  this->Internal->SelectByBox->setCurrentIndex(0);
   QObject::connect(
-      this->Internal->SelectionModeBox, SIGNAL(currentIndexChanged(int)),
+      this->Internal->SelectByBox, SIGNAL(currentIndexChanged(int)),
       this, SLOT(setRubberSelectionMode(int)));
 */
   this->Internal->SelectionRepresentationWidget = new pqCMBEnumPropertyWidget(
@@ -245,18 +245,18 @@ void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolB
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setRubberSelectionMode(int mode)
 {
-  if (mode == this->Internal->RubberSelectionMode)
+  if (mode == this->Internal->SelectByMode)
     {
     return;
     }
-  this->Internal->RubberSelectionMode = mode;
+  this->Internal->SelectByMode = mode;
   emit this->rubberSelectionModeChanged();
 }
 
 //-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::getRubberSelectionMode()
 {
-  return this->Internal->RubberSelectionMode;
+  return this->Internal->SelectByMode;
 }
 
 //-----------------------------------------------------------------------------
@@ -480,8 +480,8 @@ void pqCMBModelBuilderMainWindowCore::onCMBModelCleared()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onModelLoaded()
 {
-//    this->Internal->SelectionModeBox->addItems(list);
-//    this->Internal->SelectionModeBox->setCurrentIndex(0);
+//    this->Internal->SelectByBox->addItems(list);
+//    this->Internal->SelectByBox->setCurrentIndex(0);
 
 
     if(this->getSimBuilder()->isSimModelLoaded() &&
@@ -492,7 +492,7 @@ void pqCMBModelBuilderMainWindowCore::onModelLoaded()
     // Make sure the mesh is cleared first
     //this->getSimBuilder()->getMeshManager()->clearMesh();
 
-//    this->Internal->SelectionModeBox->blockSignals(false);
+//    this->Internal->SelectByBox->blockSignals(false);
 
 }
 
@@ -731,7 +731,7 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     if(int retVal = this->getCMBModel()->loadModelFile(filename))
       {
       // try updating the smtk entities after loading in a vtkModel.
-      pqSMTKUIManager* simUIManager = this->getSimBuilder()->getUIManager();
+      pqSimBuilderUIManager* simUIManager = this->getSimBuilder()->getUIManager();
       simUIManager->attModel()->setDiscreteModel(
         this->Internal->CMBModel->getModel());
       simUIManager->updateModelItems();
@@ -935,7 +935,7 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
     scalarBar->setVisible(show);
     if(show)
       {
-      pqSMTKUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
+      pqSimBuilderUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
       smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
       std::vector<smtk::attribute::AttributePtr> result;
       attSystem->findDefinitionAttributes(
