@@ -121,8 +121,8 @@ vtk_module_library(vtkCmbDiscreteModel ${_module_src})
 
 target_link_libraries(vtkCmbDiscreteModel
                       LINK_PUBLIC
-                      SMTKCore
-                      vtkSMTK
+                      smtkCore
+                      vtkSMTKExt
                       RemusClient)
 
 target_include_directories(vtkCmbDiscreteModel

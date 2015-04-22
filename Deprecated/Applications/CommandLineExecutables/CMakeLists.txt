@@ -60,6 +60,6 @@ target_link_libraries(export
   CMBModel_Plugin
   SimBuilderMesh_Plugin
   cmbAppCommon
-  SMTKCore
+  smtkCore
   vtksys
 )

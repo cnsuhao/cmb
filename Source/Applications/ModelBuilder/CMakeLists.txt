@@ -210,13 +210,14 @@ build_paraview_client(ModelBuilder
   SOURCES ${ModelBuilder_SOURCE_FILES}
   COMPRESSED_HELP_FILE "${CMAKE_CURRENT_BINARY_DIR}/../Help/cmbsuite.qch"
   OPTIONAL_PLUGINS
-        smtkCGMSession_Plugin
-        smtkDiscreteSession_Plugin
-        smtkExodusSession_Plugin
-        smtkRemusMeshOperator_Plugin
+    smtkCGMSessionPlugin
+    smtkDiscreteSessionPlugin
+    smtkExodusSessionPlugin
+    smtkRemoteSessionPlugin
+    smtkRemusMeshOperatorPlugin
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
-  )
+)
 
 #let cmake do what qt4_wrap_cpp used to do automatically
 set_target_properties(ModelBuilder PROPERTIES AUTOMOC TRUE)
@@ -228,11 +229,11 @@ add_dependencies(ModelBuilder CMBSuiteHelp)
 target_link_libraries(ModelBuilder
 LINK_PRIVATE
   cmbAppCommon
-  QtSMTK
+  smtkQtExt
   RemusClient
-  SMTKCore
+  smtkCore
   ModelBridge_Plugin
-  vtkSMTK
+  vtkSMTKExt
   )
 
 #------------------------------------------------------------------------------
