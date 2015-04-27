@@ -1,6 +1,6 @@
 /*=========================================================================
 
-  Module:    pqSMTKUIManager.h,v
+  Module:    pqSimBuilderUIManager.h,v
 
   Copyright (c) Kitware, Inc.
   All rights reserved.
@@ -11,12 +11,12 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME pqSMTKUIManager - a user interface manager.
+// .NAME pqSimBuilderUIManager - a user interface manager.
 // .SECTION Description
 // .SECTION See Also
 
-#ifndef __pqSMTKUIManager_h
-#define __pqSMTKUIManager_h
+#ifndef __pqSimBuilderUIManager_h
+#define __pqSimBuilderUIManager_h
 
 #include <QObject>
 #include "smtk/extension/qt/qtUIManager.h"
@@ -31,19 +31,19 @@
 class pqServer;
 class pqRenderView;
 class vtkObject;
-class pqSMTKUIManagerInternals;
+class pqSimBuilderUIManagerInternals;
 class vtkSMProxy;
 class SimBuilderCore;
 class pqSMTKModelPanel;
 
-class pqSMTKUIManager : public QObject
+class pqSimBuilderUIManager : public QObject
 {
 
 Q_OBJECT
 
 public:
-  pqSMTKUIManager();
-  virtual ~pqSMTKUIManager();
+  pqSimBuilderUIManager();
+  virtual ~pqSimBuilderUIManager();
   smtk::attribute::SystemPtr attSystem() const
     {return this->AttSystem;}
   smtk::attribute::qtUIManager* qtManager() const
@@ -94,8 +94,8 @@ protected:
   QPointer<pqSMTKModelPanel> m_ModelPanel;
 
 private:
-  static pqSMTKUIManager* Instance;
-  pqSMTKUIManagerInternals *Internals;
+  static pqSimBuilderUIManager* Instance;
+  pqSimBuilderUIManagerInternals *Internals;
 
 };
 

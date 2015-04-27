@@ -57,7 +57,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtRootView.h"
 
-#include "pqSMTKUIManager.h"
+#include "pqSimBuilderUIManager.h"
 
 #include "vtkSMProxyManager.h"
 #include "vtkClientServerStream.h"
@@ -643,11 +643,11 @@ qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
 }
 
 //----------------------------------------------------------------------------
-pqSMTKUIManager*  SimBuilderCore::attributeUIManager()
+pqSimBuilderUIManager*  SimBuilderCore::attributeUIManager()
 {
   if(!this->m_attUIManager)
     {
-    this->m_attUIManager = new pqSMTKUIManager();
+    this->m_attUIManager = new pqSimBuilderUIManager();
     }
 
   return this->m_attUIManager;;

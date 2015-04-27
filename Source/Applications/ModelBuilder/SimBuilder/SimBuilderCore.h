@@ -16,7 +16,7 @@ class pqServer;
 class pqPipelineSource;
 class vtkSMProxy;
 class pqRenderView;
-class pqSMTKUIManager;
+class pqSimBuilderUIManager;
 class SimBuilderCustomExportDialog;
 class vtkSMModelManagerProxy;
 
@@ -60,7 +60,7 @@ public:
 
   void ExportSimFile(vtkSMModelManagerProxy* mmproxy);
 
-  pqSMTKUIManager* attributeUIManager();
+  pqSimBuilderUIManager* attributeUIManager();
   qtSimBuilderUIPanel* GetUIPanel();
 
   bool isTemplateOnly(){return this->LoadTemplateOnly;}
@@ -99,7 +99,7 @@ private:
   bool LoadingScenario;
   bool ScenarioEntitiesCreated;
 
-  QPointer<pqSMTKUIManager> m_attUIManager;
+  QPointer<pqSimBuilderUIManager> m_attUIManager;
 
 };
 

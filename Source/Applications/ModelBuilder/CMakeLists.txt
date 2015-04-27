@@ -61,7 +61,7 @@ set(SimBuilder_SOURCES
   SimBuilder/SimBuilderCustomExportDialog.cxx
   SimBuilder/SimBuilderEMSExportDialog.cxx
   SimBuilder/qtSimBuilderUIPanel.cxx
-  SimBuilder/pqSMTKUIManager.cxx
+  SimBuilder/pqSimBuilderUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx
   SimBuilder/pqSMTKUIHelper.h
   ${CMAKE_CURRENT_BINARY_DIR}/DefaultExportTemplate.h

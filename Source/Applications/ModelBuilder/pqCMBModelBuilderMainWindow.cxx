@@ -86,7 +86,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "pqCMBRubberBandHelper.h"
 
 #include "SimBuilder/SimBuilderCore.h"
-#include "SimBuilder/pqSMTKUIManager.h"
+#include "SimBuilder/pqSimBuilderUIManager.h"
 #include "SimBuilder/qtSimBuilderUIPanel.h"
 
 #include <vtksys/SystemTools.hxx>
