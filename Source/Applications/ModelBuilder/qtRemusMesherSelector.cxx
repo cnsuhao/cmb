@@ -76,7 +76,9 @@ void qtRemusMesherSelector::rebuildModelList()
       this->ModelManager->findEntitiesOfType( smtk::model::MODEL_ENTITY );
 
   //remove any current models
+  this->Internal->cb_models->blockSignals(true);
   this->Internal->cb_models->clear();
+  this->Internal->cb_models->blockSignals(false);
 
   //fill the model combo box based on the contents of the model Manager.
   //todo, everytime a new model is added/removed we need to refresh this list
@@ -99,8 +101,11 @@ void qtRemusMesherSelector::rebuildModelList()
 //-----------------------------------------------------------------------------
 void qtRemusMesherSelector::modelChanged(int index)
 {
+
   //clear any existing elements in the combo box.
+  this->Internal->cb_meshers->blockSignals(true);
   this->Internal->cb_meshers->clear();
+  this->Internal->cb_meshers->blockSignals(false);
 
   //grab the current model to determine the dimension
   smtk::model::Model model =
@@ -158,7 +163,7 @@ qtRemusMesherSelector::~qtRemusMesherSelector()
 smtk::model::Model qtRemusMesherSelector::currentModel() const
 {
   return fromItemData<smtk::model::Model>(this->Internal->cb_models,
-                                              this->Internal->cb_models->currentIndex());
+                                          this->Internal->cb_models->currentIndex());
 }
 
 //-----------------------------------------------------------------------------

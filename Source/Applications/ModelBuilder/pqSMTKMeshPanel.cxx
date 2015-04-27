@@ -114,6 +114,8 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
   this->SubmitterWidget->setLayout(new QVBoxLayout());
   QPushButton* meshButton = new QPushButton(QString("Mesh"));
   this->SubmitterWidget->layout()->addWidget(meshButton);
+  //by default the widget is not visible
+  this->SubmitterWidget->setVisible(false);
 
   layout->addWidget(this->MeshSelector.data());
   layout->addWidget(this->RequirementsWidget.data());
