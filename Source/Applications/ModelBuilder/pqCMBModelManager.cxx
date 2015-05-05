@@ -262,13 +262,13 @@ public:
 
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
           this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
-  
+
           this->updateModelAnnotations(model);
           this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
 
-          return true;         
+          return true;
           }
         }
       // Should not get here.
@@ -923,6 +923,15 @@ bool pqCMBModelManager::handleOperationResult(
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
     }
 
+  smtk::attribute::ModelEntityItem::Ptr tessChangedEntities =
+    result->findModelEntity("tess_changed");
+  if(tessChangedEntities )
+    {
+    bGeometryChanged = true;
+    //in future we should only update the models that have changed, not
+    //all models
+    }
+
   // process "modified" in result to figure out if models are changed
   // or there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
@@ -1026,7 +1035,7 @@ bool pqCMBModelManager::handleOperationResult(
 
 //-----------------------------------------------------------------------------
 bool pqCMBModelManager::DetermineFileReader(
-  const std::string& filename, 
+  const std::string& filename,
   std::string& sessionType,
   std::string& engineType,
   const smtk::model::StringData& sessionTypes)
