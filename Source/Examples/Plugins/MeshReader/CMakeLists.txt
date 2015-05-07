@@ -23,7 +23,6 @@ set(depend_LIBRARIES
     vtkInteractionStyle
     vtkRendering${VTK_RENDERING_BACKEND}
     vtkRenderingFreeType
-    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
 )
 
 ADD_PARAVIEW_PLUGIN(cmbMeshReaderPlugin "1.0"
