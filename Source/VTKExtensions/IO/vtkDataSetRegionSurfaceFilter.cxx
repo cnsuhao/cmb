@@ -123,6 +123,7 @@ int vtkDataSetRegionSurfaceFilter::UnstructuredGridExecute(vtkDataSet *dataSetIn
                                                      vtkPolyData *output,
                                                      int updateGhostLevel)
 {
+  (void) updateGhostLevel;
   vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(dataSetInput);
 
   // Before we start doing anything interesting, check if we need handle
@@ -746,7 +747,7 @@ int vtkDataSetRegionSurfaceFilter::UnstructuredGridExecute(vtkDataSet *dataSetIn
     }
   if (this->PieceInvariant)
     {
-    output->RemoveGhostCells(updateGhostLevel+1);
+    output->RemoveGhostCells();
     }
 
   this->DeleteQuadHash();
