@@ -507,6 +507,10 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelect(bool checked)
 {
   if (checked)
     {
+    // reset all mesh selection operations we are doing
+    if(this->Internal->ModelDock)
+      this->Internal->ModelDock->resetMeshSelectionItems();
+
     // always use Frustum selection since the surface selection does not
     // work if opacity < 1.
 
@@ -880,6 +884,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   // works on the model geometry, not scene, or anyting else
 //  pqActiveObjects::instance().disconnect(this->activeRenderView());
 //  pqActiveObjects::instance().blockSignals(true);
+  this->activeRenderView()->setOrientationAxesVisibility(false);
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onRemovingServer(pqServer *server)
@@ -1056,13 +1061,18 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
           flatIndex = prop[0];
           if(it->hasVisibility())
             {
+            const smtk::model::IntegerList& vprop(it->integerProperty("visible"));
             visBlocks[minfo] << flatIndex+1;
-            visible = (*it).visible();
+            if(!vprop.empty())
+              visible = (vprop[0] != 0);
             }
           }
         }
       }
     }
+
+  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
+  this->modelPanel()->update();
 
   // update visibility
   foreach(cmbSMTKModelInfo* minfo, visBlocks.keys())
@@ -1072,6 +1082,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
         minfo->Representation, visBlocks[minfo], visible,
         minfo->Info->GetUUID2BlockIdMap().size());
     }
+
   // update color
   foreach(cmbSMTKModelInfo* minfo, colorEntities.keys())
     {
@@ -1085,7 +1096,6 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       }
     }
 
-  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
   if(hasNewModels)
     {
     this->activeRenderView()->resetCamera();

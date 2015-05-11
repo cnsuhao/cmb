@@ -57,6 +57,7 @@ public:
     smtk::attribute::qtMeshSelectionItem* meshItem);
   void startMeshSelectionOperation(
     const QList<pqOutputPort*> &);
+  void resetMeshSelectionItems();
 
 public slots:
   /// Called if the user accepts pending modifications
