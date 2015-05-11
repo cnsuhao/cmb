@@ -25,6 +25,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
 #include "vtkPVSMTKModelInformation.h"
+#include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
@@ -153,12 +154,41 @@ void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 {
   this->Source->getProxy()->GatherInformation(this->Info);
 
+  std::vector<int> invis_ids;
+
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     this->Info->GetUUID2BlockIdMap().begin();
+
   for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
     {
+    int visible = 1;
     mgr->setIntegerProperty(it->first, "block_index", it->second);
+    if(mgr->hasIntegerProperty(it->first, "visible"))
+      {
+      const smtk::model::IntegerList& prop(mgr->integerProperty(it->first, "visible"));
+      if(!prop.empty())
+        visible = prop[0];
+      }
+//    if(visible == 0)
+//      {
+      invis_ids.push_back(it->second + 1); // block id
+      invis_ids.push_back(visible); // visibility
+//      }
     }
+
+  if(invis_ids.size() > 1)
+    {
+    // update vtk property
+    vtkSMProxy *proxy = this->Representation->getProxy();
+    vtkSMProperty *property_ = proxy->GetProperty("BlockVisibility");
+    vtkSMIntVectorProperty *ivp;
+    if(property_ && (ivp = vtkSMIntVectorProperty::SafeDownCast(property_)))
+      {
+      ivp->SetElements(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
+      proxy->UpdateVTKObjects();
+      }
+    }
+
 }
 
 /// Copy constructor.
@@ -262,13 +292,14 @@ public:
 
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
           this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
-
+  
+          vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
           this->updateModelAnnotations(model);
           this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
 
-          return true;
+          return true;         
           }
         }
       // Should not get here.
