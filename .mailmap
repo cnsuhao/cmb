@@ -1,0 +1,4 @@
+# This file is used by 'git shortlog' to provide unique author names (see 'man
+# git-shortlog' for documentation of the syntax).
+Robert O'Bara <bob.obara@kitware.com> Bob Obara <bob.obara@kitware.com>
+Ben Boeckel <ben.boeckel@kitware.com> Ben Boeckel <mathstuf@gmail.com>
