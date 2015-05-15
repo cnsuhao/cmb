@@ -84,7 +84,11 @@ protected slots:
   void addNewSessions(const QStringList&);
   void addNewSession(const QString&);
   void onCreateNewSession();
-  void onRequestMeshCellSelection();
+  void onRequestMeshSelection();
+  void onRequestMeshCellSelection(
+    const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
+  void onRequestMeshEdgePointSelection(
+    const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
   void onMeshSelectionItemCreated(
   smtk::attribute::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
@@ -149,13 +153,12 @@ protected:
   // based selection so that we can control selections of individual cells.
   int getNumberOfSelectedCells(pqOutputPort* selPort);
   bool multipleCellsSelected();
-  void growFinished();
+  void meshSelectionFinished();
   void clearSelectedPorts();
 
   // Description
   // Some convenient methods
   void clearGUI();
-  void updateGrowGUI(bool);
   void UpdateInfoTable();
   void updateDataInfo();
   void setToolbarEnableState(QToolBar* toolbar, bool enabled);

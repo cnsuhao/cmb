@@ -149,6 +149,9 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     ~vtkInternal()
       {
+      if(this->smtkModelManager)
+          this->smtkModelManager->clear();
+
       if(this->SimBuilder)
         {
         delete this->SimBuilder;
@@ -507,6 +510,10 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelect(bool checked)
 {
   if (checked)
     {
+    // reset all mesh selection operations we are doing
+    if(this->Internal->ModelDock)
+      this->Internal->ModelDock->resetMeshSelectionItems();
+
     // always use Frustum selection since the surface selection does not
     // work if opacity < 1.
 
@@ -868,9 +875,9 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(const smtk::model::OperatorResult&,
-    const smtk::model::SessionRef&, bool)),
+    const smtk::model::SessionRef&, bool, bool)),
     this, SLOT(processModelInfo( const smtk::model::OperatorResult&,
-    const smtk::model::SessionRef&, bool)));
+    const smtk::model::SessionRef&, bool, bool)));
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
@@ -880,6 +887,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   // works on the model geometry, not scene, or anyting else
 //  pqActiveObjects::instance().disconnect(this->activeRenderView());
 //  pqActiveObjects::instance().blockSignals(true);
+  this->activeRenderView()->setOrientationAxesVisibility(false);
 }
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onRemovingServer(pqServer *server)
@@ -1000,7 +1008,7 @@ pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 //----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   const smtk::model::OperatorResult& result,
-  const smtk::model::SessionRef& sref, bool hasNewModels)
+  const smtk::model::SessionRef& sref, bool hasNewModels, bool bGeometryChanged)
 {
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
@@ -1015,15 +1023,15 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
     result->findModelEntity("modified");
 
+  smtk::model::ManagerPtr mgr = this->modelManager()->managerProxy()->modelManager();
+
   // The result could be from multiple models.
   // For example, if Session(s) is clicked to change visibility or color,
   // all models under it should change
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> >visBlocks;
+  QMap<cmbSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
   QMap<cmbSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
-  QColor color;
-  bool visible = true;
 
-  if(resultEntities && resultEntities->numberOfValues() > 0)
+  if(resultEntities && resultEntities->numberOfValues() > 0 && !bGeometryChanged)
     {
     std::cout << " client associated entities " << resultEntities->numberOfValues() << std::endl;
 
@@ -1031,47 +1039,57 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       cmbSMTKModelInfo* minfo = NULL;
+      smtk::model::EntityRef curRef(mgr, it->entity());
       // take care of potential coloring related changes
-      if(it->hasColor() && (it->isVolume() || it->isGroup() ||
-         it->hasIntegerProperty("block_index")) // a geometric entity
-         && (minfo = this->Internal->smtkModelManager->modelInfo(*it)))
+      QColor color;
+      if(curRef.hasColor() && (curRef.isVolume() || curRef.isGroup() ||
+         curRef.hasIntegerProperty("block_index")) // a geometric entity
+         && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
         {
         // this could also be removing colors already being set
-        smtk::model::FloatList rgba = (*it).color();
+        smtk::model::FloatList rgba = curRef.color();
         if ((rgba.size() == 3 || rgba.size() ==4) &&
            !(rgba[0]+rgba[1]+rgba[2] == 0))
           color.setRgbF(rgba[0], rgba[1], rgba[2]);
 
-        colorEntities[minfo].insert(*it, color);
+        colorEntities[minfo].insert(curRef, color);
         }
 
       // For potential visibility changes
+      bool visible = true;
       unsigned int flatIndex;
-      if(it->hasIntegerProperty("block_index") &&
-         (minfo = this->Internal->smtkModelManager->modelInfo(*it)))
+      if(curRef.hasIntegerProperty("block_index") &&
+         (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
         {
-        const smtk::model::IntegerList& prop((*it).integerProperty("block_index"));
+        const smtk::model::IntegerList& prop(curRef.integerProperty("block_index"));
         if(!prop.empty())
           {
           flatIndex = prop[0];
-          if(it->hasVisibility())
+          if(curRef.hasVisibility())
             {
-            visBlocks[minfo] << flatIndex+1;
-            visible = (*it).visible();
+            const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
+            if(!vprop.empty())
+              visible = (vprop[0] != 0);
+            visBlocks[minfo][visible] << flatIndex+1;
             }
           }
         }
       }
     }
 
+  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
+  this->modelPanel()->update();
+
   // update visibility
   foreach(cmbSMTKModelInfo* minfo, visBlocks.keys())
     {
     if(minfo->Representation && visBlocks[minfo].count())
-      this->Internal->ViewContextBehavior->syncBlockVisibility(
-        minfo->Representation, visBlocks[minfo], visible,
-        minfo->Info->GetUUID2BlockIdMap().size());
+      foreach(bool isVisible, visBlocks[minfo].keys())
+        this->Internal->ViewContextBehavior->syncBlockVisibility(
+          minfo->Representation, visBlocks[minfo][isVisible], isVisible,
+          minfo->Info->GetUUID2BlockIdMap().size());
     }
+
   // update color
   foreach(cmbSMTKModelInfo* minfo, colorEntities.keys())
     {
@@ -1085,7 +1103,6 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       }
     }
 
-  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
   if(hasNewModels)
     {
     this->activeRenderView()->resetCamera();

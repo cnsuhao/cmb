@@ -628,13 +628,13 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
       // [composite_index, process_id, index]
       vtkSMPropertyHelper selIDs(selSource, "IDs");
       unsigned int count = selIDs.GetNumberOfElements();
-      unsigned int flat_idx, cellid;
+      unsigned int flat_idx, selid;
       for (unsigned int cc=0; cc < (count/3); cc++)
         {
         flat_idx = selIDs.GetAsInt(3*cc);
         entid = modInfo->Info->GetModelEntityId(flat_idx - 1);
-        cellid = selIDs.GetAsInt(3*cc+2);
-        selectionValues[entid].insert(cellid);
+        selid = selIDs.GetAsInt(3*cc+2);
+        selectionValues[entid].insert(selid);
         }
       opPort->setSelectionInput(NULL, 0);
       }
@@ -731,3 +731,11 @@ void pqSMTKModelPanel::updateMeshSelection(
   renView->render();
 }
 
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::resetMeshSelectionItems()
+{
+  foreach(smtk::attribute::qtMeshSelectionItem* meshItem,
+    this->Internal->SelectionOperations.keys())
+    if(meshItem)
+      meshItem->resetSelectionState();
+}

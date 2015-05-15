@@ -94,7 +94,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItem.h"
-
+#include "smtk/attribute/MeshSelectionItemDefinition.h"
 
 #include <QComboBox>
 #include <QDockWidget>
@@ -637,9 +637,7 @@ void pqCMBModelBuilderMainWindow::updateSelectionUI(bool disable)
       this->getMainDialog()->action_Select->setChecked(false);
       }
     }
-  else
-    {
-    }
+
   if(this->getMainDialog()->actionZoomToBox->isChecked())
     {
     this->getMainDialog()->actionZoomToBox->setChecked(false);
@@ -679,7 +677,7 @@ void pqCMBModelBuilderMainWindow::onSurfaceRubberBandSelect(bool checked)
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::growFinished()
+void pqCMBModelBuilderMainWindow::meshSelectionFinished()
 {
   // finish up grow, accept or cancel
   this->getThisCore()->modelPanel()->startMeshSelectionOperation(
@@ -687,18 +685,9 @@ void pqCMBModelBuilderMainWindow::growFinished()
 
   this->getThisCore()->modelPanel()->setCurrentMeshSelectionItem(NULL);
 
-  this->updateGrowGUI(false);
-  if(!this->getMainDialog()->action_Select->isChecked())
-    {
-    this->getThisCore()->onRubberBandSelectCells(false);
-    }
+  this->updateSelectionUI(false);
+  this->getThisCore()->onRubberBandSelect(false);
   this->getThisCore()->modelManager()->clearModelSelections();
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::updateGrowGUI(bool doGrow)
-{
-  this->updateSelectionUI(doGrow);
 }
 
 //-----------------------------------------------------------------------------
@@ -1155,7 +1144,7 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
+void pqCMBModelBuilderMainWindow::onRequestMeshSelection()
 {
   smtk::attribute::qtMeshSelectionItem* const qMeshItem = qobject_cast<
   smtk::attribute::qtMeshSelectionItem*>(QObject::sender());
@@ -1165,22 +1154,41 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
     {
     return;
     }
-  smtk::attribute::MeshSelectionItemPtr MeshSelectionItem =
+  smtk::attribute::MeshSelectionItemPtr meshItem =
     smtk::dynamic_pointer_cast<smtk::attribute::MeshSelectionItem>(
     qMeshItem->getObject());
-  if(!MeshSelectionItem)
+  if(!meshItem)
     {
     return;
     }
 
-  switch(MeshSelectionItem->meshSelectMode())
+  this->updateSelectionUI(true);
+
+  const smtk::attribute::MeshSelectionItemDefinition *itemDef =
+    dynamic_cast<const smtk::attribute::MeshSelectionItemDefinition*>(
+    meshItem->definition().get());
+  smtk::model::BitFlags masked = itemDef->membershipMask();
+  if (masked == smtk::model::FACE)
+    this->onRequestMeshCellSelection(meshItem);
+  else if(masked == (smtk::model::EDGE | smtk::model::VERTEX) ||
+          masked == smtk::model::EDGE || masked == smtk::model::VERTEX)
+    this->onRequestMeshEdgePointSelection(meshItem);
+
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection(
+  const smtk::attribute::MeshSelectionItemPtr& meshSelectItem)
+{
+
+  switch(meshSelectItem->modifyMode())
   {
     case smtk::attribute::ACCEPT:
-      this->growFinished();
+      this->meshSelectionFinished();
       break;
     case smtk::attribute::NONE:
       this->clearSelectedPorts();
-      this->growFinished();
+      this->meshSelectionFinished();
       this->getThisCore()->activeRenderView()->render();
       break;
     case smtk::attribute::RESET:
@@ -1192,8 +1200,32 @@ void pqCMBModelBuilderMainWindow::onRequestMeshCellSelection()
       this->getThisCore()->onRubberBandSelectCells(true);
       break;
     default:
-      std::cerr << "ERROR: Unrecognized MeshListUpdateType: "
-                << MeshSelectionItem->meshSelectMode() << std::endl;
+      std::cerr << "ERROR: Unrecognized MeshModifyMode!" << std::endl;
+      break;
+  }
+}
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onRequestMeshEdgePointSelection(
+  const smtk::attribute::MeshSelectionItemPtr& meshSelectItem)
+{
+/*
+  // HACK: trigger the vtkSMHardwareSelector to clear buffer. Otherwise,
+  // the SelectSurface Points sometime will not work.
+  this->RenderView->getRenderViewProxy()->GetActiveCamera()->Modified();
+  this->RenderView->forceRender();
+*/
+  switch(meshSelectItem->modifyMode())
+  {
+    case smtk::attribute::ACCEPT:
+      this->getThisCore()->onRubberBandSelectPoints(true);
+      break;
+    case smtk::attribute::NONE:
+      this->clearSelectedPorts();
+      this->meshSelectionFinished();
+      this->getThisCore()->activeRenderView()->render();
+      break;
+    default:
+      std::cerr << "ERROR: Unrecognized MeshModifyMode!" << std::endl;
       break;
   }
 }
@@ -1207,7 +1239,7 @@ void pqCMBModelBuilderMainWindow::onMeshSelectionItemCreated(
     {
     QObject::connect(meshItem, SIGNAL(requestMeshSelection(
                       smtk::attribute::ModelEntityItemPtr)),
-                    this, SLOT(onRequestMeshCellSelection()));
+                    this, SLOT(onRequestMeshSelection()));
     this->getThisCore()->modelPanel()->addMeshSelectionOperation(
       meshItem, opName, uuid);
     }

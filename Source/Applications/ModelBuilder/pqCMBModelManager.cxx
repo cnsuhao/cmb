@@ -25,10 +25,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
 #include "vtkPVSMTKModelInformation.h"
+#include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMProxyProperty.h"
+#include "vtkSMRepresentationProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
@@ -153,11 +155,40 @@ void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 {
   this->Source->getProxy()->GatherInformation(this->Info);
 
+  std::vector<int> invis_ids;
+
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     this->Info->GetUUID2BlockIdMap().begin();
+
   for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
     {
+    int visible = 1;
+
+    smtk::model::UUIDWithIntegerProperties pit = mgr->integerPropertiesForEntity(it->first);
+    smtk::model::PropertyNameWithIntegers pnit;
+    for (pnit = pit->second.begin(); pnit != pit->second.end(); ++pnit)
+      {
+      if (pnit->first == "visible" && pnit->second.size() == 1 && pnit->second[0] == 0)
+        {
+        visible = 0;
+        }
+      }
+    invis_ids.push_back(it->second + 1); // block id
+    invis_ids.push_back(visible); // visibility
+
     mgr->setIntegerProperty(it->first, "block_index", it->second);
+    }
+
+  if(invis_ids.size() > 1)
+    {
+
+    // update vtk property
+    vtkSMProxy *proxy = this->Representation->getProxy();
+    vtkSMPropertyHelper prop(proxy, "BlockVisibility");
+    prop.SetNumberOfElements(0);
+    proxy->UpdateVTKObjects();
+    prop.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
+    proxy->UpdateVTKObjects();
     }
 }
 
@@ -262,13 +293,14 @@ public:
 
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
           this->ModelInfos[model.entity()].init(modelSrc, rep, filename, mgr);
-
+  
+          vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
           this->updateModelAnnotations(model);
           this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
 
-          return true;
+          return true;         
           }
         }
       // Should not get here.
@@ -333,6 +365,10 @@ public:
 
     modelSrc->updatePipeline();
     modelSrc->getProxy()->UpdatePropertyInformation();
+    vtkSMRepresentationProxy::SafeDownCast(
+        this->ModelInfos[model.entity()].Representation->getProxy())->UpdatePipeline();
+
+//    view->forceRender();
 
     this->ModelInfos[model.entity()].updateBlockInfo(
       this->ManagerProxy->modelManager());
@@ -879,11 +915,12 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     }
 
   bool hasNewModels = false;
-  bool sucess = this->handleOperationResult(result, sessId, hasNewModels);
+  bool bGeometryChanged = false;
+  bool sucess = this->handleOperationResult(result, sessId, hasNewModels, bGeometryChanged);
   if(sucess)
     {
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
-    emit this->operationFinished(result, sref, hasNewModels);
+    emit this->operationFinished(result, sref, hasNewModels, bGeometryChanged);
     }
 
   return sucess;
@@ -893,7 +930,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& sessionId,
-  bool &hasNewModels)
+  bool &hasNewModels, bool& bGeometryChanged)
 {
 /*
   cJSON* json = cJSON_CreateObject();
@@ -909,7 +946,6 @@ bool pqCMBModelManager::handleOperationResult(
 
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
-  bool bGeometryChanged =  false;
 
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs generalModifiedModels;
@@ -920,7 +956,10 @@ bool pqCMBModelManager::handleOperationResult(
     {
     // if this is a block index, its pv representation needs to be updated
     if(it->hasIntegerProperty("block_index"))
+      {
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
+      bGeometryChanged = true;
+      }
     }
 
   smtk::attribute::ModelEntityItem::Ptr tessChangedEntities =
@@ -1025,10 +1064,6 @@ bool pqCMBModelManager::handleOperationResult(
         }
       }
     }
-
-  if(hasNewModels ||
-    (newEntities && newEntities->numberOfValues() > 0))
-    pxy->modelManager()->assignDefaultNames();
 
   return success;
 }

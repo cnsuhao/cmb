@@ -119,8 +119,8 @@ namespace pqSMTKUIHelper
     if(selentityrefs.size() == 0)
       modelView->currentSelectionByMask(selentityrefs,
         eItemDef->membershipMask(), true);
-
-    entityItem->associateEntities(selentityrefs);
+    if(selentityrefs.size() > 0)
+      entityItem->associateEntities(selentityrefs);
   }
 
 }
