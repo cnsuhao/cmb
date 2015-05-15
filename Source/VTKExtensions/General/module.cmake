@@ -4,11 +4,10 @@ vtk_module(vtkCMBGeneral
     vtkCommonExecutionModel
   PRIVATE_DEPENDS
     vtkChartsCore
-    vtksys
     vtkFiltersSources
     vtkInteractionStyle
-    vtkRendering${VTK_RENDERING_BACKEND}
     vtkRenderingFreeType
-    vtkRenderingFreeType${VTK_RENDERING_BACKEND}
+    vtkRendering${VTK_RENDERING_BACKEND}
+    vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

@@ -6,9 +6,12 @@ vtk_module(vtkCMBIO
     vtkCMBMeshing
     vtkFiltersGeometry
     vtkGeovisCore
-    #vtkIOExport
+    vtkInteractionStyle
+    vtkIOExport
     vtkIOGDAL
     vtkIOParallelExodus
+    vtkRendering${VTK_RENDERING_BACKEND}
+    vtkRenderingFreeType
     vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

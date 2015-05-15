@@ -5,7 +5,10 @@ vtk_module(vtkCMBFiltering
     vtkFiltersExtraction
     vtkFiltersGeometry
   PRIVATE_DEPENDS
+    vtkInteractionStyle
     vtkIOLegacy
+    vtkRendering${VTK_RENDERING_BACKEND}
+    vtkRenderingFreeType
     vtksys
    EXCLUDE_FROM_WRAP_HIERARCHY
 )

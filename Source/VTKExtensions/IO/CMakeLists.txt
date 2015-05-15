@@ -61,17 +61,9 @@ set_source_files_properties(
   WRAP_EXCLUDE
 )
 
-set(Depend_LIBS
-  ${KML_LIBRARIES}
-  vtkInteractionStyle
-  vtkRendering${VTK_RENDERING_BACKEND}
-  vtkRenderingFreeType
-  vtkRenderingFreeType${VTK_RENDERING_BACKEND}
-  )
-
 set(vtkCMBIO_NO_HeaderTest 1)
 vtk_module_library(vtkCMBIO ${CMB_IO_SRC})
-target_link_libraries(vtkCMBIO LINK_PRIVATE ${GDAL_LIBRARY} ${Depend_LIBS})
+target_link_libraries(vtkCMBIO LINK_PRIVATE ${GDAL_LIBRARY} ${KML_LIBRARIES})
 
 
 target_include_directories(vtkCMBIO
@@ -84,7 +76,6 @@ add_executable(meshingReader
   )
 
 target_link_libraries(meshingReader
-  ${Depend_LIBS}
   vtkCMBMeshing
   vtkCMBIO
   vtkFiltersGeneral

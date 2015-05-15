@@ -46,15 +46,13 @@ set(CMB_Filtering_SRC
 set(vtkCMBFiltering_NO_HeaderTest 1)
 vtk_module_library(vtkCMBFiltering ${CMB_Filtering_SRC})
 
-target_link_libraries(vtkCMBFiltering LINK_PRIVATE rtvl
-    vtkInteractionStyle
-    vtkRendering${VTK_RENDERING_BACKEND}
-    vtkRenderingFreeType
-    vtkRenderingFreeType${VTK_RENDERING_BACKEND})
-
 target_include_directories(vtkCMBFiltering
             PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../LIDAR
             PRIVATE ${VXL_RPL_INCLUDE_DIR}
                     ${VXL_VCL_INCLUDE_DIR}
                     ${VXL_CORE_INCLUDE_DIR}
+            )
+
+target_link_libraries(vtkCMBFiltering
+            PRIVATE rtvl
             )

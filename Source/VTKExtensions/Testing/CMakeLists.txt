@@ -9,7 +9,7 @@ set(testing_libraries
   vtkInteractionStyle
   vtkInteractionWidgets
   vtkRenderingCore
-  vtkRenderingFreeType${VTK_RENDERING_BACKEND}
+  vtkRenderingFreeType
   vtkRendering${VTK_RENDERING_BACKEND}
   vtkTestingRendering
   vtksys

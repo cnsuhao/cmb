@@ -105,7 +105,7 @@ struct vtkCMBMeshWriterInternals
       }
     // cell visibility
     // GetCellBlanking checks for cell and point visibility constraints
-    if (this->structured->GetCellBlanking())
+    if (this->structured->HasAnyBlankCells())
       {
       // Create own cell visibility array. This is necessary because a cell can be
       // invisible based on its own constraint or its points' individual constraints.
@@ -124,8 +124,7 @@ struct vtkCMBMeshWriterInternals
         }
       }
     // node visibility
-    vtkUnsignedCharArray* ptVisArray = this->structured->GetPointVisibilityArray();
-    if (ptVisArray)
+    if (this->structured->HasAnyBlankPoints())
       {
       // Create point file id array so point ids are written as a contiguous set
       // ids are zero-based. Also count the number of visible points
@@ -137,7 +136,7 @@ struct vtkCMBMeshWriterInternals
       for (vtkIdType cc = 0; cc < npts; ++cc)
         {
         this->ptFileIdArray->SetValue(cc,
-          ptVisArray->GetValue(cc) ? this->nVisPts++ : INVISIBLE_ID);
+          this->structured->IsPointVisible(cc) ? this->nVisPts++ : INVISIBLE_ID);
         }
       }
     this->cellPtList = vtkIdList::New();
