@@ -105,7 +105,7 @@ signals:
   void newSessionLoaded(const QStringList& bridgeNames);
   void newFileTypesAdded(const QStringList& fileTypes);
   void operationFinished(const smtk::model::OperatorResult&,
-    const smtk::model::SessionRef& sref, bool hasNewModels);
+    const smtk::model::SessionRef& sref, bool hasNewModels, bool bGeometryChanged);
   void requestMeshSelectionUpdate(
     const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*);
 
@@ -118,7 +118,7 @@ public slots:
   bool handleOperationResult(
     const smtk::model::OperatorResult& result,
     const smtk::common::UUID& bridgeSessionId,
-    bool &hadNewModels);
+    bool &hadNewModels, bool& bGeometryChanged);
 
 protected slots:
   void onPluginLoaded();
