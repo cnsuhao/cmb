@@ -740,6 +740,10 @@ pqCMBSceneTree* pqCMBModelBuilderMainWindow::getpqCMBSceneTree()
     QPixmap pixl(":/cmb/lockIcon.png");
 
     qtCMBTreeWidget* trWidget = new qtCMBTreeWidget(this);
+    trWidget->setColumnCount(3);
+    trWidget->setHeaderLabels(
+     QStringList() << tr("Scene") << tr("Visibility") << tr("Locked"));
+
     this->Internal->SceneGeoTree = new pqCMBSceneTree(
       &pix, &pixd, &pixs, &pixl, trWidget);
     this->Internal->SceneGeoTree->getWidget()->setContextMenuPolicy(Qt::NoContextMenu);
