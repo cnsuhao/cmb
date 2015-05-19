@@ -71,16 +71,6 @@ class QStatusBar;
 class QToolBar;
 class QWidget;
 
-struct CMBAPPCOMMON_EXPORT FileBasedMeshingParameters
-  {
-  QString inputFilePath;
-  QString geometryFileName;
-  QString mesherExecPath;
-  QString commandArguments;
-  QString processExecutionDir;
-  bool valid;
-  };
-
 class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindowCore :  public QObject
 {
   Q_OBJECT
@@ -162,7 +152,7 @@ public:
   bool makeServerConnection();
 
   /// Get/Set ProcessExecDirectory
-  QString& getProcessExecDirectory() const;
+  const QString& getProcessExecDirectory() const;
   void setProcessExecDirectory(QString execPath);
 
   /// some convenient methods

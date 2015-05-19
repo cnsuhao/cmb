@@ -12,6 +12,8 @@
 
 #include "qtCMBArcWidget.h"
 
+#include <iomanip>
+
 #include <vtkIdTypeArray.h>
 #include <vtkSMNewWidgetRepresentationProxy.h>
 #include <vtkPiecewiseFunction.h>
@@ -27,6 +29,39 @@
 
 pqCMBModifierArc::pqCMBModifierArc()
 :CmbArc(new pqCMBArc()),
+ IsExternalArc(false),
+ DisplacementProfile(vtkPiecewiseFunction::New()),
+ WeightingFunction(vtkPiecewiseFunction::New()),
+ Modifier(NULL),
+ Symmetric(true),
+ Relative(true)
+{
+  IsVisible = true;
+  DispUseSpline = false;
+  WeightUseSpline = false;
+  this->DistanceRange[MIN] = 0.0;
+  this->DistanceRange[MAX] = 1.0;
+  this->DisplacementDepthRange[MIN] = -8.0;
+  this->DisplacementDepthRange[MAX] = -3.0;
+  this->DisplacementProfile->AddPoint(1, 1);
+  this->DisplacementProfile->AddPoint(0, 0);
+  this->WeightingFunction->AddPoint(1, 0);
+  this->WeightingFunction->AddPoint(0.75, 1-(0.75*0.75));
+  this->WeightingFunction->AddPoint(0.5, 1-(0.5*0.5));
+  this->WeightingFunction->AddPoint(0.25, 1-(0.25*0.25));
+  this->WeightingFunction->AddPoint(0, 1);
+
+  DispSplineControl[0] = 0;
+  DispSplineControl[1] = 0;
+  DispSplineControl[2] = 0;
+
+  WeightSplineControl[0] = 0;
+  WeightSplineControl[1] = 0;
+  WeightSplineControl[2] = 0;
+}
+
+pqCMBModifierArc::pqCMBModifierArc(vtkSMSourceProxy *proxy)
+:CmbArc(new pqCMBArc(proxy)),
  IsExternalArc(false),
  DisplacementProfile(vtkPiecewiseFunction::New()),
  WeightingFunction(vtkPiecewiseFunction::New()),
@@ -359,4 +394,88 @@ void pqCMBModifierArc::setWeightingSplineControl(double tension, double continui
   WeightSplineControl[0] = tension;
   WeightSplineControl[1] = continuity;
   WeightSplineControl[2] = bias;
+}
+
+void pqCMBModifierArc::writeFunction(std::ofstream & f)
+{
+  f << 1 << "\n";
+  f << std::setprecision(10) << DistanceRange[0] << " " << DistanceRange[1] << "\n";
+  f << std::setprecision(10) << DisplacementDepthRange[0] << " " << DisplacementDepthRange[1] << "\n";
+  f << std::setprecision(10) << DispSplineControl[0] << " " << DispSplineControl[1] << " " << DispSplineControl[2] << "\n";
+  f << std::setprecision(10) << WeightSplineControl[0] << " " << WeightSplineControl[1] << " " << WeightSplineControl[2] << "\n";
+  f << Symmetric << " " << Relative << " " << DispUseSpline << " " << WeightUseSpline << "\n";
+  f << WeightingFunction->GetSize() << "\n";
+  for(int i = 0; i < WeightingFunction->GetSize(); ++i)
+  {
+    double d[4];
+    WeightingFunction->GetNodeValue(i, d);
+    f << std::setprecision(10) << d[0] << " " << d[1] << " " << d[2] << " " << d[3] << "\n";
+  }
+  f << DisplacementProfile->GetSize() << "\n";
+  for(int i = 0; i < DisplacementProfile->GetSize(); ++i)
+  {
+    double d[4];
+    DisplacementProfile->GetNodeValue(i, d);
+    f << std::setprecision(10) << d[0] << " " << d[1] << " " << d[2] << " " << d[3] << "\n";
+  }
+}
+
+void pqCMBModifierArc::readFunction(std::ifstream & f)
+{
+  int version;
+  f >> version; //nothing for now
+  assert(version == 1);
+  f >> DistanceRange[0] >> DistanceRange[1];
+  f >> DisplacementDepthRange[0] >> DisplacementDepthRange[1];
+  f >> DispSplineControl[0] >> DispSplineControl[1] >> DispSplineControl[2];
+  f >> WeightSplineControl[0] >> WeightSplineControl[1] >> WeightSplineControl[2];
+  f >> Symmetric >> Relative >> DispUseSpline >> WeightUseSpline;
+  int n;
+  f >> n;
+  WeightingFunction->Initialize();
+  for(int i = 0; i < n; ++i)
+  {
+    double d[4];
+    f >> d[0] >> d[1] >> d[2] >> d[3];
+    WeightingFunction->AddPoint(d[0], d[1], d[2], d[3]);
+  }
+  f >> n;
+  DisplacementProfile->Initialize();
+  for(int i = 0; i < n; ++i)
+  {
+    double d[4];
+    f >> d[0] >> d[1] >> d[2] >> d[3];
+    DisplacementProfile->AddPoint(d[0], d[1], d[2], d[3]);
+  }
+}
+
+void pqCMBModifierArc::write(std::ofstream & f)
+{
+  f << 1 << "\n";
+  if(CmbArc->getArcInfo() == NULL)
+  {
+    f << 0 << "\n";
+    return;
+  }
+  f << 1 << "\n";
+  f << /*this->Id << " " <<*/ IsVisible << "\n";
+  f << CmbArc->getPlaneProjectionNormal() << " " << CmbArc->getPlaneProjectionPosition() << "\n";
+  writeFunction(f);
+}
+
+void pqCMBModifierArc::read(std::ifstream & f)
+{
+  int version;
+  f >> version;
+  assert(version == 1);
+  int hasInfo;
+  f >> hasInfo;
+  if(!hasInfo) return;
+  f >> /*this->Id >>*/ IsVisible;
+  int norm;
+  double pos;
+  f >> norm >> pos;
+  readFunction(f);
+  CmbArc->setPlaneProjectionNormal(norm);
+  CmbArc->setPlaneProjectionPosition(pos);
 }

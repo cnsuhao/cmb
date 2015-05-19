@@ -22,7 +22,8 @@
 #include <QGridLayout>
 #include <QDialog>
 #include <vector>
-#include "vtkBoundingBox.h"
+#include <fstream>
+#include "qtCMBArcWidgetManager.h"
 #include "cmbSystemConfig.h"
 #include "pqGeneralTransferFunctionWidget.h"
 #include "pqCMBSceneObjectBase.h"
@@ -51,6 +52,7 @@ public:
   virtual ~pqCMBModifierArcManager();
 
   QTableWidget *getWidget() const { return this->TableWidget;}
+  qtCMBArcWidgetManager* arcWidgetManager() const {return this->ArcWidgetManager;}
 
   void AddLinePiece(pqCMBModifierArc *dataObj, int visible=1);
 
@@ -86,6 +88,10 @@ public slots:
   void sendOrder();
   void disableAbsolute();
   void enableAbsolute();
+  void onSaveProfile();
+  void onLoadProfile();
+  void onSaveArc();
+  void onLoadArc();
 
 signals:
   void currentObjectChanged(pqCMBModifierArc*);
@@ -99,6 +105,9 @@ signals:
   void updateWeightSlineControl(double, double, double);
   void changeDisplacementFunctionType(bool);
   void changeWeightFunctionType(bool);
+
+  void addingNewArc();
+  void modifyingArcDone();
 
 protected:
   QTableWidget * TableWidget;
@@ -125,6 +134,9 @@ protected:
   void setUpTable();
 
   void setDatasetTable(int inId);
+
+  void addNewArc(pqCMBModifierArc* arc);
+  void check_save();
 
 protected slots:
   void updateLineFunctions();

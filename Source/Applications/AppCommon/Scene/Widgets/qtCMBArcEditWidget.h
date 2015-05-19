@@ -97,6 +97,7 @@ explicit qtCMBArcEditWidget(QWidget *parent = 0);
 signals:
   void arcModified(qtCMBArcWidget*, vtkIdType, vtkIdType);
   void arcModificationfinished();
+  void startArcEditing();
 
 protected slots:
   //shows the edit widget and hides the pick widget

@@ -12,6 +12,7 @@
 
 #include <QObject>
 #include <QAbstractItemView>
+#include <fstream>
 
 class qtCMBArcWidget;
 class qtCMBArcEditWidget;
@@ -28,6 +29,7 @@ class pqCMBModifierArc :  public QObject
 public:
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
+  pqCMBModifierArc(vtkSMSourceProxy *proxy);
   ~pqCMBModifierArc();
 
   pqCMBArc * GetCmbArc()
@@ -75,6 +77,12 @@ public:
 
   void getDisplacementSplineControl(double&, double&, double&);
   void getWeightingSplineControl(double&, double&, double&);
+
+  void writeFunction(std::ofstream & f);
+  void readFunction(std::ifstream & f);
+
+  void write(std::ofstream & f);
+  void read(std::ifstream & f);
 
 public slots:
   void setLeftDistance(double dist);

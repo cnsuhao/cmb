@@ -31,4 +31,7 @@ add_subdirectory(AppCommon)
 #having things configured into the build directory
 add_subdirectory(Help)
 
+add_subdirectory(MeshViewer)
 add_subdirectory(ModelBuilder)
+add_subdirectory(PointsBuilder)
+add_subdirectory(SceneBuilder)

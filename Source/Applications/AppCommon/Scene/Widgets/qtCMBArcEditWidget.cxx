@@ -295,6 +295,7 @@ void qtCMBArcEditWidget::showEditWidget()
   //this->Internals->EditButtonBox->button(
   //  QDialogButtonBox::Save)->setEnabled(false);
   this->modifySubArc();
+  emit this->startArcEditing();
 }
 
 //-----------------------------------------------------------------------------
@@ -614,6 +615,7 @@ void qtCMBArcEditWidget::arcEditingFinished()
     }
 */
   this->saveEdit();
+  emit this->arcModificationfinished();
 }
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::finishedArcModification()
@@ -635,6 +637,7 @@ void qtCMBArcEditWidget::cancelEdit()
 
   //now show the pick widget
   this->resetWidget();
+  emit this->arcModificationfinished();
 }
 
 //-----------------------------------------------------------------------------

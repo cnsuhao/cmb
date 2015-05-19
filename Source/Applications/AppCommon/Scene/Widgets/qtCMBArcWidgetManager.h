@@ -75,6 +75,8 @@ signals:
   void ArcModified(pqCMBSceneNode*);
   void ArcModified2(pqCMBArc*);
 
+  void editingStarted();
+
 public slots:
   // slot for operations on an arc or sub-arc
   void straightenArc(vtkIdType startIdx, vtkIdType endIdx);

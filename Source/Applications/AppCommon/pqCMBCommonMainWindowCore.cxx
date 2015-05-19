@@ -262,6 +262,8 @@ public:
   // Python.
   bool FinalizePython;
 
+  QString ProcessExecDirectory;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -560,6 +562,18 @@ bool pqCMBCommonMainWindowCore::makeServerConnection()
 {
   pqServerConnectReaction::connectToServer();
   return (this->getActiveServer() != NULL);
+}
+
+//-----------------------------------------------------------------------------
+const QString& pqCMBCommonMainWindowCore::getProcessExecDirectory() const
+{
+  return this->Internal->ProcessExecDirectory;
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::setProcessExecDirectory(QString execPath)
+{
+  this->Internal->ProcessExecDirectory = execPath;
 }
 
 //-----------------------------------------------------------------------------

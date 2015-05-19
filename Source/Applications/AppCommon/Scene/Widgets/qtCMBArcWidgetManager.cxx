@@ -205,6 +205,9 @@ int qtCMBArcWidgetManager::edit()
       this,SLOT(updateModifiedArc(qtCMBArcWidget*, vtkIdType, vtkIdType)));
     QObject::connect(this->EditWidget,SIGNAL(arcModificationfinished()),
       this,SLOT(editingFinished()));
+    QObject::connect(this->EditWidget,SIGNAL(startArcEditing()),
+      this,SIGNAL(editingStarted()));
+
     }
   pqCMBArc* arcObj = this->Arc;
 

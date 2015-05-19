@@ -12,6 +12,10 @@
 
 #include "pqCMBLIDARPieceObject.h"
 
+#include "pqApplicationCore.h"
+#include "pqObjectBuilder.h"
+#include "pqCMBArc.h"
+
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QDebug>
@@ -19,6 +23,12 @@
 #include <QHeaderView>
 #include <QGridLayout>
 #include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QFileInfo>
+
+#include <fstream>
+#include <sstream>
+
 #include "pqSMAdaptor.h"
 #include "pqCMBModifierArc.h"
 #include "pqDataRepresentation.h"
@@ -27,7 +37,6 @@
 #include "vtkSMRepresentationProxy.h"
 #include <vtksys/SystemTools.hxx>
 #include "ui_qtArcFunctionControl.h"
-#include "qtCMBArcWidgetManager.h"
 #include "ui_qtModifierArcDialog.h"
 
 // enum for different column types
@@ -45,8 +54,8 @@ enum DataTableCol
 
 //-----------------------------------------------------------------------------
 pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
-                                       pqServer *server,
-                                       pqRenderView *renderer)
+                                                 pqServer *server,
+                                                 pqRenderView *renderer)
 {
   this->CurrentModifierArc = NULL;
   this->UI = new Ui_qtArcFunctionControl();
@@ -117,6 +126,14 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
             this->WeightingFunction, SLOT(setMaxX(double)));
     }
 
+  QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
+  QObject::connect(this->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadProfile()));
+
+  QObject::connect(this->UI->SaveFunctions, SIGNAL(clicked()),
+                   this, SLOT(onSaveArc()));
+  QObject::connect(this->UI->LoadFunctions, SIGNAL(clicked()),
+                   this, SLOT(onLoadArc()));
+
   this->ArcWidgetManager = new qtCMBArcWidgetManager(server, renderer);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)),
                    this, SLOT(doneModifyingArc()));
@@ -128,6 +145,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->UI->ArcControlTabs->setTabEnabled(2, false);
   QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)));
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()));
+  this->check_save();
 }
 
 //-----------------------------------------------------------------------------
@@ -172,6 +190,7 @@ void pqCMBModifierArcManager::initialize()
   this->UI->WeightingSplineFrame->setVisible(false);
   QObject::connect(this->UI->WeightingSplineControl, SIGNAL(toggled(bool)),
                    this, SLOT(weightSplineBox(bool)));
+
 }
 
 //-----------------------------------------------------------------------------
@@ -286,7 +305,8 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
           this, SLOT(onLineChange(int)));
   unselectAllRows();
   this->TableWidget->setRangeSelected(QTableWidgetSelectionRange(row,0,row,RightDist), true);
-  if(visible) emit orderChanged();
+  if(visible)
+    emit orderChanged();
 }
 
 void pqCMBModifierArcManager::unselectAllRows()
@@ -400,6 +420,7 @@ bool pqCMBModifierArcManager::remove(int id, bool all)
   this->TableWidget->blockSignals(false);
   emit(orderChanged());
   onClearSelection();
+  this->check_save();
   return false;
 }
 
@@ -492,6 +513,7 @@ std::vector<int> pqCMBModifierArcManager::getCurrentOrder(QString fname, int pin
 
 void pqCMBModifierArcManager::addLine()
 {
+  emit this->addingNewArc();
   selectLine(-2);
 }
 
@@ -521,6 +543,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->UI->ArcControlTabs->setTabEnabled(1, false);
     this->UI->ArcControlTabs->setTabEnabled(2, false);
     this->UI->ApplyAgain->setEnabled(false);
+    this->UI->LoadFunctions->setEnabled(true);
     if(this->UI_Dialog != NULL)
       {
       QPushButton* applyButton = this->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
@@ -534,7 +557,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
   else if(sid == -2) //create new one
     {
     pqCMBModifierArc * dig = new pqCMBModifierArc();
-    this->CurrentModifierArc = dig;
     this->ArcWidgetManager->setActiveArc(dig->GetCmbArc());
     this->ArcWidgetManager->create();
     QWidget * arc =this->ArcWidgetManager->getActiveWidget();
@@ -547,28 +569,12 @@ void pqCMBModifierArcManager::selectLine(int sid)
     QObject::connect( dig, SIGNAL(requestRender()),
                      this, SIGNAL(requestRender()) );
 
-    sid = ArcLines.size();
-    ArcLines.push_back(dig);
-    addApplyControl();
-    //TODO THIS NEEDS TO BE BETTER
-    dig->setId(sid);
-    foreach(QString filename, ServerProxies.keys())
-      {
-      foreach(int pieceIdx, ServerProxies[filename].keys())
-        {
-        vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
-        QList< QVariant > v;
-        v <<sid;
-        pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
-        v.clear();
-        v <<sid << 1;
-        pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ArcEnable"), v);
-        source->UpdateVTKObjects();
-        }
-      }
-    this->AddLinePiece(dig);
+    addNewArc(dig);
+
     this->disableSelection();
     this->UI->addLineButton->setEnabled(false);
+    this->UI->SaveFunctions->setEnabled(false);
+    this->UI->LoadFunctions->setEnabled(false);
     if(this->UI_Dialog != NULL)
       {
       QPushButton* applyButton = this->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
@@ -587,6 +593,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
       this->UI->removeLineButton->setEnabled(true);
       this->UI->buttonUpdateLine->setEnabled(true);
       this->UI->ApplyAgain->setEnabled(true);
+      this->UI->LoadFunctions->setEnabled(true);
       }
     }
   if(this->CurrentModifierArc != NULL)
@@ -611,6 +618,32 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->UI->ArcControlTabs->setTabEnabled(1, true);
     this->UI->ArcControlTabs->setTabEnabled(2, true);
     }
+}
+
+void pqCMBModifierArcManager::addNewArc(pqCMBModifierArc* dig)
+{
+  this->CurrentModifierArc = dig;
+  int sid = ArcLines.size();
+  ArcLines.push_back(dig);
+  addApplyControl();
+  //TODO THIS NEEDS TO BE BETTER
+  dig->setId(sid);
+  foreach(QString filename, ServerProxies.keys())
+  {
+    foreach(int pieceIdx, ServerProxies[filename].keys())
+    {
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      QList< QVariant > v;
+      v <<sid;
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
+      v.clear();
+      v <<sid << 1;
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ArcEnable"), v);
+      source->UpdateVTKObjects();
+    }
+  }
+  this->AddLinePiece(dig);
+  this->check_save();
 }
 
 void pqCMBModifierArcManager::update()
@@ -668,6 +701,24 @@ void pqCMBModifierArcManager::addProxy(QString s, int pid, pqPipelineSource* ps)
   source = vtkSMSourceProxy::SafeDownCast(ps->getProxy() );
   ServerProxies[s].insert(pid, source);
   setUpTable();
+
+  for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
+  {
+    if(this->ArcLines[i]!= NULL)
+    {
+      QList< QVariant > v;
+      v << this->ArcLines[i]->getId();
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
+      v.clear();
+      v << this->ArcLines[i]->getId() << 1;
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ArcEnable"), v);
+      source->UpdateVTKObjects();
+      this->ArcLines[i]->updateArc(source);
+      ArcLinesApply[i][s][pid] = true;
+    }
+  }
+
+  this->sendOrder();
 }
 
 void pqCMBModifierArcManager::clearProxies()
@@ -732,6 +783,7 @@ void pqCMBModifierArcManager::doneModifyingArc()
 
   this->enableSelection();
   this->unselectAllRows();
+  emit this->modifyingArcDone();
   selectLine(-1);
 }
 
@@ -893,4 +945,168 @@ void  pqCMBModifierArcManager::weightSplineBox(bool v)
     this->CurrentModifierArc->setWeightingFunctionType(v);
   }
   emit changeWeightFunctionType(v);
+}
+
+void pqCMBModifierArcManager::onSaveProfile()
+{
+  if(this->CurrentModifierArc != NULL)
+  {
+    QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
+                                                    "",
+                                                    tr("Function Profile (*.fpr)"));
+    if(fileName.isEmpty())
+    {
+      return;
+    }
+    std::ofstream out(fileName.toStdString().c_str());
+    this->CurrentModifierArc->writeFunction(out);
+  }
+}
+
+void pqCMBModifierArcManager::onLoadProfile()
+{
+  if(this->CurrentModifierArc != NULL)
+  {
+    QStringList fileNames =
+      QFileDialog::getOpenFileNames(NULL,
+                                    "Open File...",
+                                    "",
+                                    "Function Profile (*.fpr)");
+    if(fileNames.count()==0)
+    {
+      return;
+    }
+    std::string fname = fileNames[0].toStdString();
+    std::ifstream in(fname.c_str());
+    this->CurrentModifierArc->readFunction(in);
+    this->updateLineFunctions();
+  }
+}
+
+void pqCMBModifierArcManager::onSaveArc()
+{
+  QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
+                                                  "",
+                                                  tr("Function Profile (*.mar)"));
+  if(fileName.isEmpty())
+  {
+    return;
+  }
+
+  QList<pqOutputPort*> ContourInputs;
+  std::ofstream out(fileName.toStdString().c_str());
+  out << 1 << "\n";
+  out << ArcLines.size() << "\n";
+
+  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  {
+    ArcLines[i]->write(out);
+    pqOutputPort *port = ArcLines[i]->GetCmbArc()->getSource()->getOutputPort(0);
+    ContourInputs.push_back( port );
+  }
+  {
+    QFileInfo fi(fileName);
+    std::string fname = QFileInfo(fi.dir(), fi.baseName()+".vtp").absoluteFilePath().toStdString();
+    QMap<QString, QList<pqOutputPort*> > namedInputs;
+    namedInputs["Input"] = ContourInputs;
+
+    //now that we have collected all the contour info, write out the file
+    pqApplicationCore* core = pqApplicationCore::instance();
+    pqObjectBuilder* builder = core->getObjectBuilder();
+    pqPipelineSource* writer = builder->createFilter("writers",
+                                                     "SceneGenV2ContourWriter",
+                                                     namedInputs, core->getActiveServer());
+
+    vtkSMSourceProxy *proxy = vtkSMSourceProxy::SafeDownCast(writer->getProxy());
+
+    pqSMAdaptor::setElementProperty( proxy->GetProperty("FileName"),
+                                     fname.c_str() );
+    proxy->UpdateProperty("FileName");
+    proxy->UpdatePipeline();
+
+    //now that the file has been written, delete the writer
+    builder->destroy(writer);
+  }
+}
+
+void pqCMBModifierArcManager::onLoadArc()
+{
+  QStringList fileNames =
+  QFileDialog::getOpenFileNames(NULL,
+                                "Open File...",
+                                "",
+                                "Function Profile (*.mar)");
+  if(fileNames.count()==0)
+  {
+    return;
+  }
+
+  std::string fname = fileNames[0].toStdString();
+  unsigned int start = ArcLines.size();
+  int rc = this->TableWidget->rowCount();
+  {
+    QFileInfo fi(fileNames[0]);
+    pqPipelineSource *reader = NULL;
+    QStringList files;
+    files << QFileInfo(fi.dir(), fi.baseName()+".vtp").absoluteFilePath();
+
+    pqApplicationCore* core = pqApplicationCore::instance();
+    pqObjectBuilder* builder = core->getObjectBuilder();
+    builder->blockSignals(true);
+
+    reader = builder->createReader("sources", "XMLPolyDataReader", files,
+                                   core->getActiveServer());
+    builder->blockSignals(false);
+
+    if (reader)
+    {
+      pqPipelineSource* extractContour = builder->createFilter("filters",
+                                                               "CmbExtractContours", reader);
+      vtkSMSourceProxy *proxy = vtkSMSourceProxy::SafeDownCast( extractContour->getProxy() );
+      proxy->UpdatePipeline();
+      proxy->UpdatePropertyInformation();
+      int max =pqSMAdaptor::getElementProperty(proxy->GetProperty("NumberOfContoursInfo")).toInt();
+      pqCMBModifierArc * dig = new pqCMBModifierArc(proxy);
+      addNewArc(dig);
+      for ( int i = 1; i < max; ++i)
+      {
+        pqSMAdaptor::setElementProperty(proxy->GetProperty("ContourIndex"),i);
+        proxy->UpdateProperty("ContourIndex");
+        proxy->UpdatePipeline();
+        pqCMBModifierArc * dig = new pqCMBModifierArc(proxy);
+        QObject::connect( dig, SIGNAL(requestRender()),
+                          this, SIGNAL(requestRender()) );
+        addNewArc(dig);
+      }
+    }
+  }
+  std::ifstream in(fname.c_str());
+  int version;
+  in >> version;
+  unsigned int num;
+  in >> num;
+  for(unsigned int i = 0; i < num; ++i)
+  {
+    unsigned int at = start + i;
+    ArcLines[at]->read(in);
+    this->setRow( rc+i, ArcLines[at] );
+    ArcLines[at]->switchToNotEditable();
+  }
+  accepted();
+  onClearSelection();
+  this->CurrentModifierArc = NULL;
+  this->check_save();
+}
+
+void pqCMBModifierArcManager::check_save()
+{
+  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  {
+    if(ArcLines[i] != NULL)
+    {
+      this->UI->SaveFunctions->setEnabled(true);
+      return;
+    }
+  }
+  this->UI->SaveFunctions->setEnabled(false);
 }
