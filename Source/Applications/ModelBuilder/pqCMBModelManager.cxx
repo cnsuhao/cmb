@@ -162,20 +162,17 @@ void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 
   for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
     {
+    smtk::model::EntityRef ent(mgr, it->first);
     int visible = 1;
-
-    smtk::model::UUIDWithIntegerProperties pit =
-      mgr->integerProperties().find(it->first);
-    if (pit != mgr->integerProperties().end() && !pit->second.empty())
+    if (ent.hasIntegerProperties())
       {
-      smtk::model::PropertyNameWithIntegers pnit;
-      for (pnit = pit->second.begin(); pnit != pit->second.end(); ++pnit)
-        {
-        if (pnit->first == "visible" && pnit->second.size() == 1 && pnit->second[0] == 0)
-          {
-          visible = 0;
-          }
-        }
+      const smtk::model::IntegerData& iprops(ent.integerProperties());
+      smtk::model::IntegerData::const_iterator pit;
+      if (
+        (pit = iprops.find("visible")) != iprops.end() &&
+        pit->second.size() > 0 &&
+        pit->second[0] == 0)
+        visible = 0;
       }
     invis_ids.push_back(it->second + 1); // block id
     invis_ids.push_back(visible); // visibility
