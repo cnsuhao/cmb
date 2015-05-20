@@ -353,8 +353,7 @@ void pqSMTKModelPanel::resetUI()
 
   smtk::model::SimpleModelSubphrases::Ptr spg =
     smtk::model::SimpleModelSubphrases::create();
-  spg->setDirectLimit(
-    std::numeric_limits<int>::max());
+  spg->setDirectLimit(-1);
   qmodel->setRoot(
     smtk::model::EntityListPhrase::create()
       ->setup(cursors)
