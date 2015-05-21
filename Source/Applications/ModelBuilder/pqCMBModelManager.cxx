@@ -164,13 +164,17 @@ void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
     {
     int visible = 1;
 
-    smtk::model::UUIDWithIntegerProperties pit = mgr->integerPropertiesForEntity(it->first);
-    smtk::model::PropertyNameWithIntegers pnit;
-    for (pnit = pit->second.begin(); pnit != pit->second.end(); ++pnit)
+    smtk::model::UUIDWithIntegerProperties pit =
+      mgr->integerProperties().find(it->first);
+    if (pit != mgr->integerProperties().end() && !pit->second.empty())
       {
-      if (pnit->first == "visible" && pnit->second.size() == 1 && pnit->second[0] == 0)
+      smtk::model::PropertyNameWithIntegers pnit;
+      for (pnit = pit->second.begin(); pnit != pit->second.end(); ++pnit)
         {
-        visible = 0;
+        if (pnit->first == "visible" && pnit->second.size() == 1 && pnit->second[0] == 0)
+          {
+          visible = 0;
+          }
         }
       }
     invis_ids.push_back(it->second + 1); // block id
