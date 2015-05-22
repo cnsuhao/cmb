@@ -35,6 +35,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <QWidget>
 #include <QPointer>
+#include <QScopedPointer>
 
 #ifndef Q_MOC_RUN
 # include <remus/client/Client.h>
@@ -54,6 +55,9 @@ public:
                         QWidget* parent);
 
   ~qtRemusMesherSelector();
+
+  void updateModel(smtk::model::ManagerPtr modelManager,
+                   const remus::client::ServerConnection& connection);
 
   smtk::model::Model currentModel() const;
 
@@ -79,7 +83,7 @@ private:
   pqInternal* Internal;
 
   smtk::model::ManagerPtr ModelManager;
-  remus::client::Client Client;
+  QScopedPointer<remus::client::Client> Client;
 };
 
 #endif

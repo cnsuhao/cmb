@@ -33,6 +33,10 @@ public:
 
   QPointer<pqCMBModelManager> modelManager();
 
+
+  void updateModel( QPointer<pqCMBModelManager> mmgr,
+                     QPointer<qtCMBMeshingMonitor> monitor);
+
 protected slots:
   void displayRequirements(const std::vector<smtk::model::Model>& models,
                            const QString & workerName,

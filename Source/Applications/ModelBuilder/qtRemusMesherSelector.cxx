@@ -53,7 +53,7 @@ qtRemusMesherSelector::qtRemusMesherSelector(
   QWidget(parent),
   Internal(new pqInternal),
   ModelManager( modelManager ),
-  Client( connection ) //connect to the server using the passed in connection
+  Client( new remus::client::Client( connection ) ) //connect to the server using the passed in connection
 {
   this->Internal->setupUi(this);
 
@@ -124,20 +124,20 @@ void qtRemusMesherSelector::modelChanged(int index)
     meshIOType = remus::common::MeshIOType( (remus::meshtypes::Mesh3D()), (remus::meshtypes::Model()));
     }
 
-  const bool supportsModelMeshing = this->Client.canMesh(modelIOType);
-  const bool supportsMeshMeshing= meshIOType.valid() && this->Client.canMesh(meshIOType);
+  const bool supportsModelMeshing = this->Client->canMesh(modelIOType);
+  const bool supportsMeshMeshing= meshIOType.valid() && this->Client->canMesh(meshIOType);
 
   if(supportsModelMeshing  || supportsMeshMeshing )
     {
 
     //combine the discrete and model works into a single list
     remus::proto::JobRequirementsSet possibleWorkers;
-    remus::proto::JobRequirementsSet modelWorkers = this->Client.retrieveRequirements( modelIOType );
+    remus::proto::JobRequirementsSet modelWorkers = this->Client->retrieveRequirements( modelIOType );
     possibleWorkers.insert(modelWorkers.begin(),modelWorkers.end());
 
     if(supportsMeshMeshing)
       {
-      remus::proto::JobRequirementsSet meshWorkers = this->Client.retrieveRequirements( meshIOType );
+      remus::proto::JobRequirementsSet meshWorkers = this->Client->retrieveRequirements( meshIOType );
       possibleWorkers.insert(meshWorkers.begin(),meshWorkers.end());
       }
 
@@ -157,6 +157,15 @@ void qtRemusMesherSelector::modelChanged(int index)
 qtRemusMesherSelector::~qtRemusMesherSelector()
 {
   delete this->Internal;
+}
+
+//-----------------------------------------------------------------------------
+void qtRemusMesherSelector::updateModel(smtk::model::ManagerPtr modelManager,
+                                        const remus::client::ServerConnection& connection)
+{
+  this->ModelManager = modelManager;
+  //connect to the server using the passed in connection
+  this->Client.reset( new remus::client::Client( connection ) );
 }
 
 //-----------------------------------------------------------------------------

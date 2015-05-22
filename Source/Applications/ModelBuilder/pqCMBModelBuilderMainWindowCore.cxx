@@ -720,7 +720,15 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
   // if ableToOperate, no UI is need for this op
   bool succeeded = false;
   if(!this->modelPanel()->modelView())
+    {
     this->modelPanel()->resetUI();
+
+    //telll the mesh panel what is the new model manager
+    //it should track
+    this->meshPanel()->updateModel(
+          this->Internal->smtkModelManager,
+          this->meshServiceMonitor());
+    }
 
   if(this->modelPanel()->modelView())
     succeeded = this->modelPanel()->modelView()->requestOperation(
