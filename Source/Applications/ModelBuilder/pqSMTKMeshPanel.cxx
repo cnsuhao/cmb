@@ -166,10 +166,21 @@ QPointer<pqCMBModelManager> pqSMTKMeshPanel::modelManager()
 }
 
 //-----------------------------------------------------------------------------
+void pqSMTKMeshPanel::updateModel(QPointer<pqCMBModelManager> mmgr,
+                                   QPointer<qtCMBMeshingMonitor> monitor)
+{
+  //we have a new modelproxy and new meshing monitor
+  this->MeshSelector->updateModel(mmgr->managerProxy()->modelManager(),
+                                  monitor->connection());
+  this->MeshMonitor = monitor;
+}
+
+//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>& modelsToDisplay,
                                           const QString & workerName,
                                           const remus::proto::JobRequirements& reqs)
 {
+  (void) workerName;
   //determine the session that this modelId is part of.
   //we can
   this->ActiveModels = modelsToDisplay;
