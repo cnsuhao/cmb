@@ -22,7 +22,7 @@ find_path(SMTK_ROOT_DIR
 
 find_path(SMTK_INCLUDE_DIR
     NAMES smtk/CoreExports.h
-    HINTS ${SMTK_ROOT_DIR}/include/
+    HINTS ${SMTK_ROOT_DIR}/include/smtk/1.0.0
 )
 
 include(FindPackageHandleStandardArgs)
