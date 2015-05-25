@@ -1,7 +1,7 @@
 /*=========================================================================
 
- Program:   CMB
- Module:    qtCMBSceneMesherDialog.h
+  
+  
 
  Copyright (c) 1998-2005 Kitware Inc. 28 Corporate Drive, Suite 204,
  Clifton Park, NY, 12065, USA.

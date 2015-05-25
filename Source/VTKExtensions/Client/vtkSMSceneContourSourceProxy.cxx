@@ -1,17 +1,12 @@
-/*=========================================================================
-
-  Program:   ParaView
-  Module:    vtkSMSceneContourSourceProxy.cxx
-
-  Copyright (c) Kitware, Inc.
-  All rights reserved.
-  See Copyright.txt or http://www.paraview.org/HTML/Copyright.html for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 #include "vtkSMSceneContourSourceProxy.h"
 
 #include "pqSMAdaptor.h"
@@ -45,7 +40,7 @@ vtkSMSceneContourSourceProxy::~vtkSMSceneContourSourceProxy()
 //----------------------------------------------------------------------------
 void vtkSMSceneContourSourceProxy::CopyData(vtkSMNewWidgetRepresentationProxy *widgetProxy)
 {
-  if (!widgetProxy || !this)
+  if (!widgetProxy)
     {
     return;
     }
@@ -97,7 +92,7 @@ void vtkSMSceneContourSourceProxy::CopyData(vtkSMNewWidgetRepresentationProxy *w
 void vtkSMSceneContourSourceProxy::EditData(
   vtkSMNewWidgetRepresentationProxy *widgetProxy, bool &closed)
 {
-  if (!widgetProxy || !this)
+  if (!widgetProxy)
     {
     return;
     }
@@ -240,7 +235,7 @@ void vtkSMSceneContourSourceProxy::EditData(
 //----------------------------------------------------------------------------
 void vtkSMSceneContourSourceProxy::ExtractContour(vtkSMSourceProxy *sourceProxy)
 {
-  if (!sourceProxy || !this)
+  if (!sourceProxy)
     {
     return;
     }
