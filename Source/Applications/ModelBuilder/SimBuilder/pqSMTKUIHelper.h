@@ -37,12 +37,6 @@ namespace pqSMTKUIHelper
       {
       return;
       }
-    QLineEdit* lineEdit =  static_cast<QLineEdit*>(
-      fileItem->property("DataItem").value<void *>());
-    if(!lineEdit)
-      {
-      return;
-      }
 
     QString filters;
     bool existingFile=true;
@@ -89,8 +83,7 @@ namespace pqSMTKUIHelper
     if (file_dialog.exec() == QDialog::Accepted)
       {
       QStringList files = file_dialog.getSelectedFiles();
-      lineEdit->setText(files[0]);
-      fileItem->onInputValueChanged();
+      fileItem->setInputValue(files[0]);
       }
 
   }
