@@ -212,6 +212,7 @@ target_link_libraries(cmbAppCommon
   LINK_PUBLIC
     vtkCMBGeneral
     pqApplicationComponents
+    smtkCore
 #    vtkCMBMeshing # required by pqCMBSceneNode.cxx
 #    vtkIOXMLParser
     CMB_Plugin
