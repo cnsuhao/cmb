@@ -1,17 +1,12 @@
-/*=========================================================================
-
-  Program:   ParaView
-  Module:    vtk.h
-
-  Copyright (c) Kitware, Inc.
-  All rights reserved.
-  See Copyright.txt or http://www.paraview.org/HTML/Copyright.html for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; wvtkCMBSubArcModifyClientOperatorithout even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 // .NAME vtkCMBSubArcModifyClientOperator
 // .SECTION Description
 // Take a widget representation and convert it down to the arcs it represents.

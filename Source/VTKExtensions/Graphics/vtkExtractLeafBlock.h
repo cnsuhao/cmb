@@ -1,17 +1,12 @@
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    vtkExtractLeafBlock.h
-
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 // .NAME vtkExtractLeafBlock - extracts a single leaf block from a multiblock dataset.
 // .SECTION Description
 // vtkExtractLeafBlock is simialr to vtkExtractBlock, except that only leaf

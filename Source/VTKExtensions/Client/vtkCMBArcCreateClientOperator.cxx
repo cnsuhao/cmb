@@ -1,17 +1,12 @@
-/*=========================================================================
-
-  Program:   ParaView
-  Module:    vtkCMBArcCreateClientOperator.cxx
-
-  Copyright (c) Kitware, Inc.
-  All rights reserved.
-  See Copyright.txt or http://www.paraview.org/HTML/Copyright.html for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 #include "vtkCMBArcCreateClientOperator.h"
 
 
@@ -41,7 +36,7 @@ bool vtkCMBArcCreateClientOperator::Create(
   vtkSMNewWidgetRepresentationProxy *widgetProxy)
 {
   this->ArcId = -1;
-  if (!widgetProxy || !this)
+  if (!widgetProxy)
     {
     return false;
     }
@@ -64,7 +59,7 @@ bool vtkCMBArcCreateClientOperator::Create(
 bool vtkCMBArcCreateClientOperator::Create(vtkSMSourceProxy *sourceProxy)
 {
   this->ArcId = -1;
-  if (!sourceProxy || !this)
+  if (!sourceProxy)
     {
     return false;
     }

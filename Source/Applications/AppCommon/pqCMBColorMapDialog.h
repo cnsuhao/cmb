@@ -1,3 +1,12 @@
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 // .NAME pqCMBColorMapDialog - a CMB color map Dialog object.
 // .SECTION Description
 //  This class provides a color editor dialog for the representation
