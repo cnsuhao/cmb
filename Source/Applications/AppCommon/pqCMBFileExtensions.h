@@ -1,6 +1,12 @@
-// .NAME pqCMBFileExtensions -
-// .SECTION Description - File extensions for cmb applications
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
 //
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
 
 #ifndef __pqCMBFileExtensions_h
 #define __pqCMBFileExtensions_h
@@ -38,7 +44,7 @@ namespace pqCMBFileExtensions
       filters = "Supported files (*.cmb *.crf *.vtk *.vtu *.vtp *.2dm *.3dm *.sol *.stl *.tin *.obj *.sbt *.sbi *.sbs *.map *.poly *.smesh *.shp *.h5m *.sat *.brep *.stp *.cub);;";
   //    filters += "CMB files (*.cmb);;";
       filters += "CMB Resource files (*.crf);;";
-  
+
       filters += "VTK data files (*.vtk *.vtu *.vtp);;";
       filters += "Solids (*.2dm *.3dm *.sol *.stl *.tin *.obj);;";
       filters += "SimBuilder files (*.crf *.sbt *.sbi *.sbs);;";
