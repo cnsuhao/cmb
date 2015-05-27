@@ -39,7 +39,7 @@ if (NOT EXISTS ${copyright_file})
   message(SEND_ERROR "Cannot find CopyrightStatement.txt")
 endif()
 
-set(license_file ${ConceptualModelBuilder_SOURCE_DIR}/LICENSE.txt)
+set(license_file ${ConceptualModelBuilder_SOURCE_DIR}/../LICENSE.txt)
 
 if (NOT EXISTS ${license_file})
   message(SEND_ERROR "Cannot find LICENSE.txt.")
