@@ -10,7 +10,6 @@
 
 #include "pqSimBuilderUIManager.h"
 
-#include "smtk/view/Base.h"
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/DirectoryItem.h"
@@ -57,7 +56,7 @@ pqSimBuilderUIManager::pqSimBuilderUIManager()
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem));
+  this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem), "SimBuilder");
   this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
@@ -76,7 +75,7 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
 //----------------------------------------------------------------------------
 smtk::attribute::qtRootView* pqSimBuilderUIManager::rootView()
 {
-  return this->qtAttSystem->rootView();
+  return dynamic_cast<smtk::attribute::qtRootView *>(this->qtAttSystem->topView());
 }
 
 //----------------------------------------------------------------------------
@@ -114,8 +113,7 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
   this->qtManager()->initializeUI(parentWidget);
   // callbacks from Expressions sections
   QList<smtk::attribute::qtBaseView*> expressions;
-  this->qtManager()->rootView()->getChildView(
-    smtk::view::Base::SIMPLE_EXPRESSION, expressions);
+  this->rootView()->getChildView("SimpleExpression", expressions);
   foreach(smtk::attribute::qtBaseView* sec, expressions)
     {
     smtk::attribute::qtSimpleExpressionView* simpleExpSec =
@@ -130,8 +128,7 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
 
   // callbacks from Attributes sections
   QList<smtk::attribute::qtBaseView*> attViews;
-  this->qtManager()->rootView()->getChildView(
-    smtk::view::Base::ATTRIBUTE, attViews);
+  this->rootView()->getChildView("Attribute", attViews);
   foreach(smtk::attribute::qtBaseView* sec, attViews)
     {
     smtk::attribute::qtAttributeView* attSec =
@@ -258,8 +255,7 @@ void pqSimBuilderUIManager::getAttributeDefinitions(
     QMap<QString, QList<smtk::attribute::DefinitionPtr> > &outDefMap)
 {
   QList<smtk::attribute::qtBaseView*> attsections;
-  this->qtManager()->rootView()->getChildView(
-    smtk::view::Base::ATTRIBUTE, attsections);
+  this->rootView()->getChildView("Attribute", attsections);
 
   foreach(smtk::attribute::qtBaseView* sec, attsections)
     {

@@ -18,6 +18,7 @@
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtAttribute.h"
 #include "smtk/extension/qt/qtFileItem.h"
+#include "smtk/extension/qt/qtRootView.h"
 #include "cmbSystemConfig.h"
 
 #include <QMap>

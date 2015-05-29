@@ -24,8 +24,7 @@
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
 
-#include "smtk/view/Instanced.h"
-#include "smtk/view/Root.h"
+#include "smtk/common/View.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtRootView.h"
 
@@ -58,7 +57,11 @@ void make_InstancedView(smtk::attribute::SystemPtr attSystem)
   typedef std::vector<smtk::attribute::DefinitionPtr>::const_iterator
                                                             DefIterType;
 
+  smtk::common::ViewPtr root = attSystem->findViewByType("Root");
+  int pos = root->details().findChild("Views");
+  smtk::common::View::Component &vcomp = root->details().child(pos);
   std::vector<smtk::attribute::DefinitionPtr> baseDefinitions;
+  
   attSystem->findBaseDefinitions(baseDefinitions);
   for (DefIterType baseIter = baseDefinitions.begin();
        baseIter != baseDefinitions.end();baseIter++)
@@ -70,14 +73,15 @@ void make_InstancedView(smtk::attribute::SystemPtr attSystem)
     for (DefIterType defIter = derivedDefs.begin();
          defIter != derivedDefs.end(); defIter++)
       {
-      smtk::view::InstancedPtr view =
-          smtk::view::Instanced::New((*defIter)->type());
+      smtk::common::ViewPtr view =
+        smtk::common::View::New("Instanced", (*defIter)->type());
+      smtk::common::View::Component &comp = view->details().addChild("InstancedAttributes");
 
       smtk::attribute::AttributePtr instance =
         attSystem->createAttribute((*defIter)->type());
-
-      attSystem->rootView()->addSubView(view);
-      view->addInstance(instance);
+      comp.addChild("Att").setAttribute("Type", instance->definition()->type())
+        .setAttribute("Name",instance->name());
+      vcomp.addChild("View").setAttribute("Title", view->title());
       }
     }
 }
@@ -195,9 +199,9 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
   this->AttSystem.reset( new smtk::attribute::System() );
   this->AttSystem->setRefModelManager( this->ModelManager->managerProxy()->modelManager() );
 
-  this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem) );
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
+
 
   bool err = false;
   if(reqs.sourceType() == (remus::common::ContentSource::File) )
@@ -212,13 +216,32 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
                               reqs.requirementsSize(),
                               inputLogger);
     }
+  // Matching the old View logic in 3.0 in which everything goes through a Root View
+  // Assuming the 
+  smtk::common::ViewPtr root = this->AttSystem->findViewByType("Root");
+  if (!root)
+    {
+    // Create a new Root View called MeshView
+    root = smtk::common::View::New("Root", ("MeshView"));
+    this->AttSystem->addView(root);
+    }
+  // Get the Views Component ifit exists - else create it
+  int pos = root->details().findChild("Views");
+  if (pos < 0)
+    {
+    root->details().addChild("Views");
+    pos = root->details().findChild("Views");
+    }
+  
+  smtk::common::View::Component &vcomp = root->details().child(pos);
 
   // If manager contains no views, create InstancedView by default
   const bool useInternalFileBrowser = true;
-  if (this->AttSystem->rootView()->numberOfSubViews() == 0)
+  if (vcomp.numberOfChildren() == 0)
     {
     make_InstancedView(this->AttSystem);
     }
+  this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem, root->title()) );
   this->AttUIManager->initializeUI(this->RequirementsWidget.data(),
                                    useInternalFileBrowser);
 
