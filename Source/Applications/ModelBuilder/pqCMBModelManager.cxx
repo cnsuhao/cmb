@@ -947,7 +947,6 @@ bool pqCMBModelManager::handleOperationResult(
     if(it->hasIntegerProperty("block_index"))
       {
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
-      bGeometryChanged = true;
       }
     }
 
@@ -955,9 +954,16 @@ bool pqCMBModelManager::handleOperationResult(
     result->findModelEntity("tess_changed");
   if(tessChangedEntities )
     {
-    bGeometryChanged = true;
-    //in future we should only update the models that have changed, not
-    //all models
+    for(it = tessChangedEntities->begin(); it != tessChangedEntities->end(); ++it)
+      {
+      if(it->isModel())
+        geometryChangedModels.insert(it->entity());
+      else if (it->isCellEntity() && !it->isVolume() )
+        {
+        geometryChangedModels.insert(
+          it->as<smtk::model::CellEntity>().model().entity());
+        }
+      }
     }
 
   // process "modified" in result to figure out if models are changed
@@ -973,7 +979,6 @@ bool pqCMBModelManager::handleOperationResult(
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
-        bGeometryChanged = true;
         }
       }
 
@@ -986,16 +991,16 @@ bool pqCMBModelManager::handleOperationResult(
       if(it->isModel())
         {
         geometryChangedModels.insert(it->entity());
-//        bGeometryChanged = true;
         }
       else if (it->isCellEntity() && !it->isVolume() &&
         !it->hasIntegerProperty("block_index")) // a new entity?
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
-        bGeometryChanged = true;
         }
       }
+
+  bGeometryChanged = geometryChangedModels.size() > 0;
 
   // check if there is "selection", such as from "grow" operator.
   //
@@ -1035,8 +1040,7 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "");
         }
-      else if(bGeometryChanged ||
-        geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+      else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         // update representation
         {
         this->clearModelSelections();

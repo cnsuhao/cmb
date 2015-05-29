@@ -1,3 +1,13 @@
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
+
 // .NAME pqSMTKUIHelper -
 // .SECTION Description - Helper for smtk::attribute::qtFileItem
 //
@@ -34,12 +44,6 @@ namespace pqSMTKUIHelper
     pqServer* server, QWidget* parent_Widget = NULL)
   {
     if(!fileItem)
-      {
-      return;
-      }
-    QLineEdit* lineEdit =  static_cast<QLineEdit*>(
-      fileItem->property("DataItem").value<void *>());
-    if(!lineEdit)
       {
       return;
       }
@@ -89,8 +93,7 @@ namespace pqSMTKUIHelper
     if (file_dialog.exec() == QDialog::Accepted)
       {
       QStringList files = file_dialog.getSelectedFiles();
-      lineEdit->setText(files[0]);
-      fileItem->onInputValueChanged();
+      fileItem->setInputValue(files[0]);
       }
 
   }
