@@ -41,7 +41,6 @@
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/ResourceSetReader.h"
 #include "smtk/io/ResourceSetWriter.h"
-#include "smtk/view/Root.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtRootView.h"
 

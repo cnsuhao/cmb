@@ -23,8 +23,6 @@
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
-#include "smtk/view/Base.h"
-#include "smtk/view/Root.h"
 
 #include "pqApplicationCore.h"
 #include "pqServer.h"
