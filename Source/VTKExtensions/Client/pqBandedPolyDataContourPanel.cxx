@@ -126,7 +126,9 @@ void pqBandedPolyDataContourPanel::updateEnableState()
     cur_input = ports.size() > 0? ports[0] : NULL;
     }
 
-  if (this->Implementation->PreviousInput != cur_input->getSource())
+  if (
+    (!cur_input && this->Implementation->PreviousInput) ||
+    this->Implementation->PreviousInput != cur_input->getSource())
     {
     if (this->Implementation->PreviousInput)
       {
@@ -134,7 +136,10 @@ void pqBandedPolyDataContourPanel::updateEnableState()
         SIGNAL(dataUpdated(pqPipelineSource*)),
         this, SLOT(updateEnableState()));
       }
-    this->Implementation->PreviousInput = cur_input->getSource();
+    if (cur_input)
+      this->Implementation->PreviousInput = cur_input->getSource();
+    else
+      this->Implementation->PreviousInput = static_cast<pqPipelineSource*>(NULL);
     if (this->Implementation->PreviousInput)
       {
       QObject::connect(this->Implementation->PreviousInput,
