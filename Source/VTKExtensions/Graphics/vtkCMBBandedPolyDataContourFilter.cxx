@@ -140,11 +140,11 @@ int vtkCMBBandedPolyDataContourFilter::ClipEdge(int v1, int v2,
 extern "C" {
 int vtkCompareClipValues(const void *val1, const void *val2)
 {
-  if ( *static_cast<double*>(val1) < *static_cast<double*>(val2) )
+  if ( *static_cast<const double*>(val1) < *static_cast<const double*>(val2) )
     {
     return (-1);
     }
-  else if ( *static_cast<double*>(val1) > *static_cast<double*>(val2) )
+  else if ( *static_cast<const double*>(val1) > *static_cast<const double*>(val2) )
     {
     return (1);
     }
@@ -317,7 +317,7 @@ int vtkCMBBandedPolyDataContourFilter::RequestData(
   // These are the new cell scalars
   vtkFloatArray *newScalars = vtkFloatArray::New();
   newScalars->Allocate(numCells*5,numCells);
-  newScalars->SetName( ( this->ScalarName && ! strlen( this->ScalarName ) == 0 ) ? this->ScalarName : "Scalars" );
+  newScalars->SetName( ( this->ScalarName && this->ScalarName[0] ) ? this->ScalarName : "Scalars" );
 
   // Used to keep track of intersections
   vtkEdgeTable *edgeTable = vtkEdgeTable::New();

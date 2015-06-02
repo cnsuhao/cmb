@@ -2,6 +2,7 @@
 set(CMB_Graphics_SRC
   vtkCleanPolylines.cxx
   vtkCMBArcWidgetRepresentation.cxx
+  vtkCMBBandedPolyDataContourFilter.cxx
   vtkCMBExtractCellFromDataSet.cxx
   vtkCMBExtractMapContour.cxx
   vtkCMBImplicitPlaneRepresentation.cxx
