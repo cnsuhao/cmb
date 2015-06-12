@@ -51,12 +51,13 @@ class pqSimBuilderUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager::pqSimBuilderUIManager()
+pqSimBuilderUIManager::pqSimBuilderUIManager(const char *topViewName)
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->qtAttSystem = new smtk::attribute::qtUIManager(*(this->AttSystem), "SimBuilder");
+  this->qtAttSystem = new smtk::attribute::qtUIManager(
+    *(this->AttSystem), topViewName);
   this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
@@ -109,8 +110,8 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
   QObject::connect(this->qtAttSystem,
     SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
     this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
-
   this->qtManager()->initializeUI(parentWidget);
+
   // callbacks from Expressions sections
   QList<smtk::attribute::qtBaseView*> expressions;
   this->rootView()->getChildView("SimpleExpression", expressions);
