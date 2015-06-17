@@ -48,7 +48,9 @@ public:
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
   void syncBlockColor(pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor&);
-  virtual void onColorByModeChanged(const QString &);
+  virtual void colorByEntity(const QString &);
+  virtual void colorByAttribute(smtk::attribute::SystemPtr attSys,
+    const QString& attdeftype, const QString& itemname);
   virtual void updateColorForEntities(pqDataRepresentation* rep,
     const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);

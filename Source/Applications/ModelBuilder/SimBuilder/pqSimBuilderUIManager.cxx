@@ -91,8 +91,8 @@ void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
   if (curManager != refModelMgr)
     {
     this->Internals->ModelMgr = refModelMgr;
-    this->AttSystem->setRefModelManager(refModelMgr);
     }
+  this->AttSystem->setRefModelManager(refModelMgr);
 }
 //-----------------------------------------------------------------------------
 void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)

@@ -34,6 +34,8 @@
 #include "vtkStringList.h"
 #include "vtkTuple.h"
 
+#include <algorithm>
+
 //BTX
 namespace RepresentationHelperFunctions
 {
@@ -278,11 +280,15 @@ static bool CMB_COLOR_REP_BY_INDEXED_LUT(
   return true;
 }
 
+static const char *helper_internal_convert(const std::string & s)
+{
+   return s.c_str();
+}
 
 static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
     vtkSMProxy* reproxy, vtkSMProxy* lutProxy,
-    const std::vector<vtkTuple<double, 3> > &rgbColors,
-    vtkStringList* new_annotations)
+    std::vector<vtkTuple<double, 3> > &rgbColors,
+    const std::vector<std::string> & in_annotations)
 //    const std::vector<vtkTuple<const char*, 2> >& new_annotations)
 {
   // Now, setup transfer functions.
@@ -293,30 +299,53 @@ static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
 //      mgr->GetColorTransferFunction(arrayname, reproxy->GetSessionProxyManager());
     vtkSMPropertyHelper(lutProxy, "IndexedLookup", true).Set(1);
 
-    if (new_annotations->GetLength() > 0)
+    if (in_annotations.size() > 0)
       {
+
+//      std::vector<vtkTuple<const char*, 2> > new_annotations;
+      std::vector<const char*> new_annotations;
+      std::transform(in_annotations.begin(), in_annotations.end(),
+        std::back_inserter(new_annotations), helper_internal_convert); 
+
       vtkSMStringVectorProperty* svp = vtkSMStringVectorProperty::SafeDownCast(
         lutProxy->GetProperty("Annotations"));
       if (svp)
         {
-        svp->SetElements(new_annotations);
-//        svp->SetElements(new_annotations[0].GetData(),
-//          static_cast<unsigned int>(new_annotations.size()*2));
+//        svp->SetElements(new_annotations);
+        svp->SetElements((const char**)(&new_annotations[0]),
+          static_cast<unsigned int>(new_annotations.size()));
         }
-
       }
+
     if (rgbColors.size() > 0)
       {
+      // Note: this is a work-around for a bug in paraview that color-by-partial
+      // field data array of a multiblockdataset will leak color with blocks that
+      // do not have the field data array. Therefore, we are adding "no group"
+      // and "no attribute" for the color lookup table, and we want to set those
+      // color to white be default. Later on, we may get these "no ..." colors from
+      // application settings.
+      std::vector<std::string>::const_iterator git =
+        std::find(in_annotations.begin(), in_annotations.end(), "no group");
+      std::vector<std::string>::const_iterator ait =
+        std::find(in_annotations.begin(), in_annotations.end(), "no attribute");
+      int idx = (git != in_annotations.end()) ? (git - in_annotations.begin()) :
+        ((ait != in_annotations.end()) ? (ait - in_annotations.begin()) : -1);
+      int numColors = (int)rgbColors.size();
+      if(idx >= 0 && (idx%2) == 0 && (idx/2) < numColors)
+        {
+        idx = idx/2;
+        rgbColors[idx][0] = rgbColors[idx][1] = rgbColors[idx][2] = 1.0;
+        }
+
       vtkSMPropertyHelper indexedColors(lutProxy->GetProperty("IndexedColors"));
       indexedColors.Set(rgbColors[0].GetData(),
         static_cast<unsigned int>(rgbColors.size() * 3));
       }
-
     lutProxy->UpdateVTKObjects();
     }
 
 }
-
 
 static void MODELBUILDER_SYNCUP_DISPLAY_LUT(
     const char* arrayname, vtkSMProxy* lutProxy)

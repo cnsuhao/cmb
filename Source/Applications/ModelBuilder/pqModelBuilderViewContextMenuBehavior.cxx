@@ -254,7 +254,7 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
 }
 
 //----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
+void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   const QString & colorMode)
 {
   if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
@@ -352,11 +352,59 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
   if(colorEntities.size() > 0)
     {
     this->updateColorForEntities(activeRep, colorMode, colorEntities);
-    this->m_ModelPanel->modelManager()->updateColorTable(
+    this->m_ModelPanel->modelManager()->updateEntityColorTable(
       activeRep, colorEntities, colorMode);
     }
-  this->m_ModelPanel->modelManager()->colorRepresentationBy(
+  this->m_ModelPanel->modelManager()->colorRepresentationByEntity(
     activeRep, colorMode);
+
+}
+
+//----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
+    smtk::attribute::SystemPtr attSys,
+    const QString& attdeftype, const QString& itemname)
+{
+  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+    return;
+
+  // active rep
+  pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
+  pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
+  if (!datapanel || !activeRep)
+    return;
+  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
+  if(!minfo)
+    return;
+
+  smtk::common::UUID modelId = minfo->Info->GetModelUUID();
+  smtk::model::Model activeModel(
+    this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
+  if(!activeModel.isValid())
+    return;
+
+  // turn off the current scalar bar before switch to the new array
+  vtkSMProxy* ctfProxy = activeRep->getLookupTableProxy();
+  vtkSMProxy* sb = vtkSMTransferFunctionProxy::FindScalarBarRepresentation(
+    ctfProxy, pqActiveObjects::instance().activeView()->getProxy());
+  if(sb)
+    {
+    vtkSMPropertyHelper(sb, "Visibility").Set(0);
+    sb->UpdateVTKObjects();
+    }
+
+  // clear all colors
+  QList<unsigned int> indices;
+  std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
+    minfo->Info->GetUUID2BlockIdMap().begin();
+  for(; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
+    {
+    indices.append(uit->second + 1);
+    }
+  datapanel->clearBlockColor(indices);
+
+  this->m_ModelPanel->modelManager()->colorRepresentationByAttribute(
+    activeRep, attSys, attdeftype, itemname);
 
 }
 
