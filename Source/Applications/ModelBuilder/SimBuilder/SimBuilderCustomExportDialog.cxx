@@ -274,6 +274,7 @@ void SimBuilderCustomExportDialog::updatePanel()
       QString::fromStdString(logger.convertToString()));
     return;
     }
+  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
 
   // Update python script item
   smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
@@ -290,7 +291,6 @@ void SimBuilderCustomExportDialog::updatePanel()
   this->SelectedAnalyses.clear();
   this->updateAnalysisTypesWidget();
 
-  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
   this->IsPanelSet = true;
 }
 
