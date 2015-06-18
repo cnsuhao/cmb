@@ -244,6 +244,8 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
   this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem, root->title()) );
   this->AttUIManager->initializeUI(this->RequirementsWidget.data(),
                                    useInternalFileBrowser);
+  QObject::connect(this->AttUIManager.get(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+    this, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)));
 
   emit this->meshingPossible( true );
 }

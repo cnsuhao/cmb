@@ -109,6 +109,8 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
   QObject::connect(this->qtAttSystem,
     SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
     this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
+  QObject::connect(this->qtManager(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+    this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
 
   this->qtManager()->initializeUI(parentWidget);
   // callbacks from Expressions sections

@@ -1183,6 +1183,12 @@ pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
       this->Internal->smtkModelManager,
       this->meshServiceMonitor(),
       this->parentWidget());
+    // connect the entity selection from mesh panel, so that the model
+    // tree view and render window will show entites being selected
+    QObject::connect(this->Internal->MeshDock,
+      SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+      this->modelPanel(),
+      SLOT(requestEntitySelection(const smtk::common::UUIDs&)));
     }
   return this->Internal->MeshDock;
 }
