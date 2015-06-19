@@ -93,6 +93,8 @@ static void internal_AddBlockGroupInfo(
   vtkDataObject* objBlock,
   const smtk::model::ManagerPtr& modelMan)
 {
+  if(!objBlock)
+    return;
   vtkStringArray* uuidArray = vtkStringArray::SafeDownCast(
     objBlock->GetFieldData()->GetAbstractArray(
     vtkModelMultiBlockSource::GetEntityTagName()));
