@@ -43,6 +43,11 @@ public:
   virtual void SetModelEntityID(const char*);
   virtual char* GetModelEntityID();
 
+  // Description:
+  // Forwarded to vtkModelMultiBlockSource
+  virtual void SetShowAnalysisMesh(int val)
+  { this->SetShowAnalysisTessellation(val); }
+
   void MarkDirty() {this->Dirty();}
 protected:
   vtkPVSMTKModelSource();

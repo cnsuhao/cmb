@@ -42,6 +42,14 @@
         </Documentation>
       </ProxyProperty>
 
+      <IntVectorProperty
+        name="ShowAnalysisMesh"
+        command="SetShowAnalysisMesh"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
+
     </SourceProxy>
 
     <SourceProxy name="SMTKModelFieldArrayFilter" class="vtkSMTKModelFieldArrayFilter">

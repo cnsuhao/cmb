@@ -100,6 +100,9 @@ protected slots:
   /// called to change the coloring mode.
   void colorMenuTriggered(QAction* action);
 
+  /// called to switch model and mesh geometry
+  void switchModelTessellation();
+
 protected:
   /// called to build the context menu for the given representation. If the
   /// picked representation was a composite data set the block index of the

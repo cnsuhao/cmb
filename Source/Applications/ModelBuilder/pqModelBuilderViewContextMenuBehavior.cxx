@@ -551,12 +551,24 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       else
         {
         QString blockName = this->lookupBlockName(blockIndex);
-        this->Menu->addAction(QString("Entity '%1'").arg(blockName));
+        this->Menu->addAction(QString("%1").arg(blockName));
         }
       this->Menu->addSeparator();
 
+      cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
+      if(minfo && minfo->Info->GetHasAnalysisMesh())
+        {
+        QAction* meshaction = this->Menu->addAction("Show Analysis Mesh");
+        meshaction->setCheckable(true);
+        meshaction->setChecked(minfo->ShowMesh);
+        this->connect(meshaction, SIGNAL(triggered()),
+                      this, SLOT(switchModelTessellation()));
+
+        this->Menu->addSeparator();
+        }
+
       QAction *hideBlockAction =
-        this->Menu->addAction(QString("Hide Entit%1").arg(multipleBlocks ? "ies" : "y"));
+        this->Menu->addAction(QString("Hide Selected"));
       this->connect(hideBlockAction, SIGNAL(triggered()),
                     this, SLOT(hideBlock()));
 
@@ -564,12 +576,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 //      QObject::connect(action, SIGNAL(triggered()), this, SLOT(hide()));
 
       QAction *showOnlyBlockAction =
-        this->Menu->addAction(QString("Show Only Entit%1").arg(multipleBlocks ? "ies" : "y"));
+        this->Menu->addAction(QString("Hide Others"));
       this->connect(showOnlyBlockAction, SIGNAL(triggered()),
                     this, SLOT(showOnlyBlock()));
 
       QAction *showAllBlocksAction =
-        this->Menu->addAction("Show All Entities");
+        this->Menu->addAction("Show Whole Model");
       this->connect(showAllBlocksAction, SIGNAL(triggered()),
                     this, SLOT(showAllBlocks()));
 /*
@@ -582,17 +594,17 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->Menu->addSeparator();
 
       QAction *setBlockColorAction =
-        this->Menu->addAction(QString("Set Entity Color%1")
+        this->Menu->addAction(QString("Set Color%1")
           .arg(multipleBlocks ? "s" : ""));
       this->connect(setBlockColorAction, SIGNAL(triggered()),
                     this, SLOT(setBlockColor()));
 
       QAction *unsetBlockColorAction =
-        this->Menu->addAction(QString("Unset Entity Color%1")
+        this->Menu->addAction(QString("Unset Color%1")
           .arg(multipleBlocks ? "s" : ""));
       this->connect(unsetBlockColorAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockColor()));
-
+/*
       this->Menu->addSeparator();
 
       QAction *setBlockOpacityAction =
@@ -606,10 +618,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
             .arg(multipleBlocks ? "Opacities" : "Opacity"));
       this->connect(unsetBlockOpacityAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockOpacity()));
+*/
+      action = this->Menu->addAction("Edit Color");
+      new pqEditColorMapReaction(action);
 
       this->Menu->addSeparator();
       }
-
 
     QMenu* reprMenu = this->Menu->addMenu("Representation")
       << pqSetName("Representation");
@@ -628,7 +642,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 
     QObject::connect(reprMenu, SIGNAL(triggered(QAction*)),
       this, SLOT(reprTypeChanged(QAction*)));
-
+/*
     this->Menu->addSeparator();
 
     pqPipelineRepresentation* pipelineRepr =
@@ -640,9 +654,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
         << pqSetName("ColorBy");
       this->buildColorFieldsMenu(pipelineRepr, colorFieldsMenu);
       }
-
-    action = this->Menu->addAction("Edit Color");
-    new pqEditColorMapReaction(action);
+*/
 
     this->Menu->addSeparator();
     }
@@ -737,6 +749,24 @@ void pqModelBuilderViewContextMenuBehavior::colorMenuTriggered(QAction* action)
 
     this->PickedRepresentation->renderViewEventually();
     END_UNDO_SET();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if(!action || !this->m_ModelPanel)
+    {
+    return;
+    }
+  pqDataRepresentation* repr = this->PickedRepresentation;
+  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
+  if(minfo && minfo->Info->GetHasAnalysisMesh())
+    {
+    minfo->ShowMesh = !minfo->ShowMesh;
+    this->m_ModelPanel->modelManager()->updateModelRepresentation(minfo);
+    action->setChecked(minfo->ShowMesh);
     }
 }
 

@@ -376,16 +376,15 @@ public:
     pqRenderView* view)
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
-      {
       return;
-      }
-
-    pqPipelineSource* modelSrc = this->ModelInfos[model.entity()].ModelSource;
+    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqPipelineSource* modelSrc = modelInfo->ModelSource;
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set("");
-    modelSrc->getProxy()->UpdateVTKObjects();
-
+     modelSrc->getProxy()->UpdateVTKObjects();
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
-      model.entity().toString().c_str());
+      modelInfo->Info->GetModelUUID().toString().c_str());
+    vtkSMPropertyHelper(modelSrc->getProxy(), "ShowAnalysisMesh").Set(
+      modelInfo->ShowMesh ? 1 : 0);
 
     modelSrc->getProxy()->InvokeCommand("MarkDirty");
     modelSrc->getProxy()->UpdateVTKObjects();
@@ -393,11 +392,11 @@ public:
     modelSrc->updatePipeline();
     modelSrc->getProxy()->UpdatePropertyInformation();
     vtkSMRepresentationProxy::SafeDownCast(
-        this->ModelInfos[model.entity()].Representation->getProxy())->UpdatePipeline();
+        modelInfo->Representation->getProxy())->UpdatePipeline();
 
 //    view->forceRender();
 
-    this->ModelInfos[model.entity()].updateBlockInfo(
+    modelInfo->updateBlockInfo(
       this->ManagerProxy->modelManager());
     this->updateGeometryEntityAnnotations(model);
     this->updateEntityGroupFieldArrayAndAnnotations(model);
@@ -1043,6 +1042,25 @@ void pqCMBModelManager::colorRepresentationByAttribute(
     }
 */
 }
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
+{
+  this->clearModelSelections();
+  pqRenderView* view = qobject_cast<pqRenderView*>(
+    pqActiveObjects::instance().activeView());
+  this->Internal->updateModelRepresentation(model, view);
+}
+//----------------------------------------------------------------------------
+void pqCMBModelManager::updateModelRepresentation(cmbSMTKModelInfo* modinfo)
+{
+  if(!modinfo)
+    return;
+  smtk::model::EntityRef model(this->Internal->ManagerProxy->modelManager(),
+                               modinfo->Info->GetModelUUID());
+  this->updateModelRepresentation(model);
+}
+
 //----------------------------------------------------------------------------
 smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
@@ -1158,6 +1176,24 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
   return sucess;
 }
 
+void internal_updateEntityList(const smtk::model::EntityRef& ent,
+                          smtk::common::UUIDs& modellist)
+{
+  if(ent.isModel())
+    {
+    modellist.insert(ent.entity());
+    }
+  else if (ent.isCellEntity() && !ent.isVolume() )
+    {
+    modellist.insert(
+      ent.as<smtk::model::CellEntity>().model().entity());
+    }
+}
+bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
+{
+  return (ent.isCellEntity() && !ent.isVolume() &&
+        !ent.hasIntegerProperty("block_index"));
+}
 //----------------------------------------------------------------------------
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
@@ -1182,6 +1218,7 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs groupChangedModels;
   smtk::common::UUIDs generalModifiedModels;
+  cmbSMTKModelInfo* minfo = NULL;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
   smtk::model::EntityRefArray::const_iterator it;
@@ -1192,11 +1229,22 @@ bool pqCMBModelManager::handleOperationResult(
       {
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
       }
-    else if(it->isGroup())
+    else if(it->isGroup() && (minfo = this->modelInfo(*it)))
       {
-      cmbSMTKModelInfo* minfo = this->modelInfo(*it);
-      if(minfo)
-       groupChangedModels.insert(minfo->Info->GetModelUUID());
+      groupChangedModels.insert(minfo->Info->GetModelUUID());
+      }
+    }
+
+  smtk::attribute::ModelEntityItem::Ptr modelWithMeshes =
+    result->findModelEntity("mesh_created");
+  if(modelWithMeshes)
+    {
+    for(it = modelWithMeshes->begin(); it != modelWithMeshes->end(); ++it)
+      {
+      if(!(minfo = this->modelInfo(*it)))
+        continue;
+      minfo->ShowMesh = true;
+      internal_updateEntityList(*it, geometryChangedModels);
       }
     }
 
@@ -1206,13 +1254,7 @@ bool pqCMBModelManager::handleOperationResult(
     {
     for(it = tessChangedEntities->begin(); it != tessChangedEntities->end(); ++it)
       {
-      if(it->isModel())
-        geometryChangedModels.insert(it->entity());
-      else if (it->isCellEntity() && !it->isVolume() )
-        {
-        geometryChangedModels.insert(
-          it->as<smtk::model::CellEntity>().model().entity());
-        }
+      internal_updateEntityList(*it, geometryChangedModels);
       }
     }
 
@@ -1223,18 +1265,17 @@ bool pqCMBModelManager::handleOperationResult(
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
       if(it->isModel())
+        {
         generalModifiedModels.insert(it->entity()); // TODO: check what kind of operations on the model
-      else if (it->isCellEntity() && !it->isVolume() &&
-        !it->hasIntegerProperty("block_index")) // a new entity?
+        }
+      else if (internal_isNewGeometricBlock(*it)) // a new block
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
         }
-      else if(it->isGroup())
+      else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
-        cmbSMTKModelInfo* minfo = this->modelInfo(*it);
-        if(minfo)
-         groupChangedModels.insert(minfo->Info->GetModelUUID());
+        groupChangedModels.insert(minfo->Info->GetModelUUID());
         }
       }
 
@@ -1248,17 +1289,14 @@ bool pqCMBModelManager::handleOperationResult(
         {
         geometryChangedModels.insert(it->entity());
         }
-      else if (it->isCellEntity() && !it->isVolume() &&
-        !it->hasIntegerProperty("block_index")) // a new entity?
+      else if (internal_isNewGeometricBlock(*it)) // a new entity?
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
         }
-      else if(it->isGroup())
+      else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
-        cmbSMTKModelInfo* minfo = this->modelInfo(*it);
-        if(minfo)
-         groupChangedModels.insert(minfo->Info->GetModelUUID());
+        groupChangedModels.insert(minfo->Info->GetModelUUID());
         }
       }
 
@@ -1305,8 +1343,7 @@ bool pqCMBModelManager::handleOperationResult(
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         // update representation
         {
-        this->clearModelSelections();
-        this->Internal->updateModelRepresentation(*it, view);
+        this->updateModelRepresentation(*it);
         }
       else if(groupChangedModels.find(it->entity()) != groupChangedModels.end())
         // update group LUT
@@ -1319,9 +1356,7 @@ bool pqCMBModelManager::handleOperationResult(
       else if(meshSelections/* && meshSelections->numberOfValues() > 0 */&&
         generalModifiedModels.find(it->entity()) != generalModifiedModels.end())
         {
-        // this->Internal->updateModelSelection(*it, meshSelections, view);
-        cmbSMTKModelInfo* minfo = &this->Internal->ModelInfos[it->entity()];
-        if(minfo)
+        if((minfo = this->modelInfo(*it)))
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
       }

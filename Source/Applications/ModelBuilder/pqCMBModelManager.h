@@ -48,7 +48,9 @@ class pqServer;
 class cmbSMTKModelInfo
   {
   public:
-    cmbSMTKModelInfo(){}
+    cmbSMTKModelInfo(){
+      this->ShowMesh = false;
+    }
     cmbSMTKModelInfo(const cmbSMTKModelInfo& other);
     void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
       pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
@@ -61,6 +63,7 @@ class cmbSMTKModelInfo
     vtkSmartPointer<vtkSMProxy> VolumeLUT;
     vtkSmartPointer<vtkSMProxy> AttributeLUT;
     QString ColorMode;
+    bool ShowMesh;
 
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
     QPointer<pqPipelineSource> ModelSource;    
@@ -117,6 +120,8 @@ public:
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
+  void updateModelRepresentation(const smtk::model::EntityRef& model);
+  void updateModelRepresentation(cmbSMTKModelInfo* minfo);
 
 signals:
   void currentModelCleared();
