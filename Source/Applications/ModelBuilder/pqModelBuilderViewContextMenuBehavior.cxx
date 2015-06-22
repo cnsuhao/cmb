@@ -254,7 +254,7 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
 }
 
 //----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
+void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   const QString & colorMode)
 {
   if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
@@ -352,11 +352,59 @@ void pqModelBuilderViewContextMenuBehavior::onColorByModeChanged(
   if(colorEntities.size() > 0)
     {
     this->updateColorForEntities(activeRep, colorMode, colorEntities);
-    this->m_ModelPanel->modelManager()->updateColorTable(
+    this->m_ModelPanel->modelManager()->updateEntityColorTable(
       activeRep, colorEntities, colorMode);
     }
-  this->m_ModelPanel->modelManager()->colorRepresentationBy(
+  this->m_ModelPanel->modelManager()->colorRepresentationByEntity(
     activeRep, colorMode);
+
+}
+
+//----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
+    smtk::attribute::SystemPtr attSys,
+    const QString& attdeftype, const QString& itemname)
+{
+  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+    return;
+
+  // active rep
+  pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
+  pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
+  if (!datapanel || !activeRep)
+    return;
+  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
+  if(!minfo)
+    return;
+
+  smtk::common::UUID modelId = minfo->Info->GetModelUUID();
+  smtk::model::Model activeModel(
+    this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
+  if(!activeModel.isValid())
+    return;
+
+  // turn off the current scalar bar before switch to the new array
+  vtkSMProxy* ctfProxy = activeRep->getLookupTableProxy();
+  vtkSMProxy* sb = vtkSMTransferFunctionProxy::FindScalarBarRepresentation(
+    ctfProxy, pqActiveObjects::instance().activeView()->getProxy());
+  if(sb)
+    {
+    vtkSMPropertyHelper(sb, "Visibility").Set(0);
+    sb->UpdateVTKObjects();
+    }
+
+  // clear all colors
+  QList<unsigned int> indices;
+  std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
+    minfo->Info->GetUUID2BlockIdMap().begin();
+  for(; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
+    {
+    indices.append(uit->second + 1);
+    }
+  datapanel->clearBlockColor(indices);
+
+  this->m_ModelPanel->modelManager()->colorRepresentationByAttribute(
+    activeRep, attSys, attdeftype, itemname);
 
 }
 
@@ -478,9 +526,6 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
 void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr,
                                               unsigned int blockIndex)
 {
-  pqRenderView* view = qobject_cast<pqRenderView*>(
-    pqActiveObjects::instance().activeView());  
-
   // get currently selected block ids
   this->PickedBlocks.clear();
   this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
@@ -488,8 +533,6 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
   this->Menu->clear();
   if (repr)
     {
-    QAction* action;
-
     vtkPVDataInformation *info = repr->getInputDataInformation();
     vtkPVCompositeDataInformation *compositeInfo = info->GetCompositeDataInformation();
     if(compositeInfo && compositeInfo->GetDataIsComposite())
@@ -503,12 +546,24 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       else
         {
         QString blockName = this->lookupBlockName(blockIndex);
-        this->Menu->addAction(QString("Entity '%1'").arg(blockName));
+        this->Menu->addAction(QString("%1").arg(blockName));
         }
       this->Menu->addSeparator();
 
+      cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
+      if(minfo && minfo->Info->GetHasAnalysisMesh())
+        {
+        QAction* meshaction = this->Menu->addAction("Show Analysis Mesh");
+        meshaction->setCheckable(true);
+        meshaction->setChecked(minfo->ShowMesh);
+        this->connect(meshaction, SIGNAL(triggered()),
+                      this, SLOT(switchModelTessellation()));
+
+        this->Menu->addSeparator();
+        }
+
       QAction *hideBlockAction =
-        this->Menu->addAction(QString("Hide Entit%1").arg(multipleBlocks ? "ies" : "y"));
+        this->Menu->addAction(QString("Hide Selected"));
       this->connect(hideBlockAction, SIGNAL(triggered()),
                     this, SLOT(hideBlock()));
 
@@ -516,12 +571,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 //      QObject::connect(action, SIGNAL(triggered()), this, SLOT(hide()));
 
       QAction *showOnlyBlockAction =
-        this->Menu->addAction(QString("Show Only Entit%1").arg(multipleBlocks ? "ies" : "y"));
+        this->Menu->addAction(QString("Hide Others"));
       this->connect(showOnlyBlockAction, SIGNAL(triggered()),
                     this, SLOT(showOnlyBlock()));
 
       QAction *showAllBlocksAction =
-        this->Menu->addAction("Show All Entities");
+        this->Menu->addAction("Show Whole Model");
       this->connect(showAllBlocksAction, SIGNAL(triggered()),
                     this, SLOT(showAllBlocks()));
 /*
@@ -534,17 +589,17 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->Menu->addSeparator();
 
       QAction *setBlockColorAction =
-        this->Menu->addAction(QString("Set Entity Color%1")
+        this->Menu->addAction(QString("Set Color%1")
           .arg(multipleBlocks ? "s" : ""));
       this->connect(setBlockColorAction, SIGNAL(triggered()),
                     this, SLOT(setBlockColor()));
 
       QAction *unsetBlockColorAction =
-        this->Menu->addAction(QString("Unset Entity Color%1")
+        this->Menu->addAction(QString("Unset Color%1")
           .arg(multipleBlocks ? "s" : ""));
       this->connect(unsetBlockColorAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockColor()));
-
+/*
       this->Menu->addSeparator();
 
       QAction *setBlockOpacityAction =
@@ -558,10 +613,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
             .arg(multipleBlocks ? "Opacities" : "Opacity"));
       this->connect(unsetBlockOpacityAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockOpacity()));
+*/
+      QAction* action = this->Menu->addAction("Edit Color");
+      new pqEditColorMapReaction(action);
 
       this->Menu->addSeparator();
       }
-
 
     QMenu* reprMenu = this->Menu->addMenu("Representation")
       << pqSetName("Representation");
@@ -580,7 +637,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 
     QObject::connect(reprMenu, SIGNAL(triggered(QAction*)),
       this, SLOT(reprTypeChanged(QAction*)));
-
+/*
     this->Menu->addSeparator();
 
     pqPipelineRepresentation* pipelineRepr =
@@ -592,9 +649,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
         << pqSetName("ColorBy");
       this->buildColorFieldsMenu(pipelineRepr, colorFieldsMenu);
       }
-
-    action = this->Menu->addAction("Edit Color");
-    new pqEditColorMapReaction(action);
+*/
 
     this->Menu->addSeparator();
     }
@@ -689,6 +744,24 @@ void pqModelBuilderViewContextMenuBehavior::colorMenuTriggered(QAction* action)
 
     this->PickedRepresentation->renderViewEventually();
     END_UNDO_SET();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if(!action || !this->m_ModelPanel)
+    {
+    return;
+    }
+  pqDataRepresentation* repr = this->PickedRepresentation;
+  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
+  if(minfo && minfo->Info->GetHasAnalysisMesh())
+    {
+    minfo->ShowMesh = !minfo->ShowMesh;
+    this->m_ModelPanel->modelManager()->updateModelRepresentation(minfo);
+    action->setChecked(minfo->ShowMesh);
     }
 }
 

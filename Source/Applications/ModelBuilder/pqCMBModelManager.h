@@ -15,7 +15,6 @@
 
 #include "vtkSmartPointer.h"
 #include "vtkNew.h"
-#include "vtkStringList.h"
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/model/StringData.h"
@@ -25,6 +24,7 @@
 #include <QPointer>
 #include <QColor>
 #include <set>
+#include <vector>
 
 namespace smtk
 {
@@ -45,13 +45,15 @@ class pqServer;
 
 //The object to keep smtk model related info:
 // pqSource, pvModelInfo, smSelectionSource
-struct cmbSMTKModelInfo
+class cmbSMTKModelInfo
   {
   public:
-    cmbSMTKModelInfo(){}
+    cmbSMTKModelInfo(){
+      this->ShowMesh = false;
+    }
     cmbSMTKModelInfo(const cmbSMTKModelInfo& other);
-    void init(pqPipelineSource*, pqDataRepresentation*,
-      const std::string& filename, smtk::model::ManagerPtr);
+    void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
+      pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
 
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
@@ -59,16 +61,19 @@ struct cmbSMTKModelInfo
     vtkSmartPointer<vtkSMProxy> EntityLUT;
     vtkSmartPointer<vtkSMProxy> GroupLUT;
     vtkSmartPointer<vtkSMProxy> VolumeLUT;
+    vtkSmartPointer<vtkSMProxy> AttributeLUT;
     QString ColorMode;
+    bool ShowMesh;
 
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
-    QPointer<pqPipelineSource> Source;
+    QPointer<pqPipelineSource> ModelSource;    
+    QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
     smtk::model::SessionPtr Session;
-    vtkNew<vtkStringList> ent_annotations;
-    vtkNew<vtkStringList> vol_annotations;
-    vtkNew<vtkStringList> grp_annotations;
+    std::vector<std::string> ent_annotations;
+    std::vector<std::string> vol_annotations;
+    std::vector<std::string> grp_annotations;
 
   };
 
@@ -85,11 +90,19 @@ public:
     const std::string& bridgeName = std::string());
 
   void supportedColorByModes(QStringList& types);
-  void updateColorTable(pqDataRepresentation* rep,
+  void updateEntityColorTable(pqDataRepresentation* rep,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities,
     const QString& colorByMode);
-  void colorRepresentationBy(
-    pqDataRepresentation* rep, const QString& colorByMode);
+  void updateAttributeColorTable(
+    pqDataRepresentation* rep,
+    vtkSMProxy* lutProxy,
+    const QMap<std::string, QColor >& colorAtts,
+    const std::vector<std::string>& annList);
+  void colorRepresentationByEntity(
+    pqDataRepresentation* rep, const QString& entityMode);
+  void colorRepresentationByAttribute(
+    pqDataRepresentation* rep, smtk::attribute::SystemPtr attSys,
+    const QString& attDef, const QString& attItem);
   void syncDisplayColorTable(pqDataRepresentation* rep);
 
   cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
@@ -107,6 +120,8 @@ public:
     std::string& engineType,
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
+  void updateModelRepresentation(const smtk::model::EntityRef& model);
+  void updateModelRepresentation(cmbSMTKModelInfo* minfo);
 
 signals:
   void currentModelCleared();

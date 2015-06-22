@@ -24,6 +24,7 @@ vtkStandardNewMacro(vtkPVSMTKModelInformation);
 //----------------------------------------------------------------------------
 vtkPVSMTKModelInformation::vtkPVSMTKModelInformation()
 {
+  this->m_HasAnalysisMesh = false;
 }
 
 //----------------------------------------------------------------------------
@@ -59,6 +60,7 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
     this->BlockId2UUIDMap[it->second] = it->first;
     }
   this->m_ModelUUID = smtk::common::UUID(modelsource->GetModelEntityID());
+  this->m_HasAnalysisMesh = modelsource->GetHasAnalysisMesh();
 }
 
 //----------------------------------------------------------------------------
@@ -125,5 +127,7 @@ void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
     this->BlockId2UUIDMap.clear();
     this->BlockId2UUIDMap.insert(
       modelInfo->BlockId2UUIDMap.begin(), modelInfo->BlockId2UUIDMap.end());
+    this->m_ModelUUID = modelInfo->m_ModelUUID;
+    this->m_HasAnalysisMesh = modelInfo->m_HasAnalysisMesh;
     }
 }

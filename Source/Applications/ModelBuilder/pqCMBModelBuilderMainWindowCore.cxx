@@ -82,7 +82,9 @@
 #include "smtk/model/Group.h"
 #include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
+#include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -168,6 +170,9 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqSMTKMeshPanel> MeshDock;
     QPointer<pqCMBModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
+    QPointer<smtk::attribute::qtAttributeDisplay> AttributeVisWidget;
+    QPointer<QAction> AttVisAction;
+
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -226,6 +231,23 @@ void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolB
 
   QObject::connect(this, SIGNAL(postAccept()),
       this->Internal->SelectionRepresentationWidget, SLOT(reloadGUI()));
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* toolbar)
+{
+  SimBuilderCore* sbCore = this->getSimBuilder();
+  this->Internal->AttributeVisWidget =
+    new smtk::attribute::qtAttributeDisplay(toolbar,
+      sbCore->attributeUIManager()->qtManager())
+    << pqSetName("colorByAttributeWidget");;
+  this->Internal->AttVisAction = toolbar->addWidget(this->Internal->AttributeVisWidget);
+  this->Internal->AttVisAction->setVisible(false);
+
+  QObject::connect(
+      this->Internal->AttributeVisWidget,
+      SIGNAL(attributeFieldSelected(const QString&, const QString&)),
+      this, SLOT(colorByAttributeFieldSelected(const QString&, const QString&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -541,8 +563,7 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelectPoints(bool checked)
 //-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::onLoadSimulation(bool templateOnly, bool isScenario)
 {
-  this->getSimBuilder()->attributeUIManager()->setModelManager(
-      this->modelManager()->managerProxy()->modelManager());
+  this->setSimBuilderModelManager();
   int res = this->getSimBuilder()->LoadSimulation(templateOnly, isScenario);
   return res;
 }
@@ -769,8 +790,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
 */
   if(lastExt == "crf")
     {
-    this->getSimBuilder()->attributeUIManager()->setModelManager(
-        this->modelManager()->managerProxy()->modelManager());
+    this->setSimBuilderModelManager();
     this->getSimBuilder()->LoadResources(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -790,8 +810,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     this->clearSimBuilder();
     this->getSimBuilder()->Initialize();
 */
-    this->getSimBuilder()->attributeUIManager()->setModelManager(
-        this->modelManager()->managerProxy()->modelManager());
+    this->setSimBuilderModelManager();
     this->getSimBuilder()->LoadSimulation(reader, this->Internal->SceneGeoTree);
     return;
     }
@@ -1088,7 +1107,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
       {
       this->Internal->ViewContextBehavior->updateColorForEntities(
         minfo->Representation, minfo->ColorMode, colorEntities[minfo]);
-      this->Internal->smtkModelManager->updateColorTable(
+      this->Internal->smtkModelManager->updateEntityColorTable(
         minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
       }
@@ -1107,7 +1126,29 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
 void pqCMBModelBuilderMainWindowCore::onColorByModeChanged(
   const QString & colorMode)
 {
-  this->Internal->ViewContextBehavior->onColorByModeChanged(colorMode);
+  bool byAttribute = colorMode ==
+    vtkModelMultiBlockSource::GetAttributeTagName();
+  this->Internal->AttVisAction->setVisible(byAttribute);
+  if(byAttribute)
+    this->onColorByAttribute();
+  else
+    this->Internal->ViewContextBehavior->colorByEntity(colorMode);
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::onColorByAttribute()
+{
+  this->Internal->AttVisAction->setVisible(true);
+  this->Internal->AttributeVisWidget->onShowCategory();
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::colorByAttributeFieldSelected(
+  const QString& attdeftype, const QString& itemname)
+{
+  this->Internal->ViewContextBehavior->colorByAttribute(
+    this->getSimBuilder()->attributeUIManager()->attSystem(),
+    attdeftype, itemname);
 }
 
 //----------------------------------------------------------------------------
@@ -1142,6 +1183,12 @@ pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
       this->Internal->smtkModelManager,
       this->meshServiceMonitor(),
       this->parentWidget());
+    // connect the entity selection from mesh panel, so that the model
+    // tree view and render window will show entites being selected
+    QObject::connect(this->Internal->MeshDock,
+      SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+      this->modelPanel(),
+      SLOT(requestEntitySelection(const smtk::common::UUIDs&)));
     }
   return this->Internal->MeshDock;
 }
@@ -1208,4 +1255,14 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
     selectionManager->blockSignals(false);
 //    pqActiveObjects::instance().setActivePort(outport);
     }
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
+{
+  this->getSimBuilder()->attributeUIManager()->setModelManager(
+      this->modelManager()->managerProxy()->modelManager());
+  QObject::connect(this->getSimBuilder()->attributeUIManager(),
+    SIGNAL(attColorChanged()), this,
+    SLOT(onColorByAttribute()));
 }

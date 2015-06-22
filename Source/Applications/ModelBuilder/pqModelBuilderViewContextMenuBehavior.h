@@ -48,7 +48,9 @@ public:
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
   void syncBlockColor(pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor&);
-  virtual void onColorByModeChanged(const QString &);
+  virtual void colorByEntity(const QString &);
+  virtual void colorByAttribute(smtk::attribute::SystemPtr attSys,
+    const QString& attdeftype, const QString& itemname);
   virtual void updateColorForEntities(pqDataRepresentation* rep,
     const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);
@@ -97,6 +99,9 @@ protected slots:
 
   /// called to change the coloring mode.
   void colorMenuTriggered(QAction* action);
+
+  /// called to switch model and mesh geometry
+  void switchModelTessellation();
 
 protected:
   /// called to build the context menu for the given representation. If the
