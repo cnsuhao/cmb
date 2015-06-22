@@ -526,9 +526,6 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
 void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr,
                                               unsigned int blockIndex)
 {
-  pqRenderView* view = qobject_cast<pqRenderView*>(
-    pqActiveObjects::instance().activeView());  
-
   // get currently selected block ids
   this->PickedBlocks.clear();
   this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
@@ -536,8 +533,6 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
   this->Menu->clear();
   if (repr)
     {
-    QAction* action;
-
     vtkPVDataInformation *info = repr->getInputDataInformation();
     vtkPVCompositeDataInformation *compositeInfo = info->GetCompositeDataInformation();
     if(compositeInfo && compositeInfo->GetDataIsComposite())
@@ -619,7 +614,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->connect(unsetBlockOpacityAction, SIGNAL(triggered()),
                     this, SLOT(unsetBlockOpacity()));
 */
-      action = this->Menu->addAction("Edit Color");
+      QAction* action = this->Menu->addAction("Edit Color");
       new pqEditColorMapReaction(action);
 
       this->Menu->addSeparator();

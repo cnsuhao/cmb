@@ -372,8 +372,7 @@ public:
     view->render();
   }
 
-  void updateModelRepresentation(const smtk::model::EntityRef& model,
-    pqRenderView* view)
+  void updateModelRepresentation(const smtk::model::EntityRef& model)
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       return;
@@ -391,18 +390,21 @@ public:
 
     modelSrc->updatePipeline();
     modelSrc->getProxy()->UpdatePropertyInformation();
+    if(modelInfo->ShowMesh)
+      {
+      vtkSMPropertyHelper(modelInfo->Representation->getProxy(),
+                        "Representation").Set("Surface With Edges");
+      modelInfo->Representation->getProxy()->UpdateVTKObjects();
+      }
     vtkSMRepresentationProxy::SafeDownCast(
         modelInfo->Representation->getProxy())->UpdatePipeline();
-
-//    view->forceRender();
 
     modelInfo->updateBlockInfo(
       this->ManagerProxy->modelManager());
     this->updateGeometryEntityAnnotations(model);
     this->updateEntityGroupFieldArrayAndAnnotations(model);
     this->resetColorTable(model);
-
-    view->render();
+    modelInfo->Representation->renderViewEventually();
   }
 
   void clear()
@@ -1047,9 +1049,7 @@ void pqCMBModelManager::colorRepresentationByAttribute(
 void pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
 {
   this->clearModelSelections();
-  pqRenderView* view = qobject_cast<pqRenderView*>(
-    pqActiveObjects::instance().activeView());
-  this->Internal->updateModelRepresentation(model, view);
+  this->Internal->updateModelRepresentation(model);
 }
 //----------------------------------------------------------------------------
 void pqCMBModelManager::updateModelRepresentation(cmbSMTKModelInfo* modinfo)
