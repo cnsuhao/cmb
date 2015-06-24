@@ -79,6 +79,7 @@
 #include "pqLoadStateReaction.h"
 #include "pqSaveStateReaction.h"
 #include "pqManagePluginsReaction.h"
+#include "pqExportReaction.h"
 
 #include "pqCMBLoadDataReaction.h"
 #include "pqPluginIOBehavior.h"
@@ -151,6 +152,7 @@ public:
   QPointer<pqEditCameraReaction> EditCameraReaction;
   QPointer<pqTimerLogReaction> TimerLogReaction;
   QPointer<pqCMBLoadDataReaction> LoadDataReaction;
+  QPointer<pqExportReaction> ExportReaction;
   QPointer<qtCMBPanelsManager> panelsManager;
   QPointer<pqProxyWidget> displayPanel;
   QPointer<pqCMBColorMapWidget> ColorEditor;
@@ -533,6 +535,10 @@ void pqCMBCommonMainWindow::initMainWindowCore()
       this->MainWindowCore->programDirectory());
     }
 
+  // export scene plugins
+  this->Internal->ExportReaction =
+    new pqExportReaction(this->Internal->UI.action_Export);
+
   // Set up a callback to before further intialization once the application
   // event loop starts.
   QTimer::singleShot(100, this->MainWindowCore, SLOT(applicationInitialize()));
@@ -649,6 +655,7 @@ void pqCMBCommonMainWindow::onEnableMenuItems(bool state)
   this->getMainDialog()->action_Close->setEnabled(state);
   this->getMainDialog()->action_Save_Data->setEnabled(state);
   this->getMainDialog()->action_Save_As->setEnabled(state);
+  this->getMainDialog()->action_Export->setEnabled(state);
   this->getMainDialog()->menuRecentFiles->setEnabled(state);
 }
 
