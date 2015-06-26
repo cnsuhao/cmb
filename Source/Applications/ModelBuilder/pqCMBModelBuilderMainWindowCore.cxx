@@ -1043,8 +1043,6 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
 
   if(resultEntities && resultEntities->numberOfValues() > 0 && !bGeometryChanged)
     {
-    std::cout << " client associated entities " << resultEntities->numberOfValues() << std::endl;
-
     smtk::model::EntityRefArray::const_iterator it;
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {

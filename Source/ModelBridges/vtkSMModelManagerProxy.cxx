@@ -380,14 +380,14 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
     if (tsession && it->second == actualSessionName)
       {
       session = tsession;
-      std::cout << "Found session " << session->sessionId() << " (" << actualSessionName << ")\n";
+//      std::cout << "Found session " << session->sessionId() << " (" << actualSessionName << ")\n";
       break;
       }
     }
   if (!session)
     { // No existing session of that type. Create a new remote session.
     smtk::common::UUID sessionId = this->beginSession(actualSessionName);
-    std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
+//    std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
 
     session = SessionRef(this->m_modelMgr, sessionId).session();
     }
