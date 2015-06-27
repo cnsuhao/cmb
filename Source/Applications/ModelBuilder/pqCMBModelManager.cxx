@@ -313,8 +313,6 @@ public:
           repSrc->getOutputPort(0), view);
         if(rep)
           {
-          std::cout << "Add model: " << model.entity().toString().c_str() << "\n";
-
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
           this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
   
@@ -1126,9 +1124,9 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
     }
 
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
-  std::cout << "Should start session \"" << sessionType << "\"\n";
+//  std::cout << "Should start session \"" << sessionType << "\"\n";
   smtk::common::UUID sessId = pxy->beginSession(sessionType);
-  std::cout << "Started " << sessionType << " session: " << sessId << "\n";
+//  std::cout << "Started " << sessionType << " session: " << sessId << "\n";
 
   smtk::model::OperatorPtr fileOp = this->managerProxy()->newFileOperator(
     filename, sessionType, engineType);
@@ -1146,9 +1144,6 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     }
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::common::UUID sessId = brOp->session()->sessionId();
-  std::cout << "Found session: " << sessId << "\n";
-
- // sessId = pxy->beginSession("cgm");
 
   if(!pxy->validSession(sessId))
     {
