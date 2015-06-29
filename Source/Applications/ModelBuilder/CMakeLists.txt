@@ -330,7 +330,7 @@ if(BUILD_TESTING)
       --test-directory=${CMB_TEST_DIR})
   endif(Q_WS_MAC)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
- set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baselines)
+ set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baselines/cmb)
 
 # message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
@@ -344,8 +344,9 @@ if(BUILD_TESTING)
 
   set (XML_TESTS_WITH_BASELINES
     # ChangeFaceColors
-#    OpenFile
-#    OpenSTLFile
+    OpenCMBFile
+    OpenExodusFile
+    OpenVTKFile
     )
 
   set (TESTS_WITHOUT_BASELINES
