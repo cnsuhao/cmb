@@ -101,6 +101,10 @@ find_path(CMB_TEST_DATA_ROOT CMBTest.readme
 get_filename_component(CMB_TEST_DATA_ROOT "${CMB_TEST_DATA_ROOT}" ABSOLUTE)
 mark_as_advanced(CMB_TEST_DATA_ROOT)
 
+set(CMB_TEST_PLUGIN_PATHS ${CMB_TEST_PLUGIN_PATHS} CACHE STRING
+   "Semi-colon seperated paths for testing plugins.")
+mark_as_advanced(CMB_TEST_PLUGIN_PATHS)
+
 #########################################################################
 
 # setup cpack stuff
