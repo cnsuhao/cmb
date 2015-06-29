@@ -25,6 +25,11 @@
 #define CMB_TEST_DATA_ROOT "@CMB_TEST_DATA_ROOT@"
 #endif
 
+//only define it if it hasn't been defined already
+#ifndef CMB_TEST_PLUGIN_PATHS
+#define CMB_TEST_PLUGIN_PATHS "@CMB_TEST_PLUGIN_PATHS@"
+#endif
+
 //erase where PVConfig has set PARAVIEW_DATA_ROOT as it will be wrong
 #ifdef PARAVIEW_DATA_ROOT
 #undef PARAVIEW_DATA_ROOT
