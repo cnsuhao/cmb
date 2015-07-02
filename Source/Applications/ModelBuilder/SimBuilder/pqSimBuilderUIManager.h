@@ -70,8 +70,6 @@ signals:
   void attColorChanged();
   void attAssociationChanged();
 
-public slots:
-
 protected slots:
   void onFileItemCreated(smtk::attribute::qtFileItem*);
   void onLaunchFileBrowser();

@@ -76,6 +76,7 @@
 #include "smtk/model/StringData.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
+#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 
@@ -344,15 +345,17 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
   colorbyBox->setCurrentIndex(0);
   QObject::connect(
       colorbyBox, SIGNAL(currentIndexChanged(const QString &)),
-      this->getThisCore(),
-      SLOT(onColorByModeChanged(const QString &)));
+      this->getThisCore(), SLOT(onColorByModeChanged(const QString &)));
 
   colorToolbar->addAction(this->getMainDialog()->actionScalarBarVisibility);
   new pqScalarBarVisibilityReaction(
     this->getMainDialog()->actionScalarBarVisibility);
+
 //  colorToolbar->addAction(this->getMainDialog()->actionEdit_Color_Map);
 //  new pqEditColorMapReaction(
 //    this->getMainDialog()->actionEdit_Color_Map);
+
+  this->getThisCore()->setupColorByAttributeToolbar(colorToolbar);
 
   this->addToolBar(Qt::TopToolBarArea, colorToolbar);
   this->insertToolBarBreak(colorToolbar);
@@ -1124,8 +1127,6 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
       }
     this->Internal->ColorByArrayBox->setCurrentIndex(currIdx);
     this->Internal->ColorByArrayBox->blockSignals(false);
-
-//    this->getThisCore()->modelManager()->updateColorTable(acitveRep);
     }
 
 }

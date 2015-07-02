@@ -260,6 +260,8 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     {
     return 0;
     }
+#include "smtk/io/Logger.h"
+#include "smtk/io/AttributeReader.h"
 
   // We need to get the file contents from server, then load it into attributes
   smtk::io::AttributeReader xmlr;

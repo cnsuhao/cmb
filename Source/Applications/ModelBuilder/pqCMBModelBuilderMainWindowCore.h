@@ -40,6 +40,10 @@ public:
   // Setup a representation-selection toolbar
   void setupSelectionRepresentationToolbar(QToolBar* parent);
 
+  // Description
+  // Setup a representation-selection toolbar
+  void setupColorByAttributeToolbar(QToolBar* parent);
+
   // Description:
   // Get flag to determine how selection is performed in display
   // 0 = Model Faces, 1 = Shells, 2 = Materials
@@ -90,6 +94,9 @@ public slots:
   virtual void onRemovingServer(pqServer*);
   virtual void onServerCreationFinished(pqServer *server);
   virtual void onColorByModeChanged(const QString &);
+  virtual void onColorByAttribute();
+  virtual void colorByAttributeFieldSelected(const QString& attdeftype,
+        const QString& itemname);
 
   virtual void onFileOpen(const QStringList& Files);
   void onCloseData(bool modelOnly=false);
@@ -167,6 +174,7 @@ public slots:
 
 protected:
   virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
+  virtual void setSimBuilderModelManager();
 
 private:
   // Description:

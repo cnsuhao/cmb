@@ -352,11 +352,12 @@ void pqSMTKModelPanel::resetUI()
   smtk::model::EntityRefs cursors;
   smtk::model::EntityRef::EntityRefsFromUUIDs(
     cursors, model, model->entitiesMatchingFlags(mask, true));
-  std::cout << std::setbase(10) << "Found " << cursors.size() << " entries\n";
 
   smtk::model::SimpleModelSubphrases::Ptr spg =
     smtk::model::SimpleModelSubphrases::create();
   spg->setDirectLimit(-1);
+  spg->setSkipAttributes(true);
+  spg->setSkipProperties(true);
   qmodel->setRoot(
     smtk::model::EntityListPhrase::create()
       ->setup(cursors)
@@ -424,7 +425,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 
     vtkSMSourceProxy *selectionSourceProxy =
       vtkSMSourceProxy::SafeDownCast(selectionSource);
-    source = modinfo->Source;
+    source = modinfo->RepSource;
     outport = source->getOutputPort(0);
     if(outport)
       {
@@ -457,7 +458,7 @@ void pqSMTKModelPanel::updateTreeSelection()
   QList<cmbSMTKModelInfo*> selModels = this->Internal->smtkManager->selectedModels();
   foreach(cmbSMTKModelInfo* modinfo, selModels)
     {
-    pqPipelineSource *source = modinfo->Source;
+    pqPipelineSource *source = modinfo->RepSource;
     vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
     vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
     selSource->UpdatePipeline();
@@ -668,7 +669,7 @@ void pqSMTKModelPanel::updateMeshSelection(
   currSelItem->syncWithCachedSelection(meshSelectionItem,
                                        outSelectionValues);
 
-  pqPipelineSource* modelSrc = minfo->Source;
+  pqPipelineSource* modelSrc = minfo->RepSource;
   vtkSMSourceProxy* smModelSource = vtkSMSourceProxy::SafeDownCast(
   modelSrc->getProxy());
 

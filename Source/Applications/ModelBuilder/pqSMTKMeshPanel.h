@@ -51,6 +51,7 @@ protected slots:
 
 signals:
   void meshingPossible( bool );
+  void entitiesSelected(const smtk::common::UUIDs&);
 
 private:
   QPointer<pqCMBModelManager> ModelManager;

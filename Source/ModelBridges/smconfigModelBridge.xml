@@ -38,15 +38,71 @@
           <Group name="ModelBridge"/>
         </ProxyGroupDomain>
         <Documentation>
-          Set the parameters of the contour function.
+          Set the model manager for the source.
         </Documentation>
       </ProxyProperty>
 
-      <Property
-        name="MarkDirty"
-        command="MarkDirty">
-        <Documentation>Mark Modified to rerun pipeline</Documentation>
-      </Property>
+      <IntVectorProperty
+        name="ShowAnalysisMesh"
+        command="SetShowAnalysisMesh"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
+
+    </SourceProxy>
+
+    <SourceProxy name="SMTKModelFieldArrayFilter" class="vtkSMTKModelFieldArrayFilter">
+
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkMultiBlockDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Connectivity filter.
+        </Documentation>
+      </InputProperty>
+
+      <StringVectorProperty
+        name="AttributeDefinitionType"
+        command="SetAttributeDefinitionType"
+        number_of_elements="1">
+      </StringVectorProperty>
+      <StringVectorProperty
+        name="AttributeItemName"
+        command="SetAttributeItemName"
+        number_of_elements="1">
+      </StringVectorProperty>
+      <StringVectorProperty
+        name="AttributeSystemContents"
+        command="SetAttributeSystemContents"
+        number_of_elements="1">
+      </StringVectorProperty>
+
+      <ProxyProperty name="ModelManagerWrapper"
+        command="SetModelManagerWrapper"
+        label="Model Manager Wrapper">
+        <ProxyGroupDomain name="groups">
+          <Group name="ModelBridge"/>
+        </ProxyGroupDomain>
+        <Documentation>
+          Set the model manager for the filter.
+        </Documentation>
+      </ProxyProperty>
+
+      <IntVectorProperty
+        name="AddGroupArray"
+        command="SetAddGroupArray"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
 
     </SourceProxy>
 

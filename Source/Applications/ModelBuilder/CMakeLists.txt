@@ -193,8 +193,21 @@ set(ModelBuilder_SOURCE_FILES
   ${apple_bundle_sources}
   ${SimBuilder_SOURCES}
   )
-
 #------------------------------------------------------------------------------
+set(  CMB_AUTOLOAD_PLUGINLIST
+    smtkCGMSessionPlugin
+    smtkDiscreteSessionPlugin
+    smtkExodusSessionPlugin
+    smtkRemoteSessionPlugin
+    smtkRemusMeshOperatorPlugin
+)
+
+if(NOT CMB_OPTIONAL_PLUGINS)
+  set(CMB_OPTIONAL_PLUGINS ${CMB_AUTOLOAD_PLUGINLIST} CACHE STRING
+     "Semi-colon seperated optional plugin names.")
+  mark_as_advanced(CMB_OPTIONAL_PLUGINS)
+endif()
+
 # Build the client
 build_paraview_client(ModelBuilder
   TITLE "Model Builder ${CMB_VERSION_MAJOR}.${CMB_VERSION_MINOR}.${CMB_VERSION_PATCH}"
@@ -210,11 +223,7 @@ build_paraview_client(ModelBuilder
   SOURCES ${ModelBuilder_SOURCE_FILES}
   COMPRESSED_HELP_FILE "${CMAKE_CURRENT_BINARY_DIR}/../Help/cmbsuite.qch"
   OPTIONAL_PLUGINS
-    smtkCGMSessionPlugin
-    smtkDiscreteSessionPlugin
-    smtkExodusSessionPlugin
-    smtkRemoteSessionPlugin
-    smtkRemusMeshOperatorPlugin
+    ${CMB_OPTIONAL_PLUGINS}
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
 )
@@ -269,6 +278,46 @@ if(BUILD_TESTING)
   set(GrowTestCMB_THRESHOLD 14)
 endif(BUILD_TESTING)
 
+########################################################################
+# write, copy and install the .plugin file for testing.
+if(BUILD_TESTING AND NOT ("${CMB_TEST_PLUGIN_PATHS}" STREQUAL ""))
+  set (cmb_test_plugin_ini "<?xml version=\"1.0\"?>\n<Plugins>\n")
+  foreach (cmb-plugin-name IN LISTS CMB_OPTIONAL_PLUGINS)
+    foreach (plugin-path IN LISTS CMB_TEST_PLUGIN_PATHS)
+      if(WIN32 AND NOT CYGWIN)
+        set(full-plugin-path "${plugin-path}/${cmb-plugin-name}.dll")
+      elseif(APPLE)
+        set(full-plugin-path "${plugin-path}/lib${cmb-plugin-name}.dylib")
+      elseif(UNIX)
+        set(full-plugin-path "${plugin-path}/lib${cmb-plugin-name}.so")
+      endif()
+
+      # message(STATUS "full-plugin-path=${full-plugin-path}")
+      if(EXISTS ${full-plugin-path})
+          set(cmb_test_plugin_ini
+            "${cmb_test_plugin_ini}  <Plugin name=\"${cmb-plugin-name}\" auto_load=\"1\" filename=\"${full-plugin-path}\" />\n")
+        list(APPEND TEST_PLUGIN_LIBS ${full-plugin-path})
+      endif()
+    endforeach()
+  endforeach()
+
+  set (cmb_test_plugin_ini "${cmb_test_plugin_ini}</Plugins>\n")
+  file(WRITE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/.plugins" "${cmb_test_plugin_ini}")
+
+  # Install the .plugins configuration file.
+  if(APPLE)
+    set(install_plugin_path "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/Plugins")
+  else()
+    set(install_plugin_path "${VTK_INSTALL_RUNTIME_DIR}")
+  endif()
+
+  install(FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/.plugins"
+          DESTINATION "${install_plugin_path}"
+          COMPONENT Runtime)
+endif()
+########################################################################
+
+
 message(STATUS "EXECUTABLE_OUTPUT_PATH=${EXECUTABLE_OUTPUT_PATH}")
 set(PROJECT_EXE ${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX})
 if(BUILD_TESTING)
@@ -281,8 +330,9 @@ if(BUILD_TESTING)
       --test-directory=${CMB_TEST_DIR})
   endif(Q_WS_MAC)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
-  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
-message(STATUS "TEST_BINARY=${TEST_BINARY}")
+ set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baselines/cmb)
+
+# message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
   #Tests that don't work on Apple
 
@@ -294,8 +344,9 @@ message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
   set (XML_TESTS_WITH_BASELINES
     # ChangeFaceColors
-#    OpenFile
-#    OpenSTLFile
+    OpenCMBFile
+    OpenExodusFile
+    OpenVTKFile
     )
 
   set (TESTS_WITHOUT_BASELINES
