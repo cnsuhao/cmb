@@ -86,6 +86,8 @@ create_test_sourcelist(CmbArcTestSources
 add_executable(CmbArcTests ${CmbArcTestSources})
 target_link_libraries(CmbArcTests ${testing_libraries})
 
+list(REMOVE_AT CmbArcTestSources 0)
+
 SET(CmbArcTestSourcesToRun ${CmbArcTestSources})
 FOREACH(test ${CmbArcTestSourcesToRun})
   GET_FILENAME_COMPONENT(TName ${test} NAME_WE)
