@@ -330,7 +330,7 @@ if(BUILD_TESTING)
       --test-directory=${CMB_TEST_DIR})
   endif(Q_WS_MAC)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
- set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baselines/cmb)
+ set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
 
 # message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
@@ -346,11 +346,40 @@ if(BUILD_TESTING)
     # ChangeFaceColors
     OpenCMBFile
     OpenExodusFile
-    OpenVTKFile
+    #OpenVTKFile
+    FlipViewX
+    FlipViewY
+    FlipViewZ
+    ShowCenter
+    SelectObjectByBox
+    Rotate2D
+    Rotate3D
+    RendererPoints
+    RendererSurfaceWithEdges
+    RendererWireframe
+    OpacityLower
+    BackfaceCullFrontface
+    BackfacePoints
+    BackfaceWireframe
+    ShowAxis
+    OpenCMBFile2
+    HideFace
+    HideOtherFaces
+    ManipulateCameraRoll
+    ManipulateCameraElevation
+    ManipulateCameraAzimuth
+    ViewportZoom
+    ObjectlessCenterRotation
+    RotateAlongPickedCenter
+    ZoomToBox
+    ViewportPan
+    HideShowAllFaces
+
     )
 
   set (TESTS_WITHOUT_BASELINES
     HelpDialog
+    AboutDialog
     )
 
   foreach(test ${TESTS_WITHOUT_BASELINES})
