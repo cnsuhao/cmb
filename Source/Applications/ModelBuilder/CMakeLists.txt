@@ -346,7 +346,7 @@ if(BUILD_TESTING)
     # ChangeFaceColors
     OpenCMBFile
     OpenExodusFile
-    #OpenVTKFile
+    OpenVTKFile
     FlipViewX
     FlipViewY
     FlipViewZ
