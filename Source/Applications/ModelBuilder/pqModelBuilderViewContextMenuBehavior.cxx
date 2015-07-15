@@ -173,6 +173,10 @@ pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 {
   delete this->Menu;
   delete this->m_DataInspector;
+  if(this->m_colormapReaction)
+    {
+    delete this->m_colormapReaction;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -505,14 +509,14 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           
           this->PickedRepresentation = view->pickBlock(pos, blockIndex);
 
+          this->buildMenu(this->PickedRepresentation, blockIndex);
+          this->Menu->popup(senderWidget->mapToGlobal(newPos));
+
           // we want to select this block.
           if(this->PickedRepresentation)
             {
             emit this->representationBlockPicked(this->PickedRepresentation, blockIndex);
             }
-
-          this->buildMenu(this->PickedRepresentation, blockIndex);
-          this->Menu->popup(senderWidget->mapToGlobal(newPos));
           }
         }
       this->Position = QPoint();
@@ -529,6 +533,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
   // get currently selected block ids
   this->PickedBlocks.clear();
   this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
+
+  if(this->m_colormapReaction)
+    {
+    this->m_colormapReaction->deleteLater();
+    this->m_colormapReaction = NULL;
+    }
 
   this->Menu->clear();
   if (repr)
@@ -615,7 +625,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
                     this, SLOT(unsetBlockOpacity()));
 */
       QAction* action = this->Menu->addAction("Edit Color");
-      new pqEditColorMapReaction(action);
+      this->m_colormapReaction = new pqEditColorMapReaction(action);
 
       this->Menu->addSeparator();
       }

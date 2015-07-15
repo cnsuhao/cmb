@@ -27,6 +27,7 @@ class QMenu;
 class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
+class pqEditColorMapReaction;
 
 /// @ingroup Behaviors
 ///
@@ -128,6 +129,7 @@ protected:
   QList<unsigned int> PickedBlocks;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
   pqMultiBlockInspectorPanel* m_DataInspector;
+  QPointer<pqEditColorMapReaction> m_colormapReaction;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)
