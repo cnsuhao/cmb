@@ -38,11 +38,6 @@ vtkCMBArcGrowClientOperator::~vtkCMBArcGrowClientOperator()
 //----------------------------------------------------------------------------
 bool vtkCMBArcGrowClientOperator::Operate(std::list<vtkIdType> arcIds)
 {
-  if (!this)
-    {
-    return false;
-    }
-
   if(arcIds.size() == 0)
     {
     return false;

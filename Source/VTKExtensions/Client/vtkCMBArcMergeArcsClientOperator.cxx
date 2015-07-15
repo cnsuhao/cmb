@@ -35,11 +35,6 @@ vtkCMBArcMergeArcsClientOperator::~vtkCMBArcMergeArcsClientOperator()
 bool vtkCMBArcMergeArcsClientOperator::Operate(
   const vtkIdType& firstArcId, const vtkIdType& secondArcId)
 {
-  if (!this)
-    {
-    return false;
-    }
-
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
   vtkSMArcOperatorProxy *proxy = vtkSMArcOperatorProxy::SafeDownCast(
         manager->NewProxy("CmbArcGroup","MergeArcsOperator"));

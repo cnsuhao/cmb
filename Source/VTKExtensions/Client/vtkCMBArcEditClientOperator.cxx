@@ -37,7 +37,7 @@ vtkCMBArcEditClientOperator::~vtkCMBArcEditClientOperator()
 bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
                         vtkSMNewWidgetRepresentationProxy *widgetProxy)
 {
-  if (!sourceProxy || !this || !widgetProxy)
+  if (!sourceProxy || !widgetProxy)
     {
     return false;
     }
