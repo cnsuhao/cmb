@@ -33,6 +33,11 @@
 #include "pqSMAdaptor.h"
 #include "pqSMProxy.h"
 #include "pqWaitCursor.h"
+#include "pqTestUtility.h"
+#include "pqCheckableComboPopupEventTranslator.h"
+#include "pqContextMenuEventTranslator.h"
+#include "pqModelTreeViewEventPlayer.h"
+#include "pqModelTreeViewEventTranslator.h"
 
 #include "vtkProcessModule.h"
 #include "vtkPVGeneralSettings.h"
@@ -252,6 +257,21 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(
     &pqActiveObjects::instance(), SIGNAL(representationChanged(pqDataRepresentation*)),
     this, SLOT(onActiveRepresentationChanged(pqDataRepresentation*)));
+
+  pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
+    new pqModelTreeViewEventTranslator(
+                      pqApplicationCore::instance()->testUtility() ));
+  pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
+    new pqContextMenuEventTranslator(
+                      pqApplicationCore::instance()->testUtility() ));
+  pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
+    new pqCheckableComboPopupEventTranslator(
+                      pqApplicationCore::instance()->testUtility() ));
+
+
+  pqApplicationCore::instance()->testUtility()->eventPlayer()->addWidgetEventPlayer(
+    new pqModelTreeViewEventPlayer(
+                      pqApplicationCore::instance()->testUtility() ));
 
   //launch a local meshing server and monitor so that we can submit jobs
   //any time
