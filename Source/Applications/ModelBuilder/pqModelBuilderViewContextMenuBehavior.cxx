@@ -561,7 +561,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
       this->Menu->addSeparator();
 
       cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
-      if(minfo && minfo->Info->GetHasAnalysisMesh())
+      if(minfo && minfo->hasAnalysisMesh())
         {
         QAction* meshaction = this->Menu->addAction("Show Analysis Mesh");
         meshaction->setCheckable(true);
@@ -767,7 +767,7 @@ void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
     }
   pqDataRepresentation* repr = this->PickedRepresentation;
   cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
-  if(minfo && minfo->Info->GetHasAnalysisMesh())
+  if(minfo && minfo->hasAnalysisMesh())
     {
     minfo->ShowMesh = !minfo->ShowMesh;
     this->m_ModelPanel->modelManager()->updateModelRepresentation(minfo);

@@ -55,6 +55,7 @@ class cmbSMTKModelInfo
     void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
       pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
+    bool hasAnalysisMesh() const;
 
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
     vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;

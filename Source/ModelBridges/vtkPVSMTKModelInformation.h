@@ -48,8 +48,6 @@ public:
   virtual const smtk::common::UUID&  GetModelEntityId(unsigned int bid);
 
   virtual const smtk::common::UUID&  GetModelUUID();
-  virtual bool GetHasAnalysisMesh() const
-  { return this->m_HasAnalysisMesh; }
 
   // Description:
   // return UUIDs to BlockId map for all blocks
@@ -64,7 +62,6 @@ protected:
   std::map<smtk::common::UUID, unsigned int> UUID2BlockIdMap;
   std::map<unsigned int, smtk::common::UUID> BlockId2UUIDMap;
   smtk::common::UUID m_ModelUUID;
-  bool m_HasAnalysisMesh;
 
 private:
 
