@@ -357,7 +357,7 @@ void pqSMTKModelPanel::resetUI()
     smtk::model::SimpleModelSubphrases::create();
   spg->setDirectLimit(-1);
   spg->setSkipAttributes(true);
-  spg->setSkipProperties(true);
+  spg->setSkipProperties(false);
   qmodel->setRoot(
     smtk::model::EntityListPhrase::create()
       ->setup(cursors)
