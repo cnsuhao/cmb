@@ -92,6 +92,42 @@ bool _internal_ContainsGroup(
   }
 }
 
+/// Get whether the model has an analysis mesh.
+/// For different modelers, meshing could have happened on the submodels
+/// of the model, and the parent model was set with the property, but
+/// not the submodel itself, so we need to check the parent model (if exists)
+/// for analysis mesh property.
+bool cmbSMTKModelInfo::hasAnalysisMesh() const
+{
+  smtk::common::UUID uid = this->Info->GetModelUUID();
+  if(this->Session->manager()->hasIntegerProperty(uid, SMTK_MESH_GEN_PROP))
+    {
+    const smtk::model::IntegerList& gen(
+      this->Session->manager()->integerProperty(uid, SMTK_MESH_GEN_PROP));
+    if(!gen.empty())
+      {
+      return true;
+      }
+    }
+  // look up the property in parent model(s)
+  smtk::model::Model subModel(this->Session->manager(), uid);
+  while(subModel.parent().isModel())
+    {
+    if(this->Session->manager()->hasIntegerProperty(subModel.parent().entity(), SMTK_MESH_GEN_PROP))
+      {
+      const smtk::model::IntegerList& gen(
+        this->Session->manager()->integerProperty(subModel.parent().entity(), SMTK_MESH_GEN_PROP));
+      if(!gen.empty())
+        {
+        return true;
+        }
+      }
+    subModel = subModel.parent();
+    }
+
+  return false;
+}
+
 //----------------------------------------------------------------------------
 void cmbSMTKModelInfo::init(
   pqPipelineSource* modelsource, pqPipelineSource* repsource, pqDataRepresentation* rep,
@@ -275,67 +311,84 @@ public:
       }
   }
 
-  bool addModelRepresentation(const smtk::model::EntityRef& model,
+  bool addModelRepresentation(smtk::model::Model& model,
     pqRenderView* view, vtkSMModelManagerProxy* smProxy,
-    const std::string& filename)
+    const std::string& filename, const smtk::model::SessionRef& sref)
   {
+    bool loadOK = true;
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       {
-      pqApplicationCore* core = pqApplicationCore::instance();
-      pqObjectBuilder* builder = core->getObjectBuilder();
-      pqPipelineSource* modelSrc = builder->createSource(
-          "ModelBridge", "SMTKModelSource", this->Server);
-      if(modelSrc)
+      model.setSession(sref);
+      // for any model that has cells, we will create a representation for it.
+      if(model.cells().size() > 0)
         {
-        // ModelManagerWrapper Proxy
-        vtkSMProxyProperty* smwrapper =
-          vtkSMProxyProperty::SafeDownCast(
-          modelSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-        smwrapper->RemoveAllProxies();
-        smwrapper->AddProxy(smProxy);
-        vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
-          model.entity().toString().c_str());
-
-        modelSrc->getProxy()->UpdateVTKObjects();
-        modelSrc->updatePipeline();
-
-        pqPipelineSource* repSrc = builder->createFilter(
-          "ModelBridge", "SMTKModelFieldArrayFilter", modelSrc);
-        smwrapper =
-          vtkSMProxyProperty::SafeDownCast(
-          repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-        smwrapper->RemoveAllProxies();
-        smwrapper->AddProxy(smProxy);
-        repSrc->getProxy()->UpdateVTKObjects();
-        repSrc->updatePipeline();
-
-        pqDataRepresentation* rep = builder->createDataRepresentation(
-          repSrc->getOutputPort(0), view);
-        if(rep)
+        pqDataRepresentation* rep = NULL;
+        pqApplicationCore* core = pqApplicationCore::instance();
+        pqObjectBuilder* builder = core->getObjectBuilder();
+        pqPipelineSource* modelSrc = builder->createSource(
+            "ModelBridge", "SMTKModelSource", this->Server);
+        if(modelSrc)
           {
-          smtk::model::ManagerPtr mgr = smProxy->modelManager();
-          this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
-  
-          vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
-          this->updateGeometryEntityAnnotations(model);
-          this->updateEntityGroupFieldArrayAndAnnotations(model);
-          this->resetColorTable(model);
-          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-            rep->getProxy(), NULL, vtkDataObject::FIELD);
+          // ModelManagerWrapper Proxy
+          vtkSMProxyProperty* smwrapper =
+            vtkSMProxyProperty::SafeDownCast(
+            modelSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+          smwrapper->RemoveAllProxies();
+          smwrapper->AddProxy(smProxy);
+          vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
+            model.entity().toString().c_str());
 
-          return true;         
+          modelSrc->getProxy()->UpdateVTKObjects();
+          modelSrc->updatePipeline();
+
+          pqPipelineSource* repSrc = builder->createFilter(
+            "ModelBridge", "SMTKModelFieldArrayFilter", modelSrc);
+          smwrapper =
+            vtkSMProxyProperty::SafeDownCast(
+            repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+          smwrapper->RemoveAllProxies();
+          smwrapper->AddProxy(smProxy);
+          repSrc->getProxy()->UpdateVTKObjects();
+          repSrc->updatePipeline();
+
+          rep = builder->createDataRepresentation(
+            repSrc->getOutputPort(0), view);
+          if(rep)
+            {
+            smtk::model::ManagerPtr mgr = smProxy->modelManager();
+            this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
+    
+            vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
+            this->updateGeometryEntityAnnotations(model);
+            this->updateEntityGroupFieldArrayAndAnnotations(model);
+            this->resetColorTable(model);
+            RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+              rep->getProxy(), NULL, vtkDataObject::FIELD);
+      
+            }
+          }
+        loadOK = (rep != NULL);
+        if(!loadOK)
+          {
+          qCritical() << "Failed to create a pqPipelineSource or pqRepresentation for the model: "
+            << model.entity().toString().c_str();
           }
         }
-      // Should not get here.
-      qCritical() << "Failed to create a pqPipelineSource or pqRepresentation for the model: "
-        << model.entity().toString().c_str();
-      return false;
+
+      // we will also try to create a representation for each submodel of the model
+      smtk::model::Models msubmodels = model.submodels();
+      smtk::model::Models::iterator it;
+      for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
+        {
+        loadOK &= this->addModelRepresentation(*it, view, smProxy, filename, sref); 
+        }
+      return loadOK;
       }
     else
       {
-      qCritical() << "There is already a pqPipelineSource for the model: "
-        << model.entity().toString().c_str();
-      return false;
+//      qCritical() << "There is already a pqPipelineSource for the model: "
+//        << model.entity().toString().c_str();
+      return loadOK;
       }
   }
 
@@ -521,13 +574,39 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
   return this->Internal->ManagerProxy;
 }
 
+// This will recursively check the submodels of the input model
+//-----------------------------------------------------------------------------
+cmbSMTKModelInfo* internal_getModelInfo(
+  const smtk::model::Model& inModel,
+  std::map<smtk::common::UUID, cmbSMTKModelInfo>& modelInfos)
+{
+  smtk::common::UUID modelId = inModel.entity();
+  if(!modelId.isNull() && modelInfos.find(modelId) != modelInfos.end())
+    {
+    return &modelInfos[modelId];
+    }
+
+  cmbSMTKModelInfo* res = NULL;
+  smtk::model::Models msubmodels = inModel.submodels();
+  smtk::model::Models::iterator it;
+  for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
+    {
+    if((res = internal_getModelInfo(*it, modelInfos)))
+      {
+      return res;
+      }
+    }
+
+  return NULL;
+}
+
 //----------------------------------------------------------------------------
 cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
   smtk::common::UUID modelId;
   if(selentity.isModel())
     {
-    modelId = selentity.entity();
+    return internal_getModelInfo(selentity.as<smtk::model::Model>(), this->Internal->ModelInfos);
     }
   else if(selentity.isVolume())
     {
@@ -1189,6 +1268,7 @@ bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
   return (ent.isCellEntity() && !ent.isVolume() &&
         !ent.hasIntegerProperty("block_index"));
 }
+
 //----------------------------------------------------------------------------
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
@@ -1209,6 +1289,7 @@ bool pqCMBModelManager::handleOperationResult(
 
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs groupChangedModels;
@@ -1239,7 +1320,8 @@ bool pqCMBModelManager::handleOperationResult(
       if(!(minfo = this->modelInfo(*it)))
         continue;
       minfo->ShowMesh = true;
-      internal_updateEntityList(*it, geometryChangedModels);
+      smtk::model::EntityRef eref(pxy->modelManager(), minfo->Info->GetModelUUID());
+      internal_updateEntityList(eref, geometryChangedModels);
       }
     }
 
@@ -1274,6 +1356,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
       }
 
+  hasNewModels = false;
   // process "created" in result to figure out if there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr newEntities =
     result->findModelEntity("created");
@@ -1282,9 +1365,13 @@ bool pqCMBModelManager::handleOperationResult(
       {
       if(it->isModel())
         {
-        geometryChangedModels.insert(it->entity());
+        // The new models will be handled later on by checking all the models
+        // in the Manager against the internal ModelInfos map here
+        hasNewModels = true;
+        continue;
         }
-      else if (internal_isNewGeometricBlock(*it)) // a new entity?
+
+      if (internal_isNewGeometricBlock(*it)) // a new entity?
         {
         geometryChangedModels.insert(
           it->as<smtk::model::CellEntity>().model().entity());
@@ -1302,7 +1389,6 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::attribute::MeshSelectionItem::Ptr meshSelections =
     result->findMeshSelection("selection");
 
-  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::common::UUIDs modelids =
     pxy->modelManager()->entitiesMatchingFlags(
     smtk::model::MODEL_ENTITY);
@@ -1320,20 +1406,18 @@ bool pqCMBModelManager::handleOperationResult(
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
     smtk::model::MODEL_ENTITY);
   bool success = true;
-  hasNewModels = false;
   smtk::model::SessionRef sref(pxy->modelManager(), sessionId);
   for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-    if((*it).isValid())
+    if((it->isValid()))
       {
       if(this->Internal->ModelInfos.find(it->entity()) ==
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
-        it->setSession(sref);
         success = this->Internal->addModelRepresentation(
-          *it, view, this->Internal->ManagerProxy, "");
+          *it, view, this->Internal->ManagerProxy, "", sref);
         }
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         // update representation
