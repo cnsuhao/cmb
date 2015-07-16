@@ -198,9 +198,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   this->initSimBuilder();
 
-  this->getThisCore()->setupSelectionRepresentationToolbar(
-    this->getMainDialog()->toolBar_Selection);
-
   this->Internal->SplitterSettings = new QSettings();
 
   QObject::connect(this->getThisCore(),

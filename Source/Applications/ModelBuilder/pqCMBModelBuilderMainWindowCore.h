@@ -38,10 +38,6 @@ public:
 
   // Description
   // Setup a representation-selection toolbar
-  void setupSelectionRepresentationToolbar(QToolBar* parent);
-
-  // Description
-  // Setup a representation-selection toolbar
   void setupColorByAttributeToolbar(QToolBar* parent);
 
   // Description:
