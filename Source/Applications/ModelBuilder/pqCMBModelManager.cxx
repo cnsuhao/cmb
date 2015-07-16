@@ -1289,6 +1289,7 @@ bool pqCMBModelManager::handleOperationResult(
 
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs groupChangedModels;
@@ -1319,7 +1320,8 @@ bool pqCMBModelManager::handleOperationResult(
       if(!(minfo = this->modelInfo(*it)))
         continue;
       minfo->ShowMesh = true;
-      internal_updateEntityList(*it, geometryChangedModels);
+      smtk::model::EntityRef eref(pxy->modelManager(), minfo->Info->GetModelUUID());
+      internal_updateEntityList(eref, geometryChangedModels);
       }
     }
 
@@ -1387,7 +1389,6 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::attribute::MeshSelectionItem::Ptr meshSelections =
     result->findMeshSelection("selection");
 
-  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::common::UUIDs modelids =
     pxy->modelManager()->entitiesMatchingFlags(
     smtk::model::MODEL_ENTITY);
