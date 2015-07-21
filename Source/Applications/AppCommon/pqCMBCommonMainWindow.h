@@ -87,6 +87,11 @@ protected slots:
 
   virtual void onEnableMenuItems(bool state);
 
+  // Description:
+  // For UI tests recording on Mac, we don't want the menu in the native mode.
+  virtual void onRecordTest();
+  virtual void onRecordTestStopped();
+
 protected:
 
   virtual void clearGUI();

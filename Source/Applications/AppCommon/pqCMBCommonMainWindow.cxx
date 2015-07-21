@@ -73,6 +73,8 @@
 #include "pqSaveScreenshotReaction.h"
 #include "pqTestingReaction.h"
 #include "pqTimerLogReaction.h"
+#include "pqTestUtility.h"
+#include "pqFileDialog.h"
 
 #include "vtkPVRenderViewSettings.h"
 #include "vtkPVGeneralSettings.h"
@@ -154,6 +156,9 @@ public:
   QPointer<qtCMBPanelsManager> panelsManager;
   QPointer<pqProxyWidget> displayPanel;
   QPointer<pqCMBColorMapWidget> ColorEditor;
+#ifdef __APPLE__
+  bool prevNativeMenuBar;
+#endif
 
 };
 
@@ -198,6 +203,10 @@ Internal(new vtkInternal(this))
   this->getMainDialog()->actionNew->setShortcuts(QKeySequence::New);
   this->getMainDialog()->actionRedo->setShortcuts(QKeySequence::Redo);
   this->getMainDialog()->actionUndo->setShortcuts(QKeySequence::Undo);
+
+  #ifdef __APPLE__
+    this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
+  #endif
 
 }
 
@@ -390,12 +399,24 @@ void pqCMBCommonMainWindow::initMainWindowCore()
 
 
   //<addaction name="actionToolsDumpWidgetNames" />
-  new pqTestingReaction(this->Internal->UI.menu_Tools->addAction("Record Test...")
-    << pqSetName("actionToolsRecordTest"),
-    pqTestingReaction::RECORD);
-  new pqTestingReaction(this->Internal->UI.menu_Tools->addAction("Play Test...")
-    << pqSetName("actionToolsPlayTest"),
-    pqTestingReaction::PLAYBACK,Qt::QueuedConnection);
+  //new pqTestingReaction(this->Internal->UI.menu_Tools->addAction("Record Test...")
+  //  << pqSetName("actionToolsRecordTest"),
+  //  pqTestingReaction::RECORD);
+  if(pqApplicationCore::instance()->testUtility())
+    {
+    QAction* recordAct = this->Internal->UI.menu_Tools->addAction("Record Test...");
+    QObject::connect(recordAct,
+      SIGNAL(triggered()), this, SLOT(onRecordTest()));
+    QObject::connect(pqApplicationCore::instance()->testUtility()->recorder(), SIGNAL(stopped()),
+                     this, SLOT(onRecordTestStopped()), Qt::QueuedConnection);
+    QObject::connect(pqApplicationCore::instance()->testUtility()->eventTranslator(), SIGNAL(stopped()),
+                     this, SLOT(onRecordTestStopped()), Qt::QueuedConnection);
+
+    new pqTestingReaction(this->Internal->UI.menu_Tools->addAction("Play Test...")
+      << pqSetName("actionToolsPlayTest"),
+      pqTestingReaction::PLAYBACK,Qt::QueuedConnection);
+    }
+
   QObject::connect(this->Internal->UI.actionLock_View_Size,
     SIGNAL(toggled(bool)), this, SLOT(onLockViewSize(bool)));
 //  new pqSaveScreenshotReaction(this->Internal->UI.actionSaveScreenshot);
@@ -695,4 +716,47 @@ void pqCMBCommonMainWindow::enableAxisChange()
 void pqCMBCommonMainWindow::showHelpPage(const QString& url)
 {
   pqHelpReaction::showHelp(url);
+}
+
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::onRecordTest()
+{
+  if(pqApplicationCore::instance()->testUtility())
+    {
+    QString filters;
+    filters += "XML Files (*.xml);;";
+  #ifdef QT_TESTING_WITH_PYTHON
+    filters += "Python Files (*.py);;";
+  #endif
+    filters += "All Files (*)";
+    pqFileDialog fileDialog (NULL,
+        pqCoreUtilities::mainWidget(),
+        tr("Record Test"), QString(), filters);
+    fileDialog.setObjectName("ToolsRecordTestDialog");
+    fileDialog.setFileMode(pqFileDialog::AnyFile);
+    if (fileDialog.exec() == QDialog::Accepted)
+      {
+      #ifdef __APPLE__
+      this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
+      if(this->Internal->prevNativeMenuBar)
+        {
+        this->menuBar()->setNativeMenuBar(false);
+        this->repaint();
+        }
+      #endif
+      pqTestingReaction::recordTest(fileDialog.getSelectedFiles()[0]);
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::onRecordTestStopped()
+{
+  #ifdef __APPLE__
+    if(this->menuBar()->isNativeMenuBar() != this->Internal->prevNativeMenuBar)
+      {
+      this->menuBar()->setNativeMenuBar(this->Internal->prevNativeMenuBar);
+      this->repaint();
+      }
+  #endif
 }

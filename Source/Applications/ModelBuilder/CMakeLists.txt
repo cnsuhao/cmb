@@ -184,6 +184,14 @@ set(ModelBuilder_SOURCE_FILES
   pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
+  pqCheckableComboPopupEventTranslator.h
+  pqCheckableComboPopupEventTranslator.cxx
+  pqContextMenuEventTranslator.h
+  pqContextMenuEventTranslator.cxx
+  pqModelTreeViewEventTranslator.h
+  pqModelTreeViewEventTranslator.cxx
+  pqModelTreeViewEventPlayer.h
+  pqModelTreeViewEventPlayer.cxx
   qtRemusMesherSelector.cxx
   qtRemusMesherSelector.h
 
@@ -343,7 +351,7 @@ if(BUILD_TESTING)
     )
 
   set (XML_TESTS_WITH_BASELINES
-    # ChangeFaceColors
+    EdgeModification
     OpenCMBFile
     OpenExodusFile
     OpenVTKFile

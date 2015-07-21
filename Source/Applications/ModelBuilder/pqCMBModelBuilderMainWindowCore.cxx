@@ -146,7 +146,6 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     bool InCreateSource;
 
     QPointer<pqCMBEnumPropertyWidget> RepresentationWidget;
-    QPointer<pqCMBEnumPropertyWidget> SelectionRepresentationWidget;
     QPointer<QComboBox> SelectByBox;
     QPointer<QAction> ColorFaceWidget;
     QPointer<QComboBox> ColorFaceCombo;
@@ -198,39 +197,6 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 {
   //pqActiveView::instance().setCurrent(0);
   delete Internal;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindowCore::setupSelectionRepresentationToolbar(QToolBar* toolbar)
-{
-/*
-  this->Internal->SelectByBox = new QComboBox(toolbar);
-  this->Internal->SelectByBox->setObjectName("selectByModelEntityTypeBox");
-  //toolbar->addWidget(SelectionLabel);
-  toolbar->addWidget(this->Internal->SelectByBox);
-  QStringList list;
-  list << "Model Faces" << "Regions" << "Domain Sets";
-  this->Internal->SelectByBox->addItems(list);
-  this->Internal->SelectByBox->setToolTip("Selection Mode");
-  this->Internal->SelectByBox->setCurrentIndex(0);
-  QObject::connect(
-      this->Internal->SelectByBox, SIGNAL(currentIndexChanged(int)),
-      this, SLOT(setRubberSelectionMode(int)));
-*/
-  this->Internal->SelectionRepresentationWidget = new pqCMBEnumPropertyWidget(
-      toolbar)
-    << pqSetName("selectionRepresentation");
-  this->Internal->SelectionRepresentationWidget->setPropertyName("SelectionRepresentation");
-  this->Internal->SelectionRepresentationWidget->setLabelText("Selection representation style");
-  toolbar->addWidget(this->Internal->SelectionRepresentationWidget);
-
-  //QObject::connect(this->getObjectInspectorDriver(),
-  //                 SIGNAL(representationChanged(pqDataRepresentation*, pqView*)),
-  //                 this->Internal->SelectionRepresentationWidget,
-  //                 SLOT(setRepresentation(pqDataRepresentation*)));
-
-  QObject::connect(this, SIGNAL(postAccept()),
-      this->Internal->SelectionRepresentationWidget, SLOT(reloadGUI()));
 }
 
 //-----------------------------------------------------------------------------
@@ -459,8 +425,6 @@ void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(
   this->setDisplayRepresentation(connRep);
 
   // this->Internal->ColorFaceWidget->setRepresentation(connRep);
-  this->Internal->SelectionRepresentationWidget->setRepresentation(connRep);
-  this->Internal->SelectionRepresentationWidget->reloadGUI();
 }
 
 //-----------------------------------------------------------------------------
