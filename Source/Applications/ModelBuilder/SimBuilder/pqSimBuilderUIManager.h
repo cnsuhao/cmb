@@ -39,7 +39,7 @@ class pqSimBuilderUIManager : public QObject
 Q_OBJECT
 
 public:
-  pqSimBuilderUIManager();
+  pqSimBuilderUIManager(const char *topViewName="SimBuilder");
   virtual ~pqSimBuilderUIManager();
   smtk::attribute::SystemPtr attSystem() const
     {return this->AttSystem;}

@@ -74,7 +74,7 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
   this->ContentWidget->setLayout(widgetLayout);
   layout->addWidget(this->ContentWidget);
 
-  this->ExportUIManager = new pqSimBuilderUIManager();
+  this->ExportUIManager = new pqSimBuilderUIManager("Export");
 
   QDialogButtonBox *buttonBox =
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -254,7 +254,7 @@ void SimBuilderCustomExportDialog::updatePanel()
     {
     delete this->ExportUIManager;
     }
-  this->ExportUIManager = new pqSimBuilderUIManager();
+  this->ExportUIManager = new pqSimBuilderUIManager("Export");
 
   // Serialize export system
   smtk::io::Logger logger;
@@ -274,6 +274,7 @@ void SimBuilderCustomExportDialog::updatePanel()
       QString::fromStdString(logger.convertToString()));
     return;
     }
+  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
 
   // Update python script item
   smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
@@ -290,7 +291,6 @@ void SimBuilderCustomExportDialog::updatePanel()
   this->SelectedAnalyses.clear();
   this->updateAnalysisTypesWidget();
 
-  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
   this->IsPanelSet = true;
 }
 
