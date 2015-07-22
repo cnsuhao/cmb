@@ -17,7 +17,7 @@
 #include <QKeyEvent>
 #include <QAbstractItemModel>
 #include <QAction>
-#include <QMenu>
+#include <QMouseEvent>
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/common/UUID.h"
 
@@ -32,87 +32,59 @@ static QString toIndexStr(QModelIndex index)
 }
 
 pqModelTreeViewEventTranslator::pqModelTreeViewEventTranslator(QObject* p)
-  : pqWidgetEventTranslator(p)
+  : pqTreeViewEventTranslator(p)
 {
 }
 
-bool pqModelTreeViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqModelTreeViewEventTranslator::translateEvent(QObject* senderObject, QEvent* tr_event, bool& Error)
 {
 
-  smtk::model::qtModelView* object = qobject_cast<smtk::model::qtModelView*>(Object);
-  if(!object)
+  smtk::model::qtModelView* treeWidget = qobject_cast<smtk::model::qtModelView*>(senderObject);
+  if(!treeWidget)
     {
     // mouse events go to the viewport widget
-    object = qobject_cast<smtk::model::qtModelView*>(Object->parent());
+    treeWidget = qobject_cast<smtk::model::qtModelView*>(senderObject->parent());
     }
-  if(!object)
-    return false;
-
-  switch(Event->type())
+  if(!treeWidget)
     {
-    case QEvent::ContextMenu:
-      break;
-    case QEvent::KeyPress:
-    case QEvent::KeyRelease:
-      {
-      QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
-      QString data =QString("%1,%2,%3,%4,%5,%6")
-        .arg(ke->type())
-        .arg(ke->key())
-        .arg(static_cast<int>(ke->modifiers()))
-        .arg(ke->text())
-        .arg(ke->isAutoRepeat())
-        .arg(ke->count());
-      emit recordEvent(object, "keyEvent", data);
-      return true;
-      }
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonRelease:
-      {
-      if(Object == object)
-        {
-        return false;
-        }
-      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(Event);
-      if(Event->type() != QEvent::MouseButtonRelease)
-        {
-        this->LastPos = mouseEvent->pos();
-        }
-      QString idxStr;
-      QPoint relPt = QPoint(0,0);
-      QModelIndex idx = object->indexAt(mouseEvent->pos());
-      idxStr = toIndexStr(idx);
-      relPt = mouseEvent->pos() - object->visualRect(idx).topLeft();
-
-      QString info = QString("%1,%2,%3,%4,%5,%6")
-        .arg(mouseEvent->button())
-        .arg(mouseEvent->buttons())
-        .arg(mouseEvent->modifiers())
-        .arg(relPt.x())
-        .arg(relPt.y())
-        .arg(idxStr);
-      if(Event->type() == QEvent::MouseButtonPress)
-        {
-        emit recordEvent(object, "mousePress", info);
-        }
-      else if(Event->type() == QEvent::MouseButtonDblClick)
-        {
-        emit recordEvent(object, "mouseDblClick", info);
-        }
-      else if(Event->type() == QEvent::MouseButtonRelease)
-        {
-        if(this->LastPos != mouseEvent->pos())
-          {
-          emit recordEvent(object, "mouseMove", info);
-          }
-
-        emit recordEvent(object, "mouseRelease", info);
-        }
-      }
-    default:
-      break;
+    return false;
     }
 
-  return true;
+  if(tr_event->type() == QEvent::MouseButtonRelease)
+    {
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(tr_event);
+    // record visibility or color change on left button release
+    if(mouseEvent->button() == Qt::LeftButton)
+      {
+      std::string actionString = treeWidget->determineAction(mouseEvent->pos());
+      std::string recordCommand;
+      if(actionString == "visible")
+        {
+        recordCommand = "toggleVisibility";
+        }
+      else if(actionString == "color")
+        {
+        recordCommand = "changeColor";
+        }
+
+      if(!recordCommand.empty())
+        {
+        QString str_index = toIndexStr(treeWidget->indexAt(mouseEvent->pos()));
+        emit this->recordEvent(treeWidget, recordCommand.c_str(), str_index);
+        }
+      }
+    // show context menu on right button release
+    else if(mouseEvent->button() == Qt::RightButton)
+      {
+      QModelIndex idx = treeWidget->indexAt(mouseEvent->pos());
+      if(idx.isValid())
+        {
+        emit this->recordEvent(treeWidget, "showContextMenu", toIndexStr(idx));
+        }
+      }
+    }
+
+  // always return false so that its super class can still do its event recording
+  return pqTreeViewEventTranslator::translateEvent(senderObject, tr_event, Error);
+
 }

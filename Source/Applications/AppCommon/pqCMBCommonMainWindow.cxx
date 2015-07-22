@@ -744,6 +744,14 @@ void pqCMBCommonMainWindow::onRecordTest()
         this->repaint();
         }
       #endif
+
+      // set cursor to the central widget of main window.
+      QCursor c = cursor();
+      c.setPos(mapToGlobal(QPoint(this->centralWidget()->width() / 2,
+       this->centralWidget()->height() / 2)));
+      c.setShape(this->cursor().shape());
+      this->centralWidget()->setCursor(c);
+
       pqTestingReaction::recordTest(fileDialog.getSelectedFiles()[0]);
       }
     }
