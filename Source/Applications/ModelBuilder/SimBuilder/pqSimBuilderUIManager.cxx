@@ -39,6 +39,7 @@
 
 #include <QLineEdit>
 #include <QStringList>
+#include <QMessageBox>
 
 //----------------------------------------------------------------------------
 class pqSimBuilderUIManagerInternals
@@ -51,13 +52,14 @@ class pqSimBuilderUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager::pqSimBuilderUIManager(const char *topViewName)
+pqSimBuilderUIManager::pqSimBuilderUIManager(const char *topViewName) :
+  m_topViewName(topViewName)
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
-  this->AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->qtAttSystem = new smtk::attribute::qtUIManager(
-    *(this->AttSystem), topViewName);
+  this->m_AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
+  this->m_attUIManager = new smtk::attribute::qtUIManager(
+    *(this->m_AttSystem), topViewName);
   this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
@@ -66,17 +68,17 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
 {
   delete this->Internals;
 
-  this->AttSystem = smtk::attribute::SystemPtr();
-  if (this->qtAttSystem != NULL)
+  this->m_AttSystem = smtk::attribute::SystemPtr();
+  if (this->m_attUIManager != NULL)
     {
-    delete this->qtAttSystem;
+    delete this->m_attUIManager;
     }
 }
 
 //----------------------------------------------------------------------------
-smtk::attribute::qtRootView* pqSimBuilderUIManager::rootView()
+smtk::attribute::qtBaseView* pqSimBuilderUIManager::topView()
 {
-  return dynamic_cast<smtk::attribute::qtRootView *>(this->qtAttSystem->topView());
+  return this->m_attUIManager->topView();
 }
 
 //----------------------------------------------------------------------------
@@ -93,7 +95,7 @@ void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
     {
     this->Internals->ModelMgr = refModelMgr;
     }
-  this->AttSystem->setRefModelManager(refModelMgr);
+  this->m_AttSystem->setRefModelManager(refModelMgr);
 }
 //-----------------------------------------------------------------------------
 void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
@@ -104,19 +106,50 @@ void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 //----------------------------------------------------------------------------
 void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
 {
-  this->qtManager()->disconnect();
-  QObject::connect(this->qtAttSystem, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
+  //Lets see if we have a top view
+  smtk::common::ViewPtr topview = this->m_AttSystem->findView(this->m_topViewName);
+  if (!topview)
+    {
+    QMessageBox::warning(parentWidget,
+      tr("No Views Warning"),
+      tr("There is no top view specified in the template file!"),
+      QMessageBox::Ok);
+    return;
+    }
+
+  this->m_attUIManager->disconnect();
+  QObject::connect(this->m_attUIManager, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
     this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
-  QObject::connect(this->qtAttSystem,
+  QObject::connect(this->m_attUIManager,
     SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
     this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
-  QObject::connect(this->qtManager(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+  QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
     this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
-  this->qtManager()->initializeUI(parentWidget);
+
+  this->m_attUIManager->initializeUI(parentWidget);
+  if (!this->topView())
+    {
+    QMessageBox::warning(parentWidget,
+      tr("No Views Warning"),
+      tr("There is no top level view created in the UI."),
+      QMessageBox::Ok);
+    return;
+    }
+
+  smtk::attribute::qtRootView* qRootV =
+    qobject_cast<smtk::attribute::qtRootView*>(this->topView());
+  if (!qRootV)
+    {
+    QMessageBox::warning(parentWidget,
+      tr("No Root View Warning"),
+      tr("There is no root view created in the UI."),
+      QMessageBox::Ok);
+    return;
+    }
 
   // callbacks from Expressions sections
   QList<smtk::attribute::qtBaseView*> expressions;
-  this->rootView()->getChildView("SimpleExpression", expressions);
+  qRootV->getChildView("SimpleExpression", expressions);
   foreach(smtk::attribute::qtBaseView* sec, expressions)
     {
     smtk::attribute::qtSimpleExpressionView* simpleExpSec =
@@ -131,7 +164,7 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
 
   // callbacks from Attributes sections
   QList<smtk::attribute::qtBaseView*> attViews;
-  this->rootView()->getChildView("Attribute", attViews);
+  qRootV->getChildView("Attribute", attViews);
   foreach(smtk::attribute::qtBaseView* sec, attViews)
     {
     smtk::attribute::qtAttributeView* attSec =
@@ -163,12 +196,12 @@ void pqSimBuilderUIManager::onLaunchFileBrowser()
 {
   smtk::attribute::qtFileItem* const fileItem =
     qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
-  if(!fileItem)
+  if(!fileItem || !this->topView())
     {
     return;
     }
   pqSMTKUIHelper::process_smtkFileItemRequest(
-    fileItem, this->ActiveServer, this->rootView()->parentWidget());
+    fileItem, this->ActiveServer, this->topView()->parentWidget());
 }
 
 //----------------------------------------------------------------------------
@@ -257,8 +290,18 @@ void pqSimBuilderUIManager::createFunctionWithExpression(
 void pqSimBuilderUIManager::getAttributeDefinitions(
     QMap<QString, QList<smtk::attribute::DefinitionPtr> > &outDefMap)
 {
+  if(!this->topView())
+    {
+    return;
+    }
+  smtk::attribute::qtRootView* qRootV =
+    qobject_cast<smtk::attribute::qtRootView*>(this->topView());
+  if (!qRootV)
+    {
+    return;
+    }
   QList<smtk::attribute::qtBaseView*> attsections;
-  this->rootView()->getChildView("Attribute", attsections);
+  qRootV->getChildView("Attribute", attsections);
 
   foreach(smtk::attribute::qtBaseView* sec, attsections)
     {
