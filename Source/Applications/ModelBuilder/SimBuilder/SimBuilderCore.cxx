@@ -271,7 +271,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
   xmlr.setSearchPaths(searchPaths);
 
   smtk::io::Logger logger;
-  bool errStatus = xmlr.readContents(*(this->attributeUIManager()->attSystem()),
+  bool errStatus = xmlr.readContents(*(this->uiManager()->attributeSystem()),
                                      info->GetFileContents(), logger);
 
   if(errStatus)
@@ -281,8 +281,12 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     }
 
   //parse element, create GUI components
-  this->attributeUIManager()->initializeUI(
+  this->uiManager()->initializeUI(
     this->GetUIPanel()->panelWidget(), this);
+  if(!this->uiManager()->topView())
+    {
+    return 0;
+    }
 /*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
@@ -311,7 +315,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
 
   // Update export dialog
   this->ExportDialog->setSimAttSystem(
-    this->attributeUIManager()->attSystem());
+    this->uiManager()->attributeSystem());
   this->setDefaultExportTemplate();
 
   this->IsSimModelLoaded = true;
@@ -377,7 +381,7 @@ int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
     // Initialize ResourceSet
     smtk::common::ResourceSet resources;
     smtk::attribute::SystemPtr simSystem =
-      this->attributeUIManager()->attSystem();
+      this->uiManager()->attributeSystem();
     resources.addResource(simSystem, "simbuilder", "",
       smtk::common::ResourceSet::INSTANCE);
     smtk::attribute::SystemPtr expSystem =
@@ -393,7 +397,7 @@ int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
     {
     // SimBuilderWriter xmlw;
     smtk::io::AttributeWriter xmlw;
-    errStatus = xmlw.writeContents( *(this->attributeUIManager()->attSystem()),
+    errStatus = xmlw.writeContents( *(this->uiManager()->attributeSystem()),
                                          filecontents, logger);
     }
 
@@ -518,8 +522,8 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   // Instantiate reader and std::map for current attribute systems
   smtk::io::ResourceSetReader resourceReader;
   std::map<std::string, smtk::common::ResourcePtr> resourceMap;
-  resourceMap["simbuilder"] = this->attributeUIManager()->attSystem();
-  //resourceMap["export"] = this->GetExportPanel()->uiManager()->attSystem();
+  resourceMap["simbuilder"] = this->uiManager()->attributeSystem();
+  //resourceMap["export"] = this->GetExportPanel()->uiManager()->attributeSystem();
 
   // Read input
   smtk::io::Logger logger;
@@ -535,6 +539,14 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     return 0;
     }
 
+  // Create GUI components
+  this->uiManager()->initializeUI(
+    this->GetUIPanel()->panelWidget(), this);
+  if(!this->uiManager()->topView())
+    {
+    return 0;
+    }
+
   //unsigned numResources =  resources.numberOfResources();
   //std::cout << "Number of resources loaded: " << numResources << std::endl;
 
@@ -547,7 +559,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
                              simState, simLink))
     {
     this->ExportDialog->setSimAttSystem(
-      this->attributeUIManager()->attSystem());
+      this->uiManager()->attributeSystem());
     this->IsSimModelLoaded = true;
     this->CurrentSimFile = info->GetFileName();
     }
@@ -574,10 +586,6 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
       return 0;
       }
     }
-
-  // Create GUI components
-  this->attributeUIManager()->initializeUI(
-    this->GetUIPanel()->panelWidget(), this);
 /*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
@@ -632,7 +640,7 @@ qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
 }
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager*  SimBuilderCore::attributeUIManager()
+pqSimBuilderUIManager*  SimBuilderCore::uiManager()
 {
   if(!this->m_attUIManager)
     {
@@ -651,7 +659,7 @@ void SimBuilderCore::updateSimBuilder(pqCMBSceneTree* /*sceneTree*/)
 //----------------------------------------------------------------------------
 void SimBuilderCore::updateSimulationModel()
 {
-  if(this->attributeUIManager()->rootView() && this->isSimModelLoaded())// && this->CMBModel)
+  if(this->uiManager()->topView() && this->isSimModelLoaded())// && this->CMBModel)
     {
     if(this->isLoadingScenario())
       {
@@ -663,9 +671,9 @@ void SimBuilderCore::updateSimulationModel()
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearCMBModel()
 {
-  if(this->isSimModelLoaded() && this->attributeUIManager()->rootView())
+  if(this->isSimModelLoaded() && this->uiManager()->topView())
     {
-//    this->attributeUIManager()->clearModelItems();
+//    this->uiManager()->clearModelItems();
     this->ScenarioEntitiesCreated = false;
     }
 }
@@ -715,7 +723,7 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
       }
     }
 */
-  smtk::attribute::SystemPtr attSystem = this->attributeUIManager()->attSystem();
+  smtk::attribute::SystemPtr attSystem = this->uiManager()->attributeSystem();
   if (!attSystem)
     {
     QMessageBox::warning(NULL, "Export Warning!",
@@ -760,7 +768,7 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
     std::string simContents;
     smtk::io::AttributeWriter xmlw;
     smtk::io::Logger logger;
-    bool errStatus = xmlw.writeContents( *(this->attributeUIManager()->attSystem()),
+    bool errStatus = xmlw.writeContents( *(this->uiManager()->attributeSystem()),
                                          simContents, logger);
     if(errStatus)
       {
@@ -832,11 +840,11 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
 void SimBuilderCore::setServer(pqServer* server)
 {
   this->ActiveServer = server;
-  this->attributeUIManager()->setServer(server);
+  this->uiManager()->setServer(server);
 }
 //----------------------------------------------------------------------------
 void SimBuilderCore::setRenderView(pqRenderView* view)
 {
   this->RenderView = view;
-  this->attributeUIManager()->setRenderView(view);
+  this->uiManager()->setRenderView(view);
 }

@@ -205,7 +205,7 @@ void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* too
   SimBuilderCore* sbCore = this->getSimBuilder();
   this->Internal->AttributeVisWidget =
     new smtk::attribute::qtAttributeDisplay(toolbar,
-      sbCore->attributeUIManager()->qtManager())
+      sbCore->uiManager()->attributeUIManager())
     << pqSetName("colorByAttributeWidget");;
   this->Internal->AttVisAction = toolbar->addWidget(this->Internal->AttributeVisWidget);
   this->Internal->AttVisAction->setVisible(false);
@@ -437,7 +437,7 @@ SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
     this->Internal->SimBuilder = new SimBuilderCore(
         this->getActiveServer(), this->activeRenderView());
     if(this->Internal->ModelDock)
-      this->Internal->SimBuilder->attributeUIManager()->
+      this->Internal->SimBuilder->uiManager()->
         setModelPanel(this->Internal->ModelDock);
     }
 
@@ -917,8 +917,8 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
     scalarBar->setVisible(show);
     if(show)
       {
-      pqSimBuilderUIManager* simUIManager = this->getSimBuilder()->attributeUIManager();
-      smtk::attribute::SystemPtr attSystem = simUIManager->attSystem();
+      pqSimBuilderUIManager* simUIManager = this->getSimBuilder()->uiManager();
+      smtk::attribute::SystemPtr attSystem = simUIManager->attributeSystem();
       std::vector<smtk::attribute::AttributePtr> result;
       attSystem->findDefinitionAttributes(
         strDefType.toStdString(), result);
@@ -1109,7 +1109,7 @@ void pqCMBModelBuilderMainWindowCore::colorByAttributeFieldSelected(
   const QString& attdeftype, const QString& itemname)
 {
   this->Internal->ViewContextBehavior->colorByAttribute(
-    this->getSimBuilder()->attributeUIManager()->attSystem(),
+    this->getSimBuilder()->uiManager()->attributeSystem(),
     attdeftype, itemname);
 }
 
@@ -1130,7 +1130,7 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     this->Internal->ViewContextBehavior->setModelPanel(
       this->Internal->ModelDock);
     if(this->Internal->SimBuilder)
-      this->Internal->SimBuilder->attributeUIManager()->
+      this->Internal->SimBuilder->uiManager()->
         setModelPanel(this->Internal->ModelDock);
     }
   return this->Internal->ModelDock;
@@ -1222,9 +1222,9 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
 {
-  this->getSimBuilder()->attributeUIManager()->setModelManager(
+  this->getSimBuilder()->uiManager()->setModelManager(
       this->modelManager()->managerProxy()->modelManager());
-  QObject::connect(this->getSimBuilder()->attributeUIManager(),
+  QObject::connect(this->getSimBuilder()->uiManager(),
     SIGNAL(attColorChanged()), this,
     SLOT(onColorByAttribute()));
 }
