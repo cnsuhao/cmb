@@ -145,7 +145,7 @@ pqCMBModelBuilderMainWindow::pqCMBModelBuilderMainWindow():
 Internal(new vtkInternal(this))
 {
   this->initializeApplication();
-  this->initUIPanels();
+  this->resetUIPanels();
 
   this->setupToolbars();
   this->setupZoomToBox();
@@ -867,7 +867,7 @@ pqProxyInformationWidget* pqCMBModelBuilderMainWindow::getInfoWidget()
 }
 
 //----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::initUIPanels()
+void pqCMBModelBuilderMainWindow::resetUIPanels()
 {
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*>::iterator it;
   for(it = this->Internal->CurrentDockWidgets.begin();
@@ -1000,12 +1000,22 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
       }
     case qtCMBPanelsManager::INFO:
+      {
       dw = panelManager->createDockWidget(this,
         this->getInfoWidget(), qtCMBPanelsManager::type2String(enType),
         Qt::RightDockWidgetArea, lastdw);
       dw->show();
       this->Internal->CurrentDockWidgets[enType] = dw;
+
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqOutputPort* actPort = rep ? rep->getOutputPortFromInput() : NULL;
+      if(this->Internal->InformationWidget &&
+         this->Internal->InformationWidget->getOutputPort() != actPort)
+        {
+        this->Internal->InformationWidget->setOutputPort(actPort);
+        }
       break;
+      }
     case qtCMBPanelsManager::SCENE:
       dw = panelManager->createDockWidget(this,
         this->getpqCMBSceneTree()->getWidget(), qtCMBPanelsManager::type2String(enType),
@@ -1114,10 +1124,10 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
         colorWidget->setDataRepresentation(acitveRep);
         break;
         }
+      // The info widget is connected with the active representation internally
+      case qtCMBPanelsManager::INFO:
       case qtCMBPanelsManager::ATTRIBUTE:
       case qtCMBPanelsManager::MODEL:
-      // The info widget is handling the active representation internally
-      case qtCMBPanelsManager::INFO:
       case qtCMBPanelsManager::SCENE:
       case qtCMBPanelsManager::MESH:
       case qtCMBPanelsManager::RENDER:

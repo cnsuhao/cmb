@@ -320,7 +320,7 @@ public:
       {
       model.setSession(sref);
       // for any model that has cells, we will create a representation for it.
-      if(model.cells().size() > 0)
+      if(model.cells().size() > 0 || model.groups().size() > 0)
         {
         pqDataRepresentation* rep = NULL;
         pqApplicationCore* core = pqApplicationCore::instance();
