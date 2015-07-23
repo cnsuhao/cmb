@@ -51,10 +51,6 @@ bool vtkCMBArcDeleteClientOperator::DeleteArc(const vtkIdType& arcId)
 bool vtkCMBArcDeleteClientOperator:: Operate(const vtkIdType& arcId,
       vtkCMBArcDeleteClientOperator::Mode mode)
 {
-  if (!this)
-    {
-    return false;
-    }
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
   vtkSMArcOperatorProxy *proxy = vtkSMArcOperatorProxy::SafeDownCast(
         manager->NewProxy("CmbArcGroup","DeleteOperator"));

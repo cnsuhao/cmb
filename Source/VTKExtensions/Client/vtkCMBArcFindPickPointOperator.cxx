@@ -34,11 +34,6 @@ vtkCMBArcFindPickPointOperator::~vtkCMBArcFindPickPointOperator()
 bool vtkCMBArcFindPickPointOperator::Operate(
   const vtkIdType& arcId, vtkSMOutputPort *selectionPort)
 {
-  if (!this)
-    {
-    return false;
-    }
-
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
   vtkSMArcOperatorProxy *proxy = vtkSMArcOperatorProxy::SafeDownCast(
         manager->NewProxy("CmbArcGroup","PickPointOperator"));

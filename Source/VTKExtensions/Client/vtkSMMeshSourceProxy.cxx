@@ -34,7 +34,7 @@ vtkSMMeshSourceProxy::~vtkSMMeshSourceProxy()
 bool vtkSMMeshSourceProxy::MovePoints(
   vtkSMProxy *movedProxy, vtkSMProxy* transformProxy)
 {
-  if (!movedProxy || !this)
+  if (!movedProxy)
     {
     return false;
     }

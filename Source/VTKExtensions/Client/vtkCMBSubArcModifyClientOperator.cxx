@@ -113,7 +113,7 @@ bool vtkCMBSubArcModifyClientOperator::Operate(
 bool vtkCMBSubArcModifyClientOperator::UpdateArc(vtkIdType arcId,
   vtkSMNewWidgetRepresentationProxy *widgetProxy, vtkSMSourceProxy* arcSource)
 {
-  if (!this || !arcSource || arcId == -1)
+  if (!arcSource || arcId == -1)
     {
     return false;
     }

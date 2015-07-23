@@ -82,7 +82,7 @@ vtkCMBArcUpdateAndSplitClientOperator::~vtkCMBArcUpdateAndSplitClientOperator()
 bool vtkCMBArcUpdateAndSplitClientOperator::Operate(vtkIdType arcId,
                       vtkSMNewWidgetRepresentationProxy *widgetProxy)
 {
-  if (!this || !widgetProxy || arcId == -1)
+  if (!widgetProxy || arcId == -1)
     {
     return false;
     }
