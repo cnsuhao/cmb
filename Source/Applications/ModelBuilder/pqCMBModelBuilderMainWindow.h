@@ -146,8 +146,8 @@ protected:
   void updateDataInfo();
   void setToolbarEnableState(QToolBar* toolbar, bool enabled);
 
-  // init UI panels as Dock widgets
-  void initUIPanels();
+  // clear existing UI panels and reset the types to default
+  void resetUIPanels();
   QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType,
     bool recreate=false);
   pqProxyInformationWidget* getInfoWidget();
