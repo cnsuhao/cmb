@@ -236,6 +236,7 @@ cmbSMTKModelInfo::cmbSMTKModelInfo(const cmbSMTKModelInfo& other)
   this->Info = other.Info;
   this->BlockSelectionSource = other.BlockSelectionSource;
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
+  this->ShowMesh = other.ShowMesh;
 }
 
 //-----------------------------------------------------------------------------
