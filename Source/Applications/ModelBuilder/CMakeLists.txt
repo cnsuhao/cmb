@@ -366,9 +366,6 @@ if(BUILD_TESTING)
     RendererSurfaceWithEdges
     RendererWireframe
     OpacityLower
-    BackfaceCullFrontface
-    BackfacePoints
-    BackfaceWireframe
     ShowAxis
     OpenCMBFile2
     HideFace
@@ -379,7 +376,6 @@ if(BUILD_TESTING)
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
-    ZoomToBox
     ViewportPan
     HideShowAllFaces
 
