@@ -68,7 +68,7 @@ public:
 
   void ExportSimFile(vtkSMModelManagerProxy* mmproxy);
 
-  pqSimBuilderUIManager* attributeUIManager();
+  pqSimBuilderUIManager* uiManager();
   qtSimBuilderUIPanel* GetUIPanel();
 
   bool isTemplateOnly(){return this->LoadTemplateOnly;}

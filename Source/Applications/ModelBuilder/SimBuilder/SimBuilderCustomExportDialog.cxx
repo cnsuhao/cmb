@@ -74,7 +74,7 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
   this->ContentWidget->setLayout(widgetLayout);
   layout->addWidget(this->ContentWidget);
 
-  this->ExportUIManager = new pqSimBuilderUIManager();
+  this->ExportUIManager = new pqSimBuilderUIManager("Export");
 
   QDialogButtonBox *buttonBox =
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -100,8 +100,17 @@ int SimBuilderCustomExportDialog::exec()
     this->updatePanel();
     }
 
+  if (!this->ExportUIManager->topView())
+    {
+    QMessageBox::warning(NULL,
+      tr("No Top Level View Warning"),
+      tr("There is no top level view created in the UI."),
+      QMessageBox::Ok);
+    return 0;
+    }
+
   // Need to ping export panel (root view) to hide advanced items at start
-  this->ExportUIManager->rootView()->showAdvanceLevel(0);
+  this->ExportUIManager->topView()->showAdvanceLevel(0);
 
   this->MainDialog->setModal(true);
   this->MainDialog->show();
@@ -221,7 +230,7 @@ exportAttSystem(bool baseline) const
     {
     return this->ExportAttSystem;
     }
-  return this->ExportUIManager->attSystem();
+  return this->ExportUIManager->attributeSystem();
 }
 
 //-----------------------------------------------------------------------------
@@ -254,7 +263,7 @@ void SimBuilderCustomExportDialog::updatePanel()
     {
     delete this->ExportUIManager;
     }
-  this->ExportUIManager = new pqSimBuilderUIManager();
+  this->ExportUIManager = new pqSimBuilderUIManager("Export");
 
   // Serialize export system
   smtk::io::Logger logger;
@@ -266,7 +275,7 @@ void SimBuilderCustomExportDialog::updatePanel()
 
   // Reload into export panel
   smtk::io::AttributeReader attReader;
-  hasError = attReader.readContents(*(this->ExportUIManager->attSystem()),
+  hasError = attReader.readContents(*(this->ExportUIManager->attributeSystem()),
     serializedSystem, logger);
   if (hasError)
     {
@@ -274,6 +283,7 @@ void SimBuilderCustomExportDialog::updatePanel()
       QString::fromStdString(logger.convertToString()));
     return;
     }
+  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
 
   // Update python script item
   smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
@@ -290,7 +300,6 @@ void SimBuilderCustomExportDialog::updatePanel()
   this->SelectedAnalyses.clear();
   this->updateAnalysisTypesWidget();
 
-  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
   this->IsPanelSet = true;
 }
 
@@ -422,7 +431,7 @@ SimBuilderCustomExportDialog::
 getExportSpecItem(const std::string& name, bool warnIfMissing) const
 {
   smtk::attribute::SystemPtr system =
-    this->ExportUIManager->attSystem();
+    this->ExportUIManager->attributeSystem();
   if (!system)
     {
     if (warnIfMissing)

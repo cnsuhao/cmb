@@ -108,6 +108,22 @@ class CardFormat:
 
 
 # ---------------------------------------------------------------------
+# Returns integer id for input string, intended to be used with UUID
+# strings. The ExportScope object should be pass in as the first argument.
+def get_unique_id(self, tag):
+  '''
+  '''
+  if not hasattr(self, 'uid_dict'):
+    self.uid_dict = dict()
+
+  uid = self.uid_dict.get(tag)
+  if uid is None:
+    uid = len(self.uid_dict)
+    self.uid_dict[tag] = uid
+  return uid
+
+
+# ---------------------------------------------------------------------
 ExportScope = type('ExportScope', (object,), dict())
 def init_scope(spec):
   '''Returns ExportScope object initialized to input spec
@@ -126,10 +142,10 @@ def init_scope(spec):
   scope.manager = spec.getSimulationAttributes()
   scope.model = None
   if scope.manager is not None:
-    scope.model = scope.manager.refModel()
+    scope.model = scope.manager.refModelManager()
   scope.gridinfo = None
-  if scope.model is not None:
-    scope.gridinfo = scope.model.gridInfo()
+  # if scope.model is not None:
+  #   scope.gridinfo = scope.model.gridInfo()
   scope.output_filename = 'output.bc'  # default
   scope.output_directory = os.getcwd() # default
   scope.analysis_types = list()
@@ -174,25 +190,33 @@ def init_scope(spec):
   material_att_list = scope.manager.findAttributes('Material')
   material_att_list += scope.manager.findAttributes('SolidMaterial')
   material_att_list.sort(key=lambda att:att.id())
+
   for material_att in material_att_list:
-    model_ent_list = material_att.associatedEntitiesSet()
+    # print 'material_att', material_att.name()
+    # print 'associations: ', material_att.associations()
+    # print 'material_att.associatedModelEntityIds', material_att.associatedModelEntityIds()
+
+    model_ent_item = material_att.associations()
     # Skip materials not associated with any model entities
-    if not model_ent_list:
+    if model_ent_item.numberOfValues() == 0:
       continue
 
     material_index += 1
-    for model_ent in model_ent_list:
-      scope.material_dict[model_ent.id()] = material_index
-      #print 'Added Material ID %d for model ent %d' % (material_index, model_ent.id())
+    for i in range(model_ent_item.numberOfValues()):
+      uuid_string = model_ent_item.valueAsString(i)
+      model_ent_id = get_unique_id(scope, uuid_string)
+      scope.material_dict[model_ent_id] = material_index
+      print 'Added Material ID %d for model ent %d (%s)' % \
+        (material_index, model_ent_id, uuid_string)
 
   scope.bc_dict = dict()
   bc_index = 0
   bc_att_list = scope.manager.findAttributes('BoundaryCondition')
   bc_att_list.sort(key=lambda bc: bc.id())
   for bc_att in bc_att_list:
-    model_ent_list = bc_att.associatedEntitiesSet()
+    model_ent_item = bc_att.associations()
     # Skip BCs not associated with any model entities
-    if not model_ent_list:
+    if model_ent_item is None:
       continue
 
     bc_index += 1
@@ -256,16 +280,21 @@ def write_section(scope, att_type):
     if att.definition().associationMask() == 0x0:
       write_items(scope, att, format_list)
 
+    model_ent_item = att.associations()
+    if model_ent_item is None:
+      print 'Expecting model association for attribute', att.name()
+      return True
+
     # Special handling for material models
     #  - Skip materials not associated with any domains
     #  - Write comment line with attribute name
     if att.type() in ['Material', 'SolidMaterial']:
-      if att.numberOfAssociatedEntities() == 0:
-        continue
       scope.output.write('! material -- %s\n' % att.name())
 
-    for ent in att.associatedEntitiesSet():
-      ok = write_items(scope, att, format_list, ent)
+    for i in range(model_ent_item.numberOfValues()):
+      ent_uuid = model_ent_item.valueAsString(i)
+      ent_id = get_unique_id(scope, ent_uuid)
+      ok = write_items(scope, att, format_list, ent_id)
 
   return True
 
@@ -343,7 +372,7 @@ def render_card(scope, item, card_format, context_id=None, group_index=0):
 
 
 # ---------------------------------------------------------------------
-def write_items(scope, att, format_list, ent=None):
+def write_items(scope, att, format_list, ent_id=None):
   '''
   Writes items for a given attribute and list of formatters
   '''
@@ -353,8 +382,8 @@ def write_items(scope, att, format_list, ent=None):
     context_id = scope.bc_dict.get(att.id(), 0)
   elif 'Constituent' in att.types():
     context_id = scope.constituent_dict.get(att.id(), 0)
-  elif ent is not None:
-    context_id = scope.material_dict.get(ent.id(), 0)
+  elif ent_id is not None:
+    context_id = scope.material_dict.get(ent_id, 0)
   if context_id is not None:
     context_id = str(context_id)
 
@@ -562,9 +591,14 @@ def write_MTS_cards(scope):
     mts_list = list()
     att_list = scope.manager.findAttributes('SolidMaterial')
     for att in att_list:
-      ent_list = att.associatedEntitiesSet()
-      for ent in ent_list:
-        ent_id = ent.id()
+      #ent_list = att.associatedEntitiesSet()
+      model_ent_item = att.associations()
+      if model_ent_item is None:
+        continue
+
+      for i in range(model_ent_item.numberOfValues()):
+        ent_uuid = model_ent_item.valueAsString(i)
+        ent_id = get_unique_id(scope, ent_uuid)
         material_id = scope.material_dict.get(ent_id, 0)
         #print 'Retrieved material id %d for entity %d' % \
         #  (material_id, ent_id)
@@ -586,7 +620,12 @@ def write_bc_sets(scope):
 
   # Get model dimension
   api_status = smtk.model.GridInfo.ApiStatus()
+
+  print 'Todo get dimension from gridInfo'
+  dimension = 2
+  """
   dimension = scope.gridinfo.dimension(api_status)
+  """
 
   for bc_id, bc_index in bc_list:
     bc_att = scope.manager.findAttribute(bc_id)
@@ -612,14 +651,23 @@ def write_EGS_cards(scope, bc_att):
   # Get grid items
   api_status = smtk.model.GridInfo.ApiStatus()
   grid_item_set = set()
-  model_ent_list = bc_att.associatedEntitiesSet()
-  for model_ent in model_ent_list:
-    ent_grid_items = scope.gridinfo.edgeGridItems(model_ent.id(), api_status)
+  #model_ent_list = bc_att.associatedEntitiesSet()
+  model_ent_item = bc_att.associations()
+  if model_ent_item is None:
+    return
+
+  for i in range(model_ent_item.numberOfValues()):
+    ent_uuid = model_ent_item.valueAsString(i)
+    ent_id = get_unique_id(scope, ent_uuid)
+
+    print 'Todo need grid edges for model entity ', ent_id
+    """
+    ent_grid_items = scope.gridinfo.edgeGridItems(ent_id, api_status)
     #print 'grid items', len(ent_grid_items)
     for grid_item in ent_grid_items:
       scope.output.write('EGS %d %d %d\n' % \
         (grid_item[0]+1, grid_item[1]+1, bc_id))
-
+    """
 
 # ---------------------------------------------------------------------
 def write_FCS_cards(scope, bc_att):
@@ -633,8 +681,16 @@ def write_FCS_cards(scope, bc_att):
   # Get grid items
   api_status = smtk.model.GridInfo.ApiStatus()
   grid_item_set = set()
-  model_ent_list = bc_att.associatedEntitiesSet()
-  for model_ent in model_ent_list:
+  model_ent_item = bc_att.associations()
+  if model_ent_item is None:
+    return
+
+  for i in range(model_ent_item.numberOfValues()):
+    ent_uuid = model_ent_item.valueAsString(i)
+    ent_id = get_unique_id(scope, ent_uuid)
+
+    print 'Todo need grid boundary for model entity ', ent_id
+    """
     ent_grid_items = scope.gridinfo.boundaryItemsOf(model_ent.id(), api_status)
     if api_status.returnType != smtk.model.GridInfo.OK:
       msg = 'GridInfo error: %s' % api_status.errorMessage
@@ -646,7 +702,7 @@ def write_FCS_cards(scope, bc_att):
       adh_face_num = vtkToAdhFaceMapping[grid_item[1]]
       scope.output.write('FCS %d %d %d\n' % \
         (grid_item[0]+1, adh_face_num, bc_id))
-
+    """
 
 # ---------------------------------------------------------------------
 def write_MID_cards(scope):
@@ -672,8 +728,16 @@ def write_NDS_cards(scope, bc_att):
 
   api_status = smtk.model.GridInfo.ApiStatus()
   node_id_set = set()
-  model_ent_list = bc_att.associatedEntitiesSet()
-  for model_ent in model_ent_list:
+  model_ent_item = bc_att.associations()
+  if model_ent_item is None:
+    return
+
+  for i in range(model_ent_item.numberOfValues()):
+    ent_uuid = model_ent_item.valueAsString(i)
+    ent_id = get_unique_id(scope, ent_uuid)
+
+    print 'Todo need grid boundary for model entity ', ent_id
+    """
     vertex_id_list = list()
     point_id_list = scope.gridinfo.pointIds(model_ent.id(), \
       smtk.model.GridInfo.ALL_POINTS, api_status)
@@ -683,7 +747,7 @@ def write_NDS_cards(scope, bc_att):
       scope.logger.addWarning(msg)
       continue
     node_id_set.update(point_id_list)
-
+    """
   for node_id in sorted(node_id_set):
     scope.output.write('NDS %d %d\n' % (node_id+1, bc_id))
 

@@ -14,28 +14,26 @@
 #ifndef __pqModelTreeViewEventTranslator_h
 #define __pqModelTreeViewEventTranslator_h
 
-#include "pqWidgetEventTranslator.h"
+#include "pqTreeViewEventTranslator.h"
 #include <QPoint>
 #include "cmbSystemConfig.h"
 
-/**
-Translates low-level Qt events into high-level cmb events that can be recorded as test cases.
-
-\sa pqEventTranslator
+/**\brief Translates low-level Qt events into high-level cmb events that can be recorded as test cases.
+* 
+* The smtk qtModelView has only one column with icons and text in same column, so in order to
+* know which icons are cliked, we have to process the mouse click position, then record
+* the icon/actions accordingly
+* 
+\sa pqTreeViewEventTranslator
 */
 
-class pqModelTreeViewEventTranslator : public pqWidgetEventTranslator
+class pqModelTreeViewEventTranslator : public pqTreeViewEventTranslator
 {
   Q_OBJECT
 
 public:
   pqModelTreeViewEventTranslator(QObject* p=0);
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
-
-protected slots:
-
-protected:
-  QPoint LastPos;
 
 private:
   pqModelTreeViewEventTranslator(const pqModelTreeViewEventTranslator&);
