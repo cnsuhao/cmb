@@ -1021,10 +1021,14 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
         // this could also be removing colors already being set
         smtk::model::FloatList rgba = curRef.color();
         if ((rgba.size() == 3 || rgba.size() ==4) &&
-           !(rgba[0]+rgba[1]+rgba[2] == 0))
+           (rgba[0]+rgba[1]+rgba[2]) != 0)
+          {
           color.setRgbF(rgba[0], rgba[1], rgba[2]);
-
-        colorEntities[minfo].insert(curRef, color);
+          }
+        if(color.isValid())
+          {
+          colorEntities[minfo].insert(curRef, color);
+          }
         }
 
       // For potential visibility changes
