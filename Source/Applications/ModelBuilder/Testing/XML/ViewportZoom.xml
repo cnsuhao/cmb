@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/3D-CMBModels/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.812903,0.572711,2,2,0)" />
+  <pqevent object="qtCMBMainWindow" command="contextMenu" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.68,0.445242,2,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.68,0.445242,2,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.572903,0.38061,2,2,0)" />
+  <pqevent object="qtCMBMainWindow" command="contextMenu" arguments="" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.774194,0.639138,2,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.774194,0.639138,2,0,0)" />
+</pqevents>
