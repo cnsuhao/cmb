@@ -52,14 +52,12 @@ class pqSimBuilderUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager::pqSimBuilderUIManager(const char *topViewName) :
-  m_topViewName(topViewName)
+pqSimBuilderUIManager::pqSimBuilderUIManager()
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->m_AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->m_attUIManager = new smtk::attribute::qtUIManager(
-    *(this->m_AttSystem), topViewName);
+  this->m_attUIManager = new smtk::attribute::qtUIManager(*(this->m_AttSystem));
   this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
@@ -104,11 +102,10 @@ void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 }
 
 //----------------------------------------------------------------------------
-void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore)
+void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
+                                        QWidget* parentWidget, SimBuilderCore* sbCore)
 {
-  //Lets see if we have a top view
-  smtk::common::ViewPtr topview = this->m_AttSystem->findView(this->m_topViewName);
-  if (!topview)
+  if (!view)
     {
     QMessageBox::warning(parentWidget,
       tr("No Views Warning"),
@@ -126,7 +123,7 @@ void pqSimBuilderUIManager::initializeUI(QWidget* parentWidget, SimBuilderCore* 
   QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
     this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
 
-  this->m_attUIManager->initializeUI(parentWidget);
+  this->m_attUIManager->setSMTKView(view, parentWidget);
   if (!this->topView())
     {
     QMessageBox::warning(parentWidget,
