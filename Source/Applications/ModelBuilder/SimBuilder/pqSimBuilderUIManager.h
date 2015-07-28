@@ -39,7 +39,7 @@ class pqSimBuilderUIManager : public QObject
 Q_OBJECT
 
 public:
-  pqSimBuilderUIManager(const char *topViewName="SimBuilder");
+  pqSimBuilderUIManager();
   virtual ~pqSimBuilderUIManager();
   smtk::attribute::SystemPtr attributeSystem() const
     {return this->m_AttSystem;}
@@ -57,7 +57,8 @@ public:
   { return this->RenderView; }
 
   smtk::attribute::qtBaseView* topView();
-  void initializeUI(QWidget* parentWidget, SimBuilderCore* sbCore);
+  void setSMTKView( smtk::common::ViewPtr topView, QWidget* parentWidget,
+                    SimBuilderCore* sbCore);
   smtk::model::ManagerPtr attModelManager() const;
   void setModelManager(smtk::model::ManagerPtr);
   void setModelPanel(pqSMTKModelPanel*);
@@ -87,7 +88,6 @@ protected:
   smtk::attribute::SystemPtr m_AttSystem;
   smtk::attribute::qtUIManager* m_attUIManager;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
-  std::string m_topViewName;
 
 private:
   static pqSimBuilderUIManager* Instance;

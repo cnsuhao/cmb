@@ -74,7 +74,7 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
   this->ContentWidget->setLayout(widgetLayout);
   layout->addWidget(this->ContentWidget);
 
-  this->ExportUIManager = new pqSimBuilderUIManager("Export");
+  this->ExportUIManager = new pqSimBuilderUIManager();
 
   QDialogButtonBox *buttonBox =
     new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -263,7 +263,7 @@ void SimBuilderCustomExportDialog::updatePanel()
     {
     delete this->ExportUIManager;
     }
-  this->ExportUIManager = new pqSimBuilderUIManager("Export");
+  this->ExportUIManager = new pqSimBuilderUIManager();
 
   // Serialize export system
   smtk::io::Logger logger;
@@ -283,7 +283,17 @@ void SimBuilderCustomExportDialog::updatePanel()
       QString::fromStdString(logger.convertToString()));
     return;
     }
-  this->ExportUIManager->initializeUI(this->ContentWidget, NULL);
+
+    // Lets get the toplevel view
+  smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
+  if (!topView)
+    {
+    QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
+    return;
+    }
+  
+
+  this->ExportUIManager->setSMTKView(topView, this->ContentWidget, NULL);
 
   // Update python script item
   smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();

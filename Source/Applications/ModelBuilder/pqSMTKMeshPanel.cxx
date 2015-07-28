@@ -218,11 +218,12 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
     }
   // Matching the old View logic in 3.0 in which everything goes through a Root View
   // Assuming the 
-  smtk::common::ViewPtr root = this->AttSystem->findViewByType("Root");
+  smtk::common::ViewPtr root = this->AttSystem->findTopLevelView();
   if (!root)
     {
     // Create a new Root View called MeshView
     root = smtk::common::View::New("Root", ("MeshView"));
+    root->details().setAttribute("TopLevel", "true");
     this->AttSystem->addView(root);
     }
   // Get the Views Component ifit exists - else create it
@@ -241,9 +242,9 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
     {
     make_InstancedView(this->AttSystem);
     }
-  this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem, root->title()) );
-  this->AttUIManager->initializeUI(this->RequirementsWidget.data(),
-                                   useInternalFileBrowser);
+  this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem));
+                            this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(),
+                                                            useInternalFileBrowser);
   QObject::connect(this->AttUIManager.get(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
     this, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)));
 

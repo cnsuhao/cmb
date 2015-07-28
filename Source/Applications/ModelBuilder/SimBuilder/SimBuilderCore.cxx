@@ -280,9 +280,16 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
                            << ". The information is: " << logger.convertToString());
     }
 
+  // Lets get the toplevel view
+  smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
+  if (!topView)
+    {
+    vtkGenericWarningMacro("There is no TopLevel View in  " <<  info->GetFileName());
+    return 0;
+    }
+  
   //parse element, create GUI components
-  this->uiManager()->initializeUI(
-    this->GetUIPanel()->panelWidget(), this);
+  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget(), this);
   if(!this->uiManager()->topView())
     {
     return 0;
@@ -539,9 +546,16 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     return 0;
     }
 
+  // Lets get the toplevel view
+  smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
+  if (!topView)
+    {
+    vtkGenericWarningMacro("There is no TopLevel View in  " <<  info->GetFileName());
+    return 0;
+    }
+  
   // Create GUI components
-  this->uiManager()->initializeUI(
-    this->GetUIPanel()->panelWidget(), this);
+  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget(), this);
   if(!this->uiManager()->topView())
     {
     return 0;
