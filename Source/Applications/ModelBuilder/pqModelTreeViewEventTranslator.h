@@ -15,8 +15,8 @@
 #define __pqModelTreeViewEventTranslator_h
 
 #include "pqTreeViewEventTranslator.h"
-#include <QPoint>
 #include "cmbSystemConfig.h"
+#include <QPoint>
 
 /**\brief Translates low-level Qt events into high-level cmb events that can be recorded as test cases.
 * 

@@ -28,6 +28,7 @@ class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqEditColorMapReaction;
+class cmbSMTKModelInfo;
 
 /// @ingroup Behaviors
 ///
@@ -121,7 +122,7 @@ protected:
   virtual bool eventFilter(QObject* caller, QEvent* e);
 
   /// return the name of the block from its flat index
-  QString lookupBlockName(unsigned int flatIndex) const;
+  QString lookupBlockName(unsigned int flatIndex, cmbSMTKModelInfo* minfo) const;
 
   QMenu* Menu;
   QPoint Position;
