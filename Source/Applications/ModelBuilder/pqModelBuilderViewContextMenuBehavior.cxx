@@ -54,6 +54,7 @@
 #include "pqSMTKModelPanel.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
+#include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/Volume.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
@@ -547,20 +548,20 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
     vtkPVCompositeDataInformation *compositeInfo = info->GetCompositeDataInformation();
     if(compositeInfo && compositeInfo->GetDataIsComposite())
       {
-      bool multipleBlocks = this->PickedBlocks.size() > 1;
+      cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
 
+      bool multipleBlocks = this->PickedBlocks.size() > 1;
       if(multipleBlocks)
         {
         this->Menu->addAction(QString("%1 Entities").arg(this->PickedBlocks.size()));
         }
       else
         {
-        QString blockName = this->lookupBlockName(blockIndex);
+        QString blockName = this->lookupBlockName(blockIndex, minfo);
         this->Menu->addAction(QString("%1").arg(blockName));
         }
       this->Menu->addSeparator();
 
-      cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
       if(minfo && minfo->hasAnalysisMesh())
         {
         QAction* meshaction = this->Menu->addAction("Show Analysis Mesh");
@@ -936,12 +937,26 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockOpacity()
 }
 
 //-----------------------------------------------------------------------------
-QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(unsigned int flatIndex) const
+QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
+  unsigned int blockIdx, cmbSMTKModelInfo* minfo) const
 {
+  // if there is an entity name in smtk, use that
+  if(blockIdx > 0 && minfo)
+    {
+    smtk::common::UUID entId = minfo->Info->GetModelEntityId(blockIdx - 1);
+    const smtk::model::EntityRef entity(this->m_ModelPanel->modelManager()->
+      managerProxy()->modelManager(), entId);
+    if(entity.isValid())
+      {
+      return entity.name().c_str();
+      }
+    }
+
+  // else fall back to multiblock data representation
   pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
   if(panel)
     {
-    return panel->lookupBlockName(flatIndex);
+    return panel->lookupBlockName(blockIdx);
     }
   else
     {
