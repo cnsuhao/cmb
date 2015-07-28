@@ -22,4 +22,17 @@ if(BUILD_TESTING)
   include(CTest)
 endif()
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+
 add_subdirectory(Source)
+
+
+
+option(CMB_ENABLE_DOCUMENTATION
+  "Include targets Sphinx-generated documentation" OFF)
+if (CMB_ENABLE_DOCUMENTATION)
+  find_package(Sphinx)
+
+
+  add_subdirectory(Documentation)
+endif()
