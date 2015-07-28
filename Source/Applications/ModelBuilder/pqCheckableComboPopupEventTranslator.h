@@ -12,6 +12,7 @@
 #define __pqCheckableComboPopupEventTranslator_h
 
 #include "pqWidgetEventTranslator.h"
+#include "cmbSystemConfig.h"
 #include <QPoint>
 
 /**

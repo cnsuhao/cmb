@@ -12,6 +12,7 @@
 #define __pqContextMenuEventTranslator_h
 
 #include "pqWidgetEventTranslator.h"
+#include "cmbSystemConfig.h"
 
 class QAction;
 
@@ -21,7 +22,7 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqContextMenuEventTranslator :
+class pqContextMenuEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
