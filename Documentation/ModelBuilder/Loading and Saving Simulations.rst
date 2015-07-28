@@ -14,7 +14,7 @@ From the File dropdown in the menubar, click Open, Load Simulation Template or L
 .. |pqOpen32| image:: images/pqOpen32.png
 	:width: 24px
 
-.. image:: images/FileMenuSimulation.png
+.. findfigure:: FileMenuSimulation.*
 	:align: right
 
 Saving a Simulation File

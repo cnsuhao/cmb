@@ -6,7 +6,7 @@
 ModelBuilder User Manual
 ====================================================
 
-.. image:: images/ModelBuilderIcon.png
+.. image:: ModelBuilder/images/ModelBuilderIcon.png
 	:scale: 50%
 	:align: center
 
@@ -17,8 +17,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   User's Guide <Users Guide>
-   UI Documentation
+   ModelBuilder/User Guide
+   ModelBuilder/UI Documentation
 
 
 Indices and tables

@@ -15,27 +15,18 @@ if (SPHINX_FOUND)
     set(multiValueArgs DEPENDS FIGURES)
     cmake_parse_arguments(sphinx "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
     if (NOT sphinx_SOURCE_DIR)
-      set(sphinx_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ModelBuilder/") # Reasonable default
+      set(sphinx_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/") # Reasonable default
     endif()
     if (NOT sphinx_BUILD_DIR)
       set(sphinx_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}") # Reasonable default
     endif()
-    message("sphinx_SOURCE_DIR=${sphinx_SOURCE_DIR}")
-    message("sphinx_BUILD_DIR=${sphinx_BUILD_DIR}")
     # Generate HTML version of docs
     set(sphinx_HTML_TOP "${sphinx_BUILD_DIR}/html/index.html")
-    message("sphinx_HTML_TOP=${sphinx_HTML_TOP}")
-    message("SPHINX_EXECUTABLE=${SPHINX_EXECUTABLE}")
-    message("sphinx_DEPENDS=${sphinx_DEPENDS}")
-    message("figureList=${figureList}")
-    message("sphinxTargetName=${sphinxTargetName}")
-    message("CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
-    message("sphinx_DESTINATION=${sphinx_DESTINATION}")
     add_custom_command(
       OUTPUT "${sphinx_HTML_TOP}"
       All
       DEPENDS
-        ${CMAKE_CURRENT_SOURCE_DIR}/ModelBuilder/conf.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/conf.py
         ${sphinx_DEPENDS}
         ${figureList}
         COMMAND ${SPHINX_EXECUTABLE}
@@ -65,7 +56,7 @@ if (SPHINX_FOUND)
 
   # at the moment all other pages are under index.rst
   set(CMB_DOCS
-    ModelBuilder/index.rst
+    index.rst
   )
 
   set(CMB_FIGS

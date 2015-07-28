@@ -3,7 +3,7 @@ Getting Started
 
 When opening ModelBuilder, the window will look similar to the figure below.
 
-.. image:: images/DefaultScreen.png
+.. findfigure:: DefaultScreen.*
 	:align: center
 
 This page will walk through some of the basic functions of ModelBuilder.
@@ -37,7 +37,7 @@ Before loading any objects, a plugin must be loaded with the correct reader.
 Loading Objects
 ^^^^^^^^^^^^^^^^^
 
-.. image:: images/ImportObjectsStep1.png
+.. findfigure:: ImportObjectsStep1.*
 	:align: right
 
 To import an object, click on the “Open” |pqOpen32| icon in the File IO toolbar or go to File—Open (CTRL-O) in the main menubar.
@@ -80,7 +80,7 @@ Interacting with the Model
 
 Right-clicking on a face within the viewport will select the face and bring up a context menu. From this menu, you can hide faces, change color, and change representation (of the object).
 
-.. image:: images/ModelFaceRightClick.png
+.. findfigure:: ModelFaceRightClick.*
 
 Attributes
 ----------
@@ -90,7 +90,7 @@ Attributes
 To load attributes, click the "Open" |pqOpen32| button on the File IO toolbar and browse for the sample.crf linked above.
 Switch to the Attribute tab. Your program should look similar to the figure below.
 
-.. image:: images/GettingStartedStateLoadedAttributes.png
+.. findfigure:: GettingStartedStateLoadedAttributes.*
 	:align: center
 
 Select File-Save Simulation and to save attributes as a CRF file.
@@ -105,7 +105,7 @@ Loading Plugins
 
 From the Tools menu at the top menubar, select “Manage Plugins...”
 
-.. image:: images/LoadPluginsStep1.png
+.. findfigure:: LoadPluginsStep1.*
 
 Click “Load New...” and browse for a plugin (libsmtkDiscreteSessionPlugin).
 The plugins will show up in the “Local Plugins” list after being loaded with a “Loaded” Property.

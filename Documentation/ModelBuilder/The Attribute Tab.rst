@@ -14,7 +14,7 @@ These tabs come in two variants: Attribute and Instanced.
 Attribute Tabs
 --------------
 
-.. image:: images/AttributeTabNewCopyDelete.png
+.. findfigure:: AttributeTabNewCopyDelete.*
 	:align: right
 
 These tabs relate to data that can exist an arbitrary number of times (such as Materials). These tabs can be identified by looking for a table with "New", "Copy", and "Delete" tabs above.
@@ -25,7 +25,7 @@ After selecting an entry, a set of configurable options should appear below the 
 
 For attributes that can be assigned, a two-column table will be shown. Only entities that can be assigned (volumes, faces, edges, and/or vertices) will be shown. Moving an entity to the left side will assign the currently selected attribute the entity.
 
-.. image:: images/AssigningAttributes.png
+.. findfigure:: AssigningAttributes.*
 	:align: center
 
 Instanced Tabs
@@ -37,7 +37,7 @@ These tabs do not have a table for new entries. Rather, they have just the label
 
 The figure below shows a sample tab with a set of constants global to the entire simulation.
 
-.. image:: images/AttributeTabInstanced.png
+.. findfigure:: AttributeTabInstanced.*
 	:align: center
 
 .. seealso::
