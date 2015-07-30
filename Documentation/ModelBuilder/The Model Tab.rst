@@ -8,7 +8,7 @@ The Model Tab contains a hierarchical tree of everything in the scene. For a dis
 
 .. |pqEyeball16| image:: images/pqEyeball16.png
 
-.. image:: images/ModelTab.png
+.. findfigure:: ModelTab.*
 
 Right clicking on any part brings up a context menu with manipulation options.
 

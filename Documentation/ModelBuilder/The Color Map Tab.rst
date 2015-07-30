@@ -4,7 +4,7 @@
 The Color Map Tab
 =================
 
-.. image:: images/ColorBy.png
+.. findfigure:: ColorBy.*
 	:align: right
 
 This tab is only populated if the “Color By” dropdown menu is filled.
@@ -17,7 +17,7 @@ This section exists only if “Interpret Values As Categories” is not selected
 
 The main colorbar is scaled from 0 to 1, where element values will use the corresponding values on the colorbar for determining color.
 
-.. image:: images/ColormapBar.png
+.. findfigure:: ColormapBar.*
 	:align: right
 
 To add a point, left-click on the color bar.

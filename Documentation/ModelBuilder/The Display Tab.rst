@@ -4,7 +4,7 @@
 The Display Tab
 ===============
 
-.. image:: images/DisplayTab.png
+.. findfigure:: DisplayTab.*
 	:align: right
 
 The Display Tab contains various options related to displaying the model.

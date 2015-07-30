@@ -7,6 +7,7 @@ User's Guide
    Getting ModelBuilder
    Getting Started
    Loading and Saving Simulations
+   Session Operators
 
 .. todo::
 	Add more use case documentation
