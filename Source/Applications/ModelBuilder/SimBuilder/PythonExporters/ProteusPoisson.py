@@ -12,7 +12,11 @@
 """Export script for ProteusPoisson applications"""
 
 import os
+import sys
 import smtk
+
+# so devs don't complain about pyc files in source
+sys.dont_write_bytecode = True
 
 # ---------------------------------------------------------------------
 # Format info structures & initializers
@@ -143,20 +147,20 @@ def ExportCMB(spec):
     scope.manager = spec.getSimulationAttributes()
     scope.model = None
     if scope.manager is not None:
-      scope.model = scope.manager.refModel()
-    scope.gridinfo = None
-    scope.nd = 0  # model dimension
-    if scope.model is not None:
-      scope.gridinfo = scope.model.gridInfo()
-      api_status = smtk.model.GridInfo.ApiStatus()
-      nd = scope.gridinfo.dimension(api_status)
-      if smtk.model.GridInfo.OK != api_status.returnType:
-        msg = 'ERROR calling GridInfo.dimension(): %s' % \
-          api_status.errorMessage
-        print msg
-        logger.addError(msg)
-      else:
-        scope.nd = nd
+      scope.model = scope.manager.refModelManager()
+    #scope.gridinfo = None
+    scope.nd = 3  # model dimension
+    # if scope.model is not None:
+    #   scope.gridinfo = scope.model.gridInfo()
+    #   api_status = smtk.model.GridInfo.ApiStatus()
+    #   nd = scope.gridinfo.dimension(api_status)
+    #   if smtk.model.GridInfo.OK != api_status.returnType:
+    #     msg = 'ERROR calling GridInfo.dimension(): %s' % \
+    #       api_status.errorMessage
+    #     print msg
+    #     logger.addError(msg)
+    #   else:
+    #     scope.nd = nd
     scope.export_manager = spec.getExportAttributes()
     scope.logger = spec.getLogger()
 
@@ -224,7 +228,8 @@ def write_pfile(scope):
       'nd = %d' % scope.nd
       ])
 
-    write_polyfile(scope)
+    # todo: disabled until write_polyfile and getNativeModelName are fixed
+    #write_polyfile(scope)
 
     # Write items specified in pfile_formats
     for info in pfile_formats:
@@ -301,29 +306,31 @@ def write_pfile(scope):
       coef_lines.append('# Number of components')
       coef_lines.append('nc = 1')
 
-      aOfX_item = find_item(scope, coefficent_att, 'physics pde coefficients')
-      aOfX = aOfX_item.valueAsString(0)
-      source = string_to_source_list(aOfX, 4)
-      coef_lines.extend(['', '# a(x)'])
-      ui_comment = create_ui_comment(scope, coefficent_att.type(), aOfX_item)
-      #print 'ui_comment', ui_comment
-      coef_lines.append(ui_comment)
-      coef_lines.append('def aOfX(x):')
-      coef_lines.extend(source)
-      coef_lines.append('aOfX_dict = {0: aOfX}')
+      # TODO: 'physics pde coefficient' and 'phyiscs rhs coefficient' cannot be found
+      #     I don't think either exists the in the view right now
+      # aOfX_item = find_item(scope, coefficent_att, 'physics pde coefficients')
+      # aOfX = aOfX_item.valueAsString(0)
+      # source = string_to_source_list(aOfX, 4)
+      # coef_lines.extend(['', '# a(x)'])
+      # ui_comment = create_ui_comment(scope, coefficent_att.type(), aOfX_item)
+      # #print 'ui_comment', ui_comment
+      # coef_lines.append(ui_comment)
+      # coef_lines.append('def aOfX(x):')
+      # coef_lines.extend(source)
+      # coef_lines.append('aOfX_dict = {0: aOfX}')
 
-      fOfX_item = find_item(scope, coefficent_att, 'physics rhs coefficients')
-      #coef_lines.extend(['', '# f(x)', 'def fOfX():'])
-      #coef_lines.extend(source)
-      coef_lines.extend(['', '# f(x)'])
-      ui_comment = create_ui_comment(scope, coefficent_att.type(), aOfX_item)
-      #print 'ui_comment', ui_comment
-      coef_lines.append(ui_comment)
-      coef_lines.append('def fOfX(x):')
-      fOfX = fOfX_item.valueAsString(0)
-      source = string_to_source_list(fOfX, 4)
-      coef_lines.extend(source)
-      coef_lines.append('fOfX_dict = {0: fOfX}')
+      # fOfX_item = find_item(scope, coefficent_att, 'physics rhs coefficients')
+      # #coef_lines.extend(['', '# f(x)', 'def fOfX():'])
+      # #coef_lines.extend(source)
+      # coef_lines.extend(['', '# f(x)'])
+      # ui_comment = create_ui_comment(scope, coefficent_att.type(), aOfX_item)
+      # #print 'ui_comment', ui_comment
+      # coef_lines.append(ui_comment)
+      # coef_lines.append('def fOfX(x):')
+      # fOfX = fOfX_item.valueAsString(0)
+      # source = string_to_source_list(fOfX, 4)
+      # coef_lines.extend(source)
+      # coef_lines.append('fOfX_dict = {0: fOfX}')
 
       physics_item = find_item(scope, coefficent_att, 'physics')
       ui_comment = create_ui_comment(scope, 'coefficients', physics_item)
@@ -339,10 +346,11 @@ def write_pfile(scope):
       find_kwargs(scope, coefficent_att, kwargs)
       argument_string = build_argument_string(args, kwargs)
 
-      physics = physics_item.valueAsString(0)
-      coef = 'coefficients = TransportCoefficients.%s(%s)' % \
-        (physics, argument_string)
-      coef_lines.append(coef)
+      # Same as above; cannot find physics_item
+      # physics = physics_item.valueAsString(0)
+      # coef = 'coefficients = TransportCoefficients.%s(%s)' % \
+      #   (physics, argument_string)
+      # coef_lines.append(coef)
 
       write_lines(scope, coef_lines)
     else:
@@ -367,11 +375,14 @@ def write_nfile(scope):
     ]
     write_lines(scope, file_header, insert_blank_line=False)
 
+      # Get filename of the _p file. We presume it is in the same dir
+    pfilename = os.path.basename(scope.pfilename)
+
     # Write fixed imports
     python_imports =  [
       'from proteus import *',
       'from proteus.default_n import *',
-      'from %s import *' % scope.pfilename[:-3]  # strip ".py"
+      'from %s import *' % pfilename[:-3]  # strip ".py"
     ]
     write_lines(scope, python_imports)
 
@@ -548,7 +559,7 @@ def write_bcs(scope, att_type, function_name, variable_name=None, comment=None):
   fcn_count = 0
   for bc_att in bc_atts:
     # Get list of model entity ids
-    model_ent_list = bc_att.associatedEntitiesSet()
+    model_ent_list = bc_att.associations()
     if not model_ent_list:
       msg = 'No model entities associated with attribute %s - ignoring' % \
         bc_att.name()
@@ -558,13 +569,19 @@ def write_bcs(scope, att_type, function_name, variable_name=None, comment=None):
 
     # Fetch function body
     item = bc_att.find('functionBody')
-    body_item = smtk.attribute.to_concrete(item)
-
-    if not body_item.isSet(0):
+    if not item:
       msg = '%s item is not set - ignoring' % bc_att.name()
       scope.logger.addWarning(msg)
       print 'WARNING:', msg
       continue
+    else:  
+      body_item = smtk.attribute.to_concrete(item)
+
+      if not body_item.isSet(0):
+        msg = '%s item is not set - ignoring' % bc_att.name()
+        scope.logger.addWarning(msg)
+        print 'WARNING:', msg
+        continue
 
     body = body_item.valueAsString(0)
     if not body:
@@ -618,11 +635,12 @@ def write_ics(scope):
   output_list.append('class %s:' % class_name)
 
   # Class body
-  item = ic_att.find('classBody')
-  body_item = smtk.to_concrete(item)
-  body_value = body_item.valueAsString(0)
-  body_list = string_to_source_list(body_value, 4)
-  output_list.extend(body_list)
+  # todo: skipped for now...no classBody?
+  # item = ic_att.find('classBody')
+  # body_item = smtk.to_concrete(item)
+  # body_value = body_item.valueAsString(0)
+  # body_list = string_to_source_list(body_value, 4)
+  # output_list.extend(body_list)
 
   # Object
   object_init = 'initialConditione = {0: %s()}' % class_name
@@ -1068,9 +1086,9 @@ def create_view_table(scope):
 
   Traverses RootView and descendants to build lookup table
   '''
-  table = dict()
-  view = scope.manager.rootView()
-  update_view_info(table, view)
+  #table = dict()
+  #view = scope.manager.rootView()
+  #update_view_info(table, view)
 
   """
   print
@@ -1082,7 +1100,9 @@ def create_view_table(scope):
     print
   print
   """
-  return table
+  #return table
+
+  return scope.manager.views()
 
 # ---------------------------------------------------------------------
 def update_view_info(table, view, view_path=[]):
