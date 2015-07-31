@@ -184,6 +184,8 @@ set(ModelBuilder_SOURCE_FILES
   pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
+  pqCheckableComboPopupEventPlayer.h
+  pqCheckableComboPopupEventPlayer.cxx
   pqCheckableComboPopupEventTranslator.h
   pqCheckableComboPopupEventTranslator.cxx
   pqContextMenuEventTranslator.h

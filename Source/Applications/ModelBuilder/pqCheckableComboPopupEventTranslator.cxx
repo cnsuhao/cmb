@@ -33,24 +33,45 @@ pqCheckableComboPopupEventTranslator::pqCheckableComboPopupEventTranslator(QObje
 
 bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
 {
-  QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
-  if(!object)
+  if(!Object)
+    {
+    return false;
+    }
+  smtk::attribute::qtCheckItemComboBox* checkComboSelf =
+    qobject_cast<smtk::attribute::qtCheckItemComboBox*>(Object);
+  // if this is the click on combobox, and not its popup menu, show popUp
+  if(checkComboSelf && Event->type() == QEvent::MouseButtonPress)
+    {
+    emit recordEvent(checkComboSelf, "showPopup", "");
+    return true;
+    }
+
+  QAbstractItemView* popView = qobject_cast<QAbstractItemView*>(Object);
+  if(!popView)
     {
     // mouse events go to the viewport widget
-    object = qobject_cast<QAbstractItemView*>(Object->parent());
+    popView = qobject_cast<QAbstractItemView*>(Object->parent());
     }
-  if(!object)
-    return false;
 
-  // only record the list view event if it's from smtk::attribute::qtCheckItemComboBox
-  smtk::attribute::qtCheckItemComboBox* checkCombo =
-    qobject_cast<smtk::attribute::qtCheckItemComboBox*>(object->parent());
+  // only record the list view event if it's the popup menu from smtk::attribute::qtCheckItemComboBox
+  checkComboSelf = NULL;
+  for(QObject* test = Object; checkComboSelf == NULL && test != NULL; test = test->parent())
+    {
+    checkComboSelf = qobject_cast<smtk::attribute::qtCheckItemComboBox*>(test);
+    }
 
-  if(!checkCombo)
+  if(!popView || !checkComboSelf)
+    {
     return false;
-    
+    }
+
   switch(Event->type())
     {
+    case QEvent::FocusOut:
+      {
+      emit recordEvent(checkComboSelf, "hidePopup", "");
+      return true;
+      }
     case QEvent::KeyPress:
     case QEvent::KeyRelease:
       {
@@ -62,14 +83,13 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
         .arg(ke->text())
         .arg(ke->isAutoRepeat())
         .arg(ke->count());
-      emit recordEvent(object, "keyEvent", data);
+      emit recordEvent(popView, "keyEvent", data);
       return true;
       }
     case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonRelease:
       {
-      if(Object == object)
+      if(Object == popView)
         {
         return false;
         }
@@ -80,7 +100,7 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
         }
       QString idxStr;
       QPoint relPt = QPoint(0,0);
-      QHeaderView* header = qobject_cast<QHeaderView*>(object);
+      QHeaderView* header = qobject_cast<QHeaderView*>(popView);
       if(header)
         {
         int idx = header->logicalIndexAt(mouseEvent->pos());
@@ -88,9 +108,9 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
         }
       else
         {
-        QModelIndex idx = object->indexAt(mouseEvent->pos());
+        QModelIndex idx = popView->indexAt(mouseEvent->pos());
         idxStr = toIndexStr(idx);
-        QRect r = object->visualRect(idx);
+        QRect r = popView->visualRect(idx);
         relPt = mouseEvent->pos() - r.topLeft();
         }
 
@@ -103,49 +123,13 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
         .arg(idxStr);
       if(Event->type() == QEvent::MouseButtonPress)
         {
-        emit recordEvent(object, "mousePress", info);
-        }
-      else if(Event->type() == QEvent::MouseButtonDblClick)
-        {
-        emit recordEvent(object, "mouseDblClick", info);
+        emit recordEvent(popView, "mousePress", info);
         }
       else if(Event->type() == QEvent::MouseButtonRelease)
         {
-        if(this->LastPos != mouseEvent->pos())
-          {
-          emit recordEvent(object, "mouseMove", info);
-          }
-        emit recordEvent(object, "mouseRelease", info);
+        emit recordEvent(popView, "mouseRelease", info);
         }
       }
-    case QEvent::Wheel:
-      {
-      if(Object == object)
-        {
-        return false;
-        }
-      QPoint relPt = QPoint(0,0);
-      QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
-      if(wheelEvent)
-        {
-        QString idxStr;
-        QModelIndex idx = object->indexAt(wheelEvent->pos());
-        idxStr = toIndexStr(idx);
-        QRect r = object->visualRect(idx);
-        relPt = wheelEvent->pos() - r.topLeft();
-        int numStep = wheelEvent->delta() > 0 ? 120 : -120;
-        int buttons = wheelEvent->buttons();
-        int modifiers = wheelEvent->modifiers();
-        emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                              .arg(numStep)
-                              .arg(buttons)
-                              .arg(modifiers)
-                              .arg(relPt.x())
-                              .arg(relPt.y())
-                              .arg(idxStr));
-        }
-      }
-      break;
     default:
       break;
     }
