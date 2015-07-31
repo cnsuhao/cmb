@@ -79,7 +79,7 @@ def verifyAssociation():
     # verify the matches
     matches = list(set(matches)) # remove duplicate matches
 
-    correctMatches = [ ('SolidMaterial-0', 'Face1'), ('SolidMaterial-0', 'Face4'), ('SolidMaterial-1', 'Face3'), ('VelocityBound-0', 'Edge4'), ('VelocityBound-0', 'Edge7') ]
+    correctMatches = [ ('mat1', 'Face1'), ('mat1', 'Face4'), ('mat2', 'Face3'), ('VelocityBound-0', 'Edge4'), ('VelocityBound-0', 'Edge7') ]
     for m in correctMatches:
         if m not in matches:
             print m, "match not found"
