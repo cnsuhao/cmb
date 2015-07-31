@@ -377,7 +377,7 @@ message("SMTK_DIR: ${SMTK_DIR}")
     EdgeModification
     OpenCMBFile
     OpenExodusFile
-    OpenVTKFile
+    #OpenVTKFile
     FlipViewX
     FlipViewY
     FlipViewZ
