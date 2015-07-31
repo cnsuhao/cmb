@@ -354,7 +354,7 @@ if(BUILD_TESTING)
     EdgeModification
     OpenCMBFile
     OpenExodusFile
-    OpenVTKFile
+    #OpenVTKFile
     FlipViewX
     FlipViewY
     FlipViewZ
