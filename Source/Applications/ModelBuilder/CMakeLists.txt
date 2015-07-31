@@ -338,7 +338,30 @@ if(BUILD_TESTING)
       --test-directory=${CMB_TEST_DIR})
   endif(Q_WS_MAC)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
+ set(TEST_SIMBUILDER_XML ${ModelBuilder_SOURCE_DIR}/SimBuilder/XML)
+ set(TEST_PYTHON ${ModelBuilder_SOURCE_DIR}/Testing/Python)
  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
+
+message("TEST_SIMBUILDER_XML=${TEST_SIMBUILDER_XML}")
+
+# Need path to python executable
+find_package(PythonInterp)
+if (PYTHONINTERP_FOUND)
+  message("PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
+  #message("PYTHON_VERSION_STRING: ${PYTHON_VERSION_STRING}")
+
+  set(PYTHON_DEFINES
+    CMAKE_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}"
+    CMAKE_PYTHON_VERSION="${PYTHON_VERSION_STRING}"
+  )
+
+  set_property(
+    SOURCE export.cxx
+    APPEND PROPERTY COMPILE_DEFINITIONS ${PYTHON_DEFINES}
+  )
+endif()
+
+message("SMTK_DIR: ${SMTK_DIR}")
 
 # message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
@@ -383,8 +406,21 @@ if(BUILD_TESTING)
 
   set (TESTS_WITHOUT_BASELINES
     HelpDialog
-    AboutDialog
     )
+
+  set (TEST_WITH_POSTPROCESS
+    VerifyAttributeSave
+    )
+
+  set (TESTS_FOR_VERIFYSIMEXPORT
+    ExportSimAdHShallow
+    ExportSimAdHSurface
+    ExportSimCTB
+    ExportSimDakota
+    ExportSimHydra
+    ExportSimProteus
+    )
+
 
   foreach(test ${TESTS_WITHOUT_BASELINES})
     #Run the test if it is on the correct platform
@@ -440,13 +476,84 @@ if(BUILD_TESTING)
   # *ALWAYS PUT ${TEST_ENV} IN QUOTES, I.E., "${TEST_ENV}"*
   set(TEST_ENV OFF)
   if(UNIX)
-    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/lib/python2.7:${CMAKE_PREFIX_PATH}/lib/python2.7/lib-dynload:${CMAKE_PREFIX_PATH}/lib/python2.7/site-packages:${CMAKE_PREFIX_PATH}/python")
+    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3/site-packages:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib/python2.7/site-packages")
+    set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib/x86_64-linux-gnu")
+    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
+    # message("TEST_ENV ${TEST_ENV}")
   else() #windows
     # Use escaped-semicolon for PYTHONPATH, so that it can be part of a list (TEST_ENV)
-    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/../python/src/python/lib\;${CMAKE_PREFIX_PATH}/lib/site-packages")
-    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH}")
+    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3/site-packages\;${CMAKE_PREFIX_PATH}/lib\;${CMAKE_PREFIX_PATH}/lib/python2.7/site-packages")
+    set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3\;${CMAKE_PREFIX_PATH}/lib\;${CMAKE_PREFIX_PATH}/lib/x86_64-linux-gnu")
+    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
     #message("TEST_ENV ${TEST_ENV}")
   endif()
+
+  set(POSTPROCESS_RUNNER "${TEST_PYTHON}/RunModelBuilderAndVerify.py")
+  if(CMB_TEST_DATA_ROOT)
+    foreach(test ${TEST_WITH_POSTPROCESS})
+      #Run the test if it is on the correct platform
+      #
+      list(FIND APPLE_EXCLUDE_TESTS ${test} APPLE_FIND_RES)
+
+      # We manually set test-directory in the runner script,
+      # so we make a TEST_BINARY without the flag set.
+      if(Q_WS_MAC)
+        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS/${PROJECT_NAME}")
+      else(Q_WS_MAC)
+        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}")
+      endif(Q_WS_MAC)
+
+      message("TEST_BINARY_BARE=${TEST_BINARY_BARE}")
+
+      if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
+        add_medium_test(${PROJECT_NAME}${test}Py
+          ${PYTHON_EXECUTABLE} ${POSTPROCESS_RUNNER}
+          ${TEST_BINARY_BARE}
+          ${CMB_TEST_DIR}
+          ${TEST_XML}/${test}.xml
+          ${PYTHON_EXECUTABLE}
+          ${TEST_PYTHON}/${test}.py
+          ${CMB_TEST_DATA_ROOT})
+        set_tests_properties(${PROJECT_NAME}${test}Py
+          PROPERTIES
+            ENVIRONMENT "${TEST_ENV}"
+        )
+      endif()
+    endforeach(test)
+
+    # simexport tests
+    foreach(test ${TESTS_FOR_VERIFYSIMEXPORT})
+      #Run the test if it is on the correct platform
+      #
+      list(FIND APPLE_EXCLUDE_TESTS ${test} APPLE_FIND_RES)
+
+      # We manually set test-directory in the runner script,
+      # so we make a TEST_BINARY without the flag set.
+      if(Q_WS_MAC)
+        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS/${PROJECT_NAME}")
+      else(Q_WS_MAC)
+        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}")
+      endif(Q_WS_MAC)
+
+      # VerifySimExport.py is hardcoded in here
+      # The script parses the testscript path to find the testname
+      if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
+      add_medium_test(${PROJECT_NAME}${test}Py
+        ${PYTHON_EXECUTABLE} ${POSTPROCESS_RUNNER}
+        ${TEST_BINARY_BARE}
+        ${CMB_TEST_DIR}
+        ${TEST_XML}/${test}.xml
+        ${PYTHON_EXECUTABLE}
+        ${TEST_PYTHON}/VerifySimExport.py
+        ${CMB_TEST_DATA_ROOT})
+      set_tests_properties(${PROJECT_NAME}${test}Py
+        PROPERTIES
+          ENVIRONMENT "${TEST_ENV}"
+      )
+      endif()
+
+    endforeach(test)
+  endif(CMB_TEST_DATA_ROOT)
 
   # Writes cmake file to run test
   function(test_with_text_file_output testname tempfile baselinefile envlist exepath exe)
