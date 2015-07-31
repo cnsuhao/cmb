@@ -34,6 +34,7 @@
 #include "pqSMProxy.h"
 #include "pqWaitCursor.h"
 #include "pqTestUtility.h"
+#include "pqCheckableComboPopupEventPlayer.h"
 #include "pqCheckableComboPopupEventTranslator.h"
 #include "pqContextMenuEventTranslator.h"
 #include "pqModelTreeViewEventPlayer.h"
@@ -268,6 +269,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   pqApplicationCore::instance()->testUtility()->eventPlayer()->addWidgetEventPlayer(
     new pqModelTreeViewEventPlayer(
+                      pqApplicationCore::instance()->testUtility() ));
+  pqApplicationCore::instance()->testUtility()->eventPlayer()->addWidgetEventPlayer(
+    new pqCheckableComboPopupEventPlayer(
                       pqApplicationCore::instance()->testUtility() ));
 
   //launch a local meshing server and monitor so that we can submit jobs
