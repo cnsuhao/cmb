@@ -51,7 +51,7 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/1QComboBox0" command="set_string" arguments="Advanced" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabExportSpec/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame0/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/PythonExporters/CTB.py" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabExportSpec/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame0/FileBrowsingFrame/1QFrame0/1QComboBox0" command="set_string" arguments="$PARAVIEW_DATA_ROOT/PythonExporters/CTB.py" />
+  
   <pqevent object="SimulationExportDialog/ExportContentWidget/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabExportSpec/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame1/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ExportSimCTB.bc" />
   <pqevent object="SimulationExportDialog/ExportButtonBox/1QPushButton0" command="activate" arguments="" />
