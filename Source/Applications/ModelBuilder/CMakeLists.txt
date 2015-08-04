@@ -478,7 +478,7 @@ message("SMTK_DIR: ${SMTK_DIR}")
   # *ALWAYS PUT ${TEST_ENV} IN QUOTES, I.E., "${TEST_ENV}"*
   set(TEST_ENV OFF)
   if (APPLE)
-    set(PYTHON_PATH "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/python")
+    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/${PROJECT_NAME}.app/Contents/Python")
     set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib/x86_64-linux-gnu")
     set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
   elseif(UNIX)
