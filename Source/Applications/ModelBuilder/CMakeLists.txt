@@ -478,7 +478,7 @@ message("SMTK_DIR: ${SMTK_DIR}")
   # *ALWAYS PUT ${TEST_ENV} IN QUOTES, I.E., "${TEST_ENV}"*
   set(TEST_ENV OFF)
   if (APPLE)
-    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/Applications/${PROJECT_NAME}.app/Contents/Python")
+    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/Applications/${PROJECT_NAME}.app/Contents/Python:${CMAKE_PREFIX_PATH}/lib")
     set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib")
     set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
   elseif(UNIX)
