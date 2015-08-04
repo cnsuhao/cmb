@@ -477,17 +477,19 @@ message("SMTK_DIR: ${SMTK_DIR}")
   # Note that since windows env vars use semicolon:
   # *ALWAYS PUT ${TEST_ENV} IN QUOTES, I.E., "${TEST_ENV}"*
   set(TEST_ENV OFF)
-  if(UNIX)
+  if (APPLE)
+    set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/Applications/${PROJECT_NAME}.app/Contents/Python:${CMAKE_PREFIX_PATH}/lib")
+    set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib")
+    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
+  elseif(UNIX)
     set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3/site-packages:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib/python2.7/site-packages")
     set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3:${CMAKE_PREFIX_PATH}/lib:${CMAKE_PREFIX_PATH}/lib/x86_64-linux-gnu")
     set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
-    # message("TEST_ENV ${TEST_ENV}")
   else() #windows
     # Use escaped-semicolon for PYTHONPATH, so that it can be part of a list (TEST_ENV)
     set(PYTHON_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3/site-packages\;${CMAKE_PREFIX_PATH}/lib\;${CMAKE_PREFIX_PATH}/lib/python2.7/site-packages")
     set(LD_LIBRARY_PATH "${CMAKE_PREFIX_PATH}/lib/paraview-4.3\;${CMAKE_PREFIX_PATH}/lib\;${CMAKE_PREFIX_PATH}/lib/x86_64-linux-gnu")
     set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};LD_LIBRARY_PATH=${LD_LIBRARY_PATH}")
-    #message("TEST_ENV ${TEST_ENV}")
   endif()
 
   set(POSTPROCESS_RUNNER "${TEST_PYTHON}/RunModelBuilderAndVerify.py")
