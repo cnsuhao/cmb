@@ -371,6 +371,7 @@ message("SMTK_DIR: ${SMTK_DIR}")
 
   set (APPLE_EXCLUDE_TESTS
     HelpDialog
+    OpenExodusFile
     )
   set (APPLE_ONLY_TESTS
     )
@@ -379,6 +380,7 @@ message("SMTK_DIR: ${SMTK_DIR}")
     EdgeModification
     OpenCMBFile
     OpenExodusFile
+    OpenExodusFile2
     #OpenVTKFile
     FlipViewX
     FlipViewY
