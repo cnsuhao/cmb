@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/3D-Meshes/mesh_hardpoints_test.3dm" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.701493,0.498969,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.624152,0.424742,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.624152,0.424742,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Display" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Representation/displayRepresentationWidget/comboBox" command="set_string" arguments="Wireframe" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.767978,0.410309,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.774763,0.426804,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.774763,0.426804,1,0,0)" />
+</pqevents>
