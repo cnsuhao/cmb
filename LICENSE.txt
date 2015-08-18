@@ -31,5 +31,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 The following files and directories come from third parties. Check the
 contents of these for details on the specifics of their respective
 licenses.
-- - - - - - - - - - - - - - - - - - - - - - - -
+- - - - - - - - - - - - - - - - - - - - - - - - do not remove this line
+LIDAR/rtvl
 CMake/FindDocutils.cmake
+CMake/FindUUID.cmake

@@ -1,3 +1,14 @@
+#=============================================================================
+#
+#  Copyright (c) Kitware, Inc.
+#  All rights reserved.
+#  See LICENSE.txt for details.
+#
+#  This software is distributed WITHOUT ANY WARRANTY; without even
+#  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#  PURPOSE.  See the above copyright notice for more information.
+#
+#=============================================================================
 import os
 import sys
 from pprint import pprint
@@ -30,7 +41,7 @@ def verifyAssociation():
 
     print "modelpath", modelpath
     model = smtk.model.Model(Read(modelpath)[0])
-    
+
     # read the model tree
     faces = model.cells() # list of faces
     edges = []
@@ -42,7 +53,7 @@ def verifyAssociation():
             # print ' ', y.name(), y.entity()
             for z in y.boundingCells(): #vertices
                 # print '  ', z.name(), z.entity()
-                pass # if ever testing vertex association, add them here  
+                pass # if ever testing vertex association, add them here
 
     # Get the resource for the CRF
     print 'CMB:'

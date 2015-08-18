@@ -1,4 +1,14 @@
-
+#=============================================================================
+#
+#  Copyright (c) Kitware, Inc.
+#  All rights reserved.
+#  See LICENSE.txt for details.
+#
+#  This software is distributed WITHOUT ANY WARRANTY; without even
+#  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+#  PURPOSE.  See the above copyright notice for more information.
+#
+#=============================================================================
 # This script runs ModelBuilder (assuming it produces something)
 # and then a python verification script (calls a function called "test")
 
@@ -57,4 +67,4 @@ def RunMBAndVerify():
 
 if __name__ == '__main__':
 	sys.exit(RunMBAndVerify())
-	
+

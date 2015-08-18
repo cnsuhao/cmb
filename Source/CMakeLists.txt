@@ -90,6 +90,12 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
 if(BUILD_TESTING)
   set(CMB_TEST_DIR ${ConceptualModelBuilder_BINARY_DIR}/Testing/Temporary)
   make_directory(${CMB_TEST_DIR})
+
+  #add the first test which is for checking the copyright
+  add_test(NAME CopyrightStatement
+    COMMAND ${CMAKE_COMMAND}
+        "-DConceptualModelBuilder_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/CheckCopyright.cmake")
 endif()
 
 # Configure data directory
