@@ -381,7 +381,10 @@ message("SMTK_DIR: ${SMTK_DIR}")
     OpenCMBFile
     OpenExodusFile
     OpenExodusFile2
+    OpenHybridFile
     #OpenVTKFile
+    Open2dm
+    Open3dm
     FlipViewX
     FlipViewY
     FlipViewZ
@@ -405,7 +408,13 @@ message("SMTK_DIR: ${SMTK_DIR}")
     RotateAlongPickedCenter
     ViewportPan
     HideShowAllFaces
-
+    OperationGrow
+    OperationEditBathymetry
+    OperationCreateEdges
+    OperationSplitFace
+    OperationMergeFace
+    OperationGroupOps
+    WriteEdge
     )
 
   set (TESTS_WITHOUT_BASELINES
