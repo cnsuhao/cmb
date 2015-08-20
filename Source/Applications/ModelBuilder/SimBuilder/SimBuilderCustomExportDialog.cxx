@@ -384,15 +384,15 @@ void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
     frameLayout->addWidget(button);
     this->AnalysisButtonGroup->addButton(button);
 
+    QObject::connect(button, SIGNAL(clicked()),
+      this, SLOT(analysisSelected()));
+
     // If there is only one analysis, or this one was last used, set checked
     if (1 == analysisTypes.size() ||
         this->SelectedAnalyses.find(*typeIter) != this->SelectedAnalyses.end())
       {
-      button->setChecked(true);
+      button->click();
       }
-
-    QObject::connect(button, SIGNAL(clicked()),
-      this, SLOT(analysisSelected()));
     }
   this->AnalysisButtonGroup->setExclusive(!this->IsMultipleSelect);
 
