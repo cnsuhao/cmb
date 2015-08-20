@@ -115,6 +115,7 @@ protected:
   // Description
   // Initializes the application.
   void initializeApplication();
+  void initializePlugins();
   void setupMenuActions();
   void setupToolbars();
   void updateSMTKSelection();

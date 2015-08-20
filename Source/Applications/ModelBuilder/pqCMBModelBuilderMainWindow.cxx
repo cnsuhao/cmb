@@ -86,6 +86,8 @@
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 
+#include "vtkPVPlugin.h"
+
 #include <QComboBox>
 #include <QDockWidget>
 #include <QLabel>
@@ -100,6 +102,8 @@
 #include <QPixmap>
 #include <QSplitter>
 #include <QSettings>
+
+#include "cmb_plugins.h"
 
 class pqCMBModelBuilderMainWindow::vtkInternal
 {
@@ -146,6 +150,7 @@ pqCMBModelBuilderMainWindow::pqCMBModelBuilderMainWindow():
 Internal(new vtkInternal(this))
 {
   this->initializeApplication();
+  this->initializePlugins();
   this->resetUIPanels();
 
   this->setupToolbars();
@@ -277,6 +282,13 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //launch a local meshing server and monitor so that we can submit jobs
   //any time
   this->MainWindowCore->launchLocalMeshingService();
+}
+
+cmb_plugins(PV_PLUGIN_IMPORT_INIT)
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::initializePlugins()
+{
+    cmb_plugins(PV_PLUGIN_IMPORT)
 }
 
 //----------------------------------------------------------------------------
