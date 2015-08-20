@@ -81,10 +81,10 @@ def verifyExportSimProteus(baselinedir, testDir, testName):
 
     if filecmp.cmp(basefile_n,testfile_n) == True and \
         filecmp.cmp(basefile_p,testfile_p) == True:
-        print("Output is the same!1")
+        print("Output is the same!")
         return 0
     else:
-        print("Output not the same!1")
+        print("Output not the same!")
         return -1
 
 
