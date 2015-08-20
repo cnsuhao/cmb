@@ -171,25 +171,32 @@ def ExportCMB(spec):
     scope.pfilename = 'poisson_p.py'
     scope.nfilename = 'poisson_n.py'
 
-    # Write each file separately, starting with physics
-    pfile_item = find_instance(scope, 'ExportSpec', 'PhysicsFile', \
+
+    nfile_item = find_instance(scope, 'ExportSpec', 'NumericsFile', \
       scope.export_manager)
-    if pfile_item is not None:
-      scope.pfilename = pfile_item.value(0)
+
+    # Write physics file
+    if nfile_item is not None:
+      noext = nfile_item.value(0).split('.')[0]
+      # take the numerics filename, strip the '_n' if it's there, use '_p'
+      if noext.endswith('_n') or noext.endswith('_N'):
+        noext = noext[:-1] + 'p'
+      else:
+        noext = noext + '_p'
+      scope.pfilename = noext + '.py'
     success = write_pfile(scope)
     print 'Completed pfile?', success
     print 'logger has %d records, hasErrors? %s'  % \
       (scope.logger.numberOfRecords(), scope.logger.hasErrors())
 
     # Write numerics file
-    nfile_item = find_instance(scope, 'ExportSpec', 'NumericsFile', \
-      scope.export_manager)
     if nfile_item is not None:
       scope.nfilename = nfile_item.value(0)
     success &= write_nfile(scope)
     print 'Completed nfile?', success
     print 'logger has %d records, hasErrors? %s'  % \
       (scope.logger.numberOfRecords(), scope.logger.hasErrors())
+
 
     print
     print 'Wrote files:', scope.pfilename, scope.nfilename
@@ -375,7 +382,7 @@ def write_nfile(scope):
     ]
     write_lines(scope, file_header, insert_blank_line=False)
 
-      # Get filename of the _p file. We presume it is in the same dir
+    # Get filename of the _p file. We presume it is in the same dir
     pfilename = os.path.basename(scope.pfilename)
 
     # Write fixed imports
