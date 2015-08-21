@@ -39,7 +39,7 @@ class pqSimBuilderUIManager : public QObject
 Q_OBJECT
 
 public:
-  pqSimBuilderUIManager();
+  pqSimBuilderUIManager(QObject* parent = NULL);
   virtual ~pqSimBuilderUIManager();
   smtk::attribute::SystemPtr attributeSystem() const
     {return this->m_AttSystem;}

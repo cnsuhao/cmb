@@ -199,7 +199,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   this->initSimBuilder();
 
-  this->Internal->SplitterSettings = new QSettings();
+  this->Internal->SplitterSettings = new QSettings(this);
 
   QObject::connect(this->getThisCore(),
     SIGNAL(newSceneLoaded()), this, SLOT(onSceneFileLoaded()));
@@ -208,7 +208,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->action_MB_Unload_Scene,
     SIGNAL(triggered()), this, SLOT(onUnloadScene()));
 
- this->getMainDialog()->faceParametersDock->setParent(0);
   this->getMainDialog()->faceParametersDock->setVisible(false);
 
   //this->getMainDialog()->actionServerConnect->setEnabled(0);

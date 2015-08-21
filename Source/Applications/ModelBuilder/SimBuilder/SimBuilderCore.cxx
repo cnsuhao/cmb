@@ -80,10 +80,6 @@ SimBuilderCore::~SimBuilderCore()
 {
   this->clearSimulationModel();
   delete this->ExportDialog;
-  if(this->m_attUIManager)
-    {
-    delete this->m_attUIManager;
-    }
 }
 
 //----------------------------------------------------------------------------
@@ -94,10 +90,7 @@ void SimBuilderCore::Initialize()
   this->LoadingScenario = false;
   this->ScenarioEntitiesCreated = false;
   this->CurrentSimFile = "";
-  if(this->m_attUIManager)
-    {
-    delete this->m_attUIManager;
-    }
+  delete this->m_attUIManager;
   this->m_attUIManager = NULL;
 }
 
@@ -658,7 +651,7 @@ pqSimBuilderUIManager*  SimBuilderCore::uiManager()
 {
   if(!this->m_attUIManager)
     {
-    this->m_attUIManager = new pqSimBuilderUIManager();
+    this->m_attUIManager = new pqSimBuilderUIManager(this);
     }
 
   return this->m_attUIManager;;
@@ -699,11 +692,8 @@ void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()
 {
-  if(this->m_attUIManager)
-    {
-    delete this->m_attUIManager;
-    this->m_attUIManager = NULL;
-    }
+  delete this->m_attUIManager;
+  this->m_attUIManager = NULL;
   if(this->UIPanel)
     {
     this->UIPanel->initialize();

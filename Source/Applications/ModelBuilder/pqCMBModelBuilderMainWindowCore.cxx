@@ -136,6 +136,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
       {
       if(this->smtkModelManager)
           this->smtkModelManager->clear();
+      delete this->smtkModelManager;
 
       if(this->SimBuilder)
         {
@@ -842,10 +843,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     this->Internal->SimBuilder->setRenderView(this->activeRenderView());
     }
 
-  if(this->Internal->smtkModelManager)
-    {
-    delete this->Internal->smtkModelManager;
-    }
+  delete this->Internal->smtkModelManager;
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(const smtk::model::OperatorResult&,
