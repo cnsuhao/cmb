@@ -105,6 +105,12 @@ pqPluginIOBehavior::pqPluginIOBehavior(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
+pqPluginIOBehavior::~pqPluginIOBehavior()
+{
+  delete this->Internals;
+}
+
+//-----------------------------------------------------------------------------
 void pqPluginIOBehavior::updateResources()
 {
   vtkSMProxyManager* proxyManager = vtkSMProxyManager::GetProxyManager();

@@ -209,6 +209,7 @@ public:
 //    delete this->LookupTableManager;
     delete this->PreviewDialog;
     delete this->ProjectManager;
+    delete this->MeshingMonitor;
 
   }
 

@@ -533,6 +533,7 @@ pqCMBModelManager::pqCMBModelManager(pqServer* server)
 pqCMBModelManager::~pqCMBModelManager()
 {
   this->clear();
+  delete this->Internal;
 }
 
 //----------------------------------------------------------------------------

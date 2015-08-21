@@ -262,6 +262,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
         this->GenerateError(result, "Method was a request but is missing \"id\".", reqIdStr);
         }
       }
+      cJSON_Delete(req);
     }
   char* response = cJSON_Print(result);
   cJSON_Delete(result);

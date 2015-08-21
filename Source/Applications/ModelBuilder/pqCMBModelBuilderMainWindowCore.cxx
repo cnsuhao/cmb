@@ -136,6 +136,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
       {
       if(this->smtkModelManager)
           this->smtkModelManager->clear();
+      delete this->smtkModelManager;
 
       if(this->SimBuilder)
         {
