@@ -207,14 +207,8 @@ public:
   {
     delete this->ToolTipTrapper;
 //    delete this->LookupTableManager;
-    if (this->PreviewDialog)
-      {
-      delete this->PreviewDialog;
-      }
-    if ( this->ProjectManager)
-      {
-      delete this->ProjectManager;
-      }
+    delete this->PreviewDialog;
+    delete this->ProjectManager;
 
   }
 
@@ -666,10 +660,7 @@ void pqCMBCommonMainWindowCore::launchLocalMeshingService()
     catch(...)
       {
       meshserver.LocalServerProxy->Delete();
-      if(this->Internal->MeshingMonitor)
-        {
-        delete this->Internal->MeshingMonitor;
-        }
+      delete this->Internal->MeshingMonitor;
       return;
       }
     }
