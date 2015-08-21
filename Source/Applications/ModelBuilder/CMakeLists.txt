@@ -204,7 +204,7 @@ set(ModelBuilder_SOURCE_FILES
   ${SimBuilder_SOURCES}
   )
 #------------------------------------------------------------------------------
-set(  CMB_AUTOLOAD_PLUGINLIST
+set(CMB_ALL_PLUGINS
     smtkCGMSessionPlugin
     smtkDiscreteSessionPlugin
     smtkExodusSessionPlugin
@@ -212,11 +212,19 @@ set(  CMB_AUTOLOAD_PLUGINLIST
     smtkRemusMeshOperatorPlugin
 )
 
-if(NOT CMB_OPTIONAL_PLUGINS)
-  set(CMB_OPTIONAL_PLUGINS ${CMB_AUTOLOAD_PLUGINLIST} CACHE STRING
-     "Semi-colon seperated optional plugin names.")
-  mark_as_advanced(CMB_OPTIONAL_PLUGINS)
-endif()
+set(CMB_AUTOLOAD_PLUGINLIST)
+set(cmb_plugins)
+foreach (plugin IN LISTS CMB_ALL_PLUGINS)
+  if (TARGET "${plugin}")
+    set(cmb_plugins "${cmb_plugins} call\(${plugin}\)")
+    list(APPEND CMB_AUTOLOAD_PLUGINLIST
+      "${plugin}")
+  endif ()
+endforeach ()
+
+set(CMB_OPTIONAL_PLUGINS ${CMB_AUTOLOAD_PLUGINLIST} CACHE STRING
+    "Semicolon separated optional plugin names.")
+mark_as_advanced(CMB_OPTIONAL_PLUGINS)
 
 # Build the client
 build_paraview_client(ModelBuilder
@@ -238,6 +246,11 @@ build_paraview_client(ModelBuilder
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
 )
 
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmb_plugins.h.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmb_plugins.h"
+  @ONLY)
+
 #let cmake do what qt4_wrap_cpp used to do automatically
 set_target_properties(ModelBuilder PROPERTIES AUTOMOC TRUE)
 
@@ -253,6 +266,8 @@ LINK_PRIVATE
   smtkCore
   ModelBridge_Plugin
   vtkSMTKExt
+
+  ${CMB_AUTOLOAD_PLUGINLIST}
   )
 
 #------------------------------------------------------------------------------
