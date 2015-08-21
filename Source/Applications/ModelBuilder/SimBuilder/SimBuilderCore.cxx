@@ -80,7 +80,6 @@ SimBuilderCore::~SimBuilderCore()
 {
   this->clearSimulationModel();
   delete this->ExportDialog;
-  delete this->m_attUIManager;
 }
 
 //----------------------------------------------------------------------------
@@ -652,7 +651,7 @@ pqSimBuilderUIManager*  SimBuilderCore::uiManager()
 {
   if(!this->m_attUIManager)
     {
-    this->m_attUIManager = new pqSimBuilderUIManager();
+    this->m_attUIManager = new pqSimBuilderUIManager(this);
     }
 
   return this->m_attUIManager;;

@@ -52,7 +52,8 @@ class pqSimBuilderUIManagerInternals
 };
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager::pqSimBuilderUIManager()
+pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
+  : QObject(parent)
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
