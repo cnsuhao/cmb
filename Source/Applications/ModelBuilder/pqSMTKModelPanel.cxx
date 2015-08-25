@@ -28,6 +28,7 @@
 #include "smtk/model/Group.h"
 #include "smtk/model/SimpleModelSubphrases.h"
 #include "smtk/model/EntityTypeBits.h" // for smtk::model::BitFlags
+#include "smtk/model/Operator.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QTreeView>
@@ -334,6 +335,10 @@ void pqSMTKModelPanel::resetUI()
       SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
       this->Internal->smtkManager,
       SLOT(startOperation( const smtk::model::OperatorPtr& )));
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(operationCancelled(const smtk::model::OperatorPtr& )),
+      this,
+      SLOT(cancelOperation( const smtk::model::OperatorPtr& )));
     QObject::connect(this->Internal->smtkManager,
       SIGNAL(requestMeshSelectionUpdate(
         const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*)),
@@ -742,3 +747,21 @@ void pqSMTKModelPanel::resetMeshSelectionItems()
     if(meshItem)
       meshItem->resetSelectionState();
 }
+
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
+{
+  smtk::attribute::qtMeshSelectionItem* currSelItem =
+    this->Internal->CurrentMeshSelectItem;
+  if(!op || !currSelItem ||
+     !this->Internal->SelectionOperations.contains(currSelItem))
+    {
+    return;
+    }
+  // if currentMeshSelectItem belongs to the cancelled op, reset the item ui
+  if(this->Internal->SelectionOperations[currSelItem].first == op->name())
+    {
+    currSelItem->resetSelectionState(true);
+    }
+}
+
