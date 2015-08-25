@@ -13,6 +13,7 @@
 
 #include "smtk/model/EntityRef.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
+#include "smtk/PublicPointerDefs.h"
 
 class vtkObject;
 class pqCMBModelManager;
@@ -71,6 +72,7 @@ public slots:
   void requestEntityAssociation(
     smtk::attribute::qtModelEntityItem* entItem);
   void requestEntitySelection(const smtk::common::UUIDs& uuids);
+  void cancelOperation(const smtk::model::OperatorPtr&);
 
 protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
