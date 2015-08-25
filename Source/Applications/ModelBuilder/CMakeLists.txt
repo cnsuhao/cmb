@@ -317,7 +317,6 @@ if(BUILD_TESTING AND NOT ("${CMB_TEST_PLUGIN_PATHS}" STREQUAL ""))
         set(full-plugin-path "${plugin-path}/lib${cmb-plugin-name}.so")
       endif()
 
-      # message(STATUS "full-plugin-path=${full-plugin-path}")
       if(EXISTS ${full-plugin-path})
           set(cmb_test_plugin_ini
             "${cmb_test_plugin_ini}  <Plugin name=\"${cmb-plugin-name}\" auto_load=\"1\" filename=\"${full-plugin-path}\" />\n")
@@ -343,7 +342,6 @@ endif()
 ########################################################################
 
 
-message(STATUS "EXECUTABLE_OUTPUT_PATH=${EXECUTABLE_OUTPUT_PATH}")
 set(PROJECT_EXE ${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX})
 if(BUILD_TESTING)
   if(Q_WS_MAC)
@@ -359,14 +357,10 @@ if(BUILD_TESTING)
  set(TEST_PYTHON ${ModelBuilder_SOURCE_DIR}/Testing/Python)
  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
 
-message("TEST_SIMBUILDER_XML=${TEST_SIMBUILDER_XML}")
-
 # Need path to python executable
 find_package(PythonInterp)
 if (PYTHONINTERP_FOUND)
-  message("PYTHON_EXECUTABLE: ${PYTHON_EXECUTABLE}")
-  #message("PYTHON_VERSION_STRING: ${PYTHON_VERSION_STRING}")
-
+  
   set(PYTHON_DEFINES
     CMAKE_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}"
     CMAKE_PYTHON_VERSION="${PYTHON_VERSION_STRING}"
@@ -377,10 +371,6 @@ if (PYTHONINTERP_FOUND)
     APPEND PROPERTY COMPILE_DEFINITIONS ${PYTHON_DEFINES}
   )
 endif()
-
-message("SMTK_DIR: ${SMTK_DIR}")
-
-# message(STATUS "TEST_BINARY=${TEST_BINARY}")
 
   #Tests that don't work on Apple
 
@@ -532,8 +522,6 @@ message("SMTK_DIR: ${SMTK_DIR}")
       else(Q_WS_MAC)
         set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}")
       endif(Q_WS_MAC)
-
-      message("TEST_BINARY_BARE=${TEST_BINARY_BARE}")
 
       if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
         add_medium_test(${PROJECT_NAME}${test}Py

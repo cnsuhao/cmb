@@ -16,7 +16,6 @@ INCLUDE_DIRECTORIES(${VXL_VCL_INCLUDE_DIR} ${VXL_CORE_INCLUDE_DIR})
 
 # Add link directories needed to use VXL.
 LINK_DIRECTORIES(${VXL_LIBRARY_DIR})
-message ("VXL_LIBRARY_DIR=${VXL_LIBRARY_DIR}")
 
 # Build the Tensor Voting library.
 add_subdirectory(rtvl)
