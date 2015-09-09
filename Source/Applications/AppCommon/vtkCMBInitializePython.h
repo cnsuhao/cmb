@@ -225,13 +225,13 @@ namespace
     // Build directory
     vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib/python2.7/site-packages");
     // Package directory
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/site-packages");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/site-packages");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/plat-linux3");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-tk");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-old");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-dynload");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/site-packages");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/site-packages");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/plat-linux3");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/lib-tk");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/lib-old");
+    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.3/lib/python2.7/lib-dynload");
   }
 # endif
 }
