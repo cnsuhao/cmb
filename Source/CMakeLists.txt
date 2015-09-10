@@ -99,8 +99,7 @@ if(BUILD_TESTING)
 endif()
 
 # Configure data directory
-find_path(CMB_TEST_DATA_ROOT CMBTest.readme
-  ${CMAKE_CURRENT_SOURCE_DIR}/TestingData
+find_path(CMB_TEST_DATA_ROOT cmb-testing-data.marker
   $ENV{CMB_TEST_DATA_ROOT}
   )
 
