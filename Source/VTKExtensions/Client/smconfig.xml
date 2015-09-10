@@ -6914,7 +6914,7 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
     </CompoundSourceProxy>
    <!-- ==================================================================== -->
 
-    <CompoundSourceProxy name="StacyObjectiveFunction" label="Stacy's Objective Func">
+    <CompoundSourceProxy name="SampleFunction" label="Sample Function">
       <Proxy group="filters" type="Calculator" id="6118" servers="1" compound_name="Calculator5">
         <Property name="AttributeMode" id="6118.AttributeMode" number_of_elements="1">
           <Element index="0" value="1"/>
