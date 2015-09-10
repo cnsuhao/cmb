@@ -194,8 +194,60 @@ namespace
   //===========================================================================
   void vtkPythonAppInitPrependPathOsX(const std::string &SELF_DIR)
     {
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../Libraries");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../Python");
+    bool is_app = false;
+      {
+      // if SELF_DIR/../ is named "Contents", we are in an App.
+      std::string contents_dir = vtksys::SystemTools::CollapseFullPath(
+        (SELF_DIR + "/..").c_str());
+      is_app = (vtksys::SystemTools::GetFilenameName(contents_dir) == "Contents");
+      }
+
+    std::string lib_dir = (is_app==false)? (SELF_DIR + "/../lib") :
+                                           (SELF_DIR + "/../../../../lib");
+    lib_dir = vtksys::SystemTools::CollapseFullPath(lib_dir.c_str());
+
+    std::string cmakeconfig = (is_app==false)? (SELF_DIR + "/../CMBConfig.cmake") :
+                                               (SELF_DIR + "/../../../../CMBConfig.cmake");
+    cmakeconfig = vtksys::SystemTools::CollapseFullPath(cmakeconfig.c_str());
+
+    bool is_build_dir = vtksys::SystemTools::FileExists(cmakeconfig.c_str());
+
+    // when we install on OsX using unix-style the test for is_build_dir is
+    // valid for install dir too. So we do an extra check.
+    bool is_unix_style_install = vtksys::SystemTools::FileExists(
+      (lib_dir + "/paraview-" PARAVIEW_VERSION).c_str());
+    if (is_build_dir)
+      {
+      if (is_unix_style_install)
+        {
+        lib_dir = lib_dir + "/paraview-" PARAVIEW_VERSION;
+        vtkPythonAppInitPrependPythonPath(lib_dir);
+        vtkPythonAppInitPrependPythonPath(lib_dir + "/site-packages");
+        // site-packages/vtk needs to be added so the Python wrapped VTK modules
+        // can be loaded from paraview e.g. import vtkCommonCorePython can work
+        // (BUG #14263).
+        vtkPythonAppInitPrependPythonPath(lib_dir + "/site-packages/vtk");
+        }
+      else // App bundle in build dir
+        {
+        vtkPythonAppInitPrependPythonPath(lib_dir);
+        vtkPythonAppInitPrependPythonPath(lib_dir + "/site-packages");
+        }
+      }
+    else
+      {
+      if(is_app)
+        {
+        std::string app_root = SELF_DIR + "/../..";
+        app_root = vtksys::SystemTools::CollapseFullPath(app_root.c_str());
+        vtkPythonAppInitPrependPythonPath(app_root + "/Contents/Libraries");
+        vtkPythonAppInitPrependPythonPath(app_root + "/Contents/Python");
+        }
+      else
+        {
+        vtkGenericWarningMacro("Non-app bundle in install directory not supported");
+        }
+      }
     }
 # else
   void vtkPythonAppInitPrependPathLinux(const std::string &SELF_DIR);
@@ -211,30 +263,61 @@ namespace
   //      - SELF_DIR/../lib
   //    + ParaView Python modules
   //      - SELF_DIR/../lib/site-packages
-  //  + INSTALL_LOCATION
+  //  + INSTALL_LOCATION (shared builds with shared forwarding)
   //    + ParaView C/C++ library location
   //      - SELF_DIR
   //    + ParaView Python modules
   //      - SELF_DIR/site-packages
   //    + VTK Python Module libraries
   //      - SELF_DIR/site-packages/vtk
+  //  + INSTALL_LOCATION (static builds)
+  //    + ParaView C/C++ library location
+  //      - (not applicable)
+  //    + ParaView Python modules
+  //      - SELF_DIR/../lib/paraview-<version>/site-packages
+  //    + VTK Python Module libraries
+  //      - SELF_DIR/../lib/paraview-<version>/site-packages/vtk
   void vtkPythonAppInitPrependPathLinux(const std::string& SELF_DIR)
     {
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib/site-packages");
-    // Build directory
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib/python2.7/site-packages");
-    // Package directory
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/site-packages");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/site-packages");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/plat-linux3");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-tk");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-old");
-    vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../paraview-4.1/lib/python2.7/lib-dynload");
-  }
+    // Determine if running from build or install dir.
+    //    If SELF_DIR/../CMBConfig.cmake, it must be running from the build
+    //    directory.
+    bool is_build_dir = vtksys::SystemTools::FileExists(
+      (SELF_DIR + "/../CMBConfig.cmake").c_str());
+    if (is_build_dir)
+      {
+      vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib");
+      vtkPythonAppInitPrependPythonPath(SELF_DIR + "/../lib/site-packages");
+      return;
+      }
+
+    // We're running from installed directory. We could be either a shared build
+    // or a static build.
+    bool using_shared_libs = false;
+#ifdef BUILD_SHARED_LIBS
+    using_shared_libs = true;
+#endif
+    if (using_shared_libs)
+      {
+      vtkPythonAppInitPrependPythonPath(SELF_DIR);
+      vtkPythonAppInitPrependPythonPath(SELF_DIR + "/site-packages");
+      // site-packages/vtk needs to be added so the Python wrapped VTK modules
+      // can be loaded from paraview e.g. import vtkCommonCorePython can work
+      // (BUG #14263).
+      vtkPythonAppInitPrependPythonPath(SELF_DIR + "/site-packages/vtk");
+      }
+    else
+      {
+      vtkPythonAppInitPrependPythonPath(
+        SELF_DIR + "/../lib/paraview-" PARAVIEW_VERSION "/site-packages");
+      vtkPythonAppInitPrependPythonPath(
+        SELF_DIR + "/../lib/paraview-" PARAVIEW_VERSION "/site-packages/vtk");
+      }
+    }
+  //===========================================================================
 # endif
+//#endif // ifndef PARAVIEW_FREEZE_PYTHON
 }
 
 #endif
-// VTK-HeaderTest-Exclude: vtkProcessModuleInitializePython.h
+// VTK-HeaderTest-Exclude: vtkCMBInitializePython.h
