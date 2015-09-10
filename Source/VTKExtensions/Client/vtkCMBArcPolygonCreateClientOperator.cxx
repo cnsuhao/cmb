@@ -45,10 +45,6 @@ vtkCMBArcPolygonCreateClientOperator::~vtkCMBArcPolygonCreateClientOperator()
 bool vtkCMBArcPolygonCreateClientOperator::Create(double minAngle,
   double edgeLength,vtkSMProxy *providerProxy)
 {
-  if (!this)
-    {
-    return false;
-    }
   if (this->InputArcIds.size() == 0)
     {
     return false;
