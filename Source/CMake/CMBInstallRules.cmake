@@ -117,7 +117,7 @@ if (APPLE)
     CACHE PATH
     "Location where the *.app bundle must be installed.")
   set(CMAKE_INSTALL_NAME_DIR "@executable_path/../Libraries")
-  set(PV_INSTALL_PLUGIN_DIR "plugins")
+  set(PV_INSTALL_PLUGIN_DIR "Plugins")
 endif()
 
 #helper function to install plugins
