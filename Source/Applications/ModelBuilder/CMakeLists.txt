@@ -220,9 +220,10 @@ foreach (plugin IN LISTS CMB_ALL_PLUGINS)
   endif ()
 endforeach ()
 
-set(CMB_OPTIONAL_PLUGINS ${CMB_AUTOLOAD_PLUGINLIST} CACHE STRING
+set(CMB_OPTIONAL_PLUGINS "" CACHE STRING
     "Semicolon separated optional plugin names.")
 mark_as_advanced(CMB_OPTIONAL_PLUGINS)
+list(APPEND CMB_OPTIONAL_PLUGINS ${CMB_AUTOLOAD_PLUGINLIST})
 
 # Build the client
 build_paraview_client(ModelBuilder
