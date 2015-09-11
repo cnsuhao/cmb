@@ -20,7 +20,6 @@
 
 #include <sstream>
 
-
 vtkStandardNewMacro(vtkCUBITReader);
 
 //-----------------------------------------------------------------------------

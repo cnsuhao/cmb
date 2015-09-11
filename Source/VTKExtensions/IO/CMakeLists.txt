@@ -25,7 +25,6 @@ set(CMB_IO_SRC
     vtkCMBSTLReader.cxx
     vtkCMBWriter.cxx
     vtkCUBITReader.cxx
-    vtkDataSetRegionSurfaceFilter.cxx
     vtkDelosMeshReader.cxx
     vtkCMBGeometryReader.cxx
     vtkCMBGeometry2DReader.cxx

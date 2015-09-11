@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_Help" command="activate" arguments="action_About" />
-  <pqevent object="qtCMBMainWindow/qtCMBAboutDialog/OK" command="activate" arguments="" />
 </pqevents>

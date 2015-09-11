@@ -12,6 +12,7 @@ vtk_module(vtkCMBIO
     vtkIOParallelExodus
     vtkRendering${VTK_RENDERING_BACKEND}
     vtkRenderingFreeType
+    vtkPVVTKExtensionsDefault
     vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

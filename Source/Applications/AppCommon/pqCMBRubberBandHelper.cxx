@@ -442,7 +442,7 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     }
 
   bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
-  pqRenderView::pqSelectionOperator selOp = ctrl ? pqRenderView::PV_SELECTION_MERGE : pqRenderView::PV_SELECTION_NEW;
+  pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
   int* region = reinterpret_cast<int*>(vregion);
   switch (this->Mode)
     {
@@ -587,7 +587,7 @@ void pqCMBRubberBandHelper::onPolygonSelection(vtkObject*, unsigned long,
     {
     vtkIntArray* polygonPoints = vtkIntArray::SafeDownCast(pointArray);
     bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
-    pqRenderView::pqSelectionOperator selOp = ctrl ? pqRenderView::PV_SELECTION_MERGE : pqRenderView::PV_SELECTION_NEW;
+    pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
     switch (this->Mode)
       {
       case POLYGON_POINTS:
