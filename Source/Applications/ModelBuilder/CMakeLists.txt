@@ -378,7 +378,7 @@ endif()
     OpenExodusFile
     OpenExodusFile2
     OpenHybridFile
-    OpenMapFile
+    #OpenMapFile
     #OpenVTKFile
     Open2dmFile
     Open2dmFile2
@@ -413,7 +413,7 @@ endif()
     OperationSplitFace
     OperationMergeFace
     OperationGroupOps
-    OperationCombined
+    #OperationCombined
     WriteEdge
     )
 
