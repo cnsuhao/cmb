@@ -295,9 +295,10 @@ endif(BUILD_TESTING)
 
 ########################################################################
 # write, copy and install the .plugin file for testing.
-if(BUILD_TESTING AND NOT ("${CMB_TEST_PLUGIN_PATHS}" STREQUAL ""))
+if(BUILD_TESTING)
   set (cmb_test_plugin_ini "<?xml version=\"1.0\"?>\n<Plugins>\n")
   foreach (cmb-plugin-name IN LISTS CMB_OPTIONAL_PLUGINS)
+    set(found FALSE)
     foreach (plugin-path IN LISTS CMB_TEST_PLUGIN_PATHS)
       if(WIN32 AND NOT CYGWIN)
         set(full-plugin-path "${plugin-path}/${cmb-plugin-name}.dll")
@@ -308,11 +309,17 @@ if(BUILD_TESTING AND NOT ("${CMB_TEST_PLUGIN_PATHS}" STREQUAL ""))
       endif()
 
       if(EXISTS ${full-plugin-path})
-          set(cmb_test_plugin_ini
-            "${cmb_test_plugin_ini}  <Plugin name=\"${cmb-plugin-name}\" auto_load=\"1\" filename=\"${full-plugin-path}\" />\n")
-        list(APPEND TEST_PLUGIN_LIBS ${full-plugin-path})
+        set(cmb_test_plugin_ini
+          "${cmb_test_plugin_ini}  <Plugin name=\"${cmb-plugin-name}\" auto_load=\"1\" filename=\"${full-plugin-path}\" />\n")
+        set(found TRUE)
+        break()
       endif()
     endforeach()
+    if (NOT found)
+      # Assume ParaView will know how to find it.
+      set(cmb_test_plugin_ini
+        "${cmb_test_plugin_ini}  <Plugin name=\"${cmb-plugin-name}\" auto_load=\"1\" />\n")
+    endif ()
   endforeach()
 
   set (cmb_test_plugin_ini "${cmb_test_plugin_ini}</Plugins>\n")
