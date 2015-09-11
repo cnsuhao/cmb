@@ -378,9 +378,12 @@ endif()
     OpenExodusFile
     OpenExodusFile2
     OpenHybridFile
+    #OpenMapFile
     #OpenVTKFile
-    Open2dm
-    Open3dm
+    Open2dmFile
+    Open2dmFile2
+    Open3dmFile
+    Open3dmFile2
     FlipViewX
     FlipViewY
     FlipViewZ
@@ -410,6 +413,7 @@ endif()
     OperationSplitFace
     OperationMergeFace
     OperationGroupOps
+    #OperationCombined
     WriteEdge
     )
 
