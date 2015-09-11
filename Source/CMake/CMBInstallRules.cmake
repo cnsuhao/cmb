@@ -117,7 +117,7 @@ if (APPLE)
     CACHE PATH
     "Location where the *.app bundle must be installed.")
   set(CMAKE_INSTALL_NAME_DIR "@executable_path/../Libraries")
-  set(PV_INSTALL_PLUGIN_DIR "plugins")
+  set(PV_INSTALL_PLUGIN_DIR "Plugins")
 endif()
 
 #helper function to install plugins
@@ -133,7 +133,7 @@ function(cmb_install_plugin target)
         )
     foreach(app_name ${PROGRAMS_TO_INSTALL_PLUGIN})
       install(TARGETS ${target}
-        DESTINATION "${VTK_INSTALL_LIBRARY_DIR}/${app_name}.app/Contents/Plugins"
+        DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/${app_name}.app/Contents/Plugins"
         )
     endforeach()
   else()
