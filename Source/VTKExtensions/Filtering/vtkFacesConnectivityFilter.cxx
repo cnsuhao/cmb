@@ -37,7 +37,7 @@
 #include "vtkPolyDataNormals.h"
 
 #include "assert.h"
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 //----------------------------------------------------------------------------
 class vtkFacesConnectivityFilter::vtkInternal

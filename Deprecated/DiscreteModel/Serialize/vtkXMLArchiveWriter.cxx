@@ -42,7 +42,7 @@
 #include <list>
 #include <map>
 #include <algorithm>
-#include "vtksys/ios/sstream"
+#include <sstream>
 
 vtkStandardNewMacro(vtkXMLArchiveWriter);
 
@@ -240,7 +240,7 @@ void SerializeStringVectorKey(vtkInformation* info,
   keyElem->SetName(keyName);
   parent->AddNestedElement(keyElem);
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   unsigned int length = static_cast<unsigned int>(info->Length(key));
   int* lengths = new int[length];
   for (unsigned int i = 0; i < length; ++i)
@@ -269,7 +269,7 @@ void SerializeKeyVectorKey(vtkInformation* info,
   keyElem->SetName(keyName);
   parent->AddNestedElement(keyElem);
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   unsigned int length = static_cast<unsigned int>(info->Length(key));
   for (unsigned int i = 0; i < length; ++i)
     {
@@ -433,7 +433,7 @@ void vtkXMLArchiveWriter::Serialize(const char* name,
   for(; iter != map.end(); iter++)
     {
     std::vector<vtkSmartPointer<vtkObject> >& objs = iter->second;
-    vtksys_ios::ostringstream str;
+    std::ostringstream str;
     str << "Key_" << iter->first;
     this->Serialize(str.str().c_str(), objs);
     }

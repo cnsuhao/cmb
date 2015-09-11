@@ -51,7 +51,7 @@
 #include <QDir>
 #include <QScrollArea>
 #include <QTemporaryFile>
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 class qtCMBApplicationOptions::pqInternal
   : public Ui::qtCMBApplicationOptions

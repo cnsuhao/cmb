@@ -21,7 +21,7 @@
 #include "vtkModelXMLParser.h"
 #include "vtkObjectFactory.h"
 #include "vtkXMLElement.h"
-#include "vtksys/ios/sstream"
+#include <sstream>
 
 vtkStandardNewMacro(vtkModelXMLParser);
 
@@ -74,7 +74,7 @@ void vtkModelXMLParser::StartElement(const char* name, const char** atts)
     }
   else
     {
-    vtksys_ios::ostringstream idstr;
+    std::ostringstream idstr;
     idstr << this->ElementIdIndex++ << ends;
     element->SetId(idstr.str().c_str());
     }

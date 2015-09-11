@@ -43,7 +43,7 @@
 #include <list>
 #include <map>
 #include <vtksys/SystemTools.hxx>
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 vtkStandardNewMacro(vtkXMLArchiveReader);
 
@@ -413,7 +413,7 @@ void SerializeKeyVectorKey(vtkInformation* info,
     return;
     }
 
-  vtksys_ios::istringstream valueStr(values);
+  std::istringstream valueStr(values);
   for (int i = 0; i < length; ++i)
     {
     std::string keyName;

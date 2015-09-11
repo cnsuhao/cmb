@@ -22,7 +22,7 @@
 
 #include "assert.h"
 #include <set>
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 class vtkMergeGroup
 {
