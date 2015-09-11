@@ -18,7 +18,7 @@
 
 #include <QHeaderView>
 #include <QPixmap>
-#include "vtksys/ios/sstream"
+#include <sstream>
 
 //-----------------------------------------------------------------------------
 qtCMBAboutDialog::qtCMBAboutDialog(QWidget* Parent) :

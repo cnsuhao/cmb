@@ -22,7 +22,7 @@
 #include <sys/stat.h>
 
 #include <string>
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 
 vtkStandardNewMacro(vtkCMBPolyReader);

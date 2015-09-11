@@ -46,7 +46,6 @@
 
 // VTK system includes.
 #include "vtksys/SystemTools.hxx"
-#include "vtksys/String.hxx"
 
 // STL includes.
 #include <sstream>
@@ -115,8 +114,8 @@ public:
       startDateTimeList.clear();
     }
 
-  string ConvertRGBtoHex(int num);
-  string ConvertRGBtoHex(int r, int g, int b, int a);
+  std::string ConvertRGBtoHex(int num);
+  std::string ConvertRGBtoHex(int r, int g, int b, int a);
 
   vtkImageData* ConvertToImage  (vtkActor* anActor);
   vtkImageData* ConvertToImage  (vtkRenderWindow* renWin, bool render3D=true);
@@ -124,7 +123,7 @@ public:
   int           WritePolygons   (DocumentPtr doc, vtkPolyData* polyData);
 
   int           AddLine         (DocumentPtr doc, CoordinatesPtr coordinates,
-                                 string name, string styleName);
+                                 std::string name, std::string styleName);
   int           WriteLines      (DocumentPtr doc, vtkPolyData* polyData);
 
   int           DoWriteGeometry (DocumentPtr doc, vtkPolyData* polyData);
@@ -167,7 +166,7 @@ public:
 
 //-----------------------------------------------------------------------------
 // Utility functions to convert RGB to hexadecimal string.
-string vtkKMLExporterInternal::ConvertRGBtoHex(int num)
+std::string vtkKMLExporterInternal::ConvertRGBtoHex(int num)
 {
     static string hexDigits = "0123456789ABCDEF";
     string argb;
@@ -181,7 +180,7 @@ string vtkKMLExporterInternal::ConvertRGBtoHex(int num)
 }
 
 //-----------------------------------------------------------------------------
-string vtkKMLExporterInternal::ConvertRGBtoHex(int r, int g, int b, int a)
+std::string vtkKMLExporterInternal::ConvertRGBtoHex(int r, int g, int b, int a)
 {
   int rgbNum = ((a & 0xff) << 24)
               | ((r & 0xff) << 16)
@@ -474,7 +473,7 @@ int vtkKMLExporterInternal::WritePolygons(DocumentPtr doc,
 
 //-----------------------------------------------------------------------------
 int vtkKMLExporterInternal::AddLine(DocumentPtr doc, CoordinatesPtr coordinates,
-                                    string name, string styleName)
+                                    std::string name, std::string styleName)
 {
   if(!doc)
     {

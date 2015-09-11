@@ -18,7 +18,7 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataNormals.h"
 
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 
 vtkStandardNewMacro(vtkCUBITReader);

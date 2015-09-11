@@ -19,13 +19,13 @@
 #include "vtkSMSession.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkWeakPointer.h"
-#include <vtksys/ios/sstream>
 #include <vtksys/SystemTools.hxx>
 
 #include <QByteArray>
 #include <QFile>
 #include <QMap>
 #include <set>
+#include <sstream>
 
 // Mostly this is copy/paste from vtkSMReaderFactory.cxx
 
@@ -146,7 +146,7 @@ void pqPluginIOBehavior::updateResources()
 //----------------------------------------------------------------------------
 const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 {
-  vtksys_ios::ostringstream all_types;
+  std::ostringstream all_types;
   size_t i=0, j=0;
   cmbInternals::ReaderType::iterator iter;
   for (iter = this->Internals->Readers.begin();
@@ -156,7 +156,7 @@ const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
         session, iter->second.Group.c_str(), iter->second.Name.c_str()) &&
         iter->second.Extensions.size() > 0)
       {
-      vtksys_ios::ostringstream stream;
+      std::ostringstream stream;
       stream << iter->second.Description << " (";
       std::vector<std::string>::const_iterator it;
       for (it = iter->second.Extensions.begin();

@@ -28,7 +28,7 @@ vtkStandardNewMacro(vtkXMLElement);
 
 #include <string>
 #include <vector>
-#include <vtksys/ios/sstream>
+#include <sstream>
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 # define SNPRINTF _snprintf
@@ -84,7 +84,7 @@ void vtkXMLElement::PrintSelf(ostream& os, vtkIndent indent)
 void vtkXMLElement::AddAttribute(const char* attrName,
                                    unsigned int attrValue)
 {
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   valueStr << attrValue << ends;
   this->AddAttribute(attrName, valueStr.str().c_str());
 }
@@ -92,7 +92,7 @@ void vtkXMLElement::AddAttribute(const char* attrName,
 //----------------------------------------------------------------------------
 void vtkXMLElement::AddAttribute(const char* attrName, int attrValue)
 {
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   valueStr << attrValue << ends;
   this->AddAttribute(attrName, valueStr.str().c_str());
 }
@@ -100,7 +100,7 @@ void vtkXMLElement::AddAttribute(const char* attrName, int attrValue)
 //----------------------------------------------------------------------------
 void vtkXMLElement::AddAttribute(const char* attrName, unsigned long attrValue)
 {
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   valueStr << attrValue << ends;
   this->AddAttribute(attrName, valueStr.str().c_str());
 }
@@ -109,7 +109,7 @@ void vtkXMLElement::AddAttribute(const char* attrName, unsigned long attrValue)
 //----------------------------------------------------------------------------
 void vtkXMLElement::AddAttribute(const char* attrName, vtkIdType attrValue)
 {
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   valueStr << attrValue << ends;
   this->AddAttribute(attrName, valueStr.str().c_str());
 }
@@ -118,7 +118,7 @@ void vtkXMLElement::AddAttribute(const char* attrName, vtkIdType attrValue)
 //----------------------------------------------------------------------------
 void vtkXMLElement::AddAttribute(const char* attrName, double attrValue)
 {
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   valueStr << attrValue << ends;
   this->AddAttribute(attrName, valueStr.str().c_str());
 }
@@ -146,7 +146,7 @@ void vtkXMLElement::AddAttribute(const char* attrName,
     return;
     }
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   for(unsigned int i=0; i<length; i++)
     {
     valueStr << vals[i];
@@ -167,7 +167,7 @@ void vtkXMLElement::AddAttribute(const char *attrName,
     return;
     }
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   for(unsigned int i=0; i<length; i++)
     {
     valueStr << vals[i] << " ";
@@ -186,7 +186,7 @@ void vtkXMLElement::AddAttribute(const char* attrName,
     return;
     }
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   for(unsigned int i=0; i<length; i++)
     {
     valueStr << vals[i] << " ";
@@ -206,7 +206,7 @@ void vtkXMLElement::AddAttribute(const char* attrName,
     return;
     }
 
-  vtksys_ios::ostringstream valueStr;
+  std::ostringstream valueStr;
   for(unsigned int i=0; i<length; i++)
     {
     valueStr << vals[i] << " ";
@@ -534,7 +534,7 @@ unsigned int vtkXMLVectorAttributeParse(const char* str,
                                            T* data)
 {
   if(!str || !length) { return 0; }
-  vtksys_ios::stringstream vstr;
+  std::stringstream vstr;
   vstr << str << ends;
   for(unsigned int i=0; i < length; ++i)
     {
