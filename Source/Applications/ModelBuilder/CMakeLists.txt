@@ -205,6 +205,9 @@ set(ModelBuilder_SOURCE_FILES
   )
 #------------------------------------------------------------------------------
 set(CMB_ALL_PLUGINS
+    CMB_Plugin
+    ModelBridge_Plugin
+
     smtkCGMSessionPlugin
     smtkDiscreteSessionPlugin
     smtkExodusSessionPlugin
