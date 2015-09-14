@@ -19,9 +19,8 @@
 #include "smtk/extension/qt/qtItem.h"
 #include "smtk/extension/qt/qtAttribute.h"
 #include "smtk/extension/qt/qtFileItem.h"
-#include "smtk/extension/qt/qtRootView.h"
 #include "smtk/extension/qt/qtAttributeView.h"
-#include "smtk/extension/qt/qtBaseView.h"
+#include "smtk/extension/qt/qtGroupView.h"
 #include "smtk/extension/qt/qtSimpleExpressionView.h"
 #include "smtk/model/Manager.h"
 
@@ -134,9 +133,9 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     return;
     }
 
-  smtk::attribute::qtRootView* qRootV =
-    qobject_cast<smtk::attribute::qtRootView*>(this->topView());
-  if (!qRootV)
+  smtk::attribute::qtGroupView* qTopGroupV =
+    qobject_cast<smtk::attribute::qtGroupView*>(this->topView());
+  if (!qTopGroupV)
     {
     QMessageBox::warning(parentWidget,
       tr("No Root View Warning"),
@@ -147,7 +146,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
 
   // callbacks from Expressions sections
   QList<smtk::attribute::qtBaseView*> expressions;
-  qRootV->getChildView("SimpleExpression", expressions);
+  qTopGroupV->getChildView("SimpleExpression", expressions);
   foreach(smtk::attribute::qtBaseView* sec, expressions)
     {
     smtk::attribute::qtSimpleExpressionView* simpleExpSec =
@@ -162,7 +161,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
 
   // callbacks from Attributes sections
   QList<smtk::attribute::qtBaseView*> attViews;
-  qRootV->getChildView("Attribute", attViews);
+  qTopGroupV->getChildView("Attribute", attViews);
   foreach(smtk::attribute::qtBaseView* sec, attViews)
     {
     smtk::attribute::qtAttributeView* attSec =
@@ -292,14 +291,14 @@ void pqSimBuilderUIManager::getAttributeDefinitions(
     {
     return;
     }
-  smtk::attribute::qtRootView* qRootV =
-    qobject_cast<smtk::attribute::qtRootView*>(this->topView());
-  if (!qRootV)
+  smtk::attribute::qtGroupView* qTopGroupV =
+    qobject_cast<smtk::attribute::qtGroupView*>(this->topView());
+  if (!qTopGroupV)
     {
     return;
     }
   QList<smtk::attribute::qtBaseView*> attsections;
-  qRootV->getChildView("Attribute", attsections);
+  qTopGroupV->getChildView("Attribute", attsections);
 
   foreach(smtk::attribute::qtBaseView* sec, attsections)
     {

@@ -42,7 +42,6 @@
 #include "smtk/io/ResourceSetReader.h"
 #include "smtk/io/ResourceSetWriter.h"
 #include "smtk/extension/qt/qtUIManager.h"
-#include "smtk/extension/qt/qtRootView.h"
 
 #include "pqSimBuilderUIManager.h"
 
@@ -262,7 +261,6 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
   std::vector<std::string> searchPaths;
   searchPaths.push_back(dirPath);
   xmlr.setSearchPaths(searchPaths);
-
   smtk::io::Logger logger;
   bool errStatus = xmlr.readContents(*(this->uiManager()->attributeSystem()),
                                      info->GetFileContents(), logger);

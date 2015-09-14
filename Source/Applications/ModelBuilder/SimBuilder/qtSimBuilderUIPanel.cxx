@@ -10,8 +10,6 @@
 
 #include "qtSimBuilderUIPanel.h"
 
-#include "smtk/extension/qt/qtRootView.h"
-
 #include <QFrame>
 #include <QScrollArea>
 #include <QVBoxLayout>
