@@ -2711,6 +2711,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
     return;
     }
 
+#if 0 || defined(for_yumin)
   if(contourObjectsPresent)
     {
     vtkSmartPointer<vtkCMBModelWriterBase> writerBase =
@@ -2727,8 +2728,10 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
     hackWrapper->Delete();
     return;
     }
+#endif
   bool success = this->exportSolidsCMBModel(inputs, cmbFileName, false);
 
+#if 0 || defined(for_yumin)
   if (success && lineObjectsPresent)
     {
     // temporary hack because don't have method to push LineSegment to server (yet)
@@ -2748,6 +2751,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
 
     hackWrapper->Delete();
     }
+#endif
 }
 //----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::exportSelectedPolygons()
@@ -2948,10 +2952,12 @@ void pqCMBSceneBuilderMainWindowCore::exportCMBFile()
   // Adding the contours to the model
   this->AddContourObjectsToModel(wrapper);
 
+#if 0 || defined(for_yumin)
   vtkSmartPointer<vtkCMBModelWriterBase> modelWriter =
     vtkSmartPointer<vtkCMBModelWriterBase>::New();
   modelWriter->SetFileName( cmbFileName.toAscii().constData() );
   modelWriter->Operate(wrapper);
+#endif
 }
 
 
