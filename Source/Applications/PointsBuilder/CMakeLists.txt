@@ -170,35 +170,35 @@ if(BUILD_TESTING)
 #      )
 
   set (XML_TESTS_WITH_BASELINES
-    LIDAROpenFile
-    LIDAROpenLAS
-    LIDARThresholdFilter
-    LIDARElevationFilter
-    LIDARDisplayProperties
-    LIDARSaveLoadContours
-    LIDARTerrainExtraction
-    LIDARZoomToBox
+    # XXX: nodata(LIDARTest.pts): LIDAROpenFile
+    # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDAROpenLAS
+    # XXX: nodata(LIDARTest.pts): LIDARThresholdFilter
+    # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDARElevationFilter
+    # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDARDisplayProperties
+    # XXX: nodata(LIDARTest.pts): LIDARSaveLoadContours
+    # XXX: nodata(clipped5Subset.pts): LIDARTerrainExtraction
+    # XXX: nodata(LIDARTest.pts): LIDARZoomToBox
     LIDARRotation
     MercedRiver
-    SelectPieces
-    LIDARThresholdSave
-    MultiLIDARFiles
-    AddContourIfFocusPointIsAtInfinity
-    EditPointsAddArc
-    EditPointsApplyArcAgain
-    EditPointsChangeDisplacementProfile
-    EditPointsChangeWeightingProfile
-    EditPointsCloseContour
-    EditPointsDatasetApply
-    EditPointsDeleteAllNodes
-    EditPointsDeleteLastAddedNode
-    EditPointsModifyArc
-    EditPointsMakeArcStraightLine
+    # XXX: nodata(LIDARTest.pts): SelectPieces
+    # XXX: nodata(LIDARTest.pts): LIDARThresholdSave
+    # XXX: nodata(clipped5Subset.pts): MultiLIDARFiles
+    # XXX: nodata(LIDARTest.pts): AddContourIfFocusPointIsAtInfinity
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsAddArc
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsApplyArcAgain
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsChangeDisplacementProfile
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsChangeWeightingProfile
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsCloseContour
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsDatasetApply
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsDeleteAllNodes
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsDeleteLastAddedNode
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsModifyArc
+    # XXX: nodata(JercSite_100x40_30.bin): EditPointsMakeArcStraightLine
   )
 
   set (TESTS_WITHOUT_BASELINES
   AboutDialog
-  LIDARTerrainExtraction2
+  # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDARTerrainExtraction2
   HelpDialog
   )
 

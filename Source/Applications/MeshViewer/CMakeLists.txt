@@ -140,24 +140,24 @@ if(BUILD_TESTING)
   set (XML_TESTS_WITH_BASELINES
     MeshSelection
     MeshChangeMaterial
-    2DMeshSculpting
+    # XXX: nodata(stone3.2dm): 2DMeshSculpting
     3DMeshSculpting
     InvertSelection
-    ContourSelection2dm
+    # XXX: nodata(stone3.2dm): ContourSelection2dm
     ContourSelection3dm
-    MeshWriteRead2dm
+    # XXX: nodata(stone3.2dm): MeshWriteRead2dm
     MeshWriteRead3dm
-    ContourPlane2dm
-    MeshSmoothing2dm
+    # XXX: nodata(stone3.2dm): ContourPlane2dm
+    # XXX: nodata(stone3.2dm): MeshSmoothing2dm
     MeshSmoothing3dm
-    ConeSelection2dm
-    ConeSelection3dm
+    # XXX: nodata(test2dmesh_domainset.2dm): ConeSelection2dm
+    # XXX: nodata(mesh_cyl_frame_2regions.3dm): ConeSelection3dm
   )
 
   set (TESTS_WITHOUT_BASELINES
   AboutTest
   HelpTest
-  MeshSelectionTools
+  # XXX: nodata(stone3.2dm): MeshSelectionTools
     )
 
   foreach(test ${TESTS_WITHOUT_BASELINES})

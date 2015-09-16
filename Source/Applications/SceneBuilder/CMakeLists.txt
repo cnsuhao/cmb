@@ -132,7 +132,6 @@ endif()
 ########################################################################
 if(BUILD_TESTING)
   set(ContourWidgetTest_THRESHOLD 14)
-  set(ZoomToBoxTest_THRESHOLD 36)
   set(CubeAxesTest_THRESHOLD 14)
   set(LightingTest_THRESHOLD 14)
   set(ObjectPropertiesTest_THRESHOLD 14)
@@ -154,7 +153,7 @@ if(BUILD_TESTING)
     )
 
   set (XML_TESTS_WITH_BASELINES
-  2DTest
+  # XXX: nodata(SceneGen.osd.txt): 2DTest
   ApplyBathymetry
   ArcAutoConnect1
   ArcAutoConnect2
@@ -163,70 +162,64 @@ if(BUILD_TESTING)
   ArcMerge1
   ArcMerge2
   ArcMesh1
-  ArcMesh2
+  # XXX: nodata(pueblo.map): ArcMesh2
   ArcSnap
   ArcSplit1
   ArcSplit2
-  AssignColorsTest
-  CameraOrientationTest
-  ChangeNumberOfPoints
+  # XXX: nodata(SceneGen.osd.txt): CameraOrientationTest
   ConeSceneTest
-  ContextMenuTest
-  CreateLine
-  CubeAxesTest
-  DeleteNodeTest
-  DisplayTypeTest
-  DuplicateNodeTest
-  EditTexturePointsTest
+  # XXX: nodata(SceneGen.osd.txt): ContextMenuTest
+  # XXX: nodata(SceneGen.osd.txt): CreateLine
+  # XXX: nodata(SceneGen.osd.txt): CubeAxesTest
+  # XXX: nodata(SceneGen.osd.txt): DisplayTypeTest
+  # XXX: nodata(SceneGen.osd.txt): DuplicateNodeTest
+  # XXX: nodata(Ballard_veg_mask.jpg): EditTexturePointsTest
   ExportArcSetsTest
-  GlyphSelectionTest_Playback
-  GlyphTest
-  GlyphTest_Playback
-  GlyphTextureTest_Playback
-  GlyphVOITest_Playback
-  ImportingAsGlyphs_Playback
-  ImportObjectTest
-  LightingTest
+  # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphSelectionTest_Playback
+  # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphTest
+  # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphTest_Playback
+  # XXX: nodata(Ballard_veg_mask.jpg): GlyphTextureTest_Playback
+  # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphVOITest_Playback
+  # XXX: nodata(stone3.2dm): ImportingAsGlyphs_Playback
+  # XXX: nodata(TINHigh.vtk): ImportObjectTest
+  # XXX: nodata(SceneGen.osd.txt): LightingTest
   LoadSaveBathymetry
   MercedRiverElevationTest
-  NewTest
-  ObjectPropertiesTest
-  ObjectReadersTest
-  OpenFileTest
-  OpenMapFileTestSB
-  ResetCameraWhenCreatingFirstSceneObject
-  SceneBuilder2DPolyFileTest
+  # XXX: nodata(cyl_frame.2dm): NewTest
+  # XXX: nodata(SceneGen.osd.txt): ObjectPropertiesTest
+  # XXX: nodata(SampleScene.sg): ObjectReadersTest
+  # XXX: nodata(SceneGen.osd.txt): OpenFileTest
+  # XXX: nodata(bay.map): OpenMapFileTestSB
+  # XXX: nodata(cyl_frame.2dm): ResetCameraWhenCreatingFirstSceneObject
+  # XXX: nodata(sac_clay_29_5_ft_blanket_rootZone_2d.poly): SceneBuilder2DPolyFileTest
   SceneBuilderContourExtraction
-  SceneBuilderTextureMappedGroundPlane
-  SelectionModeTest
-  SelectionTest
-  SnapObjectTest
-  stitchTest
-  StitchWithPointInsertionTest
-  StyleTest
+  # XXX: nodata(SceneGen.osd.txt): SelectionModeTest
+  # XXX: nodata(SceneGen.osd.txt): SelectionTest
+  # XXX: nodata(SceneGen.osd.txt): SnapObjectTest
+  # XXX: nodata(TINHigh.vtk): stitchTest
+  # XXX: nodata(TINHigh.vtk): StitchWithPointInsertionTest
+  # XXX: nodata(SceneGen.osd.txt): StyleTest
   SubArcEdit1
-  TurnOffObjectsTest
+  # XXX: nodata(SceneGen.osd.txt): TurnOffObjectsTest
   TerrainMeshTest
   TerrainMeshTest2
-  ZoomToBoxTest
-  ZoomToDataTest
   )
 
   set (TESTS_WITHOUT_BASELINES
-  AbortMesherTest
+  # XXX: nodata(SceneGen.osd.txt): AbortMesherTest
   AboutTest
   HelpTest
-  ReadWriteTest
-  SceneInspectorTest
-  WriteOmicronInputTest
-  LIDARDialogTest
-  DuplicateRandomTest
+  # XXX: nodata(SceneGen.osd.txt): ReadWriteTest
+  # XXX: nodata(SceneGen.osd.txt): SceneInspectorTest
+  # XXX: nodata(SceneGen.osd.txt): WriteOmicronInputTest
+  # XXX: nodata(SceneGen.osd.txt): LIDARDialogTest
+  # XXX: nodata(SceneGen.osd.txt): DuplicateRandomTest
   #ExportBCSTest
-  EditTextureTest
+  # XXX: nodata(SceneGen.osd.txt): EditTextureTest
   ProcessOutputTest
-  RejectMeshTest
-  CreateMeshTest
-  InfoPanelTest
+  # XXX: nodata(SceneGen.osd.txt): RejectMeshTest
+  # XXX: nodata(SceneGen.osd.txt): CreateMeshTest
+  # XXX: nodata(SceneGen.osd.txt): InfoPanelTest
   ChesapeakeBayToCMB
     )
 
@@ -270,19 +263,6 @@ endif()"
   endfunction()
 
   set(PROJECT_EXE ${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX})
-  if(WIN32)
-    test_with_text_file_output(CreateMeshWithSubmergedSolidTest ${CMB_TEST_DIR}/SubmergedSolidTest.cmb
-      ${CMB_TEST_DATA_ROOT}/SubmergedSolidTest.cmb
-      ${EXECUTABLE_OUTPUT_PATH} ${PROJECT_EXE} "-dr;--test-directory=${CMB_TEST_DIR};--test-script=${TEST_XML}/CreateMeshWithSubmergedSolidTest.xml;--exit"
-      ${EXECUTABLE_OUTPUT_PATH} ModelBuilder "-dr;--test-directory=${CMB_TEST_DIR};--test-script=${TEST_XML}/CreateMeshWithSubmergedSolidTestPart2.xml;--test-baseline=${TEST_IMAGE}/CreateMeshWithSubmergedSolidTest.png;--exit")
-  else (WIN32)
-    if (Q_WS_MAC)
-    test_with_text_file_output(CreateMeshWithSubmergedSolidTest ${CMB_TEST_DIR}/SubmergedSolidTest.cmb
-      ${CMB_TEST_DATA_ROOT}/SubmergedSolidTest.cmb
-      ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS ${PROJECT_NAME} "-dr;--test-directory=${CMB_TEST_DIR};--test-script=${TEST_XML}/CreateMeshWithSubmergedSolidTest.xml;--exit"
-      ${EXECUTABLE_OUTPUT_PATH}/ModelBuilder.app/Contents/MacOS ModelBuilder "-dr;--test-directory=${CMB_TEST_DIR};--test-script=${TEST_XML}/CreateMeshWithSubmergedSolidTestPart2.xml;--test-baseline=${TEST_IMAGE}/CreateMeshWithSubmergedSolidTest.png;--exit")
-    endif (Q_WS_MAC)
-  endif (WIN32)
 
   if(CMB_TEST_DATA_ROOT)
   foreach(test ${XML_TESTS_WITH_BASELINES})
