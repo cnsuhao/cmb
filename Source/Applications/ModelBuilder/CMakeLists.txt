@@ -288,8 +288,6 @@ endif()
 
 ########################################################################
 if(BUILD_TESTING)
-  set(ChangeDetails_THRESHOLD 14)
-  set(ChangeDetailsCMB_THRESHOLD 14)
   set(GrowTest_THRESHOLD 14)
   set(GrowTestCMB_THRESHOLD 14)
 endif(BUILD_TESTING)

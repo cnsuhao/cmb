@@ -177,8 +177,6 @@ private:
   // On successful completion of volume mesher, preview the mesh
   int previewWindow(QString path);
 
-  FileBasedMeshingParameters generateLegacyVolumeMesherInput();
-
   class vtkInternal;
   vtkInternal* const Internal;
 };

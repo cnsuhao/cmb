@@ -172,6 +172,7 @@ add_library(cmbAppCommon
   Scene/IO/pqCMBSceneReader.cxx
   Scene/IO/pqCMBSceneV1Reader.cxx
   Scene/IO/pqCMBSceneV2Reader.cxx
+  Scene/IO/pqCMBSceneV2Writer.cxx
   Scene/Objects/cmbSceneUnits.cxx
   Scene/Objects/pqCMBArc.cxx
   Scene/Objects/pqCMBConicalRegion.cxx
@@ -219,6 +220,8 @@ target_link_libraries(cmbAppCommon
   LINK_PRIVATE
     QtTesting
     RemusClient
+    smtkDiscreteSession
+    vtkSMTKDiscreteModel
   )
 
 if (PARAVIEW_ENABLE_PYTHON)
