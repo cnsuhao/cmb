@@ -18,7 +18,7 @@
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/extension/qt/qtRootView.h"
+#include "smtk/extension/qt/qtBaseView.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
@@ -109,7 +109,7 @@ int SimBuilderCustomExportDialog::exec()
     return 0;
     }
 
-  // Need to ping export panel (root view) to hide advanced items at start
+  // Need to ping export panel (top level view) to hide advanced items at start
   this->ExportUIManager->topView()->showAdvanceLevel(0);
 
   this->MainDialog->setModal(true);

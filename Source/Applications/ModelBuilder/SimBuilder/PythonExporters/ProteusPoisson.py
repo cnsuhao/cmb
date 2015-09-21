@@ -1091,10 +1091,10 @@ def log_missing_item(scope, att_type, item_path=''):
 def create_view_table(scope):
   '''Constructs dictionary of <attribute type, views> for UI feedback
 
-  Traverses RootView and descendants to build lookup table
+  Traverses TopLevel View and descendants to build lookup table
   '''
   #table = dict()
-  #view = scope.manager.rootView()
+  #view = scope.manager.findTopLevelView()
   #update_view_info(table, view)
 
   """

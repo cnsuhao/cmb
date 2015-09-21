@@ -36,7 +36,7 @@
                     Extensible="true" NumberOfRequiredValues="1"/>
 
             <File Name="PythonScript" Label="Python script" AdvanceLevel="1" Version="0"  NumberOfRequiredValues="1"
-                  AdvanceLevel="1" ShouldExist="true"
+                  ShouldExist="true"
                   FileFilters="Python files (*.py);;All files (*.*)">
               <DefaultValue>AdHShallowWater.py</DefaultValue>
             </File>
@@ -51,18 +51,16 @@
         </AttDef>
       </Definitions>
       <Attributes />
-      <RootView Title="Export">
-        <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
-        <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
-        <AdvancedFontEffects Bold="0" Italic="0" />
-
-        <InstancedView Title="ExportSpec">
+      <Views>
+        <InstancedView Title="ExportSpec" TopLevel="true">
+          <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
+          <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
+          <AdvancedFontEffects Bold="0" Italic="0" />
           <InstancedAttributes>
             <Att Type="ExportSpec">Options</Att>
           </InstancedAttributes>
         </InstancedView>
-      </RootView>
-
+      </Views>
     </SMTK_AttributeManager>
   </attribute>
 </cmb-resources>

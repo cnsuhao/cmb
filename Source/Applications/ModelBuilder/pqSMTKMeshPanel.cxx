@@ -26,7 +26,6 @@
 
 #include "smtk/common/View.h"
 #include "smtk/extension/qt/qtUIManager.h"
-#include "smtk/extension/qt/qtRootView.h"
 
 #include <QtGui/QDockWidget>
 
@@ -57,7 +56,7 @@ void make_InstancedView(smtk::attribute::SystemPtr attSystem)
   typedef std::vector<smtk::attribute::DefinitionPtr>::const_iterator
                                                             DefIterType;
 
-  smtk::common::ViewPtr root = attSystem->findViewByType("Root");
+  smtk::common::ViewPtr root = attSystem->findTopLevelView();
   int pos = root->details().findChild("Views");
   smtk::common::View::Component &vcomp = root->details().child(pos);
   std::vector<smtk::attribute::DefinitionPtr> baseDefinitions;
