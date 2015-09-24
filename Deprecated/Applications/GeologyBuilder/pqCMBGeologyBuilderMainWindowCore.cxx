@@ -3774,7 +3774,7 @@ void pqCMBGeologyBuilderMainWindowCore::onPreviewAccepted()
   else // previewing stitched TIN
     {
     // ask for file to save to...
-    QString filters = "VTK Files(*.vtk)";
+    QString filters = "VTK Files (*.vtk)";
     pqFileDialog file_dialog(
       this->getActiveServer(),
       this->parentWidget(), tr("Save Stitched TIN:"), QString(), filters);
