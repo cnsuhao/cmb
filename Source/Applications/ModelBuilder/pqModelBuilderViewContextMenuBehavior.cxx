@@ -31,7 +31,10 @@
 #include "vtkPVCompositeDataInformation.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVGeneralSettings.h"
+#include "vtkPVSelectionInformation.h"
 #include "vtkPVSMTKModelInformation.h"
+#include "vtkSelection.h"
+#include "vtkSelectionNode.h"
 #include "vtkSMArrayListDomain.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
@@ -42,6 +45,7 @@
 #include "vtkSMTransferFunctionManager.h"
 #include "vtkSMTransferFunctionProxy.h"
 #include "vtkSMViewProxy.h"
+#include "vtkUnsignedIntArray.h"
 
 #include <QAction>
 #include <QApplication>
@@ -52,42 +56,23 @@
 #include <QWidget>
 #include "pqCMBModelManager.h"
 #include "pqSMTKModelPanel.h"
+
+#include "smtk/attribute/IntItem.h"
+#include "smtk/attribute/ModelEntityItemDefinition.h"
+#include "smtk/attribute/StringItem.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
+#include "smtk/model/Operator.h"
+#include "smtk/model/Session.h"
+#include "smtk/model/StringData.h"
 #include "smtk/model/Volume.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 namespace
 {
-  // converts array association/name pair to QVariant.
-  QVariant convert(const QPair<int, QString>& array)
-    {
-    if (!array.second.isEmpty())
-      {
-      QStringList val;
-      val << QString::number(array.first)
-          << array.second;
-      return val;
-      }
-    return QVariant();
-    }
-
-  // converts QVariant to array association/name pair.
-  QPair <int, QString> convert(const QVariant& val)
-    {
-    QPair<int, QString> result;
-    if (val.canConvert<QStringList>())
-      {
-      QStringList list = val.toStringList();
-      Q_ASSERT(list.size() == 2);
-      result.first = list[0].toInt();
-      result.second = list[1];
-      }
-    return result;
-    }
-bool _internal_getBlockIndex(const smtk::model::EntityRef& eref,
+static bool _internal_getBlockIndex(const smtk::model::EntityRef& eref,
                              unsigned int& flatIndex)
   {
   const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
@@ -100,7 +85,7 @@ bool _internal_getBlockIndex(const smtk::model::EntityRef& eref,
   }
 
 /// Fetch children for volum and group entities.
-void _internal_AccumulateChildGeometricEntities(
+static void _internal_AccumulateChildGeometricEntities(
   QSet<unsigned int>& blockIds,
   const smtk::model::EntityRef& toplevel)
   {
@@ -141,7 +126,7 @@ void _internal_AccumulateChildGeometricEntities(
 
 // only use valid color, the rest will be colored
 // randomly with CTF
-bool _internal_getValidEntityColor(QColor& color,
+static bool _internal_getValidEntityColor(QColor& color,
   const smtk::model::EntityRef& entref)
   {
   smtk::model::FloatList rgba = entref.color();
@@ -153,6 +138,208 @@ bool _internal_getValidEntityColor(QColor& color,
     }
   return false;
   }
+
+// return total number of blocks selected
+//-----------------------------------------------------------------------------
+static int _internal_getSelectedRepBlocks(
+  const QList<cmbSMTKModelInfo*> &selModels,
+  QMap<cmbSMTKModelInfo*, QList<unsigned int> >& result,
+  bool& hasAnalysisMesh, bool& analysisMeshShown)
+  {
+  int totalBlocks = 0;
+  hasAnalysisMesh = false;
+  analysisMeshShown = false;
+  foreach(cmbSMTKModelInfo* modinfo, selModels)
+    {
+    pqPipelineSource *source = modinfo->RepSource;
+    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
+    vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
+    selSource->UpdatePipeline();
+    vtkNew<vtkPVSelectionInformation> selInfo;
+    selSource->GatherInformation(selInfo.GetPointer());
+    if(selInfo->GetSelection() &&
+      selInfo->GetSelection()->GetNumberOfNodes())
+      {
+      unsigned int block_id;
+      vtkUnsignedIntArray* blockIds = vtkUnsignedIntArray::SafeDownCast(
+        selInfo->GetSelection()->GetNode(0)->GetSelectionList());
+      if(blockIds)
+        {
+        for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
+          {
+          block_id = blockIds->GetValue(ui);
+          result[modinfo].push_back(block_id);
+          totalBlocks++;
+          }
+        }
+      // this may be the a ID selection
+      else
+        {
+        vtkSMPropertyHelper selIDs(selSource, "IDs");
+        unsigned int count = selIDs.GetNumberOfElements();
+        // [composite_index, process_id, index]
+        for (unsigned int cc=0; cc < (count/3); cc++)
+          {
+          block_id = selIDs.GetAsInt(3*cc);
+          result[modinfo].push_back(block_id);
+          totalBlocks++;
+          }
+        }
+      }
+    // if any model has analysis mesh, set hasAnalysisMesh to true
+    if(!hasAnalysisMesh)
+      {
+      hasAnalysisMesh = modinfo->hasAnalysisMesh();
+      }
+    if(!analysisMeshShown)
+      {
+      analysisMeshShown = modinfo->ShowMesh;
+      }
+    }
+  return totalBlocks;
+  }
+
+static bool _internal_hasSessionOp(const smtk::model::SessionPtr& brSession,
+  const std::string& opname)
+  {
+  if(brSession)
+    {
+    smtk::model::StringList opNames = brSession->operatorNames();
+    return std::find(opNames.begin(), opNames.end(), opname) != opNames.end();
+    }
+  return false;
+  }
+
+static const std::string s_internal_groupOpName("entity group");
+
+static bool _internal_startGroupOp(
+ pqCMBModelManager* modMgr,
+ cmbSMTKModelInfo* minfo,
+ const std::string& optype,
+ const QList<unsigned int>& addblocks,
+ const smtk::model::Group& modifyGroup)
+  {
+  if (_internal_hasSessionOp(minfo->Session, s_internal_groupOpName))
+    {
+    // create the group operator, if the session has one
+    smtk::model::OperatorPtr grpOp = minfo->Session->op(s_internal_groupOpName);
+    if (!grpOp)
+      {
+      std::cout
+        << "Could not create operator: \"" << s_internal_groupOpName << "\" for session"
+        << " \"" << minfo->Session->name() << "\""
+        << " (" << minfo->Session->sessionId() << ")\n";
+      return false;
+      }
+    // set up group operator with selected entities. Currently, only
+    // the discrete session has the "entity group" operator
+    smtk::attribute::AttributePtr attrib = grpOp->specification();
+    smtk::attribute::ModelEntityItemPtr modelItem =
+      attrib->findModelEntity("model");
+    smtk::attribute::StringItem::Ptr optypeItem =
+      attrib->findString("Operation");
+    smtk::attribute::ModelEntityItemPtr grpItem =
+      attrib->findAs<smtk::attribute::ModelEntityItem>(
+        "modify cell group", smtk::attribute::ALL_CHILDREN);
+    smtk::attribute::ModelEntityItemPtr addItem =
+      attrib->findAs<smtk::attribute::ModelEntityItem>(
+        "cell to add", smtk::attribute::ALL_CHILDREN);
+    smtk::attribute::IntItem::Ptr grptypeItem =
+      attrib->findInt("group type");
+    smtk::attribute::StringItem::Ptr grpnameItem =
+      attrib->findString("group name");
+    if(!modelItem || !optypeItem || !grpItem || !addItem || !grptypeItem || !grpnameItem)
+      {
+      std::cout << "The entity group operator's specification is missing items!\n"
+                << "For reference, checkout smtk/bridge/discrete/operators/EntityGroupOperator.sbt.\n";
+      return false;  
+      }
+
+    smtk::common::UUID modelId = minfo->Info->GetModelUUID();
+    smtk::model::ManagerPtr mgr = modMgr->managerProxy()->modelManager();
+    smtk::model::Model activeModel(mgr, modelId);
+    if(!activeModel.isValid())
+      {
+      std::cout
+        << "Could not find model with UUID: "
+        << modelId << "\n";
+      return false;
+      }
+    modelItem->setValue(activeModel);
+    optypeItem->setValue(optype.c_str());
+
+    // Due to limitations in the underlying group operation in "discrete" modeling kernel:
+    // For 2D model boundary group, only edges are allowed; 2D model faces are only allowed for domain group.
+    // For 3D model boundary group, only faces are allowed; domain group can only contained volumes (regions).
+    // Therefore, based on the highest dimension selected, we will have above contraints to set up the group op.
+    const smtk::attribute::ModelEntityItemDefinition *addItemDef =
+      dynamic_cast<const smtk::attribute::ModelEntityItemDefinition*>(
+      addItem->definition().get());
+
+    int dim = activeModel.dimension();
+    bool hasFace = false, hasVol = false;
+    smtk::model::EntityRefArray selEntRefs;
+    smtk::common::UUID uid;
+    foreach(unsigned int bid, addblocks)
+      {
+      uid = minfo->Info->GetModelEntityId(bid-1);
+      smtk::model::EntityRef entref(mgr, uid);
+      if(addItemDef->isValueValid(entref))
+        {
+        selEntRefs.push_back(entref);
+        if(!hasFace)
+          {
+          hasFace = entref.isFace();
+          }
+        if(!hasVol)
+          {
+          hasVol = entref.isVolume();
+          }
+        }
+      }
+
+    if(selEntRefs.size() > 0 &&
+       !addItem->setValues(selEntRefs.begin(), selEntRefs.end()))
+      {
+      std::cout << "setNumberOfValues failed for \"cell to add\" item!\n";
+      return false;
+      }
+
+    if( optype == "Create" )
+      {
+      grpnameItem->setValue("boundary group");
+      // by default, group type is set to 0 (boundary) for new group
+      if( (dim == 2 && hasFace) ||
+          (dim == 3 && hasVol) )
+        {
+        grptypeItem->setValue(1); // domain
+        grpnameItem->setValue("domain group");
+        }
+      }
+    else if(optype == "Modify")
+      {
+      if(!modifyGroup.isValid() || addItem->numberOfValues() == 0)
+        {
+        std::cout << "Either the input group is not valid, or no entities is set to add to the group.\n";
+        return false;
+        }
+      grpItem->setValue(modifyGroup);
+      }
+
+    // lanuch the group operation
+    if (!modMgr->startOperation(grpOp))
+      {
+      std::cout
+        << "Could not start operator: \"" << s_internal_groupOpName << "\" for session"
+        << " \"" << minfo->Session->name() << "\""
+        << " (" << minfo->Session->sessionId() << ")\n";
+      return false;
+      }
+    return true;
+    }
+  return false;
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -163,17 +350,17 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
     pqApplicationCore::instance()->getServerManagerModel(),
     SIGNAL(viewAdded(pqView*)),
     this, SLOT(onViewAdded(pqView*)));
-  this->Menu = new QMenu();
-  this->Menu << pqSetName("PipelineContextMenu");
-  this->m_DataInspector = new pqMultiBlockInspectorPanel(NULL);
-  this->m_DataInspector->setVisible(false);
+  this->m_contextMenu = new QMenu();
+  this->m_contextMenu << pqSetName("PipelineContextMenu");
+  this->m_dataInspector = new pqMultiBlockInspectorPanel(NULL);
+  this->m_dataInspector->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
 pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 {
-  delete this->Menu;
-  delete this->m_DataInspector;
+  delete this->m_contextMenu;
+  delete this->m_dataInspector;
   if(this->m_colormapReaction)
     {
     delete this->m_colormapReaction;
@@ -183,7 +370,7 @@ pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* panel)
 {
-  this->m_ModelPanel = panel;
+  this->m_modelPanel = panel;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,7 +378,7 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
     pqDataRepresentation* rep,
     const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *panel = this->m_dataInspector;
   if (panel && rep)
     {
     pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
@@ -262,27 +449,27 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
 void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   const QString & colorMode)
 {
-  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+  if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
   // active rep
   pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
-  pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
   if (!datapanel || !activeRep)
     return;
-  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
+  cmbSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
     return;
   if(minfo->ColorMode == colorMode)
     return;
   QStringList list;
-  this->m_ModelPanel->modelManager()->supportedColorByModes(list);
+  this->m_modelPanel->modelManager()->supportedColorByModes(list);
   if(!list.contains(colorMode))
     return;
 
   smtk::common::UUID modelId = minfo->Info->GetModelUUID();
   smtk::model::Model activeModel(
-    this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
+    this->m_modelPanel->modelManager()->managerProxy()->modelManager(), modelId);
   if(!activeModel.isValid())
     return;
 
@@ -357,10 +544,10 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   if(colorEntities.size() > 0)
     {
     this->updateColorForEntities(activeRep, colorMode, colorEntities);
-    this->m_ModelPanel->modelManager()->updateEntityColorTable(
+    this->m_modelPanel->modelManager()->updateEntityColorTable(
       activeRep, colorEntities, colorMode);
     }
-  this->m_ModelPanel->modelManager()->colorRepresentationByEntity(
+  this->m_modelPanel->modelManager()->colorRepresentationByEntity(
     activeRep, colorMode);
 
 }
@@ -370,21 +557,21 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
     smtk::attribute::SystemPtr attSys,
     const QString& attdeftype, const QString& itemname)
 {
-  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+  if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
   // active rep
   pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
-  pqMultiBlockInspectorPanel *datapanel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
   if (!datapanel || !activeRep)
     return;
-  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(activeRep);
+  cmbSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
     return;
 
   smtk::common::UUID modelId = minfo->Info->GetModelUUID();
   smtk::model::Model activeModel(
-    this->m_ModelPanel->modelManager()->managerProxy()->modelManager(), modelId);
+    this->m_modelPanel->modelManager()->managerProxy()->modelManager(), modelId);
   if(!activeModel.isValid())
     return;
 
@@ -408,7 +595,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
     }
   datapanel->clearBlockColor(indices);
 
-  this->m_ModelPanel->modelManager()->colorRepresentationByAttribute(
+  this->m_modelPanel->modelManager()->colorRepresentationByAttribute(
     activeRep, attSys, attdeftype, itemname);
 
 }
@@ -444,10 +631,10 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
     pqDataRepresentation* rep,
     const QList<unsigned int>& colorBlocks, const QColor& color)
 {
-  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+  if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *panel = this->m_dataInspector;
   if (panel && rep)
     {
     pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
@@ -485,16 +672,16 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
     if (me->button() & Qt::RightButton)
       {
-      this->Position = me->pos();
+      this->m_clickPosition = me->pos();
       }
     }
   else if (e->type() == QEvent::MouseButtonRelease)
     {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
-    if (me->button() & Qt::RightButton && !this->Position.isNull())
+    if (me->button() & Qt::RightButton && !this->m_clickPosition.isNull())
       {
       QPoint newPos = static_cast<QMouseEvent*>(e)->pos();
-      QPoint delta = newPos - this->Position;
+      QPoint delta = newPos - this->m_clickPosition;
       QWidget* senderWidget = qobject_cast<QWidget*>(caller);
       if (delta.manhattanLength() < 3 && senderWidget != NULL)
         {
@@ -502,25 +689,32 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           pqActiveObjects::instance().activeView());
         if (view)
           {
-          int pos[2] = { newPos.x(), newPos.y() } ;
-          // we need to flip Y.
-          int height = senderWidget->size().height();
-          pos[1] = height - pos[1];
-          unsigned int blockIndex = 0;
-          
-          this->PickedRepresentation = view->pickBlock(pos, blockIndex);
-
-          this->buildMenu(this->PickedRepresentation, blockIndex);
-          this->Menu->popup(senderWidget->mapToGlobal(newPos));
-
-          // we want to select this block.
-          if(this->PickedRepresentation)
+          // If we already have selection in representation(s) in the render view,
+          // do not do picking, just use the existing selection to build the context menu.
+          QList<cmbSMTKModelInfo*> selModels = this->m_modelPanel->modelManager()->selectedModels();
+          if(selModels.count() == 0) // pick a block from click
             {
-            emit this->representationBlockPicked(this->PickedRepresentation, blockIndex);
+            int pos[2] = { newPos.x(), newPos.y() } ;
+            // we need to flip Y.
+            int height = senderWidget->size().height();
+            pos[1] = height - pos[1];
+            unsigned int blockIndex = 0;
+            
+            pqDataRepresentation* pickedRepresentation = view->pickBlock(pos, blockIndex);
+
+//            this->buildMenu(this->PickedRepresentation, blockIndex);
+
+            // we want to select this block.
+            if(pickedRepresentation)
+              {
+              emit this->representationBlockPicked(pickedRepresentation, blockIndex);
+              }
             }
+          this->buildMenuFromSelections();
+          this->m_contextMenu->popup(senderWidget->mapToGlobal(newPos));
           }
         }
-      this->Position = QPoint();
+      this->m_clickPosition = QPoint();
       }
     }
 
@@ -528,12 +722,15 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
 }
 
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr,
-                                              unsigned int blockIndex)
+void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
 {
-  // get currently selected block ids
-  this->PickedBlocks.clear();
-  this->PickedBlocks.append(static_cast<unsigned int>(blockIndex));
+  // get currently selected <representation, block ids>
+  this->m_selModelBlocks.clear();
+  bool hasAnalysisMesh = false;
+  bool analysisMeshShown = false;
+  int selNumBlocks = _internal_getSelectedRepBlocks(
+    this->m_modelPanel->modelManager()->selectedModels(),
+    this->m_selModelBlocks, hasAnalysisMesh, analysisMeshShown);
 
   if(this->m_colormapReaction)
     {
@@ -541,104 +738,112 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
     this->m_colormapReaction = NULL;
     }
 
-  this->Menu->clear();
-  if (repr)
+  this->m_contextMenu->clear();
+  if (selNumBlocks > 0 && this->m_selModelBlocks.count() > 0)
     {
-    vtkPVDataInformation *info = repr->getInputDataInformation();
-    vtkPVCompositeDataInformation *compositeInfo = info->GetCompositeDataInformation();
-    if(compositeInfo && compositeInfo->GetDataIsComposite())
+    QMap<cmbSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
+      this->m_selModelBlocks.begin();
+
+    bool multipleBlocks = selNumBlocks > 1;
+    bool multipleModels = this->m_selModelBlocks.count() > 1;
+    if(multipleBlocks)
       {
-      cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
+      this->m_contextMenu->addAction(QString("%1 Entities").arg(selNumBlocks));
+      }
+    else // only one block is selected
+      {
+      QString blockName = this->lookupBlockName(rbit.value().value(0), rbit.key());
+      this->m_contextMenu->addAction(QString("%1").arg(blockName));
+      }
+    this->m_contextMenu->addSeparator();
 
-      bool multipleBlocks = this->PickedBlocks.size() > 1;
-      if(multipleBlocks)
+    // Add actions to (if the underlying model support these operations) :
+    // 1. Create group(s) with selected entities. If selections are from multiple models,
+    //    each model will create their own group;
+    // 2. Add selected entities to existing groups, which means the related groups will be shown as sub-menus.
+    //    Currently this action will only available if the selections are from a single model.
+    QAction *newGroupAction =
+      this->m_contextMenu->addAction(QString("New Group%1")
+        .arg(multipleModels ? "s" : ""));
+    this->connect(newGroupAction, SIGNAL(triggered()),
+                  this, SLOT(createGroup()));
+    if(!multipleModels && rbit.key()->grp_annotations.size() > 2) // skip the "no group" entry
+      {
+      QMenu* groupMenu = this->m_contextMenu->addMenu("Add to Group")
+        << pqSetName("addToGroupMenu");
+
+      // populate this menu with available groups types menu.
+      std::string str_uuid;
+      std::vector<std::string>::const_iterator git;
+      for(git = rbit.key()->grp_annotations.begin();
+          git != rbit.key()->grp_annotations.end(); ++git)
         {
-        this->Menu->addAction(QString("%1 Entities").arg(this->PickedBlocks.size()));
-        }
-      else
-        {
-        QString blockName = this->lookupBlockName(blockIndex, minfo);
-        this->Menu->addAction(QString("%1").arg(blockName));
-        }
-      this->Menu->addSeparator();
-
-      if(minfo && minfo->hasAnalysisMesh())
-        {
-        QAction* meshaction = this->Menu->addAction("Show Analysis Mesh");
-        meshaction->setCheckable(true);
-        meshaction->setChecked(minfo->ShowMesh);
-        this->connect(meshaction, SIGNAL(triggered()),
-                      this, SLOT(switchModelTessellation()));
-
-        this->Menu->addSeparator();
+        if(*git != "no group")
+          {
+          str_uuid = *git; // UUID
+          // the next in the array is group name, which will be used for action text
+          QAction* gaction = groupMenu->addAction((++git)->c_str());
+          gaction->setData(str_uuid.c_str());
+          }
         }
 
-      QAction *hideBlockAction =
-        this->Menu->addAction(QString("Hide Selected"));
-      this->connect(hideBlockAction, SIGNAL(triggered()),
-                    this, SLOT(hideBlock()));
-
-//      action = this->Menu->addAction("Hide All Entities");
-//      QObject::connect(action, SIGNAL(triggered()), this, SLOT(hide()));
-
-      QAction *showOnlyBlockAction =
-        this->Menu->addAction(QString("Hide Others"));
-      this->connect(showOnlyBlockAction, SIGNAL(triggered()),
-                    this, SLOT(showOnlyBlock()));
-
-      QAction *showAllBlocksAction =
-        this->Menu->addAction("Show Whole Model");
-      this->connect(showAllBlocksAction, SIGNAL(triggered()),
-                    this, SLOT(showAllBlocks()));
-/*
-      QAction *unsetVisibilityAction =
-        this->Menu->addAction(QString("Unset Entity %1")
-            .arg(multipleBlocks ? "Visibilities" : "Visibility"));
-      this->connect(unsetVisibilityAction, SIGNAL(triggered()),
-                    this, SLOT(unsetBlockVisibility()));
-*/
-      this->Menu->addSeparator();
-
-      QAction *setBlockColorAction =
-        this->Menu->addAction(QString("Set Color%1")
-          .arg(multipleBlocks ? "s" : ""));
-      this->connect(setBlockColorAction, SIGNAL(triggered()),
-                    this, SLOT(setBlockColor()));
-
-      QAction *unsetBlockColorAction =
-        this->Menu->addAction(QString("Unset Color%1")
-          .arg(multipleBlocks ? "s" : ""));
-      this->connect(unsetBlockColorAction, SIGNAL(triggered()),
-                    this, SLOT(unsetBlockColor()));
-/*
-      this->Menu->addSeparator();
-
-      QAction *setBlockOpacityAction =
-        this->Menu->addAction(QString("Set Entity %1")
-          .arg(multipleBlocks ? "Opacities" : "Opacity"));
-      this->connect(setBlockOpacityAction, SIGNAL(triggered()),
-                    this, SLOT(setBlockOpacity()));
-
-      QAction *unsetBlockOpacityAction =
-        this->Menu->addAction(QString("Unset Entity %1")
-            .arg(multipleBlocks ? "Opacities" : "Opacity"));
-      this->connect(unsetBlockOpacityAction, SIGNAL(triggered()),
-                    this, SLOT(unsetBlockOpacity()));
-*/
-      QAction* action = this->Menu->addAction("Edit Color");
-      this->m_colormapReaction = new pqEditColorMapReaction(action);
-
-      this->Menu->addSeparator();
+      QObject::connect(groupMenu, SIGNAL(triggered(QAction*)),
+        this, SLOT(addToGroup(QAction*)));
       }
 
-    QMenu* reprMenu = this->Menu->addMenu("Representation")
+    this->m_contextMenu->addSeparator();
+
+    if(hasAnalysisMesh)
+      {
+      QAction* meshaction = this->m_contextMenu->addAction("Show Analysis Mesh");
+      meshaction->setCheckable(true);
+      meshaction->setChecked(analysisMeshShown);
+      this->connect(meshaction, SIGNAL(triggered()),
+                    this, SLOT(switchModelTessellation()));
+
+      this->m_contextMenu->addSeparator();
+      }
+
+    QAction *hideBlockAction =
+      this->m_contextMenu->addAction("Hide Selected");
+    this->connect(hideBlockAction, SIGNAL(triggered()),
+                  this, SLOT(hideBlock()));
+
+    QAction *showOnlyBlockAction =
+      this->m_contextMenu->addAction("Hide Others");
+    this->connect(showOnlyBlockAction, SIGNAL(triggered()),
+                  this, SLOT(showOnlyBlock()));
+
+    QAction *showAllBlocksAction =
+      this->m_contextMenu->addAction("Show Whole Model");
+    this->connect(showAllBlocksAction, SIGNAL(triggered()),
+                  this, SLOT(showAllBlocks()));
+
+    this->m_contextMenu->addSeparator();
+
+    QAction *setBlockColorAction =
+      this->m_contextMenu->addAction("Set Color");
+    this->connect(setBlockColorAction, SIGNAL(triggered()),
+                  this, SLOT(setBlockColor()));
+
+    QAction *unsetBlockColorAction =
+      this->m_contextMenu->addAction("Unset Color");
+    this->connect(unsetBlockColorAction, SIGNAL(triggered()),
+                  this, SLOT(unsetBlockColor()));
+
+    QAction* action = this->m_contextMenu->addAction("Edit Color");
+    this->m_colormapReaction = new pqEditColorMapReaction(action);
+
+    this->m_contextMenu->addSeparator();
+
+    QMenu* reprMenu = this->m_contextMenu->addMenu("Representation")
       << pqSetName("Representation");
 
     // populate the representation types menu.
     QList<QVariant> rTypes = pqSMAdaptor::getEnumerationPropertyDomain(
-      repr->getProxy()->GetProperty("Representation"));
+      rbit.key()->Representation->getProxy()->GetProperty("Representation"));
     QVariant curRType = pqSMAdaptor::getEnumerationProperty(
-      repr->getProxy()->GetProperty("Representation"));
+      rbit.key()->Representation->getProxy()->GetProperty("Representation"));
     foreach (QVariant rtype, rTypes)
       {
       QAction* raction = reprMenu->addAction(rtype.toString());
@@ -648,162 +853,52 @@ void pqModelBuilderViewContextMenuBehavior::buildMenu(pqDataRepresentation* repr
 
     QObject::connect(reprMenu, SIGNAL(triggered(QAction*)),
       this, SLOT(reprTypeChanged(QAction*)));
-/*
-    this->Menu->addSeparator();
 
-    pqPipelineRepresentation* pipelineRepr =
-      qobject_cast<pqPipelineRepresentation*>(repr);
-
-    if (pipelineRepr)
-      {
-      QMenu* colorFieldsMenu = this->Menu->addMenu("Color By")
-        << pqSetName("ColorBy");
-      this->buildColorFieldsMenu(pipelineRepr, colorFieldsMenu);
-      }
-*/
-
-    this->Menu->addSeparator();
+    this->m_contextMenu->addSeparator();
     }
 
   // when nothing was picked we show the "link camera" menu.
-  this->Menu->addAction("Show All Models",
+  this->m_contextMenu->addAction("Show All Models",
     this, SLOT(showAllRepresentations()));
-}
-
-//-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::buildColorFieldsMenu(
-  pqPipelineRepresentation* pipelineRepr, QMenu* menu)
-{
-  QObject::connect(menu, SIGNAL(triggered(QAction*)),
-    this, SLOT(colorMenuTriggered(QAction*)), Qt::QueuedConnection);
-
-  QIcon cellDataIcon(":/pqWidgets/Icons/pqCellData16.png");
-  QIcon pointDataIcon(":/pqWidgets/Icons/pqPointData16.png");
-  QIcon solidColorIcon(":/pqWidgets/Icons/pqSolidColor16.png");
-
-  menu->addAction(solidColorIcon, "Solid Color")->setData(
-    convert(QPair<int, QString>()));
-  vtkSMProperty* prop = pipelineRepr->getProxy()->GetProperty("ColorArrayName");
-  vtkSMArrayListDomain* domain = prop?
-    vtkSMArrayListDomain::SafeDownCast(prop->FindDomain("vtkSMArrayListDomain")) : NULL;
-  if (!domain)
-    {
-    return;
-    }
-
-  // We are only showing array names here without worrying about components since that
-  // keeps the menu simple and code even simpler :).
-  for (unsigned int cc=0, max = domain->GetNumberOfStrings(); cc < max; cc++)
-    {
-    int association = domain->GetFieldAssociation(cc);
-    int icon_association = domain->GetDomainAssociation(cc);
-    QString name = domain->GetString(cc);
-
-    QIcon& icon = (icon_association == vtkDataObject::CELL)?
-      cellDataIcon : pointDataIcon;
-
-    QVariant data = convert(QPair<int, QString>(association, name));
-    menu->addAction(icon, name)->setData(data);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::colorMenuTriggered(QAction* action)
-{
-  QPair<int, QString> array = convert(action->data());
-  if (this->PickedRepresentation)
-    {
-    BEGIN_UNDO_SET("Change coloring");
-    vtkSMViewProxy* view = pqActiveObjects::instance().activeView()->getViewProxy();
-    vtkSMProxy* reprProxy = this->PickedRepresentation->getProxy();
-
-    vtkSMProxy* oldLutProxy = vtkSMPropertyHelper(reprProxy, "LookupTable", true).GetAsProxy();
-
-    vtkSMPVRepresentationProxy::SetScalarColoring(
-      reprProxy, array.second.toLatin1().data(), array.first);
-
-    vtkNew<vtkSMTransferFunctionManager> tmgr;
-
-    // Hide unused scalar bars, if applicable.
-    vtkPVGeneralSettings* gsettings = vtkPVGeneralSettings::GetInstance();
-    switch (gsettings->GetScalarBarMode())
-      {
-    case vtkPVGeneralSettings::AUTOMATICALLY_HIDE_SCALAR_BARS:
-    case vtkPVGeneralSettings::AUTOMATICALLY_SHOW_AND_HIDE_SCALAR_BARS:
-      tmgr->HideScalarBarIfNotNeeded(oldLutProxy, view);
-      break;
-      }
-
-    if (!array.second.isEmpty())
-      {
-      // we could now respect some application setting to determine if the LUT is
-      // to be reset.
-      vtkSMPVRepresentationProxy::RescaleTransferFunctionToDataRange(reprProxy, true);
-
-      /// BUG #0011858. Users often do silly things!
-      bool reprVisibility =
-        vtkSMPropertyHelper(reprProxy, "Visibility", /*quiet*/true).GetAsInt() == 1;
-
-      // now show used scalar bars if applicable.
-      if (reprVisibility &&
-        gsettings->GetScalarBarMode() ==
-        vtkPVGeneralSettings::AUTOMATICALLY_SHOW_AND_HIDE_SCALAR_BARS)
-        {
-        vtkSMPVRepresentationProxy::SetScalarBarVisibility(reprProxy, view, true);
-        }
-      }
-
-    this->PickedRepresentation->renderViewEventually();
-    END_UNDO_SET();
-    }
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
-  pqDataRepresentation* repr = this->PickedRepresentation;
-  cmbSMTKModelInfo* minfo = this->m_ModelPanel->modelManager()->modelInfo(repr);
-  if(minfo && minfo->hasAnalysisMesh())
+  bool analysisMeshShown = action->isChecked();
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
-    minfo->ShowMesh = !minfo->ShowMesh;
-    this->m_ModelPanel->modelManager()->updateModelRepresentation(minfo);
-    action->setChecked(minfo->ShowMesh);
+    if(minfo && minfo->hasAnalysisMesh() && minfo->ShowMesh == analysisMeshShown)
+      {
+      minfo->ShowMesh = !analysisMeshShown;
+      this->m_modelPanel->modelManager()->updateModelRepresentation(minfo);
+      }
     }
+  action->setChecked(!analysisMeshShown);
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::reprTypeChanged(QAction* action)
 {
-  pqDataRepresentation* repr = this->PickedRepresentation;
-  if (repr)
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
-    BEGIN_UNDO_SET("Representation Type Changed");
-    pqSMAdaptor::setEnumerationProperty(
-      repr->getProxy()->GetProperty("Representation"),
-      action->text());
-    repr->getProxy()->UpdateVTKObjects();
-    repr->renderViewEventually();
-    END_UNDO_SET();
+    pqDataRepresentation* repr = minfo->Representation;
+    if (repr)
+      {
+      BEGIN_UNDO_SET("Representation Type Changed");
+      pqSMAdaptor::setEnumerationProperty(
+        repr->getProxy()->GetProperty("Representation"),
+        action->text());
+      repr->getProxy()->UpdateVTKObjects();
+      repr->renderViewEventually();
+      END_UNDO_SET();
+      }
     }
-}
-
-//-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::hide()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
-    {
-    return;
-    }
-  pqDataRepresentation* repr = this->PickedRepresentation;
-  QList<unsigned int> emptyList;
-  this->m_ModelPanel->showOnlyBlocks(
-    repr, emptyList);
 }
 
 /// This is triggered from context menu, which will set off
@@ -814,38 +909,55 @@ void pqModelBuilderViewContextMenuBehavior::hide()
 void pqModelBuilderViewContextMenuBehavior::hideBlock()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
-  this->m_ModelPanel->setBlockVisibility(
-    this->PickedRepresentation, this->PickedBlocks, false);
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+    {
+    if (minfo->Representation)
+      {
+      this->m_modelPanel->setBlockVisibility(
+        minfo->Representation, this->m_selModelBlocks[minfo], false);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
-  this->m_ModelPanel->showOnlyBlocks(
-    this->PickedRepresentation, this->PickedBlocks);
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+    {
+    if (minfo->Representation)
+      {
+      this->m_modelPanel->showOnlyBlocks(
+        minfo->Representation, this->m_selModelBlocks[minfo]);
+      }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
-  this->m_ModelPanel->showAllBlocks(
-    this->PickedRepresentation);
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+    {
+    if (minfo->Representation)
+      {
+      this->m_modelPanel->showAllBlocks(minfo->Representation);
+      }
+    }
 /*
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *panel = this->m_dataInspector;
   if (panel)
     {
     panel->showAllBlocks();
@@ -856,13 +968,13 @@ void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
 {
-  if(!this->m_ModelPanel || !this->m_ModelPanel->modelManager())
+  if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
   foreach(pqDataRepresentation* repr,
-          this->m_ModelPanel->modelManager()->modelRepresentations())
+          this->m_modelPanel->modelManager()->modelRepresentations())
     {
-    this->m_ModelPanel->showAllBlocks(repr);
+    this->m_modelPanel->showAllBlocks(repr);
     }
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
@@ -877,17 +989,23 @@ void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
 void pqModelBuilderViewContextMenuBehavior::setBlockColor()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
   QColor color = QColorDialog::getColor(QColor(),
-    this->m_DataInspector, "Choose Block Color",
+    this->m_dataInspector, "Choose Block Color",
     QColorDialog::DontUseNativeDialog);
   if(color.isValid())
     {
-    this->m_ModelPanel->setBlockColor(
-      this->PickedRepresentation, this->PickedBlocks, color);
+    foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+      {
+      if (minfo->Representation)
+        {
+        this->m_modelPanel->setBlockColor(
+          minfo->Representation, this->m_selModelBlocks[minfo], color);
+        }
+      }
     }
 }
 
@@ -895,45 +1013,50 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
 void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
 {
   QAction *action = qobject_cast<QAction *>(sender());
-  if(!action || !this->m_ModelPanel)
+  if(!action || !this->m_modelPanel)
     {
     return;
     }
   QColor invalidColor;
-  this->m_ModelPanel->setBlockColor(
-    this->PickedRepresentation, this->PickedBlocks, invalidColor);
-}
-
-//-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::setBlockOpacity()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
-    return;
-    }
-
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
-  if(panel)
-    {
-    panel->promptAndSetBlockOpacity(this->PickedBlocks);
+    if (minfo->Representation)
+      {
+      this->m_modelPanel->setBlockColor(
+        minfo->Representation, this->m_selModelBlocks[minfo], invalidColor);
+      }
     }
 }
 
 //-----------------------------------------------------------------------------
-void pqModelBuilderViewContextMenuBehavior::unsetBlockOpacity()
+void pqModelBuilderViewContextMenuBehavior::createGroup()
 {
-  QAction *action = qobject_cast<QAction *>(sender());
-  if(!action)
+  pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
+  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
-    return;
+    _internal_startGroupOp(modMgr, minfo, "Create",
+      this->m_selModelBlocks[minfo], smtk::model::Group());
+    }
+}
+
+// This slot will only be available when there is only one model is selected
+//-----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
+{
+  if(this->m_selModelBlocks.count() != 1)
+    {
+    std::cout << "addToGroup Failed, because this operation requires one and only one model being selected!\n";
+    return;  
     }
 
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
-  if(panel)
-    {
-    panel->clearBlockOpacity(this->PickedBlocks);
-    }
+  QMap<cmbSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
+    this->m_selModelBlocks.begin();
+  smtk::common::UUID entId(action->data().toString().toStdString());
+  pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
+  cmbSMTKModelInfo* minfo = rbit.key();
+  _internal_startGroupOp(modMgr, minfo, "Modify",
+    this->m_selModelBlocks[minfo],
+    smtk::model::Group(modMgr->managerProxy()->modelManager(), entId));
 }
 
 //-----------------------------------------------------------------------------
@@ -944,7 +1067,7 @@ QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
   if(blockIdx > 0 && minfo)
     {
     smtk::common::UUID entId = minfo->Info->GetModelEntityId(blockIdx - 1);
-    const smtk::model::EntityRef entity(this->m_ModelPanel->modelManager()->
+    const smtk::model::EntityRef entity(this->m_modelPanel->modelManager()->
       managerProxy()->modelManager(), entId);
     if(entity.isValid())
       {
@@ -953,7 +1076,7 @@ QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
     }
 
   // else fall back to multiblock data representation
-  pqMultiBlockInspectorPanel *panel = this->m_DataInspector;
+  pqMultiBlockInspectorPanel *panel = this->m_dataInspector;
   if(panel)
     {
     return panel->lookupBlockName(blockIdx);

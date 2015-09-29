@@ -248,7 +248,6 @@ public:
   std::map<smtk::common::UUID, cmbSMTKModelInfo> ModelInfos;
   typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelInfo;
   std::map<smtk::common::UUID, smtk::common::UUID> Entity2Models;
-  typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelEnt;
 
   pqServer* Server;
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
@@ -457,6 +456,26 @@ public:
     this->updateEntityGroupFieldArrayAndAnnotations(model);
     this->resetColorTable(model);
     modelInfo->Representation->renderViewEventually();
+  }
+
+  // If the group has already been removed from the model, the modelInfo(entityID)
+  // will not return the modelInfo it requests, because the record is removed from
+  // model manager. This method, intead, will go through all grp_annotations info
+  // cached on client to find the the modelInfo associated with the group.
+  cmbSMTKModelInfo* modelInfoForRemovedGroup(const smtk::common::UUID& entid)
+  {
+    for(itModelInfo mit = this->ModelInfos.begin(); mit != this->ModelInfos.end(); ++mit)
+      {
+      if(std::find(mit->second.grp_annotations.begin(),
+                  mit->second.grp_annotations.end(),
+                  entid.toString())
+        != mit->second.grp_annotations.end())
+        {
+        return &mit->second;
+        }
+      }
+
+    return NULL;
   }
 
   void clear()
@@ -1303,13 +1322,19 @@ bool pqCMBModelManager::handleOperationResult(
   for(it = remEntities->begin(); it != remEntities->end(); ++it)
     {
     // if this is a block index, its pv representation needs to be updated
-    if(it->hasIntegerProperty("block_index"))
+    if(this->Internal->Entity2Models.find(it->entity()) !=
+       this->Internal->Entity2Models.end())
       {
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
+      this->Internal->Entity2Models.erase(it->entity());
       }
-    else if(it->isGroup() && (minfo = this->modelInfo(*it)))
+    else
       {
-      groupChangedModels.insert(minfo->Info->GetModelUUID());
+      minfo = this->Internal->modelInfoForRemovedGroup(it->entity());
+      if(minfo)
+        {
+        groupChangedModels.insert(minfo->Info->GetModelUUID());
+        }
       }
     }
 

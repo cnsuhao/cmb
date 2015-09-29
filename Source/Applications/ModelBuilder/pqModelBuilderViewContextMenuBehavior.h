@@ -16,6 +16,7 @@
 #include <QPointer>
 #include <QList>
 #include <QColor>
+#include <QMap>
 #include "vtkType.h"
 #include "smtk/PublicPointerDefs.h"
 
@@ -65,9 +66,6 @@ protected slots:
   /// menu if the view is a render-view.
   void onViewAdded(pqView*);
 
-  /// called to hide the representation.
-  void hide();
-
   /// called to hide the block. the action which emits the signal will
   /// contain the block index in its data().
   void hideBlock();
@@ -88,32 +86,24 @@ protected slots:
   /// signal will contain the block index in its data()
   void unsetBlockColor();
 
-  /// called to set the opacity for the block. the action which emits the
-  /// signal will contain the block index in its data()
-  void setBlockOpacity();
-
-  /// called to unset the opacity for the block. the action which emits the
-  /// signal will contain the block index in its data()
-  void unsetBlockOpacity();
-
   /// called to change the representation type.
   void reprTypeChanged(QAction* action);
 
-  /// called to change the coloring mode.
-  void colorMenuTriggered(QAction* action);
-
   /// called to switch model and mesh geometry
   void switchModelTessellation();
+
+  /// called to create group or add to an existing group with selected entities
+  void createGroup();
+  void addToGroup(QAction*);
 
 protected:
   /// called to build the context menu for the given representation. If the
   /// picked representation was a composite data set the block index of the
   /// selected block will be passed in blockIndex.
-  virtual void buildMenu(pqDataRepresentation* repr, unsigned int blockIndex);
+  //virtual void buildMenu(pqDataRepresentation* repr, unsigned int blockIndex);
 
-  /// called to build the color arrays submenu.
-  virtual void buildColorFieldsMenu(
-    pqPipelineRepresentation* pipelineRepr, QMenu* menu);
+  /// build the context menu based on model selections.
+  virtual void buildMenuFromSelections();
 
   /// event filter to capture the right-click. We don't directly use mechanisms
   /// from QWidget to popup the context menu since all of those mechanism seem
@@ -124,13 +114,12 @@ protected:
   /// return the name of the block from its flat index
   QString lookupBlockName(unsigned int flatIndex, cmbSMTKModelInfo* minfo) const;
 
-  QMenu* Menu;
-  QPoint Position;
-  QPointer<pqDataRepresentation> PickedRepresentation;
-  QList<unsigned int> PickedBlocks;
-  QPointer<pqSMTKModelPanel> m_ModelPanel;
-  pqMultiBlockInspectorPanel* m_DataInspector;
+  QMenu* m_contextMenu;
+  QPoint m_clickPosition;
+  QPointer<pqSMTKModelPanel> m_modelPanel;
+  pqMultiBlockInspectorPanel* m_dataInspector;
   QPointer<pqEditColorMapReaction> m_colormapReaction;
+  QMap<cmbSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)
