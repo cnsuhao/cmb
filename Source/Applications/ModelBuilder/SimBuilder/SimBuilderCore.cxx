@@ -99,7 +99,7 @@ int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
   QString filters;
   if(isScenario)
     {
-    filters= "SimBuilder Scenario Files (*sbs);;";
+    filters= "SimBuilder Scenario Files (*.sbt *.sbs *.sbi *.crf);;";
     }
   else if(templateOnly)
     {
