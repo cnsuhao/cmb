@@ -411,6 +411,8 @@ endif()
     OperationSplitFace
     OperationMergeFace
     OperationGroupOps
+    OperationBoundaryGroup2D
+    OperationDomainGroup2D
     #OperationCombined
     WriteEdge
     )
