@@ -109,8 +109,6 @@ SET(SIMBUILDER_TEMPLATE_NAMES
   AdHSurfaceWaterDefinitions.sbt
   AdHSurfaceWater.sbt
   AdHSurfaceWaterViews.sbt
-  CTB.crf
-  CTB.sbt
   EMS.crf
   EMS.sbt
   ProteusPoisson.crf
