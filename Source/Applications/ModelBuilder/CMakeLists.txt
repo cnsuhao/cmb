@@ -109,8 +109,6 @@ SET(SIMBUILDER_TEMPLATE_NAMES
   AdHSurfaceWaterDefinitions.sbt
   AdHSurfaceWater.sbt
   AdHSurfaceWaterViews.sbt
-  CTB.crf
-  CTB.sbt
   EMS.crf
   EMS.sbt
   ProteusPoisson.crf
@@ -428,7 +426,6 @@ endif()
   set (TESTS_FOR_VERIFYSIMEXPORT
     ExportSimAdHShallow
     ExportSimAdHSurface
-    ExportSimCTB
     ExportSimDakota
     ExportSimHydra
     ExportSimProteus
