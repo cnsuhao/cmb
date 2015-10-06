@@ -655,7 +655,7 @@ cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& sel
           }
         }
       // if found, break;
-      if(modelId.isNull())
+      if(!modelId.isNull())
         break;
       }
     }
