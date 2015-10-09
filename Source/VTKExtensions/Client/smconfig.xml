@@ -8053,6 +8053,13 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
         <DoubleRangeDomain name="range" min="0 0 0" max="1 1 1" />
       </DoubleVectorProperty>
 
+      <IntVectorProperty name="AlwaysOnTop"
+        command="SetAlwaysOnTop"
+	number_of_elements="1"
+        default_values="0">
+	<BooleanDomain name="bool" />
+      </IntVectorProperty>
+
        <IntVectorProperty name="EnableLogging"
         command="SetLoggingEnabled"
         number_of_elements="1"

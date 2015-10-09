@@ -152,7 +152,7 @@ if(BUILD_TESTING)
   set (APPLE_EXCLUDE_TESTS
     )
 
-  set (XML_TESTS_WITH_BASELINES
+set (XML_TESTS_WITH_BASELINES
   # XXX: nodata(SceneGen.osd.txt): 2DTest
   ApplyBathymetry
   ArcAutoConnect1
@@ -201,8 +201,8 @@ if(BUILD_TESTING)
   # XXX: nodata(SceneGen.osd.txt): StyleTest
   SubArcEdit1
   # XXX: nodata(SceneGen.osd.txt): TurnOffObjectsTest
-  TerrainMeshTest
-  TerrainMeshTest2
+  # XXX Need Mesher TerrainMeshTest
+  # XXX Need MesherTerrainMeshTest2
   )
 
   set (TESTS_WITHOUT_BASELINES
@@ -216,7 +216,6 @@ if(BUILD_TESTING)
   # XXX: nodata(SceneGen.osd.txt): DuplicateRandomTest
   #ExportBCSTest
   # XXX: nodata(SceneGen.osd.txt): EditTextureTest
-  ProcessOutputTest
   # XXX: nodata(SceneGen.osd.txt): RejectMeshTest
   # XXX: nodata(SceneGen.osd.txt): CreateMeshTest
   # XXX: nodata(SceneGen.osd.txt): InfoPanelTest
