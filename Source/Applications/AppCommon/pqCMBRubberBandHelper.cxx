@@ -442,15 +442,16 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     }
 
   bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
+  pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
   int* region = reinterpret_cast<int*>(vregion);
   switch (this->Mode)
     {
   case SELECT:
-    this->Internal->RenderView->selectOnSurface(region, ctrl);
+    this->Internal->RenderView->selectOnSurface(region, selOp);
     break;
 
   case SELECT_POINTS:
-    this->Internal->RenderView->selectPointsOnSurface(region, ctrl);
+    this->Internal->RenderView->selectPointsOnSurface(region, selOp);
     break;
 
   case FRUSTUM:
@@ -467,7 +468,7 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     break;
 
   case BLOCKS:
-    this->Internal->RenderView->selectBlock(region, ctrl);
+    this->Internal->RenderView->selectBlock(region, selOp);
     break;
 
   case ZOOM:
@@ -586,13 +587,14 @@ void pqCMBRubberBandHelper::onPolygonSelection(vtkObject*, unsigned long,
     {
     vtkIntArray* polygonPoints = vtkIntArray::SafeDownCast(pointArray);
     bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
+    pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
     switch (this->Mode)
       {
       case POLYGON_POINTS:
-        this->Internal->RenderView->selectPolygonPoints(polygonPoints, ctrl);
+        this->Internal->RenderView->selectPolygonPoints(polygonPoints, selOp);
         break;
       case POLYGON_CELLS:
-        this->Internal->RenderView->selectPolygonCells(polygonPoints, ctrl);
+        this->Internal->RenderView->selectPolygonCells(polygonPoints, selOp);
         break;
       }
     this->endSelection();
