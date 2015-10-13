@@ -330,21 +330,9 @@ void pqCMBCommonMainWindow::onViewChanged()
       this->MainWindowCore->activeRenderView());
 
     vtkPVRenderViewSettings::GetInstance()->SetOutlineThreshold(50);
-    vtkPVRenderViewSettings::GetInstance()->SetResolveCoincidentTopology(
-      vtkPVRenderViewSettings::ZSHIFT);
-    vtkPVRenderViewSettings::GetInstance()->SetZShift(0.002);
-    vtkPVRenderViewSettings::GetInstance()->SetUseDisplayLists(1);
-
-//    pqPipelineRepresentation::setUnstructuredGridOutlineThreshold(2.5);
-//    pqServer::setCoincidentTopologyResolutionModeSetting(
-//      VTK_RESOLVE_POLYGON_OFFSET);
-//    pqServer::setGlobalImmediateModeRenderingSetting(false);
-//  pqServer::setCoincidentTopologyResolutionModeSetting(
-//    VTK_RESOLVE_SHIFT_ZBUFFER);
-//  pqServer::setZShiftSetting(0.002);
-
-
-//    this->updateViewPositions();
+     vtkPVRenderViewSettings::GetInstance()->SetResolveCoincidentTopology(
+         vtkPVRenderViewSettings::OFFSET_FACES);
+     vtkPVRenderViewSettings::GetInstance()->SetPolygonOffsetParameters(6.0, 1.0);
     }
 }
 //----------------------------------------------------------------------------
