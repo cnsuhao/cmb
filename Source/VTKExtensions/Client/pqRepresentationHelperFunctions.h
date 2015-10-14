@@ -258,6 +258,10 @@ static bool CMB_COLOR_REP_BY_INDEXED_LUT(
 //    vtkSMPropertyHelper(lutProperty).RemoveAllValues();
 //    reproxy->UpdateVTKObjects();
     vtkSMPropertyHelper(lutProperty).Set(lutProxy);
+    // NOTE: We have to turn this off for openGL2, because there is a bug in paraview/vtk
+    // (Oct 14, 2015) that if this is on, color-by-field-data string array will not work.
+    // Once the bug is fixed in paraview/vtk, we can turn this back on again.
+    vtkSMPropertyHelper(reproxy, "InterpolateScalarsBeforeMapping", true).Set(0);
     reproxy->UpdateVTKObjects();
 
 /*
