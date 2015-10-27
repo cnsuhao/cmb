@@ -86,6 +86,7 @@
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
+#include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGroupBox>
@@ -745,36 +746,39 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     qCritical() << "File does not exist: " << filename;
     return;
     }
+
   QString lastExt = fInfo.suffix().toLower();
-/*
-  if (lastExt == "cmb")
+  // If this is simulation file, and there is already a simulation file loaded
+  if((lastExt == "crf" || lastExt== "sbt" || lastExt== "sbs" || lastExt== "sbi"
+     || fInfo.completeSuffix().toLower() == "simb.xml" ) &&
+    (this->getSimBuilder()->currentTemplate() == filename.toStdString()
+     || this->getSimBuilder()->isSimModelLoaded()))
     {
-    this->loadModelFile(filename);
-    return;
+    if(QMessageBox::question(this->parentWidget(),
+    "Load Simulation?",
+    tr("A SimBuilder file is already loaded. Do you want to close current SimBuilder file?\n") +
+    tr("NOTE: all unsaved changes to simulation database will be lost if answering Yes."),
+    QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No)
+      {
+      return;
+      }
+    else
+      {
+      QApplication::processEvents();
+      this->getSimBuilder()->clearSimulationModel();
+      this->getSimBuilder()->Initialize();
+      }
     }
-*/
+
   if(lastExt == "crf")
     {
     this->setSimBuilderModelManager();
     this->getSimBuilder()->LoadResources(reader, this->Internal->SceneGeoTree);
     return;
     }
-  if(fInfo.completeSuffix().toLower() == "simb.xml"||
+  if(fInfo.completeSuffix().toLower() == "simb.xml" ||
     lastExt== "sbt" || lastExt== "sbs" || lastExt== "sbi")
     {
-/*
-    if(this->getSimBuilder()->isSimModelLoaded() &&
-      QMessageBox::question(this->parentWidget(),
-      "Load Scenario File?",
-      "A SimBuilder file is already loaded. Do you want to close current SimBuilder file?",
-      QMessageBox::Yes|QMessageBox::No, QMessageBox::No) ==
-      QMessageBox::No)
-      {
-      return;
-      }
-    this->clearSimBuilder();
-    this->getSimBuilder()->Initialize();
-*/
     this->setSimBuilderModelManager();
     this->getSimBuilder()->LoadSimulation(reader, this->Internal->SceneGeoTree);
     return;

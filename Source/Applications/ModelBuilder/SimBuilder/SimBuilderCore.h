@@ -36,7 +36,7 @@ public:
   SimBuilderCore(pqServer*, pqRenderView* view);
   virtual ~SimBuilderCore();
 
-  bool isSimModelLoaded(){return this->IsSimModelLoaded;}
+  bool isSimModelLoaded() const {return this->IsSimModelLoaded;}
   void clearSimulationModel();
   void clearCMBModel();
   void updateCMBModelWithScenario(bool emitSignal=true);
@@ -70,6 +70,7 @@ public:
 
   pqSimBuilderUIManager* uiManager();
   qtSimBuilderUIPanel* GetUIPanel();
+  std::string currentTemplate() const { return this->CurrentSimFile;}
 
   bool isTemplateOnly(){return this->LoadTemplateOnly;}
   bool isLoadingScenario(){return this->LoadingScenario;}
@@ -100,8 +101,6 @@ private:
   SimBuilderCustomExportDialog *ExportDialog;
 
   std::string CurrentSimFile;
-  std::string CurrentTemplateFile;
-  std::string SimFileVersion;
 
   bool LoadTemplateOnly;
   bool LoadingScenario;

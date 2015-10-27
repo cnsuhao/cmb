@@ -65,8 +65,6 @@ SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
 {
   this->UIPanel = NULL;
 
-  this->SimFileVersion = "1.0";
-
   this->Initialize();
   this->setServer(pvServer);
   this->setRenderView(view);
@@ -215,25 +213,6 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
       tr("Please rename the file properly with one of the following extensions:\n") +
       tr(".sbt (for Template), .sbi (for Instance), .sbs (for Scenario)"));
     return 0;
-    }
-
-  if(this->CurrentSimFile == info->GetFileName() || this->isSimModelLoaded())
-    {
-    // we should not come in here, since application level logic have checked this.
-    if(QMessageBox::question(this->GetUIPanel(),
-    "Load Simulation?",
-    tr("A SimBuilder file is already loaded. Do you want to close current SimBuilder file?\n") +
-    tr("NOTE: all unsaved changes to simulation database will be lost if answering Yes."),
-    QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No)
-      {
-      return 0;
-      }
-    else
-      {
-      QApplication::processEvents();
-      this->clearSimulationModel();
-      this->Initialize();
-      }
     }
 
   if(finfo.suffix().toLower() == "sbt")
@@ -491,25 +470,6 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   if(lastExt != "crf")
     {
     return 0;
-    }
-
-  if(this->CurrentSimFile == info->GetFileName() || this->isSimModelLoaded())
-    {
-    // Should not come in here, since application level logic checked this.
-    if(QMessageBox::question(this->GetUIPanel(),
-    "Load Resources?",
-    tr("A SimBuilder file is already loaded. Do you want to close current SimBuilder file?\n") +
-    tr("NOTE: all unsaved changes to simulation database will be lost if answering Yes."),
-    QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No)
-      {
-      return 0;
-      }
-    else
-      {
-      QApplication::processEvents();
-      this->clearSimulationModel();
-      this->Initialize();
-      }
     }
 
   // Instantiate and initialize ResourceSet
