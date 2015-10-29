@@ -442,7 +442,7 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     }
 
   bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
-  pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
+  pqView::SelectionModifier selOp = ctrl ? pqView::PV_SELECTION_ADDITION : pqView::PV_SELECTION_DEFAULT;
   int* region = reinterpret_cast<int*>(vregion);
   switch (this->Mode)
     {
@@ -525,6 +525,8 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     {
     emit this->selectionFinished(region[0], region[1], region[2], region[3]);
     }
+
+  this->clearHardwareSelectionBuffer();
 }
 //-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::triggerFastIntersect()
@@ -587,7 +589,7 @@ void pqCMBRubberBandHelper::onPolygonSelection(vtkObject*, unsigned long,
     {
     vtkIntArray* polygonPoints = vtkIntArray::SafeDownCast(pointArray);
     bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
-    pqView::SelectionModifier selOp = ctrl ? pqRenderView::PV_SELECTION_ADDITION : pqRenderView::PV_SELECTION_DEFAULT;
+    pqView::SelectionModifier selOp = ctrl ? pqView::PV_SELECTION_ADDITION : pqView::PV_SELECTION_DEFAULT;
     switch (this->Mode)
       {
       case POLYGON_POINTS:
@@ -632,3 +634,22 @@ void pqCMBRubberBandHelper::onPickOnClick(vtkObject*, unsigned long, void*)
     this->Internal->ClearPressPosition();
     }
 }
+
+//-----------------------------------------------------------------------------
+void pqCMBRubberBandHelper::clearHardwareSelectionBuffer()
+{
+  // Currently there is no direct way to do this in paraview, and resetting
+  // "InteractionMode" will be a workaround.
+  vtkSMRenderViewProxy* rvp = this->Internal->RenderView->getRenderViewProxy();
+  int curSelMode = 0;
+  vtkSMPropertyHelper(rvp, "InteractionMode").Get(&curSelMode);
+  if(curSelMode != this->Internal->PreviousInteractionMode)
+    {
+    vtkSMPropertyHelper(rvp, "InteractionMode").Set(
+                this->Internal->PreviousInteractionMode);
+    rvp->UpdateVTKObjects();
+    vtkSMPropertyHelper(rvp, "InteractionMode").Set(curSelMode);
+    rvp->UpdateVTKObjects();
+    }
+
+}  

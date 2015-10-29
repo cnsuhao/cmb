@@ -156,6 +156,27 @@ protected:
   // Called whenever a polygon is drawn in the view
   void onPolygonSelection(vtkObject*, unsigned long, void*);
 
+  // We want to clear the cached selection pixel buffer in vtkPVHarwareSelector, otherwise
+  // in a continous selection mode, such as continously modifying an edge (split, merge)
+  // by selecting edge / vertex points, the selection comes back from paraview
+  // will contains the points from previous selection, which will cause these
+  // edge operations to fail.
+  // BTW, the cleared selection buffer is NOT the selection used for displaying
+  // selected geometry (representaiton).
+  // For reference:
+  /********************************************************************************/
+  // void vtkSMRenderViewProxy::ClearSelectionCache(bool force/*=false*/)
+  //{
+    // We check if we're currently selecting. If that's the case, any non-forced
+    // modifications (i.e. those coming through because of proxy-modifications)
+    // are considered a part of the making/showing selection and hence we
+    // don't clear the selection cache. While this doesn't help us preserve the
+    // cache between separate surface selection invocations, it does help us with
+    // reusing the case when in interactive selection mode.
+      // if ((this->IsSelectionCached && !this->IsInSelectionMode()) || force)
+  /********************************************************************************/
+  void clearHardwareSelectionBuffer();
+
 private:
   class pqInternal;
   pqInternal* Internal;
