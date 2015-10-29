@@ -11,25 +11,25 @@
 #include "vtkCMBReaderHelperFunctions.h"
 
 #include "vtkCellArray.h"
-#include "vtkFloatArray.h"
-#include "vtkPointData.h"
-#include "vtkPoints.h"
-#include "vtkLine.h"
 #include "vtkCellData.h"
+#include "vtkErrorCode.h"
+#include "vtkFieldData.h"
+#include "vtkFloatArray.h"
 #include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
-#include "vtkSmartPointer.h"
-#include "vtkErrorCode.h"
-#include "vtkStringArray.h"
-#include "vtkFieldData.h"
 #include "vtkIntArray.h"
-#include <sys/types.h>
+#include "vtkNew.h"
+#include "vtkObjectFactory.h"
+#include "vtkPointData.h"
+#include "vtkPoints.h"
+#include "vtkPolyData.h"
+#include "vtkStringArray.h"
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <vtksys/SystemTools.hxx>
-#include "vtkCMBPrepareForTriangleMesher.h"
+
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 //Turns on the old map file cell data
 //very inefficient, but easy to debug
@@ -156,7 +156,8 @@ vtkCMBMapReader::~vtkCMBMapReader()
 #endif
 
     //Initialize the map interface to create a new map file
-    vtkCMBPrepareForTriangleMesher* mapInterface = vtkCMBPrepareForTriangleMesher::New();
+    typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+    vtkNew<vtkPrepareForMesher> mapInterface;
     mapInterface->SetPolyData(output);
     mapInterface->InitializeNewMapInfo();
 
@@ -545,13 +546,10 @@ vtkCMBMapReader::~vtkCMBMapReader()
 
     mapInterface->FinalizeNewMapInfo();
 
-    vtkSmartPointer<vtkStringArray> filenameFD =
-      vtkSmartPointer<vtkStringArray>::New();
+    vtkNew<vtkStringArray> filenameFD;
     filenameFD->SetName("FileName");
     filenameFD->InsertNextValue(this->FileName);
-    output->GetFieldData()->AddArray( filenameFD );
-
-    mapInterface->Delete();
+    output->GetFieldData()->AddArray( filenameFD.GetPointer() );
 
     //Clean up
     file.close();

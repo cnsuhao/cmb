@@ -1,5 +1,6 @@
 
-# KML is needed.
+# SMTK, KML, and GDAL is needed.
+find_package(SMTK REQUIRED)
 find_package(KML)
 find_package(GDAL)
 
@@ -38,7 +39,7 @@ set(CMB_IO_SRC
     vtkGMSSolidReader.cxx
     vtkGMSTINReader.cxx
 #    vtkKMLExporter.cxx # vtkExporter for OpenGL2
-    vtkKMLReader.cxx
+    # vtkKMLReader.cxx
     vtkLASReader.cxx
     vtkLIDARPtsWriter.cxx
     vtkLIDARReader.cxx
@@ -62,7 +63,15 @@ set_source_files_properties(
 
 set(vtkCMBIO_NO_HeaderTest 1)
 vtk_module_library(vtkCMBIO ${CMB_IO_SRC})
-target_link_libraries(vtkCMBIO LINK_PRIVATE ${GDAL_LIBRARY} ${KML_LIBRARIES})
+
+#we link against smtkCore so that we get the proper include directories
+#for smtk, as those aren't exported with vtkSMTKDiscreteExt
+target_link_libraries(vtkCMBIO
+                      LINK_PRIVATE
+                      smtkCore
+                      vtkSMTKDiscreteExt
+                      ${GDAL_LIBRARY}
+                      ${KML_LIBRARIES})
 
 
 target_include_directories(vtkCMBIO

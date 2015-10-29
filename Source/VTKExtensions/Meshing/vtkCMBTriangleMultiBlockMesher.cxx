@@ -8,11 +8,7 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBTriangleMultiBlockMesher.h"
-#include "cmbFaceMesherInterface.h"
 #include "vtkMultiBlockDataSet.h"
-#include "cmbFaceMeshHelper.h"
-#include "vtkCMBMeshServerLauncher.h"
-#include "vtkCMBPrepareForTriangleMesher.h"
 #include "vtkCell.h"
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -24,13 +20,19 @@
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
+
+#include "smtk/bridge/discrete/extension/meshing/cmbFaceMesherInterface.h"
+#include "smtk/bridge/discrete/extension/meshing/cmbFaceMeshHelper.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBMeshServerLauncher.h"
+#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+
 #include <sstream>
 #include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkCMBTriangleMultiBlockMesher);
 
 
-using namespace CmbFaceMesherClasses;
+using namespace smtk::bridge::discrete::CmbFaceMesherClasses;
 
 //--------------------------------------------------------------------
 vtkCMBTriangleMultiBlockMesher::vtkCMBTriangleMultiBlockMesher()
@@ -95,7 +97,8 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
   std::map<vtkIdType, ModelFaceRep* > pid2Face; // Create a face for every polygon
 
   // Build the data structures required for meshing
-  vtkCMBPrepareForTriangleMesher* mapInterface = vtkCMBPrepareForTriangleMesher::New();
+  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(input);
   mapInterface->GetPolyId2ModelFaceRepMap(pid2Face);
   mapInterface->Delete();
@@ -107,7 +110,8 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
   output->SetNumberOfBlocks(pid2Face.size());
   unsigned blocknum = 0;
   // Mesh each polygon individually then append all their polydata together
-  vtkNew<vtkCMBMeshServerLauncher> meshServer;
+  typedef smtk::bridge::discrete::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
+  vtkNew<vtkMeshServerLauncher> meshServer;
   std::map<vtkIdType, ModelFaceRep* >::iterator faceIter = pid2Face.begin();
   for(; faceIter != pid2Face.end(); faceIter++)
     {
@@ -151,10 +155,10 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
         break;
       }
 
-    cmbFaceMesherInterface ti(face->numberOfVertices(),
-                              face->numberOfEdges(),
-                              face->numberOfHoles(),
-                              this->PreserveEdges);
+    smtk::bridge::discrete::cmbFaceMesherInterface ti(face->numberOfVertices(),
+                                                      face->numberOfEdges(),
+                                                      face->numberOfHoles(),
+                                                      this->PreserveEdges);
     ti.setUseMaxArea(this->MaxAreaMode != NoMaxArea);
     ti.setMaxArea(this->ComputedMaxArea);
     ti.setUseMinAngle(this->UseMinAngle);
