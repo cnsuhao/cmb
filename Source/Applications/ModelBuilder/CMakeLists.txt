@@ -209,6 +209,7 @@ set(CMB_ALL_PLUGINS
     smtkCGMSessionPlugin
     smtkDiscreteSessionPlugin
     smtkExodusSessionPlugin
+    smtkPolygonSessionPlugin
     smtkRemoteSessionPlugin
     smtkRemusMeshOperatorPlugin
 )
