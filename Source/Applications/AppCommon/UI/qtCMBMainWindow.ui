@@ -163,6 +163,7 @@
     <addaction name="separator"/>
     <addaction name="action_Save_Data"/>
     <addaction name="action_Save_As"/>
+    <addaction name="action_Export"/>
     <addaction name="action_Close"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
@@ -397,6 +398,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_Export">
+   <property name="text">
+    <string>Export Scene...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Scene</string>
    </property>
   </action>
   <action name="actionScalarBarVisibility">
