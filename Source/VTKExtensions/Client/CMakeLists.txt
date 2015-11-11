@@ -130,9 +130,16 @@ add_paraview_plugin(CMB_Plugin "1.0"
     ${IFACE_SRCS4}
     ${IFACE_SRCS5}
     ${PANEL_SRC}
+  CS_KITS
+    vtkSMTKDiscreteMeshingExt
+    vtkSMTKDiscreteReaderExt
 )
 
-target_link_libraries(CMB_Plugin PRIVATE vtkCMBGraphics)
+target_link_libraries(CMB_Plugin
+  PRIVATE
+    vtkCMBGraphics
+    vtkSMTKDiscreteMeshingExtCS-6.3
+    vtkSMTKDiscreteReaderExtCS-6.3)
 
 #now that the target has been created we can do the header generation
 generate_export_header(CMB_Plugin BASE_NAME vtkCMBClient
