@@ -68,6 +68,7 @@
 #include "pqCMBModelManager.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
 #include "pqMultiBlockInspectorPanel.h"
+#include "pqSMTKModelInfo.h"
 
 #include "qtCMBProgressWidget.h"
 #include "qtCMBSceneObjectFilterDialog.h"
@@ -1004,15 +1005,15 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   // The result could be from multiple models.
   // For example, if Session(s) is clicked to change visibility or color,
   // all models under it should change
-  QMap<cmbSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
-  QMap<cmbSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
+  QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
+  QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
 
   if(resultEntities && resultEntities->numberOfValues() > 0 && !bGeometryChanged)
     {
     smtk::model::EntityRefArray::const_iterator it;
     for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
-      cmbSMTKModelInfo* minfo = NULL;
+      pqSMTKModelInfo* minfo = NULL;
       smtk::model::EntityRef curRef(mgr, it->entity());
       // take care of potential coloring related changes
       QColor color;
@@ -1059,7 +1060,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   this->modelPanel()->update();
 
   // update visibility
-  foreach(cmbSMTKModelInfo* minfo, visBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, visBlocks.keys())
     {
     if(minfo->Representation && visBlocks[minfo].count())
       foreach(bool isVisible, visBlocks[minfo].keys())
@@ -1069,7 +1070,7 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
     }
 
   // update color
-  foreach(cmbSMTKModelInfo* minfo, colorEntities.keys())
+  foreach(pqSMTKModelInfo* minfo, colorEntities.keys())
     {
     if(minfo->Representation && colorEntities[minfo].count())
       {
@@ -1190,7 +1191,7 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 {
   if(!repr)
     return;
-  cmbSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(repr);
+  pqSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(repr);
   if(!minfo)
     return;
 

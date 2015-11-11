@@ -42,41 +42,7 @@ class pqOutputPort;
 class pqPipelineSource;
 class pqRenderView;
 class pqServer;
-
-//The object to keep smtk model related info:
-// pqSource, pvModelInfo, smSelectionSource
-class cmbSMTKModelInfo
-  {
-  public:
-    cmbSMTKModelInfo(){
-      this->ShowMesh = false;
-    }
-    cmbSMTKModelInfo(const cmbSMTKModelInfo& other);
-    void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
-      pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
-    void updateBlockInfo(smtk::model::ManagerPtr mgr);
-    bool hasAnalysisMesh() const;
-
-    vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
-    vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
-    vtkSmartPointer<vtkSMProxy> EntityLUT;
-    vtkSmartPointer<vtkSMProxy> GroupLUT;
-    vtkSmartPointer<vtkSMProxy> VolumeLUT;
-    vtkSmartPointer<vtkSMProxy> AttributeLUT;
-    QString ColorMode;
-    bool ShowMesh;
-
-    vtkSmartPointer<vtkPVSMTKModelInformation> Info;
-    QPointer<pqPipelineSource> ModelSource;    
-    QPointer<pqPipelineSource> RepSource;
-    QPointer<pqDataRepresentation> Representation;
-    std::string FileName;
-    smtk::model::SessionPtr Session;
-    std::vector<std::string> ent_annotations;
-    std::vector<std::string> vol_annotations;
-    std::vector<std::string> grp_annotations;
-
-  };
+class pqSMTKModelInfo;
 
 class pqCMBModelManager : public QObject
 {
@@ -106,10 +72,10 @@ public:
     const QString& attDef, const QString& attItem);
   void syncDisplayColorTable(pqDataRepresentation* rep);
 
-  cmbSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
-  cmbSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
-  QList<cmbSMTKModelInfo*> selectedModels();
-  QList<cmbSMTKModelInfo*> allModels();
+  pqSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
+  pqSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
+  QList<pqSMTKModelInfo*> selectedModels();
+  QList<pqSMTKModelInfo*> allModels();
 
   int numberOfModels();
 
@@ -122,7 +88,7 @@ public:
     const smtk::model::StringData& bridgeTypes);
   pqServer* server();
   void updateModelRepresentation(const smtk::model::EntityRef& model);
-  void updateModelRepresentation(cmbSMTKModelInfo* minfo);
+  void updateModelRepresentation(pqSMTKModelInfo* minfo);
 
 signals:
   void currentModelCleared();
@@ -131,7 +97,7 @@ signals:
   void operationFinished(const smtk::model::OperatorResult&,
     const smtk::model::SessionRef& sref, bool hasNewModels, bool bGeometryChanged);
   void requestMeshSelectionUpdate(
-    const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*);
+    const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
 
 public slots:
   void clear();

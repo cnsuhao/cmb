@@ -29,7 +29,7 @@ class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqEditColorMapReaction;
-class cmbSMTKModelInfo;
+class pqSMTKModelInfo;
 
 /// @ingroup Behaviors
 ///
@@ -112,14 +112,14 @@ protected:
   virtual bool eventFilter(QObject* caller, QEvent* e);
 
   /// return the name of the block from its flat index
-  QString lookupBlockName(unsigned int flatIndex, cmbSMTKModelInfo* minfo) const;
+  QString lookupBlockName(unsigned int flatIndex, pqSMTKModelInfo* minfo) const;
 
   QMenu* m_contextMenu;
   QPoint m_clickPosition;
   QPointer<pqSMTKModelPanel> m_modelPanel;
   pqMultiBlockInspectorPanel* m_dataInspector;
   QPointer<pqEditColorMapReaction> m_colormapReaction;
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
+  QMap<pqSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

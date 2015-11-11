@@ -25,6 +25,9 @@
 #include "pqSMAdaptor.h"
 #include "pqUndoStack.h"
 #include "pqRepresentationHelperFunctions.h"
+#include "pqCMBModelManager.h"
+#include "pqSMTKModelPanel.h"
+#include "pqSMTKModelInfo.h"
 
 #include "vtkDataObject.h"
 #include "vtkNew.h"
@@ -54,8 +57,6 @@
 #include <QMouseEvent>
 #include <QPair>
 #include <QWidget>
-#include "pqCMBModelManager.h"
-#include "pqSMTKModelPanel.h"
 
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItemDefinition.h"
@@ -142,14 +143,14 @@ static bool _internal_getValidEntityColor(QColor& color,
 // return total number of blocks selected
 //-----------------------------------------------------------------------------
 static int _internal_getSelectedRepBlocks(
-  const QList<cmbSMTKModelInfo*> &selModels,
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> >& result,
+  const QList<pqSMTKModelInfo*> &selModels,
+  QMap<pqSMTKModelInfo*, QList<unsigned int> >& result,
   bool& hasAnalysisMesh, bool& analysisMeshShown)
   {
   int totalBlocks = 0;
   hasAnalysisMesh = false;
   analysisMeshShown = false;
-  foreach(cmbSMTKModelInfo* modinfo, selModels)
+  foreach(pqSMTKModelInfo* modinfo, selModels)
     {
     pqPipelineSource *source = modinfo->RepSource;
     vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
@@ -214,7 +215,7 @@ static const std::string s_internal_groupOpName("entity group");
 
 static bool _internal_startGroupOp(
  pqCMBModelManager* modMgr,
- cmbSMTKModelInfo* minfo,
+ pqSMTKModelInfo* minfo,
  const std::string& optype,
  const QList<unsigned int>& addblocks,
  const smtk::model::Group& modifyGroup)
@@ -457,7 +458,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
   if (!datapanel || !activeRep)
     return;
-  cmbSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
+  pqSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
     return;
   if(minfo->ColorMode == colorMode)
@@ -565,7 +566,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
   if (!datapanel || !activeRep)
     return;
-  cmbSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
+  pqSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
   if(!minfo)
     return;
 
@@ -691,7 +692,7 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           {
           // If we already have selection in representation(s) in the render view,
           // do not do picking, just use the existing selection to build the context menu.
-          QList<cmbSMTKModelInfo*> selModels = this->m_modelPanel->modelManager()->selectedModels();
+          QList<pqSMTKModelInfo*> selModels = this->m_modelPanel->modelManager()->selectedModels();
           if(selModels.count() == 0) // pick a block from click
             {
             int pos[2] = { newPos.x(), newPos.y() } ;
@@ -741,7 +742,7 @@ void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
   this->m_contextMenu->clear();
   if (selNumBlocks > 0 && this->m_selModelBlocks.count() > 0)
     {
-    QMap<cmbSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
+    QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
       this->m_selModelBlocks.begin();
 
     bool multipleBlocks = selNumBlocks > 1;
@@ -871,7 +872,7 @@ void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
     return;
     }
   bool analysisMeshShown = action->isChecked();
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     if(minfo && minfo->hasAnalysisMesh() && minfo->ShowMesh == analysisMeshShown)
       {
@@ -885,7 +886,7 @@ void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
 //-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::reprTypeChanged(QAction* action)
 {
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     pqDataRepresentation* repr = minfo->Representation;
     if (repr)
@@ -913,7 +914,7 @@ void pqModelBuilderViewContextMenuBehavior::hideBlock()
     {
     return;
     }
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     if (minfo->Representation)
       {
@@ -931,7 +932,7 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
     {
     return;
     }
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     if (minfo->Representation)
       {
@@ -949,7 +950,7 @@ void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
     {
     return;
     }
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     if (minfo->Representation)
       {
@@ -998,7 +999,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
     QColorDialog::DontUseNativeDialog);
   if(color.isValid())
     {
-    foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+    foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
       {
       if (minfo->Representation)
         {
@@ -1018,7 +1019,7 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
     return;
     }
   QColor invalidColor;
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     if (minfo->Representation)
       {
@@ -1032,7 +1033,7 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
 void pqModelBuilderViewContextMenuBehavior::createGroup()
 {
   pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
-  foreach(cmbSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
+  foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     _internal_startGroupOp(modMgr, minfo, "Create",
       this->m_selModelBlocks[minfo], smtk::model::Group());
@@ -1049,11 +1050,11 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
     return;  
     }
 
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
+  QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
     this->m_selModelBlocks.begin();
   smtk::common::UUID entId(action->data().toString().toStdString());
   pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
-  cmbSMTKModelInfo* minfo = rbit.key();
+  pqSMTKModelInfo* minfo = rbit.key();
   _internal_startGroupOp(modMgr, minfo, "Modify",
     this->m_selModelBlocks[minfo],
     smtk::model::Group(modMgr->managerProxy()->modelManager(), entId));
@@ -1061,7 +1062,7 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
 
 //-----------------------------------------------------------------------------
 QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
-  unsigned int blockIdx, cmbSMTKModelInfo* minfo) const
+  unsigned int blockIdx, pqSMTKModelInfo* minfo) const
 {
   // if there is an entity name in smtk, use that
   if(blockIdx > 0 && minfo)

@@ -34,7 +34,7 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
-#include "vtksys/SystemTools.hxx"
+#include "pqSMTKModelInfo.h"
 
 #include "smtk/common/UUID.h"
 #include "smtk/io/AttributeWriter.h"
@@ -59,6 +59,7 @@
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 
+#include "vtksys/SystemTools.hxx"
 #include "cJSON.h"
 
 #include <map>
@@ -92,161 +93,14 @@ bool _internal_ContainsGroup(
   }
 }
 
-/// Get whether the model has an analysis mesh.
-/// For different modelers, meshing could have happened on the submodels
-/// of the model, and the parent model was set with the property, but
-/// not the submodel itself, so we need to check the parent model (if exists)
-/// for analysis mesh property.
-bool cmbSMTKModelInfo::hasAnalysisMesh() const
-{
-  smtk::common::UUID uid = this->Info->GetModelUUID();
-  if(this->Session->manager()->hasIntegerProperty(uid, SMTK_MESH_GEN_PROP))
-    {
-    const smtk::model::IntegerList& gen(
-      this->Session->manager()->integerProperty(uid, SMTK_MESH_GEN_PROP));
-    if(!gen.empty())
-      {
-      return true;
-      }
-    }
-  // look up the property in parent model(s)
-  smtk::model::Model subModel(this->Session->manager(), uid);
-  while(subModel.parent().isModel())
-    {
-    if(this->Session->manager()->hasIntegerProperty(subModel.parent().entity(), SMTK_MESH_GEN_PROP))
-      {
-      const smtk::model::IntegerList& gen(
-        this->Session->manager()->integerProperty(subModel.parent().entity(), SMTK_MESH_GEN_PROP));
-      if(!gen.empty())
-        {
-        return true;
-        }
-      }
-    subModel = subModel.parent();
-    }
-
-  return false;
-}
-
-//----------------------------------------------------------------------------
-void cmbSMTKModelInfo::init(
-  pqPipelineSource* modelsource, pqPipelineSource* repsource, pqDataRepresentation* rep,
-  const std::string& filename, smtk::model::ManagerPtr mgr)
-{
-  this->ModelSource = modelsource;
-  this->RepSource = repsource;
-  this->FileName = filename;
-  this->Representation = rep;
-  this->Info = vtkSmartPointer<vtkPVSMTKModelInformation>::New();
-
-  // create block selection source proxy
-  vtkSMSessionProxyManager *proxyManager =
-    vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
-
-  this->BlockSelectionSource.TakeReference(
-    proxyManager->NewProxy("sources", "BlockSelectionSource"));
-  // [composite_index, process_id, cell_id]
-  this->CompositeDataIdSelectionSource.TakeReference(
-    proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
-
-
-  this->EntityLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
-  vtkSMPropertyHelper(this->EntityLUT, "IndexedLookup", true).Set(1);
-  this->GroupLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
-  vtkSMPropertyHelper(this->GroupLUT, "IndexedLookup", true).Set(1);
-  this->VolumeLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
-  vtkSMPropertyHelper(this->VolumeLUT, "IndexedLookup", true).Set(1);
-  this->AttributeLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
-  vtkSMPropertyHelper(this->AttributeLUT, "IndexedLookup", true).Set(1);
-
-  this->ColorMode = "None";
-  this->updateBlockInfo(mgr);
-  smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
-  if (modelEntity.isValid())
-    this->Session = modelEntity.session().session();
-/*
-  vtkSMProxy* scalarBarProxy =
-    proxyManager->NewProxy("representations", "ScalarBarWidgetRepresentation");
-  scalarBarProxy->SetPrototype(true);
-  vtkSMPropertyHelper(scalarBarProxy,"LookupTable").Set(
-    this->EntityLUT.GetPointer());
-  scalarBarProxy->UpdateVTKObjects();
-  QString actual_regname = "my_entity_color_legend";
-  actual_regname.append(scalarBarProxy->GetXMLName());
-
-  proxyManager->RegisterProxy("scalar_bars",
-    actual_regname.toAscii().data(), scalarBarProxy);
-
-*/
-}
-
-void cmbSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
-{
-  this->ModelSource->getProxy()->GatherInformation(this->Info);
-
-  std::vector<int> invis_ids;
-
-  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
-    this->Info->GetUUID2BlockIdMap().begin();
-
-  for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
-    {
-    smtk::model::EntityRef ent(mgr, it->first);
-    int visible = 1;
-    if (ent.hasIntegerProperties())
-      {
-      const smtk::model::IntegerData& iprops(ent.integerProperties());
-      smtk::model::IntegerData::const_iterator pit;
-      if (
-        (pit = iprops.find("visible")) != iprops.end() &&
-        pit->second.size() > 0 &&
-        pit->second[0] == 0)
-        visible = 0;
-      }
-    invis_ids.push_back(it->second + 1); // block id
-    invis_ids.push_back(visible); // visibility
-
-    mgr->setIntegerProperty(it->first, "block_index", it->second);
-    }
-
-  if(invis_ids.size() > 1)
-    {
-
-    // update vtk property
-    vtkSMProxy *proxy = this->Representation->getProxy();
-    vtkSMPropertyHelper prop(proxy, "BlockVisibility");
-    prop.SetNumberOfElements(0);
-    proxy->UpdateVTKObjects();
-    prop.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
-    proxy->UpdateVTKObjects();
-    }
-}
-
-/// Copy constructor.
-cmbSMTKModelInfo::cmbSMTKModelInfo(const cmbSMTKModelInfo& other)
-{
-  this->ModelSource = other.ModelSource;
-  this->RepSource = other.RepSource;
-  this->FileName = other.FileName;
-  this->Representation = other.Representation;
-  this->Info = other.Info;
-  this->BlockSelectionSource = other.BlockSelectionSource;
-  this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
-  this->ShowMesh = other.ShowMesh;
-}
-
 //-----------------------------------------------------------------------------
 class pqCMBModelManager::qInternal
 {
 public:
 
   // <ModelEnity, modelInfo>
-  std::map<smtk::common::UUID, cmbSMTKModelInfo> ModelInfos;
-  typedef std::map<smtk::common::UUID, cmbSMTKModelInfo >::iterator itModelInfo;
+  std::map<smtk::common::UUID, pqSMTKModelInfo> ModelInfos;
+  typedef std::map<smtk::common::UUID, pqSMTKModelInfo >::iterator itModelInfo;
   std::map<smtk::common::UUID, smtk::common::UUID> Entity2Models;
 
   pqServer* Server;
@@ -256,7 +110,7 @@ public:
 
   void updateEntityGroupFieldArrayAndAnnotations(const smtk::model::EntityRef& model)
   {
-    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     modelInfo->grp_annotations.clear();
     smtk::model::Groups modGroups =
       model.as<smtk::model::Model>().groups();
@@ -285,7 +139,7 @@ public:
   {
     smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
 
-    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     vtkPVSMTKModelInformation* pvinfo = modelInfo->Info;
     modelInfo->ent_annotations.clear();
     modelInfo->vol_annotations.clear();
@@ -427,7 +281,7 @@ public:
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       return;
-    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     pqPipelineSource* modelSrc = modelInfo->ModelSource;
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set("");
      modelSrc->getProxy()->UpdateVTKObjects();
@@ -462,7 +316,7 @@ public:
   // will not return the modelInfo it requests, because the record is removed from
   // model manager. This method, intead, will go through all grp_annotations info
   // cached on client to find the the modelInfo associated with the group.
-  cmbSMTKModelInfo* modelInfoForRemovedGroup(const smtk::common::UUID& entid)
+  pqSMTKModelInfo* modelInfoForRemovedGroup(const smtk::common::UUID& entid)
   {
     for(itModelInfo mit = this->ModelInfos.begin(); mit != this->ModelInfos.end(); ++mit)
       {
@@ -520,13 +374,13 @@ public:
 
   void resetColorTable(const smtk::model::EntityRef& model)
   {
-    cmbSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     this->resetColorTable(modelInfo, modelInfo->EntityLUT, modelInfo->ent_annotations);
     this->resetColorTable(modelInfo, modelInfo->VolumeLUT, modelInfo->vol_annotations);
     this->resetColorTable(modelInfo, modelInfo->GroupLUT, modelInfo->grp_annotations);
    }
 
-  void resetColorTable(cmbSMTKModelInfo* modelInfo,
+  void resetColorTable(pqSMTKModelInfo* modelInfo,
                        vtkSMProxy* lutProxy,
                        const std::vector<std::string> & in_annotations)
   {
@@ -597,9 +451,9 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 
 // This will recursively check the submodels of the input model
 //-----------------------------------------------------------------------------
-cmbSMTKModelInfo* internal_getModelInfo(
+pqSMTKModelInfo* internal_getModelInfo(
   const smtk::model::Model& inModel,
-  std::map<smtk::common::UUID, cmbSMTKModelInfo>& modelInfos)
+  std::map<smtk::common::UUID, pqSMTKModelInfo>& modelInfos)
 {
   smtk::common::UUID modelId = inModel.entity();
   if(!modelId.isNull() && modelInfos.find(modelId) != modelInfos.end())
@@ -607,7 +461,7 @@ cmbSMTKModelInfo* internal_getModelInfo(
     return &modelInfos[modelId];
     }
 
-  cmbSMTKModelInfo* res = NULL;
+  pqSMTKModelInfo* res = NULL;
   smtk::model::Models msubmodels = inModel.submodels();
   smtk::model::Models::iterator it;
   for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
@@ -622,7 +476,7 @@ cmbSMTKModelInfo* internal_getModelInfo(
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
+pqSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
   smtk::common::UUID modelId;
   if(selentity.isModel())
@@ -674,7 +528,7 @@ cmbSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& sel
 }
 
 //----------------------------------------------------------------------------
-cmbSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
+pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 {
   if(!rep)
     return NULL;
@@ -692,9 +546,9 @@ cmbSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 }
 
 //----------------------------------------------------------------------------
-QList<cmbSMTKModelInfo*>  pqCMBModelManager::selectedModels()
+QList<pqSMTKModelInfo*>  pqCMBModelManager::selectedModels()
 {
-  QList<cmbSMTKModelInfo*> selModels;
+  QList<pqSMTKModelInfo*> selModels;
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
       mit != this->Internal->ModelInfos.end(); ++mit)
     {
@@ -714,9 +568,9 @@ QList<cmbSMTKModelInfo*>  pqCMBModelManager::selectedModels()
 }
 
 //----------------------------------------------------------------------------
-QList<cmbSMTKModelInfo*>  pqCMBModelManager::allModels()
+QList<pqSMTKModelInfo*>  pqCMBModelManager::allModels()
 {
-  QList<cmbSMTKModelInfo*> selModels;
+  QList<pqSMTKModelInfo*> selModels;
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
       mit != this->Internal->ModelInfos.end(); ++mit)
     {
@@ -822,7 +676,7 @@ void pqCMBModelManager::updateEntityColorTable(
 {
   if(colorEntities.count() == 0)
     return;
-  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  pqSMTKModelInfo* modInfo = this->modelInfo(rep);
   if(!modInfo)
     return;
   vtkSMProxy* lutProxy = NULL;
@@ -891,7 +745,7 @@ void pqCMBModelManager::updateEntityColorTable(
 void pqCMBModelManager::syncDisplayColorTable(
   pqDataRepresentation* rep)
 {
-  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  pqSMTKModelInfo* modInfo = this->modelInfo(rep);
   if(!modInfo)
     return;
 /*
@@ -909,7 +763,7 @@ void pqCMBModelManager::colorRepresentationByEntity(
   pqDataRepresentation* rep, const QString& entityMode)
 {
  // set rep colorByArray("...")
-  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  pqSMTKModelInfo* modInfo = this->modelInfo(rep);
   if(!modInfo || modInfo->ColorMode == entityMode)
     return;
 
@@ -942,7 +796,7 @@ void pqCMBModelManager::updateAttributeColorTable(
 {
   if(colorAtts.count() == 0)
     return;
-  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  pqSMTKModelInfo* modInfo = this->modelInfo(rep);
   if(!modInfo)
     return;
 
@@ -992,7 +846,7 @@ void pqCMBModelManager::colorRepresentationByAttribute(
     const QString& attDefType, const QString& attItemName)
 {
  // set rep colorByArray("...")
-  cmbSMTKModelInfo* modInfo = this->modelInfo(rep);
+  pqSMTKModelInfo* modInfo = this->modelInfo(rep);
   if(!modInfo)
     return;
 
@@ -1150,7 +1004,7 @@ void pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& 
   this->Internal->updateModelRepresentation(model);
 }
 //----------------------------------------------------------------------------
-void pqCMBModelManager::updateModelRepresentation(cmbSMTKModelInfo* modinfo)
+void pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
 {
   if(!modinfo)
     return;
@@ -1315,7 +1169,7 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs geometryChangedModels;
   smtk::common::UUIDs groupChangedModels;
   smtk::common::UUIDs generalModifiedModels;
-  cmbSMTKModelInfo* minfo = NULL;
+  pqSMTKModelInfo* minfo = NULL;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
   smtk::model::EntityRefArray::const_iterator it;
@@ -1455,7 +1309,7 @@ bool pqCMBModelManager::handleOperationResult(
         // update group LUT
         {
         this->Internal->updateEntityGroupFieldArrayAndAnnotations(*it);
-        cmbSMTKModelInfo* modelInfo = this->modelInfo(*it);
+        pqSMTKModelInfo* modelInfo = this->modelInfo(*it);
         this->Internal->resetColorTable(modelInfo, modelInfo->GroupLUT, modelInfo->grp_annotations);
         }
       // for grow "selection" operations, the model is writen to "modified" result

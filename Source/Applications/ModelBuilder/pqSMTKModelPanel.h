@@ -21,7 +21,7 @@ class pqDataRepresentation;
 class pqOutputPort;
 class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
-class cmbSMTKModelInfo;
+class pqSMTKModelInfo;
 
 namespace smtk {
   namespace attribute {
@@ -82,7 +82,7 @@ protected slots:
     smtk::attribute::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
   void updateMeshSelection(
-    const smtk::attribute::MeshSelectionItemPtr&, cmbSMTKModelInfo*);
+    const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
 //  void propertyChanged(
 //    vtkObject* caller, unsigned long, void*);
 //  void linkRepresentation(pqDataRepresentation *representation);

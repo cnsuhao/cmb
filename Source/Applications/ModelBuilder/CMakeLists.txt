@@ -176,10 +176,6 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h
   pqCMBImportShapefile.cxx
-  pqSMTKMeshPanel.h
-  pqSMTKMeshPanel.cxx
-  pqSMTKModelPanel.h
-  pqSMTKModelPanel.cxx
   pqCMBModelManager.h
   pqCMBModelManager.cxx
   pqCheckableComboPopupEventPlayer.h
@@ -192,6 +188,12 @@ set(ModelBuilder_SOURCE_FILES
   pqModelTreeViewEventTranslator.cxx
   pqModelTreeViewEventPlayer.h
   pqModelTreeViewEventPlayer.cxx
+  pqSMTKMeshPanel.h
+  pqSMTKMeshPanel.cxx
+  pqSMTKModelInfo.h
+  pqSMTKModelInfo.cxx
+  pqSMTKModelPanel.h
+  pqSMTKModelPanel.cxx
   qtRemusMesherSelector.cxx
   qtRemusMesherSelector.h
 
