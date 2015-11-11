@@ -16,6 +16,7 @@ SET(CmbBridgelServerFiles
   vtkPVSMTKModelSource.cxx
   vtkPythonExporter.cxx
   vtkSMTKModelFieldArrayFilter.cxx
+  vtkPVSMTKMeshSource.cxx
 )
 
 SET_SOURCE_FILES_PROPERTIES(
