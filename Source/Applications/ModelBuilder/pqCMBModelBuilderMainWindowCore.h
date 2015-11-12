@@ -151,9 +151,10 @@ public slots:
     pqPipelineSource* source);
 
   void loadJSONFile(const QString& filename);
-  bool processModelInfo(const smtk::model::OperatorResult& result,
+  bool processOperatorResult(const smtk::model::OperatorResult& result,
                         const smtk::model::SessionRef& sref,
-                        bool hasNewModels, bool bGeometryChanged);
+                        bool hasNewModels, bool bGeometryChanged,
+                        bool hasNewMeshes);
   void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
 
   // Called to show the settings dialog.
@@ -171,6 +172,10 @@ public slots:
 protected:
   virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
   virtual void setSimBuilderModelManager();
+  virtual void processModifiedMeshes(
+    const smtk::attribute::MeshItemPtr& modifiedMeshes);
+  virtual void processModifiedEntities(
+  const smtk::attribute::ModelEntityItemPtr& resultEntities);
 
 private:
   // Description:

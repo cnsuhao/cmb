@@ -50,6 +50,7 @@
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/DoubleItem.h"
 #include "smtk/attribute/IntItem.h"
+#include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
@@ -1200,13 +1201,14 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     return false;
     }
 
-  bool hasNewModels = false;
-  bool bGeometryChanged = false;
-  bool sucess = this->handleOperationResult(result, sessId, hasNewModels, bGeometryChanged);
+  bool hasNewModels = false, bGeometryChanged = false, hasNewMeshes = false;
+  bool sucess = this->handleOperationResult(result, sessId,
+    hasNewModels, bGeometryChanged, hasNewMeshes);
   if(sucess)
     {
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
-    emit this->operationFinished(result, sref, hasNewModels, bGeometryChanged);
+    emit this->operationFinished(result, sref,
+      hasNewModels, bGeometryChanged, hasNewMeshes);
     }
 
   return sucess;
@@ -1235,7 +1237,8 @@ bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& sessionId,
-  bool &hasNewModels, bool& bGeometryChanged)
+  bool &hasNewModels, bool& bGeometryChanged,
+  bool &hasNewMeshes)
 {
 /*
   cJSON* json = cJSON_CreateObject();
@@ -1257,6 +1260,8 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs newMeshesModels;
   smtk::common::UUIDs groupChangedModels;
   smtk::common::UUIDs generalModifiedModels;
+  smtk::common::UUIDs meshModifiedModels;
+
   pqSMTKModelInfo* minfo = NULL;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
     result->findModelEntity("expunged");
@@ -1293,6 +1298,7 @@ bool pqCMBModelManager::handleOperationResult(
       internal_updateEntityList(eref, newMeshesModels);
       }
     }
+  hasNewMeshes = newMeshesModels.size() > 0;
 
   smtk::attribute::ModelEntityItem::Ptr tessChangedEntities =
     result->findModelEntity("tess_changed");
@@ -1305,7 +1311,7 @@ bool pqCMBModelManager::handleOperationResult(
     }
 
   // process "modified" in result to figure out if models are changed
-  // or there are new cell entities
+  // or there are new cell entities or new groups
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
     result->findModelEntity("modified");
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)

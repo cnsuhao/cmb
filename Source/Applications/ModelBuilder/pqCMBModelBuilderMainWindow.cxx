@@ -775,7 +775,8 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
     SIGNAL(meshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
            const std::string&, const smtk::common::UUID&)),
     this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
-               const std::string&, const smtk::common::UUID&)));
+               const std::string&, const smtk::common::UUID&)),
+    Qt::UniqueConnection);
 
   // If there is no dock panel yet, this is the first time, so init
   // default panels

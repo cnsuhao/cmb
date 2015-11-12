@@ -19,6 +19,7 @@
 #include <QMap>
 #include "vtkType.h"
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/Mesh/MeshSet.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -57,6 +58,9 @@ public:
   virtual void updateColorForEntities(pqDataRepresentation* rep,
     const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);
+  virtual void updateColorForMeshes(pqDataRepresentation* rep,
+    const QString& colorMode,
+    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities){}
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);

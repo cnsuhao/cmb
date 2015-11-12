@@ -69,6 +69,7 @@
 #include "pqModelBuilderViewContextMenuBehavior.h"
 #include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKModelInfo.h"
+#include "pqSMTKMeshInfo.h"
 
 #include "qtCMBProgressWidget.h"
 #include "qtCMBSceneObjectFilterDialog.h"
@@ -77,6 +78,7 @@
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/Definition.h"
+#include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/model/Face.h"
@@ -86,6 +88,8 @@
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/mesh/Manager.h"
+#include "smtk/mesh/Collection.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -106,6 +110,7 @@
 
 #include "vtkSMModelManagerProxy.h"
 #include "vtkPVSMTKModelInformation.h"
+#include "vtkPVSMTKMeshInformation.h"
 #include <algorithm>
 #include "assert.h"
 
@@ -793,7 +798,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
 /*
   if(fInfo.suffix().toLower() == "json")
     {
-    this->processModelInfo(filename, reader);
+    this->processOperatorResult(filename, reader);
     return;
     }
 
@@ -852,9 +857,9 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(const smtk::model::OperatorResult&,
-    const smtk::model::SessionRef&, bool, bool)),
-    this, SLOT(processModelInfo( const smtk::model::OperatorResult&,
-    const smtk::model::SessionRef&, bool, bool)));
+    const smtk::model::SessionRef&, bool, bool, bool)),
+    this, SLOT(processOperatorResult( const smtk::model::OperatorResult&,
+    const smtk::model::SessionRef&, bool, bool, bool)));
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
@@ -982,24 +987,12 @@ pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
   return this->Internal->smtkModelManager;
 }
 
+// we may need to update model representation for display properties
+// of the list of entities that were potentially modified.
 //----------------------------------------------------------------------------
-bool pqCMBModelBuilderMainWindowCore::processModelInfo(
-  const smtk::model::OperatorResult& result,
-  const smtk::model::SessionRef& sref, bool hasNewModels, bool bGeometryChanged)
+void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
+  const smtk::attribute::ModelEntityItemPtr& resultEntities)
 {
-  if (result->findInt("outcome")->value() !=
-    smtk::model::OPERATION_SUCCEEDED)
-    {
-    return false;
-    }
-
-  // we may need to update model representation for display properties
-  // of the list of entities that were potentially modified.
-  // FIXME, we need more info regarding what changed in the result entities,
-  // for example, is this a color change, visibility change, etc
-  smtk::attribute::ModelEntityItem::Ptr resultEntities =
-    result->findModelEntity("modified");
-
   smtk::model::ManagerPtr mgr = this->modelManager()->managerProxy()->modelManager();
 
   // The result could be from multiple models.
@@ -1008,56 +1001,50 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
   QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
   QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
 
-  if(resultEntities && resultEntities->numberOfValues() > 0 && !bGeometryChanged)
+  smtk::model::EntityRefArray::const_iterator it;
+  for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
     {
-    smtk::model::EntityRefArray::const_iterator it;
-    for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
+    pqSMTKModelInfo* minfo = NULL;
+    smtk::model::EntityRef curRef(mgr, it->entity());
+    // take care of potential coloring related changes
+    QColor color;
+    if(curRef.hasColor() && (curRef.isVolume() || curRef.isGroup() ||
+       curRef.hasIntegerProperty("block_index")) // a geometric entity
+       && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
       {
-      pqSMTKModelInfo* minfo = NULL;
-      smtk::model::EntityRef curRef(mgr, it->entity());
-      // take care of potential coloring related changes
-      QColor color;
-      if(curRef.hasColor() && (curRef.isVolume() || curRef.isGroup() ||
-         curRef.hasIntegerProperty("block_index")) // a geometric entity
-         && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
+      // this could also be removing colors already being set
+      smtk::model::FloatList rgba = curRef.color();
+      if ((rgba.size() == 3 || rgba.size() ==4) &&
+         (rgba[0]+rgba[1]+rgba[2]) != 0)
         {
-        // this could also be removing colors already being set
-        smtk::model::FloatList rgba = curRef.color();
-        if ((rgba.size() == 3 || rgba.size() ==4) &&
-           (rgba[0]+rgba[1]+rgba[2]) != 0)
-          {
-          color.setRgbF(rgba[0], rgba[1], rgba[2]);
-          }
-        if(color.isValid())
-          {
-          colorEntities[minfo].insert(curRef, color);
-          }
+        color.setRgbF(rgba[0], rgba[1], rgba[2]);
         }
-
-      // For potential visibility changes
-      bool visible = true;
-      unsigned int flatIndex;
-      if(curRef.hasIntegerProperty("block_index") &&
-         (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
+      if(color.isValid())
         {
-        const smtk::model::IntegerList& prop(curRef.integerProperty("block_index"));
-        if(!prop.empty())
+        colorEntities[minfo].insert(curRef, color);
+        }
+      }
+
+    // For potential visibility changes
+    bool visible = true;
+    unsigned int flatIndex;
+    if(curRef.hasIntegerProperty("block_index") &&
+       (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
+      {
+      const smtk::model::IntegerList& prop(curRef.integerProperty("block_index"));
+      if(!prop.empty())
+        {
+        flatIndex = prop[0];
+        if(curRef.hasVisibility())
           {
-          flatIndex = prop[0];
-          if(curRef.hasVisibility())
-            {
-            const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
-            if(!vprop.empty())
-              visible = (vprop[0] != 0);
-            visBlocks[minfo][visible] << flatIndex+1;
-            }
+          const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
+          if(!vprop.empty())
+            visible = (vprop[0] != 0);
+          visBlocks[minfo][visible] << flatIndex+1;
           }
         }
       }
     }
-
-  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
-  this->modelPanel()->update();
 
   // update visibility
   foreach(pqSMTKModelInfo* minfo, visBlocks.keys())
@@ -1080,6 +1067,134 @@ bool pqCMBModelBuilderMainWindowCore::processModelInfo(
         minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
       }
+    }
+}
+
+// we may need to update mesh representation for display properties
+// of the list of mehse that were potentially modified.
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
+  const smtk::attribute::MeshItemPtr& modifiedMeshes)
+{
+  smtk::model::ManagerPtr mgr = this->modelManager()->managerProxy()->modelManager();
+  smtk::mesh::ManagerPtr meshMgr = mgr->meshes();
+
+  // The result could be from multiple collections.
+  // For example, if Session(s) is clicked to change visibility or color,
+  // all meshes under it should change
+  QMap<pqSMTKMeshInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
+  QMap<pqSMTKMeshInfo*, QMap<smtk::mesh::MeshSet, QColor> >colorEntities;
+  QString lastColorMode;
+
+  smtk::attribute::MeshItem::const_mesh_it it;
+  for(it = modifiedMeshes->begin(); it != modifiedMeshes->end(); ++it)
+    {
+    smtk::mesh::CollectionPtr c = meshMgr->collection(it->collectionId());
+    if(!c->hasIntegerProperty(*it, "block_index"))
+      continue;
+
+    smtk::model::EntityRef curRef(mgr, c->associatedModel());
+    pqSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(curRef);
+    if(!minfo)
+      continue;
+    if(minfo->MeshInfos.find(it->collectionId()) == minfo->MeshInfos.end())
+      return;
+    lastColorMode = minfo->ColorMode;
+    pqSMTKMeshInfo* meshInfo = &(minfo->MeshInfos[it->collectionId()]);
+
+    // take care of potential coloring related changes
+    if(c->hasFloatProperty(*it, "color"))
+      {
+      QColor color;
+      // this could also be removing colors already being set
+      const smtk::model::FloatList& rgba(c->floatProperty(*it, "color"));
+      if ((rgba.size() == 3 || rgba.size() ==4) &&
+         (rgba[0]+rgba[1]+rgba[2]) != 0)
+        {
+        color.setRgbF(rgba[0], rgba[1], rgba[2]);
+        }
+      if(color.isValid())
+        {
+        colorEntities[ meshInfo ].insert(*it, color);
+        }
+      }
+
+    // For potential visibility changes
+    bool visible = true;
+    unsigned int flatIndex;
+    const smtk::model::IntegerList& prop(c->integerProperty(*it, "block_index"));
+    if(!prop.empty())
+      {
+      flatIndex = prop[0];
+      if(c->hasIntegerProperty(*it, "visible"))
+        {
+        const smtk::model::IntegerList& vprop(c->integerProperty(*it, "visible"));
+        if(!vprop.empty())
+          visible = (vprop[0] != 0);
+        visBlocks[meshInfo][visible] << flatIndex+1;
+        }
+      }
+    }
+
+  // update mesh representation visibility
+  foreach(pqSMTKMeshInfo* meshinfo, visBlocks.keys())
+    {
+    if(meshinfo->Representation && visBlocks[meshinfo].count())
+      foreach(bool isVisible, visBlocks[meshinfo].keys())
+        this->Internal->ViewContextBehavior->syncBlockVisibility(
+          meshinfo->Representation, visBlocks[meshinfo][isVisible], isVisible,
+          meshinfo->Info->GetMesh2BlockIdMap().size());
+    }
+
+  // update mesh representation color
+  foreach(pqSMTKMeshInfo* meshinfo, colorEntities.keys())
+    {
+    if(meshinfo->Representation && colorEntities[meshinfo].count())
+      {
+      this->Internal->ViewContextBehavior->updateColorForMeshes(
+        meshinfo->Representation, lastColorMode, colorEntities[meshinfo]);
+//      this->Internal->smtkModelManager->updateEntityColorTable(
+//        meshinfo->Representation, colorEntities[meshinfo], lastColorMode);
+      meshinfo->Representation->renderViewEventually();
+      }
+    }
+
+}
+
+//----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
+  const smtk::model::OperatorResult& result,
+  const smtk::model::SessionRef& sref,
+  bool hasNewModels, bool bGeometryChanged, bool hasNewMeshes)
+{
+  if (result->findInt("outcome")->value() !=
+    smtk::model::OPERATION_SUCCEEDED)
+    {
+    return false;
+    }
+
+  // update the icons and color swatches on model tree view.
+  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
+  this->modelPanel()->update();
+
+  // FIXME, we need more info regarding what changed in the result entities,
+  // for example, is this a color change, visibility change, etc
+  // modified model entities
+  smtk::attribute::ModelEntityItem::Ptr resultEntities =
+    result->findModelEntity("modified");
+  if(resultEntities && resultEntities->numberOfValues() > 0 &&
+    !bGeometryChanged && !hasNewMeshes)
+    {
+    this->processModifiedEntities(resultEntities);
+    }
+
+  // modified meshes
+  smtk::attribute::MeshItem::Ptr modifiedMeshes =
+    result->findMesh("mesh_modified");
+  if(modifiedMeshes && modifiedMeshes->numberOfValues() > 0 &&
+    !bGeometryChanged && !hasNewMeshes)
+    {
+    this->processModifiedMeshes(modifiedMeshes);
     }
 
   if(hasNewModels)
