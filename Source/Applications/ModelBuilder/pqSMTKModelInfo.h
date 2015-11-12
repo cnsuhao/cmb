@@ -21,6 +21,9 @@
 
 #include <QPointer>
 #include <vector>
+#include <map>
+#include "smtk/common/UUID.h"
+#include "pqSMTKMeshInfo.h"
 
 class vtkPVSMTKModelInformation;
 class vtkSMModelManagerProxy;
@@ -62,6 +65,9 @@ class pqSMTKModelInfo: public QObject
     std::vector<std::string> ent_annotations;
     std::vector<std::string> vol_annotations;
     std::vector<std::string> grp_annotations;
+
+    // Information for related meshes <collectionId, meshinfo>
+    std::map<smtk::common::UUID, pqSMTKMeshInfo> MeshInfos;
 };
 
 #endif

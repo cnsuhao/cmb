@@ -58,6 +58,8 @@
 #include "smtk/io/ExportJSON.h"
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
+#include "smtk/mesh/Manager.h"
+#include "smtk/mesh/Collection.h"
 
 #include "vtksys/SystemTools.hxx"
 #include "cJSON.h"
@@ -287,20 +289,12 @@ public:
      modelSrc->getProxy()->UpdateVTKObjects();
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
       modelInfo->Info->GetModelUUID().toString().c_str());
-    vtkSMPropertyHelper(modelSrc->getProxy(), "ShowAnalysisMesh").Set(
-      modelInfo->ShowMesh ? 1 : 0);
 
     modelSrc->getProxy()->InvokeCommand("MarkDirty");
     modelSrc->getProxy()->UpdateVTKObjects();
 
     modelSrc->updatePipeline();
     modelSrc->getProxy()->UpdatePropertyInformation();
-    if(modelInfo->ShowMesh)
-      {
-      vtkSMPropertyHelper(modelInfo->Representation->getProxy(),
-                        "Representation").Set("Surface With Edges");
-      modelInfo->Representation->getProxy()->UpdateVTKObjects();
-      }
     vtkSMRepresentationProxy::SafeDownCast(
         modelInfo->Representation->getProxy())->UpdatePipeline();
 
@@ -310,6 +304,99 @@ public:
     this->updateEntityGroupFieldArrayAndAnnotations(model);
     this->resetColorTable(model);
     modelInfo->Representation->renderViewEventually();
+  }
+
+  void createMeshRepresentation(const smtk::model::EntityRef& model,
+                                pqRenderView* view)
+  {
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+      return;
+
+    // find a mesh collection that's not in the mesh info already
+    smtk::mesh::ManagerPtr meshMgr = model.manager()->meshes();
+    std::vector<smtk::mesh::CollectionPtr> meshCollections =
+      meshMgr->associatedCollections(model);
+    if(meshCollections.size() == 0)
+      return;
+
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    smtk::common::UUID newcid;
+    if(modelInfo->MeshInfos.size() > 0)
+      {
+      std::vector<smtk::mesh::CollectionPtr>::const_iterator it;
+      for(it = meshCollections.begin(); it != meshCollections.end(); ++it)
+        {
+        if(modelInfo->MeshInfos.find((*it)->entity()) == modelInfo->MeshInfos.end())
+          {
+          newcid = (*it)->entity();
+          break;
+          }
+        }
+      }
+    else
+      {
+      newcid = meshCollections[0]->entity(); // take the first mesh collection
+      }
+    if(newcid.isNull())
+      return;
+
+    pqDataRepresentation* rep = NULL;
+    pqApplicationCore* core = pqApplicationCore::instance();
+    pqObjectBuilder* builder = core->getObjectBuilder();
+    pqPipelineSource* meshSrc = builder->createSource(
+        "ModelBridge", "SMTKMeshSource", this->Server);
+    if(meshSrc)
+      {
+      // ModelManagerWrapper Proxy
+      vtkSMModelManagerProxy* smProxy = this->ManagerProxy;
+      vtkSMProxyProperty* smwrapper =
+        vtkSMProxyProperty::SafeDownCast(
+        meshSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+      smwrapper->RemoveAllProxies();
+      smwrapper->AddProxy(smProxy);
+
+      vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
+        model.entity().toString().c_str());
+      vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
+        newcid.toString().c_str());
+
+      meshSrc->getProxy()->UpdateVTKObjects();
+      meshSrc->updatePipeline();
+
+      pqPipelineSource* repSrc = builder->createFilter(
+        "ModelBridge", "SMTKModelFieldArrayFilter", meshSrc);
+      smwrapper =
+        vtkSMProxyProperty::SafeDownCast(
+        repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+      smwrapper->RemoveAllProxies();
+      smwrapper->AddProxy(smProxy);
+
+      vtkSMPropertyHelper(repSrc->getProxy(),"AddGroupArray").Set(1);
+      repSrc->getProxy()->UpdateVTKObjects();
+      repSrc->updatePipeline();
+
+      rep = builder->createDataRepresentation(
+        repSrc->getOutputPort(0), view);
+      if(rep)
+        {
+        smtk::model::ManagerPtr mgr = smProxy->modelManager();
+        modelInfo->MeshInfos[newcid].init(meshSrc, repSrc, rep,
+          meshMgr->collection(newcid)->readLocation(), mgr);
+
+        vtkSMPropertyHelper(rep->getProxy(),
+                        "Representation").Set("Surface With Edges");
+
+        RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+          rep->getProxy(), NULL, vtkDataObject::FIELD);
+        rep->renderViewEventually();
+        }
+      }
+
+    if(rep == NULL)
+      {
+      qCritical() << "Failed to create a mesh pqRepresentation for the model: "
+        << model.entity().toString().c_str();
+      }
   }
 
   // If the group has already been removed from the model, the modelInfo(entityID)
@@ -1167,6 +1254,7 @@ bool pqCMBModelManager::handleOperationResult(
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 
   smtk::common::UUIDs geometryChangedModels;
+  smtk::common::UUIDs newMeshesModels;
   smtk::common::UUIDs groupChangedModels;
   smtk::common::UUIDs generalModifiedModels;
   pqSMTKModelInfo* minfo = NULL;
@@ -1202,7 +1290,7 @@ bool pqCMBModelManager::handleOperationResult(
         continue;
       minfo->ShowMesh = true;
       smtk::model::EntityRef eref(pxy->modelManager(), minfo->Info->GetModelUUID());
-      internal_updateEntityList(eref, geometryChangedModels);
+      internal_updateEntityList(eref, newMeshesModels);
       }
     }
 
@@ -1300,13 +1388,18 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "", sref);
         }
+      // Handle new meshes for a model
+      else if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
+        {
+        this->Internal->createMeshRepresentation(*it, view);
+        }
+      // update representation
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
-        // update representation
         {
         this->updateModelRepresentation(*it);
         }
+      // update group LUT
       else if(groupChangedModels.find(it->entity()) != groupChangedModels.end())
-        // update group LUT
         {
         this->Internal->updateEntityGroupFieldArrayAndAnnotations(*it);
         pqSMTKModelInfo* modelInfo = this->modelInfo(*it);
@@ -1319,6 +1412,7 @@ bool pqCMBModelManager::handleOperationResult(
         if((minfo = this->modelInfo(*it)))
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
+
       }
     }
 

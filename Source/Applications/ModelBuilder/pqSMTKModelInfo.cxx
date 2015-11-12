@@ -27,7 +27,6 @@
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
 
-#include "smtk/common/UUID.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
