@@ -9,6 +9,7 @@ include (ParaViewPlugins)
 SET(CmbBridgelFiles
   vtkSMModelManagerProxy.cxx
   vtkPVSMTKModelInformation.cxx
+  vtkPVSMTKMeshInformation.cxx
 )
 
 SET(CmbBridgelServerFiles

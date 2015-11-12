@@ -7,11 +7,11 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME pqSMTKModelInfo -
+// .NAME pqSMTKMeshInfo -
 // .SECTION Description
 
-#ifndef __pqSMTKModelInfo_h
-#define __pqSMTKModelInfo_h
+#ifndef __pqSMTKMeshInfo_h
+#define __pqSMTKMeshInfo_h
 
 #include <QObject>
 
@@ -22,46 +22,34 @@
 #include <QPointer>
 #include <vector>
 
-class vtkPVSMTKModelInformation;
+class vtkPVSMTKMeshInformation;
 class vtkSMModelManagerProxy;
 class vtkSMProxy;
 class pqDataRepresentation;
 class pqPipelineSource;
 
-//The object to keep smtk model related info:
-// pqSource, pvModelInfo, smSelectionSource
-class pqSMTKModelInfo: public QObject
+//The object to keep smtk mesh related info:
+// pqSource, pvMeshInfo, smSelectionSource
+class pqSMTKMeshInfo: public QObject
 {
   Q_OBJECT
 
   public:
-    pqSMTKModelInfo(){
-      this->ShowMesh = false;
+    pqSMTKMeshInfo(){
     }
-    pqSMTKModelInfo(const pqSMTKModelInfo& other);
-    void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
+    pqSMTKMeshInfo(const pqSMTKMeshInfo& other);
+    void init(pqPipelineSource* meshSource, pqPipelineSource* repSource,
       pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
-    bool hasAnalysisMesh() const;
 
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
     vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
-    vtkSmartPointer<vtkSMProxy> EntityLUT;
-    vtkSmartPointer<vtkSMProxy> GroupLUT;
-    vtkSmartPointer<vtkSMProxy> VolumeLUT;
-    vtkSmartPointer<vtkSMProxy> AttributeLUT;
-    QString ColorMode;
-    bool ShowMesh;
 
-    vtkSmartPointer<vtkPVSMTKModelInformation> Info;
-    QPointer<pqPipelineSource> ModelSource;    
+    vtkSmartPointer<vtkPVSMTKMeshInformation> Info;
+    QPointer<pqPipelineSource> MeshSource;    
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
-    smtk::model::SessionPtr Session;
-    std::vector<std::string> ent_annotations;
-    std::vector<std::string> vol_annotations;
-    std::vector<std::string> grp_annotations;
 };
 
 #endif

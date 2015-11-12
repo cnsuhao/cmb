@@ -188,6 +188,8 @@ set(ModelBuilder_SOURCE_FILES
   pqModelTreeViewEventTranslator.cxx
   pqModelTreeViewEventPlayer.h
   pqModelTreeViewEventPlayer.cxx
+  pqSMTKMeshInfo.h
+  pqSMTKMeshInfo.cxx
   pqSMTKMeshPanel.h
   pqSMTKMeshPanel.cxx
   pqSMTKModelInfo.h
