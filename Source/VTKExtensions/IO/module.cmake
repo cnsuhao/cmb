@@ -13,6 +13,7 @@ vtk_module(vtkCMBIO
     vtkRendering${VTK_RENDERING_BACKEND}
     vtkRenderingFreeType
     vtkPVVTKExtensionsDefault
+    vtkSMTKDiscreteMeshingExt
     vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )

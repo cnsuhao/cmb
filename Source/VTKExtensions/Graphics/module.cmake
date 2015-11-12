@@ -5,6 +5,7 @@ vtk_module(vtkCMBGraphics
   PRIVATE_DEPENDS
     vtkCMBMeshing
     vtkFiltersFlowPaths
+    vtkSMTKDiscreteMeshingExt
     vtksys
   EXCLUDE_FROM_WRAP_HIERARCHY
 )
