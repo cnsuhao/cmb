@@ -138,6 +138,8 @@ add_paraview_plugin(CMB_Plugin "1.0"
 target_link_libraries(CMB_Plugin
   PRIVATE
     vtkCMBGraphics
+    vtkSMTKDiscreteMeshingExt
+    vtkSMTKDiscreteReaderExt
     vtkSMTKDiscreteMeshingExtCS-6.3
     vtkSMTKDiscreteReaderExtCS-6.3)
 

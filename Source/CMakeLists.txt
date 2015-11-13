@@ -179,6 +179,8 @@ add_subdirectory(LIDAR)
 #configure meshing components before
 add_subdirectory(CMBMeshing)
 
+find_package(SMTK REQUIRED)
+
 #needs to be after CMBMeshing so that we can link to the MeshServer
 pv_process_modules()
 
