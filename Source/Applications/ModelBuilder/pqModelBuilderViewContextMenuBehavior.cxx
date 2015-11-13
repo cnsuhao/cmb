@@ -69,6 +69,9 @@
 #include "smtk/model/Session.h"
 #include "smtk/model/StringData.h"
 #include "smtk/model/Volume.h"
+#include "smtk/mesh/Manager.h"
+#include "smtk/mesh/Collection.h"
+
 #include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
 
 namespace
@@ -624,6 +627,50 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(
     if(blockIds.size() > 0)
       this->syncBlockColor(rep,
         QList<unsigned int>::fromSet(blockIds), colorEntities[entref]);
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(
+    pqDataRepresentation* rep,
+    const QString& colorMode,
+    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities)
+{
+  if(colorMode == "None")
+    return;
+
+  smtk::model::ManagerPtr modelMgr = this->m_modelPanel->modelManager()->
+    managerProxy()->modelManager();
+  smtk::mesh::ManagerPtr meshMgr = modelMgr->meshes();
+
+  foreach(const smtk::mesh::MeshSet& mesh, colorEntities.keys())
+    {
+    smtk::mesh::CollectionPtr c = meshMgr->collection(mesh.collectionId());
+    if(!c->hasIntegerProperty(mesh, "block_index"))
+      continue;
+    smtk::model::EntityRefArray meshEntRefs = mesh.modelEntities();
+    if(meshEntRefs.size() == 0)
+      continue;
+
+    smtk::model::EntityRef entref = meshEntRefs[0];
+    QSet<unsigned int> blockIds;
+    if((entref.isVolume() && colorMode ==
+      vtkModelMultiBlockSource::GetVolumeTagName()) ||
+      (entref.isGroup() && colorMode ==
+      vtkModelMultiBlockSource::GetGroupTagName()) ||
+      (colorMode ==
+      vtkModelMultiBlockSource::GetEntityTagName()))
+      {
+      const smtk::model::IntegerList& prop(c->integerProperty(mesh, "block_index"));
+      if(!prop.empty() && prop[0] >=0)
+        {
+        unsigned int bidx = prop[0]+1;
+        blockIds.insert(bidx);
+        }
+      }
+    if(blockIds.size() > 0)
+      this->syncBlockColor(rep,
+        QList<unsigned int>::fromSet(blockIds), colorEntities[mesh]);
     }
 }
 

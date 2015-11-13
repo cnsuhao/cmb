@@ -60,7 +60,7 @@ public:
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);
   virtual void updateColorForMeshes(pqDataRepresentation* rep,
     const QString& colorMode,
-    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities){}
+    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities);
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);
