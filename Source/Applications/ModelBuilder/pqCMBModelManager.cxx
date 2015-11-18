@@ -220,8 +220,7 @@ public:
             this->updateEntityGroupFieldArrayAndAnnotations(model);
             this->resetColorTable(model);
             RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-              rep->getProxy(), NULL, vtkDataObject::FIELD);
-      
+              rep->getProxy(), NULL, vtkDataObject::FIELD);      
             }
           }
         loadOK = (rep != NULL);
@@ -389,7 +388,8 @@ public:
 
         RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
           rep->getProxy(), NULL, vtkDataObject::FIELD);
-        rep->renderViewEventually();
+
+        rep->getProxy()->UpdateVTKObjects();
         }
       }
 
@@ -1291,11 +1291,7 @@ bool pqCMBModelManager::handleOperationResult(
     {
     for(it = modelWithMeshes->begin(); it != modelWithMeshes->end(); ++it)
       {
-      if(!(minfo = this->modelInfo(*it)))
-        continue;
-      minfo->ShowMesh = true;
-      smtk::model::EntityRef eref(pxy->modelManager(), minfo->Info->GetModelUUID());
-      internal_updateEntityList(eref, newMeshesModels);
+      internal_updateEntityList(*it, newMeshesModels);
       }
     }
   hasNewMeshes = newMeshesModels.size() > 0;
@@ -1394,11 +1390,6 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           *it, view, this->Internal->ManagerProxy, "", sref);
         }
-      // Handle new meshes for a model
-      else if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
-        {
-        this->Internal->createMeshRepresentation(*it, view);
-        }
       // update representation
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         {
@@ -1417,6 +1408,12 @@ bool pqCMBModelManager::handleOperationResult(
         {
         if((minfo = this->modelInfo(*it)))
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
+        }
+
+      // Handle new meshes for a model
+      if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
+        {
+        this->Internal->createMeshRepresentation(*it, view);
         }
 
       }
