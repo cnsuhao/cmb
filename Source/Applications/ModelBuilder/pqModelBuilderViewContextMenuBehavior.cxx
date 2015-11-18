@@ -639,13 +639,9 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(
   if(colorMode == "None")
     return;
 
-  smtk::model::ManagerPtr modelMgr = this->m_modelPanel->modelManager()->
-    managerProxy()->modelManager();
-  smtk::mesh::ManagerPtr meshMgr = modelMgr->meshes();
-
   foreach(const smtk::mesh::MeshSet& mesh, colorEntities.keys())
     {
-    smtk::mesh::CollectionPtr c = meshMgr->collection(mesh.collectionId());
+    smtk::mesh::CollectionPtr c = mesh.collection();
     if(!c->hasIntegerProperty(mesh, "block_index"))
       continue;
     smtk::model::EntityRefArray meshEntRefs = mesh.modelEntities();

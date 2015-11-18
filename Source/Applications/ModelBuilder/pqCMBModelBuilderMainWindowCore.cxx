@@ -1077,7 +1077,6 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   const smtk::attribute::MeshItemPtr& modifiedMeshes)
 {
   smtk::model::ManagerPtr mgr = this->modelManager()->managerProxy()->modelManager();
-  smtk::mesh::ManagerPtr meshMgr = mgr->meshes();
 
   // The result could be from multiple collections.
   // For example, if Session(s) is clicked to change visibility or color,
@@ -1089,7 +1088,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   smtk::attribute::MeshItem::const_mesh_it it;
   for(it = modifiedMeshes->begin(); it != modifiedMeshes->end(); ++it)
     {
-    smtk::mesh::CollectionPtr c = meshMgr->collection(it->collectionId());
+    smtk::mesh::CollectionPtr c = it->collection();
     if(!c->hasIntegerProperty(*it, "block_index"))
       continue;
 
@@ -1097,10 +1096,10 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
     pqSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(curRef);
     if(!minfo)
       continue;
-    if(minfo->MeshInfos.find(it->collectionId()) == minfo->MeshInfos.end())
+    if(minfo->MeshInfos.find(c->entity()) == minfo->MeshInfos.end())
       return;
     lastColorMode = minfo->ColorMode;
-    pqSMTKMeshInfo* meshInfo = &(minfo->MeshInfos[it->collectionId()]);
+    pqSMTKMeshInfo* meshInfo = &(minfo->MeshInfos[c->entity()]);
 
     // take care of potential coloring related changes
     if(c->hasFloatProperty(*it, "color"))
