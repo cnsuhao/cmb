@@ -153,7 +153,7 @@ public slots:
   void loadJSONFile(const QString& filename);
   bool processOperatorResult(const smtk::model::OperatorResult& result,
                         const smtk::model::SessionRef& sref,
-                        bool hasNewModels, bool bGeometryChanged,
+                        bool hasNewModels, bool bModelGeometryChanged,
                         bool hasNewMeshes);
   void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
 

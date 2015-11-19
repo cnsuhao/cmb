@@ -1201,14 +1201,14 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     return false;
     }
 
-  bool hasNewModels = false, bGeometryChanged = false, hasNewMeshes = false;
+  bool hasNewModels = false, bModelGeometryChanged = false, hasNewMeshes = false;
   bool sucess = this->handleOperationResult(result, sessId,
-    hasNewModels, bGeometryChanged, hasNewMeshes);
+    hasNewModels, bModelGeometryChanged, hasNewMeshes);
   if(sucess)
     {
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
     emit this->operationFinished(result, sref,
-      hasNewModels, bGeometryChanged, hasNewMeshes);
+      hasNewModels, bModelGeometryChanged, hasNewMeshes);
     }
 
   return sucess;
@@ -1237,7 +1237,7 @@ bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
 bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& sessionId,
-  bool &hasNewModels, bool& bGeometryChanged,
+  bool &hasNewModels, bool& bModelGeometryChanged,
   bool &hasNewMeshes)
 {
 /*
@@ -1353,7 +1353,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
       }
 
-  bGeometryChanged = geometryChangedModels.size() > 0;
+  bModelGeometryChanged = geometryChangedModels.size() > 0;
 
   // check if there is "selection", such as from "grow" operator.
   //

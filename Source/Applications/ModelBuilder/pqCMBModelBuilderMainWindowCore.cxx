@@ -1164,7 +1164,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
 bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   const smtk::model::OperatorResult& result,
   const smtk::model::SessionRef& sref,
-  bool hasNewModels, bool bGeometryChanged, bool hasNewMeshes)
+  bool hasNewModels, bool bModelGeometryChanged, bool hasNewMeshes)
 {
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
@@ -1182,7 +1182,7 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   smtk::attribute::ModelEntityItem::Ptr resultEntities =
     result->findModelEntity("modified");
   if(resultEntities && resultEntities->numberOfValues() > 0 &&
-    !bGeometryChanged && !hasNewMeshes)
+    !bModelGeometryChanged && !hasNewMeshes)
     {
     this->processModifiedEntities(resultEntities);
     }
@@ -1191,7 +1191,7 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   smtk::attribute::MeshItem::Ptr modifiedMeshes =
     result->findMesh("mesh_modified");
   if(modifiedMeshes && modifiedMeshes->numberOfValues() > 0 &&
-    !bGeometryChanged && !hasNewMeshes)
+    !hasNewMeshes)
     {
     this->processModifiedMeshes(modifiedMeshes);
     }
