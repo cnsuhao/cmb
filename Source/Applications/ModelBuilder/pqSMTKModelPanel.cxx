@@ -29,6 +29,8 @@
 #include "smtk/model/SimpleModelSubphrases.h"
 #include "smtk/model/EntityTypeBits.h" // for smtk::model::BitFlags
 #include "smtk/model/Operator.h"
+#include "smtk/mesh/Collection.h"
+#include "smtk/mesh/Manager.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QTreeView>
@@ -66,13 +68,14 @@
 #include "vtkUnsignedIntArray.h"
 #include "vtkSelection.h"
 #include "vtkSelectionNode.h"
+#include "vtkPVSMTKMeshInformation.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMModelManagerProxy.h"
-#include "SimBuilder/pqSMTKUIHelper.h"
 #include "vtkSMDoubleMapProperty.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMDoubleMapPropertyIterator.h"
 #include "vtksys/SystemTools.hxx"
+#include "SimBuilder/pqSMTKUIHelper.h"
 
 #include <iomanip>
 #include <iostream>
@@ -103,6 +106,52 @@ public:
 //    this->VTKConnect = vtkSmartPointer<vtkEventQtSlotConnect>::New();
     this->ModelLoaded = false;
     }
+
+  pqOutputPort* setSelectionInput(vtkSMProxy* selectionSource,
+                         const std::vector<vtkIdType>& ids,
+                         pqPipelineSource* source)
+  {
+    vtkSMPropertyHelper prop(selectionSource, "Blocks");
+    prop.SetNumberOfElements(0);
+    selectionSource->UpdateVTKObjects();
+    // set selected blocks
+    if (ids.size() > 0)
+      {
+      prop.Set(&ids[0], static_cast<unsigned int>(ids.size()));
+      selectionSource->UpdateVTKObjects();
+      }
+
+    pqOutputPort* outport = source->getOutputPort(0);
+    if(outport)
+      {
+      vtkSMSourceProxy *selectionSourceProxy =
+        vtkSMSourceProxy::SafeDownCast(selectionSource);
+      outport->setSelectionInput(selectionSourceProxy, 0);
+      }
+    return outport;
+  }
+
+  void updateSelectionView(pqOutputPort* outport)
+  {
+    // update the selection manager
+    pqSelectionManager *selectionManager =
+      qobject_cast<pqSelectionManager*>(
+        pqApplicationCore::instance()->manager("SelectionManager"));
+    // use last selected port as active
+    if(selectionManager && outport)
+      {
+      selectionManager->blockSignals(true);
+      selectionManager->select(outport);
+      selectionManager->blockSignals(false);
+      }
+    else
+      {
+      pqRenderView* renView = qobject_cast<pqRenderView*>(
+         pqActiveObjects::instance().activeView());
+      renView->render();
+      }
+  }
+
 };
 
 //-----------------------------------------------------------------------------
@@ -151,143 +200,25 @@ void pqSMTKModelPanel::clearUI()
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKModelPanel::setBlockVisibility(pqDataRepresentation* rep,
-    const QList<unsigned int>& blockids, bool visible)
+void pqSMTKModelPanel::setBlockVisibility(
+    const smtk::common::UUID& sessid,
+    const smtk::common::UUIDs& entids,
+    const smtk::mesh::MeshSets& meshes, bool visible)
 {
-  if(!rep)
-    return;
-  pqSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(rep);
-  if(!modInfo)
-    return;
-  smtk::model::SessionPtr br = modInfo->Session;
-  if(!br)
-    return;
-
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
   int vis = visible ? 1 : 0;
-  foreach(unsigned int idx, blockids)
-    {
-    smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
-    BlockVisibilites[br].insert(uid);
-    }
   this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
-    BlockVisibilites, vis);
+    sessid, entids, meshes, vis);
   this->Internal->ModelPanel->update();
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKModelPanel::showOnlyBlocks(pqDataRepresentation* rep,
-    const QList<unsigned int>& indices)
+void pqSMTKModelPanel::setBlockColor(
+    const smtk::common::UUID& sessid,
+    const smtk::common::UUIDs& entids,
+    const smtk::mesh::MeshSets& meshes, const QColor& color)
 {
-  if(!rep)
-    return;
-  pqSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(rep);
-  if(!modInfo)
-    return;
-  smtk::model::SessionPtr br = modInfo->Session;
-  if(!br)
-    return;
-
-  QList<unsigned int> tmpList(indices);
-//  if(!tmpList.count())
-//    rep->setVisible(false);
-
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
-  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
-    modInfo->Info->GetUUID2BlockIdMap().begin();
-  for(; it != modInfo->Info->GetUUID2BlockIdMap().end(); ++it)
-    {
-    if(tmpList.count() && tmpList.contains(it->second+1))
-      {
-      tmpList.removeAll(it->second+1);
-      continue;
-      }
-    BlockVisibilites[br].insert(it->first);
-    }
-  this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
-    BlockVisibilites, 0);
-  this->Internal->ModelPanel->update();
-}
-
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::showAllBlocks(pqDataRepresentation* rep)
-{
-  if(!rep)
-    return;
-  pqSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(rep);
-  if(!modInfo)
-    return;
-  smtk::model::SessionPtr br = modInfo->Session;
-  if(!br)
-    return;
-
-  rep->setVisible(true);
-  smtk::model::ManagerPtr modelMan =
-    this->Internal->smtkManager->managerProxy()->modelManager();
-
-  // we want to show the whole model
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockVisibilites;
-
-  smtk::model::Model modelEntity(modelMan,
-    modInfo->Info->GetModelUUID());
-
-  BlockVisibilites[br].insert(modelEntity.entity());
-
-  smtk::model::CellEntities cellents = modelEntity.cells();
-  for (smtk::model::CellEntities::const_iterator it = cellents.begin();
-    it != cellents.end(); ++it)
-    {
-    BlockVisibilites[br].insert((*it).entity());
-    }
-
-  smtk::model::Groups groups = modelEntity.groups();
-  for (smtk::model::Groups::iterator git = groups.begin();
-    git != groups.end(); ++git)
-    {
-    BlockVisibilites[br].insert((*git).entity());
-    }
- 
-  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
-    modInfo->Info->GetUUID2BlockIdMap().begin();
-  for(; it != modInfo->Info->GetUUID2BlockIdMap().end(); ++it)
-    {
-    BlockVisibilites[br].insert(it->first);
-    }
-
-  this->Internal->ModelPanel->getModelView()->syncEntityVisibility(
-    BlockVisibilites, 1);
-
-//  this->Internal->ModelPanel->getModelView()->syncModelVisibility(
-//    modInfo->Info->GetModelUUID(), 1);
-  this->Internal->ModelPanel->update();
-}
-
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::setBlockColor(pqDataRepresentation* rep,
-    const QList<unsigned int>& blockids, const QColor& color)
-{
-  if(!rep)
-    return;
-  pqSMTKModelInfo* modInfo =
-    this->Internal->smtkManager->modelInfo(rep);
-  if(!modInfo)
-    return;
-  smtk::model::SessionPtr br = modInfo->Session;
-  if(!br)
-    return;
-
-  QMap<smtk::model::SessionPtr, smtk::common::UUIDs> BlockColors;
-  foreach(unsigned int idx, blockids)
-    {
-    smtk::common::UUID uid = modInfo->Info->GetModelEntityId(idx-1);
-    BlockColors[br].insert(uid);
-    }
-
   this->Internal->ModelPanel->getModelView()->syncEntityColor(
-    BlockColors, color);
+    sessid, entids, meshes, color);
   this->Internal->ModelPanel->update();
 }
 
@@ -324,6 +255,9 @@ void pqSMTKModelPanel::resetUI()
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(entitiesSelected(const smtk::model::EntityRefs& )),
       this, SLOT(selectEntityRepresentations(const smtk::model::EntityRefs& )));
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(meshesSelected(const smtk::mesh::MeshSets& )),
+      this, SLOT(selectMeshRepresentations(const smtk::mesh::MeshSets& )));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
       this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
@@ -407,104 +341,78 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       }
     }
 
+  pqOutputPort* outport = NULL;
+  foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
+    {
+    outport = this->Internal->setSelectionInput(
+                                      modinfo->BlockSelectionSource,
+                                      selmodelblocks[modinfo],
+                                      modinfo->RepSource);
+    }
+
+  this->Internal->updateSelectionView(outport);
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKModelPanel::selectMeshRepresentations(
+  const smtk::mesh::MeshSets& selmeshes)
+{
+  //clear current selections
+  this->Internal->smtkManager->clearMeshSelections();
+
+  // create vector of selected block ids
+  QMap<pqSMTKMeshInfo*, std::vector<vtkIdType> > selmeshblocks;
+  for(smtk::mesh::MeshSets::const_iterator it = selmeshes.begin();
+      it != selmeshes.end(); ++it)
+    {
+    unsigned int flatIndex;
+    smtk::mesh::CollectionPtr c = it->collection();
+    if(c->hasIntegerProperty(*it, "block_index"))
+      {
+      pqSMTKMeshInfo* minfo = this->Internal->smtkManager->meshInfo(*it);
+      const IntegerList& prop(c->integerProperty(*it, "block_index"));
+      //the flatIndex is 1 more than blockId, because the root is index 0
+      if(minfo && minfo->Representation && !prop.empty())
+        {
+        flatIndex = prop[0];
+        selmeshblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));
+        }
+      }
+    }
+
   // update the selection manager
   pqSelectionManager *selectionManager =
     qobject_cast<pqSelectionManager*>(
       pqApplicationCore::instance()->manager("SelectionManager"));
   pqOutputPort* outport = NULL;
-  pqPipelineSource* source = NULL;
-  foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
+  foreach(pqSMTKMeshInfo* meshinfo, selmeshblocks.keys())
     {
-    vtkSMProxy* selectionSource = modinfo->BlockSelectionSource;
-    vtkSMPropertyHelper prop(selectionSource, "Blocks");
-    prop.SetNumberOfElements(0);
-    selectionSource->UpdateVTKObjects();
-    // set selected blocks
-    if (selmodelblocks[modinfo].size() > 0)
-      {
-      prop.Set(&selmodelblocks[modinfo][0], static_cast<unsigned int>(
-        selmodelblocks[modinfo].size()));
-      }
-    selectionSource->UpdateVTKObjects();
-
-    vtkSMSourceProxy *selectionSourceProxy =
-      vtkSMSourceProxy::SafeDownCast(selectionSource);
-    source = modinfo->RepSource;
-    outport = source->getOutputPort(0);
-    if(outport)
-      {
-      outport->setSelectionInput(selectionSourceProxy, 0);
-      }
-    }
-  // use last selected port as active
-  if(selectionManager && outport)
-    {
-    selectionManager->blockSignals(true);
-    selectionManager->select(outport);
-    selectionManager->blockSignals(false);
-//    pqActiveObjects::instance().setActivePort(outport);
-//    std::cout << "set active source: " << source << std::endl;
-    }
-  else
-    {
-    pqRenderView* renView = qobject_cast<pqRenderView*>(
-       pqActiveObjects::instance().activeView());
-    renView->render();
+    outport = this->Internal->setSelectionInput(
+                                      meshinfo->BlockSelectionSource,
+                                      selmeshblocks[meshinfo],
+                                      meshinfo->RepSource);
     }
 
+  this->Internal->updateSelectionView(outport);
 }
-
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::updateTreeSelection()
 {
-
+  smtk::mesh::MeshSets meshes;
   smtk::common::UUIDs uuids;
   QList<pqSMTKModelInfo*> selModels = this->Internal->smtkManager->selectedModels();
   foreach(pqSMTKModelInfo* modinfo, selModels)
     {
-    pqPipelineSource *source = modinfo->RepSource;
-    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
-    vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
-    selSource->UpdatePipeline();
-    vtkNew<vtkPVSelectionInformation> selInfo;
-    selSource->GatherInformation(selInfo.GetPointer());
-    if(selInfo->GetSelection() &&
-      selInfo->GetSelection()->GetNumberOfNodes())
-      {
-//      std::string entId;
-      unsigned int flat_idx;
-      vtkUnsignedIntArray* blockIds = vtkUnsignedIntArray::SafeDownCast(
-        selInfo->GetSelection()->GetNode(0)->GetSelectionList());
-      if(blockIds)
-        {
-        for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
-          {
-          flat_idx = blockIds->GetValue(ui);
-          // blockId is child index, which is one less of flat_index
-          flat_idx--;
-
-          uuids.insert(modinfo->Info->GetModelEntityId(flat_idx));
-          }
-        }
-      // this may be the a ID selection
-      else
-        {
-        vtkSMPropertyHelper selIDs(selSource, "IDs");
-        unsigned int count = selIDs.GetNumberOfElements();
-        // [composite_index, process_id, index]
-        for (unsigned int cc=0; cc < (count/3); cc++)
-          {
-          flat_idx = selIDs.GetAsInt(3*cc);
-          // blockId is child index, which is one less of flat_index
-          flat_idx--;
-          //entId = modinfo->Info->GetModelEntityId(flat_idx);
-          uuids.insert(modinfo->Info->GetModelEntityId(flat_idx));
-          }
-        }
-      }
+    this->gatherSelectionInfo(modinfo->RepSource, modinfo->Info, uuids, meshes);
     }
 
-  this->modelView()->selectEntityItems(uuids, true); // block selection signal
+  QList<pqSMTKMeshInfo*> selMeshes = this->Internal->smtkManager->selectedMeshes();
+  foreach(pqSMTKMeshInfo* meshinfo, selMeshes)
+    {
+    this->gatherSelectionInfo(meshinfo->RepSource, meshinfo->Info, uuids, meshes);
+    }
+
+  this->modelView()->selectItems(uuids, meshes, true); // block selection signal
 }
 
 //----------------------------------------------------------------------------
@@ -764,3 +672,65 @@ void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
     }
 }
 
+//----------------------------------------------------------------------------
+void pqSMTKModelPanel::gatherSelectionInfo(pqPipelineSource* source,
+                                           vtkPVInformation* pvInfo,
+                                           smtk::common::UUIDs& uuids,
+                                           smtk::mesh::MeshSets& meshes)
+{
+  vtkPVSMTKModelInformation* modinfo = vtkPVSMTKModelInformation::SafeDownCast(pvInfo);
+  vtkPVSMTKMeshInformation* meshinfo = vtkPVSMTKMeshInformation::SafeDownCast(pvInfo);
+  if(!modinfo && !meshinfo)
+    {
+    return;
+    }
+
+  vtkNew<vtkPVSelectionInformation> selInfo;
+  if(vtkSelectionNode* selnode =
+    pqCMBSelectionHelperUtil::gatherSelectionNode(source, selInfo.GetPointer()))
+    {
+    unsigned int flat_idx;
+    vtkUnsignedIntArray* blockIds = selnode->GetSelectionList() ?
+      vtkUnsignedIntArray::SafeDownCast(selnode->GetSelectionList()) : NULL;
+    if(blockIds)
+      {
+      for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
+        {
+        flat_idx = blockIds->GetValue(ui);
+        // blockId is child index, which is one less of flat_index
+        flat_idx--;
+        if(modinfo)
+          {
+          uuids.insert(modinfo->GetModelEntityId(flat_idx));
+          }
+        else if(meshinfo)
+          {
+          meshes.insert(meshinfo->GetMeshSet(flat_idx));
+          }
+        }
+      }
+    // this may be the a ID selection
+    else
+      {
+      vtkSMSourceProxy* selSource = vtkSMSourceProxy::SafeDownCast(
+        source->getProxy())->GetSelectionInput(0);
+      vtkSMPropertyHelper selIDs(selSource, "IDs");
+      unsigned int count = selIDs.GetNumberOfElements();
+      // [composite_index, process_id, index]
+      for (unsigned int cc=0; cc < (count/3); cc++)
+        {
+        flat_idx = selIDs.GetAsInt(3*cc);
+        // blockId is child index, which is one less of flat_index
+        flat_idx--;
+        if(modinfo)
+          {
+          uuids.insert(modinfo->GetModelEntityId(flat_idx));
+          }
+        else if(meshinfo)
+          {
+          meshes.insert(meshinfo->GetMeshSet(flat_idx));
+          }
+        }
+      }
+    }
+}

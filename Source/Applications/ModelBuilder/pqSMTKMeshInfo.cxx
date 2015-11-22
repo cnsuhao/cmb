@@ -15,6 +15,7 @@
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
 #include "pqRepresentationHelperFunctions.h"
+#include "pqSMTKModelInfo.h"
 #include "pqServer.h"
 
 #include "vtkPVSMTKMeshInformation.h"
@@ -38,7 +39,7 @@
 //----------------------------------------------------------------------------
 void pqSMTKMeshInfo::init(
   pqPipelineSource* meshsource, pqPipelineSource* repsource, pqDataRepresentation* rep,
-  const std::string& filename, smtk::model::ManagerPtr mgr)
+  const std::string& filename, smtk::model::ManagerPtr mgr, pqSMTKModelInfo* modinfo)
 {
   this->MeshSource = meshsource;
   this->RepSource = repsource;
@@ -55,6 +56,8 @@ void pqSMTKMeshInfo::init(
   // [composite_index, process_id, cell_id]
   this->CompositeDataIdSelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
+  this->ColorMode = "None";
+  this->ModelInfo = modinfo;
 
   this->updateBlockInfo(mgr);
 }
@@ -107,4 +110,6 @@ pqSMTKMeshInfo::pqSMTKMeshInfo(const pqSMTKMeshInfo& other)
   this->Representation = other.Representation;
   this->BlockSelectionSource = other.BlockSelectionSource;
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
+  this->ColorMode = other.ColorMode;
+  this->ModelInfo = other.ModelInfo;
 }

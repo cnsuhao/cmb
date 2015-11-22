@@ -660,7 +660,6 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
   if(this->getMainDialog()->action_Select->isChecked())
     {
     this->getThisCore()->cmbRenderViewSelectionHelper()->endSelection();
-    //this->updateCMBSelection();
     this->updateSMTKSelection();
     this->getMainDialog()->action_Select->setChecked(false);
     }
@@ -970,7 +969,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     case qtCMBPanelsManager::DISPLAY:
     case qtCMBPanelsManager::PROPERTIES:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       if(rep)
         {
         // hiding color related components
@@ -1013,7 +1012,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       dw->show();
       this->Internal->CurrentDockWidgets[enType] = dw;
 
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       pqOutputPort* actPort = rep ? rep->getOutputPortFromInput() : NULL;
       if(this->Internal->InformationWidget &&
          this->Internal->InformationWidget->getOutputPort() != actPort)
@@ -1031,7 +1030,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
     case qtCMBPanelsManager::COLORMAP:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       if(rep)
         {
         pqCMBColorMapWidget* colorWidget = this->colorEditor(this);

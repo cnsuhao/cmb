@@ -172,6 +172,7 @@ set(ModelBuilder_SOURCE_FILES
   pqCMBModelBuilderMainWindowCore.cxx
   pqModelBuilderViewContextMenuBehavior.cxx
   pqModelBuilderViewContextMenuBehavior.h
+  pqCMBContextMenuHelper.h
   pqCMBModelBuilderOptions.cxx
   pqCMBModelBuilderOptions.h
   pqCMBImportShapefile.h

@@ -14,6 +14,7 @@
 #include "smtk/model/EntityRef.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/mesh/MeshSet.h"
 
 class vtkObject;
 class pqCMBModelManager;
@@ -22,6 +23,8 @@ class pqOutputPort;
 class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
 class pqSMTKModelInfo;
+class pqPipelineSource;
+class vtkPVInformation;
 
 namespace smtk {
   namespace attribute {
@@ -46,13 +49,14 @@ public:
   pqCMBModelManager* modelManager();
   smtk::model::qtModelView* modelView();
 
-  void setBlockVisibility(pqDataRepresentation* rep,
-    const QList<unsigned int>& indices, bool visible);
-  void setBlockColor(pqDataRepresentation* rep,
-    const QList<unsigned int>& indices, const QColor&);
-  void showOnlyBlocks(pqDataRepresentation* rep,
-    const QList<unsigned int>& indices);
-  void showAllBlocks(pqDataRepresentation* rep);
+  void setBlockVisibility(
+    const smtk::common::UUID& sessionid,
+    const smtk::common::UUIDs& entids,
+    const smtk::mesh::MeshSets& meshes, bool visible);
+  void setBlockColor(
+    const smtk::common::UUID& sessionid,
+    const smtk::common::UUIDs& entids,
+    const smtk::mesh::MeshSets& meshes, const QColor&);
 
   void addMeshSelectionOperation(
     smtk::attribute::qtMeshSelectionItem* meshItem,
@@ -76,6 +80,7 @@ public slots:
 
 protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
+  void selectMeshRepresentations(const smtk::mesh::MeshSets& );
   void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
   void onLaunchFileBrowser();
   void onModelEntityItemCreated(
@@ -83,6 +88,11 @@ protected slots:
   void onRequestEntityAssociation();
   void updateMeshSelection(
     const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
+  void gatherSelectionInfo(pqPipelineSource* source,
+                           vtkPVInformation* pvInfo,
+                           smtk::common::UUIDs& uuids,
+                           smtk::mesh::MeshSets& meshes);
+
 //  void propertyChanged(
 //    vtkObject* caller, unsigned long, void*);
 //  void linkRepresentation(pqDataRepresentation *representation);

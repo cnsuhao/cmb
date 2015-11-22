@@ -1305,13 +1305,15 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 {
   if(!repr)
     return;
-  pqSMTKModelInfo* minfo = this->Internal->smtkModelManager->modelInfo(repr);
-  if(!minfo)
+  pqSMTKModelInfo* modinfo = this->Internal->smtkModelManager->modelInfo(repr);
+  pqSMTKMeshInfo* meshinfo = this->Internal->smtkModelManager->meshInfo(repr);
+  if(!modinfo && !meshinfo)
     return;
 
   this->Internal->smtkModelManager->clearModelSelections();
 
-  vtkSMProxy* selectionSource = minfo->BlockSelectionSource;
+  vtkSMProxy* selectionSource = modinfo ?
+    modinfo->BlockSelectionSource : meshinfo->BlockSelectionSource;
   vtkSMPropertyHelper prop(selectionSource, "Blocks");
   std::vector<vtkIdType> selIds;
   selIds.push_back(static_cast<vtkIdType>(blockIndex));

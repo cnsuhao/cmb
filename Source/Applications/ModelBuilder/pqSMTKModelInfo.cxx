@@ -39,6 +39,8 @@
 /// for analysis mesh property.
 bool pqSMTKModelInfo::hasAnalysisMesh() const
 {
+  return this->MeshInfos.size() > 0;
+/*
   smtk::common::UUID uid = this->Info->GetModelUUID();
   if(this->Session->manager()->hasIntegerProperty(uid, SMTK_MESH_GEN_PROP))
     {
@@ -66,6 +68,7 @@ bool pqSMTKModelInfo::hasAnalysisMesh() const
     }
 
   return false;
+*/
 }
 
 //----------------------------------------------------------------------------
@@ -107,7 +110,7 @@ void pqSMTKModelInfo::init(
   this->updateBlockInfo(mgr);
   smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())
-    this->Session = modelEntity.session().session();
+    this->SessionId = modelEntity.session().entity();
 /*
   vtkSMProxy* scalarBarProxy =
     proxyManager->NewProxy("representations", "ScalarBarWidgetRepresentation");
@@ -155,7 +158,6 @@ void pqSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 
   if(invis_ids.size() > 1)
     {
-
     // update vtk property
     vtkSMProxy *proxy = this->Representation->getProxy();
     vtkSMPropertyHelper prop(proxy, "BlockVisibility");
@@ -174,7 +176,9 @@ pqSMTKModelInfo::pqSMTKModelInfo(const pqSMTKModelInfo& other)
   this->FileName = other.FileName;
   this->Representation = other.Representation;
   this->Info = other.Info;
+  this->SessionId = other.SessionId;
   this->BlockSelectionSource = other.BlockSelectionSource;
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
   this->ShowMesh = other.ShowMesh;
+  this->MeshInfos.insert(other.MeshInfos.begin(), other.MeshInfos.end());
 }

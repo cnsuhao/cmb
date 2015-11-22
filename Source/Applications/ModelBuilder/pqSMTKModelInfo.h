@@ -61,7 +61,7 @@ class pqSMTKModelInfo: public QObject
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
-    smtk::model::SessionPtr Session;
+    smtk::common::UUID SessionId;
     std::vector<std::string> ent_annotations;
     std::vector<std::string> vol_annotations;
     std::vector<std::string> grp_annotations;

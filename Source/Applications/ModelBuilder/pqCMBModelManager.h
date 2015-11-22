@@ -18,6 +18,7 @@
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/model/StringData.h"
+#include "smtk/mesh/MeshSet.h"
 
 #include <QObject>
 #include <QStringList>
@@ -43,6 +44,7 @@ class pqPipelineSource;
 class pqRenderView;
 class pqServer;
 class pqSMTKModelInfo;
+class pqSMTKMeshInfo;
 
 class pqCMBModelManager : public QObject
 {
@@ -65,22 +67,19 @@ public:
     vtkSMProxy* lutProxy,
     const QMap<std::string, QColor >& colorAtts,
     const std::vector<std::string>& annList);
-  void colorRepresentationByEntity(
-    pqDataRepresentation* rep, const QString& entityMode);
   void colorRepresentationByAttribute(
     pqDataRepresentation* rep, smtk::attribute::SystemPtr attSys,
     const QString& attDef, const QString& attItem);
-  void syncDisplayColorTable(pqDataRepresentation* rep);
 
   pqSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   pqSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
-  QList<pqSMTKModelInfo*> selectedModels();
-  QList<pqSMTKModelInfo*> allModels();
+  QList<pqSMTKModelInfo*> selectedModels() const;
+  QList<pqSMTKModelInfo*> allModels() const;
 
   int numberOfModels();
 
-  QList<pqDataRepresentation*> modelRepresentations();
-  pqDataRepresentation* activeModelRepresentation();
+  QList<pqDataRepresentation*> modelRepresentations() const;
+  pqDataRepresentation* activeRepresentation() const;
   bool DetermineFileReader(
     const std::string& filename,
     std::string& bridgeType,
@@ -89,6 +88,12 @@ public:
   pqServer* server();
   void updateModelRepresentation(const smtk::model::EntityRef& model);
   void updateModelRepresentation(pqSMTKModelInfo* minfo);
+
+  pqSMTKMeshInfo* meshInfo(const smtk::mesh::MeshSet& mesh);
+  pqSMTKMeshInfo* meshInfo(pqDataRepresentation* rep);
+  QList<pqSMTKMeshInfo*> selectedMeshes() const;
+  QList<pqDataRepresentation*> meshRepresentations() const;
+  QList<pqSMTKMeshInfo*> allMeshes() const;
 
 signals:
   void currentModelCleared();
@@ -104,6 +109,7 @@ public slots:
   void clear();
   bool startNewSession(const std::string& bridgeName);
   void clearModelSelections();
+  void clearMeshSelections();
   smtk::model::OperatorPtr createFileOperator(const std::string& filename);
   bool startOperation(const smtk::model::OperatorPtr&);
   bool handleOperationResult(

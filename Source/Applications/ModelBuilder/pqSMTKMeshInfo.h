@@ -27,6 +27,7 @@ class vtkSMModelManagerProxy;
 class vtkSMProxy;
 class pqDataRepresentation;
 class pqPipelineSource;
+class pqSMTKModelInfo;
 
 //The object to keep smtk mesh related info:
 // pqSource, pvMeshInfo, smSelectionSource
@@ -39,7 +40,8 @@ class pqSMTKMeshInfo: public QObject
     }
     pqSMTKMeshInfo(const pqSMTKMeshInfo& other);
     void init(pqPipelineSource* meshSource, pqPipelineSource* repSource,
-      pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
+      pqDataRepresentation*, const std::string& filename,
+      smtk::model::ManagerPtr, pqSMTKModelInfo* modinfo);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
 
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
@@ -50,6 +52,8 @@ class pqSMTKMeshInfo: public QObject
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
+    QString ColorMode;
+    QPointer<pqSMTKModelInfo> ModelInfo;
 };
 
 #endif
