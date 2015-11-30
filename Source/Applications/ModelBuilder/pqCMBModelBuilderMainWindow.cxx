@@ -309,8 +309,8 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
   bool started = this->getThisCore()->modelManager()->startNewSession(brName);
   if(started)
     {
-    this->onNewModelCreated();
     this->getThisCore()->modelPanel()->resetUI();
+    this->onNewModelCreated();
     }
 }
 

@@ -535,6 +535,7 @@ void pqCMBModelManager::initialize()
       QObject::connect(pqApplicationCore::instance()->getPluginManager(),
         SIGNAL(pluginsUpdated()),
         this, SLOT(onPluginLoaded()));
+      this->Internal->ManagerProxy->sessionNames();//fetch session names
       }
     }
 }
@@ -830,7 +831,7 @@ std::set<std::string> pqCMBModelManager::supportedFileTypes(
   const std::string& sessionName)
 {
   std::set<std::string> resultSet;
-  if(this->Internal->ManagerProxy)
+  if(this->managerProxy())
     {
     smtk::model::StringData bftypes = this->Internal->ManagerProxy->supportedFileTypes(sessionName);
     smtk::model::PropertyNameWithStrings typeIt;
@@ -1541,7 +1542,7 @@ void pqCMBModelManager::clear()
 bool pqCMBModelManager::startNewSession(const std::string& sessionName)
 {
   smtk::common::UUID sessionId =
-    this->Internal->ManagerProxy->beginSession(sessionName, true);
+    this->managerProxy()->beginSession(sessionName, true);
   smtk::model::SessionRef sref(
     this->managerProxy()->modelManager(), sessionId);
 
@@ -1557,7 +1558,7 @@ bool pqCMBModelManager::startNewSession(const std::string& sessionName)
 void pqCMBModelManager::onPluginLoaded()
 {
   // force remote server to refetch sessions incase a new session is loaded
-  if(this->Internal->ManagerProxy)
+  if(this->managerProxy())
     {
     QStringList newFileTypes;
     QStringList newSessionNames;
