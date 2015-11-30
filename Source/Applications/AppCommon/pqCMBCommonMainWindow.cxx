@@ -334,7 +334,7 @@ void pqCMBCommonMainWindow::onViewChanged()
     vtkPVRenderViewSettings::GetInstance()->SetOutlineThreshold(50);
      vtkPVRenderViewSettings::GetInstance()->SetResolveCoincidentTopology(
          vtkPVRenderViewSettings::OFFSET_FACES);
-     vtkPVRenderViewSettings::GetInstance()->SetPolygonOffsetParameters(6.0, 1.0);
+     vtkPVRenderViewSettings::GetInstance()->SetPolygonOffsetParameters(1.0, 0.5);
     }
 }
 //----------------------------------------------------------------------------
