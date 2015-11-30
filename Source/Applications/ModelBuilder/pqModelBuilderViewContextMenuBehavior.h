@@ -17,8 +17,10 @@
 #include <QList>
 #include <QColor>
 #include <QMap>
+#include <QPair>
 #include "vtkType.h"
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/Mesh/MeshSet.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -29,7 +31,8 @@ class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqEditColorMapReaction;
-class cmbSMTKModelInfo;
+class pqSMTKModelInfo;
+class pqSMTKMeshInfo;
 
 /// @ingroup Behaviors
 ///
@@ -57,6 +60,9 @@ public:
   virtual void updateColorForEntities(pqDataRepresentation* rep,
     const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor >& colorEntities);
+  virtual void updateColorForMeshes(pqDataRepresentation* rep,
+    const QString& colorMode,
+    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities);
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int);
@@ -112,14 +118,24 @@ protected:
   virtual bool eventFilter(QObject* caller, QEvent* e);
 
   /// return the name of the block from its flat index
-  QString lookupBlockName(unsigned int flatIndex, cmbSMTKModelInfo* minfo) const;
+  QString lookupBlockName(unsigned int flatIndex, pqSMTKModelInfo* minfo) const;
+
+  virtual void showAllEntitiesAndMeshes(
+    const QList<pqSMTKModelInfo*>&,
+    const QList<pqSMTKMeshInfo*>&);
+  // \a sessionBlocks is map of <sessionId, < Entities, Meshes> >
+  virtual void getSelectedEntitiesAndMeshes(
+    QMap<smtk::common::UUID,
+    QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> > &sessionBlocks);
+  virtual void setSelectedBlocksColor(const QColor& color);
 
   QMenu* m_contextMenu;
   QPoint m_clickPosition;
   QPointer<pqSMTKModelPanel> m_modelPanel;
   pqMultiBlockInspectorPanel* m_dataInspector;
   QPointer<pqEditColorMapReaction> m_colormapReaction;
-  QMap<cmbSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
+  QMap<pqSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
+  QMap<pqSMTKMeshInfo*, QList<unsigned int> > m_selMeshBlocks;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

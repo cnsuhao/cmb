@@ -309,8 +309,8 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
   bool started = this->getThisCore()->modelManager()->startNewSession(brName);
   if(started)
     {
-    this->onNewModelCreated();
     this->getThisCore()->modelPanel()->resetUI();
+    this->onNewModelCreated();
     }
 }
 
@@ -660,7 +660,6 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
   if(this->getMainDialog()->action_Select->isChecked())
     {
     this->getThisCore()->cmbRenderViewSelectionHelper()->endSelection();
-    //this->updateCMBSelection();
     this->updateSMTKSelection();
     this->getMainDialog()->action_Select->setChecked(false);
     }
@@ -775,7 +774,8 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
     SIGNAL(meshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
            const std::string&, const smtk::common::UUID&)),
     this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
-               const std::string&, const smtk::common::UUID&)));
+               const std::string&, const smtk::common::UUID&)),
+    Qt::UniqueConnection);
 
   // If there is no dock panel yet, this is the first time, so init
   // default panels
@@ -969,7 +969,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     case qtCMBPanelsManager::DISPLAY:
     case qtCMBPanelsManager::PROPERTIES:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       if(rep)
         {
         // hiding color related components
@@ -1012,7 +1012,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       dw->show();
       this->Internal->CurrentDockWidgets[enType] = dw;
 
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       pqOutputPort* actPort = rep ? rep->getOutputPortFromInput() : NULL;
       if(this->Internal->InformationWidget &&
          this->Internal->InformationWidget->getOutputPort() != actPort)
@@ -1030,7 +1030,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
     case qtCMBPanelsManager::COLORMAP:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeModelRepresentation();
+      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
       if(rep)
         {
         pqCMBColorMapWidget* colorWidget = this->colorEditor(this);

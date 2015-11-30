@@ -127,5 +127,69 @@ namespace pqSMTKUIHelper
   }
 
 }
+
+
+#include "pqPipelineSource.h"
+#include "vtkNew.h"
+#include "vtkSMSourceProxy.h"
+#include "vtkPVSelectionInformation.h"
+#include "vtkSelection.h"
+#include "vtkSelectionNode.h"
+#include "vtkUnsignedIntArray.h"
+#include "vtkSMPropertyHelper.h"
+#include <QList>
+
+namespace pqCMBSelectionHelperUtil
+{
+
+static vtkSelectionNode* gatherSelectionNode(
+    pqPipelineSource* source,
+    vtkPVSelectionInformation* selInfo)
+  {
+    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
+    vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
+    selSource->UpdatePipeline();
+
+    selSource->GatherInformation(selInfo);
+    if(selInfo->GetSelection() &&
+      selInfo->GetSelection()->GetNumberOfNodes())
+      {
+      return selInfo->GetSelection()->GetNode(0);
+      }
+    return NULL;
+  }
+
+static int fillSelectionIdList(
+  QList<unsigned int> & result,
+  vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
+{
+  int total = 0;
+  if(blockIds)
+    {
+    for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
+      {
+      unsigned int block_id = blockIds->GetValue(ui);
+      result.push_back(block_id);
+      }
+    total += blockIds->GetNumberOfTuples();
+    }
+
+  if(selIDs)
+    {
+    unsigned int count = selIDs->GetNumberOfElements();
+    // [composite_index, process_id, index]
+    for (unsigned int cc=0; cc < (count/3); cc++)
+      {
+      unsigned int block_id = selIDs->GetAsInt(3*cc);
+      result.push_back(block_id);
+      }
+    total += count/3;
+    }
+  return total;
+}
+
+
+}
+
 //ETX
 #endif
