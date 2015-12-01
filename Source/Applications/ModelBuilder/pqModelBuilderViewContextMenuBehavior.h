@@ -20,7 +20,7 @@
 #include <QPair>
 #include "vtkType.h"
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/Mesh/MeshSet.h"
+#include "smtk/mesh/MeshSet.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
