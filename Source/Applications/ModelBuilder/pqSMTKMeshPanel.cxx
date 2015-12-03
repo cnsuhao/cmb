@@ -60,7 +60,7 @@ void make_InstancedView(smtk::attribute::SystemPtr attSystem)
   int pos = root->details().findChild("Views");
   smtk::common::View::Component &vcomp = root->details().child(pos);
   std::vector<smtk::attribute::DefinitionPtr> baseDefinitions;
-  
+
   attSystem->findBaseDefinitions(baseDefinitions);
   for (DefIterType baseIter = baseDefinitions.begin();
        baseIter != baseDefinitions.end();baseIter++)
@@ -215,13 +215,12 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
                               reqs.requirementsSize(),
                               inputLogger);
     }
-  // Matching the old View logic in 3.0 in which everything goes through a Root View
-  // Assuming the 
+
   smtk::common::ViewPtr root = this->AttSystem->findTopLevelView();
   if (!root)
     {
-    // Create a new Root View called MeshView
-    root = smtk::common::View::New("Root", ("MeshView"));
+    // Create a new Group View called MeshView
+    root = smtk::common::View::New("Group", ("MeshView"));
     root->details().setAttribute("TopLevel", "true");
     this->AttSystem->addView(root);
     }
@@ -232,7 +231,7 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
     root->details().addChild("Views");
     pos = root->details().findChild("Views");
     }
-  
+
   smtk::common::View::Component &vcomp = root->details().child(pos);
 
   // If manager contains no views, create InstancedView by default
