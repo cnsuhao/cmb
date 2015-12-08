@@ -215,13 +215,13 @@ public:
             {
             smtk::model::ManagerPtr mgr = smProxy->modelManager();
             this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
-    
+
             vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
             this->updateGeometryEntityAnnotations(model);
             this->updateEntityGroupFieldArrayAndAnnotations(model);
             this->resetColorTable(model);
             RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-              rep->getProxy(), NULL, vtkDataObject::FIELD);      
+              rep->getProxy(), NULL, vtkDataObject::FIELD);
             }
           }
         loadOK = (rep != NULL);
@@ -237,7 +237,7 @@ public:
       smtk::model::Models::iterator it;
       for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
         {
-        loadOK &= this->addModelRepresentation(*it, view, smProxy, filename, sref); 
+        loadOK &= this->addModelRepresentation(*it, view, smProxy, filename, sref);
         }
       return loadOK;
       }
@@ -307,11 +307,30 @@ public:
     modelInfo->Representation->renderViewEventually();
   }
 
-  void createMeshRepresentation(const smtk::model::EntityRef& model,
+  void createMeshRepresentation(smtk::model::ManagerPtr manager,
+                                smtk::model::EntityRef model,
                                 pqRenderView* view)
   {
-    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+    smtk::model::Model smtkModel(manager, model.entity());
+
+    //The model relationship could be on the model itself, or a submodel
+    //So determine where the relationship is
+    bool containsModel = false;
+    containsModel = (this->ModelInfos.find(model.entity()) == this->ModelInfos.end());
+    if(!containsModel && smtkModel.submodels().size() > 0)
+      {
+      smtk::model::Models submodels = smtkModel.submodels();
+      for(std::size_t i=0; !containsModel && i < submodels.size(); ++i)
+        {
+        model = submodels[i];
+        containsModel = (this->ModelInfos.find(model.entity()) == this->ModelInfos.end());
+        }
+      }
+
+    if(!containsModel)
+      {
       return;
+      }
 
     // find a mesh collection that's not in the mesh info already
     smtk::mesh::ManagerPtr meshMgr = model.manager()->meshes();
@@ -1080,7 +1099,7 @@ void pqCMBModelManager::colorRepresentationByAttribute(
           {
           stritemval =
             smtk::dynamic_pointer_cast<smtk::attribute::IntItem>(attitem)->valueAsString();
-          }    
+          }
         else if (attitem->type() == smtk::attribute::Item::STRING)
           {
           stritemval =
@@ -1477,7 +1496,7 @@ bool pqCMBModelManager::handleOperationResult(
       // Handle new meshes for a model
       if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
         {
-        this->Internal->createMeshRepresentation(*it, view);
+        this->Internal->createMeshRepresentation(this->managerProxy()->modelManager(),*it, view);
         }
 
       }
