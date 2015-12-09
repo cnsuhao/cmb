@@ -308,22 +308,22 @@ public:
   }
 
   void createMeshRepresentation(smtk::model::ManagerPtr manager,
-                                smtk::model::EntityRef model,
+                                const smtk::model::EntityRef& model,
                                 pqRenderView* view)
   {
+    smtk::model::EntityRef related_model  = model;
     smtk::model::Model smtkModel(manager, model.entity());
 
     //The model relationship could be on the model itself, or a submodel
     //So determine where the relationship is
-    bool containsModel = false;
-    containsModel = (this->ModelInfos.find(model.entity()) == this->ModelInfos.end());
+    bool containsModel = (this->ModelInfos.find(model.entity()) != this->ModelInfos.end());
     if(!containsModel && smtkModel.submodels().size() > 0)
       {
       smtk::model::Models submodels = smtkModel.submodels();
       for(std::size_t i=0; !containsModel && i < submodels.size(); ++i)
         {
-        model = submodels[i];
-        containsModel = (this->ModelInfos.find(model.entity()) == this->ModelInfos.end());
+        related_model = submodels[i];
+        containsModel = (this->ModelInfos.find(related_model.entity()) != this->ModelInfos.end());
         }
       }
 
@@ -337,9 +337,11 @@ public:
     std::vector<smtk::mesh::CollectionPtr> meshCollections =
       meshMgr->associatedCollections(model);
     if(meshCollections.size() == 0)
+      {
       return;
+      }
 
-    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[related_model.entity()];
     smtk::common::UUID newcid;
     if(modelInfo->MeshInfos.size() > 0)
       {
@@ -1435,7 +1437,6 @@ bool pqCMBModelManager::handleOperationResult(
         groupChangedModels.insert(minfo->Info->GetModelUUID());
         }
       }
-
   bModelGeometryChanged = geometryChangedModels.size() > 0;
 
   // check if there is "selection", such as from "grow" operator.
