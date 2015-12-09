@@ -14,15 +14,15 @@ else ()
     SMTK_ENABLE_REMOTE_SESSION
     SMTK_ENABLE_PARAVIEW_SUPPORT)
   foreach (smtk_option IN LISTS smtk_options)
-    set("${smtk_option}" ON)
+    # These must be set as INTERNAL cache variables so that SMTK cannot
+    # override them other than with local variables. Setting a local variable
+    # is not sufficient due to ${unfortunate_historical_reasons} in CMake.
+    set("${smtk_option}" ON
+      CACHE INTERNAL "Forced by CMB")
   endforeach ()
 
   add_subdirectory(SMTK)
   set(SMTK_DIR "${CMAKE_CURRENT_BINARY_DIR}/SMTK"
     CACHE INTERNAL "Path to SMTKConfig.cmake")
   mark_as_advanced(SMTK_DIR)
-
-  set_property(CACHE ${smtk_options}
-    PROPERTY
-      TYPE INTERNAL)
 endif ()
