@@ -1,18 +1,14 @@
 message("test_cmd " ${test_cmd})
 message("output_base " ${output_base})
 message("output_test " ${output_test})
-set(fullexe "${test_path}/${test_name}")
-if(NOT EXISTS ${fullexe})
-  set(fullexe "${test_path}/${cfg}/${test_name}")
-endif()
 FILE(REMOVE "${output_test}")
 execute_process(
-  COMMAND ${fullexe} -T ${test_dir}
+  COMMAND ${test_exe} -T ${test_dir}
    RESULT_VARIABLE test_result
   )
 
 if(test_result)
-  message(SEND_ERROR "${fullexe} did not run successfully.")
+  message(SEND_ERROR "${test_exe} did not run successfully.")
 endif(test_result)
 
 execute_process(

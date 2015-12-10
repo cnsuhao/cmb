@@ -127,12 +127,6 @@ if (APPLE)
 endif()
 
 if(BUILD_TESTING)
-  if(Q_WS_MAC)
-  set(TEST_BINARY ${EXECUTABLE_OUTPUT_PATH}/GeologyBuilder.app/Contents/MacOS/GeologyBuilder --test-directory=${CMB_TEST_DIR})
-  else(Q_WS_MAC)
-   set(TEST_BINARY ${EXECUTABLE_OUTPUT_PATH}/GeologyBuilder --test-directory=${CMB_TEST_DIR})
-  endif(Q_WS_MAC)
-
   set(TEST_XML ${GeologyBuilder_SOURCE_DIR}/Testing/XML)
   set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
 
@@ -157,7 +151,7 @@ if(BUILD_TESTING)
 
     if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       add_medium_test(GeologyBuilder${test}
-        ${TEST_BINARY}
+        GeologyBuilder
         -dr
         --test-directory=${CMB_TEST_DIR}
         --test-script=${TEST_XML}/${test}.xml --exit)
@@ -174,7 +168,7 @@ if(BUILD_TESTING)
     if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       get_image_threshold_arg(THRESHOLD_CMD ${test})
       add_medium_test(GeologyBuilder${test}
-      ${TEST_BINARY}
+      GeologyBuilder
       -dr
       --test-script=${TEST_XML}/${test}.xml
       --test-directory=${CMB_TEST_DIR}

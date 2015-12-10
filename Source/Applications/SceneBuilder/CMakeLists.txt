@@ -138,12 +138,6 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
-  if(Q_WS_MAC)
-  set(TEST_BINARY ${EXECUTABLE_OUTPUT_PATH}/SceneBuilder.app/Contents/MacOS/SceneBuilder --test-directory=${CMB_TEST_DIR})
-  else(Q_WS_MAC)
-   set(TEST_BINARY ${EXECUTABLE_OUTPUT_PATH}/SceneBuilder --test-directory=${CMB_TEST_DIR})
-  endif(Q_WS_MAC)
-
   set(TEST_XML ${SceneBuilder_SOURCE_DIR}/Testing/XML)
   set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
 
@@ -229,7 +223,7 @@ set (XML_TESTS_WITH_BASELINES
 
     if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       add_long_test(SceneBuilder${test}
-        ${TEST_BINARY}
+        SceneBuilder
         -dr
         --test-directory=${CMB_TEST_DIR}
         --test-script=${TEST_XML}/${test}.xml --exit)
@@ -272,7 +266,7 @@ endif()"
     if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       get_image_threshold_arg(THRESHOLD_CMD ${test})
       add_long_test(SceneBuilder${test}
-      ${TEST_BINARY}
+      SceneBuilder
       -dr
       --test-script=${TEST_XML}/${test}.xml
       --test-directory=${CMB_TEST_DIR}

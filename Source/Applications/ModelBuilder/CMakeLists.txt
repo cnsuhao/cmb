@@ -348,14 +348,6 @@ endif()
 
 set(PROJECT_EXE ${PROJECT_NAME}${CMAKE_EXECUTABLE_SUFFIX})
 if(BUILD_TESTING)
-  if(Q_WS_MAC)
-    set(TEST_BINARY
-      "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS/${PROJECT_NAME}"
-      --test-directory=${CMB_TEST_DIR})
-  else(Q_WS_MAC)
-    set(TEST_BINARY "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}"
-      --test-directory=${CMB_TEST_DIR})
-  endif(Q_WS_MAC)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
  set(TEST_SIMBUILDER_XML ${ModelBuilder_SOURCE_DIR}/SimBuilder/XML)
  set(TEST_PYTHON ${ModelBuilder_SOURCE_DIR}/Testing/Python)
@@ -457,7 +449,7 @@ endif()
 
     if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       add_long_test(${PROJECT_NAME}${test}
-    ${TEST_BINARY} -dr
+    ModelBuilder -dr
     --test-directory=${CMB_TEST_DIR}
     --test-script=${TEST_XML}/${test}.xml --exit)
       #Because of SpawnVolumeMesher and SpawnVolumeMesherCMB, we need to make all of these
@@ -469,7 +461,7 @@ endif()
   if (APPLE)
     foreach(test ${APPLE_ONLY_TESTS})
       add_long_test(${PROJECT_NAME}${test}
-    ${TEST_BINARY} -dr
+    ModelBuilder -dr
     --test-directory=${CMB_TEST_DIR}
     --test-script=${TEST_XML}/${test}.xml --exit)
       #Because of SpawnVolumeMesher and SpawnVolumeMesherCMB, we need to make all of these
@@ -486,7 +478,7 @@ endif()
       if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
     get_image_threshold_arg(THRESHOLD_CMD ${test})
     add_medium_test(${PROJECT_NAME}${test}
-      ${TEST_BINARY} -dr
+      ModelBuilder -dr
       --test-script=${TEST_XML}/${test}.xml
       --test-directory=${CMB_TEST_DIR}
       --test-baseline=${TEST_IMAGE}/${test}.png
@@ -525,18 +517,10 @@ endif()
       #
       list(FIND APPLE_EXCLUDE_TESTS ${test} APPLE_FIND_RES)
 
-      # We manually set test-directory in the runner script,
-      # so we make a TEST_BINARY without the flag set.
-      if(Q_WS_MAC)
-        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS/${PROJECT_NAME}")
-      else(Q_WS_MAC)
-        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}")
-      endif(Q_WS_MAC)
-
       if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
         add_medium_test(${PROJECT_NAME}${test}Py
           ${PYTHON_EXECUTABLE} ${POSTPROCESS_RUNNER}
-          ${TEST_BINARY_BARE}
+          $<TARGET_FILE:ModelBuilder>
           ${CMB_TEST_DIR}
           ${TEST_XML}/${test}.xml
           ${PYTHON_EXECUTABLE}
@@ -555,20 +539,12 @@ endif()
       #
       list(FIND APPLE_EXCLUDE_TESTS ${test} APPLE_FIND_RES)
 
-      # We manually set test-directory in the runner script,
-      # so we make a TEST_BINARY without the flag set.
-      if(Q_WS_MAC)
-        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.app/Contents/MacOS/${PROJECT_NAME}")
-      else(Q_WS_MAC)
-        set(TEST_BINARY_BARE "${EXECUTABLE_OUTPUT_PATH}/${PROJECT_EXE}")
-      endif(Q_WS_MAC)
-
       # VerifySimExport.py is hardcoded in here
       # The script parses the testscript path to find the testname
       if(NOT APPLE OR NOT APPLE_FIND_RES GREATER -1)
       add_medium_test(${PROJECT_NAME}${test}Py
         ${PYTHON_EXECUTABLE} ${POSTPROCESS_RUNNER}
-        ${TEST_BINARY_BARE}
+        $<TARGET_FILE:ModelBuilder>
         ${CMB_TEST_DIR}
         ${TEST_XML}/${test}.xml
         ${PYTHON_EXECUTABLE}

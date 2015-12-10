@@ -123,13 +123,7 @@ else()
     "Single output directory for building all libraries.")
 endif()
 
-if(NOT DEFINED EXECUTABLE_OUTPUT_PATH)
-  set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL
-    "Single output directory for building all executables.")
-else()
-   set (EXECUTABLE_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH} CACHE INTERNAL
-    "Single output directory for building all executables.")
-endif()
+set (EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 #########################################################################
 # include helper functions that projects use
