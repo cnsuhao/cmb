@@ -55,7 +55,6 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/SimulationFiles/ExportSimAdHShallowTest/test.2dm" />
  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame1/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/SimulationFiles/ExportSimAdHShallowTest/test.hot" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame1/FileBrowsingFrame/1QFrame0/1QComboBox0" command="set_string" arguments="/Users/obara/Projects/CMBTestingData/SimulationFiles/ExportSimAdHShallowTest/test.hot" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame2/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
    <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ExportSimAdHShallow.bc" />
  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame3/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />

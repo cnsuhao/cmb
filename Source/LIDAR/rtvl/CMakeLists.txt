@@ -64,6 +64,4 @@ find_library(V3P_NETLIB_LIBRARY
   PATH_SUFFIXES
     Release Debug)
 
-#target_link_libraries(rtvl rgtl vnl_algo vnl)
 target_link_libraries(rtvl ${RGTL_LIBRARY} ${VNL_ALGO_LIBRARY} ${VNL_LIBRARY} ${V3P_NETLIB_LIBRARY})
-#${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}

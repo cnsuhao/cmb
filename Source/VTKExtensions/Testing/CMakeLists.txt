@@ -47,22 +47,22 @@ target_link_libraries(delosMeshReader ${testing_libraries})
 add_executable(testDataReader testDataReader.cxx)
 target_link_libraries(testDataReader ${testing_libraries})
 
-add_short_test(DiscreteColorLookupTableTest ${EXECUTABLE_OUTPUT_PATH}/testDiscreteColorLookupTable)
+add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 
-add_short_test(TestLIDARReaderPiece ${EXECUTABLE_OUTPUT_PATH}/LIDARConverter
+add_short_test(TestLIDARReaderPiece LIDARConverter
         ${CMB_TEST_DATA_ROOT}/LIDAR/LIDARTest.pts
         ${CMB_TEST_DIR}/testSplit 3 1)
 
-add_short_test(TestLIDARReaderAppend ${EXECUTABLE_OUTPUT_PATH}/LIDARConverter
+add_short_test(TestLIDARReaderAppend LIDARConverter
         ${CMB_TEST_DATA_ROOT}/LIDAR/LIDARTest.pts
         ${CMB_TEST_DIR}/testAppend append 5)
 
-add_short_test(TestLIDARReaderBinary ${EXECUTABLE_OUTPUT_PATH}/LIDARConverter
+add_short_test(TestLIDARReaderBinary LIDARConverter
         ${CMB_TEST_DATA_ROOT}/LIDAR/smooth_surface.bin
         ${CMB_TEST_DIR}/testBinary append 2)
 
 add_short_test(PrintAllExtensions
-  ${EXECUTABLE_OUTPUT_PATH}/testVTKObjectMethods
+  testVTKObjectMethods
   ${EXT_CLASS}
   )
 
@@ -91,7 +91,7 @@ list(REMOVE_AT CmbArcTestSources 0)
 SET(CmbArcTestSourcesToRun ${CmbArcTestSources})
 FOREACH(test ${CmbArcTestSourcesToRun})
   GET_FILENAME_COMPONENT(TName ${test} NAME_WE)
-  add_short_test(${TName} ${EXECUTABLE_OUTPUT_PATH}/CmbArcTests ${TName})
+  add_short_test(${TName} CmbArcTests ${TName})
 ENDFOREACH(test)
 
 #
@@ -101,22 +101,7 @@ ENDFOREACH(test)
 #             (1) there is no possible way to run ParaView with "-dr" and have the plugin loaded
 #             (2) there is no identification of the ParaView executable in ${ParaView_USE_FILE}
 #
-if(Q_WS_MAC)
-  #set(PV_TEST_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/SceneBuilder.app/Contents/MacOS/SceneBuilder --test-directory=${CMB_TEST_DIR})
-  if ( EXISTS ${ParaView_DIR}/bin/paraview.app )
-    set( PV_TEST_EXECUTABLE ${ParaView_DIR}/bin/paraview.app/Contents/MacOS/paraview )
-  else ( EXISTS ${ParaView_DIR}/bin/paraview.app )
-    set( PV_TEST_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/paraview.app/Contents/MacOS/paraview )
-  endif ( EXISTS ${ParaView_DIR}/bin/paraview.app )
-else(Q_WS_MAC)
-  #set(PV_TEST_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/SceneBuilder --test-directory=${CMB_TEST_DIR})
-  if ( EXISTS ${ParaView_DIR}/bin/paraview )
-    set( PV_TEST_EXECUTABLE ${ParaView_DIR}/bin/paraview )
-  else ( EXISTS ${ParaView_DIR}/bin/paraview )
-    set( PV_TEST_EXECUTABLE ${EXECUTABLE_OUTPUT_PATH}/paraview )
-  endif ( EXISTS ${ParaView_DIR}/bin/paraview )
-endif(Q_WS_MAC)
-if ( EXISTS ${PV_TEST_EXECUTABLE} )
+if ( TARGET paraview )
 
   set( PV_TEST_XML_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
   set( PV_TEST_IMG_DIR ${CMB_TEST_DATA_ROOT}/Baseline )
@@ -139,7 +124,7 @@ if ( EXISTS ${PV_TEST_EXECUTABLE} )
     if ( NOT APPLE OR NOT APPLE_FIND_RES GREATER -1 )
       # FIXME: Running with -dr prevents plugin from loading, but might also cause invalid test images
       add_short_test( ${test}
-        ${PV_TEST_EXECUTABLE}
+        $<TARGET_FILE:paraview>
           --test-directory=${CMB_TEST_DIR}
           --test-script=${PV_TEST_XML_DIR}/${test}.xml
           --exit
@@ -156,7 +141,7 @@ if ( EXISTS ${PV_TEST_EXECUTABLE} )
         get_image_threshold_arg( THRESHOLD_CMD ${test} )
         # FIXME: Running with -dr prevents plugin from loading, but might also cause invalid test images
         add_short_test( ${test}
-          ${PV_TEST_EXECUTABLE}
+          $<TARGET_FILE:paraview>
             --test-script=${PV_TEST_XML_DIR}/${test}.xml
             --test-directory=${CMB_TEST_DIR}
             --test-baseline=${PV_TEST_IMG_DIR}/${test}.png
@@ -166,4 +151,4 @@ if ( EXISTS ${PV_TEST_EXECUTABLE} )
       endif()
     endforeach(test)
   endif( CMB_TEST_DATA_ROOT )
-endif ( EXISTS ${PV_TEST_EXECUTABLE} )
+endif ()
