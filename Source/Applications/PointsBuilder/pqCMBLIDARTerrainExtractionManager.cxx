@@ -1227,7 +1227,7 @@ void pqCMBLIDARTerrainExtractionManager::GuessCacheDirectory()
 
   if (!cacheDirInfo.isDir() )
     {
-    QString directory = QDir::homePath();
+    QString directory = QDir::tempPath();
     this->LIDARPanel->getGUIPanel()->CacheDirectoryLabel->setText( directory );
     this->LIDARPanel->getGUIPanel()->CacheDirectoryLabel->setToolTip( directory );
 
