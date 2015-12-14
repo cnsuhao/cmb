@@ -291,6 +291,19 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
   smtk::model::SessionPtr session,
   const std::string& engineName)
 {
+  std::string lastExt =
+    vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  if( lastExt == ".smtk" || lastExt == ".json")
+    {
+    OperatorPtr smtkImportOp = session->op("import smtk model");
+    // Not all session should have an ImportOperator
+    if (smtkImportOp)
+      {
+      this->initFileOperator(smtkImportOp, fileName, engineName);
+      return smtkImportOp;
+      }
+    }
+
   OperatorPtr readOp = session->op("read");
   // Assuming all session should have a ReadOperator
   if (!readOp)
