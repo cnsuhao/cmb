@@ -348,7 +348,7 @@ public:
       }
 
     pqSMTKModelInfo* modelInfo = &this->ModelInfos[related_model.entity()];
-    smtk::common::UUID newcid;
+    std::vector<smtk::mesh::CollectionPtr> newMCs;
     if(modelInfo->MeshInfos.size() > 0)
       {
       std::vector<smtk::mesh::CollectionPtr>::const_iterator it;
@@ -356,76 +356,80 @@ public:
         {
         if(modelInfo->MeshInfos.find((*it)->entity()) == modelInfo->MeshInfos.end())
           {
-          newcid = (*it)->entity();
-          break;
+          newMCs.push_back(*it);
           }
         }
       }
     else
       {
-      newcid = meshCollections[0]->entity(); // take the first mesh collection
+      newMCs.insert(newMCs.end(), meshCollections.begin(), meshCollections.end()); // take all mesh collections
       }
-    if(newcid.isNull())
+    if(newMCs.size() == 0)
       return;
 
-    pqDataRepresentation* rep = NULL;
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
-    pqPipelineSource* meshSrc = builder->createSource(
-        "ModelBridge", "SMTKMeshSource", this->Server);
-    if(meshSrc)
+    std::vector<smtk::mesh::CollectionPtr>::const_iterator cit;
+    for(cit = newMCs.begin(); cit != newMCs.end(); ++cit)
       {
-      // ModelManagerWrapper Proxy
-      vtkSMModelManagerProxy* smProxy = this->ManagerProxy;
-      vtkSMProxyProperty* smwrapper =
-        vtkSMProxyProperty::SafeDownCast(
-        meshSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-      smwrapper->RemoveAllProxies();
-      smwrapper->AddProxy(smProxy);
-
-      vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
-        model.entity().toString().c_str());
-      vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
-        newcid.toString().c_str());
-
-      meshSrc->getProxy()->UpdateVTKObjects();
-      meshSrc->updatePipeline();
-
-      pqPipelineSource* repSrc = builder->createFilter(
-        "ModelBridge", "SMTKModelFieldArrayFilter", meshSrc);
-      smwrapper =
-        vtkSMProxyProperty::SafeDownCast(
-        repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-      smwrapper->RemoveAllProxies();
-      smwrapper->AddProxy(smProxy);
-
-//      vtkSMPropertyHelper(repSrc->getProxy(),"AddGroupArray").Set(1);
-      repSrc->getProxy()->UpdateVTKObjects();
-      repSrc->updatePipeline();
-
-      rep = builder->createDataRepresentation(
-        repSrc->getOutputPort(0), view);
-      if(rep)
+      smtk::common::UUID cid = (*cit)->entity();
+      pqDataRepresentation* rep = NULL;
+      pqPipelineSource* meshSrc = builder->createSource(
+          "ModelBridge", "SMTKMeshSource", this->Server);
+      if(meshSrc)
         {
-        smtk::model::ManagerPtr mgr = smProxy->modelManager();
-        modelInfo->MeshInfos[newcid].init(meshSrc, repSrc, rep,
-          meshMgr->collection(newcid)->readLocation(), mgr, modelInfo);
+        // ModelManagerWrapper Proxy
+        vtkSMModelManagerProxy* smProxy = this->ManagerProxy;
+        vtkSMProxyProperty* smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          meshSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
 
-        vtkSMPropertyHelper(rep->getProxy(),
-                        "Representation").Set("Surface With Edges");
+        vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
+          model.entity().toString().c_str());
+        vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
+          cid.toString().c_str());
 
-        RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-          rep->getProxy(), NULL, vtkDataObject::FIELD);
+        meshSrc->getProxy()->UpdateVTKObjects();
+        meshSrc->updatePipeline();
 
-        rep->getProxy()->UpdateVTKObjects();
+        pqPipelineSource* repSrc = builder->createFilter(
+          "ModelBridge", "SMTKModelFieldArrayFilter", meshSrc);
+        smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
+
+  //      vtkSMPropertyHelper(repSrc->getProxy(),"AddGroupArray").Set(1);
+        repSrc->getProxy()->UpdateVTKObjects();
+        repSrc->updatePipeline();
+
+        rep = builder->createDataRepresentation(
+          repSrc->getOutputPort(0), view);
+        if(rep)
+          {
+          smtk::model::ManagerPtr mgr = smProxy->modelManager();
+          modelInfo->MeshInfos[cid].init(meshSrc, repSrc, rep,
+            (*cit)->readLocation(), mgr, modelInfo);
+
+          vtkSMPropertyHelper(rep->getProxy(),
+                          "Representation").Set("Surface With Edges");
+
+          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+            rep->getProxy(), NULL, vtkDataObject::FIELD);
+
+          rep->getProxy()->UpdateVTKObjects();
+          }
         }
-      }
 
-    if(rep == NULL)
-      {
-      qCritical() << "Failed to create a mesh pqRepresentation for the model: "
-        << model.entity().toString().c_str();
-      }
+      if(rep == NULL)
+        {
+        qCritical() << "Failed to create a mesh pqRepresentation for the model: "
+          << model.entity().toString().c_str();
+        }
+    }
   }
 
   // If the group has already been removed from the model, the modelInfo(entityID)
