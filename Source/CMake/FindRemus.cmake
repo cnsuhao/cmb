@@ -18,10 +18,12 @@
 
 find_path(REMUS_ROOT_DIR
     NAMES include/remus/version.h
+          include/remus/Version.h
 )
 
 find_path(REMUS_INCLUDE_DIR
     NAMES remus/version.h
+          remus/Version.h
     HINTS ${REMUS_ROOT_DIR}/include/
 )
 
