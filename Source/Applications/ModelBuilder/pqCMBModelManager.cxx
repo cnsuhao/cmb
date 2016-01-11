@@ -182,7 +182,10 @@ public:
     bool loadOK = true;
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       {
-      model.setSession(sref);
+      // if this is a submodel, we don't want it to be child of the session.
+      // Instead its parent should be the child of the session.
+      if(!model.parent().isModel())
+        model.setSession(sref);
       // for any model that has cells, we will create a representation for it.
       if(model.cells().size() > 0 || model.groups().size() > 0)
         {
@@ -1546,14 +1549,16 @@ bool pqCMBModelManager::handleOperationResult(
   for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-    if((it->isValid()))
+    if((it->isValid())) // ingore submodels
       {
       if(this->Internal->ModelInfos.find(it->entity()) ==
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
+        // if this is a submodel, use its parent
+        smtk::model::Model newModel =  it->parent().isModel() ? it->parent() : *it;
         success = this->Internal->addModelRepresentation(
-          *it, view, this->Internal->ManagerProxy, "", sref);
+          newModel, view, this->Internal->ManagerProxy, "", sref);
         }
       // update representation
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
