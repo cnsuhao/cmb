@@ -1246,7 +1246,7 @@ std::string pqCMBModelManager::getNativeModelFile(
 
   // This is a json/smtk model file, we will look for native model file,
   // and return the session type that can read that file.
-  std::ifstream file(filename);
+  std::ifstream file(filename.c_str());
   if (!file.good())
     {
     return filename;
