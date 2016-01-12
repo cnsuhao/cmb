@@ -62,6 +62,12 @@
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
 
+#include "smtk/io/ImportJSON.h"
+#include "cJSON.h"
+
+#include <fstream>
+#include <iostream>
+
 #include "vtksys/SystemTools.hxx"
 #include "cJSON.h"
 
@@ -176,7 +182,10 @@ public:
     bool loadOK = true;
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
       {
-      model.setSession(sref);
+      // if this is a submodel, we don't want it to be child of the session.
+      // Instead its parent should be the child of the session.
+      if(!model.parent().isModel())
+        model.setSession(sref);
       // for any model that has cells, we will create a representation for it.
       if(model.cells().size() > 0 || model.groups().size() > 0)
         {
@@ -342,7 +351,7 @@ public:
       }
 
     pqSMTKModelInfo* modelInfo = &this->ModelInfos[related_model.entity()];
-    smtk::common::UUID newcid;
+    std::vector<smtk::mesh::CollectionPtr> newMCs;
     if(modelInfo->MeshInfos.size() > 0)
       {
       std::vector<smtk::mesh::CollectionPtr>::const_iterator it;
@@ -350,76 +359,80 @@ public:
         {
         if(modelInfo->MeshInfos.find((*it)->entity()) == modelInfo->MeshInfos.end())
           {
-          newcid = (*it)->entity();
-          break;
+          newMCs.push_back(*it);
           }
         }
       }
     else
       {
-      newcid = meshCollections[0]->entity(); // take the first mesh collection
+      newMCs.insert(newMCs.end(), meshCollections.begin(), meshCollections.end()); // take all mesh collections
       }
-    if(newcid.isNull())
+    if(newMCs.size() == 0)
       return;
 
-    pqDataRepresentation* rep = NULL;
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
-    pqPipelineSource* meshSrc = builder->createSource(
-        "ModelBridge", "SMTKMeshSource", this->Server);
-    if(meshSrc)
+    std::vector<smtk::mesh::CollectionPtr>::const_iterator cit;
+    for(cit = newMCs.begin(); cit != newMCs.end(); ++cit)
       {
-      // ModelManagerWrapper Proxy
-      vtkSMModelManagerProxy* smProxy = this->ManagerProxy;
-      vtkSMProxyProperty* smwrapper =
-        vtkSMProxyProperty::SafeDownCast(
-        meshSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-      smwrapper->RemoveAllProxies();
-      smwrapper->AddProxy(smProxy);
-
-      vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
-        model.entity().toString().c_str());
-      vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
-        newcid.toString().c_str());
-
-      meshSrc->getProxy()->UpdateVTKObjects();
-      meshSrc->updatePipeline();
-
-      pqPipelineSource* repSrc = builder->createFilter(
-        "ModelBridge", "SMTKModelFieldArrayFilter", meshSrc);
-      smwrapper =
-        vtkSMProxyProperty::SafeDownCast(
-        repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-      smwrapper->RemoveAllProxies();
-      smwrapper->AddProxy(smProxy);
-
-//      vtkSMPropertyHelper(repSrc->getProxy(),"AddGroupArray").Set(1);
-      repSrc->getProxy()->UpdateVTKObjects();
-      repSrc->updatePipeline();
-
-      rep = builder->createDataRepresentation(
-        repSrc->getOutputPort(0), view);
-      if(rep)
+      smtk::common::UUID cid = (*cit)->entity();
+      pqDataRepresentation* rep = NULL;
+      pqPipelineSource* meshSrc = builder->createSource(
+          "ModelBridge", "SMTKMeshSource", this->Server);
+      if(meshSrc)
         {
-        smtk::model::ManagerPtr mgr = smProxy->modelManager();
-        modelInfo->MeshInfos[newcid].init(meshSrc, repSrc, rep,
-          meshMgr->collection(newcid)->readLocation(), mgr, modelInfo);
+        // ModelManagerWrapper Proxy
+        vtkSMModelManagerProxy* smProxy = this->ManagerProxy;
+        vtkSMProxyProperty* smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          meshSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
 
-        vtkSMPropertyHelper(rep->getProxy(),
-                        "Representation").Set("Surface With Edges");
+        vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
+          model.entity().toString().c_str());
+        vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
+          cid.toString().c_str());
 
-        RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-          rep->getProxy(), NULL, vtkDataObject::FIELD);
+        meshSrc->getProxy()->UpdateVTKObjects();
+        meshSrc->updatePipeline();
 
-        rep->getProxy()->UpdateVTKObjects();
+        pqPipelineSource* repSrc = builder->createFilter(
+          "ModelBridge", "SMTKModelFieldArrayFilter", meshSrc);
+        smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
+
+  //      vtkSMPropertyHelper(repSrc->getProxy(),"AddGroupArray").Set(1);
+        repSrc->getProxy()->UpdateVTKObjects();
+        repSrc->updatePipeline();
+
+        rep = builder->createDataRepresentation(
+          repSrc->getOutputPort(0), view);
+        if(rep)
+          {
+          smtk::model::ManagerPtr mgr = smProxy->modelManager();
+          modelInfo->MeshInfos[cid].init(meshSrc, repSrc, rep,
+            (*cit)->readLocation(), mgr, modelInfo);
+
+          vtkSMPropertyHelper(rep->getProxy(),
+                          "Representation").Set("Surface With Edges");
+
+          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+            rep->getProxy(), NULL, vtkDataObject::FIELD);
+
+          rep->getProxy()->UpdateVTKObjects();
+          }
         }
-      }
 
-    if(rep == NULL)
-      {
-      qCritical() << "Failed to create a mesh pqRepresentation for the model: "
-        << model.entity().toString().c_str();
-      }
+      if(rep == NULL)
+        {
+        qCritical() << "Failed to create a mesh pqRepresentation for the model: "
+          << model.entity().toString().c_str();
+        }
+    }
   }
 
   // If the group has already been removed from the model, the modelInfo(entityID)
@@ -1196,8 +1209,9 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
     return retBrEns;
     }
 
+  std::string realmodelfile = this->getNativeModelFile(filename);
   std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(filename);
+    vtksys::SystemTools::GetFilenameLastExtension(realmodelfile);
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::model::StringList bnames = pxy->sessionNames();
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
@@ -1211,13 +1225,83 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
         {
         if (tpit->find(lastExt) == 0)
           {
-          retBrEns[*it].push_back(typeIt->first);
+          std::string sesstype = *it;
+          retBrEns[sesstype].push_back(typeIt->first);
           }
         }
       }
     }
 
   return retBrEns;
+}
+
+//----------------------------------------------------------------------------
+std::string pqCMBModelManager::getNativeModelFile(
+  const std::string& filename) const
+{
+  std::string lastExt =
+    vtksys::SystemTools::GetFilenameLastExtension(filename);
+  if( lastExt != ".smtk" && lastExt != ".json")
+    return filename;
+
+  // This is a json/smtk model file, we will look for native model file,
+  // and return the session type that can read that file.
+  std::ifstream file(filename);
+  if (!file.good())
+    {
+    return filename;
+    }
+
+  std::string data(
+    (std::istreambuf_iterator<char>(file)),
+    (std::istreambuf_iterator<char>()));
+
+  if (data.empty())
+    {
+    return filename;
+    }
+
+  cJSON* root = cJSON_Parse(data.c_str());
+  if (root && root->type == cJSON_Object && root->child)
+    {
+    cJSON* sessionRec = root->child;
+    cJSON* modelsObj = cJSON_GetObjectItem(sessionRec, "models");
+    if (modelsObj && modelsObj->child && modelsObj->child->string )
+      {
+      cJSON* modelObj = modelsObj->child;
+      smtk::model::ManagerPtr tmpMgr = smtk::model::Manager::create();
+      smtk::common::UUID modelid = smtk::common::UUID(modelObj->string);
+
+      // Find the model entry, and get the native model file name if it exists.
+      // The modelObj record (whose string is model uuid) contains all entities, meshes and properties etc,
+      // and one of its children should be the model entity iteslf, whose string is also the uuid.
+      cJSON* modelentry = cJSON_GetObjectItem(modelObj, modelObj->string);
+      if(modelentry)
+        {
+        // failed to load properties is still OK
+        smtk::io::ImportJSON::ofManagerStringProperties(modelid, modelentry, tmpMgr);
+        }
+
+      std::string nativemodelfile;
+      std::string nativefilekey = tmpMgr->hasStringProperty(modelid, "output_native_url") ?
+                                  "output_native_url" :
+                                  (tmpMgr->hasStringProperty(modelid, "url") ? "url" : "");
+      if (!nativefilekey.empty())
+        {
+        smtk::model::StringList const& nprop(tmpMgr->stringProperty(modelid, nativefilekey));
+        if (!nprop.empty())
+          {
+          nativemodelfile = nprop[0];
+          }
+        }
+
+      if(!nativemodelfile.empty())
+        {
+        return nativemodelfile;
+        }
+      }
+    }
+  return filename;
 }
 
 //----------------------------------------------------------------------------
@@ -1465,14 +1549,16 @@ bool pqCMBModelManager::handleOperationResult(
   for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-    if((it->isValid()))
+    if((it->isValid())) // ingore submodels
       {
       if(this->Internal->ModelInfos.find(it->entity()) ==
         this->Internal->ModelInfos.end())
         {
         hasNewModels = true;
+        // if this is a submodel, use its parent
+        smtk::model::Model newModel =  it->parent().isModel() ? it->parent() : *it;
         success = this->Internal->addModelRepresentation(
-          *it, view, this->Internal->ManagerProxy, "", sref);
+          newModel, view, this->Internal->ManagerProxy, "", sref);
         }
       // update representation
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
