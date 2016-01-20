@@ -14,8 +14,8 @@
 #include "vtkCMBArcEndNode.h"
 #include "vtkCMBArcProvider.h"
 
-#include "smtk/bridge/discrete/extension/meshing/cmbFaceMeshHelper.h"
-#include "smtk/bridge/discrete/extension/meshing/cmbFaceMesherInterface.h"
+#include "smtk/extension/vtk/meshing/cmbFaceMeshHelper.h"
+#include "smtk/extension/vtk/meshing/cmbFaceMesherInterface.h"
 
 #include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
@@ -92,7 +92,7 @@ void vtkCMBArcPolygonProvider::ClearInnerLoops( )
 //----------------------------------------------------------------------------
 vtkPolyData* vtkCMBArcPolygonProvider::CreatePolyDataRepresentation()
 {
-  using namespace smtk::bridge::discrete;
+  using namespace smtk::vtk;
 
   vtkCMBArcManager *manager = vtkCMBArcManager::GetInstance();
 

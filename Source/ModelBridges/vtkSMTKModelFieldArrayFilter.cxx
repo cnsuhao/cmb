@@ -33,7 +33,7 @@
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/common/UUID.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/model/AttributeAssignments.h"
 #include "smtk/model/EntityRef.h"
 #include "smtk/model/Group.h"

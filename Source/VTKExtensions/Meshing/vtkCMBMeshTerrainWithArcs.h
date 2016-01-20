@@ -19,9 +19,9 @@
 
 class vtkPoints;
 class vtkCellArray;
-namespace smtk { namespace bridge { namespace discrete {
+namespace smtk { namespace vtk {
   class vtkCMBTriangleMesher;
-} } }
+} }
 
 class VTKCMBMESHING_EXPORT vtkCMBMeshTerrainWithArcs : public vtkPolyDataAlgorithm
 {
@@ -93,7 +93,7 @@ protected:
   vtkCmbInternalTerrainInfo *TerrainInfo;
   //ETX
 
-  smtk::bridge::discrete::vtkCMBTriangleMesher *Mesher;
+  smtk::vtk::vtkCMBTriangleMesher *Mesher;
   double MesherMaxArea;
 
 private:

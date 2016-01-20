@@ -58,7 +58,7 @@
 #include "smtk/attribute/StringItem.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"

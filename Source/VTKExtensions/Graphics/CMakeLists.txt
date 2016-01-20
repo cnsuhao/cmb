@@ -35,4 +35,4 @@ vtk_module_library(vtkCMBGraphics ${CMB_Graphics_SRC})
 target_link_libraries(vtkCMBGraphics
                       LINK_PRIVATE
                       smtkCore
-                      vtkSMTKDiscreteReaderExt)
+                      vtkSMTKReaderExt)

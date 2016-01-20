@@ -266,7 +266,7 @@ LINK_PRIVATE
   RemusClient
   smtkCore
   ModelBridge_Plugin
-  vtkSMTKExt
+  vtkSMTKSourceExt
   )
 
 #------------------------------------------------------------------------------

@@ -46,7 +46,7 @@ target_link_libraries(vtkCMBMeshing
                       RemusClient
                       RemusServer
                       smtkCore
-                      vtkSMTKDiscreteMeshingExt
+                      vtkSMTKMeshingExt
                       ${Meshing_Libs})
 
 target_include_directories(vtkCMBMeshing

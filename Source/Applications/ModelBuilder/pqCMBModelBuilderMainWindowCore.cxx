@@ -87,7 +87,7 @@
 #include "smtk/model/Operator.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
 

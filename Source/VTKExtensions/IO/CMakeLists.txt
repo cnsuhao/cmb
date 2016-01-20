@@ -69,7 +69,7 @@ vtk_module_library(vtkCMBIO ${CMB_IO_SRC})
 target_link_libraries(vtkCMBIO
                       LINK_PRIVATE
                       smtkCore
-                      vtkSMTKDiscreteReaderExt
+                      vtkSMTKReaderExt
                       ${GDAL_LIBRARY}
                       ${KML_LIBRARIES})
 

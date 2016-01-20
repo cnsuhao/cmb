@@ -28,7 +28,7 @@
 #include "vtkXMLPolyDataWriter.h"
 
 #include "union_find.h"
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBMeshServerLauncher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBMeshServerLauncher.h"
 
 #include <algorithm>
 #include <iterator>
@@ -151,7 +151,7 @@ public:
   void Generate(
     vtkIdType region, vtkPolyData* pdIn, vtkPolyData* holesIn,
     vtkPolyData* pdOut, vtkIdTypeArray* modelFace, vtkIdTypeArray* pedigreeIds,
-    smtk::bridge::discrete::vtkCMBMeshServerLauncher* lau)
+    smtk::vtk::vtkCMBMeshServerLauncher* lau)
     {
     std::set<vtkIdType> roots = this->Sets.Roots();
 
@@ -486,7 +486,7 @@ int vtkRegionsToLoops::RequestData(
   snippetsByRegion.AddContainerInfo(tabIn);
   //cout << "\n\n";
 
-  typedef smtk::bridge::discrete::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
+  typedef smtk::vtk::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
   vtkNew<vtkMeshServerLauncher> lau;
   // Now triangulate each region
   SnippetCollection::iterator snipIt;
