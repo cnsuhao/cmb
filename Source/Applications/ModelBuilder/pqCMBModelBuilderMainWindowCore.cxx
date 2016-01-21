@@ -1202,6 +1202,11 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
     emit this->newModelCreated();
     }
   this->activeRenderView()->render();
+
+  if(hasNewMeshes)
+    {
+    emit this->newMeshCreated();
+    }
   return true;
 }
 

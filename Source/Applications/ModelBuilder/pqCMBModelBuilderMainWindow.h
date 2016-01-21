@@ -44,6 +44,7 @@ public slots:
   void onCMBModelCleared();
   void onCMBModelModified();
   void onNewModelCreated();
+  void onNewMeshCreated();
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,

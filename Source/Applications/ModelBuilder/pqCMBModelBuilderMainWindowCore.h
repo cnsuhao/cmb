@@ -83,6 +83,7 @@ signals:
   void rubberSelectionModeChanged();
   void newSceneLoaded();
   void newModelCreated();
+  void newMeshCreated();
 
 public slots:
   // Description

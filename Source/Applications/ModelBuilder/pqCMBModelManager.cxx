@@ -1549,10 +1549,9 @@ bool pqCMBModelManager::handleOperationResult(
   for (smtk::model::Models::iterator it = modelEnts.begin();
       it != modelEnts.end(); ++it)
     {
-    if((it->isValid())) // ingore submodels
+    if(it->isValid() && !it->parent().isModel()) // ingore submodels
       {
-      if(this->Internal->ModelInfos.find(it->entity()) ==
-        this->Internal->ModelInfos.end())
+      if(internal_getModelInfo(*it, this->Internal->ModelInfos) == NULL)
         {
         hasNewModels = true;
         // if this is a submodel, use its parent
