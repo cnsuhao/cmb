@@ -197,7 +197,10 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   QObject::connect(this->getThisCore(),
     SIGNAL(newModelCreated()),
-    this, SLOT(onNewModelCreated()));
+    this, SLOT(onNewModelCreated()), Qt::QueuedConnection);
+  QObject::connect(this->getThisCore(),
+    SIGNAL(newMeshCreated()),
+    this, SLOT(onNewMeshCreated()), Qt::QueuedConnection);
 
   this->initSimBuilder();
 
@@ -787,6 +790,13 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
 
   this->updateEnableState();
 }
+
+void pqCMBModelBuilderMainWindow::onNewMeshCreated()
+{
+  this->getThisCore()->modelPanel()->show();
+  this->getThisCore()->modelPanel()->raise();
+}
+
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::loadSimulation()
 {
