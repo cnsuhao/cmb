@@ -180,11 +180,11 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
     {
     //clear functions
     QList< QVariant > v;
-    v <<Id;
+    v << Id << 0;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
     source->UpdateVTKObjects();
     v.clear();
-    v << -1;
+    v << -1 << 0;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
     source->UpdateVTKObjects();
     }
@@ -194,7 +194,7 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       double d[4];
       WeightingFunction->GetNodeValue(i, d);
       QList< QVariant > v;
-      v <<Id << d[0] << d[1] << d[2] << d[3];
+      v <<Id << 0 << d[0] << d[1] << d[2] << d[3];
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
       source->UpdateVTKObjects();
       }
@@ -203,22 +203,37 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       double d[4];
       DisplacementProfile->GetNodeValue(i, d);
       QList< QVariant > v;
-      v <<Id << d[0] << d[1] << d[2] << d[3];
+      v <<Id << 0 << d[0] << d[1] << d[2] << d[3];
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddDespPoint"), v);
       source->UpdateVTKObjects();
       }
     sendRanges(source);
+    for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints()); ++i)
+      {
+      QList< QVariant > v;
+      v << Id << static_cast<int>(i) << 0;
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+      source->UpdateVTKObjects();
+      }
     }
     {
     QList< QVariant > v;
-    v <<Id << Relative << Symmetric;
+    v << Id << 0 << Relative << Symmetric;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
+    source->UpdateVTKObjects();
+    v.clear();
+    v << -1 << -1 << 0 << 1;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
     source->UpdateVTKObjects();
     }
     {
     QList< QVariant > v;
-    v << Id << ((this->WeightUseSpline)?1:0) << ((this->DispUseSpline)?1:0);
+    v << Id << 0 << ((this->WeightUseSpline)?1:0) << ((this->DispUseSpline)?1:0);
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SelectFunctionType"), v);
+    v.clear();
+    v << -1 << -1 << 0 << 1;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SelectFunctionType"), v);
+    source->UpdateVTKObjects();
     }
   source->UpdateVTKObjects();
   source->MarkAllPropertiesAsModified();
@@ -334,9 +349,19 @@ pqCMBModifierArc::setRelative(bool b)
 void
 pqCMBModifierArc::sendRanges(vtkSMSourceProxy* source)
 {
+  vtkPVArcInfo* info = CmbArc->getArcInfo();
   QList< QVariant > v;
-  v << Id << DisplacementDepthRange[MIN] << DisplacementDepthRange[MAX]
-          << DistanceRange[MIN] << DistanceRange[MAX];
+  for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints()); ++i)
+    {
+    v.clear();
+    v << Id << i << DisplacementDepthRange[MIN] << DisplacementDepthRange[MAX]
+      << DistanceRange[MIN] << DistanceRange[MAX];
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
+    source->UpdateVTKObjects();
+    }
+  v.clear();
+  v << -1 << -1 << DisplacementDepthRange[MIN] << DisplacementDepthRange[MAX]
+    << DistanceRange[MIN] << DistanceRange[MAX];
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
   source->UpdateVTKObjects();
 }

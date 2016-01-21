@@ -5790,8 +5790,8 @@ associates the containing cell ID to the point.
       <IntVectorProperty
         name="SetFunctionModes"
         command="SetFunctionModes"
-        number_of_elements="3"
-        default_values="-1 0 1">
+        number_of_elements="4"
+        default_values="-1 -1 0 1">
         <Documentation>
           Sets relative and symmetry control.
         </Documentation>
@@ -5820,18 +5820,28 @@ associates the containing cell ID to the point.
       <IntVectorProperty
         name="ClearFunctions"
         command="ClearFunctions"
-        number_of_elements="1"
-        default_values="-1">
+        number_of_elements="2"
+        default_values="-1 -1">
         <Documentation>
-         Clears the weighting and desp functions
+         Clears all weighting and depth functions
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="SetFunctionToPoint"
+        command="SetFunctionToPoint"
+        number_of_elements="3"
+        default_values="-1 -1 -1">
+        <Documentation>
+          Set a profile function to a point
         </Documentation>
       </IntVectorProperty>
 
       <IntVectorProperty
         name="SelectFunctionType"
         command="SelectFunctionType"
-        number_of_elements="3"
-        default_values="-1 0 0">
+        number_of_elements="4"
+        default_values="-1 -1 0 0">
         <Documentation>
           Selects function type.
         </Documentation>
@@ -5901,8 +5911,8 @@ associates the containing cell ID to the point.
         name="AddWeightPoint"
         label="Add Weighting Point"
         command="AddWeightingFunPoint"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Add point to wighting function.
         </Documentation>
@@ -5912,8 +5922,8 @@ associates the containing cell ID to the point.
         name="AddDespPoint"
         label="Add Desp Point"
         command="AddDispFunPoint"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Point to be used in closest point calculation.
         </Documentation>
@@ -5923,8 +5933,8 @@ associates the containing cell ID to the point.
         name="SetControlVars"
         label="Set the control Varables"
         command="SetControlRanges"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Point to be used in closest point calculation.
         </Documentation>
