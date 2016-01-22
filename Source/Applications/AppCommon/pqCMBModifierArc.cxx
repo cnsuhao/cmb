@@ -58,6 +58,7 @@ pqCMBModifierArc::pqCMBModifierArc()
   WeightSplineControl[0] = 0;
   WeightSplineControl[1] = 0;
   WeightSplineControl[2] = 0;
+  setUpFunction();
 }
 
 pqCMBModifierArc::pqCMBModifierArc(vtkSMSourceProxy *proxy)
@@ -107,6 +108,7 @@ void pqCMBModifierArc::switchToNotEditable()
   this->CmbArc->pqCMBSceneObjectBase::setColor(rgba, this->IsVisible);
   CmbArc->arcIsModified();
   CmbArc->updateRepresentation();
+  setUpFunction();
   emit requestRender();
 }
 
@@ -116,6 +118,7 @@ void pqCMBModifierArc::switchToEditable()
   this->CmbArc->pqCMBSceneObjectBase::setColor(rgba, true);
   CmbArc->arcIsModified();
   CmbArc->updateRepresentation();
+  setUpFunction();
   emit requestRender();
 }
 
@@ -124,6 +127,7 @@ bool pqCMBModifierArc::setCMBArc(pqCMBArc * arc)
   if(arc == NULL) return false;
   if(!IsExternalArc) delete CmbArc;
   CmbArc = arc;
+  setUpFunction();
   IsExternalArc = true;
   return true;
 }
@@ -141,6 +145,7 @@ void pqCMBModifierArc::removeFromServer(vtkSMSourceProxy* source)
 void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
 {
   vtkPVArcInfo* info = CmbArc->getArcInfo();
+  setUpFunction();
   if(info != NULL)
     {
     CmbArc->arcIsModified();
@@ -354,14 +359,15 @@ pqCMBModifierArc::sendRanges(vtkSMSourceProxy* source)
   for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints()); ++i)
     {
     v.clear();
-    v << Id << i << DisplacementDepthRange[MIN] << DisplacementDepthRange[MAX]
-      << DistanceRange[MIN] << DistanceRange[MAX];
+    v << Id << i
+      << pointsParams[i].DisplacementDepthRange[MIN]
+      << pointsParams[i].DisplacementDepthRange[MAX]
+      << pointsParams[i].DistanceRange[MIN] << pointsParams[i].DistanceRange[MAX];
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
     source->UpdateVTKObjects();
     }
   v.clear();
-  v << -1 << -1 << DisplacementDepthRange[MIN] << DisplacementDepthRange[MAX]
-    << DistanceRange[MIN] << DistanceRange[MAX];
+  v << -1 << -1 << 0 << 0 << 0 << 0;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
   source->UpdateVTKObjects();
 }
@@ -503,4 +509,67 @@ void pqCMBModifierArc::read(std::ifstream & f)
   readFunction(f);
   CmbArc->setPlaneProjectionNormal(norm);
   CmbArc->setPlaneProjectionPosition(pos);
+  setUpFunction();
+}
+
+void pqCMBModifierArc::getDisplacementParams(size_t pt, double & min, double & max) const
+{
+  if(pt < pointsParams.size())
+  {
+    min = pointsParams[pt].DistanceRange[MIN];
+    max = pointsParams[pt].DistanceRange[MAX];
+  }
+}
+
+void pqCMBModifierArc::setDisplacementParams(size_t pt, double min, double max)
+{
+  setUpFunction();
+  if(pt < pointsParams.size())
+  {
+    pointsParams[pt].DistanceRange[MIN] = min;
+    pointsParams[pt].DistanceRange[MAX] = max;
+  }
+}
+
+void pqCMBModifierArc::getDepthParams(size_t pt, double & min, double & max) const
+{
+  if(pt < pointsParams.size())
+  {
+    min = pointsParams[pt].DisplacementDepthRange[MIN];
+    max = pointsParams[pt].DisplacementDepthRange[MAX];
+  }
+}
+
+void pqCMBModifierArc::setDepthParams(size_t pt, double min, double max)
+{
+  setUpFunction();
+  if(pt < pointsParams.size())
+  {
+    pointsParams[pt].DisplacementDepthRange[MIN] = min;
+    pointsParams[pt].DisplacementDepthRange[MAX] = max;
+  }
+}
+
+void pqCMBModifierArc::setUpFunction()
+{
+  vtkPVArcInfo* info = CmbArc->getArcInfo();
+  if(info == NULL) return;
+  if(pointsParams.size() == info->GetNumberOfPoints())
+  {
+    //DO Nothing
+  }
+  else if(pointsParams.size() > info->GetNumberOfPoints())
+  {
+    pointsParams.resize(info->GetNumberOfPoints());
+  }
+  else for(size_t i = pointsParams.size();
+           i < static_cast<size_t>(info->GetNumberOfPoints()); ++i)
+  {
+    modifierParams mp;
+    mp.DistanceRange[0] = DistanceRange[0];
+    mp.DistanceRange[1] = DistanceRange[1];
+    mp.DisplacementDepthRange[0] = DisplacementDepthRange[0];
+    mp.DisplacementDepthRange[1] = DisplacementDepthRange[1];
+    pointsParams.push_back(mp);
+  }
 }

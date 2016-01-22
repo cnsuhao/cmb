@@ -13,6 +13,7 @@
 #include <QObject>
 #include <QAbstractItemView>
 #include <fstream>
+#include <vector>
 
 class qtCMBArcWidget;
 class qtCMBArcEditWidget;
@@ -27,6 +28,16 @@ class pqCMBModifierArc :  public QObject
   Q_OBJECT
 
 public:
+  struct modifierParams
+  {
+    double DistanceRange[2];
+    double DisplacementDepthRange[2];
+    vtkPiecewiseFunction * DisplacementProfile;
+    vtkPiecewiseFunction * WeightingFunction;
+    modifierParams()
+    :DisplacementProfile(NULL),WeightingFunction(NULL)
+    {}
+  };
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
   pqCMBModifierArc(vtkSMSourceProxy *proxy);
@@ -84,6 +95,12 @@ public:
   void write(std::ofstream & f);
   void read(std::ifstream & f);
 
+  void getDisplacementParams(size_t pt, double & min, double & max) const;
+  void setDisplacementParams(size_t pt, double min, double max);
+
+  void getDepthParams(size_t pt, double & min, double & max) const;
+  void setDepthParams(size_t pt, double min, double max);
+
 public slots:
   void setLeftDistance(double dist);
   void setRightDistance(double dist);
@@ -112,6 +129,7 @@ signals:
 protected:
   //Varable for the path
   pqCMBArc * CmbArc;
+  std::vector<modifierParams> pointsParams;
   bool IsExternalArc;
   double DistanceRange[2];
   double DisplacementDepthRange[2];
@@ -127,6 +145,7 @@ protected:
   bool DispUseSpline;
   bool WeightUseSpline;
   void sendRanges(vtkSMSourceProxy*);
+  void setUpFunction();
 };
 
 #endif

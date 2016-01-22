@@ -38,6 +38,7 @@
 #include <vtksys/SystemTools.hxx>
 #include "ui_qtArcFunctionControl.h"
 #include "ui_qtModifierArcDialog.h"
+#include "vtkPVArcInfo.h"
 
 // enum for different column types
 enum DataTableCol
@@ -143,6 +144,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                    this, SLOT(doneModifyingArc()));
   this->UI->ArcControlTabs->setTabEnabled(1, false);
   this->UI->ArcControlTabs->setTabEnabled(2, false);
+  this->UI->ArcControlTabs->setTabEnabled(3, false);
   QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)));
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()));
   this->check_save();
@@ -182,6 +184,17 @@ void pqCMBModifierArcManager::initialize()
                    this, SLOT(onDatasetChange(QTableWidgetItem*)));
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
+
+  this->UI->points->setColumnCount(6);
+  this->UI->points->setHorizontalHeaderLabels(
+                QStringList() << tr("X") << tr("Y")
+                              << tr("Minimum\nDisplacement\nDepth")
+                              << tr("Maximum\nDisplacement\nDepth")
+                              << tr("Left\nFunction\nDistance")
+                              << tr("Right\nFunction\nDistance"));
+  this->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
+  this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
+  this->UI->points->verticalHeader()->hide();
 
   this->UI->DisplacementSplineFrame->setVisible(false);
   QObject::connect(this->UI->DisplacementSplineCont, SIGNAL(toggled(bool)),
@@ -248,8 +261,12 @@ void pqCMBModifierArcManager::showDialog()
 //-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::clear()
 {
+  selectLine(-1);
+  this->CurrentModifierArc = NULL;
   this->TableWidget->clearContents();
   this->TableWidget->setRowCount(0);
+  this->UI->points->clearContents();
+  this->UI->points->setRowCount(0);
   for(unsigned int i = 0; i < ArcLines.size(); ++i)
     {
     delete ArcLines[i];
@@ -542,6 +559,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->UI->addLineButton->setEnabled(true);
     this->UI->ArcControlTabs->setTabEnabled(1, false);
     this->UI->ArcControlTabs->setTabEnabled(2, false);
+    this->UI->ArcControlTabs->setTabEnabled(3, false);
     this->UI->ApplyAgain->setEnabled(false);
     this->UI->LoadFunctions->setEnabled(true);
     if(this->UI_Dialog != NULL)
@@ -601,6 +619,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->UI->Symmetric->setEnabled(true);
     this->updateLineFunctions();
     this->setDatasetTable(sid);
+    this->setUpPointsTable();
     connect(this->UI->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
             this->CurrentModifierArc, SLOT(setMinDisplacementDepth(double)));
     connect(this->UI->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
@@ -617,6 +636,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
             this->CurrentModifierArc, SLOT(setRelative(bool)));
     this->UI->ArcControlTabs->setTabEnabled(1, true);
     this->UI->ArcControlTabs->setTabEnabled(2, true);
+    this->UI->ArcControlTabs->setTabEnabled(3, true);
     }
 }
 
@@ -652,6 +672,26 @@ void pqCMBModifierArcManager::update()
     {
     return;
     }
+  {//Update point functions
+    pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
+    vtkPVArcInfo* ai = arc->getArcInfo();
+    for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
+    {
+      double min,max;
+      QTableWidgetItem * tmp = this->UI->points->item( i, 2);
+      min = tmp->data(Qt::DisplayRole).toDouble();
+      tmp = this->UI->points->item( i, 3);
+      max = tmp->data(Qt::DisplayRole).toDouble();
+      CurrentModifierArc->setDepthParams(i,min,max);
+      tmp = this->UI->points->item( i, 4);
+      min = tmp->data(Qt::DisplayRole).toDouble();
+      tmp = this->UI->points->item( i, 5);
+      max = tmp->data(Qt::DisplayRole).toDouble();
+      CurrentModifierArc->setDisplacementParams(i,
+                                                (CurrentModifierArc->getSymmetry())?0:min,
+                                                max);
+    }
+  }
   foreach(QString filename, ServerProxies.keys())
     {
     foreach(int pieceIdx, ServerProxies[filename].keys())
@@ -660,6 +700,7 @@ void pqCMBModifierArcManager::update()
       this->CurrentModifierArc->updateArc(source);
       }
     }
+  setUpPointsTable();
   emit(functionsUpdated());
   emit(requestRender());
 }
@@ -866,6 +907,54 @@ void pqCMBModifierArcManager::setUpTable()
       objItem->setFlags(commFlags);
       }
     }
+  tmp->resizeColumnsToContents();
+  tmp->blockSignals(false);
+}
+
+void pqCMBModifierArcManager::setUpPointsTable()
+{
+  QTableWidget* tmp = this->UI->points;
+  tmp->blockSignals(true);
+
+  tmp->clearContents();
+  tmp->setRowCount(0);
+  if(CurrentModifierArc == NULL)
+  {
+    tmp->blockSignals(false);
+    return;
+  }
+  Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+  tmp->setSelectionMode(QAbstractItemView::NoSelection);
+  pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
+  vtkPVArcInfo* ai = arc->getArcInfo();
+  for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
+  {
+    double pt[3];
+    ai->GetPointLocation(i, pt);
+    int row = tmp->rowCount();
+    tmp->insertRow(tmp->rowCount());
+    QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(pt[0]));
+    tmp->setItem(row, 0, qtwi);
+    qtwi->setFlags(commFlags);
+    qtwi = new QTableWidgetItem(QString::number(pt[1]));
+    tmp->setItem(row, 1, qtwi);
+    qtwi->setFlags(commFlags);
+    double min,max;
+    CurrentModifierArc->getDepthParams(i,min,max);
+    qtwi = new QTableWidgetItem();
+    qtwi->setData(Qt::DisplayRole, min);
+    tmp->setItem(row, 2, qtwi);
+    qtwi = new QTableWidgetItem();
+    qtwi->setData(Qt::DisplayRole, max);
+    tmp->setItem(row, 3, qtwi);
+    CurrentModifierArc->getDisplacementParams(i, min, max);
+    qtwi = new QTableWidgetItem();
+    qtwi->setData(Qt::DisplayRole, (CurrentModifierArc->getSymmetry())?-max:min);
+    tmp->setItem(row, 4, qtwi);
+    qtwi = new QTableWidgetItem();
+    qtwi->setData(Qt::DisplayRole, max);
+    tmp->setItem(row, 5, qtwi);
+  }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
 }

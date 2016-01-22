@@ -133,6 +133,8 @@ protected:
 
   void setUpTable();
 
+  void setUpPointsTable();
+
   void setDatasetTable(int inId);
 
   void addNewArc(pqCMBModifierArc* arc);
