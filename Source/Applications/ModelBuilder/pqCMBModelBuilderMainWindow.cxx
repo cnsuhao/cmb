@@ -117,6 +117,8 @@ public:
       {
       delete this->SceneGeoTree;
       }
+    if(this->InformationWidget)
+      delete this->InformationWidget;
     }
 
   QPointer<pqProxyInformationWidget> InformationWidget;
