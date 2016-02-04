@@ -40,6 +40,8 @@ class qtCMBArcWidgetManager;
 class pqServer;
 class pqRenderView;
 class pqPipelineSource;
+class qtCMBManualFunctionWidget;
+class cmbProfileFunction;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 {
@@ -55,6 +57,7 @@ public:
   qtCMBArcWidgetManager* arcWidgetManager() const {return this->ArcWidgetManager;}
 
   void AddLinePiece(pqCMBModifierArc *dataObj, int visible=1);
+  void AddFunction(cmbProfileFunction * fun);
 
   std::vector<int> getCurrentOrder(QString, int pindx);
 
@@ -75,6 +78,7 @@ public slots:
   void onCurrentObjectChanged();
   void unselectAllRows();
   void onSelectionChange();
+  void onFunctionSelectionChange();
   void enableSelection();
   void disableSelection();
   void applyAgain();
@@ -86,8 +90,8 @@ public slots:
   void removeArc();
   void doneModifyingArc();
   void sendOrder();
-  void disableAbsolute();
   void enableAbsolute();
+  void disableAbsolute();
   void onSaveProfile();
   void onLoadProfile();
   void onSaveArc();
@@ -117,6 +121,10 @@ protected:
   QMap< QString, QMap<int, int> > ServerRows;
   std::vector< QMap< QString, QMap<int, bool> > > ArcLinesApply;
   qtCMBArcWidgetManager* ArcWidgetManager;
+  QGridLayout* functionLayout;
+  qtCMBManualFunctionWidget* ManualFunctionWidget;
+  cmbProfileFunction * selectedFunction;
+  QTableWidgetItem * selectedFunctionTabelItem;
   pqCMBSceneObjectBase::enumObjectType SourceType;
 
   void initialize();
@@ -126,7 +134,6 @@ protected:
   Ui_qtModifierArcDialog * UI_Dialog;
   QDialog * Dialog;
 
-  QPointer<pqGeneralTransferFunctionWidget> DisplacementProfile;
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
 
   void addApplyControl();
@@ -140,13 +147,15 @@ protected:
   void addNewArc(pqCMBModifierArc* arc);
   void check_save();
 
+  void selectFunction(cmbProfileFunction* fun);
+
 protected slots:
   void updateLineFunctions();
   void accepted();
-  void dispSplineControlChanged();
-  void weightingSplineControlChanged();
-  void dispSplineBox(bool);
-  void weightSplineBox(bool);
+  void nameChanged(QString);
+  void setToDefault();
+  void newFunction();
+  void deleteFunction();
 
 protected slots:
   void onLineChange(int Id);

@@ -40,17 +40,15 @@
 #include "ui_qtModifierArcDialog.h"
 #include "vtkPVArcInfo.h"
 
+#include "qtCMBManualFunctionWidget.h"
+#include "cmbManualProfileFunction.h"
+#include "cmbProfileFunction.h"
+
 // enum for different column types
 enum DataTableCol
 {
   VisibilityCol=0,
-  Id,
-  Symmetric,
-  Relative,
-  MinDisp,
-  MaxDisp,
-  LeftDist,
-  RightDist
+  Id
 };
 
 //-----------------------------------------------------------------------------
@@ -59,6 +57,9 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                                                  pqRenderView *renderer)
 {
   this->CurrentModifierArc = NULL;
+  this->ManualFunctionWidget = NULL;
+  this->selectedFunction = NULL;
+  this->selectedFunctionTabelItem = NULL;
   this->UI = new Ui_qtArcFunctionControl();
   QWidget * w = new QWidget();
   this->UI->setupUi(w);
@@ -78,6 +79,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
     connect(applyButton, SIGNAL(clicked()), this, SLOT(accepted()));
     //connect(this->Dialog, SIGNAL(rejected()), this, SLOT(clear()));
   }
+  functionLayout = new QGridLayout(this->UI->functionControlArea);
+  functionLayout->setMargin(0);
   this->TableWidget = this->UI->ModifyArcTable;
   this->clear();
   this->initialize();
@@ -89,46 +92,18 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                    this, SLOT(update()));
   QObject::connect(this->UI->ApplyAgain, SIGNAL(clicked()),
                    this, SLOT(applyAgain()));
-    {
-    QGridLayout* gridlayout = new QGridLayout(this->UI->displacementChartFrame);
-    gridlayout->setMargin(0);
-    this->DisplacementProfile = new pqGeneralTransferFunctionWidget();
-    gridlayout->addWidget(this->DisplacementProfile);
-    this->DisplacementProfile->addFunction(NULL, false);
-    connect( this, SIGNAL(changeDisplacementFunctionType(bool)),
-             this->DisplacementProfile, SLOT(setFunctionType(bool)));
-    connect(this->DisplacementProfile, SIGNAL(controlPointsModified()),
-            this->DisplacementProfile, SLOT(render()));
-    connect(this->UI->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMinY(double)));
-    connect(this->UI->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMaxY(double)));
-    connect(this->UI->leftValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMinX(double)));
-    connect(this->UI->rightValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMaxX(double)));
-    }
 
-    {
-    QGridLayout* gridlayout = new QGridLayout(this->UI->weightingChartFrame);
-    gridlayout->setMargin(0);
-    this->WeightingFunction = new pqGeneralTransferFunctionWidget();
-    gridlayout->addWidget(this->WeightingFunction);
-    this->WeightingFunction->addFunction(NULL, false);
-    this->WeightingFunction->setMinY(0);
-    this->WeightingFunction->setMaxY(1);
-    connect( this, SIGNAL(changeWeightFunctionType(bool)),
-             this->WeightingFunction, SLOT(setFunctionType(bool)));
-    connect(this->WeightingFunction, SIGNAL(controlPointsModified()),
-            this->WeightingFunction, SLOT(render()));
-    connect(this->UI->leftValue, SIGNAL(valueChanged(double)),
-            this->WeightingFunction, SLOT(setMinX(double)));
-    connect(this->UI->rightValue, SIGNAL(valueChanged(double)),
-            this->WeightingFunction, SLOT(setMaxX(double)));
-    }
+  QObject::connect(this->UI->NewFunction, SIGNAL(clicked()),
+                   this, SLOT(newFunction()));
+    
 
   QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
   QObject::connect(this->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadProfile()));
+
+  QObject::connect(this->UI->functionName, SIGNAL(textChanged(QString)),
+                   this, SLOT(nameChanged(QString)));
+
+  QObject::connect(this->UI->isDefault, SIGNAL(clicked(bool)), this, SLOT(setToDefault()));
 
   QObject::connect(this->UI->SaveFunctions, SIGNAL(clicked()),
                    this, SLOT(onSaveArc()));
@@ -163,14 +138,9 @@ pqCMBModifierArcManager::~pqCMBModifierArcManager()
 //-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::initialize()
 {
-  this->TableWidget->setColumnCount(8);
-  this->TableWidget->setHorizontalHeaderLabels(
-      QStringList() << tr("Apply") << tr("ID")
-                    << tr("Symmetric") << tr("Relative\nDisplacement")
-                    << tr("Minimum\nDisplacement\nDepth")
-                    << tr("Maximum\nDisplacement\nDepth")
-                    << tr("Left\nFunction\nDistance")
-                    << tr("Right\nFunction\nDistance"));
+  this->TableWidget->setColumnCount(2);
+  this->TableWidget->setHorizontalHeaderLabels(QStringList() << tr("Apply")
+                                                             << tr("Path ID"));
 
   this->TableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
   this->TableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -196,14 +166,10 @@ void pqCMBModifierArcManager::initialize()
   this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->UI->points->verticalHeader()->hide();
 
-  this->UI->DisplacementSplineFrame->setVisible(false);
-  QObject::connect(this->UI->DisplacementSplineCont, SIGNAL(toggled(bool)),
-                   this, SLOT(dispSplineBox(bool)));
-
-  this->UI->WeightingSplineFrame->setVisible(false);
-  QObject::connect(this->UI->WeightingSplineControl, SIGNAL(toggled(bool)),
-                   this, SLOT(weightSplineBox(bool)));
-
+  this->UI->functionTable->setSelectionMode(QAbstractItemView::SingleSelection);
+  QObject::connect(this->UI->functionTable, SIGNAL(itemSelectionChanged()),
+                   this, SLOT(onFunctionSelectionChange()));
+  this->UI->functionConfigure->hide();
 }
 
 //-----------------------------------------------------------------------------
@@ -263,6 +229,10 @@ void pqCMBModifierArcManager::clear()
 {
   selectLine(-1);
   this->CurrentModifierArc = NULL;
+  delete this->ManualFunctionWidget;
+  this->ManualFunctionWidget = NULL;
+  this->selectedFunction = NULL;
+  this->selectedFunctionTabelItem = NULL;
   this->TableWidget->clearContents();
   this->TableWidget->setRowCount(0);
   this->UI->points->clearContents();
@@ -321,14 +291,31 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
   connect(dataObj, SIGNAL(functionChanged(int)),
           this, SLOT(onLineChange(int)));
   unselectAllRows();
-  this->TableWidget->setRangeSelected(QTableWidgetSelectionRange(row,0,row,RightDist), true);
+  this->TableWidget->setRangeSelected(QTableWidgetSelectionRange(row,0,row,Id), true);
   if(visible)
     emit orderChanged();
 }
 
+void pqCMBModifierArcManager::AddFunction(cmbProfileFunction * fun)
+{
+  this->UI->functionTable->insertRow(this->UI->functionTable->rowCount());
+  int row = this->UI->functionTable->rowCount()-1;
+
+  QTableWidgetItem* objItem = new QTableWidgetItem(fun->getName().c_str());
+  QVariant vdata;
+  vdata.setValue(static_cast<void*>(fun));
+  objItem->setData(Qt::UserRole, vdata);
+
+  this->UI->functionTable->setItem(row, 0, objItem);
+}
+
 void pqCMBModifierArcManager::unselectAllRows()
 {
-  this->TableWidget->setRangeSelected(QTableWidgetSelectionRange(0,0,this->TableWidget->rowCount()-1,RightDist), false);
+  this->TableWidget->setRangeSelected(
+                      QTableWidgetSelectionRange(0,0,
+                                                 this->TableWidget->rowCount()-1,
+                                                 Id),
+                      false);
 }
 
 void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
@@ -338,30 +325,6 @@ void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
   QString s = QString::number(dataObj->getId());
   QTableWidgetItem* v = new QTableWidgetItem(s);
   this->TableWidget->setItem(row, Id, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( dataObj->getSymmetry()?"Y":"N" );
-  this->TableWidget->setItem(row, Symmetric, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( dataObj->getRelative()?"Y":"N" );
-  this->TableWidget->setItem(row, Relative, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( QString::number(dataObj->getDisplacementDepth(pqCMBModifierArc::MIN)) );
-  this->TableWidget->setItem(row, MinDisp, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( QString::number(dataObj->getDisplacementDepth(pqCMBModifierArc::MAX)) );
-  this->TableWidget->setItem(row, MaxDisp, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( QString::number((dataObj->getSymmetry())?-dataObj->getDistanceRange(pqCMBModifierArc::MAX):dataObj->getDistanceRange(pqCMBModifierArc::MIN)) );
-  this->TableWidget->setItem(row, LeftDist, v);
-  v->setFlags(commFlags);
-
-  v = new QTableWidgetItem( QString::number(dataObj->getDistanceRange(pqCMBModifierArc::MAX)) );
-  this->TableWidget->setItem(row, RightDist, v);
   v->setFlags(commFlags);
 }
 
@@ -442,8 +405,7 @@ bool pqCMBModifierArcManager::remove(int id, bool all)
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBModifierArcManager::onItemChanged(
-  QTableWidgetItem* item)
+void pqCMBModifierArcManager::onItemChanged( QTableWidgetItem* item)
 {
   int id = this->TableWidget->item( item->row(), Id )->text().toInt();
   pqCMBModifierArc* dl = ArcLines[id];
@@ -512,6 +474,23 @@ void pqCMBModifierArcManager::onSelectionChange()
   this->TableWidget->blockSignals(false);
 }
 
+void pqCMBModifierArcManager::onFunctionSelectionChange()
+{
+  cmbProfileFunction* fun = NULL;
+  selectedFunctionTabelItem = NULL;
+  QList<QTableWidgetItem *>selected =	this->UI->functionTable->selectedItems();
+  if( !selected.empty() )
+  {
+    selectedFunctionTabelItem = selected.front();
+    QVariant d = selectedFunctionTabelItem->data( Qt::UserRole );
+    void * dv = d.value<void *>();
+    fun = static_cast<cmbProfileFunction*>(dv);
+  }
+  selectFunction(fun);
+}
+
+
+
 std::vector<int> pqCMBModifierArcManager::getCurrentOrder(QString fname, int pindx)
 {
   std::vector<int> result;
@@ -540,18 +519,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
     {
     if(sid == this->CurrentModifierArc->getId()) return;
     this->UI->ArcControlArea->takeWidget();
-    QObject::disconnect( this->UI->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
-                        this->CurrentModifierArc, SLOT(setMinDisplacementDepth(double)) );
-    QObject::disconnect( this->UI->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
-                        this->CurrentModifierArc, SLOT(setMaxDisplacementDepth(double)) );
-    QObject::disconnect( this->UI->leftValue, SIGNAL(valueChanged(double)),
-                        this->CurrentModifierArc, SLOT(setLeftDistance(double)) );
-    QObject::disconnect( this->UI->rightValue, SIGNAL(valueChanged(double)),
-                        this->CurrentModifierArc, SLOT(setRightDistance(double)) );
-    QObject::disconnect( this->UI->Symmetric, SIGNAL(clicked(bool)),
-                        this->CurrentModifierArc, SLOT(setSymmetry(bool)));
-    QObject::disconnect( this->UI->Relative, SIGNAL(clicked(bool)),
-                        this->CurrentModifierArc, SLOT(setRelative(bool)) );
     this->CurrentModifierArc->switchToNotEditable();
     this->CurrentModifierArc = NULL;
     this->UI->removeLineButton->setEnabled(false);
@@ -616,24 +583,10 @@ void pqCMBModifierArcManager::selectLine(int sid)
     }
   if(this->CurrentModifierArc != NULL)
     {
-    this->UI->Symmetric->setEnabled(true);
     this->updateLineFunctions();
     this->setDatasetTable(sid);
     this->setUpPointsTable();
-    connect(this->UI->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
-            this->CurrentModifierArc, SLOT(setMinDisplacementDepth(double)));
-    connect(this->UI->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
-            this->CurrentModifierArc, SLOT(setMaxDisplacementDepth(double)));
-    connect(this->UI->leftValue, SIGNAL(valueChanged(double)),
-            this->CurrentModifierArc, SLOT(setLeftDistance(double)));
-    connect(this->UI->rightValue, SIGNAL(valueChanged(double)),
-            this->CurrentModifierArc, SLOT(setRightDistance(double)));
-    connect(this->UI->Symmetric, SIGNAL(clicked(bool)),
-            this->CurrentModifierArc, SLOT(setSymmetry(bool)));
-    connect(this->CurrentModifierArc, SIGNAL(functionChanged(int)),
-            this, SLOT(updateLineFunctions()));
-    connect(this->UI->Relative, SIGNAL(clicked(bool)),
-            this->CurrentModifierArc, SLOT(setRelative(bool)));
+
     this->UI->ArcControlTabs->setTabEnabled(1, true);
     this->UI->ArcControlTabs->setTabEnabled(2, true);
     this->UI->ArcControlTabs->setTabEnabled(3, true);
@@ -687,9 +640,7 @@ void pqCMBModifierArcManager::update()
       min = tmp->data(Qt::DisplayRole).toDouble();
       tmp = this->UI->points->item( i, 5);
       max = tmp->data(Qt::DisplayRole).toDouble();
-      CurrentModifierArc->setDisplacementParams(i,
-                                                (CurrentModifierArc->getSymmetry())?0:min,
-                                                max);
+      CurrentModifierArc->setDisplacementParams(i, min, max); //TODO
     }
   }
   foreach(QString filename, ServerProxies.keys())
@@ -773,39 +724,45 @@ void pqCMBModifierArcManager::updateLineFunctions()
 {
   if(this->CurrentModifierArc == NULL) return;
   pqCMBModifierArc * dig = this->CurrentModifierArc;
-  this->UI->dispacementMinDepthValue->setValue(dig->getDisplacementDepth(pqCMBModifierArc::MIN));
-  this->UI->displacementMaxDepthValue->setValue(dig->getDisplacementDepth(pqCMBModifierArc::MAX));
-  this->UI->leftValue->setValue(dig->getDistanceRange(pqCMBModifierArc::MIN));
-  this->UI->rightValue->setValue(dig->getDistanceRange(pqCMBModifierArc::MAX));
-  bool isSymmetric = dig->getSymmetry();
-  if(isSymmetric)
-    {
-    this->UI->leftValue->setEnabled(false);
-    this->UI->Symmetric->setChecked(true);
-    }
+  std::vector<cmbProfileFunction *> funs;
+  dig->getFunctions(funs);
+  this->UI->functionTable->setColumnCount(1);
+  this->UI->functionTable->setRowCount(0);
+  for(unsigned int i = 0; i < funs.size(); ++i)
+  {
+    this->AddFunction(funs[i]);
+  }
+  this->UI->functionTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+  selectedFunctionTabelItem = NULL;
+  selectFunction(NULL);
+}
+
+void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
+{
+  delete ManualFunctionWidget;
+  ManualFunctionWidget = NULL;
+  selectedFunction = NULL;
+  if(fun == NULL)
+  {
+    this->UI->functionConfigure->hide();
+  }
   else
+  {
+    this->UI->functionName->setText(fun->getName().c_str());
+    this->UI->functionConfigure->show();
+    selectedFunction = fun;
+    bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
+    this->UI->isDefault->setChecked(isDefault);
+    this->UI->isDefault->setEnabled(!isDefault);
+    switch(fun->getType())
     {
-    this->UI->leftValue->setEnabled(true);
-    this->UI->Symmetric->setChecked(false);
+      case cmbProfileFunction::MANUAL:
+        ManualFunctionWidget =
+            new qtCMBManualFunctionWidget(dynamic_cast<cmbManualProfileFunction*>(fun),
+                                          NULL);
+        functionLayout->addWidget(this->ManualFunctionWidget);
     }
-  this->UI->DisplacementSplineCont->setChecked(dig->getDisplacementFunctionUseSpline());
-  this->UI->WeightingSplineControl->setChecked(dig->getWeightingFunctionUseSpline());
-
-  this->UI->Relative->setChecked(dig->getRelative());
-  this->DisplacementProfile->changeFunction(0, dig->getDisplacementProfile(), true);
-  this->DisplacementProfile->setMinX(dig->getDistanceRange(pqCMBModifierArc::MIN));
-  this->DisplacementProfile->setMaxX(dig->getDistanceRange(pqCMBModifierArc::MAX));
-  this->DisplacementProfile->setMinY(dig->getDisplacementDepth(pqCMBModifierArc::MIN));
-  this->DisplacementProfile->setMaxY(dig->getDisplacementDepth(pqCMBModifierArc::MAX));
-
-  this->WeightingFunction->changeFunction(0, dig->getWeightingFunction(), true);
-  this->WeightingFunction->setMinY(0);
-  this->WeightingFunction->setMaxY(1);
-  this->WeightingFunction->setMinX(dig->getDistanceRange(pqCMBModifierArc::MIN));
-  this->WeightingFunction->setMaxX(dig->getDistanceRange(pqCMBModifierArc::MAX));
-
-  this->DisplacementProfile->render();
-  this->WeightingFunction->render();
+  }
 }
 
 void pqCMBModifierArcManager::doneModifyingArc()
@@ -949,7 +906,7 @@ void pqCMBModifierArcManager::setUpPointsTable()
     tmp->setItem(row, 3, qtwi);
     CurrentModifierArc->getDisplacementParams(i, min, max);
     qtwi = new QTableWidgetItem();
-    qtwi->setData(Qt::DisplayRole, (CurrentModifierArc->getSymmetry())?-max:min);
+    qtwi->setData(Qt::DisplayRole, min); //TODO
     tmp->setItem(row, 4, qtwi);
     qtwi = new QTableWidgetItem();
     qtwi->setData(Qt::DisplayRole, max);
@@ -977,8 +934,6 @@ void pqCMBModifierArcManager::setDatasetTable(int inId)
 
 void pqCMBModifierArcManager::disableAbsolute()
 {
-  this->UI->Relative->setChecked( true );
-  this->UI->Relative->setEnabled( false );
   for(int i = 0; i < this->TableWidget->rowCount(); ++i)
   {
     QTableWidgetItem * tmp = this->TableWidget->item( i, Id );
@@ -986,7 +941,8 @@ void pqCMBModifierArcManager::disableAbsolute()
     pqCMBModifierArc * ma = ArcLines[id];
     if(ma != NULL)
     {
-      ma->setRelative(true);
+      //TODO
+      //ma->setRelative(true);
       this->setRow(i,ma);
     }
   }
@@ -994,46 +950,7 @@ void pqCMBModifierArcManager::disableAbsolute()
 
 void pqCMBModifierArcManager::enableAbsolute()
 {
-  this->UI->Relative->setEnabled( true );
-}
-
-void
-pqCMBModifierArcManager::dispSplineControlChanged()
-{
-  /*TODO: This is not implimented yet.  We are waiting to see if they require more control
-  DispSplineTension;
-  DispSplineCont
-  DispSplineBias*/
-}
-
-void pqCMBModifierArcManager::weightingSplineControlChanged()
-{
-  /*TODO: This is not implimented yet.  We are waiting to see if they require more control
-  WeightingSplineTension
-  WeightingSplineContinuity
-  WeightingSplineBias*/
-}
-
-void pqCMBModifierArcManager::dispSplineBox(bool v)
-{
-  /*Not showing the frame for now unless they want more control*/
-  //this->UI->DisplacementSplineFrame->setVisible(v);
-  if(this->CurrentModifierArc != NULL)
-  {
-    this->CurrentModifierArc->setDisplacementFunctionType(v);
-  }
-  emit changeDisplacementFunctionType(v);
-}
-
-void  pqCMBModifierArcManager::weightSplineBox(bool v)
-{
-  /*Not showing the frame for now unless they want more control*/
-  //this->UI->WeightingSplineFrame->setVisible(v);
-  if(this->CurrentModifierArc != NULL)
-  {
-    this->CurrentModifierArc->setWeightingFunctionType(v);
-  }
-  emit changeWeightFunctionType(v);
+  //TODO
 }
 
 void pqCMBModifierArcManager::onSaveProfile()
@@ -1068,7 +985,6 @@ void pqCMBModifierArcManager::onLoadProfile()
     std::string fname = fileNames[0].toStdString();
     std::ifstream in(fname.c_str());
     this->CurrentModifierArc->readFunction(in);
-    this->updateLineFunctions();
   }
 }
 
@@ -1198,4 +1114,55 @@ void pqCMBModifierArcManager::check_save()
     }
   }
   this->UI->SaveFunctions->setEnabled(false);
+}
+
+
+void pqCMBModifierArcManager::nameChanged(QString n)
+{
+  if(selectedFunction == NULL || CurrentModifierArc == NULL) return;
+
+  if(CurrentModifierArc->updateLabel(n.toStdString(), selectedFunction))
+  {
+    if(selectedFunctionTabelItem) selectedFunctionTabelItem->setText(n);
+    QPalette palette;
+    palette.setColor(QPalette::Base,Qt::yellow);
+    palette.setColor(QPalette::Text,Qt::black);
+    this->UI->functionName->setPalette(palette);
+  }
+  else
+  {
+    QPalette palette;
+    palette.setColor(QPalette::Base,Qt::red);
+    palette.setColor(QPalette::Text,Qt::black);
+    this->UI->functionName->setPalette(palette);
+  }
+}
+
+void pqCMBModifierArcManager::setToDefault()
+{
+  if(selectedFunction && CurrentModifierArc)
+  {
+    CurrentModifierArc->setDefaultFun(selectedFunction->getName());
+    this->UI->isDefault->setEnabled(false);
+  }
+}
+
+void pqCMBModifierArcManager::newFunction()
+{
+  if(CurrentModifierArc)
+  {
+    cmbProfileFunction * nfun = CurrentModifierArc->createFunction();
+    this->AddFunction(nfun);
+  }
+}
+
+void pqCMBModifierArcManager::deleteFunction()
+{
+  if(selectedFunction && CurrentModifierArc)
+  {
+    if(CurrentModifierArc->deleteFunction(selectedFunction->getName()))
+    {
+      this->UI->functionTable->removeRow(
+    }
+  }
 }

@@ -14,6 +14,11 @@
 #include <QAbstractItemView>
 #include <fstream>
 #include <vector>
+#include <map>
+#include <string>
+
+#include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 
 class qtCMBArcWidget;
 class qtCMBArcEditWidget;
@@ -22,8 +27,10 @@ class pqCMBArc;
 class pqPipelineSource;
 class vtkPiecewiseFunction;
 class vtkSMSourceProxy;
+class cmbManualProfileFunction;
+class cmbProfileFunction;
 
-class pqCMBModifierArc :  public QObject
+class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
 {
   Q_OBJECT
 
@@ -32,10 +39,9 @@ public:
   {
     double DistanceRange[2];
     double DisplacementDepthRange[2];
-    vtkPiecewiseFunction * DisplacementProfile;
-    vtkPiecewiseFunction * WeightingFunction;
+    cmbProfileFunction const* function;
     modifierParams()
-    :DisplacementProfile(NULL),WeightingFunction(NULL)
+    :function(NULL)
     {}
   };
   enum RangeLable{ MIN = 0, MAX = 1};
@@ -53,42 +59,6 @@ public:
 
   void setVisablity(bool vis);
 
-  vtkPiecewiseFunction * getDisplacementProfile();
-  vtkPiecewiseFunction * getWeightingFunction();
-
-  double getDisplacementDepth(RangeLable r)
-  {
-    return DisplacementDepthRange[r];
-  }
-
-  double getDistanceRange(RangeLable r)
-  {
-    return DistanceRange[r];
-  }
-
-  bool getSymmetry() const
-  {
-    return Symmetric;
-  }
-
-  bool getRelative() const
-  {
-    return Relative;
-  }
-
-  bool getDisplacementFunctionUseSpline()
-  {
-    return DispUseSpline;
-  }
-
-  bool getWeightingFunctionUseSpline()
-  {
-    return WeightUseSpline;
-  }
-
-  void getDisplacementSplineControl(double&, double&, double&);
-  void getWeightingSplineControl(double&, double&, double&);
-
   void writeFunction(std::ofstream & f);
   void readFunction(std::ifstream & f);
 
@@ -101,23 +71,27 @@ public:
   void getDepthParams(size_t pt, double & min, double & max) const;
   void setDepthParams(size_t pt, double min, double max);
 
+  bool updateLabel(std::string str, cmbProfileFunction * fun);
+
+  cmbProfileFunction * getDefaultFun()
+  {
+    return defaultFun;
+  }
+  bool setDefaultFun(std::string const& name);
+
+  void getFunctions(std::vector<cmbProfileFunction*> & funs) const;
+
+  cmbProfileFunction * createFunction();
+
+  bool deleteFunction(std::string const& name);
+
 public slots:
-  void setLeftDistance(double dist);
-  void setRightDistance(double dist);
-  void setMinDisplacementDepth(double d);
-  void setMaxDisplacementDepth(double d);
-  void setDisplacementFunctionType(bool);
-  void setWeightingFunctionType(bool);
-  void setSymmetry(bool);
-  void setRelative(bool);
   void sendChangeSignals();
   void updateArc(vtkSMSourceProxy* source);
   void switchToNotEditable();
   void switchToEditable();
   void removeFromServer(vtkSMSourceProxy* source);
   bool setCMBArc(pqCMBArc *);
-  void setDisplacementSplineControl(double, double, double);
-  void setWeightingSplineControl(double,double,double);
 
 signals:
   void functionChanged(int);
@@ -131,20 +105,15 @@ protected:
   pqCMBArc * CmbArc;
   std::vector<modifierParams> pointsParams;
   bool IsExternalArc;
-  double DistanceRange[2];
-  double DisplacementDepthRange[2];
-  double DispSplineControl[3];
-  double WeightSplineControl[3];
-  vtkPiecewiseFunction * DisplacementProfile;
-  vtkPiecewiseFunction * WeightingFunction;
+
+  std::map<std::string, cmbProfileFunction * > functions;
+  cmbProfileFunction * defaultFun;
+  
   qtCMBArcEditWidget* Modifier;
   int Id;
-  bool Symmetric;
-  bool Relative;
+  
   bool IsVisible;
-  bool DispUseSpline;
-  bool WeightUseSpline;
-  void sendRanges(vtkSMSourceProxy*);
+
   void setUpFunction();
 };
 

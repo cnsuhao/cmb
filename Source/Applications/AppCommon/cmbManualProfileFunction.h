@@ -1,0 +1,56 @@
+#ifndef cmbManualProfileFunction_h_
+#define cmbManualProfileFunction_h_
+
+#include "cmbProfileFunction.h"
+
+class CMBAPPCOMMON_EXPORT cmbManualProfileFunction : public cmbProfileFunction
+{
+public:
+  friend class cmbProfileFunction;
+  cmbManualProfileFunction();
+  ~cmbManualProfileFunction();
+  virtual cmbProfileFunction::FunctionType getType() const;
+  virtual pqCMBModifierArc::modifierParams getDefault() const;
+  virtual vtkPiecewiseFunction * getDisplacementProfile() const;
+  virtual vtkPiecewiseFunction * getWeightingFunction() const;
+
+  virtual void sendDataToPoint(int arc_ID, int pointID,
+                               pqCMBModifierArc::modifierParams & mp,
+                               vtkSMSourceProxy* source) const;
+
+  bool isSymmetric() const;
+  bool isRelative() const;
+  void setSymmetric(bool is);
+  void setRelative(bool ir);
+  bool isDispSpline() const;
+  bool isWeightSpline() const;
+  void setDispSpline(bool s);
+  void setWeightSpline(bool w);
+
+  double getDistanceRange(pqCMBModifierArc::RangeLable i);
+  double getDepthRange(pqCMBModifierArc::RangeLable i);
+
+  void setDistanceRange(pqCMBModifierArc::RangeLable i, double v);
+  void setDepthRange(pqCMBModifierArc::RangeLable i, double v);
+
+  void setDistanceRange(double min, double max);
+  void setDepthRange(double min, double max);
+
+protected:
+  virtual bool readData(std::ifstream & in, int version);
+  virtual bool writeData(std::ofstream & out) const;
+private:
+  vtkPiecewiseFunction * DisplacementProfile;
+  vtkPiecewiseFunction * WeightingFunction;
+
+  double DistanceRange[2];
+  double DisplacementDepthRange[2];
+
+  bool Symmetric;
+  bool Relative;
+
+  bool DispUseSpline;
+  bool WeightUseSpline;
+};
+
+#endif

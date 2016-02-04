@@ -290,27 +290,19 @@ void pqGeneralTransferFunctionWidget::clear()
 //-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::addFunction(vtkPiecewiseFunction * pwf, bool pwf_editable)
 {
+  vtkNew<vtkSplineFunctionItem> item;
+  item->SetSplineFunction(pwf);
+  this->Internals->TransferFunctionItem = item.GetPointer();
+  this->Internals->TransferFunctionItem->SetDrawAsSpline(this->Internals->UseSpline);
+  this->Internals->TransferFunctionItem->SetControls(this->Internals->Controls[0],
+                                                     this->Internals->Controls[1],
+                                                     this->Internals->Controls[2]);
   if (pwf == NULL)
     {
-    vtkNew<vtkSplineFunctionItem> item;
-    item->SetSplineFunction(pwf);
-    this->Internals->TransferFunctionItem = item.GetPointer();
-    this->Internals->TransferFunctionItem->SetDrawAsSpline(this->Internals->UseSpline);
-    this->Internals->TransferFunctionItem->SetControls(this->Internals->Controls[0],
-                                                       this->Internals->Controls[1],
-                                                       this->Internals->Controls[2]);
     this->Internals->ControlPointsItem = NULL;
     }
   else
     {
-    vtkNew<vtkSplineFunctionItem> item;
-    item->SetSplineFunction(pwf);
-    this->Internals->TransferFunctionItem = item.GetPointer();
-    this->Internals->TransferFunctionItem->SetDrawAsSpline(this->Internals->UseSpline);
-    this->Internals->TransferFunctionItem->SetControls(this->Internals->Controls[0],
-                                                       this->Internals->Controls[1],
-                                                       this->Internals->Controls[2]);
-
     if (pwf_editable)
       {
       vtkNew<CMBControlPointItem> cpItem;

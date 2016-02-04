@@ -28,6 +28,7 @@ set(UI_FORMS
     UI/qtCMBSceneObjectDuplicate.ui
     UI/qtCMBSceneObjectImportNoUnits.ui
     UI/qtCMBSceneSurfaceMesherDialog.ui
+    UI/qtCMBManualFunctionWidget.ui
     UI/qtCMBTINStitcherDialog.ui
     UI/qtContourWidget.ui
     UI/qtDefineGroundPlane.ui
@@ -97,8 +98,10 @@ add_library(cmbAppCommon
   pqCMBColorMapWidget.h
   qtCMBPanelsManager.cxx
   qtCMBPanelsManager.h
-  pqScalarBarWidget.cxx
-  pqScalarBarWidget.h
+  cmbManualProfileFunction.cxx
+  cmbManualProfileFunction.h
+  cmbProfileFunction.cxx
+  cmbProfileFunction.h
   qtCMBAboutDialog.cxx
   qtCMBAboutDialog.h
   pqCMBAppCommonInit.cxx
@@ -158,6 +161,9 @@ add_library(cmbAppCommon
   qtCMBCreateSimpleGeometry.cxx
   qtCMBCreateSimpleGeometry.h
   qtCMBMeshingMonitor.cxx
+  qtCMBManualFunctionWidget.cxx
+  qtCMBManualFunctionWidget.h
+  qtCMBMeshingClient.cxx
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h
   qtCMBOptionsDialog.cxx
