@@ -102,6 +102,8 @@ add_library(cmbAppCommon
   cmbManualProfileFunction.h
   cmbProfileFunction.cxx
   cmbProfileFunction.h
+  cmbScalarBarWidget.cxx
+  cmbScalarBarWidget.h
   qtCMBAboutDialog.cxx
   qtCMBAboutDialog.h
   pqCMBAppCommonInit.cxx
