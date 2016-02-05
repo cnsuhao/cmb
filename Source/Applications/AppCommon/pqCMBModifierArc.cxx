@@ -347,7 +347,7 @@ bool pqCMBModifierArc::deleteFunction(std::string const& name)
   {
     return false;
   }
-  cmbProfileFunction * fun = i->second();
+  cmbProfileFunction * fun = i->second;
   if(fun == defaultFun) return false;
   functions.erase(i);
   delete fun;

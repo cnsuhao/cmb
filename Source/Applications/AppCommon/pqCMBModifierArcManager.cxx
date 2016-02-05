@@ -95,6 +95,9 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 
   QObject::connect(this->UI->NewFunction, SIGNAL(clicked()),
                    this, SLOT(newFunction()));
+
+  QObject::connect(this->UI->DeleteFunction, SIGNAL(clicked()),
+                   this, SLOT(deleteFunction()));
     
 
   QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
@@ -754,6 +757,7 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
     bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
     this->UI->isDefault->setChecked(isDefault);
     this->UI->isDefault->setEnabled(!isDefault);
+    this->UI->DeleteFunction->setEnabled(!isDefault);
     switch(fun->getType())
     {
       case cmbProfileFunction::MANUAL:
@@ -1158,11 +1162,14 @@ void pqCMBModifierArcManager::newFunction()
 
 void pqCMBModifierArcManager::deleteFunction()
 {
-  if(selectedFunction && CurrentModifierArc)
+  if(selectedFunction && selectedFunctionTabelItem && CurrentModifierArc)
   {
     if(CurrentModifierArc->deleteFunction(selectedFunction->getName()))
     {
-      this->UI->functionTable->removeRow(
+      this->UI->functionTable->removeRow(selectedFunctionTabelItem->row());
+      selectedFunctionTabelItem = NULL;
+      selectedFunction = NULL;
+      onFunctionSelectionChange();
     }
   }
 }
