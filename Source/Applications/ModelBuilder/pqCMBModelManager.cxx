@@ -419,6 +419,7 @@ public:
 
           vtkSMPropertyHelper(rep->getProxy(),
                           "Representation").Set("Surface With Edges");
+          vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
 
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
