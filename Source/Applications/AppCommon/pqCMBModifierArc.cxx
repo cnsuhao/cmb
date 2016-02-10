@@ -258,6 +258,15 @@ void pqCMBModifierArc::getDepthParams(size_t pt, double & min, double & max) con
   }
 }
 
+pqCMBModifierArc::modifierParams * pqCMBModifierArc::getPointModifer(size_t i)
+{
+  if(i < pointsParams.size())
+  {
+    return &(pointsParams[i]);
+  }
+  return NULL;
+}
+
 void pqCMBModifierArc::setDepthParams(size_t pt, double min, double max)
 {
   setUpFunction();
@@ -352,4 +361,23 @@ bool pqCMBModifierArc::deleteFunction(std::string const& name)
   functions.erase(i);
   delete fun;
   return true;
+}
+
+cmbProfileFunction * pqCMBModifierArc::cloneFunction(std::string const& name)
+{
+  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  if(i == functions.end())
+  {
+    return NULL;
+  }
+  int count = 1;
+  std::string newname = i->second->getName() + "Clone0";
+  while(functions.find(newname) != functions.end())
+  {
+    std::stringstream ss;
+    ss << i->second->getName() + "Clone" << count++;
+    ss >> newname;
+  }
+  functions[newname] = i->second->clone(newname);
+  return functions[newname];
 }

@@ -21,6 +21,7 @@ set(UI_FORMS
     UI/qtCMBCreateSimpleGeometry.ui
     UI/qtCMBOptionsDialog.ui
     UI/qtCMBArcEditWidget.ui
+    UI/qtCMBFunctionEditor.ui
     UI/qtCMBSceneArcPolygonMeshingDialog.ui
     UI/qtCMBSceneArcSnappingDialog.ui
     UI/qtCMBGenerateContoursDialog.ui
@@ -165,6 +166,8 @@ add_library(cmbAppCommon
   qtCMBMeshingMonitor.cxx
   qtCMBManualFunctionWidget.cxx
   qtCMBManualFunctionWidget.h
+  qtCMBManualProfilePointFunctionModifier.cxx
+  qtCMBManualProfilePointFunctionModifier.h
   qtCMBMeshingClient.cxx
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h

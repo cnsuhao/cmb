@@ -14,6 +14,8 @@ cmbManualProfileFunction::cmbManualProfileFunction()
 {
   DispUseSpline = false;
   WeightUseSpline = false;
+  this->DisplacementProfile->SetAllowDuplicateScalars(1);
+  this->WeightingFunction->SetAllowDuplicateScalars(1);
   this->DistanceRange[pqCMBModifierArc::MIN] = 0.0;
   this->DistanceRange[pqCMBModifierArc::MAX] = 1.0;
   this->DisplacementDepthRange[pqCMBModifierArc::MIN] = -8.0;
@@ -76,8 +78,10 @@ void cmbManualProfileFunction::setSymmetric(bool is)
   bool p = Symmetric;
   Symmetric = is;
   vtkPiecewiseFunction * tdisp = vtkPiecewiseFunction::New();
+  tdisp->SetAllowDuplicateScalars(1);
   tdisp->DeepCopy(DisplacementProfile);
   vtkPiecewiseFunction * tw = vtkPiecewiseFunction::New();
+  tw->SetAllowDuplicateScalars(1);
   tw->DeepCopy(WeightingFunction);
   WeightingFunction->Initialize();
   DisplacementProfile->Initialize();
@@ -89,6 +93,10 @@ void cmbManualProfileFunction::setSymmetric(bool is)
     {
       tw->GetNodeValue(i, v);
       WeightingFunction->AddPoint(v[0], v[1], v[2], v[3]);
+    }
+    for(int i = tw->GetSize()-1; i >= 0; --i)
+    {
+      tw->GetNodeValue(i, v);
       if(v[0]!=0)
       {
         WeightingFunction->AddPoint(-v[0], v[1], v[2], v[3]);
@@ -98,6 +106,10 @@ void cmbManualProfileFunction::setSymmetric(bool is)
     {
       tdisp->GetNodeValue(i, v);
       DisplacementProfile->AddPoint(v[0], v[1], v[2], v[3]);
+    }
+    for(int i = tdisp->GetSize()-1; i >= 0; --i)
+    {
+      tdisp->GetNodeValue(i, v);
       if(v[0]!=0)
       {
         DisplacementProfile->AddPoint(-v[0], v[1], v[2], v[3]);
@@ -231,7 +243,7 @@ bool cmbManualProfileFunction::writeData(std::ofstream & out) const
 }
 
 void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
-                                               pqCMBModifierArc::modifierParams & mp,
+                                               pqCMBModifierArc::modifierParams & in_mp,
                                                vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;
@@ -239,6 +251,11 @@ void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
   source->UpdateVTKObjects();
   v.clear();
+  pqCMBModifierArc::modifierParams mp = in_mp;
+  if(mp.useDefault)
+  {
+    mp = getDefault();
+  }
   v << arc_ID << pointID
     << mp.DisplacementDepthRange[pqCMBModifierArc::MIN] << mp.DisplacementDepthRange[pqCMBModifierArc::MAX]
     << mp.DistanceRange[pqCMBModifierArc::MIN] << mp.DistanceRange[pqCMBModifierArc::MAX];
@@ -279,4 +296,22 @@ void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
   v.clear();
   v << arc_ID << pointID << pointID;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+}
+
+cmbProfileFunction * cmbManualProfileFunction::clone(std::string const& name) const
+{
+  cmbManualProfileFunction * fun = new cmbManualProfileFunction();
+  fun->setName(name);
+  fun->Relative = this->Relative;
+  fun->Symmetric = this->Symmetric;
+  fun->DispUseSpline = this->DispUseSpline;
+  fun->WeightUseSpline = this->WeightUseSpline;
+  fun->DistanceRange[0] = this->DistanceRange[0];
+  fun->DistanceRange[1] = this->DistanceRange[1];
+  fun->DisplacementDepthRange[0] = this->DisplacementDepthRange[0];
+  fun->DisplacementDepthRange[1] = this->DisplacementDepthRange[1];
+  fun->DisplacementProfile->DeepCopy(this->DisplacementProfile);
+  fun->WeightingFunction->DeepCopy(this->WeightingFunction);
+
+  return fun;
 }

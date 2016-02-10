@@ -53,6 +53,7 @@ public:
   ArcDepressPiecewiseFun()
     {
       fun = vtkPiecewiseFunction::New();
+      fun->SetAllowDuplicateScalars(1);
     }
   virtual ~ArcDepressPiecewiseFun()
   {

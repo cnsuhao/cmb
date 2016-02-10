@@ -13,7 +13,7 @@ public:
   virtual pqCMBModifierArc::modifierParams getDefault() const;
   virtual vtkPiecewiseFunction * getDisplacementProfile() const;
   virtual vtkPiecewiseFunction * getWeightingFunction() const;
-
+  virtual cmbProfileFunction * clone(std::string const& name) const;
   virtual void sendDataToPoint(int arc_ID, int pointID,
                                pqCMBModifierArc::modifierParams & mp,
                                vtkSMSourceProxy* source) const;

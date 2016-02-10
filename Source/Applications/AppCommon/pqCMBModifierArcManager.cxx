@@ -41,6 +41,7 @@
 #include "vtkPVArcInfo.h"
 
 #include "qtCMBManualFunctionWidget.h"
+#include "qtCMBManualProfilePointFunctionModifier.h"
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileFunction.h"
 
@@ -58,6 +59,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 {
   this->CurrentModifierArc = NULL;
   this->ManualFunctionWidget = NULL;
+  this->ManualFunctionCustomize = NULL;
   this->selectedFunction = NULL;
   this->selectedFunctionTabelItem = NULL;
   this->UI = new Ui_qtArcFunctionControl();
@@ -81,6 +83,9 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   }
   functionLayout = new QGridLayout(this->UI->functionControlArea);
   functionLayout->setMargin(0);
+
+  modifierFunctionLayout = new QGridLayout(this->UI->pointsControl);
+  modifierFunctionLayout->setMargin(0);
   this->TableWidget = this->UI->ModifyArcTable;
   this->clear();
   this->initialize();
@@ -98,6 +103,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 
   QObject::connect(this->UI->DeleteFunction, SIGNAL(clicked()),
                    this, SLOT(deleteFunction()));
+  QObject::connect(this->UI->CloneFunction, SIGNAL(clicked()),
+                   this, SLOT(cloneFunction()));
     
 
   QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
@@ -158,16 +165,14 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
 
-  this->UI->points->setColumnCount(6);
-  this->UI->points->setHorizontalHeaderLabels(
-                QStringList() << tr("X") << tr("Y")
-                              << tr("Minimum\nDisplacement\nDepth")
-                              << tr("Maximum\nDisplacement\nDepth")
-                              << tr("Left\nFunction\nDistance")
-                              << tr("Right\nFunction\nDistance"));
+  this->UI->points->setColumnCount(2);
+  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("X") << tr("Y"));
   this->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
   this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->UI->points->verticalHeader()->hide();
+
+  QObject::connect(this->UI->points, SIGNAL(itemSelectionChanged()),
+                   this, SLOT(onPointsSelectionChange()));
 
   this->UI->functionTable->setSelectionMode(QAbstractItemView::SingleSelection);
   QObject::connect(this->UI->functionTable, SIGNAL(itemSelectionChanged()),
@@ -233,6 +238,7 @@ void pqCMBModifierArcManager::clear()
   selectLine(-1);
   this->CurrentModifierArc = NULL;
   delete this->ManualFunctionWidget;
+  delete this->ManualFunctionCustomize;
   this->ManualFunctionWidget = NULL;
   this->selectedFunction = NULL;
   this->selectedFunctionTabelItem = NULL;
@@ -492,7 +498,25 @@ void pqCMBModifierArcManager::onFunctionSelectionChange()
   selectFunction(fun);
 }
 
-
+void pqCMBModifierArcManager::onPointsSelectionChange()
+{
+  QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
+  delete ManualFunctionCustomize;
+  ManualFunctionCustomize = NULL;
+  if( !selected.empty() )
+  {
+    std::vector<cmbProfileFunction*> funs;
+    CurrentModifierArc->getFunctions(funs);
+    QTableWidgetItem * si = selected.front();
+    int row = si->row();
+    pqCMBModifierArc::modifierParams * mp = CurrentModifierArc->getPointModifer(row);
+    if(mp != NULL)
+    {
+      ManualFunctionCustomize = new qtCMBManualProfilePointFunctionModifier(NULL, funs, *mp);
+      modifierFunctionLayout->addWidget(this->ManualFunctionCustomize);
+    }
+  }
+}
 
 std::vector<int> pqCMBModifierArcManager::getCurrentOrder(QString fname, int pindx)
 {
@@ -631,20 +655,6 @@ void pqCMBModifierArcManager::update()
   {//Update point functions
     pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
     vtkPVArcInfo* ai = arc->getArcInfo();
-    for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
-    {
-      double min,max;
-      QTableWidgetItem * tmp = this->UI->points->item( i, 2);
-      min = tmp->data(Qt::DisplayRole).toDouble();
-      tmp = this->UI->points->item( i, 3);
-      max = tmp->data(Qt::DisplayRole).toDouble();
-      CurrentModifierArc->setDepthParams(i,min,max);
-      tmp = this->UI->points->item( i, 4);
-      min = tmp->data(Qt::DisplayRole).toDouble();
-      tmp = this->UI->points->item( i, 5);
-      max = tmp->data(Qt::DisplayRole).toDouble();
-      CurrentModifierArc->setDisplacementParams(i, min, max); //TODO
-    }
   }
   foreach(QString filename, ServerProxies.keys())
     {
@@ -875,6 +885,8 @@ void pqCMBModifierArcManager::setUpTable()
 void pqCMBModifierArcManager::setUpPointsTable()
 {
   QTableWidget* tmp = this->UI->points;
+  tmp->setSelectionMode(QAbstractItemView::SingleSelection);
+  tmp->setSelectionBehavior(QAbstractItemView::SelectRows);
   tmp->blockSignals(true);
 
   tmp->clearContents();
@@ -885,7 +897,7 @@ void pqCMBModifierArcManager::setUpPointsTable()
     return;
   }
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  tmp->setSelectionMode(QAbstractItemView::NoSelection);
+  tmp->setSelectionMode(QAbstractItemView::SingleSelection);
   pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
   vtkPVArcInfo* ai = arc->getArcInfo();
   for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
@@ -895,26 +907,11 @@ void pqCMBModifierArcManager::setUpPointsTable()
     int row = tmp->rowCount();
     tmp->insertRow(tmp->rowCount());
     QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(pt[0]));
+    qtwi->setFlags(commFlags);
     tmp->setItem(row, 0, qtwi);
-    qtwi->setFlags(commFlags);
     qtwi = new QTableWidgetItem(QString::number(pt[1]));
-    tmp->setItem(row, 1, qtwi);
     qtwi->setFlags(commFlags);
-    double min,max;
-    CurrentModifierArc->getDepthParams(i,min,max);
-    qtwi = new QTableWidgetItem();
-    qtwi->setData(Qt::DisplayRole, min);
-    tmp->setItem(row, 2, qtwi);
-    qtwi = new QTableWidgetItem();
-    qtwi->setData(Qt::DisplayRole, max);
-    tmp->setItem(row, 3, qtwi);
-    CurrentModifierArc->getDisplacementParams(i, min, max);
-    qtwi = new QTableWidgetItem();
-    qtwi->setData(Qt::DisplayRole, min); //TODO
-    tmp->setItem(row, 4, qtwi);
-    qtwi = new QTableWidgetItem();
-    qtwi->setData(Qt::DisplayRole, max);
-    tmp->setItem(row, 5, qtwi);
+    tmp->setItem(row, 1, qtwi);
   }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
@@ -1171,5 +1168,13 @@ void pqCMBModifierArcManager::deleteFunction()
       selectedFunction = NULL;
       onFunctionSelectionChange();
     }
+  }
+}
+
+void pqCMBModifierArcManager::cloneFunction()
+{
+  if(selectedFunction && selectedFunctionTabelItem && CurrentModifierArc)
+  {
+    this->AddFunction(CurrentModifierArc->cloneFunction(selectedFunction->getName()));
   }
 }

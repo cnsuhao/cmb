@@ -41,6 +41,7 @@ class pqServer;
 class pqRenderView;
 class pqPipelineSource;
 class qtCMBManualFunctionWidget;
+class qtCMBManualProfilePointFunctionModifier;
 class cmbProfileFunction;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
@@ -79,6 +80,7 @@ public slots:
   void unselectAllRows();
   void onSelectionChange();
   void onFunctionSelectionChange();
+  void onPointsSelectionChange();
   void enableSelection();
   void disableSelection();
   void applyAgain();
@@ -123,6 +125,8 @@ protected:
   qtCMBArcWidgetManager* ArcWidgetManager;
   QGridLayout* functionLayout;
   qtCMBManualFunctionWidget* ManualFunctionWidget;
+  qtCMBManualProfilePointFunctionModifier* ManualFunctionCustomize;
+  QGridLayout* modifierFunctionLayout;
   cmbProfileFunction * selectedFunction;
   QTableWidgetItem * selectedFunctionTabelItem;
   pqCMBSceneObjectBase::enumObjectType SourceType;
@@ -156,6 +160,7 @@ protected slots:
   void setToDefault();
   void newFunction();
   void deleteFunction();
+  void cloneFunction();
 
 protected slots:
   void onLineChange(int Id);

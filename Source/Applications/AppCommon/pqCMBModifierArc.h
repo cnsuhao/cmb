@@ -40,8 +40,9 @@ public:
     double DistanceRange[2];
     double DisplacementDepthRange[2];
     cmbProfileFunction const* function;
+    bool useDefault;
     modifierParams()
-    :function(NULL)
+    :function(NULL), useDefault(true)
     {}
   };
   enum RangeLable{ MIN = 0, MAX = 1};
@@ -84,6 +85,10 @@ public:
   cmbProfileFunction * createFunction();
 
   bool deleteFunction(std::string const& name);
+
+  cmbProfileFunction * cloneFunction(std::string const& name);
+
+  modifierParams * getPointModifer(size_t i);
 
 public slots:
   void sendChangeSignals();
