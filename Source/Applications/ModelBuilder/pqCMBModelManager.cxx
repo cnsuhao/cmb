@@ -12,6 +12,7 @@
 
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
+#include "vtkPVSMTKMeshInformation.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
@@ -435,6 +436,59 @@ public:
         }
     }
   }
+
+  void updateModelMeshRepresentations(const smtk::model::Model& model)
+  {
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+      return;
+    // find a mesh collection that's not in the mesh info already
+    smtk::mesh::ManagerPtr meshMgr = model.manager()->meshes();
+    std::vector<smtk::mesh::CollectionPtr> meshCollections =
+      meshMgr->associatedCollections(model);
+    if(meshCollections.size() == 0)
+      {
+      return;
+      }
+
+    pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
+    for(qInternal::itMeshInfo meshiter = modelInfo->MeshInfos.begin();
+        meshiter != modelInfo->MeshInfos.end(); ++meshiter)
+      {
+      pqPipelineSource* source = meshiter->second.RepSource;
+      if(!source)
+        continue;
+      // clear selection
+      pqOutputPort* outport = source->getOutputPort(0);
+      if(outport)
+        {
+        outport->setSelectionInput(0, 0);
+        }
+
+      pqPipelineSource* meshSrc = meshiter->second.MeshSource;
+      vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set("");
+      vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set("");
+      meshSrc->getProxy()->UpdateVTKObjects();
+
+      vtkSMPropertyHelper(meshSrc->getProxy(), "ModelEntityID").Set(
+        model.entity().toString().c_str());
+      vtkSMPropertyHelper(meshSrc->getProxy(), "MeshCollectionID").Set(
+        meshiter->second.Info->GetMeshCollectionID().toString().c_str());
+
+      meshSrc->getProxy()->InvokeCommand("MarkDirty");
+      meshSrc->getProxy()->UpdateVTKObjects();
+      meshSrc->updatePipeline();
+      meshSrc->getProxy()->UpdatePropertyInformation();
+
+      vtkSMRepresentationProxy::SafeDownCast(
+          meshiter->second.Representation->getProxy())->UpdatePipeline();
+
+      meshiter->second.updateBlockInfo(
+        this->ManagerProxy->modelManager());
+
+      meshiter->second.Representation->renderViewEventually();
+      }
+  }
+
 
   // If the group has already been removed from the model, the modelInfo(entityID)
   // will not return the modelInfo it requests, because the record is removed from
@@ -1202,6 +1256,12 @@ void pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
 }
 
 //----------------------------------------------------------------------------
+void pqCMBModelManager::updateModelMeshRepresentations(const smtk::model::Model& model)
+{
+  this->Internal->updateModelMeshRepresentations(model);
+}
+
+//----------------------------------------------------------------------------
 smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
   smtk::model::StringData retBrEns;
@@ -1564,6 +1624,7 @@ bool pqCMBModelManager::handleOperationResult(
       else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
         {
         this->updateModelRepresentation(*it);
+        this->updateModelMeshRepresentations(*it);
         }
       // update group LUT
       else if(groupChangedModels.find(it->entity()) != groupChangedModels.end())
