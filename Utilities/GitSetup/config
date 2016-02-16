@@ -1,0 +1,10 @@
+[hooks]
+	url = https://gitlab.kitware.com/utils/gitsetup.git
+[upstream]
+	url = https://gitlab.kitware.com/cmb/cmb.git
+[gitlab]
+	host = gitlab.kitware.com
+	group-path = cmb
+	group-name = CMB
+	project-path = cmb
+	project-name = CMB
