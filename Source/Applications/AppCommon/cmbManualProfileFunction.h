@@ -2,6 +2,28 @@
 #define cmbManualProfileFunction_h_
 
 #include "cmbProfileFunction.h"
+class cmbManualProfileFunction;
+
+class CMBAPPCOMMON_EXPORT cmbManualProfileFunctionParameters : public cmbProfileFunctionParameters
+{
+public:
+  friend class cmbManualProfileFunction;
+  cmbManualProfileFunctionParameters();
+  virtual ~cmbManualProfileFunctionParameters();
+  virtual cmbProfileFunctionParameters * clone();
+
+  double getDistanceRange(pqCMBModifierArc::RangeLable i);
+  double getDepthRange(pqCMBModifierArc::RangeLable i);
+
+  void setDistanceRange(pqCMBModifierArc::RangeLable i, double v);
+  void setDepthRange(pqCMBModifierArc::RangeLable i, double v);
+
+protected:
+  double DistanceRange[2];
+  double DisplacementDepthRange[2];
+
+  cmbManualProfileFunctionParameters(cmbManualProfileFunctionParameters const* other);
+};
 
 class CMBAPPCOMMON_EXPORT cmbManualProfileFunction : public cmbProfileFunction
 {
@@ -17,6 +39,7 @@ public:
   virtual void sendDataToPoint(int arc_ID, int pointID,
                                pqCMBModifierArc::modifierParams & mp,
                                vtkSMSourceProxy* source) const;
+  virtual cmbProfileFunctionParameters * getParameters() const;
 
   bool isSymmetric() const;
   bool isRelative() const;
@@ -43,8 +66,9 @@ private:
   vtkPiecewiseFunction * DisplacementProfile;
   vtkPiecewiseFunction * WeightingFunction;
 
-  double DistanceRange[2];
-  double DisplacementDepthRange[2];
+  cmbManualProfileFunctionParameters * parameters;
+
+  cmbManualProfileFunction(cmbManualProfileFunction const* other);
 
   bool Symmetric;
   bool Relative;

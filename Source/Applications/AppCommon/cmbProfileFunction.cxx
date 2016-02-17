@@ -1,4 +1,5 @@
 #include "cmbProfileFunction.h"
+#include "cmbProfileWedgeFunction.h"
 #include "cmbManualProfileFunction.h"
 #include <sstream>
 
@@ -35,6 +36,8 @@ cmbProfileFunction * cmbProfileFunction::read(std::ifstream & in, size_t count)
     {
       case MANUAL:
         fun = new cmbManualProfileFunction();
+      case WEDGE:
+        fun = new cmbProfileWedgeFunction();
     }
     std::string name;
     in >> name;

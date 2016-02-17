@@ -30,6 +30,83 @@
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileFunction.h"
 
+////////////////////////////////////////
+pqCMBModifierArc::modifierParams::modifierParams(modifierParams const& other)
+: function(other.function), params(NULL), useDefault(other.useDefault)
+{
+  if(other.params != NULL)
+  {
+    params = other.params->clone();
+  }
+}
+
+pqCMBModifierArc::modifierParams::~modifierParams()
+{ delete params; }
+
+void pqCMBModifierArc::modifierParams::operator=(pqCMBModifierArc::modifierParams const& other)
+{
+  function = other.function;
+  useDefault = other.useDefault;
+  delete params;
+  params = NULL;
+  if(other.params != NULL)
+  {
+    params = other.params->clone();
+  }
+}
+
+pqCMBModifierArc::modifierParams::modifierParams(cmbProfileFunction const* fun)
+:function(fun), params(NULL), useDefault(true)
+{
+  if(function)
+  {
+    params = function->getParameters()->clone();
+  }
+}
+
+bool pqCMBModifierArc::modifierParams::getUseDefault()
+{
+  return useDefault;
+}
+
+void pqCMBModifierArc::modifierParams::setUseDefault(bool b)
+{
+  useDefault = b;
+}
+
+cmbProfileFunctionParameters * pqCMBModifierArc::modifierParams::getParams()
+{
+  if((params == NULL || useDefault) && function)
+  {
+    return function->getParameters();
+  }
+  return params;
+}
+
+cmbProfileFunction const* pqCMBModifierArc::modifierParams::getFunction()
+{
+  return function;
+}
+
+void
+pqCMBModifierArc::modifierParams::setFunction(cmbProfileFunction const* f)
+{
+  if(f == NULL)
+  {
+    delete params;
+    params = NULL;
+    function = NULL;
+  }
+  else if(f != function)
+  {
+    function = f;
+    delete params;
+    params = function->getParameters()->clone();
+  }
+}
+
+////////////////////////////////////////
+
 pqCMBModifierArc::pqCMBModifierArc()
 :CmbArc(new pqCMBArc()), IsExternalArc(false), Modifier(NULL), IsVisible(true)
 {
@@ -145,7 +222,7 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
     for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());
         ++i)
     {
-      pointsParams[i].function->sendDataToPoint(Id, i, pointsParams[i], source);
+      pointsParams[i].getFunction()->sendDataToPoint(Id, i, pointsParams[i], source);
     }
     {
     //clear functions
@@ -230,34 +307,6 @@ void pqCMBModifierArc::read(std::ifstream & f)
   setUpFunction();
 }
 
-void pqCMBModifierArc::getDisplacementParams(size_t pt, double & min, double & max) const
-{
-  if(pt < pointsParams.size())
-  {
-    min = pointsParams[pt].DistanceRange[MIN];
-    max = pointsParams[pt].DistanceRange[MAX];
-  }
-}
-
-void pqCMBModifierArc::setDisplacementParams(size_t pt, double min, double max)
-{
-  setUpFunction();
-  if(pt < pointsParams.size())
-  {
-    pointsParams[pt].DistanceRange[MIN] = min;
-    pointsParams[pt].DistanceRange[MAX] = max;
-  }
-}
-
-void pqCMBModifierArc::getDepthParams(size_t pt, double & min, double & max) const
-{
-  if(pt < pointsParams.size())
-  {
-    min = pointsParams[pt].DisplacementDepthRange[MIN];
-    max = pointsParams[pt].DisplacementDepthRange[MAX];
-  }
-}
-
 pqCMBModifierArc::modifierParams * pqCMBModifierArc::getPointModifer(size_t i)
 {
   if(i < pointsParams.size())
@@ -265,16 +314,6 @@ pqCMBModifierArc::modifierParams * pqCMBModifierArc::getPointModifer(size_t i)
     return &(pointsParams[i]);
   }
   return NULL;
-}
-
-void pqCMBModifierArc::setDepthParams(size_t pt, double min, double max)
-{
-  setUpFunction();
-  if(pt < pointsParams.size())
-  {
-    pointsParams[pt].DisplacementDepthRange[MIN] = min;
-    pointsParams[pt].DisplacementDepthRange[MAX] = max;
-  }
 }
 
 void pqCMBModifierArc::setUpFunction()
@@ -380,4 +419,27 @@ cmbProfileFunction * pqCMBModifierArc::cloneFunction(std::string const& name)
   }
   functions[newname] = i->second->clone(newname);
   return functions[newname];
+}
+
+void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* fun)
+{
+  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  if(i == functions.end())
+  {
+    functions[name] = fun;
+  }
+  else
+  {
+    if(defaultFun == i->second) defaultFun = fun;
+    fun->setName(name);
+    for (size_t ind = 0; ind < pointsParams.size(); ++ind)
+    {
+      if(pointsParams[ind].getFunction()->getName() == name)
+      {
+        pointsParams[ind].setFunction(fun);
+      }
+    }
+    delete i->second;
+    i->second = fun;
+  }
 }

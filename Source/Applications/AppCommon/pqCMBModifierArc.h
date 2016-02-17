@@ -29,6 +29,7 @@ class vtkPiecewiseFunction;
 class vtkSMSourceProxy;
 class cmbManualProfileFunction;
 class cmbProfileFunction;
+class cmbProfileFunctionParameters;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
 {
@@ -37,13 +38,21 @@ class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
 public:
   struct modifierParams
   {
-    double DistanceRange[2];
-    double DisplacementDepthRange[2];
+  private:
+    cmbProfileFunctionParameters * params;
     cmbProfileFunction const* function;
     bool useDefault;
-    modifierParams()
-    :function(NULL), useDefault(true)
-    {}
+  public:
+    modifierParams(modifierParams const& other);
+    void operator=(modifierParams const& other);
+    modifierParams(cmbProfileFunction const* fun = NULL);
+    ~modifierParams();
+    bool getUseDefault();
+    void setUseDefault(bool b);
+    cmbProfileFunctionParameters * getParams();
+    cmbProfileFunction const* getFunction();
+    void setFunction(cmbProfileFunction const* f);
+
   };
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
@@ -66,12 +75,6 @@ public:
   void write(std::ofstream & f);
   void read(std::ifstream & f);
 
-  void getDisplacementParams(size_t pt, double & min, double & max) const;
-  void setDisplacementParams(size_t pt, double min, double max);
-
-  void getDepthParams(size_t pt, double & min, double & max) const;
-  void setDepthParams(size_t pt, double min, double max);
-
   bool updateLabel(std::string str, cmbProfileFunction * fun);
 
   cmbProfileFunction * getDefaultFun()
@@ -85,6 +88,8 @@ public:
   cmbProfileFunction * createFunction();
 
   bool deleteFunction(std::string const& name);
+
+  void setFunction(std::string const& name, cmbProfileFunction* fun);
 
   cmbProfileFunction * cloneFunction(std::string const& name);
 

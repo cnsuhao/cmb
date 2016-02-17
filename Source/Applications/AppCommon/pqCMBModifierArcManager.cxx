@@ -41,9 +41,11 @@
 #include "vtkPVArcInfo.h"
 
 #include "qtCMBManualFunctionWidget.h"
+#include "qtCMBProfileWedgeFunctionWidget.h"
 #include "qtCMBManualProfilePointFunctionModifier.h"
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileFunction.h"
+#include "cmbProfileWedgeFunction.h"
 
 // enum for different column types
 enum DataTableCol
@@ -59,6 +61,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 {
   this->CurrentModifierArc = NULL;
   this->ManualFunctionWidget = NULL;
+  this->WedgeFunctionWidget = NULL;
   this->ManualFunctionCustomize = NULL;
   this->selectedFunction = NULL;
   this->selectedFunctionTabelItem = NULL;
@@ -105,6 +108,12 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                    this, SLOT(deleteFunction()));
   QObject::connect(this->UI->CloneFunction, SIGNAL(clicked()),
                    this, SLOT(cloneFunction()));
+
+  QObject::connect(this->UI->CloneFunction, SIGNAL(clicked()),
+                   this, SLOT(cloneFunction()));
+
+  QObject::connect(this->UI->FunctionType, SIGNAL(currentIndexChanged(int)),
+                   this,  SLOT(functionTypeChanged(int)));
     
 
   QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
@@ -238,6 +247,7 @@ void pqCMBModifierArcManager::clear()
   selectLine(-1);
   this->CurrentModifierArc = NULL;
   delete this->ManualFunctionWidget;
+  delete this->WedgeFunctionWidget;
   delete this->ManualFunctionCustomize;
   this->ManualFunctionWidget = NULL;
   this->selectedFunction = NULL;
@@ -753,7 +763,9 @@ void pqCMBModifierArcManager::updateLineFunctions()
 void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
 {
   delete ManualFunctionWidget;
+  delete WedgeFunctionWidget;
   ManualFunctionWidget = NULL;
+  WedgeFunctionWidget = NULL;
   selectedFunction = NULL;
   if(fun == NULL)
   {
@@ -762,6 +774,7 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
   else
   {
     this->UI->functionName->setText(fun->getName().c_str());
+    this->UI->FunctionType->setCurrentIndex(static_cast<int>(fun->getType()));
     this->UI->functionConfigure->show();
     selectedFunction = fun;
     bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
@@ -772,11 +785,35 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
     {
       case cmbProfileFunction::MANUAL:
         ManualFunctionWidget =
-            new qtCMBManualFunctionWidget(dynamic_cast<cmbManualProfileFunction*>(fun),
-                                          NULL);
+            new qtCMBManualFunctionWidget(dynamic_cast<cmbManualProfileFunction*>(fun), NULL);
         functionLayout->addWidget(this->ManualFunctionWidget);
+        break;
+      case cmbProfileFunction::WEDGE:
+        WedgeFunctionWidget =
+          new qtCMBProfileWedgeFunctionWidget(NULL, dynamic_cast<cmbProfileWedgeFunction*>(fun));
+        functionLayout->addWidget(this->WedgeFunctionWidget);
+        break;
     }
   }
+}
+
+void pqCMBModifierArcManager::functionTypeChanged(int type)
+{
+  if(selectedFunction == NULL) return;
+  if(type == selectedFunction->getType()) return;
+  cmbProfileFunction* fun = NULL;
+  std::string name = selectedFunction->getName();
+  switch( type )
+  {
+    case cmbProfileFunction::MANUAL:
+      fun = new cmbManualProfileFunction();
+      break;
+    case cmbProfileFunction::WEDGE:
+      fun = new cmbProfileWedgeFunction();
+      break;
+  }
+  this->CurrentModifierArc->setFunction(name, fun);
+  selectFunction(fun);
 }
 
 void pqCMBModifierArcManager::doneModifyingArc()

@@ -43,6 +43,7 @@ class pqPipelineSource;
 class qtCMBManualFunctionWidget;
 class qtCMBManualProfilePointFunctionModifier;
 class cmbProfileFunction;
+class qtCMBProfileWedgeFunctionWidget;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 {
@@ -126,6 +127,7 @@ protected:
   QGridLayout* functionLayout;
   qtCMBManualFunctionWidget* ManualFunctionWidget;
   qtCMBManualProfilePointFunctionModifier* ManualFunctionCustomize;
+  qtCMBProfileWedgeFunctionWidget* WedgeFunctionWidget;
   QGridLayout* modifierFunctionLayout;
   cmbProfileFunction * selectedFunction;
   QTableWidgetItem * selectedFunctionTabelItem;
@@ -161,6 +163,7 @@ protected slots:
   void newFunction();
   void deleteFunction();
   void cloneFunction();
+  void functionTypeChanged(int);
 
 protected slots:
   void onLineChange(int Id);

@@ -22,6 +22,7 @@ set(UI_FORMS
     UI/qtCMBOptionsDialog.ui
     UI/qtCMBArcEditWidget.ui
     UI/qtCMBFunctionEditor.ui
+    UI/qtCMBFunctionWedgeEditor.ui
     UI/qtCMBSceneArcPolygonMeshingDialog.ui
     UI/qtCMBSceneArcSnappingDialog.ui
     UI/qtCMBGenerateContoursDialog.ui
@@ -103,6 +104,8 @@ add_library(cmbAppCommon
   cmbManualProfileFunction.h
   cmbProfileFunction.cxx
   cmbProfileFunction.h
+  cmbProfileWedgeFunction.cxx
+  cmbProfileWedgeFunction.h
   cmbScalarBarWidget.cxx
   cmbScalarBarWidget.h
   qtCMBAboutDialog.cxx
@@ -175,6 +178,8 @@ add_library(cmbAppCommon
   qtCMBOptionsDialog.h
   qtCMBOptionsPage.cxx
   qtCMBOptionsPage.h
+  qtCMBProfileWedgeFunctionWidget.cxx
+  qtCMBProfileWedgeFunctionWidget.h
   qtCMBProjectServerManager.cxx
   qtCMBProjectServerManager.h
   qtCMBTreeWidget.cxx
