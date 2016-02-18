@@ -423,6 +423,7 @@ endif()
     #OperationCombined
     WriteEdge
     Import2dmAndEdgeModify
+    ImportExport2dm
     )
 
   set (TESTS_WITHOUT_BASELINES
