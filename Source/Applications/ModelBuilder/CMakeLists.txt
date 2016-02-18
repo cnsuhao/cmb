@@ -422,6 +422,7 @@ endif()
     OperationDomainGroup2D
     #OperationCombined
     WriteEdge
+    Import2dmAndEdgeModify
     )
 
   set (TESTS_WITHOUT_BASELINES
