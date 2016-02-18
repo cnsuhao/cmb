@@ -88,6 +88,7 @@ public:
   pqServer* server();
   void updateModelRepresentation(const smtk::model::EntityRef& model);
   void updateModelRepresentation(pqSMTKModelInfo* minfo);
+  void updateModelMeshRepresentations(const smtk::model::Model& model);
 
   pqSMTKMeshInfo* meshInfo(const smtk::mesh::MeshSet& mesh);
   pqSMTKMeshInfo* meshInfo(pqDataRepresentation* rep);

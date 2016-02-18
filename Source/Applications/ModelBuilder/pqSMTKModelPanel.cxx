@@ -97,7 +97,7 @@ public:
   bool ignorePropertyChange;
 
   // [meshItem, <opName, sessionId>]
-  QMap<smtk::attribute::qtMeshSelectionItem*,
+  QMap<QPointer<smtk::attribute::qtMeshSelectionItem>,
     QPair<std::string, smtk::common::UUID> >SelectionOperations;
   QPointer<smtk::attribute::qtMeshSelectionItem> CurrentMeshSelectItem;
 
