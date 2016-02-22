@@ -10,7 +10,6 @@
 #include "pqCMBSceneV2Reader.h"
 #include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
-#include "pqDistanceWidget.h"
 #include "pqCMBArc.h"
 #include "pqCMBConicalRegion.h"
 #include "pqCMBFacetedObject.h"

@@ -19,7 +19,6 @@
 #define __vtkDateFormatter_h
 
 #include "vtkCMBGeneralModule.h" // For export macro
-#include "vtkExporter.h"
 #include "cmbSystemConfig.h"
 
 // Forware declaration.

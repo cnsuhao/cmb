@@ -7,7 +7,7 @@ vtk_module(vtkCMBIO
     vtkFiltersGeometry
     vtkGeovisCore
     vtkInteractionStyle
-    vtkIOExport
+#    vtkIOExport
     vtkIOGDAL
     vtkIOParallelExodus
     vtkRendering${VTK_RENDERING_BACKEND}
