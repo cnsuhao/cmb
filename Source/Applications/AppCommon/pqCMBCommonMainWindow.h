@@ -103,10 +103,7 @@ protected:
   virtual void initMainWindowCore();
 
   void initProjectManager();
-
-  QDockWidget* createDockWidget (QMainWindow* mw,
-    QWidget* content, const std::string& title,
-    Qt::DockWidgetArea dockarea, QDockWidget* lastdw);
+  QDockWidget* initPVColorEditorDock();
 
   pqCMBCommonMainWindowCore* MainWindowCore;
 

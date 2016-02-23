@@ -24,6 +24,7 @@
 #include <QTimer>
 
 #include "pqApplicationCore.h"
+#include "pqColorMapEditor.h"
 #include "pqDisplayColorWidget.h"
 #include "vtkMapper.h"
 #include "pqObjectBuilder.h"
@@ -162,6 +163,7 @@ public:
   bool prevNativeMenuBar;
 #endif
 
+  QPointer<QDockWidget> PVColorEditorDock;
 };
 
 //----------------------------------------------------------------------------
@@ -210,6 +212,7 @@ Internal(new vtkInternal(this))
     this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
   #endif
 
+  this->initPVColorEditorDock();
 }
 
 //----------------------------------------------------------------------------
@@ -269,37 +272,20 @@ pqCMBColorMapWidget* pqCMBCommonMainWindow::colorEditor(QWidget* p)
   return this->Internal->ColorEditor;
 }
 
-//-----------------------------------------------------------------------------
-QDockWidget* pqCMBCommonMainWindow::createDockWidget (QMainWindow* mw,
-  QWidget* content, const std::string& title,
-  Qt::DockWidgetArea dockarea, QDockWidget* lastdw)
+//----------------------------------------------------------------------------
+QDockWidget* pqCMBCommonMainWindow::initPVColorEditorDock()
 {
-  QDockWidget* dw = new QDockWidget(mw);
-  QWidget* container = new QWidget();
-  container->setObjectName("dockscrollWidget");
-  container->setSizePolicy(QSizePolicy::Preferred,
-    QSizePolicy::Expanding);
-
-  QScrollArea* s = new QScrollArea(dw);
-  s->setWidgetResizable(true);
-  s->setFrameShape(QFrame::NoFrame);
-  s->setObjectName("scrollArea");
-  s->setWidget(container);
-
-  QVBoxLayout* vboxlayout = new QVBoxLayout(container);
-  vboxlayout->setMargin(0);
-  vboxlayout->addWidget(content);
-
-  QString dockTitle(title.c_str());
-  dw->setWindowTitle(dockTitle);
-  dw->setObjectName(dockTitle.append("dockWidget"));
-  dw->setWidget(s);
-  mw->addDockWidget(dockarea,dw);
-  if(lastdw)
+  if(!this->Internal->PVColorEditorDock)
     {
-    mw->tabifyDockWidget(lastdw, dw);
+    QPointer<pqColorMapEditor> colorWidget = new pqColorMapEditor(this);
+    this->Internal->PVColorEditorDock = this->panelsManager()->createDockWidget(this,
+      colorWidget, qtCMBPanelsManager::type2String(qtCMBPanelsManager::COLORMAP),
+      Qt::RightDockWidgetArea, NULL);
+    this->Internal->PVColorEditorDock->hide();
+    pqApplicationCore::instance()->registerManager(
+      "COLOR_EDITOR_PANEL", this->Internal->PVColorEditorDock);
     }
-  return dw;
+  return this->Internal->PVColorEditorDock;
 }
 
 //----------------------------------------------------------------------------
