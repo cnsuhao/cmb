@@ -8646,7 +8646,7 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
                     panel_visibility="never" />
           <Property name="SelectScaleArray"
                     panel_visibility="never" />
-          <Property name="Source"
+          <Property name="GlyphType"
                     panel_visibility="never" />
         </ExposedProperties>
         <ShareProperties subproxy="CmbSurfaceRepresentation">

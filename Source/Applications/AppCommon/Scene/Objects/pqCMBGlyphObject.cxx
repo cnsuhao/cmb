@@ -167,7 +167,7 @@ void pqCMBGlyphObject::initialize(pqRenderView *view, pqServer * /*server*/, boo
 
   pqSMAdaptor::setEnumerationProperty(repProxy->GetProperty("Representation"), "3D Glyphs");
   //vtkSMPropertyHelper(repProxy, "ImmediateModeRendering").Set(0);
-  vtkSMPropertyHelper(repProxy, "Source").Set(this->GlyphSource->getProxy());
+  vtkSMPropertyHelper(repProxy, "GlyphType").Set(this->GlyphSource->getProxy());
   vtkSMPropertyHelper(repProxy, "Scaling").Set(true);
   vtkSMPropertyHelper(repProxy, "ScaleMode").Set(2);
   vtkSMPropertyHelper(repProxy, "Orient").Set(true);
