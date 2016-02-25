@@ -100,6 +100,7 @@
 #include "vtkEvent.h"
 #include "vtkEventQtSlotConnect.h"
 #include "vtkImageData.h"
+#include "vtkMapper.h"
 #include "vtkMath.h"
 #include "vtkNew.h"
 #include <vtkProcessModule.h>
@@ -1928,12 +1929,8 @@ pqContourWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlan
   this->setContourPlane(contourWidget, orthoPlane, projpos);
 
   vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-
-  contourWidget->setVisible(0);
-  contourWidget->setEnabled(0);
-
-  contourWidget->setWidgetVisible(1);
   vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "Enabled").Set(1);
+  contourWidget->setWidgetVisible(1);
   contourWidget->getWidgetProxy()->UpdateVTKObjects();
   contourWidget->showWidget();
 
@@ -2092,9 +2089,6 @@ pqContourWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
   dwProxy->UpdatePipeline();
 
   vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-  contourWidget->setVisible(0);
-  contourWidget->setEnabled(0);
-
   contourWidget->setWidgetVisible(1);
   vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "Enabled").Set(1);
   vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "ShowSelectedNodes").Set(0);

@@ -321,6 +321,13 @@ void pqCMBCommonMainWindow::onViewChanged()
      vtkPVRenderViewSettings::GetInstance()->SetResolveCoincidentTopology(
          vtkPVRenderViewSettings::OFFSET_FACES);
      vtkPVRenderViewSettings::GetInstance()->SetPolygonOffsetParameters(1.0, 0.5);
+
+    // NOTE: This is a temporary HACK. After server is created (paraview settings were set),
+    // CMB will change the coincident geometry settings. This only works with buildin server (same process)
+    // and only for openGL2, UNTIL paraview exposes these parameters from its PVRenderViewSettings.
+    vtkMapper::SetResolveCoincidentTopologyPolygonOffsetParameters(2.0, 2.0);
+    vtkMapper::SetResolveCoincidentTopologyLineOffsetParameters(1.0, 1.0);
+
     }
 }
 //----------------------------------------------------------------------------

@@ -2410,13 +2410,13 @@ qtCMBArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, d
 
   vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
 
-
   widget->setView( this->activeRenderView() );
 
   //this block is needed to create the widget in the right order
   //we need to set on the proxy enabled, not the widget
   //than we need to call Initialize
-  widget->setWidgetVisible( true );
+  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
+  widget->setWidgetVisible(1);
   vtkSMPropertyHelper(widget->getWidgetProxy(), "Enabled").Set(1);
   widget->getWidgetProxy()->UpdateVTKObjects();
   //widget->getWidgetProxy()->GetWidget()->SetEnabled(true);
