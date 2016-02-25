@@ -113,6 +113,7 @@ void qtCMBArcWidget::cleanupWidget()
 
   if (widget)
     {
+    vtkSMPropertyHelper(widget, "Enabled").Set(1);
     widget->InvokeCommand("Initialize");
     pqApplicationCore::instance()->get3DWidgetFactory()->
       free3DWidget(widget);

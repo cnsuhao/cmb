@@ -67,6 +67,9 @@ public slots:
 protected slots:
   //saves the information returned from the selection.
   void selectedInfo(pqOutputPort* port);
+  // picking arc end point finished
+  void onPickingFinished();
+
 private:
 
   PickInfo* Info;
