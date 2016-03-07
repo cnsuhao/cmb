@@ -75,7 +75,7 @@ void pqSMTKMeshInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 
   for(; it != this->Info->GetMesh2BlockIdMap().end(); ++it)
     {
-    int visible = 1;
+    int visible = this->Representation->isVisible();
     if (c->hasIntegerProperty(it->first, "visible"))
       {
       const smtk::model::IntegerList& prop(c->integerProperty(it->first, "visible"));
