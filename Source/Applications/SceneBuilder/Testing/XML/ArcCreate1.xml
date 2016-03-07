@@ -37,7 +37,7 @@
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/WholeArcButton" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/OperationsWidget/EditButton" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/ArcEditWidgtet/CmbSceneContourWidget/Finished" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/0QPushButton0" command="activate" arguments="" />
 
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="0" />
   <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />

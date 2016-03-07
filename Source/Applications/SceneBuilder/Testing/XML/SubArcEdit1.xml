@@ -91,7 +91,7 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.483034,0.799342,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.483034,0.799342,1,0,0)" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/OperationsWidget/SubArcOpWidget/ArcCollapseButton" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/0QPushButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="Scene" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,21,8,/0:0/0:0/1:0" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,21,8,/0:0/0:0/1:0" />
@@ -146,7 +146,7 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.433134,0.4375,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.433134,0.4375,1,0,0)" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/ArcEditWidgtet/CmbSceneContourWidget/Finished" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/pqCMBArcEditWidget/SelectPointsWidget/PickButtonBox/0QPushButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="Scene" />
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
   <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionSaveScreenshot" />
