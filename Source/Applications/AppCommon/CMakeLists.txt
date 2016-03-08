@@ -43,6 +43,8 @@ set(UI_FORMS
     UI/qtPreviewDialog.ui
     UI/qtCMBSceneObjectFilterDialog.ui
     UI/qtCMBStackedTINDialog.ui
+    UI/pqContourWidget.ui
+    UI/pqLineWidget.ui
     )
 
 qt4_wrap_ui(UI_BUILT_SOURCES
@@ -83,6 +85,10 @@ set(dynamicHeaders
   "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h")
 
 add_library(cmbAppCommon
+  pq3DWidget.cxx
+  pq3DWidgetInterface.cxx
+  pqContourWidget.cxx
+  pqLineWidget.cxx
   pqCMBLoadDataReaction.cxx
   pqCMBLoadDataReaction.h
   pqPluginIOBehavior.cxx

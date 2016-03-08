@@ -164,9 +164,12 @@ int qtCMBArcWidgetManager::create()
     this->Widget->setView(this->View);
     this->getDefaultArcPlane(normal, planepos);
     this->resetArcPlane(normal, planepos);
+    this->Widget->setView(this->View);
     this->Widget->setWidgetVisible(true);
-    this->Widget->reset();
-    this->Widget->removeAllNodes();
+
+    vtkSMPropertyHelper(this->Widget->getWidgetProxy(), "Enabled").Set(1);
+    this->Widget->getWidgetProxy()->UpdateVTKObjects();
+    this->Widget->showWidget();
     }
 
   this->Widget->select();
@@ -218,8 +221,10 @@ int qtCMBArcWidgetManager::edit()
     }
 
   this->EditWidget->setView(this->View);
+
   this->EditWidget->setArc(arcObj);
   this->EditWidget->setArcManager(this);
+  this->EditWidget->show();
   this->ActiveWidget = this->EditWidget;
 
   return 1;
@@ -276,8 +281,10 @@ void qtCMBArcWidgetManager::updateArcNode()
    }
 
   //update the object
-  this->Widget->setWidgetVisible(false);
   this->Widget->setVisible(false);
+  this->Widget->reset();
+  this->Widget->removeAllNodes();
+  this->Widget->setWidgetVisible(false);
   this->Widget->getWidgetProxy()->UpdatePropertyInformation();
   this->Widget->setView(NULL);
   this->ActiveWidget = NULL;
@@ -290,6 +297,10 @@ void qtCMBArcWidgetManager::updateArcNode()
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::editingFinished()
 {
+  if(this->EditWidget && this->ActiveWidget == this->EditWidget)
+    {
+    this->EditWidget->hide();
+    }
   this->ActiveWidget = NULL;
   this->Node = NULL;
   this->Arc = NULL;
@@ -387,19 +398,17 @@ qtCMBArcWidget* qtCMBArcWidgetManager::createContourWidget(
   pointplacer->UpdateVTKObjects();
   pointplacer->Delete();
 
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-
-
-  widget->setView( this->View );
 
   //this block is needed to create the widget in the right order
   //we need to set on the proxy enabled, not the widget
   //than we need to call Initialize
+  widget->setView( this->View );
   widget->setWidgetVisible( this->View != NULL );
+
+  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
   vtkSMPropertyHelper(widget->getWidgetProxy(), "Enabled").Set(1);
   widget->getWidgetProxy()->UpdateVTKObjects();
-  //widget->getWidgetProxy()->GetWidget()->SetEnabled(true);
-  widget->getWidgetProxy()->InvokeCommand("Initialize");
+  widget->showWidget();
 
   return widget;
 }

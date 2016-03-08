@@ -49,6 +49,7 @@ ArcPointPicker::ArcPointPicker(QObject * parent):
   View(NULL),
   Selecter(NULL)
 {
+  this->setCheckable(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +57,7 @@ ArcPointPicker::~ArcPointPicker()
 {
   if(this->Selecter)
     {
+    this->Selecter->disconnect();
     delete this->Selecter;
     }
 }
@@ -76,9 +78,13 @@ void ArcPointPicker::doPick(pqRenderView *view, pqCMBArc *arc, PickInfo &info)
 
     // we only want selection on one representation.
     view->setUseMultipleRepresentationSelection(false);
-
+    // things are selected
     QObject::connect(view,SIGNAL(selected(pqOutputPort*)),
                      this,SLOT(selectedInfo(pqOutputPort*)),
+                     Qt::UniqueConnection);
+    // selection is done
+    QObject::connect(view,SIGNAL(selectionModeChanged(bool)),
+                     this,SLOT(onPickingFinished()),
                      Qt::UniqueConnection);
 
     this->Info = &info;
@@ -92,13 +98,9 @@ void ArcPointPicker::doPick(pqRenderView *view, pqCMBArc *arc, PickInfo &info)
 //-----------------------------------------------------------------------------
 void ArcPointPicker::selectedInfo(pqOutputPort* port)
 {
-  //emit triggered false to stop the selection widget
-  emit triggered(false);
-
   //always update the port
   this->Info->IsValid = false;
   this->Info->port = port;
-
 
   if(port && port->getSource() == this->Arc->getSource())
     {
@@ -123,24 +125,32 @@ void ArcPointPicker::selectedInfo(pqOutputPort* port)
       }
     }
 
-  //we want the connection to happen once the view goes away so
-  //remove the connection
-  delete this->Selecter;
-  this->Selecter = NULL;
-
-  this->View->forceRender();
-
-  // reset multiple selection to true
-  this->View->setUseMultipleRepresentationSelection(false);
-
   // clear selection on this port if it is not the arc we expected
   if(port && port->getSource() != this->Arc->getSource())
     {
     port->setSelectionInput(NULL, 0);
     }
-  emit this->pickFinished();
 }
 
+//-----------------------------------------------------------------------------
+void ArcPointPicker::onPickingFinished()
+{
+  //we want the connection to happen once the view goes away so
+  //remove the connection
+  if(this->Selecter)
+    {
+    this->Selecter->disconnect();
+    delete this->Selecter;
+    this->Selecter = NULL;
+    }
+  if(this->View)
+    {
+    this->View->forceRender();
+    // reset multiple selection to true
+    this->View->setUseMultipleRepresentationSelection(false);
+    }
+  emit this->pickFinished();
+}
 }
 
 
@@ -197,7 +207,7 @@ qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget *parent) :
 
   //connect the picker up so we know when it is done.
   QObject::connect(&this->Picker, SIGNAL(pickFinished()),
-    this, SLOT(showPickWidget()));
+    this, SLOT(showPickWidget()), Qt::QueuedConnection);
 
   //setup the widget to look correctly
   //this->Internals->ArcEditWidgtet->hide();
@@ -445,12 +455,15 @@ void qtCMBArcEditWidget::modifySubArc()
         pointplacer->UpdateVTKObjects();
         }
       }
-    this->SubWidget->setWidgetVisible(true);
+    vtkSMPropertyHelper(this->SubWidget->getWidgetProxy(), "Enabled").Set(1);
+    this->SubWidget->getWidgetProxy()->UpdateVTKObjects();
     }
 
   this->SubWidget->useArcEditingUI(this->isWholeArcSelected());
   this->SubWidget->show();
   this->SubWidget->setEnabled(true);
+  this->SubWidget->setWidgetVisible(true);
+
   if ( arcObj && arcObj->getType() == pqCMBSceneObjectBase::Arc)
     {
     //pass the info from the arc into the widget proxy
@@ -617,6 +630,7 @@ void qtCMBArcEditWidget::arcEditingFinished()
   this->saveEdit();
   emit this->arcModificationfinished();
 }
+
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::finishedArcModification()
 {

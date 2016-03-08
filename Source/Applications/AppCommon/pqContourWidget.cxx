@@ -7,8 +7,8 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "qtCMBArcWidget.h"
-#include "ui_qtContourWidget.h"
+#include "pqContourWidget.h"
+#include "ui_pqContourWidget.h"
 
 #include "pq3DWidgetFactory.h"
 #include "pqApplicationCore.h"
@@ -16,7 +16,6 @@
 #include "pqServerManagerModel.h"
 #include "pqSignalAdaptorTreeWidget.h"
 #include "pqSMAdaptor.h"
-#include "pqView.h"
 
 #include <QDoubleValidator>
 #include <QShortcut>
@@ -24,27 +23,27 @@
 #include <QMessageBox>
 
 #include "vtkEventQtSlotConnect.h"
+#include "vtkPVProxyDefinitionIterator.h"
 #include "vtkSmartPointer.h"
 #include "vtkSMDoubleVectorProperty.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
 #include "vtkSMPropertyHelper.h"
+#include "vtkSMProxyDefinitionManager.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMProxyProperty.h"
-
-#include "vtkAbstractWidget.h"
-#include "vtkCommand.h"
+#include "vtkSMSessionProxyManager.h"
 
 #include "vtkClientServerStream.h"
 
-class qtCMBArcWidget::pqInternals : public Ui::qtContourWidget
+class pqContourWidget::pqInternals : public Ui::ContourWidget
 {
 public:
   vtkSmartPointer<vtkEventQtSlotConnect> ClosedLoopConnect;
 };
 
 //-----------------------------------------------------------------------------
-qtCMBArcWidget::qtCMBArcWidget(
+pqContourWidget::pqContourWidget(
   vtkSMProxy* _smproxy, vtkSMProxy* pxy, QWidget* p) :
   Superclass(_smproxy, pxy, p)
 {
@@ -73,8 +72,6 @@ qtCMBArcWidget::qtCMBArcWidget(
     this, SLOT(updateMode()));
   QObject::connect(this->Internals->Finished, SIGNAL(clicked()),
     this, SLOT(finishContour()));
-  QObject::connect(this->Internals->buttonRectArc, SIGNAL(clicked()),
-    this, SLOT(generateRectangleArc()));
 
 
   pqServerManagerModel* smmodel =
@@ -83,18 +80,42 @@ qtCMBArcWidget::qtCMBArcWidget(
 }
 
 //-----------------------------------------------------------------------------
-qtCMBArcWidget::~qtCMBArcWidget()
+pqContourWidget::~pqContourWidget()
 {
-  this->cleanupWidget();
   delete this->Internals;
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::createWidget(pqServer* server)
+void pqContourWidget::createWidget(pqServer* server)
 {
+  vtkSMSessionProxyManager *proxyManager =
+      vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
+  vtkSMProxyDefinitionManager* pxdm = proxyManager->GetProxyDefinitionManager();
+
+  bool hasContourWidgetRep2 = false;
+  const std::string contourWidgetRep2Name("ContourWidgetRepresentation2");
+  vtkSmartPointer<vtkPVProxyDefinitionIterator> iter;
+  iter.TakeReference(pxdm->NewSingleGroupIterator("representations"));
+  for(iter->InitTraversal();
+      (!iter->IsDoneWithTraversal()) && (!hasContourWidgetRep2);
+      iter->GoToNextItem())
+    {
+    hasContourWidgetRep2 = (iter->GetProxyName() == contourWidgetRep2Name);
+    }
+
   vtkSMNewWidgetRepresentationProxy* widget = NULL;
-  widget = pqApplicationCore::instance()->get3DWidgetFactory()->
-    get3DWidget("ArcWidgetRepresentation", server);
+  if(hasContourWidgetRep2)
+    {
+    widget = pqApplicationCore::instance()->get3DWidgetFactory()->
+      get3DWidget(contourWidgetRep2Name.c_str(),
+                  server, this->getReferenceProxy());
+    }
+  else
+    {
+    widget = pqApplicationCore::instance()->get3DWidgetFactory()->
+      get3DWidget("ContourWidgetRepresentation",
+                  server, this->getReferenceProxy());
+    }
 
   this->setWidgetProxy(widget);
 
@@ -107,22 +128,7 @@ void qtCMBArcWidget::createWidget(pqServer* server)
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::cleanupWidget()
-{
-  vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
-
-  if (widget)
-    {
-    vtkSMPropertyHelper(widget, "Enabled").Set(1);
-    widget->InvokeCommand("Initialize");
-    pqApplicationCore::instance()->get3DWidgetFactory()->
-      free3DWidget(widget);
-    }
-  this->setWidgetProxy(0);
-}
-
-//-----------------------------------------------------------------------------
-void qtCMBArcWidget::select()
+void pqContourWidget::select()
 {
   this->setWidgetVisible(true);
   this->setLineColor(QColor::fromRgbF(1.0,0.0,1.0));
@@ -133,7 +139,7 @@ void qtCMBArcWidget::select()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::deselect()
+void pqContourWidget::deselect()
 {
   this->setLineColor(QColor::fromRgbF(1.0,1.0,1.0));
   this->Superclass::updatePickShortcut(false);
@@ -141,7 +147,7 @@ void qtCMBArcWidget::deselect()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::updateWidgetVisibility()
+void pqContourWidget::updateWidgetVisibility()
 {
   const bool widget_visible = this->widgetVisible();
   const bool widget_enabled = this->widgetSelected();
@@ -149,7 +155,7 @@ void qtCMBArcWidget::updateWidgetVisibility()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::deleteAllNodes()
+void pqContourWidget::deleteAllNodes()
 {
   QMessageBox msgBox;
   msgBox.setText("Delete all contour nodes.");
@@ -162,7 +168,7 @@ void qtCMBArcWidget::deleteAllNodes()
     }
 }
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::removeAllNodes()
+void pqContourWidget::removeAllNodes()
 {
   vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
   if (widget)
@@ -176,73 +182,53 @@ void qtCMBArcWidget::removeAllNodes()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::checkContourLoopClosed()
+void pqContourWidget::checkContourLoopClosed()
 {
-  vtkSMProxy* repProxy = this->getWidgetProxy()->GetRepresentationProxy();
-
-  //request from the info the state of the loop not on the property it self
-  vtkSMPropertyHelper loopHelper(repProxy,"ClosedLoopInfo");
-  loopHelper.UpdateValueFromServer();
-
-  int loopClosed = loopHelper.GetAsInt();
-  this->Internals->Closed->setChecked(loopClosed);
-  if(loopClosed)
+  if(!this->Internals->Closed->isChecked())
     {
-    this->ModifyMode();
-    emit this->contourLoopClosed();
+    vtkSMProxy* repProxy = this->getWidgetProxy()->GetRepresentationProxy();
+    repProxy->UpdatePropertyInformation();
+    int loopClosed = pqSMAdaptor::getElementProperty(
+      repProxy->GetProperty("ClosedLoopInfo")).toInt();
+    if(loopClosed)
+      {
+      this->Internals->Closed->blockSignals(true);
+      this->Internals->Closed->setChecked(1);
+      this->Internals->Closed->blockSignals(false);
+      this->Internals->ModifyMode->setChecked(1);
+      emit this->contourLoopClosed();
+      }
     }
 
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::closeLoop(bool val)
+void pqContourWidget::closeLoop(bool val)
 {
   vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
   if (widget)
     {
     vtkSMProxy* repProxy = widget->GetRepresentationProxy();
-    vtkSMPropertyHelper loopHelper(repProxy,"ClosedLoop");
-    if(val)
+    repProxy->UpdatePropertyInformation();
+    bool loopClosed = pqSMAdaptor::getElementProperty(
+      repProxy->GetProperty("ClosedLoopInfo")).toBool();
+    if(loopClosed != val)
       {
-      widget->InvokeCommand("CloseLoop");
-      }
-    this->Internals->ModifyMode->setChecked(val);
-    loopHelper.Set(val);
-    repProxy->UpdateVTKObjects();
-
-    this->setModified();
-    this->render();
-    }
-}
-
-//-----------------------------------------------------------------------------
-void qtCMBArcWidget::ModifyMode()
-{
-  this->Internals->ModifyMode->setChecked(true);
-}
-
-//-----------------------------------------------------------------------------
-void qtCMBArcWidget::checkCanBeEdited()
-{
-  vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
-  if (widget)
-    {
-    vtkSMProxy* repProxy = widget->GetRepresentationProxy();
-    vtkSMPropertyHelper canEditHelper(repProxy,"CanEdit");
-    canEditHelper.UpdateValueFromServer();
-    int canEdit = canEditHelper.GetAsInt();
-    if (!canEdit)
-      {
-      this->Internals->ModifyMode->setChecked(true);
-      this->Internals->EditMode->setDisabled(true);
-      this->Internals->Closed->setChecked(false);
-      this->Internals->Closed->setDisabled(true);
+      if(val)
+        {
+        widget->InvokeCommand("CloseLoop");
+        }
+      this->Internals->ModifyMode->setChecked(val);
+      pqSMAdaptor::setElementProperty(
+        widget->GetRepresentationProxy()->GetProperty("ClosedLoop"), val);
+      widget->GetRepresentationProxy()->UpdateVTKObjects();
+      this->setModified();
+      this->render();
       }
     }
 }
-
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::updateMode()
+void pqContourWidget::updateMode()
 {
   //the text should always be updated to this.
   vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
@@ -261,56 +247,50 @@ void qtCMBArcWidget::updateMode()
     widget->UpdateVTKObjects();
     }
 }
-
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::finishContour( )
+void pqContourWidget::toggleEditMode()
 {
-  vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
-  widget->GetWidget()->InvokeEvent(vtkCommand::EndInteractionEvent,NULL);
-  emit this->contourDone();
-}
-
-//-----------------------------------------------------------------------------
-void qtCMBArcWidget::generateRectangleArc( )
-{
-  vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
-  if (widget)
+  if(this->Internals->EditMode->isChecked())
     {
-    widget->InvokeCommand("Rectangularize");
-    this->setModified();
-    this->render();
+    this->Internals->ModifyMode->setChecked(true);
     }
+  else
+    {
+    this->Internals->EditMode->setChecked(true);
+    }
+}
+//-----------------------------------------------------------------------------
+void pqContourWidget::finishContour( )
+{
   emit this->contourDone();
 }
 
 //----------------------------------------------------------------------------
-void qtCMBArcWidget::setPointPlacer(vtkSMProxy* placerProxy)
+void pqContourWidget::setPointPlacer(vtkSMProxy* placerProxy)
 {
   this->updateRepProperty(placerProxy, "PointPlacer");
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::setLineInterpolator(vtkSMProxy* interpProxy)
+void pqContourWidget::setLineInterpolator(vtkSMProxy* interpProxy)
 {
   this->updateRepProperty(interpProxy, "LineInterpolator");
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::reset()
+void pqContourWidget::reset()
 {
   this->Superclass::reset();
 
   //update our mode
-  this->Internals->EditMode->setDisabled(false);
   this->Internals->EditMode->setChecked(true);
   this->Internals->Closed->blockSignals(true);
-  this->Internals->Closed->setEnabled(true);
   this->Internals->Closed->setChecked(false);
   this->Internals->Closed->blockSignals(false);
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::setLineColor(const QColor& color)
+void pqContourWidget::setLineColor(const QColor& color)
 {
   vtkSMProxy* widget = this->getWidgetProxy();
   vtkSMPropertyHelper(widget,
@@ -323,7 +303,7 @@ void qtCMBArcWidget::setLineColor(const QColor& color)
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidget::updateRepProperty(
+void pqContourWidget::updateRepProperty(
   vtkSMProxy* smProxy, const char* propertyName)
 {
   vtkSMNewWidgetRepresentationProxy* widget = this->getWidgetProxy();
@@ -339,12 +319,4 @@ void qtCMBArcWidget::updateRepProperty(
       widget->UpdateProperty(propertyName);
       }
     }
-}
-
-//-----------------------------------------------------------------------------
-void qtCMBArcWidget::useArcEditingUI(bool isWholeArc)
-{
-  this->Internals->buttonRectArc->setVisible(isWholeArc);
-  this->Internals->Delete->setVisible(false);
-  this->Internals->Closed->setEnabled(isWholeArc);
 }

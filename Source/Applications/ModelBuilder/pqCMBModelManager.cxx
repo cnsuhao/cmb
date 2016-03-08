@@ -319,7 +319,8 @@ public:
 
   void createMeshRepresentation(smtk::model::ManagerPtr manager,
                                 const smtk::model::EntityRef& model,
-                                pqRenderView* view)
+                                pqRenderView* view,
+                                bool visible)
   {
     smtk::model::EntityRef related_model  = model;
     smtk::model::Model smtkModel(manager, model.entity());
@@ -425,7 +426,7 @@ public:
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
 
-          rep->getProxy()->UpdateVTKObjects();
+          rep->setVisible(visible);
           }
         }
 
@@ -1612,11 +1613,12 @@ bool pqCMBModelManager::handleOperationResult(
     {
     if(it->isValid() && !it->parent().isModel()) // ingore submodels
       {
+      smtk::model::Model newModel;
       if(internal_getModelInfo(*it, this->Internal->ModelInfos) == NULL)
         {
         hasNewModels = true;
         // if this is a submodel, use its parent
-        smtk::model::Model newModel =  it->parent().isModel() ? it->parent() : *it;
+        newModel =  it->parent().isModel() ? it->parent() : *it;
         success = this->Internal->addModelRepresentation(
           newModel, view, this->Internal->ManagerProxy, "", sref);
         }
@@ -1644,7 +1646,17 @@ bool pqCMBModelManager::handleOperationResult(
       // Handle new meshes for a model
       if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
         {
-        this->Internal->createMeshRepresentation(this->managerProxy()->modelManager(),*it, view);
+        // If models are also created from the same operation, we only show models,
+        // and set mesh representation invisible.
+        this->Internal->createMeshRepresentation(this->managerProxy()->modelManager(),
+                                                 *it, view, !hasNewModels);
+        // make the new model source the active source
+        if(hasNewModels && newModel.isValid())
+          {
+          pqSMTKModelInfo* newModelInfo = this->modelInfo(newModel);
+          if(newModelInfo)
+            pqActiveObjects::instance().setActiveSource(newModelInfo->RepSource);
+          }
         }
 
       }

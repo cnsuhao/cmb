@@ -64,7 +64,9 @@ bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
   widget->SetEnabled(true);
   widgetRep->ClearAllNodes();
   widget->Initialize();
-
+  // enable it again because Initialize() may have disabled it
+  widget->SetEnabled(true);
+  widgetRep->VisibilityOn();
   //set the arc to have the shape of the provider
   widget->Initialize(provider->GetOutput(),1);
   widgetRep->SetClosedLoop(closed);

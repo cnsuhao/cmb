@@ -1160,6 +1160,16 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
 
 }
 
+void internal_collectAllMeshes(smtk::mesh::MeshSets& meshes,
+                      smtk::mesh::CollectionPtr c,
+                      smtk::mesh::DimensionType dim)
+{
+  smtk::mesh::MeshSet dimMesh = c->meshes(dim);
+  meshes.insert(dimMesh);
+  for(int i=0; i<dimMesh.size(); ++i)
+    meshes.insert(dimMesh.subset(i));
+}
+
 //----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   const smtk::model::OperatorResult& result,
@@ -1207,6 +1217,39 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
     {
     emit this->newMeshCreated();
     }
+  // if both models and meshes are created, we hide all meshes, assuming the users really
+  // want to see the models without coincident meshes
+ if(hasNewMeshes && hasNewModels)
+   {
+   smtk::attribute::ModelEntityItem::Ptr modelWithMeshes =
+     result->findModelEntity("mesh_created");
+  if(modelWithMeshes)
+    {
+    smtk::mesh::ManagerPtr meshMgr = this->modelManager()->managerProxy()->modelManager()->meshes();
+    smtk::mesh::MeshSets meshes;
+    smtk::model::EntityRefArray::const_iterator it;
+    for(it = modelWithMeshes->begin(); it != modelWithMeshes->end(); ++it)
+      {
+      std::vector<smtk::mesh::CollectionPtr> colls = meshMgr->associatedCollections(*it);
+      std::vector<smtk::mesh::CollectionPtr>::const_iterator cit;
+      for(cit = colls.begin(); cit != colls.end(); ++cit)
+        {
+        meshes.insert((*cit)->meshes());
+        internal_collectAllMeshes(meshes, *cit, smtk::mesh::Dims3);
+        internal_collectAllMeshes(meshes, *cit, smtk::mesh::Dims2);
+        internal_collectAllMeshes(meshes, *cit, smtk::mesh::Dims1);
+        internal_collectAllMeshes(meshes, *cit, smtk::mesh::Dims0);
+        }
+      }
+    if(meshes.size() > 0)
+      {
+      this->modelPanel()->modelView()->syncEntityVisibility(
+        sref.session(), smtk::common::UUIDs(), meshes, 0);
+      this->modelPanel()->update();
+      }
+    }
+
+   }
   return true;
 }
 
