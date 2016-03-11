@@ -389,9 +389,16 @@ int vtkCMBADHReader::RequestData(
     vtkErrorMacro("Must set Input!");
     return 0;
     }
+  
   if(!this->FileName || strcmp(this->FileName,"") == 0)
     {
     vtkErrorMacro("ERROR: File Name Must Be Specified!");
+    return 0;
+    }
+
+  if(this->DataSets.size() == 0)
+    {
+    vtkErrorMacro("ERROR: No Data Available!");
     return 0;
     }
 
@@ -404,41 +411,22 @@ int vtkCMBADHReader::RequestData(
       outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   bool needToUpdateNames = false;
-  //Redo everything if the name has changed
-  if(!this->OldFileName || strcmp(this->FileName, this->OldFileName) != 0)
+  // Check to see if the prefix or suffix has changed - the first check is to see if
+  // both current and old are NULL, the second is to see if they have the strings
+  if((this->OldPrefix != this->Prefix) && ((this->OldPrefix == NULL) ||
+					   (strcmp(this->Prefix, this->OldPrefix) != 0)))
     {
-    this->DataSets.clear();
-    this->TimeValue = 0;
-    this->DataSet = 0;
-    if(!ScanFile())
-      {
-      vtkErrorMacro("ERROR: Invalid ADH File");
-      return 0;
-      }
-    this->DataSet = 0;
-    this->PrimaryDataSet = 0;
-    this->SetOldFileName(this->FileName);
-    this->SetOldPrefix(this->Prefix);
-    this->SetOldSuffix(this->Suffix);
-    }
-  else
-    {
-    // Check to see if the prefix or suffix has changed - the first check is to see if
-    // both current and old are NULL, the second is to see if they have the strings
-    if((this->OldPrefix != this->Prefix) && ((this->OldPrefix == NULL) ||
-                                             (strcmp(this->Prefix, this->OldPrefix) != 0)))
-      {
       this->SetOldPrefix(this->Prefix);
       needToUpdateNames = true;
-      }
-
-    if((this->OldSuffix != this->Suffix) && ((this->OldSuffix == NULL) ||
-                                             (strcmp(this->Suffix, this->OldSuffix) != 0)))
-      {
+    }
+  
+  if((this->OldSuffix != this->Suffix) && ((this->OldSuffix == NULL) ||
+					   (strcmp(this->Suffix, this->OldSuffix) != 0)))
+    {
       this->SetOldSuffix(this->Suffix);
       needToUpdateNames = true;
-      }
     }
+  
   std::vector<ADHTemporalData*>::iterator iter;
   if (needToUpdateNames && (this->DataSets.size() > 0))
     {
@@ -534,13 +522,28 @@ int vtkCMBADHReader::RequestData(
 {
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
+  if(this->FileName && (strcmp(this->FileName,"") != 0))
+    {
+      // Has the filename chnaged?
+      if(!this->OldFileName || strcmp(this->FileName, this->OldFileName) != 0)
+	{
+	  this->DataSets.clear();
+	  this->TimeValue = 0;
+	  this->DataSet = 0;
+	  if(!ScanFile())
+	    {
+	      vtkErrorMacro("ERROR: Invalid ADH File");
+	      return 0;
+	    }
+	  this->DataSet = 0;
+	  this->PrimaryDataSet = 0;
+	  this->SetOldFileName(this->FileName);
+	  this->SetOldPrefix(this->Prefix);
+	  this->SetOldSuffix(this->Suffix);
+	}
+    }
   if(this->DataSets.size() > 0)
     {
-    if (!this->FileName)
-      {
-      vtkErrorMacro("FileName has to be specified!");
-      return 0;
-      }
     outInfo->Set(vtkStreamingDemandDrivenPipeline::TIME_STEPS(),
         this->DataSets[this->PrimaryDataSet]->TimeSteps,
         this->DataSets[this->PrimaryDataSet]->NumberOfTimeSteps);
