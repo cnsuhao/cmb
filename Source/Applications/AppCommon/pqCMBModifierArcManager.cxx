@@ -174,8 +174,9 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
 
-  this->UI->points->setColumnCount(2);
-  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("X") << tr("Y"));
+  this->UI->points->setColumnCount(3);
+  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("X") << tr("Y")
+                                                             << tr("Function"));
   this->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
   this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->UI->points->verticalHeader()->hide();
@@ -813,6 +814,12 @@ void pqCMBModifierArcManager::functionTypeChanged(int type)
       break;
   }
   this->CurrentModifierArc->setFunction(name, fun);
+  if(selectedFunctionTabelItem)
+  {
+    QVariant vdata;
+    vdata.setValue(static_cast<void*>(fun));
+    selectedFunctionTabelItem->setData(Qt::UserRole, vdata);
+  }
   selectFunction(fun);
 }
 
@@ -949,6 +956,10 @@ void pqCMBModifierArcManager::setUpPointsTable()
     qtwi = new QTableWidgetItem(QString::number(pt[1]));
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 1, qtwi);
+    pqCMBModifierArc::modifierParams * mp = CurrentModifierArc->getPointModifer(i);
+    qtwi = new QTableWidgetItem(QString(mp->getFunction()->getName().c_str()));
+    qtwi->setFlags(commFlags);
+    tmp->setItem(row, 2, qtwi);
   }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
@@ -1012,10 +1023,7 @@ void pqCMBModifierArcManager::onLoadProfile()
   if(this->CurrentModifierArc != NULL)
   {
     QStringList fileNames =
-      QFileDialog::getOpenFileNames(NULL,
-                                    "Open File...",
-                                    "",
-                                    "Function Profile (*.fpr)");
+      QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.fpr)");
     if(fileNames.count()==0)
     {
       return;
@@ -1075,10 +1083,7 @@ void pqCMBModifierArcManager::onSaveArc()
 void pqCMBModifierArcManager::onLoadArc()
 {
   QStringList fileNames =
-  QFileDialog::getOpenFileNames(NULL,
-                                "Open File...",
-                                "",
-                                "Function Profile (*.mar)");
+  QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
   if(fileNames.count()==0)
   {
     return;
@@ -1163,7 +1168,7 @@ void pqCMBModifierArcManager::nameChanged(QString n)
   {
     if(selectedFunctionTabelItem) selectedFunctionTabelItem->setText(n);
     QPalette palette;
-    palette.setColor(QPalette::Base,Qt::yellow);
+    palette.setColor(QPalette::Base,Qt::white);
     palette.setColor(QPalette::Text,Qt::black);
     this->UI->functionName->setPalette(palette);
   }
