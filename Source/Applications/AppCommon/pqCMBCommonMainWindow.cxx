@@ -214,6 +214,17 @@ Internal(new vtkInternal(this))
 #endif
 #endif
       }
+    else
+      {
+#ifdef _WIN32
+      add_python_path(self_dir + "/Lib/site-packages");
+#elif __APPLE__
+      /* handled by ParaView */
+#else
+      // The shared forward executable lives in the lib/cmb-${cmb_version} directory.
+      add_python_path(self_dir + "/../python2.7/site-packages");
+#endif
+      }
     }
 
   pqApplicationCore* core = pqApplicationCore::instance();
