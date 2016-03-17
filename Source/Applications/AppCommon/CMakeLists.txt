@@ -106,8 +106,6 @@ add_library(cmbAppCommon
   cmbProfileFunction.h
   cmbProfileWedgeFunction.cxx
   cmbProfileWedgeFunction.h
-  cmbScalarBarWidget.cxx
-  cmbScalarBarWidget.h
   qtCMBAboutDialog.cxx
   qtCMBAboutDialog.h
   pqCMBAppCommonInit.cxx
@@ -171,7 +169,6 @@ add_library(cmbAppCommon
   qtCMBManualFunctionWidget.h
   qtCMBManualProfilePointFunctionModifier.cxx
   qtCMBManualProfilePointFunctionModifier.h
-  qtCMBMeshingClient.cxx
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h
   qtCMBOptionsDialog.cxx
