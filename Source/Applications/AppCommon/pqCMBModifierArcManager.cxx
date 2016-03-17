@@ -771,9 +771,15 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
   if(fun == NULL)
   {
     this->UI->functionConfigure->hide();
+    this->UI->CloneFunction->setEnabled(false);
+    this->UI->DeleteFunction->setEnabled(false);
+    this->UI->Save->setEnabled(false);
   }
   else
   {
+    this->UI->CloneFunction->setEnabled(true);
+    this->UI->DeleteFunction->setEnabled(true);
+    this->UI->Save->setEnabled(true);
     this->UI->functionName->setText(fun->getName().c_str());
     this->UI->FunctionType->setCurrentIndex(static_cast<int>(fun->getType()));
     this->UI->functionConfigure->show();
