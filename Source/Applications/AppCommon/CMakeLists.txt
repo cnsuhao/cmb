@@ -116,6 +116,8 @@ add_library(cmbAppCommon
   pqCMBDisplayProxyEditor.h
   pqCMBEnumPropertyWidget.cxx
   pqCMBEnumPropertyWidget.h
+  pqScalarBarWidget.cxx
+  pqScalarBarWidget.h
   qtCMBHelpDialog.cxx
   qtCMBHelpDialog.h
   vtkCMBInteractorStyleRubberBand.cxx

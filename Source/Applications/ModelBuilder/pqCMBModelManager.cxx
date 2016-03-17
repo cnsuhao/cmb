@@ -419,7 +419,7 @@ public:
           {
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
           modelInfo->MeshInfos[cid].init(meshSrc, repSrc, rep,
-            (*cit)->readLocation()/*.absolutePath()*/, mgr, modelInfo);
+            (*cit)->readLocation().absolutePath(), mgr, modelInfo);
 
           vtkSMPropertyHelper(rep->getProxy(),
                           "Representation").Set("Surface With Edges");
