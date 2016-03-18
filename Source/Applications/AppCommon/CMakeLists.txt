@@ -228,7 +228,24 @@ target_link_libraries(cmbAppCommon
     RemusClient
     smtkDiscreteSession
     vtkSMTKDiscreteModel
+    vtksys
   )
+
+set(python_path_sources)
+if (USE_SYSTEM_SMTK)
+  list(APPEND python_path_sources
+    "USE_SYSTEM_SMTK")
+endif ()
+
+if (CMB_SUPERBUILD_DEVELOPER_ROOT)
+  list(APPEND python_path_sources
+    "CMB_SUPERBUILD_DEVELOPER_ROOT=\"${CMB_SUPERBUILD_DEVELOPER_ROOT}\"")
+endif ()
+
+set_source_files_properties(
+  pqCMBCommonMainWindow.cxx
+  PROPERTIES
+    COMPILE_DEFINITIONS "${python_path_sources}")
 
 if (PARAVIEW_ENABLE_PYTHON)
   target_link_libraries(cmbAppCommon

@@ -61,6 +61,7 @@
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkVariant.h"
+#include "vtkPythonInterpreter.h"
 #include "vtkMapper.h"
 
 #include "qtCMBAboutDialog.h"
@@ -91,6 +92,10 @@
 #include "pqProxyWidget.h"
 #include "vtkCommand.h"
 #include "pqCMBColorMapWidget.h"
+
+#include "vtkPVConfig.h"
+
+#include <vtksys/SystemTools.hxx>
 
 class cmbRecentFilesMenu : public pqRecentFilesMenu
 {
@@ -167,6 +172,13 @@ public:
 };
 
 //----------------------------------------------------------------------------
+static void add_python_path(std::string const& path)
+{
+  std::string const& full_path = vtksys::SystemTools::CollapseFullPath(path);
+  vtkPythonInterpreter::PrependPythonPath(full_path.c_str());
+}
+
+//----------------------------------------------------------------------------
 pqCMBCommonMainWindow::pqCMBCommonMainWindow():
 SelectionShortcut(NULL),
 ResetCameraShortcut(NULL),
@@ -176,6 +188,44 @@ Internal(new vtkInternal(this))
   this->Internal->UI.setupUi(this);
   this->Internal->RecentFilesMenu = new
     cmbRecentFilesMenu(*this->Internal->UI.menuRecentFiles, this);
+
+  vtkProcessModule* proc_module = vtkProcessModule::GetProcessModule();
+  std::string self_dir = proc_module->GetSelfDir();
+  if (!self_dir.empty())
+    {
+#ifdef __APPLE__
+    bool is_build_dir = vtksys::SystemTools::FileExists(self_dir + "/../../../../CMakeCache.txt");
+#else
+    bool is_build_dir = vtksys::SystemTools::FileExists(self_dir + "/../CMakeCache.txt");
+#endif
+
+    if (is_build_dir)
+      {
+#ifndef USE_SYSTEM_SMTK
+      add_python_path(self_dir + "/../ThirdParty/SMTK");
+#endif
+#ifdef CMB_SUPERBUILD_DEVELOPER_ROOT
+#ifdef _WIN32
+      add_python_path(CMB_SUPERBUILD_DEVELOPER_ROOT "/bin/Lib/site-packages");
+      add_python_path(CMB_SUPERBUILD_DEVELOPER_ROOT "/lib/site-packages");
+#else
+      add_python_path(CMB_SUPERBUILD_DEVELOPER_ROOT "/lib/python2.7/site-packages");
+      add_python_path(CMB_SUPERBUILD_DEVELOPER_ROOT "/lib/paraview-" PARAVIEW_VERSION "/site-packages");
+#endif
+#endif
+      }
+    else
+      {
+#ifdef _WIN32
+      add_python_path(self_dir + "/Lib/site-packages");
+#elif __APPLE__
+      /* handled by ParaView */
+#else
+      // The shared forward executable lives in the lib/cmb-${cmb_version} directory.
+      add_python_path(self_dir + "/../python2.7/site-packages");
+#endif
+      }
+    }
 
   pqApplicationCore* core = pqApplicationCore::instance();
 
