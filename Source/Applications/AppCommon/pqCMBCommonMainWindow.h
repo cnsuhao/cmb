@@ -104,6 +104,7 @@ protected:
 
   void initProjectManager();
   virtual QDockWidget* initPVColorEditorDock();
+  virtual void initInspectorDock() ;
 
   pqCMBCommonMainWindowCore* MainWindowCore;
 

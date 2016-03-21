@@ -262,7 +262,6 @@ Internal(new vtkInternal(this))
     this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
   #endif
 
-  this->initPVColorEditorDock();
 }
 
 //----------------------------------------------------------------------------
@@ -323,6 +322,12 @@ pqCMBColorMapWidget* pqCMBCommonMainWindow::colorEditor(QWidget* p)
 }
 
 //----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::initInspectorDock()
+{
+  this->Internal->UI.faceParametersDock->setEnabled(false);
+}
+
+//----------------------------------------------------------------------------
 QDockWidget* pqCMBCommonMainWindow::initPVColorEditorDock()
 {
   if(!this->Internal->PVColorEditorDock)
@@ -332,6 +337,8 @@ QDockWidget* pqCMBCommonMainWindow::initPVColorEditorDock()
       colorWidget, qtCMBPanelsManager::type2String(qtCMBPanelsManager::COLORMAP),
       Qt::RightDockWidgetArea, NULL);
     this->Internal->PVColorEditorDock->hide();
+    pqApplicationCore::instance()->unRegisterManager(
+      "COLOR_EDITOR_PANEL");
     pqApplicationCore::instance()->registerManager(
       "COLOR_EDITOR_PANEL", this->Internal->PVColorEditorDock);
     }
@@ -411,7 +418,8 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   this->Internal->DockPanelViewMenu =
     new pqViewMenuManager(this, this->Internal->UI.menuShow);
 
-  this->Internal->UI.faceParametersDock->setEnabled(false);
+  this->initInspectorDock();
+  this->initPVColorEditorDock();
 
   QObject::connect(
     this->MainWindowCore, SIGNAL(enableExternalProcesses(bool)),

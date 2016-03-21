@@ -154,6 +154,11 @@ protected:
     bool recreate=false);
   pqProxyInformationWidget* getInfoWidget();
 
+  // override base class, because ModelBuilder is providing its own color editor
+  virtual QDockWidget* initPVColorEditorDock() {return NULL;}
+  // ModelBuilder is not using the InspectorPanel provided from base class
+  virtual void initInspectorDock();
+
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
   void operator=(const pqCMBModelBuilderMainWindow&); // Not implemented.
