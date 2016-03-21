@@ -355,7 +355,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
   this->Internal->Model2DToolbar = NULL;
 //  QToolBar* colorToolbar = new pqColorToolbar(this)
 //    << pqSetName("variableToolbar");
-  QToolBar* colorToolbar = new QToolBar(this);
+  QToolBar* colorToolbar = new QToolBar("Color By", this);
   colorToolbar->setObjectName("colorByToolbar");
   QLabel* label = new QLabel("Color By ", colorToolbar);
   colorToolbar->layout()->setSpacing(0);
@@ -771,7 +771,6 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
 {
   // legacy slots, should be updated later with new smtk model slots
  // SMTK model loaded
-  this->getMainDialog()->faceParametersDock->setVisible(false);
   this->updateSelectionUI(false);
   this->getMainDialog()->action_Select->setEnabled(true);
 
@@ -1051,6 +1050,8 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
           colorWidget, qtCMBPanelsManager::type2String(enType),
           Qt::RightDockWidgetArea, lastdw);
         dw->show();
+        pqApplicationCore::instance()->unRegisterManager(
+          "COLOR_EDITOR_PANEL");
         pqApplicationCore::instance()->registerManager(
           "COLOR_EDITOR_PANEL", dw);
         this->Internal->CurrentDockWidgets[enType] = dw;
@@ -1274,5 +1275,16 @@ void pqCMBModelBuilderMainWindow::onMeshSelectionItemCreated(
                     this, SLOT(onRequestMeshSelection()));
     this->getThisCore()->modelPanel()->addMeshSelectionOperation(
       meshItem, opName, uuid);
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::initInspectorDock()
+{
+  if(this->getMainDialog()->faceParametersDock)
+    {
+    this->removeDockWidget(
+      this->getMainDialog()->faceParametersDock);
+    this->getMainDialog()->faceParametersDock->setParent(NULL);
     }
 }
