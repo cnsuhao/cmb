@@ -17,6 +17,8 @@
 #include <map>
 #include <string>
 
+#include "vtkDataObject.h"
+
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
 
@@ -36,23 +38,18 @@ class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
   Q_OBJECT
 
 public:
-  struct modifierParams
+  struct pointFunctionWrapper
   {
   private:
-    cmbProfileFunctionParameters * params;
     cmbProfileFunction const* function;
-    bool useDefault;
   public:
-    modifierParams(modifierParams const& other);
-    void operator=(modifierParams const& other);
-    modifierParams(cmbProfileFunction const* fun = NULL);
-    ~modifierParams();
-    bool getUseDefault();
-    void setUseDefault(bool b);
-    cmbProfileFunctionParameters * getParams();
-    cmbProfileFunction const* getFunction();
+    pointFunctionWrapper(pointFunctionWrapper const& other);
+    void operator=(pointFunctionWrapper const& other);
+    pointFunctionWrapper(cmbProfileFunction const* fun = NULL);
+    ~pointFunctionWrapper();
     void setFunction(cmbProfileFunction const* f);
-
+    cmbProfileFunction const* getFunction();
+    std::string getName();
   };
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
@@ -93,7 +90,7 @@ public:
 
   cmbProfileFunction * cloneFunction(std::string const& name);
 
-  modifierParams * getPointModifer(size_t i);
+  pointFunctionWrapper * getPointFunction(vtkIdType i);
 
 public slots:
   void sendChangeSignals();
@@ -113,7 +110,7 @@ signals:
 protected:
   //Varable for the path
   pqCMBArc * CmbArc;
-  std::vector<modifierParams> pointsParams;
+  std::map<vtkIdType, pointFunctionWrapper> pointsFunctions;
   bool IsExternalArc;
 
   std::map<std::string, cmbProfileFunction * > functions;

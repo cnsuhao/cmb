@@ -5,11 +5,13 @@
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileWedgeFunction.h"
 
+#include <cassert>
+
 qtCMBManualProfilePointFunctionModifier
 ::qtCMBManualProfilePointFunctionModifier(QWidget * parent,
                                           std::vector<cmbProfileFunction*> funs,
-                                          pqCMBModifierArc::modifierParams & params)
-:QWidget(parent), UI(new Ui_qtCMBFunctionEditor), modifier(params), functions(funs)
+                                          pqCMBModifierArc::pointFunctionWrapper & w)
+:QWidget(parent), UI(new Ui_qtCMBFunctionEditor), functions(funs), wrapper(w)
 {
   this->UI->setupUi(this);
 
@@ -36,13 +38,18 @@ qtCMBManualProfilePointFunctionModifier
   connect(this->UI->rightSlope, SIGNAL(valueChanged(double)),
           this, SLOT(setRightSlope(double)));
 
-  //TODO remove the function selection form here, it is here
-  //     for now because we only have manal
+  {
+    QVariant vdata;
+    vdata.setValue(static_cast<void*>(NULL));
+    this->UI->function->addItem("", vdata);
+  }
+
+  cindex = 0;
   for( unsigned int i = 0; i < functions.size(); ++i)
   {
-    if(functions[i] == params.getFunction())
+    if(functions[i] == w.getFunction())
     {
-      cindex = i;
+      cindex = i+1;
     }
     QVariant vdata;
     vdata.setValue(static_cast<void*>(functions[i]));
@@ -51,7 +58,6 @@ qtCMBManualProfilePointFunctionModifier
   this->UI->function->setCurrentIndex(cindex);
   connect(this->UI->function, SIGNAL(currentIndexChanged(int)),
           this, SLOT(functionIndexChange(int)));
-  //done todo
 
 }
 
@@ -63,48 +69,30 @@ void qtCMBManualProfilePointFunctionModifier
   wedgeFunction = NULL;
   wedgeModifierParams = NULL;
 
-  this->UI->useDefaults->setChecked(modifier.getUseDefault());
+  this->UI->useDefaults->setChecked(true);
+  this->UI->useDefaults->hide();
   this->UI->parameters->hide();
   this->UI->wedgeParam->hide();
 
-  switch(modifier.getFunction()->getType())
+  manualFunction = NULL;
+  wedgeFunction = NULL;
+
+  if(wrapper.getFunction() == NULL)
+  {
+    return;
+  }
+
+  switch(wrapper.getFunction()->getType())
   {
     case cmbProfileFunction::MANUAL:
-      manualFunction = dynamic_cast< cmbManualProfileFunction const* >(modifier.getFunction());
+      manualFunction = dynamic_cast< cmbManualProfileFunction const* >(wrapper.getFunction());
       manualModifierParams =
-                        dynamic_cast< cmbManualProfileFunctionParameters * >(modifier.getParams());
-      if(!modifier.getUseDefault())
-      {
-        this->UI->parameters->show();
-        this->UI->leftDist->setValue(manualModifierParams->getDistanceRange(pqCMBModifierArc::MIN));
-        this->UI->rightDist->setValue(manualModifierParams->getDistanceRange(pqCMBModifierArc::MAX));
-        this->UI->minDepth->setValue(manualModifierParams->getDepthRange(pqCMBModifierArc::MIN));
-        this->UI->maxDepth->setValue(manualModifierParams->getDepthRange(pqCMBModifierArc::MAX));
-
-        if(manualFunction->isRelative())
-        {
-          this->UI->leftDist->setDisabled(true);
-          this->UI->leftDist->setValue(-manualModifierParams->getDistanceRange(pqCMBModifierArc::MAX));
-        }
-      }
+              dynamic_cast< cmbManualProfileFunctionParameters * >(manualFunction->getParameters());
       break;
     case cmbProfileFunction::WEDGE:
-      wedgeFunction = dynamic_cast< cmbProfileWedgeFunction const* >(modifier.getFunction());
+      wedgeFunction = dynamic_cast< cmbProfileWedgeFunction const* >(wrapper.getFunction());
       wedgeModifierParams =
-                          dynamic_cast< cmbProfileWedgeFunctionParameters * >(modifier.getParams());
-      if (!modifier.getUseDefault())
-      {
-        this->UI->wedgeParam->show();
-        this->UI->wedgeDepth->setValue(wedgeModifierParams->getDepth());
-        this->UI->baseWidth->setValue(wedgeModifierParams->getBaseWidth());
-        this->UI->leftSlope->setValue(wedgeModifierParams->getSlopeLeft());
-        this->UI->rightSlope->setValue(wedgeModifierParams->getSlopeRight());
-        if(wedgeFunction->isRelative())
-        {
-          this->UI->leftSlope->setDisabled(true);
-          this->UI->leftSlope->setValue(wedgeModifierParams->getSlopeRight());
-        }
-      }
+                dynamic_cast< cmbProfileWedgeFunctionParameters * >(wedgeFunction->getParameters());
       break;
   }
 
@@ -113,7 +101,6 @@ void qtCMBManualProfilePointFunctionModifier
 void qtCMBManualProfilePointFunctionModifier
 ::setUseDefaults(bool v)
 {
-  modifier.setUseDefault(v);
   setUp();
 }
 
@@ -153,8 +140,9 @@ void qtCMBManualProfilePointFunctionModifier
 {
   if(in != cindex)
   {
+    assert(in-1 < functions.size());
     cindex = in;
-    modifier.setFunction(functions[in]);
+    wrapper.setFunction(functions[in-1]);
     setUp();
   }
 }

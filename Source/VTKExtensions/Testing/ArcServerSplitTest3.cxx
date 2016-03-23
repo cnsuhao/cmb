@@ -22,24 +22,24 @@ int ArcServerSplitTest3( int /*argc*/, char * /*argv*/[] )
   double midPos[3] = {-50.0,10.0,-20.0};
 
   vtkCMBArc *arc = vtkCMBArc::New();
-  arc->SetEndNode(0,en1);
-  arc->SetEndNode(1,en2);
+  arc->SetEndNode(0,vtkCMBArc::Point(en1, 0));
+  arc->SetEndNode(1,vtkCMBArc::Point(en2, 1));
 
   //attempt to split an arc with no internal points
   vtkSmartPointer<vtkCMBArcSplitOnPositionOperator> splitPosition =
       vtkSmartPointer<vtkCMBArcSplitOnPositionOperator>::New();
 
   //now add multiple internal point
-  arc->InsertNextPoint(-50,2.5,-20);
-  arc->InsertNextPoint(-50,5,-20);
-  arc->InsertNextPoint(-50,7.5,-20);
-  arc->InsertNextPoint(midPos); //Split Here
-  arc->InsertNextPoint(-40,10,-20);
-  arc->InsertNextPoint(-30,10,-20);
-  arc->InsertNextPoint(-20,10,-20);
-  arc->InsertNextPoint(-10,10,-20);
-  arc->InsertNextPoint(0,10,0);
-  arc->InsertNextPoint(10,10,10);
+  arc->InsertNextPoint(2,-50,2.5,-20);
+  arc->InsertNextPoint(3,-50,5,-20);
+  arc->InsertNextPoint(4,-50,7.5,-20);
+  arc->InsertNextPoint(5,midPos); //Split Here
+  arc->InsertNextPoint(6,-40,10,-20);
+  arc->InsertNextPoint(7,-30,10,-20);
+  arc->InsertNextPoint(8,-20,10,-20);
+  arc->InsertNextPoint(9,-10,10,-20);
+  arc->InsertNextPoint(10,0,10,0);
+  arc->InsertNextPoint(11,10,10,10);
 
   //attempt a bad positional split
   splitPosition->SetPositionTolerance(0.0);

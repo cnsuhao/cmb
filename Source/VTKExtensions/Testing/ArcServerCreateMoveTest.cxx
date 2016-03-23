@@ -27,27 +27,30 @@ int ArcServerCreateMoveTest( int /*argc*/, char * /*argv*/[] )
 
 
   vtkCMBArc *arc = vtkCMBArc::New();
-  arc->SetEndNode(0,en1);
-  arc->SetEndNode(1,en2);
+  vtkCMBArc::Point pt1(en1, 0);
+  arc->SetEndNode(0,pt1);
+  vtkCMBArc::Point pt2(en2, 1);
+  arc->SetEndNode(1,pt2);
 
-  arc->InsertNextPoint( 1, 0, 0 );
-  arc->InsertNextPoint( 4, 0, 0 );
-  arc->InsertNextPoint( 8, 0.5, 0 );
-  arc->InsertNextPoint( 9, 1, 0 );
+  arc->InsertNextPoint( 2, 1, 0, 0 );
+  arc->InsertNextPoint( 3, 4, 0, 0 );
+  arc->InsertNextPoint( 4, 8, 0.5, 0 );
+  arc->InsertNextPoint( 5, 9, 1, 0 );
 
   vtkCMBArc *arc2 = vtkCMBArc::New();
-  arc2->SetEndNode(0,en1);
+  arc2->SetEndNode(0,pt1);
 
-  arc2->InsertNextPoint( -1, 0, 0 );
-  arc2->InsertNextPoint( -4, 0, 0 );
-  arc2->InsertNextPoint( -8, -0.5, 0 );
-  arc2->InsertNextPoint( -9, -1, 0 );
+  arc2->InsertNextPoint( 6, -1, 0, 0 );
+  arc2->InsertNextPoint( 7, -4, 0, 0 );
+  arc2->InsertNextPoint( 8, -8, -0.5, 0 );
+  arc2->InsertNextPoint( 9, -9, -1, 0 );
 
   vtkCMBArc *loopArc = vtkCMBArc::New();
-  loopArc->SetEndNode(0,en3);
-  loopArc->SetEndNode(1,en3);
-  loopArc->InsertNextPoint( 0, 2, 0 );
-  loopArc->InsertNextPoint( -2, 0, 0 );
+  vtkCMBArc::Point pt3(en3, 10);
+  loopArc->SetEndNode(0,pt3);
+  loopArc->SetEndNode(1,pt3);
+  loopArc->InsertNextPoint(11, 0, 2, 0 );
+  loopArc->InsertNextPoint(12, -2, 0, 0 );
 
   //don't delete the arcs as that will remove them from the manager
   arc = NULL;
@@ -109,7 +112,8 @@ int ArcServerCreateMoveTest( int /*argc*/, char * /*argv*/[] )
   pos[1] = 0;
   pos[2] = 0;
   arc = manager->GetArc(1);
-  arc->MoveEndNode(0,pos);
+  vtkCMBArc::Point tmpPt(pos, 2);
+  arc->MoveEndNode(0,tmpPt);
 
 
   en = manager->GetEndNodeAt(pos);
@@ -128,7 +132,7 @@ int ArcServerCreateMoveTest( int /*argc*/, char * /*argv*/[] )
 
   //move the loop to be merged on top of the other two arcs
   arc = manager->GetArc(2);
-  arc->MoveEndNode(1,pos);
+  arc->MoveEndNode(1,tmpPt);
 
   en = manager->GetEndNodeAt(pos);
   if ( en != manager->GetArc(0)->GetEndNode(0) )

@@ -105,11 +105,6 @@ cmbProfileFunctionParameters * cmbManualProfileFunction::getParameters() const
 cmbProfileFunction::FunctionType cmbManualProfileFunction::getType() const
 { return cmbProfileFunction::MANUAL; }
 
-pqCMBModifierArc::modifierParams cmbManualProfileFunction::getDefault() const
-{
-  return pqCMBModifierArc::modifierParams(this);
-}
-
 vtkPiecewiseFunction * cmbManualProfileFunction::getDisplacementProfile() const
 {
   return this->DisplacementProfile;
@@ -310,7 +305,6 @@ bool cmbManualProfileFunction::writeData(std::ofstream & out) const
 }
 
 void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
-                                               pqCMBModifierArc::modifierParams & in_mp,
                                                vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;
@@ -318,8 +312,7 @@ void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
   source->UpdateVTKObjects();
   v.clear();
-  cmbManualProfileFunctionParameters * p =
-            dynamic_cast<cmbManualProfileFunctionParameters *>(in_mp.getParams());
+  cmbManualProfileFunctionParameters * p = parameters;
   v << arc_ID << pointID
     << p->getDepthRange(pqCMBModifierArc::MIN) << p->getDepthRange(pqCMBModifierArc::MAX)
     << p->getDistanceRange(pqCMBModifierArc::MIN) << p->getDistanceRange(pqCMBModifierArc::MAX);

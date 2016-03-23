@@ -61,6 +61,8 @@ public:
   //Returns the position of the point position, given the point index;
   bool GetPointLocation(vtkIdType index, double pos[3]);
 
+  bool GetPointID(vtkIdType index, vtkIdType & id);
+
   //Description:
   //Returns the location of all the points in the arc
   vtkGetObjectMacro(PointLocations,vtkDoubleArray);
@@ -84,6 +86,7 @@ protected:
   vtkIdType NumberOfPoints;
   double *EndNodePos;
   vtkDoubleArray* PointLocations;
+  vtkIdTypeArray* PointIds;
 
   vtkIdTypeArray* EndNodeIds;
 

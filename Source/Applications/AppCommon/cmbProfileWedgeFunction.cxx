@@ -99,11 +99,6 @@ cmbProfileFunction::FunctionType cmbProfileWedgeFunction::getType() const
   return cmbProfileFunction::WEDGE;
 }
 
-pqCMBModifierArc::modifierParams cmbProfileWedgeFunction::getDefault() const
-{
-  return pqCMBModifierArc::modifierParams(this);
-}
-
 cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) const
 {
   cmbProfileWedgeFunction * result = new cmbProfileWedgeFunction(this);
@@ -112,7 +107,6 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
 }
 
 void cmbProfileWedgeFunction::sendDataToPoint(int arc_ID, int pointID,
-                                              pqCMBModifierArc::modifierParams & mp,
                                               vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;
@@ -125,8 +119,7 @@ void cmbProfileWedgeFunction::sendDataToPoint(int arc_ID, int pointID,
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
     source->UpdateVTKObjects();
   }
-  cmbProfileWedgeFunctionParameters * p =
-                                dynamic_cast<cmbProfileWedgeFunctionParameters *>(mp.getParams());
+  cmbProfileWedgeFunctionParameters * p = this->parameters;
   double slopeLeft = p->getSlopeLeft();
   double slopeRight = p->getSlopeRight();
   double baseWidth = p->getBaseWidth();

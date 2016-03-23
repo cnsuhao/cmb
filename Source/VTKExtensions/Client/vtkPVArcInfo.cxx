@@ -32,6 +32,7 @@ vtkPVArcInfo::vtkPVArcInfo()
   this->ClosedLoop = 0;
   this->NumberOfPoints = 0;
   this->PointLocations = NULL;
+  this->PointIds = NULL;
   this->EndNodeIds = NULL;
 
   this->EndNodePos = new double[6];
@@ -49,6 +50,7 @@ vtkPVArcInfo::~vtkPVArcInfo()
   if(this->PointLocations)
     {
     this->PointLocations->Delete();
+    this->PointIds->Delete();
     }
   if(this->EndNodeIds)
     {
@@ -75,6 +77,7 @@ void vtkPVArcInfo::CopyFromObject(vtkObject* obj)
   if(this->PointLocations)
     {
     this->PointLocations->Initialize();
+    this->PointIds->Initialize();
     }
   if(this->EndNodeIds)
     {
@@ -129,22 +132,29 @@ void vtkPVArcInfo::GatherDetailedInfo()
   if(!this->PointLocations)
     {
     this->PointLocations = vtkDoubleArray::New();
+    this->PointIds = vtkIdTypeArray::New();
     }
   this->PointLocations->SetNumberOfComponents(3);
   this->PointLocations->SetNumberOfTuples(this->NumberOfPoints);
+  this->PointIds->SetNumberOfComponents(1);
+  this->PointIds->SetNumberOfTuples(this->NumberOfPoints);
 
   //add all the points
   vtkIdType index = 0;
   arc->GetEndNode(0)->GetPosition(this->EndNodePos);
   this->PointLocations->InsertTuple(index,this->EndNodePos);
+  this->PointIds->InsertTuple1(index, arc->GetEndNode(0)->GetPointId());
   this->EndNodeIds->InsertValue(0,0);
   index++;
 
   arc->InitTraversal();
-  double point[3];
+  vtkCMBArc::Point point;
+  //TODO Pass the id
   while(arc->GetNextPoint(point))
     {
-    this->PointLocations->InsertTuple(index,point);
+    double pos[3] = {point[0], point[1], point[2]};
+    this->PointLocations->InsertTuple(index,pos);
+    this->PointIds->InsertTuple1(index, point.GetId());
     ++index;
     }
 
@@ -153,6 +163,7 @@ void vtkPVArcInfo::GatherDetailedInfo()
     {
     arc->GetEndNode(1)->GetPosition(&this->EndNodePos[3]);
     this->PointLocations->InsertTuple(index,&this->EndNodePos[3]);
+    this->PointIds->InsertTuple1(index, arc->GetEndNode(1)->GetPointId());
     this->EndNodeIds->InsertValue(1,index);
     }
 }
@@ -193,6 +204,17 @@ bool vtkPVArcInfo::GetPointLocation(vtkIdType index, double pos[3])
       }
     return true;
     }
+  return false;
+}
+
+bool vtkPVArcInfo::GetPointID(vtkIdType index, vtkIdType & id)
+{
+  if(this->PointIds && index >=0 &&
+     index < this->PointIds->GetNumberOfTuples())
+  {
+    id = this->PointIds->GetTuple1(index);
+    return true;
+  }
   return false;
 }
 

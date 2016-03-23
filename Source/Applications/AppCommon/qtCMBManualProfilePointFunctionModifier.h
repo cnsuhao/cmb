@@ -18,7 +18,7 @@ class qtCMBManualProfilePointFunctionModifier: public QWidget
 public:
   qtCMBManualProfilePointFunctionModifier(QWidget * parent,
                                           std::vector<cmbProfileFunction*> funs,
-                                          pqCMBModifierArc::modifierParams & params);
+                                          pqCMBModifierArc::pointFunctionWrapper & w);
 protected slots:
   void setUseDefaults(bool);
   void setLeftDist(double);
@@ -33,7 +33,7 @@ protected slots:
   void setDepth(double);
 protected:
   Ui_qtCMBFunctionEditor * UI;
-  pqCMBModifierArc::modifierParams & modifier;
+  pqCMBModifierArc::pointFunctionWrapper & wrapper;
   cmbManualProfileFunction const* manualFunction;
   cmbProfileWedgeFunction const* wedgeFunction;
   cmbManualProfileFunctionParameters * manualModifierParams;

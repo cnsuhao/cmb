@@ -39,8 +39,10 @@
 #include "vtkNew.h"
 #include "vtkBoundingBox.h"
 #include "vtkCellArray.h"
+#include "vtkUnsignedIntArray.h"
 
 #include <map>
+#include <set>
 
 vtkStandardNewMacro(vtkCMBArcWidgetRepresentation);
 
@@ -65,6 +67,7 @@ vtkCMBArcWidgetRepresentation::vtkCMBArcWidgetRepresentation()
   this->LoggingEnabled = false;
   this->ModifiedPointMap = new vtkCMBArcWidgetRepresentation::vtkInternalMap();
   this->CanEdit = 1;
+  this->pointId = 0;
 }
 
 //----------------------------------------------------------------------
@@ -275,6 +278,8 @@ int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
   node->WorldPosition[1] = worldPos[1];
   node->WorldPosition[2] = worldPos[2];
   node->Selected = 0;
+  node->PointId = this->pointId;
+  pointId++;
 
   this->GetRendererComputedDisplayPositionFromWorldPosition(
           worldPos, worldOrient, node->NormalizedDisplayPosition );
@@ -300,6 +305,19 @@ int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
   this->NeedToRender = 1;
 
   return 1;
+}
+
+int vtkCMBArcWidgetRepresentation::AddNodeAtDisplayPosition(int X, int Y)
+{
+  int addNode = GetNumberOfNodes();
+  int r = vtkOrientedGlyphContourRepresentation::AddNodeAtDisplayPosition(X,Y);
+  if(r)
+  {
+    vtkContourRepresentationNode * node = GetNthNode( addNode );
+    node->PointId = this->pointId;
+    pointId++;
+  }
+  return r;
 }
 
 //----------------------------------------------------------------------
@@ -337,6 +355,21 @@ vtkPolyData* vtkCMBArcWidgetRepresentation::GetContourRepresentationAsPolyData()
   // Make sure we are up to date with any changes made in the placer
   this->UpdateContour();
   this->BuildLines();
+
+  vtkSmartPointer<vtkUnsignedIntArray> ids =
+                              vtkSmartPointer<vtkUnsignedIntArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetName ("PointIDs");
+  //std::set<vtkIdType> checker;
+
+  for(int i = 0; i < GetNumberOfNodes(); ++i)
+  {
+    //assert( checker.find(GetNthNode( i )->PointId) == checker.end());
+    //checker.insert(GetNthNode( i )->PointId);
+    ids->InsertNextTuple1(GetNthNode( i )->PointId);
+  }
+
+  this->Lines->GetPointData()->SetScalars(ids);
 
   return Lines;
  }
@@ -378,6 +411,7 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
     delete this->Internal->Nodes[i];
     }
   this->Internal->Nodes.clear();
+  pointId = 0;
 
   vtkPolyData *tmpPoints = vtkPolyData::New();
   tmpPoints->DeepCopy(pd);
@@ -389,6 +423,7 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
 
   //account for the offset if the input has vert cells
   vtkIdList *pointIds = pd->GetCell(pd->GetNumberOfVerts())->GetPointIds();
+  vtkDataArray * vda = pd->GetPointData()->GetScalars();
   vtkIdType numPointsInLineCells = pointIds->GetNumberOfIds();
 
   // Get the worldOrient from the point placer
@@ -427,6 +462,8 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
     node->WorldPosition[1] = pos[1];
     node->WorldPosition[2] = pos[2];
     node->Selected = 0;
+    node->PointId = vda->GetTuple1(i);
+    pointId = std::max(pointId, static_cast<unsigned int>(node->PointId+1));
 
     node->NormalizedDisplayPosition[0] = displayPos[0];
     node->NormalizedDisplayPosition[1] = displayPos[1];

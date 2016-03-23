@@ -20,6 +20,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkObjectFactory.h"
 #include "vtkVector.h"
+#include "vtkPointData.h"
 
 vtkStandardNewMacro(vtkCMBArcUpdateOperator);
 
@@ -115,6 +116,7 @@ bool vtkCMBArcUpdateOperator::Operate(vtkPolyData *source)
   vtkIdType currentIndex = 0;
   vtkIdType numberOfCells = lines->GetNumberOfCells();
   vtkIdType numberOfInternalEndNodes = lines->GetNumberOfConnectivityEntries() - numberOfCells;
+  vtkDataArray * vda = source->GetPointData()->GetScalars();
 
   //walk the polydata and create the arc
   lines->InitTraversal();
@@ -124,17 +126,18 @@ bool vtkCMBArcUpdateOperator::Operate(vtkPolyData *source)
     for ( vtkIdType i=0; i < ids->GetNumberOfIds(); ++i)
       {
       source->GetPoint(ids->GetId(i),pos);
+      unsigned int pointID = vda->GetTuple1(ids->GetId(i));
       if (currentIndex != 0 && currentIndex != numberOfInternalEndNodes-1)
         {
-        updatedArc->InsertNextPoint(pos);
+        updatedArc->InsertNextPoint(pointID, pos);
         }
       else if (currentIndex == 0)
         {
-        this->UpdateEndNode(updatedArc,0,pos);
+        this->UpdateEndNode(updatedArc,0, pointID, pos);
         }
       else
         {
-        this->UpdateEndNode(updatedArc,1,pos);
+        this->UpdateEndNode(updatedArc,1, pointID, pos);
         }
       ++currentIndex;
       }
@@ -165,7 +168,8 @@ bool vtkCMBArcUpdateOperator::UpdateSubArc(
   vtkIdType currentIndex = 0;
   vtkIdType numberOfCells = lines->GetNumberOfCells();
   vtkIdType numberOfInternalEndNodes = lines->GetNumberOfConnectivityEntries() - numberOfCells;
-  std::list<vtkVector3d> newPoints;
+  std::list<vtkCMBArc::Point> newPoints;
+  vtkDataArray * vda = source->GetPointData()->GetScalars();
 
   //walk the polydata and create the arc
   lines->InitTraversal();
@@ -175,20 +179,21 @@ bool vtkCMBArcUpdateOperator::UpdateSubArc(
     for ( vtkIdType i=0; i < ids->GetNumberOfIds(); ++i)
       {
       source->GetPoint(ids->GetId(i),pos);
+      unsigned int pointID = vda->GetTuple1(ids->GetId(i));
       // if there is an end node involved
       if(currentIndex == 0 && (this->StartPointId==0 ||
         this->StartPointId == numArcPoints - 1))
         {
-        this->UpdateEndNode(updatedArc, this->StartPointId==0 ? 0 : 1 ,pos);
+        this->UpdateEndNode(updatedArc, this->StartPointId==0 ? 0 : 1 ,pointID,pos);
         }
       else if(currentIndex == numberOfInternalEndNodes-1 &&
         (this->EndPointId==0 || this->EndPointId == numArcPoints - 1))
         {
-        this->UpdateEndNode(updatedArc, this->EndPointId==0 ? 0 : 1 ,pos);
+        this->UpdateEndNode(updatedArc, this->EndPointId==0 ? 0 : 1 ,pointID,pos);
         }
       else
         {
-        newPoints.push_back(vtkVector3d(pos));
+        newPoints.push_back(vtkCMBArc::Point(pos, pointID));
         }
       ++currentIndex;
       }
@@ -203,8 +208,9 @@ bool vtkCMBArcUpdateOperator::UpdateSubArc(
 }
 
 //----------------------------------------------------------------------------
-void vtkCMBArcUpdateOperator::UpdateEndNode(vtkCMBArc *arc, const int &endNodePos, double pos[3])
+void vtkCMBArcUpdateOperator::UpdateEndNode(vtkCMBArc *arc, const int &endNodePos, unsigned int ptId, double pos[3])
 {
+  vtkCMBArc::Point point(pos, ptId);
   if (this->EndNodeFlags[endNodePos] == this->EndNodeDefault)
     {
     this->EndNodeFlags[endNodePos] = (this->RecreateArcBehavior==1) ?
@@ -214,11 +220,11 @@ void vtkCMBArcUpdateOperator::UpdateEndNode(vtkCMBArc *arc, const int &endNodePo
   //we don't have information so we are removing the old ed
   if (this->EndNodeFlags[endNodePos]==this->EndNodeMoved)
     {
-    arc->MoveEndNode(endNodePos,pos);
+    arc->MoveEndNode(endNodePos, point);
     }
   else if(this->EndNodeFlags[endNodePos]==this->EndNodeRecreated)
     {
-    arc->SetEndNode(endNodePos,pos);
+    arc->SetEndNode(endNodePos, point);
     }
 }
 

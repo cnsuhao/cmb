@@ -361,7 +361,7 @@ public:
 
     void setFunctions(DepArcProfileFunction * fun0, DepArcProfileFunction * fun1, double mv)
     {
-      assert(fun0 != NULL);
+      //assert(fun0 != NULL);
       mixFunctions.fun[0] = fun0;
       mixFunctions.fun[1] = fun1;
       mixFunctions.mixValue = mv;
@@ -434,6 +434,7 @@ public:
 
     double apply(double d, double pt) const
     {
+      if(mixFunctions.fun[0] == NULL) return d;
       assert(mixFunctions.fun[0]!=NULL);
       double tmpr = mixFunctions.fun[0]->apply(d,pt, this->params);
       if(mixFunctions.fun[1] != NULL)
@@ -464,9 +465,10 @@ public:
     struct mf
     {
       DepArcProfileFunction * fun[2];
+      double distanceFromFunction;
       double mixValue;
       mf()
-      {fun[0] = NULL; fun[1] = NULL, mixValue = 0;}
+      {fun[0] = NULL; fun[1] = NULL; mixValue = 0;}
     } mixFunctions;
 
   };
@@ -628,6 +630,11 @@ public:
     }
     result = sqrt(result);
     resultPt = closePt;
+    if(closePt.getFunction() == NULL)
+    {
+      //TODO: FUNCTION
+      return false;
+    }
     if(closePt.getFunction()->isSymmetric() || cls == NULL)
     {
       return closePt.inside(result);

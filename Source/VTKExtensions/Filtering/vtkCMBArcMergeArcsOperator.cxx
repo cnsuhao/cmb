@@ -74,7 +74,7 @@ bool vtkCMBArcMergeArcsOperator::Operate(vtkIdType firstId, vtkIdType secondId)
     return false;
     }
 
-  double point[3];
+  vtkCMBArc::Point point;
   //these two variable help determine the order the internal points
   //need to be merged in
   bool reversePoints = false;
@@ -112,7 +112,7 @@ bool vtkCMBArcMergeArcsOperator::Operate(vtkIdType firstId, vtkIdType secondId)
 
     //move firsts first end node to the end of second.
     second->GetEndNode(1)->GetPosition(point);
-    first->SetEndNode(0,point);
+    first->SetEndNode(0, point);
 
 
     //make sure we mark the correct arc to delete
@@ -143,7 +143,7 @@ bool vtkCMBArcMergeArcsOperator::Operate(vtkIdType firstId, vtkIdType secondId)
   //now remove the old end node from second and make it
   //point to the end of first
   second->GetEndNode(secondEndNode)->GetPosition(point);
-  first->SetEndNode(1,point);
+  first->SetEndNode(1, point);
 
   this->ArcIdToDelete = second->GetId();
   this->CreatedArcId = first->GetId();

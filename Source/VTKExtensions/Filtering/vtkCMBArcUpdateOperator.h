@@ -83,7 +83,7 @@ protected:
   // Update the specified sub-arc with source polydata.
   virtual bool UpdateSubArc(vtkPolyData *source, vtkCMBArc* updatedArc);
 
-  void UpdateEndNode(vtkCMBArc *arc, const int &endNodePos, double pos[3]);
+  void UpdateEndNode(vtkCMBArc *arc, const int &endNodePos, unsigned int ptId, double pos[3]);
   vtkIdType ArcId;
   int RecreateArcBehavior;
   int EndNodeFlags[2];

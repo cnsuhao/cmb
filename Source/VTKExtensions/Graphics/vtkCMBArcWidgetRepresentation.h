@@ -65,6 +65,7 @@ public:
   virtual int SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] );
   virtual int SetActiveNodeToWorldPosition(double worldPos[3]);
   virtual int AddNodeOnContour(int X, int Y);
+  virtual int AddNodeAtDisplayPosition(int X, int Y);
 
 
   // Description:
@@ -125,6 +126,8 @@ protected:
 private:
   vtkCMBArcWidgetRepresentation(const vtkCMBArcWidgetRepresentation&);  //Not implemented
   void operator=(const vtkCMBArcWidgetRepresentation&);  //Not implemented
+
+  unsigned pointId;
 };
 
 #endif

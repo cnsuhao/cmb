@@ -17,6 +17,7 @@
 
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBArc.h"
 #include <map>
 #include <set>
 
@@ -136,7 +137,7 @@ protected:
   //Description:
   //creates an endnode at the positon in space.
   //if an endnode already exists there it returns that one
-  vtkCMBArcEndNode* CreateEndNode(double position[3]);
+  vtkCMBArcEndNode* CreateEndNode(vtkCMBArc::Point const& point);
 
   //Description:
   //Merge the the two end node together. This method will update the point locator with
@@ -152,7 +153,7 @@ protected:
   //moves the passed in end node to the position also passed in.
   //Since this can cause endNodes to be merged you have to use the
   //end node that is returned.
-  vtkCMBArcEndNode* MoveEndNode(vtkCMBArcEndNode *endNode, double position[3]);
+  vtkCMBArcEndNode* MoveEndNode(vtkCMBArcEndNode *endNode, vtkCMBArc::Point const& point);
 
   //Description:
   //Removes the passed in arc end node with the associated arc

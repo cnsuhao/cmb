@@ -174,8 +174,8 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
 
-  this->UI->points->setColumnCount(3);
-  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("X") << tr("Y")
+  this->UI->points->setColumnCount(4);
+  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("id") << tr("X") << tr("Y")
                                                              << tr("Function"));
   this->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
   this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -520,7 +520,7 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
     CurrentModifierArc->getFunctions(funs);
     QTableWidgetItem * si = selected.front();
     int row = si->row();
-    pqCMBModifierArc::modifierParams * mp = CurrentModifierArc->getPointModifer(row);
+    pqCMBModifierArc::pointFunctionWrapper * mp = CurrentModifierArc->getPointFunction(row);
     if(mp != NULL)
     {
       ManualFunctionCustomize = new qtCMBManualProfilePointFunctionModifier(NULL, funs, *mp);
@@ -952,20 +952,29 @@ void pqCMBModifierArcManager::setUpPointsTable()
   vtkPVArcInfo* ai = arc->getArcInfo();
   for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
   {
+    vtkIdType id;
+    ai->GetPointID(i, id);
+  
     double pt[3];
     ai->GetPointLocation(i, pt);
+
     int row = tmp->rowCount();
+
     tmp->insertRow(tmp->rowCount());
-    QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(pt[0]));
+
+    QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(id));
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 0, qtwi);
-    qtwi = new QTableWidgetItem(QString::number(pt[1]));
+    qtwi = new QTableWidgetItem(QString::number(pt[0]));
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 1, qtwi);
-    pqCMBModifierArc::modifierParams * mp = CurrentModifierArc->getPointModifer(i);
-    qtwi = new QTableWidgetItem(QString(mp->getFunction()->getName().c_str()));
+    qtwi = new QTableWidgetItem(QString::number(pt[1]));
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 2, qtwi);
+    pqCMBModifierArc::pointFunctionWrapper * mp = CurrentModifierArc->getPointFunction(i);
+    qtwi = new QTableWidgetItem(QString(mp->getName().c_str()));
+    qtwi->setFlags(commFlags);
+    tmp->setItem(row, 3, qtwi);
   }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);

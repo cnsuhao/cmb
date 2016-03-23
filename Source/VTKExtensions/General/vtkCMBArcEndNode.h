@@ -18,13 +18,14 @@
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkType.h"
 #include "vtkABI.h"
+#include "vtkCMBArc.h"
 #include "cmbSystemConfig.h"
 
 class VTKCMBGENERAL_EXPORT vtkCMBArcEndNode
 {
   friend class vtkCMBArcManager;
 public:
-  vtkCMBArcEndNode(double position[3]);
+  vtkCMBArcEndNode(double position[3], unsigned int ptid);
   ~vtkCMBArcEndNode();
 
   //comparison operator needed for storage
@@ -37,15 +38,22 @@ public:
   //Description:
   //Get the position of this end node
   void GetPosition(double pos[3]) const;
+  void GetPosition(vtkCMBArc::Point& pt) const;
 
   //Description:
   //Get the position of this end node
   const double* GetPosition( ) const;
 
+  //Description:
+  //Get the id for the point in the arc
+  unsigned int GetPointId() const;
+
 protected:
   void SetPosition(double* position);
+  void SetPosition(vtkCMBArc::Point& pt);
 
   double Position[3];
+  unsigned int PointId;
 private:
   const vtkIdType Id;
   static vtkIdType NextId;

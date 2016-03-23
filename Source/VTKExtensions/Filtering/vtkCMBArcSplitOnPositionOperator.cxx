@@ -21,7 +21,7 @@ vtkStandardNewMacro(vtkCMBArcSplitOnPositionOperator);
 namespace
 {
 
-bool pointsEqual(double pos1[3], double pos2[3], double tol)
+bool pointsEqual(double pos1[3], vtkCMBArc::Point pos2, double tol)
   {
   return  (( pos1[0] <= pos2[0] + tol) && ( pos1[0] >= pos2[0] - tol)) &&
           (( pos1[1] <= pos2[1] + tol) && ( pos1[1] >= pos2[1] - tol)) &&
@@ -76,7 +76,7 @@ bool vtkCMBArcSplitOnPositionOperator::Operate(vtkIdType arcId)
   //go through the points of the arc and split it on the position
   bool foundSplitPoint = false;
   int index = 0;
-  double point[3];
+  vtkCMBArc::Point point;
   arc->InitTraversal();
   while (arc->GetNextPoint(point))
     {

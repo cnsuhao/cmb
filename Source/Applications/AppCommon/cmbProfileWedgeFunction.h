@@ -39,10 +39,8 @@ public:
   cmbProfileWedgeFunction();
   ~cmbProfileWedgeFunction();
   virtual cmbProfileFunction::FunctionType getType() const;
-  virtual pqCMBModifierArc::modifierParams getDefault() const;
   virtual cmbProfileFunction * clone(std::string const& name) const;
   virtual void sendDataToPoint(int arc_ID, int pointID,
-                               pqCMBModifierArc::modifierParams & mp,
                                vtkSMSourceProxy* source) const;
   virtual cmbProfileFunctionParameters * getParameters() const;
 

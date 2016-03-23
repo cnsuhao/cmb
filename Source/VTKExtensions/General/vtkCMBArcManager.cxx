@@ -8,7 +8,6 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBArcManager.h"
-#include "vtkCMBArc.h"
 #include "vtkCMBArcEndNode.h"
 
 #include "vtkObjectFactory.h"
@@ -328,8 +327,9 @@ vtkCMBArcEndNode* vtkCMBArcManager::GetEndNodeAt(double position[3])
 }
 
 //-----------------------------------------------------------------------------
-vtkCMBArcEndNode* vtkCMBArcManager::CreateEndNode(double position[3])
+vtkCMBArcEndNode* vtkCMBArcManager::CreateEndNode(vtkCMBArc::Point const& point)
 {
+  double position[3] = {point[0], point[1], point[2]};
   vtkCMBArcEndNode *preExistingEndNode = this->GetEndNodeAt(position);
   if (preExistingEndNode)
     {
@@ -339,7 +339,7 @@ vtkCMBArcEndNode* vtkCMBArcManager::CreateEndNode(double position[3])
     }
 
   //we have to create a new end node.
-  return new vtkCMBArcEndNode(position);
+  return new vtkCMBArcEndNode(position, point.GetId());
 }
 
 
@@ -388,8 +388,9 @@ vtkCMBArcEndNode* vtkCMBArcManager::MergeEndNodes(vtkCMBArcEndNode* endNode1,
 
 //-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::MoveEndNode(vtkCMBArcEndNode* endNode,
-                                                double position[3])
+                                                vtkCMBArc::Point const& point)
 {
+  double position[3] = {point[0], point[1], point[2]};
   //does a point already exist at the passed in position?
   vtkCMBArcEndNode *preExistingEndNode = this->GetEndNodeAt(position);
   if (preExistingEndNode && preExistingEndNode == endNode)
@@ -405,11 +406,12 @@ vtkCMBArcEndNode* vtkCMBArcManager::MoveEndNode(vtkCMBArcEndNode* endNode,
     }
   else if (!endNode)
     {
-    return this->CreateEndNode(position);
+    return this->CreateEndNode(point);
     }
   else
     {
     endNode->SetPosition(position);
+    endNode->PointId = point.GetId();
     if ( this->IsManagedEndNode(endNode) )
       {
       //by moving this end node we just invalidated the point locator
@@ -557,12 +559,12 @@ void vtkCMBArcManager::AddEndNodeToLocator(vtkCMBArcEndNode *en)
     {
     this->LocatorModified();
     }
-  }
+}
 
 
-  //-----------------------------------------------------------------------------
-  void vtkCMBArcManager::BuildLocator( )
-  {
+//-----------------------------------------------------------------------------
+void vtkCMBArcManager::BuildLocator( )
+{
   if (!this->LocatorNeedsRebuilding)
     {
     return;

@@ -19,6 +19,7 @@
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
 
 vtkStandardNewMacro(vtkCMBArcCreateOperator);
 
@@ -62,6 +63,7 @@ bool vtkCMBArcCreateOperator::Operate(vtkPolyData *source)
   vtkIdType currentIndex = 0;
   vtkIdType numberOfCells = lines->GetNumberOfCells();
   vtkIdType numberOfInternalEndNodes = lines->GetNumberOfConnectivityEntries() - numberOfCells;
+  vtkDataArray * vda = source->GetPointData()->GetScalars();
 
   //walk the polydata and create the arc
   lines->InitTraversal();
@@ -71,17 +73,19 @@ bool vtkCMBArcCreateOperator::Operate(vtkPolyData *source)
     for ( vtkIdType i=0; i < ids->GetNumberOfIds(); ++i)
       {
       source->GetPoint(ids->GetId(i),pos);
+      unsigned int pointID = vda->GetTuple1(ids->GetId(i));
+      vtkCMBArc::Point tmpPt(pos, pointID);
       if (currentIndex != 0 && currentIndex != numberOfInternalEndNodes-1)
         {
-        createdArc->InsertNextPoint(pos);
+        createdArc->InsertNextPoint(tmpPt);
         }
       else if (currentIndex == 0)
         {
-        createdArc->SetEndNode(0,pos);
+        createdArc->SetEndNode(0, tmpPt);
         }
       else
         {
-        createdArc->SetEndNode(1,pos);
+        createdArc->SetEndNode(1, tmpPt);
         }
       ++currentIndex;
       }

@@ -27,27 +27,27 @@ int ArcServerUndoTest( int /*argc*/, char * /*argv*/[] )
 
 
   vtkCMBArc *arc = vtkCMBArc::New();
-  arc->SetEndNode(0,en1);
-  arc->SetEndNode(1,en2);
+  arc->SetEndNode(0,vtkCMBArc::Point(en1,0));
+  arc->SetEndNode(1,vtkCMBArc::Point(en2,1));
 
-  arc->InsertNextPoint( 1, 0, 0 );
-  arc->InsertNextPoint( 4, 0, 0 );
-  arc->InsertNextPoint( 8, 0.5, 0 );
-  arc->InsertNextPoint( 9, 1, 0 );
+  arc->InsertNextPoint( 2, 1, 0, 0 );
+  arc->InsertNextPoint( 3, 4, 0, 0 );
+  arc->InsertNextPoint( 4, 8, 0.5, 0 );
+  arc->InsertNextPoint( 5, 9, 1, 0 );
 
   vtkCMBArc *arc2 = vtkCMBArc::New();
-  arc2->SetEndNode(0,en1);
+  arc2->SetEndNode(0, vtkCMBArc::Point(en1,0));
 
-  arc2->InsertNextPoint( -1, 0, 0 );
-  arc2->InsertNextPoint( -4, 0, 0 );
-  arc2->InsertNextPoint( -8, -0.5, 0 );
-  arc2->InsertNextPoint( -9, -1, 0 );
+  arc2->InsertNextPoint( 6, -1, 0, 0 );
+  arc2->InsertNextPoint( 7, -4, 0, 0 );
+  arc2->InsertNextPoint( 8, -8, -0.5, 0 );
+  arc2->InsertNextPoint( 9, -9, -1, 0 );
 
   vtkCMBArc *loopArc = vtkCMBArc::New();
-  loopArc->SetEndNode(0,en3);
-  loopArc->SetEndNode(1,en3);
-  loopArc->InsertNextPoint( 0, 2, 0 );
-  loopArc->InsertNextPoint( -2, 0, 0 );
+  loopArc->SetEndNode(0,vtkCMBArc::Point(en3, 10));
+  loopArc->SetEndNode(1,vtkCMBArc::Point(en3, 10));
+  loopArc->InsertNextPoint(11, 0, 2, 0 );
+  loopArc->InsertNextPoint(12, -2, 0, 0 );
 
 
   vtkCMBArcManager *manager = vtkCMBArcManager::GetInstance();
@@ -86,7 +86,7 @@ int ArcServerUndoTest( int /*argc*/, char * /*argv*/[] )
   //when we undo the delete on arc1 we need to make sure it uses the same
   //endnode as arc3
   arc->MarkedForDeletion();
-  loopArc->MoveEndNode(0,en2);
+  loopArc->MoveEndNode(0, vtkCMBArc::Point(en2,2));
   arc->UnMarkedForDeletion();
 
   if ( arc->GetEndNode(1) != loopArc->GetEndNode(0) )

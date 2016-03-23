@@ -17,8 +17,8 @@
 vtkIdType vtkCMBArcEndNode::NextId = 0;
 
 //----------------------------------------------------------------------------
-vtkCMBArcEndNode::vtkCMBArcEndNode(double position[3])
-: Id(NextId++)
+vtkCMBArcEndNode::vtkCMBArcEndNode(double position[3], unsigned int pid)
+: Id(NextId++), PointId(pid)
 {
   this->Position[0] = position[0];
   this->Position[1] = position[1];
@@ -27,7 +27,6 @@ vtkCMBArcEndNode::vtkCMBArcEndNode(double position[3])
 //----------------------------------------------------------------------------
 vtkCMBArcEndNode::~vtkCMBArcEndNode()
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -50,6 +49,11 @@ void vtkCMBArcEndNode::GetPosition(double pos[3]) const
   pos[2] = this->Position[2];
 }
 
+void vtkCMBArcEndNode::GetPosition(vtkCMBArc::Point& pt) const
+{
+  pt = vtkCMBArc::Point(this->Position, this->PointId);
+}
+
 //----------------------------------------------------------------------------
 const double* vtkCMBArcEndNode::GetPosition( ) const
 {
@@ -62,4 +66,17 @@ void vtkCMBArcEndNode::SetPosition(double* position)
   this->Position[0] = position[0];
   this->Position[1] = position[1];
   this->Position[2] = position[2];
+}
+
+void vtkCMBArcEndNode::SetPosition(vtkCMBArc::Point& pt)
+{
+  this->Position[0] = pt[0];
+  this->Position[1] = pt[1];
+  this->Position[2] = pt[2];
+}
+
+//----------------------------------------------------------------------------
+unsigned int vtkCMBArcEndNode::GetPointId() const
+{
+  return this->PointId;
 }

@@ -208,7 +208,8 @@ int ArcServerCreateOperatorTest( int /*argc*/, char * /*argv*/[] )
   pos[1] = 0;
   pos[2] = 0;
   vtkCMBArc *arc = manager->GetArc(1);
-  arc->MoveEndNode(0,pos);
+  vtkCMBArc::Point point(pos, 100);
+  arc->MoveEndNode(0,point);
 
 
   en = manager->GetEndNodeAt(pos);
@@ -227,7 +228,7 @@ int ArcServerCreateOperatorTest( int /*argc*/, char * /*argv*/[] )
 
   //move the loop to be merged on top of the other two arcs
   arc = manager->GetArc(2);
-  arc->MoveEndNode(1,pos);
+  arc->MoveEndNode(1,point);
 
   en = manager->GetEndNodeAt(pos);
   if ( en != manager->GetArc(0)->GetEndNode(0) )

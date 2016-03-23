@@ -89,6 +89,7 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId,
 
 
   double startPos[3],endPos[3];
+  vtkIdType startID, endID;
   if ( firstArcsEndNodes.size() == 0 || secondArcsEndNodes.size() == 0)
     {
     //unable to connect these arcs
@@ -99,7 +100,9 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId,
     //simple case if both only have one free end node, than we don't
     //have to do anything
     (*firstArcsEndNodes.begin())->GetPosition(startPos);
+    startID = (*firstArcsEndNodes.begin())->GetId();
     (*secondArcsEndNodes.begin())->GetPosition(endPos);
+    endID = (*secondArcsEndNodes.begin())->GetId();
     }
   else
     {
@@ -107,6 +110,7 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId,
     double tmp;
     double dist = VTK_DOUBLE_MAX;
     double point1[3], point2[3];
+    vtkIdType point1ID, point2ID;
     std::list<vtkCMBArcEndNode*>::const_iterator it1,it2;
     for (it1 = firstArcsEndNodes.begin(); it1 != firstArcsEndNodes.end(); it1++)
       {
@@ -114,12 +118,16 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId,
         {
         (*it1)->GetPosition(point1);
         (*it2)->GetPosition(point2);
+        point1ID = (*it1)->GetId();
+        point2ID = (*it2)->GetId();
         tmp = vtkMath::Distance2BetweenPoints(point1,point2);
         if ( tmp < dist )
           {
           dist = tmp;
           startPos[0]=point1[0];startPos[1]=point1[1];startPos[2]=point1[2];
           endPos[0]=point2[0];endPos[1]=point2[1];endPos[2]=point2[2];
+          startID = point1ID;
+          endID = point2ID;
           }
         }
       }
@@ -127,8 +135,10 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId,
 
   //create the auto connect arc
   vtkCMBArc *autoConnectedArc = vtkCMBArc::New();
-  autoConnectedArc->SetEndNode(0,startPos);
-  autoConnectedArc->SetEndNode(1,endPos);
+  vtkCMBArc::Point startPoint(startPos, startID);
+  autoConnectedArc->SetEndNode(0, startPoint);
+  vtkCMBArc::Point endPoint(endPos, endID);
+  autoConnectedArc->SetEndNode(1, endPoint);
   this->CreatedArcId = autoConnectedArc->GetId();
   return true;
   }

@@ -70,7 +70,7 @@ void vtkCMBArc::PrintSelf(ostream& os, vtkIndent indent)
   for (int i=0; i < this->GetNumberOfEndNodes(); ++i)
     {
     cout << "End Node: " << i+1 << endl;
-    cout << indent.GetNextIndent() << "ID: " << this->GetEndNode(i)->GetId()<< endl;
+    cout << indent.GetNextIndent() << "ID: " << this->GetEndNode(i)->GetPointId()<< endl;
     this->GetEndNode(i)->GetPosition(position);
     cout << indent.GetNextIndent() << " position " << position[0] << ","
             << position[1] << "," << position[2] << endl;
@@ -80,10 +80,11 @@ void vtkCMBArc::PrintSelf(ostream& os, vtkIndent indent)
   cout << "Number of Internal Points " << this->GetNumberOfInternalPoints() << endl;
   int idx = 0;
   this->InitTraversal();
-  while(this->GetNextPoint(position))
+  vtkCMBArc::Point point;
+  while(this->GetNextPoint(point))
     {
-    cout << indent.GetNextIndent() << " internal point("<<idx++<<"): " << position[0] << ","
-            << position[1] << "," << position[2] << endl;
+    cout << indent.GetNextIndent() << " internal point("<<idx++<<"): " << point[0] << ","
+            << point[1] << "," << point[2] << " ID: " << point.GetId() << endl;
     }
 
 }
@@ -125,7 +126,7 @@ vtkCMBArcEndNode* vtkCMBArc::GetEndNode(const int& index) const
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::SetEndNode(const int& index, double position[3])
+bool vtkCMBArc::SetEndNode(const int& index, vtkCMBArc::Point const& point)
 {
   if (this->InvalidEndNodeIndex(index))
     {
@@ -133,7 +134,7 @@ bool vtkCMBArc::SetEndNode(const int& index, double position[3])
     }
 
   //SetEndNode is used to create end nodes and to update end nodes.
-  vtkCMBArcEndNode *en = this->ArcManager->CreateEndNode(position);
+  vtkCMBArcEndNode *en = this->ArcManager->CreateEndNode(point);
   if (!en)
     {
     //should never happen
@@ -166,7 +167,7 @@ bool vtkCMBArc::SetEndNode(const int& index, double position[3])
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::MoveEndNode(const int& index, double position[3])
+bool vtkCMBArc::MoveEndNode(const int& index, vtkCMBArc::Point const& point)
 {
   if (this->InvalidEndNodeIndex(index))
     {
@@ -177,10 +178,10 @@ bool vtkCMBArc::MoveEndNode(const int& index, double position[3])
   vtkCMBArcEndNode *oldEn = this->EndNodes[index];
   if(!oldEn)
     {
-    return this->SetEndNode(index,position);
+    return this->SetEndNode(index, point);
     }
 
-  vtkCMBArcEndNode *movedEn = this->ArcManager->MoveEndNode(oldEn,position);
+  vtkCMBArcEndNode *movedEn = this->ArcManager->MoveEndNode(oldEn, point);
   if (!movedEn)
     {
     return false;
@@ -225,67 +226,74 @@ bool vtkCMBArc::ClearPoints()
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::InsertPointAtFront(double point[3])
+bool vtkCMBArc::InsertPointAtFront(unsigned int ptId, double point[3])
+{
+  //create a constant point and push that back
+  vtkCMBArc::Point p(point, ptId);
+  return this->InsertPointAtFront(p);
+}
+
+bool vtkCMBArc::InsertPointAtFront(vtkCMBArc::Point& point)
 {
   //make sure we push to the front an unique point, so don't allow consecutive
   //duplicate points
   if ( this->Points.size() != 0 )
     {
-    internalPoint backPoint = this->Points.front();
-    if ( backPoint.x == point[0] &&
-         backPoint.y == point[1] &&
-         backPoint.z == point[2] )
+    vtkCMBArc::Point& backPoint = this->Points.front();
+    if ( backPoint == point )
       {
       return false;
       }
     }
-
   //create a constant point and push that back
-  internalPoint p = {point[0],point[1],point[2]};
-  this->Points.push_front(p);
+  this->Points.push_front(point);
   this->Modified();
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::InsertNextPoint(double point[3])
+bool vtkCMBArc::InsertNextPoint(unsigned int ptId, double point[3])
 {
-  bool res = this->InternalInsertNextPoint(this->Points, point);
-  if(res)
-    {
-    this->Modified();
-    }
-  return res;
+  vtkCMBArc::Point pt(point, ptId);
+  return this->InsertNextPoint(pt);
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::InternalInsertNextPoint(
-  InternalPointList& inPoints, const double point[3])
+
+bool vtkCMBArc::InsertNextPoint(vtkCMBArc::Point& point)
+{
+  bool res = this->InternalInsertNextPoint(this->Points,point);
+  if(res)
+  {
+    this->Modified();
+  }
+  return res;
+}
+
+bool vtkCMBArc::InternalInsertNextPoint( InternalPointList& inPoints,
+                                         vtkCMBArc::Point& point )
 {
   //make sure we push back the next unique point, so don't allow consecutive
   //duplicate points
   if ( inPoints.size() != 0 )
     {
-    internalPoint backPoint = inPoints.back();
-    if ( backPoint.x == point[0] &&
-         backPoint.y == point[1] &&
-         backPoint.z == point[2] )
+    vtkCMBArc::Point& backPoint = inPoints.back();
+    if ( backPoint == point )
       {
       return false;
       }
     }
 
   //create a constant point and push that back
-  internalPoint p = {point[0],point[1],point[2]};
-  inPoints.push_back(p);
+  inPoints.push_back(point);
   return true;
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::InsertNextPoint(const double& x,const double& y,
-                                                const double& z)
+bool vtkCMBArc::InsertNextPoint(unsigned int ptId, const double& x,
+                                const double& y, const double& z)
 {
-  double point[3] = {x,y,z};
+  vtkCMBArc::Point point(x,y,z,ptId);
   return this->InsertNextPoint(point);
 }
 
@@ -347,7 +355,7 @@ bool vtkCMBArc::InitTraversal(const vtkIdType& startIndex,
   }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::GetNextPoint(double point[3])
+bool vtkCMBArc::GetNextPoint( vtkCMBArc::Point& point )
 {
   int numArcPoints = this->GetNumberOfInternalPoints();
   if (this->PointIterationForward)
@@ -371,10 +379,7 @@ bool vtkCMBArc::GetNextPoint(double point[3])
       {
       return false;
       }
-   const internalPoint iteratorPoint = (*this->PointIterator);
-    point[0] = iteratorPoint.x;
-    point[1] = iteratorPoint.y;
-    point[2] = iteratorPoint.z;
+    point = (*this->PointIterator);
 
     this->PointIterator++;
     this->CurrentNumberOfTraversedPoints++;
@@ -403,10 +408,7 @@ bool vtkCMBArc::GetNextPoint(double point[3])
       return false;
       }
 
-    const internalPoint iteratorPoint = (*this->ReversePointIterator);
-    point[0] = iteratorPoint.x;
-    point[1] = iteratorPoint.y;
-    point[2] = iteratorPoint.z;
+    point = (*this->ReversePointIterator);
 
     this->ReversePointIterator++;
     this->CurrentNumberOfTraversedPoints++;
@@ -422,16 +424,14 @@ vtkIdType vtkCMBArc::GetNumberOfInternalPoints() const
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArc::GetArcInternalPoint(vtkIdType pid, double pos[3])
+bool vtkCMBArc::GetArcInternalPoint(vtkIdType pid, vtkCMBArc::Point& point)
 {
   if(pid >=0 && pid < static_cast<vtkIdType>(this->Points.size()))
     {
     InternalPointList::const_iterator startIndexIt = this->Points.begin();
     std::advance(startIndexIt, pid);
-    const internalPoint iteratorPoint = *startIndexIt;
-    pos[0] = iteratorPoint.x;
-    pos[1] = iteratorPoint.y;
-    pos[2] = iteratorPoint.z;
+    point = *startIndexIt;
+
     return true;
     }
   return false;
@@ -460,7 +460,7 @@ bool vtkCMBArc::GetEndNodeDirection(const int& index, double direction[3]) const
   if (this->GetNumberOfInternalPoints() > 0)
     {
     //the point we want to use is an internal node
-    const internalPoint iteratorPoint = (index == 0) ?
+    const vtkCMBArc::Point iteratorPoint = (index == 0) ?
           this->Points.front():this->Points.back();
     pos[0][0] = iteratorPoint.x;
     pos[0][1] = iteratorPoint.y;
@@ -552,7 +552,8 @@ void vtkCMBArc::MarkedForDeletion()
       {
       //store the end nodes position
       const double *pos = this->EndNodes[i]->GetPosition();
-      internalPoint ip = {pos[0],pos[1],pos[2]};
+
+      vtkCMBArc::Point ip(pos[0],pos[1],pos[2], this->EndNodes[i]->GetPointId());
       this->UndoEndNodes.push_back(ip);
 
       //remove this end node reference
@@ -568,15 +569,11 @@ void vtkCMBArc::UnMarkedForDeletion()
   this->ArcManager->UnMarkedForDeletion(this);
   int index = 0;
   InternalPointList::iterator it;
-  double pos[3] = {0,0,0};
 
   for ( it = this->UndoEndNodes.begin(); it != this->UndoEndNodes.end();
                                                                 it++, index++)
     {
-    pos[0] = it->x;
-    pos[1] = it->y;
-    pos[2] = it->z;
-    this->SetEndNode(index,pos);
+    this->SetEndNode(index, *it);
     }
   this->UndoEndNodes.clear();
 }
@@ -608,7 +605,7 @@ bool vtkCMBArc::ReplaceEndNode(vtkCMBArcEndNode* oldEndNode, vtkCMBArcEndNode* n
 
 //----------------------------------------------------------------------------
 bool vtkCMBArc::ReplacePoints(vtkIdType startIndex, vtkIdType endIndex,
-                   std::list<vtkVector3d>& newPoints, bool includeEnds)
+                   std::list<vtkCMBArc::Point>& newPoints, bool includeEnds)
 {
   if(endIndex < 0 || startIndex < 0 || startIndex == endIndex)
     {
@@ -631,7 +628,7 @@ bool vtkCMBArc::ReplacePoints(vtkIdType startIndex, vtkIdType endIndex,
   while(newPoints.size() != 0)
     {
     this->InternalInsertNextPoint(subPoints,
-      forwardDir ? newPoints.front().GetData() : newPoints.back().GetData());
+      forwardDir ? newPoints.front() : newPoints.back());
     if(forwardDir)
       {
       newPoints.pop_front();
