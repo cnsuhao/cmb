@@ -35,7 +35,7 @@ public:
   virtual vtkPiecewiseFunction * getDisplacementProfile() const;
   virtual vtkPiecewiseFunction * getWeightingFunction() const;
   virtual cmbProfileFunction * clone(std::string const& name) const;
-  virtual void sendDataToPoint(int arc_ID, int pointID,
+  virtual void sendDataToProxy(int arc_ID, int pointID,
                                vtkSMSourceProxy* source) const;
   virtual cmbProfileFunctionParameters * getParameters() const;
 

@@ -304,27 +304,31 @@ bool cmbManualProfileFunction::writeData(std::ofstream & out) const
   //TODO
 }
 
-void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
+void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
                                                vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;
-  v << arc_ID << pointID;
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
+  v << arc_ID << funID
+    << ((this->WeightUseSpline)?1:0) << ((this->DispUseSpline)?1:0)
+    << Relative << Symmetric ;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateManualFunction"), v);
   source->UpdateVTKObjects();
   v.clear();
+  //Send function parameters
   cmbManualProfileFunctionParameters * p = parameters;
-  v << arc_ID << pointID
+  v << arc_ID << funID
     << p->getDepthRange(pqCMBModifierArc::MIN) << p->getDepthRange(pqCMBModifierArc::MAX)
     << p->getDistanceRange(pqCMBModifierArc::MIN) << p->getDistanceRange(pqCMBModifierArc::MAX);
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetManualControlVars"), v);
   v.clear();
   source->UpdateVTKObjects();
+  //send function points
   for(int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
     double d[4];
     v.clear();
     WeightingFunction->GetNodeValue(i, d);
-    v << arc_ID << pointID << d[0] << d[1] << d[2] << d[3];
+    v << arc_ID << funID << d[0] << d[1] << d[2] << d[3];
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
     source->UpdateVTKObjects();
   }
@@ -333,26 +337,15 @@ void cmbManualProfileFunction::sendDataToPoint(int arc_ID, int pointID,
     double d[4];
     v.clear();
     DisplacementProfile->GetNodeValue(i, d);
-    v << arc_ID << pointID << d[0] << d[1] << d[2] << d[3];
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddDespPoint"), v);
+    v << arc_ID << funID << d[0] << d[1] << d[2] << d[3];
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddManualDespPoint"), v);
     source->UpdateVTKObjects();
-  }
-  {
-    v.clear();
-    v << arc_ID << pointID << Relative << Symmetric;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
-    source->UpdateVTKObjects();
-  }
-  {
-    v.clear();
-    v << arc_ID << pointID << ((this->WeightUseSpline)?1:0)
-      << ((this->DispUseSpline)?1:0);
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SelectFunctionType"), v);
   }
   //TODO, this can be shared
-  v.clear();
-  v << arc_ID << pointID << pointID;
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+  //TODO MOVE THIS
+  //v.clear();
+  //v << arc_ID << pointID << pointID;
+  //pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
 }
 
 cmbProfileFunction * cmbManualProfileFunction::clone(std::string const& name) const

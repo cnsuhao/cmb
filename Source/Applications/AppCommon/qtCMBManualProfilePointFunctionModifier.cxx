@@ -140,9 +140,15 @@ void qtCMBManualProfilePointFunctionModifier
 {
   if(in != cindex)
   {
-    assert(in-1 < functions.size());
     cindex = in;
-    wrapper.setFunction(functions[in-1]);
+    if(in == 0)
+    {
+      wrapper.setFunction(NULL);
+    }
+    else
+    {
+      wrapper.setFunction(functions[in-1]);
+    }
     setUp();
   }
 }

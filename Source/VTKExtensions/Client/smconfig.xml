@@ -5788,16 +5788,6 @@ associates the containing cell ID to the point.
       </DoubleVectorProperty>
 
       <IntVectorProperty
-        name="SetFunctionModes"
-        command="SetFunctionModes"
-        number_of_elements="4"
-        default_values="-1 -1 0 1">
-        <Documentation>
-          Sets relative and symmetry control.
-        </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
         name="AddArc"
         command="AddArc"
         number_of_elements="1"
@@ -5818,32 +5808,12 @@ associates the containing cell ID to the point.
       </IntVectorProperty>
 
       <IntVectorProperty
-        name="ClearFunctions"
-        command="ClearFunctions"
-        number_of_elements="2"
-        default_values="-1 -1">
-        <Documentation>
-         Clears all weighting and depth functions
-        </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
         name="SetFunctionToPoint"
         command="SetFunctionToPoint"
         number_of_elements="3"
         default_values="-1 -1 -1">
         <Documentation>
           Set a profile function to a point
-        </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
-        name="SelectFunctionType"
-        command="SelectFunctionType"
-        number_of_elements="4"
-        default_values="-1 -1 0 0">
-        <Documentation>
-          Selects function type.
         </Documentation>
       </IntVectorProperty>
 
@@ -5907,6 +5877,20 @@ associates the containing cell ID to the point.
         </Documentation>
       </IntVectorProperty>
 
+<!-- CreateManualFunction(int arc_ind, int funId, int desptFunctionType, int weightFunType
+ int isRelative, int isSymmetric); -->
+
+      <IntVectorProperty
+          name="CreateManualFunction"
+          command="CreateManualFunction"
+          number_of_elements="6"
+          default_values="-1 -1 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </IntVectorProperty>
+
+
       <DoubleVectorProperty
         name="AddWeightPoint"
         label="Add Weighting Point"
@@ -5919,9 +5903,9 @@ associates the containing cell ID to the point.
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
-        name="AddDespPoint"
+        name="AddManualDespPoint"
         label="Add Desp Point"
-        command="AddDispFunPoint"
+        command="AddManualDispFunPoint"
         number_of_elements="6"
         default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
@@ -5930,9 +5914,9 @@ associates the containing cell ID to the point.
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
-        name="SetControlVars"
+        name="SetManualControlVars"
         label="Set the control Varables"
-        command="SetControlRanges"
+        command="SetManualControlRanges"
         number_of_elements="6"
         default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>

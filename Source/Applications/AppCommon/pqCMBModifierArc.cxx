@@ -181,6 +181,14 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       source->UpdateVTKObjects();
       }
     }
+    std::map< cmbProfileFunction const*, unsigned int> function_to_id;
+    std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+    for(unsigned int i = 0;
+        iter != functions.end(); ++i,++iter)
+    {
+      iter->second->sendDataToProxy(Id, i, source);
+      function_to_id[iter->second] = i;
+    }
     for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());
         ++i)
     {
@@ -189,31 +197,11 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       pointFunctionWrapper & wrapper = pointsFunctions[id];
       if(pointsFunctions[i].getFunction() != NULL)
       {
-        pointsFunctions[i].getFunction()->sendDataToPoint(Id, i, source);
+        QList< QVariant > v;
+        v.clear();
+        v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
+        pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
       }
-    }
-    {
-    //clear functions
-    QList< QVariant > v;
-    v << -1 << 0;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
-    source->UpdateVTKObjects();
-    }
-    {
-    QList< QVariant > v;
-    v << -1 << -1 << 0 << 1;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
-    source->UpdateVTKObjects();
-    }
-    {
-    QList< QVariant > v;
-    v << -1 << -1 << 0 << 1;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SelectFunctionType"), v);
-    source->UpdateVTKObjects();
-      v.clear();
-      v << -1 << -1 << 0 << 0 << 0 << 0;
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
-      source->UpdateVTKObjects();
     }
   source->UpdateVTKObjects();
   source->MarkAllPropertiesAsModified();

@@ -33,6 +33,9 @@
 #include <algorithm>
 #include <math.h>
 #include <limits>
+#include <cassert>
+
+#include <boost/shared_ptr.hpp>
 
 vtkStandardNewMacro(vtkArcDepressFilter);
 
@@ -61,7 +64,7 @@ public:
   }
   virtual double evaluate(double d, double minF, double maxF)
   {
-    double wd = fun->GetValue(d);
+    double wd = this->evaluate(d);
     return (1-wd)*minF+(wd)*maxF;
   }
   virtual double evaluate(double d)
@@ -141,105 +144,51 @@ public:
 class DepArcProfileFunction
 {
 public:
+  enum FunctionType{Piecewise = 1, Spline = 0};
+  virtual ~DepArcProfileFunction(){}
+  virtual bool evalFun( double d, double & weight, double & desp ) const = 0;
+  virtual double apply(double d, double pt) const = 0;
+  virtual void apply(double d, double *pt, double *n) const = 0;
+  virtual void addWeightPoint(double w, double v, double s, double m) = 0;
+  virtual bool inside(double d) const = 0;
+};
+
+class DepArcManualProfileFunction : public DepArcProfileFunction
+{
+public:
   enum FunctionEnum{WeightFun = 0, DispFun = 1};
   enum range{MIN = 0,MAX = 1};
-  struct pointParameters
+
+  DepArcManualProfileFunction(DepArcProfileFunction::FunctionType despType,
+                              DepArcProfileFunction::FunctionType weightFun,
+                              bool symmetric, bool relative )
+  : IsSymmetric(symmetric), IsRelative(relative)
   {
-  private:
-    double MinMaxDespDepth[2];
-    double MinMaxDist[2];
-  public:
-    pointParameters()
-    {
-      this->setMinMaxDistance(-1,1);
-      this->setMinMaxDesplacementDepth(-8,-3);
-    }
-    void setMinMaxDesplacementDepth(double min, double max)
-    {
-      MinMaxDespDepth[MIN] = min;
-      MinMaxDespDepth[MAX] = max;
-    }
+    SelectedFunction[DispFun] = (despType == DepArcProfileFunction::Piecewise) ?
+                                  dynamic_cast<ArcDepressFunction*>(new ArcDepressPiecewiseFun()) :
+                                  dynamic_cast<ArcDepressFunction*>(new ArcDepressSplineFun());
+    SelectedFunction[WeightFun] = (weightFun == DepArcProfileFunction::Piecewise) ?
+                                  dynamic_cast<ArcDepressFunction*>(new ArcDepressPiecewiseFun()) :
+                                  dynamic_cast<ArcDepressFunction*>(new ArcDepressSplineFun());
 
-    void setMinMaxDistance(double min, double max)
-    {
-      MinMaxDist[MIN] = min;
-      MinMaxDist[MAX] = max;
-    }
-
-    double getMaxDistance() const
-    {
-      return MinMaxDist[MAX];
-    }
-
-    double getMinDistance() const
-    {
-      return MinMaxDist[MIN];
-    }
-
-    double getMaxDepth() const
-    {
-      return MinMaxDespDepth[MAX];
-    }
-
-    double getMinDepth() const
-    {
-      return MinMaxDespDepth[MIN];
-    }
-
-  };
-  DepArcProfileFunction()
-  : IsSymmetric(true), IsRelative(false)
-  {
-    PiecewiseFun[0] = new ArcDepressPiecewiseFun();
-    PiecewiseFun[1] = new ArcDepressPiecewiseFun();
-    SelectedFunction[0] = PiecewiseFun[0];
-    SelectedFunction[1] = PiecewiseFun[1];
-    SplineFun[0] = new ArcDepressSplineFun();
-    SplineFun[1] = new ArcDepressSplineFun();
+    this->setMinMaxDistance(0, 0);
+    this->setMinMaxDesplacementDepth(0, 0);
   }
 
-  ~DepArcProfileFunction()
+  ~DepArcManualProfileFunction()
   {
-    delete PiecewiseFun[0];
-    delete PiecewiseFun[1];
-    delete SplineFun[0];
-    delete SplineFun[1];
+    delete SelectedFunction[0];
+    delete SelectedFunction[1];
+  }
+
+  virtual void addWeightPoint(double w, double v, double s, double m)
+  {
+    addPoint(WeightFun, w, v, s, m);
   }
 
   void addPoint(FunctionEnum e, double w, double v, double s, double m)
   {
-    PiecewiseFun[e]->addPoint(w,v,s,m);
-    SplineFun[e]->addPoint(w,v,s,m);
-  }
-
-  void clearPoints()
-  {
-    PiecewiseFun[0]->clearPoints();
-    SplineFun[0]->clearPoints();
-    PiecewiseFun[1]->clearPoints();
-    SplineFun[1]->clearPoints();
-  }
-
-  bool select(bool weight, bool disp)
-  {
-    return select(DepArcProfileFunction::WeightFun, weight) ||
-           select(DepArcProfileFunction::DispFun, disp);
-  }
-
-  bool select(FunctionEnum e, bool b)
-  {
-    bool result;
-    if(b)
-    {
-      result = SelectedFunction[e] != SplineFun[e];
-      SelectedFunction[e] = SplineFun[e];
-    }
-    else
-    {
-      result = SelectedFunction[e] != PiecewiseFun[e];
-      SelectedFunction[e] = PiecewiseFun[e];
-    }
-    return result;
+    SelectedFunction[e]->addPoint(w,v,s,m);
   }
 
   bool isSymmetric() const
@@ -247,30 +196,29 @@ public:
     return IsSymmetric;
   }
 
-  virtual bool evalFun( double d, double & weight, double & desp,
-                        pointParameters const& params ) const
+  virtual bool evalFun( double d, double & weight, double & desp ) const
   {
-    if(d < params.getMinDistance() || d > params.getMaxDistance())
+    if(d < getMinDistance() || d > getMaxDistance())
     {
       return false;
     }
     if(d < 0)
     {
-      d = d/-params.getMinDistance();
+      d = d/-getMinDistance();
     }
     else if( d >= 0)
     {
-      d = d/params.getMaxDistance();
+      d = d/getMaxDistance();
     }
     weight = SelectedFunction[WeightFun]->evaluate(d);
-    desp = SelectedFunction[DispFun]->evaluate(d, params.getMinDepth(),
-                                               params.getMaxDepth());
+    desp = SelectedFunction[DispFun]->evaluate(d, getMinDepth(), getMaxDepth());
     return true;
   }
-  double apply(double d, double pt, pointParameters const& params) const
+
+  virtual double apply(double d, double pt) const
   {
     double w, tmp;
-    if(!evalFun(d, w, tmp, params)) return pt;
+    if(!evalFun(d, w, tmp)) return pt;
     if(IsRelative)
     {
       return pt + w*tmp;
@@ -281,10 +229,10 @@ public:
     }
   }
 
-  void apply(double d, double *pt, double *n, pointParameters const& params) const
+  virtual void apply(double d, double *pt, double *n) const
   {
     double w, tmp;
-    if(!evalFun(d, w, tmp, params)) return;
+    if(!evalFun(d, w, tmp)) return;
     if(IsRelative)
     {
       pt[0] = pt[0] + w*tmp*n[0];
@@ -299,10 +247,46 @@ public:
     }
   }
 
-  void setFunctionModes(bool symmetric, bool relative)
+  double getMaxDistance() const
   {
-    this->IsSymmetric = symmetric;
-    this->IsRelative = relative;
+    return MinMaxDist[MAX];
+  }
+
+  double getMinDistance() const
+  {
+    return MinMaxDist[MIN];
+  }
+
+  double getMaxDepth() const
+  {
+    return MinMaxDespDepth[MAX];
+  }
+
+  double getMinDepth() const
+  {
+    return MinMaxDespDepth[MIN];
+  }
+
+  void setMinMaxDesplacementDepth(double min, double max)
+  {
+    MinMaxDespDepth[MIN] = min;
+    MinMaxDespDepth[MAX] = max;
+  }
+
+  void setMinMaxDistance(double left, double right)
+  {
+    MinMaxDist[MIN] = left;
+    MinMaxDist[MAX] = right;
+  }
+
+  bool inside(double d) const
+  {
+    assert(getMaxDistance() != 0);
+    if(isSymmetric())
+    {
+      return std::abs(d) <= getMaxDistance();
+    }
+    return getMinDistance() <= d && d <= getMaxDistance();
   }
 
 protected:
@@ -311,8 +295,59 @@ protected:
   bool IsRelative;
 
   ArcDepressFunction * SelectedFunction[2];
-  ArcDepressPiecewiseFun * PiecewiseFun[2];
-  ArcDepressSplineFun * SplineFun[2];
+  double MinMaxDespDepth[2];
+  double MinMaxDist[2];
+
+};
+
+class DepArcMixProfileFunction: public DepArcProfileFunction
+{
+public:
+  DepArcMixProfileFunction(boost::shared_ptr<DepArcProfileFunction> fun0,
+                           boost::shared_ptr<DepArcProfileFunction> fun1, double m)
+  :mix(m)
+  {
+    assert(fun0 != NULL);
+    assert(fun1 != NULL);
+    fun[0] = fun0;
+    fun[1] = fun1;
+    assert(mix >0 && mix < 1.0);
+  }
+
+  virtual double apply(double d, double pt) const
+  {
+    return fun[0]->apply(d,pt)*(1-mix) + fun[1]->apply(d, pt) * mix;
+  }
+
+  virtual void apply(double d, double *pt, double *n) const
+  {
+    double pta[3], ptb[3];
+    fun[0]->apply(d, pta, n);
+    fun[1]->apply(d, ptb, n);
+    double t = mix;
+    double tm1 = 1-t;
+    pt[0] = tm1 * pta[0] + t*ptb[0];
+    pt[1] = tm1 * pta[1] + t*ptb[1];
+    pt[2] = tm1 * pta[2] + t*ptb[2];
+  }
+
+  virtual bool evalFun( double d, double & weight, double & desp ) const
+  {
+    assert(false && " do not use for the mixing function");
+  }
+
+  bool inside(double d) const
+  {
+    return fun[0]->inside(d) || fun[1]->inside(d);
+  }
+
+  virtual void addWeightPoint(double w, double v, double s, double m)
+  {
+    assert(false && " do not use for the mixing function");
+  }
+
+  boost::shared_ptr<DepArcProfileFunction> fun[2];
+  double mix;
 };
 
 namespace
@@ -334,7 +369,8 @@ namespace
 
 class DepArcData
 {
-public:
+  friend class vtkArcDepressFilter;
+private:
 
   DepArcData()
   :IsEnabled(true)
@@ -350,34 +386,26 @@ public:
   {
     double pt[2];
 
-    DepArcProfileFunction::pointParameters params;
-
-    void setFunction(DepArcProfileFunction * fun)
+    void clearPointFunction()
     {
-      mixFunctions.fun[0] = fun;
-      mixFunctions.fun[1] = NULL;
-      mixFunctions.mixValue = 0;
+      pointFunction = boost::shared_ptr<DepArcProfileFunction>();
     }
 
-    void setFunctions(DepArcProfileFunction * fun0, DepArcProfileFunction * fun1, double mv)
+    void setFunction(boost::shared_ptr<DepArcProfileFunction> fun)
     {
-      //assert(fun0 != NULL);
-      mixFunctions.fun[0] = fun0;
-      mixFunctions.fun[1] = fun1;
-      mixFunctions.mixValue = mv;
+      pointFunction = fun;
     }
 
-    DepArcProfileFunction * getFunction(size_t id = 0)
+    boost::shared_ptr<DepArcProfileFunction> getFunction()
     {
-      return mixFunctions.fun[id];
+      return pointFunction;
     }
 
     point(point const& pin)
     {
       pt[0] = pin.pt[0];
       pt[1] = pin.pt[1];
-      mixFunctions = pin.mixFunctions;
-      params = pin.params;
+      pointFunction = pin.pointFunction;
     }
     explicit point(double x = 0, double y = 0)
     {
@@ -386,13 +414,14 @@ public:
     }
     ~point()
     {
+      clearPointFunction();
     }
     void operator=(point const& pin)
     {
+      clearPointFunction();
       pt[0] = pin.pt[0];
       pt[1] = pin.pt[1];
-      mixFunctions = pin.mixFunctions;
-      params = pin.params;
+      pointFunction = pin.pointFunction;
     }
     point operator-(point const& pin) const
     {
@@ -429,48 +458,22 @@ public:
     }
     bool inside(double d) const
     {
-      return params.getMinDistance() <= d && d <= params.getMaxDistance();
+      return pointFunction->inside(d);
     }
 
     double apply(double d, double pt) const
     {
-      if(mixFunctions.fun[0] == NULL) return d;
-      assert(mixFunctions.fun[0]!=NULL);
-      double tmpr = mixFunctions.fun[0]->apply(d,pt, this->params);
-      if(mixFunctions.fun[1] != NULL)
-        tmpr = tmpr*(1-mixFunctions.mixValue) +
-               mixFunctions.fun[1]->apply(d, pt, this->params) * mixFunctions.mixValue;
-      return tmpr;
+      assert(pointFunction.get() != NULL);
+      return pointFunction->apply(d,pt);
     }
 
     void apply(double d, double *pt, double *n) const
     {
-      assert(mixFunctions.fun[0]!=NULL);
-
-      if(mixFunctions.fun[1] == NULL)
-         mixFunctions.fun[0]->apply(d, pt, n, this->params);
-      else
-      {
-        double pta[3], ptb[3];
-        mixFunctions.fun[0]->apply(d, pta, n, this->params);
-        mixFunctions.fun[1]->apply(d, ptb, n, this->params);
-        double t = mixFunctions.mixValue;
-        double tm1 = 1-t;
-        pt[0] = tm1 * pta[0] + t*ptb[0];
-        pt[1] = tm1 * pta[1] + t*ptb[1];
-        pt[2] = tm1 * pta[2] + t*ptb[2];
-      }
+      assert(pointFunction.get() !=NULL);
+      pointFunction->apply(d, pt, n);
     }
   private:
-    struct mf
-    {
-      DepArcProfileFunction * fun[2];
-      double distanceFromFunction;
-      double mixValue;
-      mf()
-      {fun[0] = NULL; fun[1] = NULL; mixValue = 0;}
-    } mixFunctions;
-
+    boost::shared_ptr<DepArcProfileFunction> pointFunction;
   };
 
   struct line_seg
@@ -487,6 +490,7 @@ public:
       assert(p2 != NULL);
       dr = *p2 - *p1;
     }
+
     point getPoint(double t) const
     {
       assert(t<=1.0);
@@ -494,14 +498,20 @@ public:
       else if(t == 0) return *pt1;
       point result = *(pt1) + dr * t;
 
-      double minDepth = pt1->params.getMinDepth()*(1-t)+pt2->params.getMinDepth()*t;
-      double maxDepth = pt1->params.getMaxDepth()*(1-t)+pt2->params.getMaxDepth()*t;
-      double minDist = pt1->params.getMinDistance()*(1-t)+pt2->params.getMinDistance()*t;
-      double maxDist = pt1->params.getMaxDistance()*(1-t)+pt2->params.getMaxDistance()*t;;
-
-      result.params.setMinMaxDesplacementDepth(minDepth, maxDepth);
-      result.params.setMinMaxDistance(minDist, maxDist);
-      result.setFunctions(pt1->getFunction(), pt2->getFunction(), t);
+      if(pt2->getFunction() == NULL)
+      {
+        result.setFunction( pt1->getFunction() );
+      }
+      else if(pt1->getFunction() == NULL)
+      {
+        result.setFunction( pt2->getFunction() );
+      }
+      else
+      {
+        boost::shared_ptr<DepArcProfileFunction>
+          mixxer(new DepArcMixProfileFunction(pt1->getFunction(), pt2->getFunction(), t));
+        result.setFunction( mixxer );
+      }
       return result;
     }
 
@@ -541,38 +551,16 @@ public:
       if(i == 0) return *pt1;
       return *pt2;
     }
+    double length()
+    {
+      return std::sqrt(dr.normSquared());
+    }
   private:
     point * pt1;
     point * pt2;
     point dr;
   };
 
-  void addFunctionPoint(DepArcProfileFunction::FunctionEnum e,
-                        size_t funId,
-                        double w, double v, double s, double m)
-  {
-    while(funId >= functions.size())
-    {
-      functions.push_back(new DepArcProfileFunction);
-    }
-    functions[funId]->addPoint(e,w,v,s,m);
-  }
-
-  void clearFunctionPoints(size_t funId)
-  {
-    while(funId >= functions.size())
-    {
-      functions.push_back(new DepArcProfileFunction);
-    }
-    functions[funId]->clearPoints();
-  }
-
-  bool select( size_t funId, bool weight, bool disp)
-  {
-    if( funId < functions.size() )
-       return functions[funId]->select(weight, disp);
-    return false;
-  }
 
   bool IsEnabled;
 
@@ -596,10 +584,6 @@ public:
       delete points[i];
     }
     points.clear();
-    for(unsigned int i = 0; i < functions.size(); ++i)
-    {
-      delete functions[i];
-    }
     functions.clear();
     assert(lines.empty() && points.empty() && functions.empty());
   }
@@ -635,17 +619,6 @@ public:
       //TODO: FUNCTION
       return false;
     }
-    if(closePt.getFunction()->isSymmetric() || cls == NULL)
-    {
-      return closePt.inside(result);
-    }
-
-    //Check side
-    if(cls->side(pt, closePt))
-    {
-      result = -result;
-    }
-
     return closePt.inside(result);
   }
 
@@ -658,24 +631,72 @@ public:
     lines.push_back(l);
   }
 
-  void sendParamsToPoints()
+  void setFunction(size_t b, size_t e, boost::shared_ptr<DepArcProfileFunction> fun)
   {
+    for(;b<e; ++b)
+    {
+      points[b]->setFunction(fun);
+    }
   }
 
-  void setFunctionModes(size_t id, bool isSymmetric, bool isRelative )
+  void setInterpolateFunction(size_t b, size_t e)
   {
-    assert(id < functions.size());
-    functions[id]->setFunctionModes(isSymmetric, isRelative);
+    assert(points[b]->getFunction() != NULL);
+    assert(points[e]->getFunction() != NULL);
+    double total_distance = 0;
+    if(points[b]->getFunction() == points[e]->getFunction())
+    {
+      //optimize
+      setFunction(b+1,e,points[b]->getFunction());
+      return;
+    }
+    boost::shared_ptr<DepArcProfileFunction> fun0 = points[b]->getFunction();
+    boost::shared_ptr<DepArcProfileFunction> fun1 = points[e]->getFunction();
+
+    for (size_t i = b; i<e; ++i)
+    {
+      total_distance += lines[i].length();
+    }
+    double currentLength = lines[b].length();
+    for (size_t i = b+1; i<e; ++i)
+    {
+      double t = currentLength/total_distance;
+      boost::shared_ptr<DepArcMixProfileFunction> mix(new DepArcMixProfileFunction(fun0, fun1, t));
+      points[i]->setFunction(mix);
+      currentLength += lines[i].length();
+    }
   }
 
-  void setPointControls(int ptId,
-                        double minDispDepth, double maxDispDepth,
-                        double minDist, double maxDist)
+  void setUpFunctions()
   {
-    assert(ptId < points.size());
-    points[ptId]->params.setMinMaxDesplacementDepth(minDispDepth, maxDispDepth);
-    points[ptId]->params.setMinMaxDistance((minDist!=0)?minDist:-1e-23,
-                                           (maxDist!=0)?maxDist:1e-23);
+    size_t b = 0;
+    while ( b < points.size() && points[b]->getFunction() == NULL)
+    {
+      b++;
+    }
+    if(b == points.size()) return;
+    if(b != 0)
+    {
+      setFunction(0,b,points[b]->getFunction());
+    }
+    while (b != points.size())
+    {
+      assert(points[b]->getFunction() != NULL);
+      size_t e = b+1;
+      while( e < points.size() && points[e]->getFunction() == NULL )
+      {
+        e++;
+      }
+      if( e == points.size())
+      {
+        setFunction(b+1,e,points[b]->getFunction());
+      }
+      else if( e != b+1)
+      {
+        setInterpolateFunction(b,e);
+      }
+      b = e;
+    }
   }
 
   void setFunctionToPoint(int ptId, int fId)
@@ -687,10 +708,9 @@ public:
     }
   }
 
-protected:
   std::vector<line_seg> lines;
   std::vector<point *> points;
-  std::vector<DepArcProfileFunction *> functions;
+  std::vector< boost::shared_ptr<DepArcProfileFunction> > functions;
 };
 
 void vtkArcDepressFilter::PrintSelf(ostream& /*os*/, vtkIndent /*indent*/)
@@ -727,17 +747,21 @@ void vtkArcDepressFilter::AddPointToArc(double in_ind, double v1, double v2)
 }
 
 void vtkArcDepressFilter
-::SetControlRanges( double arc_ind, double pointId,
-                    double minDispDepth, double maxDispDepth,
-                    double minDist, double maxDist)
+::SetManualControlRanges( double arc_ind, double funId,
+                          double minDispDepth, double maxDispDepth,
+                          double minDist, double maxDist)
 {
   int ind = static_cast<int>(arc_ind);
-  int ptId = static_cast<int>(pointId);
+  int fId = static_cast<int>(funId);
   if(ind < 0) return;
-  if(ptId < 0) return;
   if(static_cast<size_t>(ind) >= Arcs.size() || Arcs[ind] == NULL) return;
-  DepArcData * data = Arcs[ind];
-  data->setPointControls(ptId, minDispDepth, maxDispDepth, minDist, maxDist);
+  DepArcData * td = Arcs[ind];
+  assert(fId < td->functions.size());
+  boost::shared_ptr<DepArcProfileFunction> fun = td->functions[fId];
+  DepArcManualProfileFunction * mfun = dynamic_cast<DepArcManualProfileFunction *>(fun.get());
+  assert(mfun != NULL);
+  mfun->setMinMaxDesplacementDepth(  minDispDepth, maxDispDepth );
+  mfun->setMinMaxDistance( minDist, maxDist );
   this->Modified();
 }
 
@@ -771,39 +795,11 @@ void vtkArcDepressFilter::SetArcEnable(int arc_ind, int isEnabled)
   this->Modified();
 }
 
-void vtkArcDepressFilter::SetFunctionModes(int arc_ind, int funId,
-                                           int isRelative, int isSymmetric)
-{
-  if(static_cast<size_t>(arc_ind) >= Arcs.size() || arc_ind < 0 || Arcs[arc_ind] == NULL) return;
-  //TODO Fix this
-  Arcs[arc_ind]->setFunctionModes(funId, isSymmetric != 0,isRelative != 0);
-  this->Modified();
-}
-
-void vtkArcDepressFilter::ClearFunctions( int arc_ind, int funId )
-{
-  if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
-    return;
-  if(funId < 0) return;
-  Arcs[arc_ind]->clearFunctionPoints(static_cast<int>(funId));
-  this->Modified();
-}
-
 void vtkArcDepressFilter::SetFunctionToPoint(int arc_ind, int ptId, int funId)
 {
   if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
     return;
   Arcs[arc_ind]->setFunctionToPoint(ptId, funId);
-}
-
-void vtkArcDepressFilter::SelectFunctionType( int arc_ind, int funId, int weight_spline_type,
-                                             int disp_spline_type)
-{
-  if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL) return;
-  if(Arcs[arc_ind]->select(funId, weight_spline_type != 0, disp_spline_type != 0))
-  {
-    this->Modified();
-  }
 }
 
 void vtkArcDepressFilter::AddWeightingFunPoint( double arc_ind, double funId,
@@ -813,17 +809,26 @@ void vtkArcDepressFilter::AddWeightingFunPoint( double arc_ind, double funId,
   int fid = static_cast<int>(funId);
   if(ind < 0) return;
   if(static_cast<size_t>(ind) >= Arcs.size() || Arcs[ind] == NULL) return;
-  Arcs[ind]->addFunctionPoint(DepArcProfileFunction::WeightFun, fid, x,y,m,s);
+  DepArcData * td = Arcs[ind];
+  assert(fid < td->functions.size());
+  td->functions[fid]->addWeightPoint(x,y,m,s);
 }
 
-void vtkArcDepressFilter::AddDispFunPoint( double arc_ind, double funId,
-                                           double x, double y, double m, double s)
+void vtkArcDepressFilter::AddManualDispFunPoint( double arc_ind, double funId,
+                                                double x, double y, double m, double s)
 {
   int ind = static_cast<int>(arc_ind);
   int fid = static_cast<int>(funId);
   if(ind < 0) return;
   if(static_cast<size_t>(ind) >= Arcs.size() || Arcs[ind] == NULL) return;
-  Arcs[ind]->addFunctionPoint(DepArcProfileFunction::DispFun, fid, x,y,m,s);
+  DepArcData * td = Arcs[ind];
+  assert(fid < td->functions.size());
+
+  boost::shared_ptr<DepArcProfileFunction> fun = td->functions[fid];
+  DepArcManualProfileFunction * mfun = dynamic_cast<DepArcManualProfileFunction *>(fun.get());
+  assert(mfun != NULL);
+
+  mfun->addPoint(DepArcManualProfileFunction::DispFun, x, y, m, s);
 }
 
 vtkArcDepressFilter::vtkArcDepressFilter()
@@ -936,7 +941,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   double normal[3];
   for(size_t t = 0; t < Arcs.size(); ++t)
   {
-    Arcs[t]->sendParamsToPoints();
+    Arcs[t]->setUpFunctions();
   }
   for ( i=0; i < numPts; i++ )
     {
@@ -1018,3 +1023,23 @@ void vtkArcDepressFilter::setUseNormalDirection(int in)
     this->UseNormalDirection = false;
   }
 }
+
+void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
+                                               int desptFunctionType, int weightFunType,
+                                               int isRelative, int isSymmetric)
+{
+  if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
+    return;
+  assert(funId >= 0);
+  DepArcData * td = Arcs[funId];
+  if(funId >= td->functions.size())
+  {
+    td->functions.resize(funId + 1);
+  }
+  td->functions[funId] = boost::shared_ptr<DepArcProfileFunction>(
+                            new DepArcManualProfileFunction(
+                                static_cast<DepArcProfileFunction::FunctionType>(desptFunctionType),
+                                static_cast<DepArcProfileFunction::FunctionType>(weightFunType),
+                                isRelative, isSymmetric));
+}
+

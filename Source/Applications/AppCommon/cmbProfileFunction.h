@@ -30,7 +30,7 @@ public:
   bool write(std::ofstream & out) const;
   static cmbProfileFunction * read(std::ifstream & in, size_t count);
 
-  virtual void sendDataToPoint(int arc_ID, int pointID,
+  virtual void sendDataToProxy(int arc_ID, int pointID,
                                vtkSMSourceProxy* source) const = 0;
 protected:
   virtual bool readData(std::ifstream & in, int version) = 0;

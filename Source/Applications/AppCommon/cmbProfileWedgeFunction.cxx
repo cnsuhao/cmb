@@ -106,7 +106,7 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
   return result;
 }
 
-void cmbProfileWedgeFunction::sendDataToPoint(int arc_ID, int pointID,
+void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int pointID,
                                               vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;
