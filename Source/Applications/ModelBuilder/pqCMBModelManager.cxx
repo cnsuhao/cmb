@@ -1271,9 +1271,8 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
     return retBrEns;
     }
 
-  std::string realmodelfile = this->getNativeModelFile(filename);
   std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(realmodelfile);
+    vtksys::SystemTools::GetFilenameLastExtension(filename);
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
   smtk::model::StringList bnames = pxy->sessionNames();
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
@@ -1298,75 +1297,6 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
 }
 
 //----------------------------------------------------------------------------
-std::string pqCMBModelManager::getNativeModelFile(
-  const std::string& filename) const
-{
-  std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(filename);
-  if( lastExt != ".smtk" && lastExt != ".json")
-    return filename;
-
-  // This is a json/smtk model file, we will look for native model file,
-  // and return the session type that can read that file.
-  std::ifstream file(filename.c_str());
-  if (!file.good())
-    {
-    return filename;
-    }
-
-  std::string data(
-    (std::istreambuf_iterator<char>(file)),
-    (std::istreambuf_iterator<char>()));
-
-  if (data.empty())
-    {
-    return filename;
-    }
-
-  cJSON* root = cJSON_Parse(data.c_str());
-  if (root && root->type == cJSON_Object && root->child)
-    {
-    cJSON* sessionRec = root->child;
-    cJSON* modelsObj = cJSON_GetObjectItem(sessionRec, "models");
-    if (modelsObj && modelsObj->child && modelsObj->child->string )
-      {
-      cJSON* modelObj = modelsObj->child;
-      smtk::model::ManagerPtr tmpMgr = smtk::model::Manager::create();
-      smtk::common::UUID modelid = smtk::common::UUID(modelObj->string);
-
-      // Find the model entry, and get the native model file name if it exists.
-      // The modelObj record (whose string is model uuid) contains all entities, meshes and properties etc,
-      // and one of its children should be the model entity iteslf, whose string is also the uuid.
-      cJSON* modelentry = cJSON_GetObjectItem(modelObj, modelObj->string);
-      if(modelentry)
-        {
-        // failed to load properties is still OK
-        smtk::io::ImportJSON::ofManagerStringProperties(modelid, modelentry, tmpMgr);
-        }
-
-      std::string nativemodelfile;
-      std::string nativefilekey = tmpMgr->hasStringProperty(modelid, "output_native_url") ?
-                                  "output_native_url" :
-                                  (tmpMgr->hasStringProperty(modelid, "url") ? "url" : "");
-      if (!nativefilekey.empty())
-        {
-        smtk::model::StringList const& nprop(tmpMgr->stringProperty(modelid, nativefilekey));
-        if (!nprop.empty())
-          {
-          nativemodelfile = nprop[0];
-          }
-        }
-
-      if(!nativemodelfile.empty())
-        {
-        return nativemodelfile;
-        }
-      }
-    }
-  return filename;
-}
-
-//----------------------------------------------------------------------------
 smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
   const std::string& filename)
 {
@@ -1375,6 +1305,11 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
     {
     return smtk::model::OperatorPtr();
     }
+
+  std::string lastExt =
+    vtksys::SystemTools::GetFilenameLastExtension(filename);
+  if( lastExt == ".smtk")
+    return this->managerProxy()->smtkFileOperator(filename);
 
   smtk::model::StringData sessionTypes = this->fileModelSessions(filename);
   if (sessionTypes.size() == 0)
@@ -1721,7 +1656,8 @@ void pqCMBModelManager::clear()
 bool pqCMBModelManager::startNewSession(const std::string& sessionName)
 {
   smtk::common::UUID sessionId =
-    this->managerProxy()->beginSession(sessionName, true);
+    this->managerProxy()->beginSession(sessionName, 
+                                       smtk::common::UUID::null(), true);
   smtk::model::SessionRef sref(
     this->managerProxy()->modelManager(), sessionId);
 
