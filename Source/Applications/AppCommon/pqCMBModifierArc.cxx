@@ -201,9 +201,15 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
         v.clear();
         v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
         pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+        source->UpdateVTKObjects();
       }
     }
-  source->UpdateVTKObjects();
+  //{
+  //  QList< QVariant > v;
+  //  v << -1 << -1 << -1;
+  //  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+  //}
+  //source->UpdateVTKObjects();
   source->MarkAllPropertiesAsModified();
   source->UpdatePipeline();
 }

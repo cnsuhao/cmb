@@ -141,16 +141,50 @@ public:
   vtkKochanekSpline * fun;
 };
 
+class DepArcMixProfileFunction;
+class DepArcWedgeProfileFunction;
+
 class DepArcProfileFunction
 {
 public:
   enum FunctionType{Piecewise = 1, Spline = 0};
+  enum Type {Manual, Mix, Wedge};
   virtual ~DepArcProfileFunction(){}
+  virtual Type getType() const = 0;
   virtual bool evalFun( double d, double & weight, double & desp ) const = 0;
   virtual double apply(double d, double pt) const = 0;
   virtual void apply(double d, double *pt, double *n) const = 0;
   virtual void addWeightPoint(double w, double v, double s, double m) = 0;
   virtual bool inside(double d) const = 0;
+
+};
+
+class DepArcWedgeProfileFunction : public DepArcProfileFunction
+{
+public:
+  double base_width, displacement, slope, max_width;
+  virtual DepArcProfileFunction::Type getType() const
+  {
+    return DepArcProfileFunction::Wedge;
+  }
+  virtual bool evalFun( double d, double & weight, double & desp ) const
+  {
+    return false;
+  }
+  virtual double apply(double d, double pt) const
+  {
+    return -1.0;
+  }
+  virtual void apply(double d, double *pt, double *n) const
+  {
+  }
+  virtual void addWeightPoint(double w, double v, double s, double m)
+  {
+  }
+  virtual bool inside(double d) const
+  {
+    return false;//
+  }
 };
 
 class DepArcManualProfileFunction : public DepArcProfileFunction
@@ -179,6 +213,11 @@ public:
   {
     delete SelectedFunction[0];
     delete SelectedFunction[1];
+  }
+
+  virtual DepArcProfileFunction::Type getType() const
+  {
+    return DepArcProfileFunction::Manual;
   }
 
   virtual void addWeightPoint(double w, double v, double s, double m)
@@ -314,6 +353,11 @@ public:
     assert(mix >0 && mix < 1.0);
   }
 
+  virtual DepArcProfileFunction::Type getType() const
+  {
+    return DepArcProfileFunction::Mix;
+  }
+
   virtual double apply(double d, double pt) const
   {
     return fun[0]->apply(d,pt)*(1-mix) + fun[1]->apply(d, pt) * mix;
@@ -363,6 +407,24 @@ namespace
   double dot(double const i1[2], double const i2[2])
   {
     return i1[0]*i2[0]+i1[1]*i2[1];
+  }
+
+  boost::shared_ptr<DepArcProfileFunction>
+  interpolate_functions( boost::shared_ptr<DepArcProfileFunction> fun0,
+                        boost::shared_ptr<DepArcProfileFunction> fun1, double weight)
+  {
+    if(fun0 == fun1) return fun0;
+    assert(fun0 != boost::shared_ptr<DepArcProfileFunction>());
+    assert(fun1 != boost::shared_ptr<DepArcProfileFunction>());
+    if(fun0->getType() != fun1->getType() ||
+       fun0->getType() == DepArcProfileFunction::Manual ||
+       fun0->getType() == DepArcProfileFunction::Mix)
+    {
+      return boost::shared_ptr<DepArcProfileFunction>(new DepArcMixProfileFunction(fun0,
+                                                                                   fun1, weight));
+    }
+    //TODO interpolate wedge
+    return boost::shared_ptr<DepArcProfileFunction>();
   }
   
 }
@@ -497,21 +559,7 @@ private:
       if(t == 1) return *pt2;
       else if(t == 0) return *pt1;
       point result = *(pt1) + dr * t;
-
-      if(pt2->getFunction() == NULL)
-      {
-        result.setFunction( pt1->getFunction() );
-      }
-      else if(pt1->getFunction() == NULL)
-      {
-        result.setFunction( pt2->getFunction() );
-      }
-      else
-      {
-        boost::shared_ptr<DepArcProfileFunction>
-          mixxer(new DepArcMixProfileFunction(pt1->getFunction(), pt2->getFunction(), t));
-        result.setFunction( mixxer );
-      }
+      result.setFunction(interpolate_functions(pt1->getFunction(), pt2->getFunction(), t));
       return result;
     }
 
@@ -661,8 +709,7 @@ private:
     for (size_t i = b+1; i<e; ++i)
     {
       double t = currentLength/total_distance;
-      boost::shared_ptr<DepArcMixProfileFunction> mix(new DepArcMixProfileFunction(fun0, fun1, t));
-      points[i]->setFunction(mix);
+      points[i]->setFunction(interpolate_functions(fun0,fun1,t));
       currentLength += lines[i].length();
     }
   }
@@ -1031,7 +1078,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
   if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
     return;
   assert(funId >= 0);
-  DepArcData * td = Arcs[funId];
+  DepArcData * td = Arcs[arc_ind];
   if(funId >= td->functions.size())
   {
     td->functions.resize(funId + 1);
