@@ -99,7 +99,9 @@ bool vtkSMModelManagerProxy::validSession(
 }
 
 smtk::common::UUID vtkSMModelManagerProxy::beginSession(
-  const std::string& sessionName, bool createNew)
+  const std::string& sessionName,
+  const smtk::common::UUID& newSessionId,
+  bool createNew)
 {
   if (this->m_remoteSessionNames.find(sessionName) == this->m_remoteSessionNames.end())
     {
@@ -115,15 +117,19 @@ smtk::common::UUID vtkSMModelManagerProxy::beginSession(
       it != this->m_remoteSessionIds.end();
       ++it)
       {
-      if(it->second == sessionName)
+      if(( !newSessionId.isNull() && newSessionId == it->first ) ||
+         ( newSessionId.isNull() && it->second == sessionName ))
         return it->first;
       }  
     }
 
+  std::string sessionParams = sessionName;
+  if(!newSessionId.isNull())
+    sessionParams += ("\", \"session-id\":\"" + newSessionId.toString());
   //FIXME: Sanitize sessionName!
   std::string reqStr =
     "{\"jsonrpc\":\"2.0\", \"method\":\"create-session\", \"params\":{\"session-name\":\"" +
-    sessionName + "\"}, \"id\":\"1\"}";
+    sessionParams + "\"}, \"id\":\"1\"}";
   cJSON* result = this->jsonRPCRequest(reqStr);
   cJSON* sessionObj;
   cJSON* sessionIdObj;
@@ -293,7 +299,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
 {
   std::string lastExt =
     vtksys::SystemTools::GetFilenameLastExtension(fileName);
-  if( lastExt == ".smtk" || lastExt == ".json")
+  if( lastExt == ".smtk" )
     {
     OperatorPtr smtkImportOp = session->op("import smtk model");
     // Not all session should have an ImportOperator
@@ -413,6 +419,66 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
 //  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
 //  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
   OperatorPtr fileOp = this->newFileOperator(fileName, session, actualEngineName);
+  return fileOp;
+}
+
+smtk::model::OperatorPtr vtkSMModelManagerProxy::smtkFileOperator(
+  const std::string& fileName)
+{
+  std::string lastExt =
+    vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  if( lastExt != ".smtk")
+    return OperatorPtr();
+
+  // This is a json/smtk model file, we will look for native model file,
+  // and return the session type that can read that file.
+  std::ifstream file(fileName.c_str());
+  if (!file.good())
+    return OperatorPtr();
+
+  std::string data(
+    (std::istreambuf_iterator<char>(file)),
+    (std::istreambuf_iterator<char>()));
+
+  if (data.empty())
+    return OperatorPtr();
+
+  cJSON* root = cJSON_Parse(data.c_str());
+  if(!root)
+    return OperatorPtr();
+  cJSON* sessNode = root->child;
+  cJSON* typeObj;
+  cJSON* nameObj;
+  if (
+    !sessNode ||
+    sessNode->type != cJSON_Object ||
+    // Does the sessNode have a valid session ID?
+    !sessNode->string ||
+    !sessNode->string[0] ||
+    // Does the node have fields "type" and "name" of type String?
+    !(typeObj = cJSON_GetObjectItem(sessNode, "type")) ||
+    typeObj->type != cJSON_String ||
+    !typeObj->valuestring ||
+    !typeObj->valuestring[0] ||
+    strcmp(typeObj->valuestring, "session") || // must be session type
+    !(nameObj = cJSON_GetObjectItem(sessNode, "name")) ||
+    nameObj->type != cJSON_String ||
+    !nameObj->valuestring ||
+    !nameObj->valuestring[0]
+    )
+    return OperatorPtr();
+
+  smtk::common::UUID fileSessionId(sessNode->string);
+  smtk::common::UUID sessionId = this->beginSession(nameObj->valuestring,
+                                                    fileSessionId);
+  SessionPtr session = SessionRef(this->m_modelMgr, sessionId).session();
+  if (!session)
+    {
+    std::cerr << "Could not find or create session of type \"" << nameObj->valuestring << "\"\n";
+    return OperatorPtr();
+    }
+
+  OperatorPtr fileOp = this->newFileOperator(fileName, session, std::string());
   return fileOp;
 }
 

@@ -125,7 +125,6 @@ protected slots:
 protected:
   void initialize();
   void initOperator(smtk::model::OperatorPtr brOp);
-  std::string getNativeModelFile(const std::string& filename) const;
 
 private:
   class qInternal;

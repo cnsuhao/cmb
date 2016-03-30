@@ -157,7 +157,12 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          smtk::model::SessionRef sref = this->ModelMgr->createSession(bname->valuestring);
+          // If there is a session id specified for the session, make the new session use it.
+          cJSON* sessId = cJSON_GetObjectItem(param, "session-id");
+          smtk::model::SessionRef tmpSess(this->ModelMgr,
+            sessId ? smtk::common::UUID(sessId->valuestring) :
+            smtk::common::UUID::null());
+          smtk::model::SessionRef sref = this->ModelMgr->createSession(bname->valuestring, tmpSess);
           if (!sref.isValid() || !sref.session())
             {
             this->GenerateError(result,

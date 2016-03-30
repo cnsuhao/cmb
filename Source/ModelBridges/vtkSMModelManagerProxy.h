@@ -27,7 +27,9 @@ public:
   std::vector<std::string> sessionNames(bool forceFetch = false);
 
   smtk::common::UUID beginSession(
-    const std::string& sessionName, bool createNew = false);
+    const std::string& sessionName,
+    const smtk::common::UUID& sessionId = smtk::common::UUID::null(),
+    bool createNew = false);
   bool endSession(const smtk::common::UUID& sessionId);
 
   smtk::model::StringData supportedFileTypes(
@@ -38,6 +40,8 @@ public:
     const std::string& engineName = std::string());
   std::vector<std::string> fileOperators(
     const std::string& sessionName);
+  smtk::model::OperatorPtr smtkFileOperator(
+  const std::string& fileName);
 
   std::vector<std::string> operatorNames(const std::string& sessionName);
   std::vector<std::string> operatorNames(const smtk::common::UUID& sessionId);
