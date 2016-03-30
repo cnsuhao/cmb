@@ -131,25 +131,11 @@ public:
     return outport;
   }
 
-  void updateSelectionView(pqOutputPort* outport)
+  void updateSelectionView()
   {
-    // update the selection manager
-    pqSelectionManager *selectionManager =
-      qobject_cast<pqSelectionManager*>(
-        pqApplicationCore::instance()->manager("SelectionManager"));
-    // use last selected port as active
-    if(selectionManager && outport)
-      {
-      selectionManager->blockSignals(true);
-      selectionManager->select(outport);
-      selectionManager->blockSignals(false);
-      }
-    else
-      {
-      pqRenderView* renView = qobject_cast<pqRenderView*>(
+    pqRenderView* renView = qobject_cast<pqRenderView*>(
          pqActiveObjects::instance().activeView());
-      renView->render();
-      }
+    renView->render();
   }
 
 };
@@ -341,16 +327,15 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       }
     }
 
-  pqOutputPort* outport = NULL;
   foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
     {
-    outport = this->Internal->setSelectionInput(
+    this->Internal->setSelectionInput(
                                       modinfo->BlockSelectionSource,
                                       selmodelblocks[modinfo],
                                       modinfo->RepSource);
     }
 
-  this->Internal->updateSelectionView(outport);
+  this->Internal->updateSelectionView();
 }
 
 //-----------------------------------------------------------------------------
@@ -381,19 +366,15 @@ void pqSMTKModelPanel::selectMeshRepresentations(
     }
 
   // update the selection manager
-  pqSelectionManager *selectionManager =
-    qobject_cast<pqSelectionManager*>(
-      pqApplicationCore::instance()->manager("SelectionManager"));
-  pqOutputPort* outport = NULL;
   foreach(pqSMTKMeshInfo* meshinfo, selmeshblocks.keys())
     {
-    outport = this->Internal->setSelectionInput(
+    this->Internal->setSelectionInput(
                                       meshinfo->BlockSelectionSource,
                                       selmeshblocks[meshinfo],
                                       meshinfo->RepSource);
     }
 
-  this->Internal->updateSelectionView(outport);
+  this->Internal->updateSelectionView();
 }
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::updateTreeSelection()
