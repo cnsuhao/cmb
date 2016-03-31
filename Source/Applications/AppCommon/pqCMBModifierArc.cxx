@@ -144,72 +144,68 @@ void pqCMBModifierArc::removeFromServer(vtkSMSourceProxy* source)
 void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
 {
   vtkPVArcInfo* info = CmbArc->getArcInfo();
+  if(info == NULL) return;
   setUpFunction();
-  if(info != NULL)
+  CmbArc->arcIsModified();
+  CmbArc->updateRepresentation();
     {
-    CmbArc->arcIsModified();
-    CmbArc->updateRepresentation();
+    //clear functions
+    QList< QVariant > v;
+    v <<Id;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearArc"), v);
+    source->UpdateVTKObjects();
+    v.clear();
+    v << -1;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearArc"), v);
+    source->UpdateVTKObjects();
+    }
+  for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints()); ++i)
+    {
+    double tmp[3];
+    info->GetPointLocation(i, tmp);
+    QList< QVariant > v;
+    v <<Id << tmp[0] << tmp[1];
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddPoint"), v);
+    source->UpdateVTKObjects();
+    }
+  if(info->IsClosedLoop())
+    {
+    QList< QVariant > v;
+    v <<Id;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
+    source->UpdateVTKObjects();
+    v.clear();
+    v << -1;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
+    source->UpdateVTKObjects();
+    }
+  std::map< cmbProfileFunction const*, unsigned int> function_to_id;
+  std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+  for(unsigned int i = 0; iter != functions.end(); ++i,++iter)
+    {
+    iter->second->sendDataToProxy(Id, i, source);
+    function_to_id[iter->second] = i;
+    }
+  for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());++i)
+    {
+    vtkIdType id;
+    info->GetPointID(i, id);
+    pointFunctionWrapper & wrapper = pointsFunctions[id];
+    if(pointsFunctions[i].getFunction() != NULL)
       {
-      //clear functions
       QList< QVariant > v;
-      v <<Id;
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearArc"), v);
-      source->UpdateVTKObjects();
       v.clear();
-      v << -1;
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearArc"), v);
-      source->UpdateVTKObjects();
-      }
-    for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints()); ++i)
-      {
-      double tmp[3];
-      info->GetPointLocation(i, tmp);
-      QList< QVariant > v;
-      v <<Id << tmp[0] << tmp[1];
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddPoint"), v);
-      source->UpdateVTKObjects();
-      }
-    if(info->IsClosedLoop())
-      {
-      QList< QVariant > v;
-      v <<Id;
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
-      source->UpdateVTKObjects();
-      v.clear();
-      v << -1;
-      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
+      v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
       source->UpdateVTKObjects();
       }
     }
-    std::map< cmbProfileFunction const*, unsigned int> function_to_id;
-    std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
-    for(unsigned int i = 0;
-        iter != functions.end(); ++i,++iter)
-    {
-      iter->second->sendDataToProxy(Id, i, source);
-      function_to_id[iter->second] = i;
-    }
-    for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());
-        ++i)
-    {
-      vtkIdType id;
-      info->GetPointID(i, id);
-      pointFunctionWrapper & wrapper = pointsFunctions[id];
-      if(pointsFunctions[i].getFunction() != NULL)
-      {
-        QList< QVariant > v;
-        v.clear();
-        v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
-        pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
-        source->UpdateVTKObjects();
-      }
-    }
-  //{
-  //  QList< QVariant > v;
-  //  v << -1 << -1 << -1;
-  //  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
-  //}
-  //source->UpdateVTKObjects();
+  {
+    QList< QVariant > v;
+    v << -1 << -1 << -1;
+    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+  }
+  source->UpdateVTKObjects();
   source->MarkAllPropertiesAsModified();
   source->UpdatePipeline();
 }

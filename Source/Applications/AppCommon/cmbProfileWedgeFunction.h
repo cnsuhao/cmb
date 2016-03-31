@@ -68,6 +68,9 @@ public:
   bool isWeightSpline() const;
   void setWeightSpline(bool w);
 
+  bool isClamped() const;
+  void setClamped(bool w);
+
 protected:
   virtual bool readData(std::ifstream & in, int version);
   virtual bool writeData(std::ofstream & out) const;
@@ -78,6 +81,8 @@ private:
   bool Relative;
   bool Symmetry;
   bool WeightUseSpline;
+
+  bool clamp;
 
   cmbProfileWedgeFunction(cmbProfileWedgeFunction const* other);
 };

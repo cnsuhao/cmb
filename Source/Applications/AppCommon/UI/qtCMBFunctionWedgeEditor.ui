@@ -225,7 +225,7 @@
    <item row="4" column="3">
     <widget class="QCheckBox" name="clamp">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Clamp</string>

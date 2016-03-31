@@ -72,7 +72,7 @@ void cmbProfileWedgeFunctionParameters::setSlopeRight(double d)
 cmbProfileWedgeFunction::cmbProfileWedgeFunction()
 : parameters(new cmbProfileWedgeFunctionParameters()),
   WeightingFunction(vtkPiecewiseFunction::New()), Relative(true),
-  Symmetry(true), WeightUseSpline(false)
+  Symmetry(true), WeightUseSpline(false), clamp(true)
 {
   this->WeightingFunction->SetAllowDuplicateScalars(1);
   this->WeightingFunction->AddPoint(0, 1);
@@ -106,88 +106,53 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
   return result;
 }
 
-void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int pointID,
+void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
                                               vtkSMSourceProxy* source) const
 {
-  QList< QVariant > v;
-  v << arc_ID << pointID;
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearFunctions"), v);
-  source->UpdateVTKObjects();
-  {
-    v.clear();
-    v << arc_ID << pointID << Relative << Symmetry;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionModes"), v);
-    source->UpdateVTKObjects();
-  }
   cmbProfileWedgeFunctionParameters * p = this->parameters;
   double slopeLeft = p->getSlopeLeft();
   double slopeRight = p->getSlopeRight();
   double baseWidth = p->getBaseWidth();
   double depth = p->getDepth();
 
-  std::vector<double> points_x;
-  std::vector<double> points_y;
+  QList< QVariant > v;
+  double widthLeft = widthLeft = baseWidth * 0.5;
+  if(slopeLeft  != 0)
+  {
+    slopeLeft = 1/slopeLeft;
+    widthLeft = std::abs(widthLeft) + std::abs(depth/ slopeLeft );
+  }
   double widthRight = baseWidth * 0.5;
   if(slopeRight != 0)
   {
+    slopeRight = 1.0/slopeRight;
     widthRight = std::abs(widthRight) + std::abs(depth/slopeRight);
   }
-  double widthLeft = 0;
-  if(!Symmetry)
-  {
-    widthLeft = baseWidth * 0.5;
-    if(slopeLeft != 0)
-    {
-      widthLeft = std::abs(widthLeft) + std::abs(depth/slopeLeft);
-    }
-    points_x.push_back(-1);
-    points_y.push_back(0);
-    if(baseWidth != 0)
-    {
-      points_x.push_back(-(baseWidth*0.5)/widthLeft);
-      points_y.push_back(1);
-    }
-  }
-
-  points_x.push_back(0);
-  points_y.push_back(1);
-  if(baseWidth != 0)
-  {
-    points_x.push_back((baseWidth*0.5)/widthRight);
-    points_y.push_back(1);
-  }
-  points_x.push_back(1);
-  points_y.push_back(0);
-
+  v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
+    << Relative << (p->getDepth() < 0) //TODO
+    << this->clamp
+    << p->getBaseWidth() << p->getDepth() << slopeLeft << slopeRight
+    << widthLeft << widthRight;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
+  source->UpdateVTKObjects();
   v.clear();
-  v << arc_ID << pointID << 0 << depth << -widthLeft << widthRight;
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetControlVars"), v);
+  v << -1 << -1 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
+  source->UpdateVTKObjects();
+
   for(int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
     double d[4];
     v.clear();
     WeightingFunction->GetNodeValue(i, d);
-    v << arc_ID << pointID << d[0] << d[1] << d[2] << d[3];
+    v << arc_ID << funId << d[0] << d[1] << d[2] << d[3];
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
     source->UpdateVTKObjects();
   }
-
-  for(int i = 0; i < points_x.size(); ++i)
-  {
-    v.clear();
-    v << arc_ID << pointID << points_x[i] << points_y[i] << 0.5 << 0;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddDespPoint"), v);
-    source->UpdateVTKObjects();
-  }
-  {
-    v.clear();
-    v << arc_ID << pointID << 0 << WeightUseSpline;
-    pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SelectFunctionType"), v);
-  }
-  //TODO, this can be shared
   v.clear();
-  v << arc_ID << pointID << pointID;
-  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+  v << -1 << -1 << 0 << 0 << 0 << 0;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
+  source->UpdateVTKObjects();
 }
 
 cmbProfileFunctionParameters * cmbProfileWedgeFunction::getParameters() const
@@ -310,4 +275,13 @@ bool cmbProfileWedgeFunction::isWeightSpline() const
 void cmbProfileWedgeFunction::setWeightSpline(bool w)
 {
   WeightUseSpline = w;
+}
+
+bool cmbProfileWedgeFunction::isClamped() const
+{
+  return clamp;
+}
+void cmbProfileWedgeFunction::setClamped(bool w)
+{
+  clamp = w;
 }

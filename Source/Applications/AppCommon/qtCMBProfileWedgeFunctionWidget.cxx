@@ -111,9 +111,9 @@ void qtCMBProfileWedgeFunctionWidget
 }
 
 void qtCMBProfileWedgeFunctionWidget
-::setClamp(bool)
+::setClamp(bool in)
 {
-  //TODO
+  function->setClamped(in);
 }
 
 void qtCMBProfileWedgeFunctionWidget
@@ -165,4 +165,5 @@ void qtCMBProfileWedgeFunctionWidget::setUp()
   this->UI->WeightingSplineControl->setChecked(function->isWeightSpline());
 
   this->UI->relative->setChecked(function->isRelative());
+  this->UI->clamp->setChecked(function->isClamped());
 }

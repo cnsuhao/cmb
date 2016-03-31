@@ -314,6 +314,10 @@ void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateManualFunction"), v);
   source->UpdateVTKObjects();
   v.clear();
+  v << -1 << -1 << 0 << 0 << 0 << 0 ;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateManualFunction"), v);
+  source->UpdateVTKObjects();
+  v.clear();
   //Send function parameters
   cmbManualProfileFunctionParameters * p = parameters;
   v << arc_ID << funID
@@ -322,6 +326,8 @@ void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetManualControlVars"), v);
   v.clear();
   source->UpdateVTKObjects();
+  v << -1 << -1 <<0 << 0 << 0 << 0;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetManualControlVars"), v);
   //send function points
   for(int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
@@ -332,6 +338,10 @@ void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
     source->UpdateVTKObjects();
   }
+  v.clear();
+  v << -1 << -1 << 0 << 0 << 0 << 0;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddWeightPoint"), v);
+  source->UpdateVTKObjects();
   for(int i = 0; i < DisplacementProfile->GetSize(); ++i)
   {
     double d[4];
@@ -341,11 +351,10 @@ void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddManualDespPoint"), v);
     source->UpdateVTKObjects();
   }
-  //TODO, this can be shared
-  //TODO MOVE THIS
-  //v.clear();
-  //v << arc_ID << pointID << pointID;
-  //pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+  v.clear();
+  v << -1 << -1 << 0 << 0 << 0 << 0;
+  pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddManualDespPoint"), v);
+  source->UpdateVTKObjects();
 }
 
 cmbProfileFunction * cmbManualProfileFunction::clone(std::string const& name) const

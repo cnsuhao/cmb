@@ -5877,9 +5877,6 @@ associates the containing cell ID to the point.
         </Documentation>
       </IntVectorProperty>
 
-<!-- CreateManualFunction(int arc_ind, int funId, int desptFunctionType, int weightFunType
- int isRelative, int isSymmetric); -->
-
       <IntVectorProperty
           name="CreateManualFunction"
           command="CreateManualFunction"
@@ -5890,6 +5887,16 @@ associates the containing cell ID to the point.
           </Documentation>
       </IntVectorProperty>
 
+
+      <DoubleVectorProperty
+          name="CreateWedgeFunction"
+          command="CreateWedgeFunction"
+          number_of_elements="12"
+          default_values="-1 -1 0 0 0 0 0 0 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </DoubleVectorProperty>
 
       <DoubleVectorProperty
         name="AddWeightPoint"
