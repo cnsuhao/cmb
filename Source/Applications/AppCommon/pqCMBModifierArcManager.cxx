@@ -64,7 +64,6 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->WedgeFunctionWidget = NULL;
   this->ManualFunctionCustomize = NULL;
   this->selectedFunction = NULL;
-  this->selectedFunctionTabelItem = NULL;
   this->UI = new Ui_qtArcFunctionControl();
   QWidget * w = new QWidget();
   this->UI->setupUi(w);
@@ -109,20 +108,22 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   QObject::connect(this->UI->CloneFunction, SIGNAL(clicked()),
                    this, SLOT(cloneFunction()));
 
-  QObject::connect(this->UI->CloneFunction, SIGNAL(clicked()),
-                   this, SLOT(cloneFunction()));
-
+  QObject::connect(this->UI->FunctionName, SIGNAL(currentIndexChanged(int)),
+                   this, SLOT(onFunctionSelectionChange()));
   QObject::connect(this->UI->FunctionType, SIGNAL(currentIndexChanged(int)),
                    this,  SLOT(functionTypeChanged(int)));
+  QObject::connect(this->UI->PointMode, SIGNAL(currentIndexChanged(int)),
+                   this,  SLOT(functionModeChanged(int)));
+
+  QObject::connect(this->UI->EndPointDisplayed,SIGNAL(currentIndexChanged(int)),
+                   this, SLOT(pointDisplayed(int)));
     
 
   QObject::connect(this->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
   QObject::connect(this->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadProfile()));
 
-  QObject::connect(this->UI->functionName, SIGNAL(textChanged(QString)),
+  QObject::connect(this->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
                    this, SLOT(nameChanged(QString)));
-
-  QObject::connect(this->UI->isDefault, SIGNAL(clicked(bool)), this, SLOT(setToDefault()));
 
   QObject::connect(this->UI->SaveFunctions, SIGNAL(clicked()),
                    this, SLOT(onSaveArc()));
@@ -184,10 +185,6 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->UI->points, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onPointsSelectionChange()));
 
-  this->UI->functionTable->setSelectionMode(QAbstractItemView::SingleSelection);
-  QObject::connect(this->UI->functionTable, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onFunctionSelectionChange()));
-  this->UI->functionConfigure->hide();
 }
 
 //-----------------------------------------------------------------------------
@@ -252,7 +249,6 @@ void pqCMBModifierArcManager::clear()
   delete this->ManualFunctionCustomize;
   this->ManualFunctionWidget = NULL;
   this->selectedFunction = NULL;
-  this->selectedFunctionTabelItem = NULL;
   this->TableWidget->clearContents();
   this->TableWidget->setRowCount(0);
   this->UI->points->clearContents();
@@ -318,15 +314,10 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
 
 void pqCMBModifierArcManager::AddFunction(cmbProfileFunction * fun)
 {
-  this->UI->functionTable->insertRow(this->UI->functionTable->rowCount());
-  int row = this->UI->functionTable->rowCount()-1;
-
-  QTableWidgetItem* objItem = new QTableWidgetItem(fun->getName().c_str());
   QVariant vdata;
   vdata.setValue(static_cast<void*>(fun));
-  objItem->setData(Qt::UserRole, vdata);
-
-  this->UI->functionTable->setItem(row, 0, objItem);
+  this->UI->FunctionName->addItem(fun->getName().c_str(), vdata);
+  this->UI->DeleteFunction->setEnabled(this->UI->FunctionName->count()>1);
 }
 
 void pqCMBModifierArcManager::unselectAllRows()
@@ -497,12 +488,10 @@ void pqCMBModifierArcManager::onSelectionChange()
 void pqCMBModifierArcManager::onFunctionSelectionChange()
 {
   cmbProfileFunction* fun = NULL;
-  selectedFunctionTabelItem = NULL;
-  QList<QTableWidgetItem *>selected =	this->UI->functionTable->selectedItems();
-  if( !selected.empty() )
+  int	index = this->UI->FunctionName->currentIndex();
+  if(index != -1)
   {
-    selectedFunctionTabelItem = selected.front();
-    QVariant d = selectedFunctionTabelItem->data( Qt::UserRole );
+    QVariant d = this->UI->FunctionName->itemData(index);
     void * dv = d.value<void *>();
     fun = static_cast<cmbProfileFunction*>(dv);
   }
@@ -750,15 +739,35 @@ void pqCMBModifierArcManager::updateLineFunctions()
   pqCMBModifierArc * dig = this->CurrentModifierArc;
   std::vector<cmbProfileFunction *> funs;
   dig->getFunctions(funs);
-  this->UI->functionTable->setColumnCount(1);
-  this->UI->functionTable->setRowCount(0);
+  this->UI->FunctionName->blockSignals(true);
+  this->UI->FunctionName->clear();
   for(unsigned int i = 0; i < funs.size(); ++i)
   {
     this->AddFunction(funs[i]);
   }
-  this->UI->functionTable->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-  selectedFunctionTabelItem = NULL;
-  selectFunction(NULL);
+  this->UI->PointMode->setCurrentIndex(CurrentModifierArc->getFunctionMode());
+  this->functionModeChanged(CurrentModifierArc->getFunctionMode());
+  QString name;
+  switch(CurrentModifierArc->getFunctionMode())
+  {
+    case pqCMBModifierArc::EndPoints:
+    {
+      if(this->UI->EndPointDisplayed->currentIndex() == 1)
+      {
+        name = dig->getEndFun()->getName().c_str();
+        break;
+      }
+      //else falls through
+    }
+    case pqCMBModifierArc::Single:
+      name = dig->getStartFun()->getName().c_str();
+      break;
+    case pqCMBModifierArc::PointAssignment:
+      break;
+  }
+  this->UI->FunctionName->setCurrentIndex(this->UI->FunctionName->findText(name));
+  this->UI->FunctionName->blockSignals(false);
+  onFunctionSelectionChange();
 }
 
 void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
@@ -770,7 +779,6 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
   selectedFunction = NULL;
   if(fun == NULL)
   {
-    this->UI->functionConfigure->hide();
     this->UI->CloneFunction->setEnabled(false);
     this->UI->DeleteFunction->setEnabled(false);
     this->UI->Save->setEnabled(false);
@@ -780,14 +788,27 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
     this->UI->CloneFunction->setEnabled(true);
     this->UI->DeleteFunction->setEnabled(true);
     this->UI->Save->setEnabled(true);
-    this->UI->functionName->setText(fun->getName().c_str());
     this->UI->FunctionType->setCurrentIndex(static_cast<int>(fun->getType()));
-    this->UI->functionConfigure->show();
     selectedFunction = fun;
-    bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
-    this->UI->isDefault->setChecked(isDefault);
-    this->UI->isDefault->setEnabled(!isDefault);
-    this->UI->DeleteFunction->setEnabled(!isDefault);
+    this->nameChanged(fun->getName().c_str());
+    switch(CurrentModifierArc->getFunctionMode())
+    {
+      case pqCMBModifierArc::EndPoints:
+        if(this->UI->EndPointDisplayed->currentIndex() == 1)
+        {
+          CurrentModifierArc->setEndFun(selectedFunction->getName());
+          break;
+        }
+      case pqCMBModifierArc::Single:
+        CurrentModifierArc->setStartFun(selectedFunction->getName());
+        break;
+      case pqCMBModifierArc::PointAssignment:
+        break;
+    }
+    //bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
+    //this->UI->isDefault->setChecked(isDefault);
+    //this->UI->isDefault->setEnabled(!isDefault);
+    //this->UI->DeleteFunction->setEnabled(!isDefault); //TODO: FIX This
     switch(fun->getType())
     {
       case cmbProfileFunction::MANUAL:
@@ -820,12 +841,14 @@ void pqCMBModifierArcManager::functionTypeChanged(int type)
       break;
   }
   this->CurrentModifierArc->setFunction(name, fun);
-  if(selectedFunctionTabelItem)
+  int	index = this->UI->FunctionName->currentIndex();
+  if(index != -1)
   {
     QVariant vdata;
     vdata.setValue(static_cast<void*>(fun));
-    selectedFunctionTabelItem->setData(Qt::UserRole, vdata);
+    this->UI->FunctionName->setItemData(index, vdata); //todo
   }
+
   selectFunction(fun);
 }
 
@@ -972,7 +995,7 @@ void pqCMBModifierArcManager::setUpPointsTable()
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 2, qtwi);
     pqCMBModifierArc::pointFunctionWrapper * mp = CurrentModifierArc->getPointFunction(i);
-    qtwi = new QTableWidgetItem(QString(mp->getName().c_str()));
+    qtwi = new QTableWidgetItem((mp != NULL)?QString(mp->getName().c_str()):QString("NULL"));
     qtwi->setFlags(commFlags);
     tmp->setItem(row, 3, qtwi);
   }
@@ -1178,30 +1201,35 @@ void pqCMBModifierArcManager::check_save()
 void pqCMBModifierArcManager::nameChanged(QString n)
 {
   if(selectedFunction == NULL || CurrentModifierArc == NULL) return;
+  if(n.isEmpty()) return;
 
   if(CurrentModifierArc->updateLabel(n.toStdString(), selectedFunction))
   {
-    if(selectedFunctionTabelItem) selectedFunctionTabelItem->setText(n);
+    int	index = this->UI->FunctionName->currentIndex();
+    if(index != -1)
+    {
+      this->UI->FunctionName->setItemText(index, n);
+    }
     QPalette palette;
     palette.setColor(QPalette::Base,Qt::white);
     palette.setColor(QPalette::Text,Qt::black);
-    this->UI->functionName->setPalette(palette);
+    this->UI->FunctionName->setPalette(palette);
   }
   else
   {
     QPalette palette;
     palette.setColor(QPalette::Base,Qt::red);
     palette.setColor(QPalette::Text,Qt::black);
-    this->UI->functionName->setPalette(palette);
+    this->UI->FunctionName->setPalette(palette);
   }
 }
 
 void pqCMBModifierArcManager::setToDefault()
 {
+  //TODO redo this
   if(selectedFunction && CurrentModifierArc)
   {
-    CurrentModifierArc->setDefaultFun(selectedFunction->getName());
-    this->UI->isDefault->setEnabled(false);
+    CurrentModifierArc->setStartFun(selectedFunction->getName());
   }
 }
 
@@ -1210,28 +1238,80 @@ void pqCMBModifierArcManager::newFunction()
   if(CurrentModifierArc)
   {
     cmbProfileFunction * nfun = CurrentModifierArc->createFunction();
+    int	count = this->UI->FunctionName->count();
     this->AddFunction(nfun);
+    this->UI->FunctionName->setCurrentIndex(count);
   }
 }
 
 void pqCMBModifierArcManager::deleteFunction()
 {
-  if(selectedFunction && selectedFunctionTabelItem && CurrentModifierArc)
+  if(selectedFunction && CurrentModifierArc)
   {
     if(CurrentModifierArc->deleteFunction(selectedFunction->getName()))
     {
-      this->UI->functionTable->removeRow(selectedFunctionTabelItem->row());
-      selectedFunctionTabelItem = NULL;
-      selectedFunction = NULL;
+      int	index = this->UI->FunctionName->currentIndex();
+      if(index != -1)
+      {
+        this->UI->FunctionName->removeItem(index);
+        if(index != 0)
+        {
+          index--;
+        }
+        this->UI->FunctionName->setCurrentIndex(index);
+      }
       onFunctionSelectionChange();
     }
   }
+  this->UI->DeleteFunction->setEnabled(this->UI->FunctionName->count() > 1);
 }
 
 void pqCMBModifierArcManager::cloneFunction()
 {
-  if(selectedFunction && selectedFunctionTabelItem && CurrentModifierArc)
+  if(selectedFunction && CurrentModifierArc)
   {
+    int	count = this->UI->FunctionName->count();
     this->AddFunction(CurrentModifierArc->cloneFunction(selectedFunction->getName()));
+    this->UI->FunctionName->setCurrentIndex(count);
   }
+}
+
+void pqCMBModifierArcManager::functionModeChanged(int m)
+{
+  if(CurrentModifierArc == NULL) return;
+  pqCMBModifierArc::FunctionMode mode = static_cast<pqCMBModifierArc::FunctionMode>(m);
+  CurrentModifierArc->setFunctionMode(mode);
+  switch(CurrentModifierArc->getFunctionMode())
+  {
+    case pqCMBModifierArc::PointAssignment:
+    case pqCMBModifierArc::Single:
+      this->pointDisplayed(0);
+      this->UI->EndPointDisplayed->hide();
+      break;
+    case pqCMBModifierArc::EndPoints:
+      this->pointDisplayed(this->UI->EndPointDisplayed->currentIndex());
+      this->UI->EndPointDisplayed->show();
+      break;
+  }
+}
+
+void pqCMBModifierArcManager::pointDisplayed(int index)
+{
+  QString name;
+  if(CurrentModifierArc == NULL) return;
+  switch(CurrentModifierArc->getFunctionMode())
+  {
+    case pqCMBModifierArc::EndPoints:
+      if(index == 1)
+      {
+        name = CurrentModifierArc->getEndFun()->getName().c_str();
+        break;
+      }
+    case pqCMBModifierArc::Single:
+      name = CurrentModifierArc->getStartFun()->getName().c_str();
+      break;
+    case pqCMBModifierArc::PointAssignment:
+      break;
+  }
+  this->UI->FunctionName->setCurrentIndex(this->UI->FunctionName->findText(name));
 }

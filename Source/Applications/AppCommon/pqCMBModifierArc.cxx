@@ -27,7 +27,7 @@
 #include "vtkSMProperty.h"
 #include "qtCMBArcEditWidget.h"
 #include "qtCMBArcWidgetManager.h"
-#include "cmbManualProfileFunction.h"
+#include "cmbProfileWedgeFunction.h"
 #include "cmbProfileFunction.h"
 
 ////////////////////////////////////////
@@ -70,11 +70,11 @@ std::string pqCMBModifierArc::pointFunctionWrapper::getName()
 ////////////////////////////////////////
 
 pqCMBModifierArc::pqCMBModifierArc()
-:CmbArc(new pqCMBArc()), IsExternalArc(false), Modifier(NULL), IsVisible(true)
+:CmbArc(new pqCMBArc()), IsExternalArc(false), Modifier(NULL), IsVisible(true), functionMode(Single)
 {
-  defaultFun = new cmbManualProfileFunction();
-  defaultFun->setName("FUN0");
-  functions[defaultFun->getName()] = defaultFun;
+  endFunction = startFunction = new cmbProfileWedgeFunction();
+  startFunction->setName("FUN0");
+  functions[startFunction->getName()] = startFunction;
   setUpFunction();
 }
 
@@ -83,9 +83,9 @@ pqCMBModifierArc::pqCMBModifierArc(vtkSMSourceProxy *proxy)
  IsExternalArc(false), Modifier(NULL), IsVisible(true)
 {
   IsVisible = true;
-  defaultFun = new cmbManualProfileFunction();
-  defaultFun->setName("FUN0");
-  functions[defaultFun->getName()] = defaultFun;
+  endFunction = startFunction = new cmbProfileWedgeFunction();
+  startFunction->setName("FUN0");
+  functions[startFunction->getName()] = startFunction;
 }
 
 pqCMBModifierArc::~pqCMBModifierArc()
@@ -147,10 +147,11 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
   if(info == NULL) return;
   setUpFunction();
   CmbArc->arcIsModified();
+  QList< QVariant > v;
   CmbArc->updateRepresentation();
     {
     //clear functions
-    QList< QVariant > v;
+    v.clear();
     v <<Id;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ClearArc"), v);
     source->UpdateVTKObjects();
@@ -163,14 +164,14 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
     {
     double tmp[3];
     info->GetPointLocation(i, tmp);
-    QList< QVariant > v;
+    v.clear();
     v <<Id << tmp[0] << tmp[1];
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddPoint"), v);
     source->UpdateVTKObjects();
     }
   if(info->IsClosedLoop())
     {
-    QList< QVariant > v;
+    v.clear();
     v <<Id;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
     source->UpdateVTKObjects();
@@ -179,29 +180,50 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetArcAsClosed"), v);
     source->UpdateVTKObjects();
     }
-  std::map< cmbProfileFunction const*, unsigned int> function_to_id;
-  std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
-  for(unsigned int i = 0; iter != functions.end(); ++i,++iter)
-    {
-    iter->second->sendDataToProxy(Id, i, source);
-    function_to_id[iter->second] = i;
-    }
-  for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());++i)
-    {
-    vtkIdType id;
-    info->GetPointID(i, id);
-    pointFunctionWrapper & wrapper = pointsFunctions[id];
-    if(pointsFunctions[i].getFunction() != NULL)
+
+  switch(functionMode)
+  {
+    case EndPoints:
+      if(endFunction != startFunction)
       {
-      QList< QVariant > v;
+        v.clear();
+        endFunction->sendDataToProxy(Id, 1, source);
+        v << Id << info->GetNumberOfPoints()-1 << 1;
+        pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+        source->UpdateVTKObjects();
+      }
+    case Single:
       v.clear();
-      v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
+      startFunction->sendDataToProxy(Id, 0, source);
+      v << Id << 0 << 0;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
       source->UpdateVTKObjects();
+    case PointAssignment:
+    {
+      std::map< cmbProfileFunction const*, unsigned int> function_to_id;
+      std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+      for(unsigned int i = 0; iter != functions.end(); ++i,++iter)
+      {
+        iter->second->sendDataToProxy(Id, i, source);
+        function_to_id[iter->second] = i;
+      }
+      for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());++i)
+      {
+        vtkIdType id;
+        info->GetPointID(i, id);
+        pointFunctionWrapper & wrapper = pointsFunctions[id];
+        if(pointsFunctions[i].getFunction() != NULL)
+        {
+          v.clear();
+          v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
+          pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
+          source->UpdateVTKObjects();
+        }
       }
     }
+  }
   {
-    QList< QVariant > v;
+    v.clear();
     v << -1 << -1 << -1;
     pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
   }
@@ -235,14 +257,14 @@ void pqCMBModifierArc::readFunction(std::ifstream & f)
 
 void pqCMBModifierArc::write(std::ofstream & f)
 {
-  f << 1 << "\n";
+  f << 2 << "\n";
   if(CmbArc->getArcInfo() == NULL)
   {
     f << 0 << "\n";
     return;
   }
   f << 1 << "\n";
-  f << /*this->Id << " " <<*/ IsVisible << "\n";
+  f << IsVisible << "\n";
   f << CmbArc->getPlaneProjectionNormal() << " " << CmbArc->getPlaneProjectionPosition() << "\n";
   writeFunction(f);
 }
@@ -251,11 +273,11 @@ void pqCMBModifierArc::read(std::ifstream & f)
 {
   int version;
   f >> version;
-  assert(version == 1);
+  assert(version <= 1);
   int hasInfo;
   f >> hasInfo;
   if(!hasInfo) return;
-  f >> /*this->Id >>*/ IsVisible;
+  f >> IsVisible;
   int norm;
   double pos;
   f >> norm >> pos;
@@ -326,14 +348,25 @@ bool pqCMBModifierArc::updateLabel(std::string str, cmbProfileFunction * fun)
   return false;
 }
 
-bool pqCMBModifierArc::setDefaultFun(std::string const& name)
+bool pqCMBModifierArc::setStartFun(std::string const& name)
 {
   std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
   if(i == functions.end())
   {
     return false;
   }
-  defaultFun = i->second;
+  startFunction = i->second;
+  return true;
+}
+
+bool pqCMBModifierArc::setEndFun(std::string const& name)
+{
+  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  if(i == functions.end())
+  {
+    return false;
+  }
+  endFunction = i->second;
   return true;
 }
 
@@ -347,7 +380,7 @@ cmbProfileFunction * pqCMBModifierArc::createFunction()
     ss << "FUN" << count++;
     ss >> name;
   }
-  cmbProfileFunction * result = new cmbManualProfileFunction();
+  cmbProfileFunction * result = new cmbProfileWedgeFunction();
   result->setName(name);
   functions[name] = result;
   return result;
@@ -360,9 +393,10 @@ bool pqCMBModifierArc::deleteFunction(std::string const& name)
   {
     return false;
   }
+  if(functions.size() == 1) return false;
   cmbProfileFunction * fun = i->second;
-  if(fun == defaultFun) return false;
   functions.erase(i);
+  if(fun == startFunction) startFunction = functions.begin()->second;
   delete fun;
   return true;
 }
@@ -395,7 +429,7 @@ void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* 
   }
   else
   {
-    if(defaultFun == i->second) defaultFun = fun;
+    if(startFunction == i->second) startFunction = fun;
     fun->setName(name);
     for( std::map<vtkIdType, pointFunctionWrapper>::iterator it = pointsFunctions.begin();
         it != pointsFunctions.end(); ++it)
@@ -408,4 +442,19 @@ void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* 
     delete i->second;
     i->second = fun;
   }
+}
+
+pqCMBModifierArc::FunctionMode pqCMBModifierArc::getFunctionMode() const
+{
+  return this->functionMode;
+}
+
+void pqCMBModifierArc::setFunctionMode(pqCMBModifierArc::FunctionMode fm)
+{
+  this->functionMode = fm;
+}
+
+void pqCMBModifierArc::setRelative(bool b)
+{
+  //TODO
 }

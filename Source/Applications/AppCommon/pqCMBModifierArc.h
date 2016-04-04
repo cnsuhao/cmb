@@ -38,6 +38,7 @@ class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
   Q_OBJECT
 
 public:
+  enum FunctionMode{Single = 0, EndPoints = 1, PointAssignment = 2};
   struct pointFunctionWrapper
   {
   private:
@@ -74,11 +75,16 @@ public:
 
   bool updateLabel(std::string str, cmbProfileFunction * fun);
 
-  cmbProfileFunction * getDefaultFun()
+  cmbProfileFunction * getStartFun()
   {
-    return defaultFun;
+    return startFunction;
   }
-  bool setDefaultFun(std::string const& name);
+  cmbProfileFunction * getEndFun()
+  {
+    return endFunction;
+  }
+  bool setStartFun(std::string const& name);
+  bool setEndFun(std::string const& name);
 
   void getFunctions(std::vector<cmbProfileFunction*> & funs) const;
 
@@ -92,6 +98,9 @@ public:
 
   pointFunctionWrapper * getPointFunction(vtkIdType i);
 
+  FunctionMode getFunctionMode() const;
+  void setFunctionMode(FunctionMode fm);
+
 public slots:
   void sendChangeSignals();
   void updateArc(vtkSMSourceProxy* source);
@@ -99,6 +108,7 @@ public slots:
   void switchToEditable();
   void removeFromServer(vtkSMSourceProxy* source);
   bool setCMBArc(pqCMBArc *);
+  void setRelative(bool b);
 
 signals:
   void functionChanged(int);
@@ -113,13 +123,18 @@ protected:
   std::map<vtkIdType, pointFunctionWrapper> pointsFunctions;
   bool IsExternalArc;
 
+  FunctionMode functionMode;
+
   std::map<std::string, cmbProfileFunction * > functions;
-  cmbProfileFunction * defaultFun;
+  cmbProfileFunction * startFunction;
+  cmbProfileFunction * endFunction;
   
   qtCMBArcEditWidget* Modifier;
   int Id;
   
   bool IsVisible;
+
+  bool IsRelative;
 
   void setUpFunction();
 };

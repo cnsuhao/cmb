@@ -130,7 +130,6 @@ protected:
   qtCMBProfileWedgeFunctionWidget* WedgeFunctionWidget;
   QGridLayout* modifierFunctionLayout;
   cmbProfileFunction * selectedFunction;
-  QTableWidgetItem * selectedFunctionTabelItem;
   pqCMBSceneObjectBase::enumObjectType SourceType;
 
   void initialize();
@@ -164,6 +163,8 @@ protected slots:
   void deleteFunction();
   void cloneFunction();
   void functionTypeChanged(int);
+  void functionModeChanged(int);
+  void pointDisplayed(int);
 
 protected slots:
   void onLineChange(int Id);
