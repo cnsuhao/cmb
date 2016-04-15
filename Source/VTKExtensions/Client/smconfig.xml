@@ -5755,6 +5755,42 @@ associates the containing cell ID to the point.
 
     </SourceProxy>
 
+    <SourceProxy name="ArcPointGlyphingFilter"
+                 class="vtkCMBArcPointGlyphingFilter"
+                 label="Glyph Arc Points">
+      <Documentation
+        long_help="Glyph arc points">
+        write me.
+      </Documentation>
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkPolyData"/>
+        </DataTypeDomain>
+        <InputArrayDomain name="input_array"
+          attribute_type="point"
+          optional="1"/>
+        <Documentation>
+          Set the input.
+        </Documentation>
+      </InputProperty>
+
+      <IntVectorProperty name="setVisible" command="setVisible"
+        number_of_elements="1" default_values="-1">
+        <Documentation>
+          set point as visiable
+        </Documentation>
+      </IntVectorProperty>
+
+      <Property name="clearVisible" command="clearVisible" />
+
+    </SourceProxy>
+
     <SourceProxy name="ArcDepressFilter" class="vtkArcDepressFilter"
       label="Depress PolyData">
       <Documentation

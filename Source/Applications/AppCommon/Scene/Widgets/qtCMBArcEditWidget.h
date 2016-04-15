@@ -16,7 +16,10 @@
 #include <QAction> //needed for ArcPointPicker
 #include <QStringBuilder> //needed for more efficient string concatenating
 #include "vtkType.h"
+#include "vtkCommand.h"
 #include "cmbSystemConfig.h"
+#include "vtkPropPicker.h"
+#include "vtkProp.h"
 
 class pqOutputPort;
 class pqRenderView;
@@ -24,6 +27,7 @@ class pqRenderViewSelectionReaction;
 class pqCMBArc;
 class qtCMBArcWidget;
 class qtCMBArcWidgetManager;
+class qtCMBArcEditWidget;
 
 namespace Ui {
 class qtCMBArcEditWidget;
@@ -77,14 +81,21 @@ private:
   pqRenderView* View;
   pqRenderViewSelectionReaction* Selecter;
 };
+
 }
+
+class vtkPointSelectedCallback;
+class qtCMBArcWidgetManager;
 
 class qtCMBArcEditWidget : public QWidget
 {
 Q_OBJECT
 
 public:
-explicit qtCMBArcEditWidget(QWidget *parent = 0);
+  friend class vtkPointSelectedCallback;
+  friend class qtCMBArcWidgetManager;
+
+  explicit qtCMBArcEditWidget(QWidget *parent = 0);
   virtual ~qtCMBArcEditWidget();
 
   virtual void setView(pqRenderView* view) { this->View=view; }
@@ -97,10 +108,15 @@ explicit qtCMBArcEditWidget(QWidget *parent = 0);
   // will be shown. Otherwise the new sub-arc editing panel will be shown
   bool isWholeArcSelected();
 
+  void selectPointMode();
+
+  void highlightPoint(int);
+
 signals:
   void arcModified(qtCMBArcWidget*, vtkIdType, vtkIdType);
   void arcModificationfinished();
   void startArcEditing();
+  void selectedPointOnLine(vtkIdType);
 
 protected slots:
   //shows the edit widget and hides the pick widget
@@ -148,6 +164,8 @@ protected slots:
   // pick the whole arc for operations
   void pickWholeArc();
 
+  void selectedPoint(int);
+
 private:
   //resets the widget to what it would be like if it was just created
   void resetWidget();
@@ -169,6 +187,44 @@ private:
 
   Ui::PickInfo StartPoint;
   Ui::PickInfo EndPoint;
+};
+
+class testPointPick : public vtkCommand
+{
+public:
+  static testPointPick *New()
+  { return new testPointPick; }
+  virtual void Execute(vtkObject *caller, unsigned long, void*)
+  {
+    /*vtkPropPicker *picker = reinterpret_cast<vtkPropPicker*>(caller);
+    vtkProp *prop = picker->GetViewProp();
+    if ( prop != NULL )
+    {
+      //this->BalloonWidget->UpdateBalloonString(prop,"Picked");
+    }*/
+  }
+};
+
+class vtkPointSelectedCallback : public vtkCommand
+{
+  friend class qtCMBArcEditWidget;
+public:
+  static vtkPointSelectedCallback *New()
+  {
+    vtkPointSelectedCallback *cb = new vtkPointSelectedCallback;
+
+    return cb;
+  }
+
+  virtual void Execute(vtkObject *vtkNotUsed(caller),
+                       unsigned long pointID,
+                       void *vtkNotUsed(callData))
+  {
+    widget->selectedPoint(static_cast<int>(pointID));
+  }
+
+private:
+  qtCMBArcEditWidget * widget;
 };
 
 #endif // __qtCMBArcEditWidget_h

@@ -60,6 +60,7 @@ public:
   //Description:
   //Returns the position of the point position, given the point index;
   bool GetPointLocation(vtkIdType index, double pos[3]);
+  bool GetPointLocationById(vtkIdType ptID, double pos[3]);
 
   bool GetPointID(vtkIdType index, vtkIdType & id);
 

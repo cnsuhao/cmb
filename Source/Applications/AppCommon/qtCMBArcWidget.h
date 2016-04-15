@@ -14,6 +14,8 @@
 #include "pq3DWidget.h"
 #include <QColor>
 #include "cmbSystemConfig.h"
+#include "vtkContourWidget.h"
+#include "vtkCMBArcWidgetRepresentation.h"
 
 class pqServer;
 class vtkSMProxy;
@@ -54,6 +56,8 @@ public:
   /// In this mode, for whole arc, the Visibility, Closed, Delete, buttonRectArc
   /// are all invisible; and for sub-arc, we only allow Modify for now.
   virtual void useArcEditingUI(bool isWholeArc);
+
+  void highlightPoint(int);
 
 signals:
   /// Signal emitted when the representation proxy's "ClosedLoop" property

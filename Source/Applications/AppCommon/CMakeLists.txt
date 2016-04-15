@@ -169,8 +169,6 @@ add_library(cmbAppCommon
   qtCMBMeshingMonitor.cxx
   qtCMBManualFunctionWidget.cxx
   qtCMBManualFunctionWidget.h
-  qtCMBManualProfilePointFunctionModifier.cxx
-  qtCMBManualProfilePointFunctionModifier.h
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h
   qtCMBOptionsDialog.cxx

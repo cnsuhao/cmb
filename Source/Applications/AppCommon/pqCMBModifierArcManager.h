@@ -27,6 +27,7 @@
 #include "cmbSystemConfig.h"
 #include "pqGeneralTransferFunctionWidget.h"
 #include "pqCMBSceneObjectBase.h"
+#include "pqCMBModifierArc.h"
 
 class QTableWidget;
 class pqCMBModifierArc;
@@ -44,6 +45,7 @@ class qtCMBManualFunctionWidget;
 class qtCMBManualProfilePointFunctionModifier;
 class cmbProfileFunction;
 class qtCMBProfileWedgeFunctionWidget;
+class pqCMBModifierArcManagerInternal;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 {
@@ -51,8 +53,8 @@ class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 
 public:
   pqCMBModifierArcManager(QLayout *layout,
-                     pqServer *server,
-                     pqRenderView *renderer);
+                          pqServer *server,
+                          pqRenderView *renderer);
   virtual ~pqCMBModifierArcManager();
 
   QTableWidget *getWidget() const { return this->TableWidget;}
@@ -126,11 +128,12 @@ protected:
   qtCMBArcWidgetManager* ArcWidgetManager;
   QGridLayout* functionLayout;
   qtCMBManualFunctionWidget* ManualFunctionWidget;
-  qtCMBManualProfilePointFunctionModifier* ManualFunctionCustomize;
   qtCMBProfileWedgeFunctionWidget* WedgeFunctionWidget;
-  QGridLayout* modifierFunctionLayout;
   cmbProfileFunction * selectedFunction;
   pqCMBSceneObjectBase::enumObjectType SourceType;
+  pqRenderView * view;
+  pqServer * server;
+  bool addPointMode;
 
   void initialize();
   void setRow(int row, pqCMBModifierArc * line);
@@ -154,6 +157,10 @@ protected:
 
   void selectFunction(cmbProfileFunction* fun);
 
+  void addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
+
+  pqCMBModifierArcManagerInternal * Internal;
+
 protected slots:
   void updateLineFunctions();
   void accepted();
@@ -165,6 +172,9 @@ protected slots:
   void functionTypeChanged(int);
   void functionModeChanged(int);
   void pointDisplayed(int);
+  void addPoint();
+  void deletePoint();
+  void addPoint(vtkIdType);
 
 protected slots:
   void onLineChange(int Id);

@@ -207,6 +207,19 @@ bool vtkPVArcInfo::GetPointLocation(vtkIdType index, double pos[3])
   return false;
 }
 
+bool vtkPVArcInfo::GetPointLocationById(vtkIdType ptID, double pos[3])
+{
+  //TODO make this faster as a look up table
+  for(size_t i = 0; i < this->PointLocations->GetNumberOfTuples();++i)
+  {
+    if(this->PointIds->GetTuple1(i) == ptID)
+    {
+      return this->GetPointLocation(i, pos);
+    }
+  }
+  return false;
+}
+
 bool vtkPVArcInfo::GetPointID(vtkIdType index, vtkIdType & id)
 {
   if(this->PointIds && index >=0 &&

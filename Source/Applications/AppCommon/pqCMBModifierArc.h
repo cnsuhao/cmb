@@ -41,16 +41,21 @@ public:
   enum FunctionMode{Single = 0, EndPoints = 1, PointAssignment = 2};
   struct pointFunctionWrapper
   {
+    friend class pqCMBModifierArc;
   private:
     cmbProfileFunction const* function;
+    vtkIdType ptId;
+    vtkIdType pointIndex;
+    void setFunction(cmbProfileFunction const* f);
   public:
     pointFunctionWrapper(pointFunctionWrapper const& other);
     void operator=(pointFunctionWrapper const& other);
     pointFunctionWrapper(cmbProfileFunction const* fun = NULL);
     ~pointFunctionWrapper();
-    void setFunction(cmbProfileFunction const* f);
-    cmbProfileFunction const* getFunction();
-    std::string getName();
+    cmbProfileFunction const* getFunction() const;
+    std::string getName() const;
+    vtkIdType getPointId() const;
+    vtkIdType getPointIndex() const;
   };
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
@@ -97,9 +102,15 @@ public:
   cmbProfileFunction * cloneFunction(std::string const& name);
 
   pointFunctionWrapper * getPointFunction(vtkIdType i);
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun);
+  void removeFunctionAtPoint(vtkIdType i);
+  bool pointHasFunction(vtkIdType i) const;
 
   FunctionMode getFunctionMode() const;
   void setFunctionMode(FunctionMode fm);
+
+  void getPointFunctions(std::vector<pointFunctionWrapper const*>& result) const;
+
 
 public slots:
   void sendChangeSignals();
@@ -120,7 +131,7 @@ signals:
 protected:
   //Varable for the path
   pqCMBArc * CmbArc;
-  std::map<vtkIdType, pointFunctionWrapper> pointsFunctions;
+  std::map<vtkIdType, pointFunctionWrapper *> pointsFunctions;
   bool IsExternalArc;
 
   FunctionMode functionMode;

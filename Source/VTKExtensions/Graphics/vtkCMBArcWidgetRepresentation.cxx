@@ -40,6 +40,7 @@
 #include "vtkBoundingBox.h"
 #include "vtkCellArray.h"
 #include "vtkUnsignedIntArray.h"
+#include "vtkCommand.h"
 
 #include <map>
 #include <set>
@@ -67,12 +68,16 @@ vtkCMBArcWidgetRepresentation::vtkCMBArcWidgetRepresentation()
   this->LoggingEnabled = false;
   this->ModifiedPointMap = new vtkCMBArcWidgetRepresentation::vtkInternalMap();
   this->CanEdit = 1;
+  this->PointSelectMode = 0;
   this->pointId = 0;
+  this->PointSelectCallBack = NULL;
 }
 
 //----------------------------------------------------------------------
 vtkCMBArcWidgetRepresentation::~vtkCMBArcWidgetRepresentation()
 {
+  if(PointSelectCallBack) PointSelectCallBack->Delete();
+  PointSelectCallBack = NULL;
   if ( this->ModifiedPointMap )
     {
     delete this->ModifiedPointMap;
@@ -142,6 +147,7 @@ int vtkCMBArcWidgetRepresentation::ToggleActiveNodeSelected()
 //----------------------------------------------------------------------
 int vtkCMBArcWidgetRepresentation::DeleteNthNode(int n)
 {
+  if(PointSelectMode) return 0;
   if (n <= 0)
     {
     //you can't delete this first node ever!
@@ -205,7 +211,8 @@ void vtkCMBArcWidgetRepresentation::BuildRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-int vtkCMBArcWidgetRepresentation::SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] )
+int vtkCMBArcWidgetRepresentation
+::SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] )
 {
   int ret = this->Superclass::SetActiveNodeToWorldPosition(worldPos,worldOrient);
   if (ret==1)
@@ -226,9 +233,26 @@ int vtkCMBArcWidgetRepresentation::SetActiveNodeToWorldPosition(double worldPos[
   return ret;
 }
 
+void vtkCMBArcWidgetRepresentation::StartWidgetInteraction(double startEventPos[2])
+{
+  if(PointSelectMode)
+  {
+    if( this->GetCurrentOperation() == vtkContourRepresentation::Translate )
+    {
+      this->SetCurrentOperationToInactive();
+    }
+    PointSelectCallBack->Execute(NULL, this->ActiveNode, NULL);
+  }
+  else
+  {
+    this->Superclass::StartWidgetInteraction(startEventPos);
+  }
+}
+
 //----------------------------------------------------------------------
 int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
 {
+  if(PointSelectMode) return 0;
   int idx;
 
   double worldPos[3];
@@ -385,6 +409,12 @@ int vtkCMBArcWidgetRepresentation::GetNodeModifiedFlags(int n)
     flag = it->second;
     }
    return flag;
+}
+
+void vtkCMBArcWidgetRepresentation::SetPointSelectCallBack(vtkCommand * cp)
+{
+  if(this->PointSelectCallBack) this->PointSelectCallBack->Delete();
+  this->PointSelectCallBack = cp;
 }
 
 //----------------------------------------------------------------------
@@ -574,4 +604,15 @@ void vtkCMBArcWidgetRepresentation::PrintSelf(ostream& os,
 
   os << indent << "Logging Enabled: "
      << (this->LoggingEnabled ? "On\n" : "Off\n");
+}
+
+void vtkCMBArcWidgetRepresentation::SetActiveNode(int a)
+{
+  this->ActiveNode = a;
+  this->NeedToRender = 1;
+  if(this->Renderer && this->Renderer->GetActiveCamera() != NULL)
+  {
+    this->BuildRepresentation();
+  }
+  this->Modified();
 }

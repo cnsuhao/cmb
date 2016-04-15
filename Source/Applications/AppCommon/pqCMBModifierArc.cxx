@@ -10,7 +10,7 @@
 #include "pqCMBModifierArc.h"
 #include "pqCMBArc.h"
 
-#include "qtCMBArcWidget.h"
+//#include "qtCMBArcWidget.h"
 
 #include <iomanip>
 #include <sstream>
@@ -50,7 +50,7 @@ pqCMBModifierArc::pointFunctionWrapper::pointFunctionWrapper(cmbProfileFunction 
 {
 }
 
-cmbProfileFunction const* pqCMBModifierArc::pointFunctionWrapper::getFunction()
+cmbProfileFunction const* pqCMBModifierArc::pointFunctionWrapper::getFunction() const
 {
   return function;
 }
@@ -61,10 +61,20 @@ pqCMBModifierArc::pointFunctionWrapper::setFunction(cmbProfileFunction const* f)
   function = f;
 }
 
-std::string pqCMBModifierArc::pointFunctionWrapper::getName()
+std::string pqCMBModifierArc::pointFunctionWrapper::getName() const
 {
   if(function) return function->getName();
   return "NULL";
+}
+
+vtkIdType pqCMBModifierArc::pointFunctionWrapper::getPointId() const
+{
+  return ptId;
+}
+
+vtkIdType pqCMBModifierArc::pointFunctionWrapper::getPointIndex() const
+{
+  return pointIndex;
 }
 
 ////////////////////////////////////////
@@ -98,6 +108,12 @@ pqCMBModifierArc::~pqCMBModifierArc()
     i->second = NULL;
   }
   functions.clear();
+
+  for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
+      it != pointsFunctions.end(); ++it)
+  {
+    delete it->second;
+  }
 }
 
 
@@ -211,11 +227,11 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       {
         vtkIdType id;
         info->GetPointID(i, id);
-        pointFunctionWrapper & wrapper = pointsFunctions[id];
-        if(pointsFunctions[i].getFunction() != NULL)
+        pointFunctionWrapper * wrapper = pointsFunctions[id];
+        if(wrapper != NULL && wrapper->getFunction() != NULL)
         {
           v.clear();
-          v << Id << i << function_to_id[pointsFunctions[i].getFunction()];
+          v << Id << i << function_to_id[wrapper->getFunction()];
           pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
           source->UpdateVTKObjects();
         }
@@ -289,8 +305,14 @@ void pqCMBModifierArc::read(std::ifstream & f)
 
 pqCMBModifierArc::pointFunctionWrapper * pqCMBModifierArc::getPointFunction(vtkIdType i)
 {
-  std::map<vtkIdType, pointFunctionWrapper>::iterator it = pointsFunctions.find(i);
-  return (it == pointsFunctions.end())?NULL:&(it->second);
+  std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);
+  return (it == pointsFunctions.end())?NULL:it->second;
+}
+
+bool pqCMBModifierArc::pointHasFunction(vtkIdType i) const
+{
+  std::map<vtkIdType, pointFunctionWrapper *>::const_iterator it =pointsFunctions.find(i);
+  return (it != pointsFunctions.end()) && it->second != NULL && it->second->getFunction() != NULL;
 }
 
 void pqCMBModifierArc::setUpFunction()
@@ -306,14 +328,27 @@ void pqCMBModifierArc::setUpFunction()
   {
     vtkIdType id;
     info->GetPointID(i, id);
-    std::map<vtkIdType, pointFunctionWrapper>::iterator it = pointsFunctions.find(id);
+    std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.find(id);
+    if(it == pointsFunctions.end())
+    {
+      pointsFunctions[id] = new pointFunctionWrapper(NULL);
+      pointsFunctions[id]->ptId = id;
+      pointsFunctions[id]->pointIndex = i;
+    }
+    else
+    {
+      it->second->pointIndex = i;
+    }
     usedIds.insert(id);
   }
-  for(std::map<vtkIdType, pointFunctionWrapper>::iterator it = pointsFunctions.begin();
+
+  //clean out cruff
+  for(std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
       it != pointsFunctions.end();/*in the loop*/)
   {
     if(usedIds.find(it->first) == usedIds.end())
     {
+      delete it->second;
       pointsFunctions.erase(it++);
     }
     else
@@ -431,12 +466,12 @@ void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* 
   {
     if(startFunction == i->second) startFunction = fun;
     fun->setName(name);
-    for( std::map<vtkIdType, pointFunctionWrapper>::iterator it = pointsFunctions.begin();
+    for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
         it != pointsFunctions.end(); ++it)
     {
-      if(it->second.getName() == name)
+      if(it->second != NULL && it->second->getName() == name)
       {
-        it->second.setFunction(fun);
+        it->second->setFunction(fun);
       }
     }
     delete i->second;
@@ -457,4 +492,51 @@ void pqCMBModifierArc::setFunctionMode(pqCMBModifierArc::FunctionMode fm)
 void pqCMBModifierArc::setRelative(bool b)
 {
   //TODO
+}
+
+pqCMBModifierArc::pointFunctionWrapper const*
+pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun)
+{
+  std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);
+  if (it == pointsFunctions.end() && fun == NULL) return NULL;
+  if (fun == NULL)
+  {
+    this->removeFunctionAtPoint(i);
+    return NULL;
+  }
+  if (it != pointsFunctions.end() && it->second != NULL)
+  {
+    it->second->function = fun;
+    return it->second;
+  }
+  else
+  {
+    assert(false && "the wrapper should always exist");
+    return pointsFunctions[i];
+  }
+}
+
+void pqCMBModifierArc::removeFunctionAtPoint(vtkIdType i)
+{
+  std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);
+  if (it == pointsFunctions.end()) return;
+  it->second->function = NULL;
+}
+
+void pqCMBModifierArc
+::getPointFunctions(std::vector<pqCMBModifierArc::pointFunctionWrapper const*>& result) const
+{
+  result.clear();
+  vtkPVArcInfo* info = CmbArc->getArcInfo();
+  if(info == NULL) return;
+  for(unsigned int i = 0; i < info->GetNumberOfPoints(); ++i)
+  {
+    vtkIdType id;
+    info->GetPointID(i, id);
+    pointFunctionWrapper const* wrapper = this->pointsFunctions.find(id)->second;
+    if(wrapper != NULL && wrapper->getFunction() != NULL)
+    {
+      result.push_back(wrapper);
+    }
+  }
 }

@@ -144,7 +144,7 @@ bool pqCMBArc::createArc(vtkSMSourceProxy *proxy)
   return false;
 }
 
-//------------- ----------------------------------------------------------------
+//------------------------------------------------------------------------------
 bool pqCMBArc::createArc(const vtkIdType& arcId)
 {
   if (this->ArcId == -1 && arcId > -1)

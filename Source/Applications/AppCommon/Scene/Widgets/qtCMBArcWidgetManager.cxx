@@ -210,6 +210,8 @@ int qtCMBArcWidgetManager::edit()
       this,SLOT(editingFinished()));
     QObject::connect(this->EditWidget,SIGNAL(startArcEditing()),
       this,SIGNAL(editingStarted()));
+    QObject::connect(this->EditWidget,SIGNAL(selectedPointOnLine(vtkIdType)),
+                     this, SIGNAL(selectedId(vtkIdType)));
 
     }
   pqCMBArc* arcObj = this->Arc;
@@ -601,4 +603,19 @@ void qtCMBArcWidgetManager::makeArc(vtkIdType startPID, vtkIdType endPID)
 {
   this->modifyArc(startPID, endPID,
     vtkCMBSubArcModifyClientOperator::OpMAKEARC);
+}
+
+void qtCMBArcWidgetManager::startSelectPoint()
+{
+  this->EditWidget->selectPointMode();
+}
+
+void qtCMBArcWidgetManager::cancelSelectPoint()
+{
+  this->EditWidget->selectedPoint(-1);
+}
+
+void qtCMBArcWidgetManager::highlightPoint(int index)
+{
+  if(this->EditWidget) this->EditWidget->highlightPoint(index);
 }

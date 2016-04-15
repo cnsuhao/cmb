@@ -25,6 +25,7 @@
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QPointer>
 
 #include <fstream>
 #include <sstream>
@@ -39,13 +40,43 @@
 #include "ui_qtArcFunctionControl.h"
 #include "ui_qtModifierArcDialog.h"
 #include "vtkPVArcInfo.h"
+#include "qtCMBArcWidget.h"
+#include "pq3DWidgetFactory.h"
+#include "vtkSMRenderViewProxy.h"
+
+#include "vtkSMPropertyHelper.h"
+#include "vtkSMProxyProperty.h"
+#include "vtkSMSourceProxy.h"
+#include "vtkSMVectorProperty.h"
+#include "vtkSMRepresentationProxy.h"
+#include "vtkNew.h"
 
 #include "qtCMBManualFunctionWidget.h"
 #include "qtCMBProfileWedgeFunctionWidget.h"
-#include "qtCMBManualProfilePointFunctionModifier.h"
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileFunction.h"
 #include "cmbProfileWedgeFunction.h"
+#include "pqDataRepresentation.h"
+#include "pqPipelineSource.h"
+#include "vtkSMNewWidgetRepresentationProxy.h"
+
+#include "vtkCMBArcEditClientOperator.h"
+
+#include "pqRepresentationHelperFunctions.h"
+
+#include <vtkPoints.h>
+#include <vtkActor.h> 
+#include <vtkPolyDataMapper.h>
+#include <vtkGlyph3D.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkProperty.h>
+#include <vtkRenderWindow.h>
+#include <vtkRendererCollection.h>
+#include <QVTKWidget.h>
+
+#include "vtkSMCMBGlyphPointSourceProxy.h"
 
 // enum for different column types
 enum DataTableCol
@@ -54,15 +85,65 @@ enum DataTableCol
   Id
 };
 
+class pqCMBModifierArcManagerInternal
+{
+public:
+  QPointer<pqDataRepresentation> ArcPointSelectRepresentation;
+  QPointer<pqPipelineSource> ArcPointSelectSource;
+  vtkSMNewWidgetRepresentationProxy * editableWidget;
+  //qtCMBArcWidget* PointSelectionWidget;
+  QPointer<pqPipelineSource> SphereSource;
+  QPointer<pqDataRepresentation> Representation;
+  QPointer<pqPipelineSource> LineGlyphFilter;
+};
+
 //-----------------------------------------------------------------------------
 pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                                                  pqServer *server,
                                                  pqRenderView *renderer)
 {
+  pqApplicationCore* core = pqApplicationCore::instance();
+  pqObjectBuilder* builder = core->getObjectBuilder();
+  this->view = renderer;
+  this->server = server;
+  this->Internal = new pqCMBModifierArcManagerInternal;
+  //this->Internal->PointSelectionWidget = NULL;
+  this->Internal->editableWidget = NULL;
+
+  this->Internal->SphereSource = builder->createSource("sources", "SphereSource", server);
+  this->Internal->LineGlyphFilter = builder->createSource("filters", "ArcPointGlyphingFilter", server);
+  this->Internal->Representation =
+      builder->createDataRepresentation( this->Internal->LineGlyphFilter->getOutputPort(0),
+                                         this->view,
+                                         "GeometryRepresentation");
+
+  //vtkSMSourceProxy* source = this->Internal->SphereSource->getProxy();
+  pqSMAdaptor::setElementProperty(this->Internal->SphereSource->getProxy()->GetProperty("SetRadius"),1000);
+
+  this->Internal->SphereSource->getProxy()->MarkModified(this->Internal->SphereSource->getProxy());
+
+  vtkSMProxy *repProxy = this->Internal->Representation->getProxy();
+  RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY( repProxy, "Color", vtkDataObject::POINT);
+
+  pqSMAdaptor::setEnumerationProperty(repProxy->GetProperty("Representation"), "3D Glyphs");
+  //vtkSMPropertyHelper(repProxy, "ImmediateModeRendering").Set(0);
+  vtkSMPropertyHelper(repProxy, "GlyphType").Set(this->Internal->SphereSource->getProxy());
+  vtkSMPropertyHelper(repProxy, "Scaling").Set(true);
+  vtkSMPropertyHelper(repProxy, "ScaleMode").Set(2);
+  vtkSMPropertyHelper(repProxy, "Orient").Set(true);
+  vtkSMPropertyHelper(repProxy, "OrientationMode").Set(1);
+  vtkSMPropertyHelper(repProxy, "MapScalars").Set(0);
+  vtkSMPropertyHelper(repProxy, "SelectScaleArray").Set("Scaling");
+  vtkSMPropertyHelper(repProxy, "SelectOrientationVectors").Set("Orientation");
+
+  // This is a work arround for a bug in ParaView
+  vtkSMPropertyHelper(repProxy, "ScaleFactor").Set(1.0);
+
+  repProxy->UpdateVTKObjects();
+
   this->CurrentModifierArc = NULL;
   this->ManualFunctionWidget = NULL;
   this->WedgeFunctionWidget = NULL;
-  this->ManualFunctionCustomize = NULL;
   this->selectedFunction = NULL;
   this->UI = new Ui_qtArcFunctionControl();
   QWidget * w = new QWidget();
@@ -86,8 +167,6 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   functionLayout = new QGridLayout(this->UI->functionControlArea);
   functionLayout->setMargin(0);
 
-  modifierFunctionLayout = new QGridLayout(this->UI->pointsControl);
-  modifierFunctionLayout->setMargin(0);
   this->TableWidget = this->UI->ModifyArcTable;
   this->clear();
   this->initialize();
@@ -137,22 +216,33 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                    this, SLOT(doneModifyingArc()));
   QObject::connect(this->ArcWidgetManager, SIGNAL(Finish()),
                    this, SLOT(doneModifyingArc()));
+  QObject::connect( this->ArcWidgetManager, SIGNAL(selectedId(vtkIdType)),
+                    this, SLOT(addPoint(vtkIdType)));
   this->UI->ArcControlTabs->setTabEnabled(1, false);
   this->UI->ArcControlTabs->setTabEnabled(2, false);
   this->UI->ArcControlTabs->setTabEnabled(3, false);
   QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)));
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()));
   this->check_save();
+  this->addPointMode = false;
 }
 
 //-----------------------------------------------------------------------------
 pqCMBModifierArcManager::~pqCMBModifierArcManager()
 {
+  if(this->Internal->ArcPointSelectSource)
+  {
+    pqApplicationCore::instance()->getObjectBuilder()->destroy(this->Internal->ArcPointSelectSource);
+    this->Internal->ArcPointSelectSource = NULL;
+  }
+  delete this->Internal;
   this->UI->ArcControlArea->takeWidget();
   this->clear();
   delete this->Dialog;
   delete this->UI;
   delete this->ArcWidgetManager;
+  //delete this->Internal->PointSelectionWidget;
+  //TODO clean up editableWidget
 }
 
 //-----------------------------------------------------------------------------
@@ -175,8 +265,9 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
 
-  this->UI->points->setColumnCount(4);
-  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("id") << tr("X") << tr("Y")
+  this->UI->points->setColumnCount(5);
+  this->UI->points->setHorizontalHeaderLabels( QStringList() << tr("Point Index") << tr("Point Id")
+                                                             << tr("X") << tr("Y")
                                                              << tr("Function"));
   this->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
   this->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -184,6 +275,8 @@ void pqCMBModifierArcManager::initialize()
 
   QObject::connect(this->UI->points, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onPointsSelectionChange()));
+  QObject::connect(this->UI->AddPoint, SIGNAL(clicked()), this, SLOT(addPoint()));
+  QObject::connect(this->UI->RemovePoint, SIGNAL(clicked()), this, SLOT(deletePoint()));
 
 }
 
@@ -246,7 +339,6 @@ void pqCMBModifierArcManager::clear()
   this->CurrentModifierArc = NULL;
   delete this->ManualFunctionWidget;
   delete this->WedgeFunctionWidget;
-  delete this->ManualFunctionCustomize;
   this->ManualFunctionWidget = NULL;
   this->selectedFunction = NULL;
   this->TableWidget->clearContents();
@@ -501,20 +593,27 @@ void pqCMBModifierArcManager::onFunctionSelectionChange()
 void pqCMBModifierArcManager::onPointsSelectionChange()
 {
   QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
-  delete ManualFunctionCustomize;
-  ManualFunctionCustomize = NULL;
   if( !selected.empty() )
   {
-    std::vector<cmbProfileFunction*> funs;
-    CurrentModifierArc->getFunctions(funs);
-    QTableWidgetItem * si = selected.front();
-    int row = si->row();
-    pqCMBModifierArc::pointFunctionWrapper * mp = CurrentModifierArc->getPointFunction(row);
-    if(mp != NULL)
+    vtkSMSourceProxy * pointDisplaySource =
+                        vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
+    QVariant qv = selected[0]->data(Qt::UserRole);
+    pqCMBModifierArc::pointFunctionWrapper * wrapper =
+                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+    this->UI->FunctionName->setCurrentIndex(this->UI->FunctionName->findText(wrapper->getName().c_str()));
+    selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
-      ManualFunctionCustomize = new qtCMBManualProfilePointFunctionModifier(NULL, funs, *mp);
-      modifierFunctionLayout->addWidget(this->ManualFunctionCustomize);
+      double pt[3];
+      vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
+      pointDisplaySource->InvokeCommand("clearVisible");
+      pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"), wrapper->getPointIndex());
+      pointDisplaySource->UpdateVTKObjects();
+      pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"), -1);
+      pointDisplaySource->UpdatePipeline();
+      this->Internal->Representation->getProxy()->UpdateVTKObjects();
+      emit requestRender();
     }
+    //this->ArcWidgetManager->highlightPoint(wrapper->getPointIndex());
   }
 }
 
@@ -542,9 +641,14 @@ void pqCMBModifierArcManager::addLine()
 
 void pqCMBModifierArcManager::selectLine(int sid)
 {
+  vtkSMSourceProxy * pointDisplaySource =
+                        vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
   if(this->CurrentModifierArc != NULL)
     {
     if(sid == this->CurrentModifierArc->getId()) return;
+    pqSMAdaptor::setInputProperty(pointDisplaySource->GetProperty("Input"), NULL, 0);
+    pointDisplaySource->MarkModified(pointDisplaySource);
+    pointDisplaySource->UpdateVTKObjects();
     this->UI->ArcControlArea->takeWidget();
     this->CurrentModifierArc->switchToNotEditable();
     this->CurrentModifierArc = NULL;
@@ -610,9 +714,18 @@ void pqCMBModifierArcManager::selectLine(int sid)
     }
   if(this->CurrentModifierArc != NULL)
     {
+    if(this->CurrentModifierArc->GetCmbArc()->getSource() != NULL)
+    {
+      pqSMAdaptor::setInputProperty(pointDisplaySource->GetProperty("Input"),
+                                    this->CurrentModifierArc->GetCmbArc()->getSource()->getProxy(),
+                                    0);
+      pointDisplaySource->MarkModified(pointDisplaySource);
+      pointDisplaySource->UpdateVTKObjects();
+    }
     this->updateLineFunctions();
     this->setDatasetTable(sid);
     this->setUpPointsTable();
+    this->UI->points->selectRow(0);
 
     this->UI->ArcControlTabs->setTabEnabled(1, true);
     this->UI->ArcControlTabs->setTabEnabled(2, true);
@@ -763,7 +876,17 @@ void pqCMBModifierArcManager::updateLineFunctions()
       name = dig->getStartFun()->getName().c_str();
       break;
     case pqCMBModifierArc::PointAssignment:
+    {
+      QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
+      if( !selected.empty() )
+      {
+        QVariant qv = selected[0]->data(Qt::UserRole);
+        pqCMBModifierArc::pointFunctionWrapper * wrapper =
+          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+        name = wrapper->getName().c_str();
+      }
       break;
+    }
   }
   this->UI->FunctionName->setCurrentIndex(this->UI->FunctionName->findText(name));
   this->UI->FunctionName->blockSignals(false);
@@ -803,7 +926,17 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
         CurrentModifierArc->setStartFun(selectedFunction->getName());
         break;
       case pqCMBModifierArc::PointAssignment:
+      {
+        QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
+        if( !selected.empty() )
+        {
+          QVariant qv = selected[0]->data(Qt::UserRole);
+          pqCMBModifierArc::pointFunctionWrapper * wrapper =
+                         static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+          CurrentModifierArc->addFunctionAtPoint(wrapper->getPointId(),selectedFunction);
+        }
         break;
+      }
     }
     //bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
     //this->UI->isDefault->setChecked(isDefault);
@@ -957,6 +1090,13 @@ void pqCMBModifierArcManager::setUpTable()
 
 void pqCMBModifierArcManager::setUpPointsTable()
 {
+  pqCMBModifierArc::pointFunctionWrapper * wrapper = NULL;
+  QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
+  if( !selected.empty() )
+  {
+    QVariant qv = selected[0]->data(Qt::UserRole);
+    wrapper = static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+  }
   QTableWidget* tmp = this->UI->points;
   tmp->setSelectionMode(QAbstractItemView::SingleSelection);
   tmp->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -969,35 +1109,15 @@ void pqCMBModifierArcManager::setUpPointsTable()
     tmp->blockSignals(false);
     return;
   }
-  Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   tmp->setSelectionMode(QAbstractItemView::SingleSelection);
+
   pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
   vtkPVArcInfo* ai = arc->getArcInfo();
-  for(size_t i = 0; ai != NULL && i < static_cast<size_t>(ai->GetNumberOfPoints()); ++i)
+  std::vector<pqCMBModifierArc::pointFunctionWrapper const*> points;
+  CurrentModifierArc->getPointFunctions(points);
+  for(size_t i = 0; i < points.size(); ++i)
   {
-    vtkIdType id;
-    ai->GetPointID(i, id);
-  
-    double pt[3];
-    ai->GetPointLocation(i, pt);
-
-    int row = tmp->rowCount();
-
-    tmp->insertRow(tmp->rowCount());
-
-    QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(id));
-    qtwi->setFlags(commFlags);
-    tmp->setItem(row, 0, qtwi);
-    qtwi = new QTableWidgetItem(QString::number(pt[0]));
-    qtwi->setFlags(commFlags);
-    tmp->setItem(row, 1, qtwi);
-    qtwi = new QTableWidgetItem(QString::number(pt[1]));
-    qtwi->setFlags(commFlags);
-    tmp->setItem(row, 2, qtwi);
-    pqCMBModifierArc::pointFunctionWrapper * mp = CurrentModifierArc->getPointFunction(i);
-    qtwi = new QTableWidgetItem((mp != NULL)?QString(mp->getName().c_str()):QString("NULL"));
-    qtwi->setFlags(commFlags);
-    tmp->setItem(row, 3, qtwi);
+    this->addItemToTable(points[i], wrapper == points[i]);
   }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
@@ -1281,16 +1401,22 @@ void pqCMBModifierArcManager::functionModeChanged(int m)
   if(CurrentModifierArc == NULL) return;
   pqCMBModifierArc::FunctionMode mode = static_cast<pqCMBModifierArc::FunctionMode>(m);
   CurrentModifierArc->setFunctionMode(mode);
+  this->UI->EndPointDisplayed->hide();
+  this->UI->pointsFrame->hide();
   switch(CurrentModifierArc->getFunctionMode())
   {
     case pqCMBModifierArc::PointAssignment:
+      this->UI->pointsFrame->show();
+
+      break;
     case pqCMBModifierArc::Single:
       this->pointDisplayed(0);
-      this->UI->EndPointDisplayed->hide();
+      //this->ArcWidgetManager->highlightPoint(-1);
       break;
     case pqCMBModifierArc::EndPoints:
       this->pointDisplayed(this->UI->EndPointDisplayed->currentIndex());
       this->UI->EndPointDisplayed->show();
+
       break;
   }
 }
@@ -1308,10 +1434,109 @@ void pqCMBModifierArcManager::pointDisplayed(int index)
         break;
       }
     case pqCMBModifierArc::Single:
+      //this->ArcWidgetManager->highlightPoint(0);
       name = CurrentModifierArc->getStartFun()->getName().c_str();
       break;
     case pqCMBModifierArc::PointAssignment:
       break;
   }
   this->UI->FunctionName->setCurrentIndex(this->UI->FunctionName->findText(name));
+}
+
+void pqCMBModifierArcManager::addPoint(vtkIdType id)
+{
+  this->addPointMode = false;
+  std::vector<cmbProfileFunction*> funs;
+  CurrentModifierArc->getFunctions(funs);
+  if(!CurrentModifierArc->pointHasFunction(id))
+  {
+    this->addItemToTable(CurrentModifierArc->addFunctionAtPoint(id, funs[0]), true);
+  }
+}
+
+void pqCMBModifierArcManager::addPoint()
+{
+  ArcWidgetManager->startSelectPoint();
+  this->addPointMode = true;
+}
+
+void pqCMBModifierArcManager::deletePoint()
+{
+  if(this->addPointMode)
+  {
+    ArcWidgetManager->cancelSelectPoint();
+    this->addPointMode = false;
+    return;
+  }
+
+  QList<QTableWidgetItem *>selected =	this->UI->points->selectedItems();
+  if( !selected.empty() )
+  {
+    QVariant qv = selected[0]->data(Qt::UserRole);
+    pqCMBModifierArc::pointFunctionWrapper * wrapper =
+                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+    CurrentModifierArc->removeFunctionAtPoint(wrapper->getPointId());
+    this->UI->points->removeRow(selected[0]->row());
+
+  }
+}
+
+void pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp,
+                                             bool select)
+{
+  if(mp == NULL) return;
+  QTableWidget* tmp = this->UI->points;
+
+  Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+  double pt[3];
+  vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
+  ai->GetPointLocation(mp->getPointIndex(), pt);
+
+  int row = tmp->rowCount();
+  if(tmp->rowCount() != 0)
+  {
+    //If there are enough points, binary would be significantly faster
+    for(row = 0; row < tmp->rowCount(); ++row)
+    {
+      QTableWidgetItem * item = tmp->item(row, 0);
+      QVariant qv = item->data(Qt::UserRole);
+      pqCMBModifierArc::pointFunctionWrapper * wrapper =
+                      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+      if(mp->getPointIndex() < wrapper->getPointIndex()) break;
+    }
+  }
+
+  tmp->insertRow(row);
+
+  QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(mp->getPointId()));
+  QVariant vdata;
+  vdata.setValue(static_cast<void*>(const_cast<pqCMBModifierArc::pointFunctionWrapper *>(mp)));
+  qtwi->setData(Qt::UserRole, vdata);
+  qtwi->setFlags(commFlags);
+  tmp->setItem(row, 1, qtwi);
+  qtwi = new QTableWidgetItem(QString::number(pt[0]));
+  qtwi->setData(Qt::UserRole, vdata);
+  qtwi->setFlags(commFlags);
+  tmp->setItem(row, 2, qtwi);
+  qtwi = new QTableWidgetItem(QString::number(pt[1]));
+  qtwi->setData(Qt::UserRole, vdata);
+  qtwi->setFlags(commFlags);
+  tmp->setItem(row, 3, qtwi);
+  qtwi = new QTableWidgetItem(QString(mp->getName().c_str()));
+  qtwi->setData(Qt::UserRole, vdata);
+  qtwi->setFlags(commFlags);
+  tmp->setItem(row, 4, qtwi);
+  qtwi = new QTableWidgetItem(QString::number(mp->getPointIndex()));
+  qtwi->setData(Qt::UserRole, vdata);
+  qtwi->setFlags(commFlags);
+  tmp->setItem(row, 0, qtwi);
+  if(select)
+  {
+    tmp->selectRow(row);
+  }
+  if (tmp->rowCount() == 1)
+  {
+    tmp->resizeColumnsToContents();
+  }
 }
