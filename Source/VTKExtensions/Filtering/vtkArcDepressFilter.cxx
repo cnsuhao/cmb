@@ -278,8 +278,8 @@ public:
                              double sl, double sr, double maxwL, double maxwR)
   : baseWidth(bw), displacement(disp), relative(r), clamp(c), dig(d)
   {
-    slope[Right] = sr;
-    slope[Left] = sl;
+    slope[Right] = (dig)?sr:-sr;
+    slope[Left] = (dig)?sl:-sl;
     maxWidth[Right] = maxwR;
     maxWidth[Left] = maxwL;
     weightFuntion = (weightFun == DepArcProfileFunction::Piecewise) ?
@@ -323,13 +323,14 @@ public:
     if(!evalFun(d, w, tmp)) return pt;
     if(relative)
     {
-      //TODO Clamp
       if(clamp && ((dig && tmp>0)||(!dig && tmp<0))) return pt;
       return pt + w*tmp;
     }
     else
     {
-      //TODO Clamp
+      double direction = tmp - pt;
+      if(dig && clamp && direction > 0) return pt;
+      else if(!dig && clamp && direction < 0) return pt;
       return w*tmp +(1-w)*pt;
     }
   }
@@ -339,7 +340,7 @@ public:
     if(!evalFun(d, w, tmp)) return;
     if(relative)
     {
-      //TODO Clamp
+      if(clamp && ((dig && tmp>0)||(!dig && tmp<0))) return;
       pt[0] = pt[0] + w*tmp*n[0];
       pt[1] = pt[1] + w*tmp*n[1];
       pt[2] = pt[2] + w*tmp*n[2];
@@ -347,9 +348,16 @@ public:
     else
     {
       //TODO Clamp
-      pt[0] = w*tmp*n[0] + (1-w)*pt[0];
-      pt[1] = w*tmp*n[1] + (1-w)*pt[1];
-      pt[2] = w*tmp*n[2] + (1-w)*pt[2];
+      double tmpPt[] = {w*tmp*n[0] + (1-w)*pt[0],
+                        w*tmp*n[1] + (1-w)*pt[1],
+                        w*tmp*n[2] + (1-w)*pt[2]};
+      if(clamp)
+      {
+        //todo
+      }
+      pt[0] = tmpPt[0];
+      pt[1] = tmpPt[1];
+      pt[2] = tmpPt[2];
     }
   }
   virtual void addWeightPoint(double w, double v, double s, double m)

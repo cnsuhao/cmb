@@ -3,35 +3,6 @@
 
 #include "cmbProfileFunction.h"
 
-class cmbProfileWedgeFunction;
-
-class CMBAPPCOMMON_EXPORT cmbProfileWedgeFunctionParameters : public cmbProfileFunctionParameters
-{
-public:
-  friend class cmbProfileWedgeFunction;
-  cmbProfileWedgeFunctionParameters();
-  virtual ~cmbProfileWedgeFunctionParameters();
-  virtual cmbProfileWedgeFunctionParameters * clone();
-
-  double getDepth() const;
-  double getBaseWidth() const;
-  double getSlopeLeft() const;
-  double getSlopeRight() const;
-
-  void setDepth(double d);
-  void setBaseWidth(double d);
-  void setSlopeLeft(double d);
-  void setSlopeRight(double d);
-
-protected:
-  double depth;
-  double baseWidth;
-  double slopeLeft;
-  double slopeRight;
-
-  cmbProfileWedgeFunctionParameters(cmbProfileWedgeFunctionParameters const* other);
-};
-
 class CMBAPPCOMMON_EXPORT cmbProfileWedgeFunction : public cmbProfileFunction
 {
 public:
@@ -42,7 +13,6 @@ public:
   virtual cmbProfileFunction * clone(std::string const& name) const;
   virtual void sendDataToProxy(int arc_ID, int pointID,
                                vtkSMSourceProxy* source) const;
-  virtual cmbProfileFunctionParameters * getParameters() const;
 
   virtual vtkPiecewiseFunction * getWeightingFunction() const
   {
@@ -71,11 +41,18 @@ public:
   bool isClamped() const;
   void setClamped(bool w);
 
+  void setDig(bool d);
+  bool isDig() const;
+
 protected:
   virtual bool readData(std::ifstream & in, int version);
   virtual bool writeData(std::ofstream & out) const;
 private:
-  cmbProfileWedgeFunctionParameters * parameters;
+  double depth;
+  double baseWidth;
+  double slopeLeft;
+  double slopeRight;
+
   vtkPiecewiseFunction * WeightingFunction;
 
   bool Relative;
@@ -83,6 +60,7 @@ private:
   bool WeightUseSpline;
 
   bool clamp;
+  bool dig;
 
   cmbProfileWedgeFunction(cmbProfileWedgeFunction const* other);
 };

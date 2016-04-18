@@ -26,6 +26,7 @@ protected slots:
   void setRelative(bool);
   void setSymmetry(bool);
   void setClamp(bool);
+  void setDig(bool);
   void weightSplineBox(bool);
   void render();
 protected:

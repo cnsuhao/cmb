@@ -24,7 +24,6 @@ public:
   virtual ~cmbProfileFunction(){}
   virtual FunctionType getType() const = 0;
   virtual cmbProfileFunction * clone(std::string const& name) const = 0;
-  virtual cmbProfileFunctionParameters * getParameters() const = 0;
   void setName(std::string const& n);
   std::string const& getName() const;
   bool write(std::ofstream & out) const;

@@ -88,7 +88,7 @@
    <item row="4" column="4">
     <widget class="QCheckBox" name="relative">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="text">
       <string>Relative</string>
@@ -229,6 +229,13 @@
      </property>
      <property name="text">
       <string>Clamp</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="Dig">
+     <property name="text">
+      <string>Dig</string>
      </property>
     </widget>
    </item>
