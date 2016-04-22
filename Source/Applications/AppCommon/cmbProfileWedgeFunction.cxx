@@ -22,7 +22,8 @@ cmbProfileWedgeFunction
 : depth(other->depth), baseWidth(other->baseWidth),
   slopeLeft(other->slopeLeft), slopeRight(other->slopeRight),
   WeightingFunction(vtkPiecewiseFunction::New()), Relative(other->Relative),
-  Symmetry(other->Symmetry)
+  Symmetry(other->Symmetry), WeightUseSpline(other->WeightUseSpline),
+  clamp(other->clamp), dig(other->dig)
 {
   this->WeightingFunction->DeepCopy(other->WeightingFunction);
 }

@@ -374,6 +374,8 @@ public:
   {
     assert(other->weightFuntion != NULL);
     assert(this->weightFuntion != NULL);
+    assert(t<=1.0 && t >= 0);
+    assert(this->relative == other->relative);
     DepArcWedgeProfileFunction * result = new DepArcWedgeProfileFunction();
     result->baseWidth = (1-t)*this->baseWidth + t*other->baseWidth;
     result->displacement = (1-t)*this->displacement + t*other->displacement;
@@ -381,8 +383,8 @@ public:
                       (this->slope[1] == 0)?0:1/this->slope[1]};
     double otherS[] = {(other->slope[0] == 0)?0:1/other->slope[0],
                        (other->slope[1] == 0)?0:1/other->slope[1]};
-    result->slope[0] = ((1-t)*thisS[0] + t*otherS[0]);
-    result->slope[1] = ((1-t)*thisS[1] + t*otherS[1]);
+    result->slope[0] = ((1-t)*std::abs(thisS[0]) + t*std::abs(otherS[0]));
+    result->slope[1] = ((1-t)*std::abs(thisS[1]) + t*std::abs(otherS[1]));
     if(result->slope[0] != 0) result->slope[0] = 1.0/result->slope[0];
     if(result->slope[1] != 0) result->slope[1] = 1.0/result->slope[1];
     if(this->relative && other->relative)
@@ -399,17 +401,23 @@ public:
         result->maxWidth[Right] = std::abs(result->maxWidth[Right]) +
                                   std::abs(result->displacement/result->slope[Right]);
       }
+      result->dig = result->displacement < 0;
     }
     else
     {
       result->maxWidth[0] = (1-t)*this->maxWidth[0] + t*other->maxWidth[0];
       result->maxWidth[1] = (1-t)*this->maxWidth[1] + t*other->maxWidth[1];
+      result->dig = (t<0.5)?this->dig:other->dig;
+      if(!result->dig)
+      {
+        result->slope[0] = -result->slope[0];
+        result->slope[1] = -result->slope[1];
+      }
     }
     result->weightFuntion = new MixArcDepressFunction(this->weightFuntion->clone(),
                                                       other->weightFuntion->clone(), t);
     result->relative = this->relative;
     result->clamp = this->clamp;
-    result->dig = this->dig;
     if(relative == other->relative && clamp == other->clamp && dig == other->dig)
     {
       assert(result->weightFuntion != NULL);
