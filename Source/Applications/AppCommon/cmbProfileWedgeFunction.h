@@ -30,7 +30,7 @@ public:
   void setSlopeRight(double d);
 
   bool isRelative() const;
-  void setRelative(bool ir);
+  virtual void setRelative(bool ir);
 
   bool isSymmetric() const;
   void setSymmetry(bool);

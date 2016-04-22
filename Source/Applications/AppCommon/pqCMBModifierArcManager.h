@@ -46,12 +46,14 @@ class qtCMBManualProfilePointFunctionModifier;
 class cmbProfileFunction;
 class qtCMBProfileWedgeFunctionWidget;
 class pqCMBModifierArcManagerInternal;
+class vtkPointSelectedCallback;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 {
   Q_OBJECT
 
 public:
+  friend class vtkPointSelectedCallback;
   pqCMBModifierArcManager(QLayout *layout,
                           pqServer *server,
                           pqRenderView *renderer);
@@ -138,8 +140,6 @@ protected:
   void initialize();
   void setRow(int row, pqCMBModifierArc * line);
 
-  Ui_qtArcFunctionControl * UI;
-  Ui_qtModifierArcDialog * UI_Dialog;
   QDialog * Dialog;
 
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
@@ -157,6 +157,8 @@ protected:
 
   void selectFunction(cmbProfileFunction* fun);
 
+  void updateUiControls();
+
   void addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
 
   pqCMBModifierArcManagerInternal * Internal;
@@ -166,7 +168,6 @@ protected slots:
   void accepted();
   void nameChanged(QString);
   void setToDefault();
-  void newFunction();
   void deleteFunction();
   void cloneFunction();
   void functionTypeChanged(int);
@@ -175,6 +176,7 @@ protected slots:
   void addPoint();
   void deletePoint();
   void addPoint(vtkIdType);
+  void editArc();
 
 protected slots:
   void onLineChange(int Id);

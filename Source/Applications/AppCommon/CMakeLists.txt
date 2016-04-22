@@ -48,6 +48,7 @@ set(UI_FORMS
     UI/qtCMBStackedTINDialog.ui
     UI/pqContourWidget.ui
     UI/pqLineWidget.ui
+    UI/qtArcEditWidget.ui
     )
 
 qt4_wrap_ui(UI_BUILT_SOURCES

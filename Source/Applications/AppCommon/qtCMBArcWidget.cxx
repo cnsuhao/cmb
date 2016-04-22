@@ -221,6 +221,11 @@ void qtCMBArcWidget::ModifyMode()
   this->Internals->ModifyMode->setChecked(true);
 }
 
+void qtCMBArcWidget::EditMode()
+{
+  this->Internals->EditMode->setChecked(true);
+}
+
 //-----------------------------------------------------------------------------
 void qtCMBArcWidget::checkCanBeEdited()
 {
@@ -347,17 +352,5 @@ void qtCMBArcWidget::useArcEditingUI(bool isWholeArc)
   this->Internals->buttonRectArc->setVisible(isWholeArc);
   this->Internals->Delete->setVisible(false);
   this->Internals->Closed->setEnabled(isWholeArc);
-}
-
-void qtCMBArcWidget::highlightPoint(int i)
-{
-  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->getWidgetProxy();
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-                      vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
-  widgetRep->SetActiveNode(i);
-  this->setModified();
-  this->render();
-  widgetProxy->UpdateVTKObjects();
 }
 

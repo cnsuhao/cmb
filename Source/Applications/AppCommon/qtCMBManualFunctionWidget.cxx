@@ -67,12 +67,9 @@ qtCMBManualFunctionWidget
   this->Ui->Symmetric->setChecked(isSymmetric);
   connect(this->Ui->Symmetric, SIGNAL(clicked(bool)),
           this, SLOT(setSemetricMode(bool)));
-  connect(this->Ui->Relative, SIGNAL(clicked(bool)), this, SLOT(relativeChanged(bool)));
 
   this->Ui->DisplacementSplineCont->setChecked(function->isDispSpline());
   this->Ui->WeightingSplineControl->setChecked(function->isWeightSpline());
-
-  this->Ui->Relative->setChecked(function->isRelative());
 
   this->DisplacementProfile->changeFunction(0, function->getDisplacementProfile(), true);
   this->WeightingFunction->changeFunction(0, function->getWeightingFunction(), true);
@@ -89,6 +86,10 @@ qtCMBManualFunctionWidget
 
 qtCMBManualFunctionWidget::~qtCMBManualFunctionWidget()
 {
+  delete this->WeightingFunction;
+  this->WeightingFunction = NULL;
+  delete this->DisplacementProfile;
+  this->DisplacementProfile = NULL;
   delete Ui;
 }
 
@@ -132,11 +133,6 @@ void qtCMBManualFunctionWidget::setSemetricMode( bool sm )
   this->Ui->leftValue->setValue(function->getDistanceRange(pqCMBModifierArc::MIN));
   this->Ui->rightValue->setValue(function->getDistanceRange(pqCMBModifierArc::MAX));
   this->render();
-}
-
-void qtCMBManualFunctionWidget::relativeChanged(bool b)
-{
-  this->function->setRelative(b);
 }
 
 void qtCMBManualFunctionWidget::updateDepthMax(double d)

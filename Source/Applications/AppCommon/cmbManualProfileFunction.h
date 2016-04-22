@@ -42,7 +42,7 @@ public:
   bool isSymmetric() const;
   bool isRelative() const;
   void setSymmetric(bool is);
-  void setRelative(bool ir);
+  virtual void setRelative(bool ir);
   bool isDispSpline() const;
   bool isWeightSpline() const;
   void setDispSpline(bool s);

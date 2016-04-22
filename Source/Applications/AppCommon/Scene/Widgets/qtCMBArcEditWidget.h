@@ -86,6 +86,7 @@ private:
 
 class vtkPointSelectedCallback;
 class qtCMBArcWidgetManager;
+class pqCmbModifierArcManager;
 
 class qtCMBArcEditWidget : public QWidget
 {
@@ -94,6 +95,7 @@ Q_OBJECT
 public:
   friend class vtkPointSelectedCallback;
   friend class qtCMBArcWidgetManager;
+  friend class pqCmbModifierArcManager;
 
   explicit qtCMBArcEditWidget(QWidget *parent = 0);
   virtual ~qtCMBArcEditWidget();
@@ -109,8 +111,6 @@ public:
   bool isWholeArcSelected();
 
   void selectPointMode();
-
-  void highlightPoint(int);
 
 signals:
   void arcModified(qtCMBArcWidget*, vtkIdType, vtkIdType);
@@ -187,44 +187,6 @@ private:
 
   Ui::PickInfo StartPoint;
   Ui::PickInfo EndPoint;
-};
-
-class testPointPick : public vtkCommand
-{
-public:
-  static testPointPick *New()
-  { return new testPointPick; }
-  virtual void Execute(vtkObject *caller, unsigned long, void*)
-  {
-    /*vtkPropPicker *picker = reinterpret_cast<vtkPropPicker*>(caller);
-    vtkProp *prop = picker->GetViewProp();
-    if ( prop != NULL )
-    {
-      //this->BalloonWidget->UpdateBalloonString(prop,"Picked");
-    }*/
-  }
-};
-
-class vtkPointSelectedCallback : public vtkCommand
-{
-  friend class qtCMBArcEditWidget;
-public:
-  static vtkPointSelectedCallback *New()
-  {
-    vtkPointSelectedCallback *cb = new vtkPointSelectedCallback;
-
-    return cb;
-  }
-
-  virtual void Execute(vtkObject *vtkNotUsed(caller),
-                       unsigned long pointID,
-                       void *vtkNotUsed(callData))
-  {
-    widget->selectedPoint(static_cast<int>(pointID));
-  }
-
-private:
-  qtCMBArcEditWidget * widget;
 };
 
 #endif // __qtCMBArcEditWidget_h

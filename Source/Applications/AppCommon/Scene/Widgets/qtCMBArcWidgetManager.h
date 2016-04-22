@@ -86,7 +86,6 @@ public slots:
   void makeArc(vtkIdType startIdx, vtkIdType endIdx);
   void startSelectPoint();
   void cancelSelectPoint();
-  void highlightPoint(int index);
 
 protected slots:
   // called when a whole arc is done creating or modifying.

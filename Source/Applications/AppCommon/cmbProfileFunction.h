@@ -28,6 +28,7 @@ public:
   std::string const& getName() const;
   bool write(std::ofstream & out) const;
   static cmbProfileFunction * read(std::ifstream & in, size_t count);
+  virtual void setRelative(bool b) = 0;
 
   virtual void sendDataToProxy(int arc_ID, int pointID,
                                vtkSMSourceProxy* source) const = 0;

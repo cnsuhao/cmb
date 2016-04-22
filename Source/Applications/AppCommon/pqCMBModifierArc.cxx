@@ -80,26 +80,35 @@ vtkIdType pqCMBModifierArc::pointFunctionWrapper::getPointIndex() const
 ////////////////////////////////////////
 
 pqCMBModifierArc::pqCMBModifierArc()
-:CmbArc(new pqCMBArc()), IsExternalArc(false), Modifier(NULL), IsVisible(true), functionMode(Single)
+:CmbArc(new pqCMBArc()), IsExternalArc(false), IsVisible(true), IsRelative(true),
+ functionMode(Single)
 {
-  endFunction = startFunction = new cmbProfileWedgeFunction();
-  startFunction->setName("FUN0");
-  functions[startFunction->getName()] = startFunction;
+  cmbProfileWedgeFunction * fun = new cmbProfileWedgeFunction();
+  startFunction = new pointFunctionWrapper(fun);
+  endFunction = new pointFunctionWrapper(fun);
+  fun->setName("FUN0");
+  fun->setRelative(true);
+  functions[startFunction->getName()] = fun;
   setUpFunction();
 }
 
 pqCMBModifierArc::pqCMBModifierArc(vtkSMSourceProxy *proxy)
 :CmbArc(new pqCMBArc(proxy)),
- IsExternalArc(false), Modifier(NULL), IsVisible(true)
+ IsExternalArc(false), IsVisible(true), IsRelative( true )
 {
   IsVisible = true;
-  endFunction = startFunction = new cmbProfileWedgeFunction();
-  startFunction->setName("FUN0");
-  functions[startFunction->getName()] = startFunction;
+  cmbProfileWedgeFunction * fun = new cmbProfileWedgeFunction();
+  startFunction = new pointFunctionWrapper(fun);
+  endFunction = new pointFunctionWrapper(fun);
+  fun->setName("FUN0");
+  fun->setRelative(true);
+  functions[startFunction->getName()] = fun;
 }
 
 pqCMBModifierArc::~pqCMBModifierArc()
 {
+  delete startFunction;
+  delete endFunction;
   if(!IsExternalArc) delete CmbArc;
   for(std::map<std::string, cmbProfileFunction * >::iterator i = functions.begin();
       i != functions.end(); ++i)
@@ -200,20 +209,21 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
   switch(functionMode)
   {
     case EndPoints:
-      if(endFunction != startFunction)
+      if(endFunction->getFunction() != startFunction->getFunction())
       {
         v.clear();
-        endFunction->sendDataToProxy(Id, 1, source);
+        endFunction->getFunction()->sendDataToProxy(Id, 1, source);
         v << Id << info->GetNumberOfPoints()-1 << 1;
         pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
         source->UpdateVTKObjects();
       }
     case Single:
       v.clear();
-      startFunction->sendDataToProxy(Id, 0, source);
+      startFunction->getFunction()->sendDataToProxy(Id, 0, source);
       v << Id << 0 << 0;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
       source->UpdateVTKObjects();
+      break;
     case PointAssignment:
     {
       std::map< cmbProfileFunction const*, unsigned int> function_to_id;
@@ -390,7 +400,7 @@ bool pqCMBModifierArc::setStartFun(std::string const& name)
   {
     return false;
   }
-  startFunction = i->second;
+  startFunction->setFunction(i->second);
   return true;
 }
 
@@ -401,7 +411,7 @@ bool pqCMBModifierArc::setEndFun(std::string const& name)
   {
     return false;
   }
-  endFunction = i->second;
+  endFunction->setFunction(i->second);
   return true;
 }
 
@@ -418,6 +428,7 @@ cmbProfileFunction * pqCMBModifierArc::createFunction()
   cmbProfileFunction * result = new cmbProfileWedgeFunction();
   result->setName(name);
   functions[name] = result;
+  result->setRelative(this->IsRelative);
   return result;
 }
 
@@ -431,7 +442,8 @@ bool pqCMBModifierArc::deleteFunction(std::string const& name)
   if(functions.size() == 1) return false;
   cmbProfileFunction * fun = i->second;
   functions.erase(i);
-  if(fun == startFunction) startFunction = functions.begin()->second;
+  if(fun == startFunction->getFunction()) startFunction->setFunction( functions.begin()->second );
+  if(fun == endFunction->getFunction()) endFunction->setFunction( functions.begin()->second );
   delete fun;
   return true;
 }
@@ -458,13 +470,14 @@ cmbProfileFunction * pqCMBModifierArc::cloneFunction(std::string const& name)
 void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* fun)
 {
   std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  fun->setRelative(IsRelative);
   if(i == functions.end())
   {
     functions[name] = fun;
   }
   else
   {
-    if(startFunction == i->second) startFunction = fun;
+    if(startFunction->getFunction() == i->second) startFunction->setFunction(fun);
     fun->setName(name);
     for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
         it != pointsFunctions.end(); ++it)
@@ -474,6 +487,8 @@ void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* 
         it->second->setFunction(fun);
       }
     }
+    if(i->second == startFunction->getFunction()) startFunction->setFunction( fun );
+    if(i->second == endFunction->getFunction())   endFunction->setFunction( fun );
     delete i->second;
     i->second = fun;
   }
@@ -491,7 +506,12 @@ void pqCMBModifierArc::setFunctionMode(pqCMBModifierArc::FunctionMode fm)
 
 void pqCMBModifierArc::setRelative(bool b)
 {
-  //TODO
+  this->IsRelative = true;
+  for(std::map<std::string, cmbProfileFunction * >::iterator i = functions.begin();
+      i != functions.end(); ++i)
+  {
+    i->second->setRelative(b);
+  }
 }
 
 pqCMBModifierArc::pointFunctionWrapper const*
@@ -529,14 +549,36 @@ void pqCMBModifierArc
   result.clear();
   vtkPVArcInfo* info = CmbArc->getArcInfo();
   if(info == NULL) return;
-  for(unsigned int i = 0; i < info->GetNumberOfPoints(); ++i)
+  vtkIdType id;
+  switch(functionMode)
   {
-    vtkIdType id;
-    info->GetPointID(i, id);
-    pointFunctionWrapper const* wrapper = this->pointsFunctions.find(id)->second;
-    if(wrapper != NULL && wrapper->getFunction() != NULL)
-    {
-      result.push_back(wrapper);
-    }
+    case PointAssignment:
+      for(unsigned int i = 0; i < info->GetNumberOfPoints(); ++i)
+      {
+        info->GetPointID(i, id);
+        pointFunctionWrapper const* wrapper = this->pointsFunctions.find(id)->second;
+        if(wrapper != NULL && wrapper->getFunction() != NULL)
+        {
+          result.push_back(wrapper);
+        }
+      }
+      return;
+    case EndPoints:
+      result.reserve(2);
+      info->GetPointID(info->GetNumberOfPoints()-1, id);
+      this->endFunction->ptId = id;
+      this->endFunction->pointIndex = info->GetNumberOfPoints()-1;
+      result.push_back(this->endFunction);
+    case Single:
+      info->GetPointID(0, id);
+      this->startFunction->ptId = id;
+      this->startFunction->pointIndex = 0;
+      result.insert(result.begin(), this->startFunction); //add to front
   }
+}
+
+bool pqCMBModifierArc
+::isRelative() const
+{
+  return IsRelative;
 }

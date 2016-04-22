@@ -82,11 +82,11 @@ public:
 
   cmbProfileFunction * getStartFun()
   {
-    return startFunction;
+    return const_cast<cmbProfileFunction *>(startFunction->getFunction());
   }
   cmbProfileFunction * getEndFun()
   {
-    return endFunction;
+    return const_cast<cmbProfileFunction *>(endFunction->getFunction());
   }
   bool setStartFun(std::string const& name);
   bool setEndFun(std::string const& name);
@@ -111,6 +111,7 @@ public:
 
   void getPointFunctions(std::vector<pointFunctionWrapper const*>& result) const;
 
+  bool isRelative() const;
 
 public slots:
   void sendChangeSignals();
@@ -137,10 +138,9 @@ protected:
   FunctionMode functionMode;
 
   std::map<std::string, cmbProfileFunction * > functions;
-  cmbProfileFunction * startFunction;
-  cmbProfileFunction * endFunction;
+  pointFunctionWrapper * startFunction;
+  pointFunctionWrapper * endFunction;
   
-  qtCMBArcEditWidget* Modifier;
   int Id;
   
   bool IsVisible;

@@ -57,8 +57,6 @@ public:
   /// are all invisible; and for sub-arc, we only allow Modify for now.
   virtual void useArcEditingUI(bool isWholeArc);
 
-  void highlightPoint(int);
-
 signals:
   /// Signal emitted when the representation proxy's "ClosedLoop" property
   /// is modified.
@@ -74,6 +72,9 @@ public slots:
 
   /// Move to modify mode
   void ModifyMode( );
+
+  ///Move to Edit mode
+  void EditMode();
 
   /// Check if the loop can even go to edit mode
   void checkCanBeEdited();

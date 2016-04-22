@@ -705,21 +705,7 @@ void qtCMBArcEditWidget::onMakeArc()
 
 void qtCMBArcEditWidget::selectPointMode()
 {
-  this->pickWholeArc();
-  this->modifySubArc();
-
-
-  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->SubWidget->getWidgetProxy();
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-                        vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
-  widgetRep->PickableOn();
-  vtkSmartPointer<testPointPick> pcbk = vtkSmartPointer<testPointPick>::New();
-  widgetRep->AddObserver(vtkCommand::LeftButtonReleaseEvent,pcbk);
-  widgetRep->SetPointSelectMode(1);
-  vtkPointSelectedCallback * psc = vtkPointSelectedCallback::New();
-  psc->widget = this;
-  widgetRep->SetPointSelectCallBack(psc);
+  //TODO REMOVE THIS
 }
 
 void qtCMBArcEditWidget::selectedPoint(int index)
@@ -738,17 +724,4 @@ void qtCMBArcEditWidget::selectedPoint(int index)
   widgetRep->SetPointSelectMode(0);
   this->hideArcWidget();
   this->resetWidget();
-}
-
-void qtCMBArcEditWidget::highlightPoint(int i)
-{
-  if(!this->SubWidget) return;
-  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->SubWidget->getWidgetProxy();
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-                          vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
-  widgetRep->SetActiveNode(i);
-  this->SubWidget->setModified();
-  this->View->forceRender();
-  //widgetProxy->UpdateVTKObjects();
 }

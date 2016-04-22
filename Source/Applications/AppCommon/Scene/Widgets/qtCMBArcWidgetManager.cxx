@@ -155,7 +155,7 @@ int qtCMBArcWidgetManager::create()
     {
     this->Widget = this->createDefaultContourWidget(normal, planepos);
     QObject::connect(this->Widget,SIGNAL(contourDone()),
-      this,SLOT(updateArcNode()));
+                     this,SLOT(updateArcNode()));
     created = true;
     }
 
@@ -613,9 +613,4 @@ void qtCMBArcWidgetManager::startSelectPoint()
 void qtCMBArcWidgetManager::cancelSelectPoint()
 {
   this->EditWidget->selectedPoint(-1);
-}
-
-void qtCMBArcWidgetManager::highlightPoint(int index)
-{
-  if(this->EditWidget) this->EditWidget->highlightPoint(index);
 }

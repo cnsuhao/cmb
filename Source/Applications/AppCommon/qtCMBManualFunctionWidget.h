@@ -25,7 +25,6 @@ public slots:
   void updateDistMin(double);
   void dispSplineBox(bool);
   void weightSplineBox(bool);
-  void relativeChanged(bool);
   void render();
 
 signals:
