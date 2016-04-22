@@ -221,11 +221,6 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
                    this, SLOT(nameChanged(QString)));
 
-  QObject::connect(this->Internal->UI->SaveFunctions, SIGNAL(clicked()),
-                   this, SLOT(onSaveArc()));
-  QObject::connect(this->Internal->UI->LoadFunctions, SIGNAL(clicked()),
-                   this, SLOT(onLoadArc()));
-
   this->ArcWidgetManager = new qtCMBArcWidgetManager(server, renderer);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)),
                    this, SLOT(doneModifyingArc()));
@@ -235,9 +230,6 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                    this, SLOT(doneModifyingArc()));
   QObject::connect( this->ArcWidgetManager, SIGNAL(selectedId(vtkIdType)),
                     this, SLOT(addPoint(vtkIdType)));
-  this->Internal->UI->ArcControlTabs->setTabEnabled(1, true);
-  this->Internal->UI->ArcControlTabs->setTabEnabled(2, true);
-  this->Internal->UI->ArcControlTabs->setTabEnabled(3, false);
   QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)));
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()));
   this->check_save();
@@ -286,10 +278,15 @@ void pqCMBModifierArcManager::initialize()
                    this, SLOT(onCurrentObjectChanged()), Qt::QueuedConnection);
   QObject::connect(this->TableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
                    this, SLOT(onItemChanged(QTableWidgetItem*)));
+  QObject::connect(this->Internal->UI->DatasetControl, SIGNAL(clicked(bool)),
+                   this->Internal->UI->DatasetTable, SLOT(setVisible(bool)));
   QObject::connect(this->Internal->UI->DatasetTable, SIGNAL(itemChanged(QTableWidgetItem*)),
                    this, SLOT(onDatasetChange(QTableWidgetItem*)));
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onSelectionChange()));
+
+  this->Internal->UI->DatasetControl->setChecked(false);
+  this->Internal->UI->DatasetTable->hide();
 
   this->Internal->UI->points->setColumnCount(2);
   this->Internal->UI->points->setHorizontalHeaderLabels( QStringList() << tr("Point")
@@ -748,10 +745,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->Internal->UI->removeLineButton->setEnabled(false);
     this->Internal->UI->buttonUpdateLine->setEnabled(false);
     this->Internal->UI->addLineButton->setEnabled(true);
-    this->Internal->UI->ArcControlTabs->setTabEnabled(1, true);
-    this->Internal->UI->ArcControlTabs->setTabEnabled(2, true);
-    this->Internal->UI->ArcControlTabs->setTabEnabled(3, false);
-    this->Internal->UI->LoadFunctions->setEnabled(true);
     if(this->Internal->UI_Dialog != NULL)
       {
       QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
@@ -765,7 +758,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
   }
   else if(sid == -2) //create new one
     {
-    this->Internal->mode = EditArc;
     pqCMBModifierArc * dig = new pqCMBModifierArc();
     this->ArcWidgetManager->setActiveArc(dig->GetCmbArc());
     this->ArcWidgetManager->create();
@@ -790,13 +782,12 @@ void pqCMBModifierArcManager::selectLine(int sid)
 
     this->disableSelection();
     this->Internal->UI->addLineButton->setEnabled(false);
-    this->Internal->UI->SaveFunctions->setEnabled(false);
-    this->Internal->UI->LoadFunctions->setEnabled(false);
     if(this->Internal->UI_Dialog != NULL)
       {
       QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
       applyButton->setEnabled(false);
       }
+    this->Internal->mode = EditArc;
     }
   else
     {
@@ -809,7 +800,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
       //this->ArcWidgetManager->edit();
       this->Internal->UI->removeLineButton->setEnabled(true);
       this->Internal->UI->buttonUpdateLine->setEnabled(true);
-      //this->Internal->UI->LoadFunctions->setEnabled(true);
       }
     }
   if(this->CurrentModifierArc != NULL)
@@ -827,9 +817,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->setUpPointsTable();
     this->Internal->UI->points->selectRow(0);
 
-    this->Internal->UI->ArcControlTabs->setTabEnabled(1, true);
-    this->Internal->UI->ArcControlTabs->setTabEnabled(2, true);
-    this->Internal->UI->ArcControlTabs->setTabEnabled(3, true);
     }
   this->updateUiControls();
 }
@@ -1409,11 +1396,11 @@ void pqCMBModifierArcManager::check_save()
   {
     if(ArcLines[i] != NULL)
     {
-      this->Internal->UI->SaveFunctions->setEnabled(true);
+      this->Internal->UI->Save->setEnabled(true);
       return;
     }
   }
-  this->Internal->UI->SaveFunctions->setEnabled(false);
+  this->Internal->UI->Save->setEnabled(false);
 }
 
 
@@ -1689,6 +1676,8 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->addLineButton->setEnabled(true);
       this->Internal->UI->EditArc->setEnabled(false);
       this->Internal->UI->pointsFrame->hide();
+      this->Internal->UI->DatasetControl->hide();
+      this->Internal->UI->Load->setEnabled(true);
       break;
     case EditArc:
       this->Internal->UI->EditControl->show();
@@ -1697,6 +1686,8 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->addLineButton->setEnabled(false);
       this->Internal->UI->EditArc->setEnabled(false);
       this->Internal->UI->pointsFrame->hide();
+      this->Internal->UI->DatasetControl->hide();
+      this->Internal->UI->Load->setEnabled(false);
       break;
     case EditFunction:
       this->Internal->UI->EditControl->hide();
@@ -1704,6 +1695,8 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->buttonUpdateLine->setEnabled(true);
       this->Internal->UI->addLineButton->setEnabled(!this->addPointMode);
       this->Internal->UI->EditArc->setEnabled(!this->addPointMode);
+      this->Internal->UI->DatasetControl->show();
+      this->Internal->UI->Load->setEnabled(true);
       if(this->CurrentModifierArc->getFunctionMode() == pqCMBModifierArc::Single)
       {
         this->Internal->UI->pointsFrame->hide();
