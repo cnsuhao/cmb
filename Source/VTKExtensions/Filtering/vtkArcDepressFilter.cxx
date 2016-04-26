@@ -1309,7 +1309,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
                             new DepArcManualProfileFunction(
                                 static_cast<DepArcProfileFunction::FunctionType>(desptFunctionType),
                                 static_cast<DepArcProfileFunction::FunctionType>(weightFunType),
-                                isRelative, isSymmetric));
+                                isSymmetric, isRelative));
   this->Modified();
 }
 

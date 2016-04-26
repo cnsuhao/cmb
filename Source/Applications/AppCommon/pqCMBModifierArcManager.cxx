@@ -462,9 +462,9 @@ void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
   v->setFlags(commFlags);
 
   QTableWidgetItem* objItem = new QTableWidgetItem();
-  this->TableWidget->setItem(row, Relative, objItem);
   objItem->setFlags(commFlags | Qt::ItemIsUserCheckable);
   objItem->setCheckState(dataObj->isRelative() ? Qt::Checked : Qt::Unchecked);
+  this->TableWidget->setItem(row, Relative, objItem);
 }
 
 //-----------------------------------------------------------------------------

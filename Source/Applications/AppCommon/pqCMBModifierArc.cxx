@@ -506,7 +506,7 @@ void pqCMBModifierArc::setFunctionMode(pqCMBModifierArc::FunctionMode fm)
 
 void pqCMBModifierArc::setRelative(bool b)
 {
-  this->IsRelative = true;
+  this->IsRelative = b;
   for(std::map<std::string, cmbProfileFunction * >::iterator i = functions.begin();
       i != functions.end(); ++i)
   {
