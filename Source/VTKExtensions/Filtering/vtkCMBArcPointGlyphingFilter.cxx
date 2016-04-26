@@ -73,6 +73,7 @@ int vtkCMBArcPointGlyphingFilter::RequestData(vtkInformation * /*info*/,
 
   vtkSmartPointer<vtkCellArray> cellIds = vtkSmartPointer<vtkCellArray>::New();
   cellIds->Allocate(numPts,numPts/2);
+  cellIds->InsertNextCell(0);
   output->SetVerts(cellIds);
 
 
