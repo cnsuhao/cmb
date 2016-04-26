@@ -452,6 +452,11 @@ void pqModelBuilderViewContextMenuBehavior::onViewAdded(pqView* view)
 //-----------------------------------------------------------------------------
 bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 {
+  if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
+    {
+    return Superclass::eventFilter(caller, e);
+    }
+
   if (e->type() == QEvent::MouseButtonPress)
     {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
@@ -476,7 +481,6 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
           {
           // If we already have selection in representation(s) in the render view,
           // do not do picking, just use the existing selection to build the context menu.
-          QList<pqSMTKModelInfo*> selModels = this->m_modelPanel->modelManager()->selectedModels();
           if(this->m_modelPanel->modelManager()->selectedModels().count() == 0 &&
              this->m_modelPanel->modelManager()->selectedMeshes().count() == 0) // pick a block from click
             {
