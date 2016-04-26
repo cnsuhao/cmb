@@ -28,6 +28,7 @@
 #include "pqGeneralTransferFunctionWidget.h"
 #include "pqCMBSceneObjectBase.h"
 #include "pqCMBModifierArc.h"
+#include <vtkBoundingBox.h>
 
 class QTableWidget;
 class pqCMBModifierArc;
@@ -89,7 +90,7 @@ public slots:
   void enableSelection();
   void disableSelection();
   void applyAgain();
-  void addProxy(QString, int pid, pqPipelineSource*);
+  void addProxy(QString, int pid, vtkBoundingBox dataBounds, pqPipelineSource*);
   void clearProxies();
   void addLine();
   void selectLine(int lid);
@@ -124,7 +125,16 @@ protected:
   QTableWidget * TableWidget;
   std::vector<pqCMBModifierArc*> ArcLines;
   pqCMBModifierArc * CurrentModifierArc;
-  QMap< QString, QMap<int, vtkSMSourceProxy*> > ServerProxies;
+  struct DataSource
+  {
+  public:
+    DataSource(vtkBoundingBox b = vtkBoundingBox(), vtkSMSourceProxy* sm = NULL)
+    :box(b), source(sm)
+    {}
+    vtkBoundingBox box;
+    vtkSMSourceProxy* source;
+  };
+  QMap< QString, QMap<int, DataSource> > ServerProxies;
   QMap< QString, QMap<int, int> > ServerRows;
   std::vector< QMap< QString, QMap<int, bool> > > ArcLinesApply;
   qtCMBArcWidgetManager* ArcWidgetManager;

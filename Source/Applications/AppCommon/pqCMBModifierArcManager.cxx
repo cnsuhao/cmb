@@ -120,6 +120,7 @@ public:
   EditMode mode;
   qtCMBArcWidget * CurrentArcWidget;
   int selectedRow;
+  vtkBoundingBox boundingBox;
 };
 
 //-----------------------------------------------------------------------------
@@ -136,14 +137,15 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->Internal->editableWidget = NULL;
 
   this->Internal->SphereSource = builder->createSource("sources", "SphereSource", server);
-  this->Internal->LineGlyphFilter = builder->createSource("filters", "ArcPointGlyphingFilter", server);
+  this->Internal->LineGlyphFilter = builder->createSource("filters",
+                                                          "ArcPointGlyphingFilter", server);
   this->Internal->Representation =
       builder->createDataRepresentation( this->Internal->LineGlyphFilter->getOutputPort(0),
                                          this->view,
                                          "GeometryRepresentation");
 
   //vtkSMSourceProxy* source = this->Internal->SphereSource->getProxy();
-  pqSMAdaptor::setElementProperty(this->Internal->SphereSource->getProxy()->GetProperty("SetRadius"),1000);
+  //pqSMAdaptor::setElementProperty(this->Internal->SphereSource->getProxy()->GetProperty("SetRadius"),1000);
 
   this->Internal->SphereSource->getProxy()->MarkModified(this->Internal->SphereSource->getProxy());
 
@@ -309,7 +311,7 @@ void pqCMBModifierArcManager::accepted()
   {
     foreach(int pieceIdx, ServerProxies[filename].keys())
     {
-      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
       {
         if(this->ArcLines[i]!= NULL)
@@ -335,7 +337,7 @@ void pqCMBModifierArcManager::showDialog()
   {
     foreach(int pieceIdx, ServerProxies[filename].keys())
     {
-      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
       {
         if(this->ArcLines[i]!= NULL)
@@ -377,6 +379,7 @@ void pqCMBModifierArcManager::clear()
   ServerProxies.clear();
   ServerRows.clear();
   ArcLinesApply.clear();
+  this->Internal->boundingBox.Reset();
 }
 
 void pqCMBModifierArcManager::enableSelection()
@@ -694,9 +697,12 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
       double pt[3];
       vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
       pointDisplaySource->InvokeCommand("clearVisible");
+      double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;
       if(this->CurrentModifierArc->getFunctionMode() != pqCMBModifierArc::Single)
       {
-        pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"), wrapper->getPointIndex());
+        pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"),
+                                        wrapper->getPointIndex());
+        pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setScale"), ml);
         pointDisplaySource->UpdateVTKObjects();
       }
       pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"), -1);
@@ -833,7 +839,7 @@ void pqCMBModifierArcManager::addNewArc(pqCMBModifierArc* dig)
   {
     foreach(int pieceIdx, ServerProxies[filename].keys())
     {
-      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       QList< QVariant > v;
       v <<sid;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
@@ -869,7 +875,7 @@ void pqCMBModifierArcManager::update()
     {
     foreach(int pieceIdx, ServerProxies[filename].keys())
       {
-      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       this->CurrentModifierArc->updateArc(source);
       }
     }
@@ -900,7 +906,7 @@ void pqCMBModifierArcManager::removeArc()
       {
       foreach(int pieceIdx, ServerProxies[filename].keys())
         {
-        vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+        vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
         tmp->removeFromServer(source);
         }
       }
@@ -910,12 +916,14 @@ void pqCMBModifierArcManager::removeArc()
   emit(requestRender());
 }
 
-void pqCMBModifierArcManager::addProxy(QString s, int pid, pqPipelineSource* ps)
+void pqCMBModifierArcManager::addProxy(QString s, int pid, vtkBoundingBox box, pqPipelineSource* ps)
 {
   vtkSMSourceProxy* source = NULL;
   source = vtkSMSourceProxy::SafeDownCast(ps->getProxy() );
-  ServerProxies[s].insert(pid, source);
+  ServerProxies[s].insert(pid, DataSource(box, source));
   setUpTable();
+
+  this->Internal->boundingBox.AddBox(box);
 
   for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
   {
@@ -941,6 +949,7 @@ void pqCMBModifierArcManager::clearProxies()
   ServerProxies.clear();
   ServerRows.clear();
   ArcLinesApply.clear();
+  this->Internal->boundingBox.Reset();
 }
 
 void pqCMBModifierArcManager::updateLineFunctions()
@@ -998,6 +1007,8 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
       QVariant qv = selected[0]->data(Qt::UserRole);
       pqCMBModifierArc::pointFunctionWrapper * wrapper =
                           static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+      this->Internal->UI->points->item(selected[0]->row(), 1)->setText(selectedFunction->getName().c_str());
+      this->Internal->UI->points->resizeColumnsToContents();
       switch (this->CurrentModifierArc->getFunctionMode())
       {
         case pqCMBModifierArc::EndPoints:
@@ -1068,7 +1079,7 @@ void pqCMBModifierArcManager::doneModifyingArc()
       {
       foreach(int pieceIdx, ServerProxies[filename].keys())
         {
-        vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+        vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
         this->CurrentModifierArc->updateArc(source);
         }
       }
@@ -1109,7 +1120,7 @@ void pqCMBModifierArcManager::sendOrder()
     {
     foreach(int pieceIdx, ServerProxies[filename].keys())
       {
-      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx];
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       std::vector<int> order = this->getCurrentOrder(filename, pieceIdx);
       QList< QVariant > v;
       v << static_cast<int>(order.size());
@@ -1420,6 +1431,14 @@ void pqCMBModifierArcManager::nameChanged(QString n)
     palette.setColor(QPalette::Base,Qt::white);
     palette.setColor(QPalette::Text,Qt::black);
     this->Internal->UI->FunctionName->setPalette(palette);
+    for(int row = 0; row < this->Internal->UI->points->rowCount(); ++row )
+    {
+      QTableWidgetItem * item = this->Internal->UI->points->item(row, 1);
+      pqCMBModifierArc::pointFunctionWrapper * other =
+        static_cast<pqCMBModifierArc::pointFunctionWrapper*>(item->data(Qt::UserRole).value<void *>());
+      item->setText(other->getName().c_str());
+    }
+    this->Internal->UI->points->resizeColumnsToContents();
   }
   else
   {

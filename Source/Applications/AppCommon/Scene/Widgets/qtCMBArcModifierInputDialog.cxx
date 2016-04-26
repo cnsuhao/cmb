@@ -86,7 +86,7 @@ int qtCMBArcModifierInputDialog::getNumberOfSourceNames() const
 void qtCMBArcModifierInputDialog::selectedSourceChanged()
 {
   this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
-                                                                            this->InternalWidget->SurfaceList->selectedItems().count() > 0 );
+                                   this->InternalWidget->SurfaceList->selectedItems().count() > 0 );
 
   QStringList surfaceNames;
   this->getSelectedSourceNames(surfaceNames);

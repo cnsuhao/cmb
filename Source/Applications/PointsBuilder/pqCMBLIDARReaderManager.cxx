@@ -604,7 +604,7 @@ int pqCMBLIDARReaderManager::importLIDARData(
     table->AddLIDARPiece(dataObj, visible);
 
     FilePieceIdMap[filename].insert(pieceId,dataObj);
-    arcManager->addProxy(filename, pieceId, dataObj->getDiggerSource());
+    arcManager->addProxy(filename, pieceId, bbox, dataObj->getDiggerSource());
     // The following effect is like OnPreviewSelected();
     if(visible) // update the render window
       {
@@ -706,7 +706,7 @@ int pqCMBLIDARReaderManager::importLASData(
     table->AddLIDARPiece(dataObj, visible);
 
     FilePieceIdMap[filename].insert(i,dataObj);
-    arcManager->addProxy(filename, i, dataObj->getDiggerSource());
+    arcManager->addProxy(filename, i, bbox, dataObj->getDiggerSource());
     // The following effect is like OnPreviewSelected();
     if(visible) // update the render window
       {
@@ -801,7 +801,7 @@ int pqCMBLIDARReaderManager::importDEMData(
   table->AddLIDARPiece(dataObj, visible);
 
   FilePieceIdMap[filename].insert(0,dataObj);
-  arcManager->addProxy(filename, 0, dataObj->getDiggerSource());
+  arcManager->addProxy(filename, 0, bbox, dataObj->getDiggerSource());
   // The following effect is like OnPreviewSelected();
   if(visible) // update the render window
     {
@@ -879,7 +879,7 @@ pqCMBLIDARReaderManager
   table->AddLIDARPiece(dataObj, visible);
   
   FilePieceIdMap[filename].insert(0,dataObj);
-  arcManager->addProxy(filename, 0, dataObj->getDiggerSource());
+  arcManager->addProxy(filename, 0, bbox, dataObj->getDiggerSource());
   // The following effect is like OnPreviewSelected();
   if(visible) // update the render window
   {

@@ -29,6 +29,7 @@ void vtkCMBArcPointGlyphingFilter::clearVisible()
   this->visible.clear();
   this->Modified();
 }
+
 void vtkCMBArcPointGlyphingFilter::setVisible(int index)
 {
   if(index < 0) return;
@@ -36,7 +37,14 @@ void vtkCMBArcPointGlyphingFilter::setVisible(int index)
   this->Modified();
 }
 
+void vtkCMBArcPointGlyphingFilter::setScale(double s)
+{
+  this->scale = s;
+  this->Modified();
+}
+
 vtkCMBArcPointGlyphingFilter::vtkCMBArcPointGlyphingFilter()
+:scale(5.0)
 {
   GetInputPortInformation(0)->Set(INPUT_IS_OPTIONAL(), 1);
 }
@@ -95,7 +103,7 @@ int vtkCMBArcPointGlyphingFilter::RequestData(vtkInformation * /*info*/,
       inPts->GetPoint(i, point);
       vtkIdType id = newPoints->InsertNextPoint(point);
       color->InsertNextTuple4(225,0,0,255);
-      scaling->InsertNextTuple3(5.0, 5.0, 5.0);
+      scaling->InsertNextTuple3(this->scale, this->scale, this->scale);
       visibility->InsertNextValue(1);
       cellIds->InsertCellPoint(id);
       cellIds->UpdateCellCount(id+1);

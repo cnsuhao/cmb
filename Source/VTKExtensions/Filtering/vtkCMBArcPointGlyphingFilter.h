@@ -26,6 +26,7 @@ public:
 
   void clearVisible();
   void setVisible(int);
+  void setScale(double);
 
 protected:
   vtkCMBArcPointGlyphingFilter();
@@ -34,6 +35,7 @@ protected:
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   std::set<int> visible;
+  double scale;
 
 private:
   vtkCMBArcPointGlyphingFilter(const vtkCMBArcPointGlyphingFilter&):vtkPolyDataAlgorithm()

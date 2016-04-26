@@ -1621,8 +1621,8 @@ void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumOb
   QList<pqPipelineSource*> transformFilters;
   QMap< QString, QList< pqOutputPort* > > namedInputs;
   this->Internal->ArcModOptionDlg->getSelectedSourceNames(selectedNames);
-  //TODO Change this
-  this->CreatTransPipelineMesh(selectedNames,transformFilters, dt);
+  vtkBoundingBox bbox;
+  this->CreatTransPipelineMesh(selectedNames, bbox, transformFilters, dt);
 
   foreach (pqPipelineSource *filter, transformFilters)
   {
@@ -1657,7 +1657,9 @@ void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumOb
 
   this->Internal->ArcModManager->clearProxies();
 
-  this->Internal->ArcModManager->addProxy("All Source", 0, this->Internal->ArcDepress);
+  //TODO add bounding box
+
+  this->Internal->ArcModManager->addProxy("All Source", 0, bbox, this->Internal->ArcDepress);
 
   this->Internal->ArcModManager->showDialog();
 }
@@ -1721,7 +1723,8 @@ void pqCMBSceneBuilderMainWindowCore::createSurfaceMesh()
   QStringList selectedNames;
   QList<pqPipelineSource*> transformFilters;
   this->Internal->SurfaceMesherOptionDlg->getSelectedSurfaceNames(selectedNames);
-  this->CreatTransPipelineMesh(selectedNames,transformFilters, pqCMBSceneObjectBase::Points);
+  vtkBoundingBox bbox;
+  this->CreatTransPipelineMesh(selectedNames, bbox, transformFilters, pqCMBSceneObjectBase::Points);
 
   foreach (pqPipelineSource *filter, transformFilters)
     {
@@ -1782,8 +1785,11 @@ void pqCMBSceneBuilderMainWindowCore::createSurfaceMesh()
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBSceneBuilderMainWindowCore::CreatTransPipelineMesh( const QStringList &selectedNames,
-   QList<pqPipelineSource*> &transformFilters, pqCMBSceneObjectBase::enumObjectType dt)
+void pqCMBSceneBuilderMainWindowCore
+::CreatTransPipelineMesh(const QStringList &selectedNames,
+                         vtkBoundingBox & bbox,
+                         QList<pqPipelineSource*> &transformFilters,
+                         pqCMBSceneObjectBase::enumObjectType dt)
 {
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
   pqCMBSceneNode *node;
@@ -1795,6 +1801,9 @@ void pqCMBSceneBuilderMainWindowCore::CreatTransPipelineMesh( const QStringList 
     dataObj = node->getDataObject();
     if (selectedNames.contains(node->getName()))
       {
+      vtkBoundingBox tmpb;
+      node->getBounds(&tmpb);
+      bbox.AddBox(tmpb);
       vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
       dataObj->getTransform( transform );
       vtkMatrix4x4 *matrix = transform->GetMatrix();

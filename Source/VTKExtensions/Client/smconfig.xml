@@ -5787,6 +5787,10 @@ associates the containing cell ID to the point.
         </Documentation>
       </IntVectorProperty>
 
+      <DoubleVectorProperty name="setScale"  command="setScale"
+         number_of_elements="1" default_values="-1">
+      </DoubleVectorProperty>
+
       <Property name="clearVisible" command="clearVisible" />
 
     </SourceProxy>
