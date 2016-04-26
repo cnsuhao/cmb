@@ -87,6 +87,7 @@
 #include "smtk/model/Operator.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
@@ -179,7 +180,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
     QPointer<smtk::attribute::qtAttributeDisplay> AttributeVisWidget;
     QPointer<QAction> AttVisAction;
-
+    QPointer<pqPluginSMTKViewBehavior> smtkViewBehavior;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -198,6 +199,7 @@ pqCMBModelBuilderMainWindowCore::pqCMBModelBuilderMainWindowCore(QWidget* parent
   pqApplicationCore* core = pqApplicationCore::instance();
   core->setUndoStack(NULL);
 
+  this->Internal->smtkViewBehavior = new pqPluginSMTKViewBehavior(this);
 }
 
 //-----------------------------------------------------------------------------
