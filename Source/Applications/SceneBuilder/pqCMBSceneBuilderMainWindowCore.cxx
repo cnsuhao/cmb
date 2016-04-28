@@ -1630,7 +1630,7 @@ void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumOb
   }
 
   QObject::connect(this->Internal->ArcModManager, SIGNAL(applyFunctions()),
-                   this, SLOT(applyArcToSurface()));
+                   this, SLOT(applyArcToSurface()), Qt::UniqueConnection);
 
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
   bool useNormals = this->Internal->ArcModOptionDlg->getUseNormal();
@@ -1657,7 +1657,7 @@ void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumOb
 
   this->Internal->ArcModManager->clearProxies();
 
-  //TODO add bounding box
+  this->Tree->clearSelection();
 
   this->Internal->ArcModManager->addProxy("All Source", 0, bbox, this->Internal->ArcDepress);
 
@@ -3331,7 +3331,7 @@ void pqCMBSceneBuilderMainWindowCore::setpqCMBSceneTree(pqCMBSceneTree * tree)
     }
 
   Internal->ArcModManager = new pqCMBModifierArcManager(NULL, this->getActiveServer(),
-                                                   this->activeRenderView());
+                                                        this->activeRenderView());
 
 
   //make sure the context menu has the new scene tree

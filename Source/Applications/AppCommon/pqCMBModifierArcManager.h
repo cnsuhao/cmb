@@ -76,6 +76,8 @@ public:
   pqCMBSceneObjectBase::enumObjectType getSourceType() const
   { return this->SourceType; }
 
+  void setUseNormal(bool un);
+
 public slots:
   void showDialog();
   void clear();
@@ -146,6 +148,8 @@ protected:
   pqRenderView * view;
   pqServer * server;
   bool addPointMode;
+
+  bool useNormal;
 
   void initialize();
   void setRow(int row, pqCMBModifierArc * line);

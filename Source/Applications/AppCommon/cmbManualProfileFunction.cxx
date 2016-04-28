@@ -326,7 +326,7 @@ void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetManualControlVars"), v);
   v.clear();
   source->UpdateVTKObjects();
-  v << -1 << -1 <<0 << 0 << 0 << 0;
+  v << -1 << -1 << 0 << 0 << 0 << 0;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetManualControlVars"), v);
   //send function points
   for(int i = 0; i < WeightingFunction->GetSize(); ++i)

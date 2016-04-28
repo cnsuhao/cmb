@@ -128,6 +128,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
                                                  pqServer *server,
                                                  pqRenderView *renderer)
 {
+  useNormal = false;
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
   this->view = renderer;
@@ -462,7 +463,7 @@ void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
   v->setFlags(commFlags);
 
   QTableWidgetItem* objItem = new QTableWidgetItem();
-  objItem->setFlags(commFlags | Qt::ItemIsUserCheckable);
+  objItem->setFlags(commFlags | ((useNormal)?Qt::NoItemFlags:Qt::ItemIsUserCheckable));
   objItem->setCheckState(dataObj->isRelative() ? Qt::Checked : Qt::Unchecked);
   this->TableWidget->setItem(row, Relative, objItem);
 }
@@ -618,7 +619,7 @@ void pqCMBModifierArcManager::onSelectionChange()
     int id = tmp->text().toInt();
     pqCMBModifierArc * ma = ArcLines[id];
     tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
-    tmp->setFlags((tmp->flags()| Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
+    tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
     
     QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
     Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -636,7 +637,7 @@ void pqCMBModifierArcManager::onSelectionChange()
     pqCMBModifierArc * ma = ArcLines[id];
 
     QTableWidgetItem * tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
-    tmp->setFlags(tmp->flags() | Qt::ItemIsUserCheckable);
+    tmp->setFlags(tmp->flags() | ((useNormal)?Qt::NoItemFlags:Qt::ItemIsUserCheckable));
 
     switch(this->Internal->mode)
     {
@@ -647,7 +648,7 @@ void pqCMBModifierArcManager::onSelectionChange()
         Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
         this->TableWidget->setItem(this->Internal->selectedRow, Mode, qtwi);
-        tmp->setFlags(tmp->flags() ^ Qt::ItemIsUserCheckable);
+        tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
         qtwi->setFlags(commFlags);
         break;
       }
@@ -860,6 +861,11 @@ void pqCMBModifierArcManager::update()
     case EditArc:
       this->Internal->mode = EditFunction;
       this->Internal->CurrentArcWidget->finishContour();
+      if(this->Internal->UI_Dialog != NULL)
+      {
+        QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+        applyButton->setEnabled(true);
+      }
       break;
   }
 
@@ -876,6 +882,7 @@ void pqCMBModifierArcManager::update()
     foreach(int pieceIdx, ServerProxies[filename].keys())
       {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
+      if(source == NULL) continue;
       this->CurrentModifierArc->updateArc(source);
       }
     }
@@ -918,8 +925,14 @@ void pqCMBModifierArcManager::removeArc()
 
 void pqCMBModifierArcManager::addProxy(QString s, int pid, vtkBoundingBox box, pqPipelineSource* ps)
 {
+  assert(ps != NULL);
+  assert(!s.isNull());
   vtkSMSourceProxy* source = NULL;
   source = vtkSMSourceProxy::SafeDownCast(ps->getProxy() );
+  if(source == NULL)
+  {
+    return;
+  }
   ServerProxies[s].insert(pid, DataSource(box, source));
   setUpTable();
 
@@ -949,6 +962,11 @@ void pqCMBModifierArcManager::clearProxies()
   ServerProxies.clear();
   ServerRows.clear();
   ArcLinesApply.clear();
+  if(!this->ArcLines.empty())
+  {
+    QMap< QString, QMap<int, bool> > newVis;
+    ArcLinesApply.resize(this->ArcLines.size(), newVis);
+  }
   this->Internal->boundingBox.Reset();
 }
 
@@ -1238,23 +1256,27 @@ void pqCMBModifierArcManager::setDatasetTable(int inId)
 
 void pqCMBModifierArcManager::disableAbsolute()
 {
-  for(int i = 0; i < this->TableWidget->rowCount(); ++i)
+  useNormal = true;
+  this->TableWidget->blockSignals(true);
+  for(unsigned int i = 0; i < ArcLines.size(); ++i)
   {
-    QTableWidgetItem * tmp = this->TableWidget->item( i, Id );
-    int id = tmp->text().toInt();
-    pqCMBModifierArc * ma = ArcLines[id];
-    if(ma != NULL)
-    {
-      //TODO
-      //ma->setRelative(true);
-      this->setRow(i,ma);
-    }
+    QTableWidgetItem * tmp = this->TableWidget->item( i, Relative);
+    tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
+    tmp->setCheckState( Qt::Checked );
+
+    ArcLines[i]->setRelative(true);
   }
+  this->TableWidget->blockSignals(false);
 }
 
 void pqCMBModifierArcManager::enableAbsolute()
 {
-  //TODO
+  useNormal = false;
+  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  {
+    QTableWidgetItem * tmp = this->TableWidget->item( i, Relative);
+    tmp->setFlags(tmp->flags() | Qt::ItemIsUserCheckable);
+  }
 }
 
 void pqCMBModifierArcManager::onSaveProfile()
