@@ -363,9 +363,7 @@ void pqCMBModifierArcManager::clear()
   selectLine(-1);
   this->CurrentModifierArc = NULL;
   this->Internal->mode = NoEditMode;
-  delete this->ManualFunctionWidget;
-  delete this->WedgeFunctionWidget;
-  this->ManualFunctionWidget = NULL;
+  this->selectFunction(NULL);
   this->selectedFunction = NULL;
   this->TableWidget->clearContents();
   this->TableWidget->setRowCount(0);
@@ -381,6 +379,7 @@ void pqCMBModifierArcManager::clear()
   ServerRows.clear();
   ArcLinesApply.clear();
   this->Internal->boundingBox.Reset();
+  this->updateUiControls();
 }
 
 void pqCMBModifierArcManager::enableSelection()
