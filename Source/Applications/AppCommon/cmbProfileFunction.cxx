@@ -53,6 +53,6 @@ cmbProfileFunction * cmbProfileFunction::read(std::ifstream & in, size_t count)
 
 bool cmbProfileFunction::write(std::ofstream & out) const
 {
-  out << 2 << " " << getName() << std::endl;
+  out << 2 << " " << " " << getType() << '\n' << getName() << std::endl;
   return this->writeData(out);
 }

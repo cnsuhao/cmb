@@ -48,8 +48,8 @@ public:
   void setDispSpline(bool s);
   void setWeightSpline(bool w);
 
-  double getDistanceRange(pqCMBModifierArc::RangeLable i);
-  double getDepthRange(pqCMBModifierArc::RangeLable i);
+  double getDistanceRange(pqCMBModifierArc::RangeLable i) const;
+  double getDepthRange(pqCMBModifierArc::RangeLable i) const;
 
   void setDistanceRange(pqCMBModifierArc::RangeLable i, double v);
   void setDepthRange(pqCMBModifierArc::RangeLable i, double v);

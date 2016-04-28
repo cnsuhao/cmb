@@ -225,12 +225,12 @@ void cmbManualProfileFunction::setWeightSpline(bool w)
   WeightUseSpline = w;
 }
 
-double cmbManualProfileFunction::getDistanceRange(pqCMBModifierArc::RangeLable i)
+double cmbManualProfileFunction::getDistanceRange(pqCMBModifierArc::RangeLable i) const
 {
   return parameters->getDistanceRange(i);
 }
 
-double cmbManualProfileFunction::getDepthRange(pqCMBModifierArc::RangeLable i)
+double cmbManualProfileFunction::getDepthRange(pqCMBModifierArc::RangeLable i) const
 {
   return parameters->getDepthRange(i);
 }
@@ -300,8 +300,28 @@ bool cmbManualProfileFunction::readData(std::ifstream & in, int version)
 
 bool cmbManualProfileFunction::writeData(std::ofstream & out) const
 {
+  out << 2 << "\n"
+      << this->getDepthRange(pqCMBModifierArc::MIN) << " "
+      << this->getDepthRange(pqCMBModifierArc::MAX) << "\n"
+      << this->getDistanceRange(pqCMBModifierArc::MIN) << " "
+      << this->getDistanceRange(pqCMBModifierArc::MAX) << "\n"
+      << Symmetric << " " << Relative << " " << DispUseSpline << " " << WeightUseSpline << "\n"
+      << WeightingFunction->GetSize() << "\n";
+  for(unsigned int i = 0; i < WeightingFunction->GetSize(); ++i)
+  {
+    double d[4];
+    WeightingFunction->GetNodeValue(i, d);
+    out << d[0] << ' ' << d[1] << ' ' << d[2] << ' ' << d[3] << '\n';
+  }
+  out << DisplacementProfile->GetSize() << '\n';
+  for(int i = 0; i < DisplacementProfile->GetSize(); ++i)
+  {
+    double d[4];
+    DisplacementProfile->GetNodeValue(i, d);
+    out << d[0] << ' ' << d[1] << ' ' << d[2] << ' ' << d[3] << '\n';
+  }
+
   return true;
-  //TODO
 }
 
 void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,

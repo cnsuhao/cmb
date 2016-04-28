@@ -102,8 +102,6 @@ public slots:
   void sendOrder();
   void enableAbsolute();
   void disableAbsolute();
-  void onSaveProfile();
-  void onLoadProfile();
   void onSaveArc();
   void onLoadArc();
 

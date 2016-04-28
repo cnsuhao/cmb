@@ -204,14 +204,40 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
 
 bool cmbProfileWedgeFunction::readData(std::ifstream & in, int version)
 {
-  //TODO
-  return false;
+  int subv;
+  in >> subv
+     >> this->depth >> this->baseWidth >> this->slopeLeft >> this->slopeRight
+     >> this->Relative >> this->Symmetry >> this->WeightUseSpline
+     >> this->clamp >> this->dig;
+
+  int n;
+  in >> n;
+  this->WeightingFunction->Initialize();
+  for(int i = 0; i < n; ++i)
+  {
+    double d[4];
+    in >> d[0] >> d[1] >> d[2] >> d[3];
+    this->WeightingFunction->AddPoint(d[0], d[1], d[2], d[3]);
+  }
+  return true;
 }
 
 bool cmbProfileWedgeFunction::writeData(std::ofstream & out) const
 {
-  //todo
-  return false;
+  out << '\n' << 1 << '\n' //version
+      << this->depth << ' ' << this->baseWidth << ' ' << this->slopeLeft << ' '
+      << this->slopeRight << '\n' << this->Relative << ' ' << this->Symmetry << ' '
+      << this->WeightUseSpline << ' ' << this->clamp << ' ' << this->dig << '\n';
+
+  out << this->WeightingFunction->GetSize() << "\n";
+  for(unsigned int i = 0; i < WeightingFunction->GetSize(); ++i)
+  {
+    double d[4];
+    this->WeightingFunction->GetNodeValue(i, d);
+    out << d[0] << ' ' << d[1] << ' ' << d[2] << ' ' << d[3] << '\n';
+  }
+
+  return true;
 }
 
 bool cmbProfileWedgeFunction::isWeightSpline() const

@@ -218,8 +218,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   QObject::connect(this->Internal->UI->FunctionType, SIGNAL(currentIndexChanged(int)),
                    this,  SLOT(functionTypeChanged(int)));
 
-  QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveProfile()));
-  QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadProfile()));
+  QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveArc()));
+  QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadArc()));
 
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
                    this, SLOT(nameChanged(QString)));
@@ -399,7 +399,6 @@ void pqCMBModifierArcManager::onClearSelection()
 {
   this->TableWidget->blockSignals(true);
   this->TableWidget->clearSelection();
-  this->Internal->selectedRow = -1;
   this->onSelectionChange();
   this->updateUiControls();
   //TODO clear the selected values form system
@@ -616,16 +615,19 @@ void pqCMBModifierArcManager::onSelectionChange()
   if(this->Internal->selectedRow != -1)
   {
     QTableWidgetItem * tmp = this->TableWidget->item( this->Internal->selectedRow, Id );
-    int id = tmp->text().toInt();
-    pqCMBModifierArc * ma = ArcLines[id];
-    tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
-    tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
+    if(tmp != NULL)
+    {
+      int id = tmp->text().toInt();
+      pqCMBModifierArc * ma = ArcLines[id];
+      tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
+      tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
     
-    QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
-    Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
-    this->TableWidget->setItem(this->Internal->selectedRow, Mode, qtwi);
-    qtwi->setFlags(commFlags);
+      QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
+      Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+      this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
+      this->TableWidget->setItem(this->Internal->selectedRow, Mode, qtwi);
+      qtwi->setFlags(commFlags);
+    }
     this->Internal->selectedRow = -1;
   }
   QList<QTableWidgetSelectionRange>     selected = this->TableWidget->selectedRanges();
@@ -641,7 +643,6 @@ void pqCMBModifierArcManager::onSelectionChange()
 
     switch(this->Internal->mode)
     {
-      case NoEditMode:
       case EditArc:
       {
         QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
@@ -652,6 +653,8 @@ void pqCMBModifierArcManager::onSelectionChange()
         qtwi->setFlags(commFlags);
         break;
       }
+      case NoEditMode:
+        this->Internal->mode = EditFunction;
       case EditFunction:
       {
         QComboBox* combo = new QComboBox();
@@ -665,6 +668,10 @@ void pqCMBModifierArcManager::onSelectionChange()
       }
     }
     emit selectionChanged(id);
+  }
+  else
+  {
+    this->Internal->mode = NoEditMode;
   }
   this->TableWidget->blockSignals(false);
 }
@@ -760,6 +767,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     }
   if(sid == -1 || sid < -2)
   {
+    this->Internal->UI->points->setRowCount(0);
     this->Internal->mode = NoEditMode;
     return;
   }
@@ -810,7 +818,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
       }
     }
   if(this->CurrentModifierArc != NULL)
-    {
+  {
     if(this->CurrentModifierArc->GetCmbArc()->getSource() != NULL)
     {
       pqSMAdaptor::setInputProperty(pointDisplaySource->GetProperty("Input"),
@@ -824,7 +832,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->setUpPointsTable();
     this->Internal->UI->points->selectRow(0);
 
-    }
+  }
   this->updateUiControls();
 }
 
@@ -1279,38 +1287,6 @@ void pqCMBModifierArcManager::enableAbsolute()
   }
 }
 
-void pqCMBModifierArcManager::onSaveProfile()
-{
-  if(this->CurrentModifierArc != NULL)
-  {
-    QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
-                                                    "",
-                                                    tr("Function Profile (*.fpr)"));
-    if(fileName.isEmpty())
-    {
-      return;
-    }
-    std::ofstream out(fileName.toStdString().c_str());
-    this->CurrentModifierArc->writeFunction(out);
-  }
-}
-
-void pqCMBModifierArcManager::onLoadProfile()
-{
-  if(this->CurrentModifierArc != NULL)
-  {
-    QStringList fileNames =
-      QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.fpr)");
-    if(fileNames.count()==0)
-    {
-      return;
-    }
-    std::string fname = fileNames[0].toStdString();
-    std::ifstream in(fname.c_str());
-    this->CurrentModifierArc->readFunction(in);
-  }
-}
-
 void pqCMBModifierArcManager::onSaveArc()
 {
   QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
@@ -1323,15 +1299,12 @@ void pqCMBModifierArcManager::onSaveArc()
 
   QList<pqOutputPort*> ContourInputs;
   std::ofstream out(fileName.toStdString().c_str());
-  out << 1 << "\n";
-  out << ArcLines.size() << "\n";
+  out << 2 << "\n";
 
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
-  {
-    ArcLines[i]->write(out);
-    pqOutputPort *port = ArcLines[i]->GetCmbArc()->getSource()->getOutputPort(0);
-    ContourInputs.push_back( port );
-  }
+  CurrentModifierArc->write(out);
+  pqOutputPort *port = CurrentModifierArc->GetCmbArc()->getSource()->getOutputPort(0);
+  ContourInputs.push_back( port );
+
   {
     QFileInfo fi(fileName);
     std::string fname = QFileInfo(fi.dir(), fi.baseName()+".vtp").absoluteFilePath().toStdString();
@@ -1408,15 +1381,12 @@ void pqCMBModifierArcManager::onLoadArc()
   std::ifstream in(fname.c_str());
   int version;
   in >> version;
-  unsigned int num;
-  in >> num;
-  for(unsigned int i = 0; i < num; ++i)
-  {
-    unsigned int at = start + i;
-    ArcLines[at]->read(in);
-    this->setRow( rc+i, ArcLines[at] );
-    ArcLines[at]->switchToNotEditable();
-  }
+
+  unsigned int at = start + 0;
+  ArcLines[at]->read(in);
+  this->setRow( rc+0, ArcLines[at] );
+  ArcLines[at]->switchToNotEditable();
+
   accepted();
   onClearSelection();
   this->CurrentModifierArc = NULL;

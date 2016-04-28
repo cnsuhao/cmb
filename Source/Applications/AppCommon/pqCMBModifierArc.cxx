@@ -273,12 +273,106 @@ void pqCMBModifierArc::sendChangeSignals()
 
 void pqCMBModifierArc::writeFunction(std::ofstream & f)
 {
-  //TODO
+  f << 2 << '\n'
+    << functions.size() << '\n';
+  for(std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+      iter != functions.end(); ++iter)
+  {
+    iter->second->write(f);
+  }
+  switch( functionMode )
+  {
+    case Single:
+      f << startFunction->getName() << '\n';
+      break;
+    case EndPoints:
+      f << startFunction->getName() << '\n';
+      f << endFunction->getName() << '\n';
+      break;
+    case PointAssignment:
+    {
+      std::vector<pqCMBModifierArc::pointFunctionWrapper const*> functions;
+      this->getPointFunctions(functions);
+      f << functions.size() << std::endl;
+      for(unsigned int i = 0; i < functions.size(); ++i)
+      {
+        f << functions[i]->getPointId() << " " << functions[i]->getName() << '\n';
+      }
+    }
+  }
 }
 
-void pqCMBModifierArc::readFunction(std::ifstream & f)
+void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
 {
-  //TODO
+  int version;
+  f >> version;
+  int size;
+  f >> size;
+  std::map<std::string, cmbProfileFunction * > tmp_fun;
+  for( int i = 0; i < size; ++i )
+  {
+    cmbProfileFunction * cpf = cmbProfileFunction::read(f, i);
+    tmp_fun[cpf->getName()] = cpf;
+  }
+
+  if(!import_functions)
+  {
+    this->functions.clear();
+  }
+
+  for(std::map<std::string, cmbProfileFunction * >::const_iterator iter = tmp_fun.begin();
+      iter != tmp_fun.end(); ++iter)
+  {
+    std::string str = iter->first;
+    int i = 0;
+    while(functions.find(str) != functions.end())
+    {
+      std::stringstream ss;
+      ss << iter->first << i++;
+      ss >> str;
+    }
+    iter->second->setName(str);
+    this->setFunction(str, iter->second);
+  }
+
+  std::string name[2];
+  vtkIdType id;
+  switch( functionMode )
+  {
+    case Single:
+      f >> name[0];
+      if(!import_functions)
+      {
+        cmbProfileFunction * f = tmp_fun[name[0]];
+        setStartFun(f->getName());
+        setEndFun(f->getName());
+      }
+      break;
+    case EndPoints:
+      f >> name[0] >> name[1];
+      if(!import_functions)
+      {
+        cmbProfileFunction * f = tmp_fun[name[0]];
+        setStartFun(f->getName());
+        f = tmp_fun[name[1]];
+        setEndFun(f->getName());
+      }
+      break;
+    case PointAssignment:
+    {
+      int count;
+      f >> count;
+      for(int i = 0; i < count; ++i)
+      {
+        f >> id >> name[0];
+        if(!import_functions)
+        {
+          cmbProfileFunction * f = tmp_fun[name[0]];
+          this->addFunctionAtPoint(id, f);
+        }
+      }
+    }
+  }
 }
 
 void pqCMBModifierArc::write(std::ofstream & f)
@@ -291,26 +385,47 @@ void pqCMBModifierArc::write(std::ofstream & f)
   }
   f << 1 << "\n";
   f << IsVisible << "\n";
+  f << static_cast<int>(functionMode) << std::endl;
   f << CmbArc->getPlaneProjectionNormal() << " " << CmbArc->getPlaneProjectionPosition() << "\n";
   writeFunction(f);
 }
 
-void pqCMBModifierArc::read(std::ifstream & f)
+void pqCMBModifierArc::read(std::ifstream & f, bool import_function)
 {
+  if(!import_function)
+  {
+    setUpFunction();
+  }
   int version;
   f >> version;
-  assert(version <= 1);
+  assert(version == 2);
   int hasInfo;
   f >> hasInfo;
   if(!hasInfo) return;
-  f >> IsVisible;
+  if(import_function)
+  {
+    bool v;
+    f >> IsVisible;
+    int t;
+    f >> t;
+  }
+  else
+  {
+    f >> IsVisible;
+    int mode;
+    f >> mode;
+    functionMode = static_cast<FunctionMode>(mode);
+  }
   int norm;
   double pos;
   f >> norm >> pos;
-  readFunction(f);
-  CmbArc->setPlaneProjectionNormal(norm);
-  CmbArc->setPlaneProjectionPosition(pos);
-  setUpFunction();
+  readFunction(f, import_function);
+  if(!import_function)
+  {
+    CmbArc->setPlaneProjectionNormal(norm);
+    CmbArc->setPlaneProjectionPosition(pos);
+    setUpFunction();
+  }
 }
 
 pqCMBModifierArc::pointFunctionWrapper * pqCMBModifierArc::getPointFunction(vtkIdType i)

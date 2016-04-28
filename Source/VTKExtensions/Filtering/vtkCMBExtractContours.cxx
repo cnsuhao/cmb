@@ -17,6 +17,9 @@
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkXMLPolyDataReader.h"
+#include "vtkDataArray.h"
+#include "vtkPointData.h"
+#include "vtkIntArray.h"
 
 #include <set>
 #include <sys/types.h>
@@ -104,11 +107,14 @@ int vtkCMBExtractContours::RequestData(
 
   //now that we the point id's construct our output polydata
   vtkPoints *points = vtkPoints::New();
+  vtkDataArray *pointIds = vtkIntArray::New();
   vtkCellArray *lines = vtkCellArray::New();
   vtkCellArray *verts = vtkCellArray::New();
+  vtkDataArray *oIds  = input->GetPointData()->GetScalars();
 
   vtkIdType selectedCount = 0;
   points->SetNumberOfPoints(origNumPoints);
+  pointIds->SetNumberOfTuples(origNumPoints);
   lines->InsertNextCell(origNumPoints);
   verts->InsertNextCell(origNumPoints);
   for ( vtkIdType i=0; i < origNumPoints; ++i )
@@ -122,16 +128,27 @@ int vtkCMBExtractContours::RequestData(
     double temp[3];
     input->GetPoint(pointId,temp);
     points->InsertPoint(i,input->GetPoint(pointId));
+    if(oIds)
+      {
+      unsigned int id = oIds->GetTuple1(pointId);
+      pointIds->SetTuple1(i, id);
+      }
+    else
+      {
+      pointIds->SetTuple1(i, i);
+      }
     lines->InsertCellPoint(i);
     }
   verts->UpdateCellCount(selectedCount);
 
   output->SetPoints(points);
+  output->GetPointData()->SetScalars(pointIds);
   output->SetVerts(verts);
   output->SetLines(lines);
 
   origPointIds->Delete();
   points->FastDelete();
+  pointIds->FastDelete();
   lines->FastDelete();
   verts->FastDelete();
 

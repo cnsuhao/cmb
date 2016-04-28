@@ -27,6 +27,9 @@ public:
   vtkGetStringMacro(FileName);
   vtkSetStringMacro(FileName);
 
+  void Write()
+  {} //Work is done in the rquest data,  This is to make paraview happy
+
 protected:
   vtkSceneGenV2ContourWriter();
   ~vtkSceneGenV2ContourWriter();

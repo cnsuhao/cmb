@@ -73,10 +73,10 @@ public:
   void setVisablity(bool vis);
 
   void writeFunction(std::ofstream & f);
-  void readFunction(std::ifstream & f);
+  void readFunction(std::ifstream & f, bool import_functions = false);
 
   void write(std::ofstream & f);
-  void read(std::ifstream & f);
+  void read(std::ifstream & f, bool import_functions = false);
 
   bool updateLabel(std::string str, cmbProfileFunction * fun);
 
