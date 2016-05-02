@@ -1347,7 +1347,7 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
 bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 {
   this->initialize();
-  if(!this->Internal->ManagerProxy || !brOp || !brOp->ableToOperate())
+  if(!this->Internal->ManagerProxy || !brOp)
     {
     return false;
     }

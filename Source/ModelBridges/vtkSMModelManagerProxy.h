@@ -58,8 +58,11 @@ protected:
   vtkSMModelManagerProxy();
   virtual ~vtkSMModelManagerProxy();
 
-  cJSON* jsonRPCRequest(cJSON* req);
-  cJSON* jsonRPCRequest(const std::string& req);
+  cJSON* requestJSONOp(smtk::model::RemoteOperatorPtr op,
+                       const std::string& strMethod,
+                       const smtk::common::UUID& fwdSessionId);
+  cJSON* jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperProxy=NULL);
+  cJSON* jsonRPCRequest(const std::string& req, vtkSMProxy* opHelperProxy=NULL);
   void jsonRPCNotification(cJSON* note);
   void jsonRPCNotification(const std::string& note);
 
