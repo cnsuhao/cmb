@@ -220,6 +220,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 
   QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveArc()));
   QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadArc()));
+  QObject::connect(this->Internal->UI->importFunctions, SIGNAL(clicked()),
+                   this, SLOT(importFunction()));
 
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
                    this, SLOT(nameChanged(QString)));
@@ -1392,6 +1394,23 @@ void pqCMBModifierArcManager::onLoadArc()
   this->check_save();
 }
 
+void pqCMBModifierArcManager::importFunction()
+{
+  QStringList fileNames =
+  QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
+  if(fileNames.count()==0)
+  {
+    return;
+  }
+
+  std::string fname = fileNames[0].toStdString();
+  std::ifstream in(fname.c_str());
+  int version;
+  in >> version;
+  this->CurrentModifierArc->read(in, true);
+  this->updateLineFunctions();
+}
+
 void pqCMBModifierArcManager::check_save()
 {
   for(unsigned int i = 0; i < ArcLines.size(); ++i)
@@ -1688,6 +1707,7 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->pointsFrame->hide();
       this->Internal->UI->DatasetControl->hide();
       this->Internal->UI->Load->setEnabled(true);
+      this->Internal->UI->importFunctions->setEnabled(false);
       break;
     case EditArc:
       this->Internal->UI->EditControl->show();
@@ -1698,6 +1718,7 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->pointsFrame->hide();
       this->Internal->UI->DatasetControl->hide();
       this->Internal->UI->Load->setEnabled(false);
+      this->Internal->UI->importFunctions->setEnabled(false);
       break;
     case EditFunction:
       this->Internal->UI->EditControl->hide();
@@ -1707,6 +1728,7 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->EditArc->setEnabled(!this->addPointMode);
       this->Internal->UI->DatasetControl->show();
       this->Internal->UI->Load->setEnabled(true);
+      this->Internal->UI->importFunctions->setEnabled(true);
       if(this->CurrentModifierArc->getFunctionMode() == pqCMBModifierArc::Single)
       {
         this->Internal->UI->pointsFrame->hide();

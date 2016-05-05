@@ -104,6 +104,7 @@ public slots:
   void disableAbsolute();
   void onSaveArc();
   void onLoadArc();
+  void importFunction();
 
 signals:
   void currentObjectChanged(pqCMBModifierArc*);
