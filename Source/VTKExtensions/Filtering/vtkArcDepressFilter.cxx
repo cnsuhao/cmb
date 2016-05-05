@@ -302,7 +302,7 @@ public:
     if(d < 0)
     {
       sign = -1;
-      unsigned int side = static_cast<unsigned int>(Left);
+      side = static_cast<unsigned int>(Left);
     }
     if(sign*d > maxWidth[side]) return false;
     weight = weightFuntion->evaluate(d/maxWidth[side]);
@@ -313,7 +313,7 @@ public:
     else
     {
       //TODO: look at this
-      desp = (d- 0.5*baseWidth)*slope[side]+displacement;
+      desp = (sign*d- 0.5*baseWidth)*slope[side]+displacement;
     }
     return true;
   }
@@ -867,8 +867,8 @@ private:
     point pt(pin[0], pin[1]);
     point closePt = *(points[0]);
     result = pt.distSquared(closePt);
-    line_seg const* cls = NULL;
-    lsId = lines.size();
+    line_seg const* cls = &(lines[0]);
+    lsId = 0;
     for (unsigned int i = 0; i<lines.size(); ++i)
     {
       line_seg const& ls = lines[i];
@@ -889,6 +889,7 @@ private:
       //TODO: FUNCTION
       return false;
     }
+    if(cls->side(pt, closePt)) result = -result;
     return closePt.inside(result);
   }
 
