@@ -18,6 +18,7 @@
 #include <string>
 
 #include "vtkDataObject.h"
+#include "vtkBoundingBox.h"
 
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
@@ -102,7 +103,8 @@ public:
   cmbProfileFunction * cloneFunction(std::string const& name);
 
   pointFunctionWrapper * getPointFunction(vtkIdType i);
-  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun);
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
+                                                                   cmbProfileFunction * fun);
   void removeFunctionAtPoint(vtkIdType i);
   bool pointHasFunction(vtkIdType i) const;
 
@@ -115,7 +117,7 @@ public:
 
 public slots:
   void sendChangeSignals();
-  void updateArc(vtkSMSourceProxy* source);
+  void updateArc(vtkSMSourceProxy* source, vtkBoundingBox bbox);
   void switchToNotEditable();
   void switchToEditable();
   void removeFromServer(vtkSMSourceProxy* source);

@@ -333,8 +333,8 @@ public:
     double w, tmpD, tmpR;
     if(!evalFun(d, w, tmpD, tmpR)) return;
     double wT[] = {(clamp && tmpD > 0)?0:w*tmpD, (clamp && tmpR < 0)?0:w*tmpR};
-    if(dispMode & Dig)   {pt[0] += wT[0]*n[0]; pt[1] += wT[0]*n[1]; pt[2] += wT[0]*n[1];}
-    if(dispMode & Raise) {pt[0] += wT[1]*n[0]; pt[1] += wT[1]*n[1]; pt[2] += wT[1]*n[1];}
+    if(dispMode & Dig)   {pt[0] += wT[0]*n[0]; pt[1] += wT[0]*n[1]; pt[2] += wT[0]*n[2];}
+    if(dispMode & Raise) {pt[0] += wT[1]*n[0]; pt[1] += wT[1]*n[1]; pt[2] += wT[1]*n[2];}
   }
 
   virtual void addWeightPoint(double w, double v, double s, double m)

@@ -13,6 +13,7 @@ public:
   virtual cmbProfileFunction::FunctionType getType() const;
   virtual cmbProfileFunction * clone(std::string const& name) const;
   virtual void sendDataToProxy(int arc_ID, int pointID,
+                               vtkBoundingBox bbox,
                                vtkSMSourceProxy* source) const;
 
   virtual vtkPiecewiseFunction * getWeightingFunction() const

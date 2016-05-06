@@ -8,6 +8,7 @@
 
 #include <string>
 #include <fstream>
+#include <vtkBoundingBox.h>
 
 class CMBAPPCOMMON_EXPORT cmbProfileFunctionParameters
 {
@@ -31,6 +32,7 @@ public:
   virtual void setRelative(bool b) = 0;
 
   virtual void sendDataToProxy(int arc_ID, int pointID,
+                               vtkBoundingBox bbox,
                                vtkSMSourceProxy* source) const = 0;
 protected:
   virtual bool readData(std::ifstream & in, int version) = 0;

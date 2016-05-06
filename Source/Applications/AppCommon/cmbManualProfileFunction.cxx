@@ -325,6 +325,7 @@ bool cmbManualProfileFunction::writeData(std::ofstream & out) const
 }
 
 void cmbManualProfileFunction::sendDataToProxy(int arc_ID, int funID,
+                                               vtkBoundingBox /*bbox*/,
                                                vtkSMSourceProxy* source) const
 {
   QList< QVariant > v;

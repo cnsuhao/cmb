@@ -46,6 +46,7 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
 }
 
 void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
+                                              vtkBoundingBox bbox,
                                               vtkSMSourceProxy* source) const
 {
   double slopeLeft = getSlopeLeft();
@@ -64,7 +65,10 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
     }
     else
     {
-      widthLeft = 1e60; //TODO better value
+      double miz = bbox.GetMinPoint()[2];
+      double maz = bbox.GetMaxPoint()[2];
+      widthLeft = std::max(std::abs(widthLeft) + std::abs((miz - depth)/ slopeLeft),
+                           std::abs(widthLeft) + std::abs((maz - depth)/ slopeLeft));
     }
   }
   double widthRight = baseWidth * 0.5;
@@ -77,7 +81,10 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
     }
     else
     {
-      widthRight = 1e60; //TODO better value
+      double miz = bbox.GetMinPoint()[2];
+      double maz = bbox.GetMaxPoint()[2];
+      widthRight = std::max(std::abs(widthRight) + std::abs((miz - depth)/ slopeRight),
+                            std::abs(widthRight) + std::abs((maz - depth)/ slopeRight));
     }
   }
   v << arc_ID << funId << ((this->WeightUseSpline)?1:0)

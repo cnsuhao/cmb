@@ -166,7 +166,7 @@ void pqCMBModifierArc::removeFromServer(vtkSMSourceProxy* source)
   source->UpdatePropertyInformation();
 }
 
-void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
+void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source, vtkBoundingBox bbox)
 {
   vtkPVArcInfo* info = CmbArc->getArcInfo();
   if(info == NULL) return;
@@ -212,14 +212,14 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       if(endFunction->getFunction() != startFunction->getFunction())
       {
         v.clear();
-        endFunction->getFunction()->sendDataToProxy(Id, 1, source);
+        endFunction->getFunction()->sendDataToProxy(Id, 1, bbox, source);
         v << Id << info->GetNumberOfPoints()-1 << 1;
         pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
         source->UpdateVTKObjects();
       }
     case Single:
       v.clear();
-      startFunction->getFunction()->sendDataToProxy(Id, 0, source);
+      startFunction->getFunction()->sendDataToProxy(Id, 0, bbox, source);
       v << Id << 0 << 0;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetFunctionToPoint"), v);
       source->UpdateVTKObjects();
@@ -230,7 +230,7 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source)
       std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
       for(unsigned int i = 0; iter != functions.end(); ++i,++iter)
       {
-        iter->second->sendDataToProxy(Id, i, source);
+        iter->second->sendDataToProxy(Id, i, bbox, source);
         function_to_id[iter->second] = i;
       }
       for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());++i)

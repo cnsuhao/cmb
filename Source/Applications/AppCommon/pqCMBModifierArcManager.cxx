@@ -319,7 +319,7 @@ void pqCMBModifierArcManager::accepted()
       {
         if(this->ArcLines[i]!= NULL)
         {
-          this->ArcLines[i]->updateArc(source);
+          this->ArcLines[i]->updateArc(source, this->Internal->boundingBox);
         }
       }
     }
@@ -892,7 +892,7 @@ void pqCMBModifierArcManager::update()
       {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       if(source == NULL) continue;
-      this->CurrentModifierArc->updateArc(source);
+      this->CurrentModifierArc->updateArc(source, this->Internal->boundingBox);
       }
     }
   setUpPointsTable();
@@ -958,7 +958,7 @@ void pqCMBModifierArcManager::addProxy(QString s, int pid, vtkBoundingBox box, p
       v << this->ArcLines[i]->getId() << 1;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ArcEnable"), v);
       source->UpdateVTKObjects();
-      this->ArcLines[i]->updateArc(source);
+      this->ArcLines[i]->updateArc(source, this->Internal->boundingBox);
       ArcLinesApply[i][s][pid] = true;
     }
   }
@@ -1107,7 +1107,7 @@ void pqCMBModifierArcManager::doneModifyingArc()
       foreach(int pieceIdx, ServerProxies[filename].keys())
         {
         vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-        this->CurrentModifierArc->updateArc(source);
+        this->CurrentModifierArc->updateArc(source, this->Internal->boundingBox);
         }
       }
     }
