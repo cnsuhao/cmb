@@ -64,7 +64,6 @@ bool vtkCMBArcCreateOperator::Operate(vtkPolyData *source)
   vtkIdType numberOfCells = lines->GetNumberOfCells();
   vtkIdType numberOfInternalEndNodes = lines->GetNumberOfConnectivityEntries() - numberOfCells;
   vtkDataArray * vda = source->GetPointData()->GetScalars();
-  source->PrintSelf(std::cout, vtkIndent());
 
   //walk the polydata and create the arc
   lines->InitTraversal();
