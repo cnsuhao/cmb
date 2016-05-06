@@ -7,6 +7,7 @@ class CMBAPPCOMMON_EXPORT cmbProfileWedgeFunction : public cmbProfileFunction
 {
 public:
   friend class cmbProfileFunction;
+  enum DisplacmentMode{Dig,Raise,Level};
   cmbProfileWedgeFunction();
   ~cmbProfileWedgeFunction();
   virtual cmbProfileFunction::FunctionType getType() const;
@@ -41,8 +42,8 @@ public:
   bool isClamped() const;
   void setClamped(bool w);
 
-  void setDig(bool d);
-  bool isDig() const;
+  void setMode(DisplacmentMode d);
+  DisplacmentMode getMode() const;
 
 protected:
   virtual bool readData(std::ifstream & in, int version);
@@ -60,7 +61,7 @@ private:
   bool WeightUseSpline;
 
   bool clamp;
-  bool dig;
+  DisplacmentMode dispMode;
 
   cmbProfileWedgeFunction(cmbProfileWedgeFunction const* other);
 };

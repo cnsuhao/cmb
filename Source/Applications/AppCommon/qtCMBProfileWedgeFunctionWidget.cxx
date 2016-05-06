@@ -16,10 +16,10 @@ qtCMBProfileWedgeFunctionWidget
           this, SLOT(setSymmetry(bool)));
   connect(this->UI->clamp, SIGNAL(toggled(bool)),
           this, SLOT(setClamp(bool)));
-  connect(this->UI->Dig, SIGNAL(toggled(bool)),
-          this, SLOT(setDig(bool)));
+  connect(this->UI->displacementMode, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(setMode(int)));
 
-  this->UI->Dig->setEnabled(!fun->isRelative());
+  this->UI->displacementMode->setVisible(!fun->isRelative());
 
   connect(this->UI->LeftSlope, SIGNAL(valueChanged(double)),
           this, SLOT(setLeftSlope(double)));
@@ -94,10 +94,10 @@ void qtCMBProfileWedgeFunctionWidget
 void qtCMBProfileWedgeFunctionWidget
 ::setRelative(bool b)
 {
-  this->UI->Dig->setEnabled(!b);
+  this->UI->displacementMode->setVisible(!b);
   if(b)
   {
-    this->UI->Dig->setChecked(function->isDig());
+    this->UI->displacementMode->setCurrentIndex(function->getMode());
   }
 }
 
@@ -173,10 +173,21 @@ void qtCMBProfileWedgeFunctionWidget::setUp()
   this->UI->WeightingSplineControl->setChecked(function->isWeightSpline());
 
   this->UI->clamp->setChecked(function->isClamped());
-  this->UI->Dig->setChecked(function->isDig());
+  this->UI->displacementMode->setCurrentIndex(function->getMode());
 }
 
-void qtCMBProfileWedgeFunctionWidget::setDig(bool b)
+void qtCMBProfileWedgeFunctionWidget::setMode(int b)
 {
-  this->function->setDig(b);
+  cmbProfileWedgeFunction::DisplacmentMode m =
+                                          static_cast<cmbProfileWedgeFunction::DisplacmentMode>(b);
+  this->function->setMode( m );
+  if(m == cmbProfileWedgeFunction::Level)
+  {
+    this->UI->clamp->setChecked(true);
+    this->UI->clamp->setDisabled(true);
+  }
+  else
+  {
+    this->UI->clamp->setDisabled(false);
+  }
 }

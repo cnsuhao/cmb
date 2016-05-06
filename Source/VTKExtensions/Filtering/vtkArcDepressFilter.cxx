@@ -206,7 +206,6 @@ public:
   enum Type {Manual, Mix, Wedge};
   virtual ~DepArcProfileFunction(){}
   virtual Type getType() const = 0;
-  virtual bool evalFun( double d, double & weight, double & desp ) const = 0;
   virtual double apply(double d, double pt) const = 0;
   virtual void apply(double d, double *pt, double *n) const = 0;
   virtual void addWeightPoint(double w, double v, double s, double m) = 0;
@@ -250,11 +249,6 @@ public:
     pt[2] = tm1 * pta[2] + t*ptb[2];
   }
 
-  virtual bool evalFun( double d, double & weight, double & desp ) const
-  {
-    assert(false && " do not use for the mixing function");
-  }
-
   bool inside(double d) const
   {
     return fun[0]->inside(d) || fun[1]->inside(d);
@@ -273,19 +267,21 @@ class DepArcWedgeProfileFunction : public DepArcProfileFunction
 {
 public:
   enum {Left = 0, Right = 1};
+  enum DisplacementMode {Dig = 1, Raise = 2, Level = 3};
   DepArcWedgeProfileFunction(DepArcProfileFunction::FunctionType weightFun,
-                             bool r, bool d, bool c, double bw, double disp,
+                             bool r, DisplacementMode d, bool c, double bw, double disp,
                              double sl, double sr, double maxwL, double maxwR)
-  : baseWidth(bw), displacement(disp), relative(r), clamp(c), dig(d)
+  : baseWidth(bw), displacement(disp), relative((r)?1:0), clamp(c), dispMode(d)
   {
-    slope[Right] = (dig)?sr:-sr;
-    slope[Left] = (dig)?sl:-sl;
+    slope[Right] = sr;//:-sr;
+    slope[Left] = sl;//:-sl;
     maxWidth[Right] = maxwR;
     maxWidth[Left] = maxwL;
     weightFuntion = (weightFun == DepArcProfileFunction::Piecewise) ?
                                   dynamic_cast<ArcDepressFunction*>(new ArcDepressPiecewiseFun()) :
                                   dynamic_cast<ArcDepressFunction*>(new ArcDepressSplineFun());
-    assert(!relative || (relative && (dig == disp < 0) ));
+    assert(!relative || (relative && ((dispMode == Dig && disp < 0) ||
+                                      (dispMode == Raise && disp > 0)) ));
   }
   ~DepArcWedgeProfileFunction()
   {
@@ -295,7 +291,8 @@ public:
   {
     return DepArcProfileFunction::Wedge;
   }
-  virtual bool evalFun( double d, double & weight, double & desp ) const
+
+  bool evalFun( double d, double & weight, double & despDig, double & despRaise ) const
   {
     double sign = 1.0;
     unsigned int side = static_cast<unsigned int>(Right);
@@ -306,64 +303,45 @@ public:
     }
     if(sign*d > maxWidth[side]) return false;
     weight = weightFuntion->evaluate(d/maxWidth[side]);
-    if(sign*d < 0.5*baseWidth)
+    despDig = despRaise = displacement;
+
+    if(sign*d >= 0.5*baseWidth)
     {
-      desp = displacement;
-    }
-    else
-    {
-      //TODO: look at this
-      desp = (sign*d- 0.5*baseWidth)*slope[side]+displacement;
+      double p1 = (sign*d- 0.5*baseWidth) * slope[side];
+      despDig   +=  p1;
+      despRaise += -p1;
     }
     return true;
   }
+
   virtual double apply(double d, double pt) const
   {
-    double w, tmp;
-    if(!evalFun(d, w, tmp)) return pt;
-    if(relative)
-    {
-      if(clamp && ((dig && tmp>0)||(!dig && tmp<0))) return pt;
-      return pt + w*tmp;
-    }
-    else
-    {
-      double direction = tmp - pt;
-      if(dig && clamp && direction > 0) return pt;
-      else if(!dig && clamp && direction < 0) return pt;
-      return w*tmp +(1-w)*pt;
-    }
+    double w, tmpD, tmpR;
+    if(!evalFun(d, w, tmpD, tmpR)) return pt;
+    double absolute = (1-relative); // 1 or 0
+    double dir[] = { tmpD - pt*absolute, tmpR - pt*absolute };
+    double ptW = (1-w*absolute);
+
+    if(dispMode & Dig)   pt = (clamp && dir[0] > 0) ? pt : (ptW*pt + w*tmpD);
+    if(dispMode & Raise) pt = (clamp && dir[1] < 0) ? pt : (ptW*pt + w*tmpR);
+    return pt;
   }
+
   virtual void apply(double d, double *pt, double *n) const
   {
-    double w, tmp;
-    if(!evalFun(d, w, tmp)) return;
-    if(relative)
-    {
-      if(clamp && ((dig && tmp>0)||(!dig && tmp<0))) return;
-      pt[0] = pt[0] + w*tmp*n[0];
-      pt[1] = pt[1] + w*tmp*n[1];
-      pt[2] = pt[2] + w*tmp*n[2];
-    }
-    else
-    {
-      //TODO Clamp
-      double tmpPt[] = {w*tmp*n[0] + (1-w)*pt[0],
-                        w*tmp*n[1] + (1-w)*pt[1],
-                        w*tmp*n[2] + (1-w)*pt[2]};
-      if(clamp)
-      {
-        //todo
-      }
-      pt[0] = tmpPt[0];
-      pt[1] = tmpPt[1];
-      pt[2] = tmpPt[2];
-    }
+    assert(relative && "Normal direction only makes sense in relative");
+    double w, tmpD, tmpR;
+    if(!evalFun(d, w, tmpD, tmpR)) return;
+    double wT[] = {(clamp && tmpD > 0)?0:w*tmpD, (clamp && tmpR < 0)?0:w*tmpR};
+    if(dispMode & Dig)   {pt[0] += wT[0]*n[0]; pt[1] += wT[0]*n[1]; pt[2] += wT[0]*n[1];}
+    if(dispMode & Raise) {pt[0] += wT[1]*n[0]; pt[1] += wT[1]*n[1]; pt[2] += wT[1]*n[1];}
   }
+
   virtual void addWeightPoint(double w, double v, double s, double m)
   {
     weightFuntion->addPoint(w,v,s,m);
   }
+
   virtual bool inside(double d) const
   {
     if(d<0) return -d <= maxWidth[Left];
@@ -401,29 +379,24 @@ public:
         result->maxWidth[Right] = std::abs(result->maxWidth[Right]) +
                                   std::abs(result->displacement/result->slope[Right]);
       }
-      result->dig = result->displacement < 0;
+      result->dispMode = (result->displacement < 0)?Dig:Raise;
     }
     else
     {
       result->maxWidth[0] = (1-t)*this->maxWidth[0] + t*other->maxWidth[0];
       result->maxWidth[1] = (1-t)*this->maxWidth[1] + t*other->maxWidth[1];
-      result->dig = (t<0.5)?this->dig:other->dig;
-      if(!result->dig)
-      {
-        result->slope[0] = -result->slope[0];
-        result->slope[1] = -result->slope[1];
-      }
+      result->dispMode    = (t<0.5) ? this->dispMode : other->dispMode;
     }
     result->weightFuntion = new MixArcDepressFunction(this->weightFuntion->clone(),
                                                       other->weightFuntion->clone(), t);
     result->relative = this->relative;
     result->clamp = this->clamp;
-    if(relative == other->relative && clamp == other->clamp && dig == other->dig)
+    if(relative == other->relative && clamp == other->clamp && dispMode == other->dispMode)
     {
       assert(result->weightFuntion != NULL);
       return result;
     }
-    else if(relative == other->relative && clamp == other->clamp && dig != other->dig)
+    else if(relative == other->relative && clamp == other->clamp && dispMode != other->dispMode)
     {
       if(t >= 0.5)
       {
@@ -435,7 +408,7 @@ public:
     DepArcWedgeProfileFunction * tmpO = new DepArcWedgeProfileFunction(result);
     tmpO->relative = other->relative;
     tmpO->clamp = other->clamp;
-    tmpO->dig = other->dig;
+    tmpO->dispMode = other->dispMode;
     assert(result->weightFuntion != NULL);
     assert(tmpO->weightFuntion != NULL);
     return new DepArcMixProfileFunction(boost::shared_ptr<DepArcProfileFunction>(result),
@@ -454,12 +427,14 @@ private:
     this->maxWidth[1] = other->maxWidth[1];
     this->relative = other->relative;
     this->clamp = other->relative;
-    this->dig = other->relative;
+    this->dispMode = other->dispMode;
     weightFuntion = other->weightFuntion->clone();
     assert(weightFuntion != NULL);
   }
   double baseWidth, displacement, slope[2], maxWidth[2];
-  bool relative, clamp, dig;
+  int relative;
+  bool clamp;
+  DisplacementMode dispMode;
   ArcDepressFunction * weightFuntion;
 };
 
@@ -511,7 +486,7 @@ public:
     return IsSymmetric;
   }
 
-  virtual bool evalFun( double d, double & weight, double & desp ) const
+  bool evalFun( double d, double & weight, double & desp ) const
   {
     if(d < getMinDistance() || d > getMaxDistance())
     {
@@ -1316,7 +1291,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
 
 void vtkArcDepressFilter
 ::CreateWedgeFunction( double arc_ind_in, double funId_in, double weightFunType_in,
-                       double relative_in, double dig_in, double clamp_in, double basewidth,
+                       double relative_in, double mode_in, double clamp_in, double basewidth,
                        double displacement, double slopeLeft, double slopeRight,
                        double maxWidthLeft, double maxWidthRight)
 {
@@ -1325,7 +1300,8 @@ void vtkArcDepressFilter
   DepArcProfileFunction::FunctionType weightFunType=
               static_cast<DepArcProfileFunction::FunctionType>(static_cast<int>(weightFunType_in));
   bool relative = relative_in != 0;
-  bool dig = dig_in != 0;
+  DepArcWedgeProfileFunction::DisplacementMode disMode =
+                            static_cast< DepArcWedgeProfileFunction::DisplacementMode > (mode_in+1);
   bool clamp = clamp_in != 0;
 
   if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
@@ -1339,13 +1315,10 @@ void vtkArcDepressFilter
   }
 
   td->functions[funId] =
-    boost::shared_ptr<DepArcProfileFunction>( new DepArcWedgeProfileFunction(weightFunType,
-                                                                             relative, dig, clamp,
-                                                                             basewidth,
-                                                                             displacement,
-                                                                             slopeLeft, slopeRight,
-                                                                             maxWidthLeft,
-                                                                             maxWidthRight ));
+    boost::shared_ptr<DepArcProfileFunction>(
+        new DepArcWedgeProfileFunction(weightFunType, relative, disMode, clamp, basewidth,
+                                       displacement, slopeLeft, slopeRight, maxWidthLeft,
+                                       maxWidthRight ));
   this->Modified();
 }
 

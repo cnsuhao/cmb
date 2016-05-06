@@ -10,7 +10,7 @@
 cmbProfileWedgeFunction::cmbProfileWedgeFunction()
 : depth(-8), baseWidth(0), slopeLeft(1), slopeRight(1),
   WeightingFunction(vtkPiecewiseFunction::New()), Relative(true),
-  Symmetry(true), WeightUseSpline(false), clamp(true), dig(true)
+  Symmetry(true), WeightUseSpline(false), clamp(true), dispMode(Dig)
 {
   this->WeightingFunction->SetAllowDuplicateScalars(1);
   this->WeightingFunction->AddPoint(0, 1);
@@ -23,7 +23,7 @@ cmbProfileWedgeFunction
   slopeLeft(other->slopeLeft), slopeRight(other->slopeRight),
   WeightingFunction(vtkPiecewiseFunction::New()), Relative(other->Relative),
   Symmetry(other->Symmetry), WeightUseSpline(other->WeightUseSpline),
-  clamp(other->clamp), dig(other->dig)
+  clamp(other->clamp), dispMode(other->dispMode)
 {
   this->WeightingFunction->DeepCopy(other->WeightingFunction);
 }
@@ -81,7 +81,7 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
     }
   }
   v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
-    << Relative << this->isDig() //TODO
+    << Relative << this->getMode() //TODO
     << this->clamp
     << getBaseWidth() << getDepth() << slopeLeft << slopeRight
     << widthLeft << widthRight;
@@ -204,11 +204,12 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
 
 bool cmbProfileWedgeFunction::readData(std::ifstream & in, int version)
 {
-  int subv;
+  int subv, tmpMode;
   in >> subv
      >> this->depth >> this->baseWidth >> this->slopeLeft >> this->slopeRight
      >> this->Relative >> this->Symmetry >> this->WeightUseSpline
-     >> this->clamp >> this->dig;
+     >> this->clamp >> tmpMode;
+  this->dispMode = static_cast<DisplacmentMode>(tmpMode);
 
   int n;
   in >> n;
@@ -227,7 +228,7 @@ bool cmbProfileWedgeFunction::writeData(std::ofstream & out) const
   out << '\n' << 1 << '\n' //version
       << this->depth << ' ' << this->baseWidth << ' ' << this->slopeLeft << ' '
       << this->slopeRight << '\n' << this->Relative << ' ' << this->Symmetry << ' '
-      << this->WeightUseSpline << ' ' << this->clamp << ' ' << this->dig << '\n';
+      << this->WeightUseSpline << ' ' << this->clamp << ' ' << this->dispMode << '\n';
 
   out << this->WeightingFunction->GetSize() << "\n";
   for(unsigned int i = 0; i < WeightingFunction->GetSize(); ++i)
@@ -259,11 +260,26 @@ void cmbProfileWedgeFunction::setClamped(bool w)
   clamp = w;
 }
 
-void cmbProfileWedgeFunction::setDig(bool d)
+void cmbProfileWedgeFunction::setMode(DisplacmentMode d)
 {
-  this->dig = d;
+  if(Relative)
+  {
+    if(d == Level) return;
+    if(depth < 0) this->dispMode = Dig;
+    else this->dispMode = Raise;
+  }
+  else
+  {
+    this->dispMode = d;
+  }
 }
-bool cmbProfileWedgeFunction::isDig() const
+
+cmbProfileWedgeFunction::DisplacmentMode cmbProfileWedgeFunction::getMode() const
 {
-  return (Relative)?(depth<0):this->dig;
+  if(Relative)
+  {
+    if(depth<0) return Dig;
+    else return Raise;
+  }
+  return this->dispMode;
 }
