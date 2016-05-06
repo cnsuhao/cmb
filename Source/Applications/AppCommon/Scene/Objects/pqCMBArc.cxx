@@ -28,6 +28,8 @@
 #include "vtkCMBArcAutoConnectClientOperator.h"
 #include "vtkCMBArcFindPickPointOperator.h"
 
+#include "vtkSMPVRepresentationProxy.h"
+
 #include "vtkCommand.h"
 #include "vtkIdTypeArray.h"
 #include "vtkProcessModule.h"
@@ -452,6 +454,8 @@ void pqCMBArc::updateRepresentation()
     {
     pqDataRepresentation* repr = builder->createDataRepresentation(
       this->Source->getOutputPort(0), view, "GeometryRepresentation");
+    vtkSMPVRepresentationProxy::SetScalarColoring(repr->getProxy(),
+                                                  QString("").toLatin1().data(), 0);
     this->setRepresentation(repr);
     }
 
