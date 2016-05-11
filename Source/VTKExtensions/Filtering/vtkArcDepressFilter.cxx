@@ -210,7 +210,8 @@ public:
   virtual void apply(double d, double *pt, double *n) const = 0;
   virtual void addWeightPoint(double w, double v, double s, double m) = 0;
   virtual bool inside(double d) const = 0;
-
+  virtual void setFunctionRange(double /*minZ*/, double /*maxZ*/)
+  {}
 };
 
 class DepArcMixProfileFunction: public DepArcProfileFunction
@@ -253,6 +254,11 @@ public:
   {
     return fun[0]->inside(d) || fun[1]->inside(d);
   }
+  virtual void setFunctionRange(double minZ, double maxZ)
+  {
+    fun[0]->setFunctionRange(minZ, maxZ);
+    fun[1]->setFunctionRange(minZ, maxZ);
+  }
 
   virtual void addWeightPoint(double w, double v, double s, double m)
   {
@@ -270,13 +276,18 @@ public:
   enum DisplacementMode {Dig = 1, Raise = 2, Level = 3};
   DepArcWedgeProfileFunction(DepArcProfileFunction::FunctionType weightFun,
                              bool r, DisplacementMode d, bool c, double bw, double disp,
-                             double sl, double sr, double maxwL, double maxwR)
+                             double sl, double sr )
   : baseWidth(bw), displacement(disp), relative((r)?1:0), clamp(c), dispMode(d)
   {
+    if(relative)
+    {
+      maxWidth[Right] = (sr == 0) ? bw : std::abs(bw) + std::abs( disp/ sr );
+      maxWidth[Left]  = (sl == 0) ? bw : std::abs(bw) + std::abs( disp/ sl );
+    }
     slope[Right] = sr;//:-sr;
     slope[Left] = sl;//:-sl;
-    maxWidth[Right] = maxwR;
-    maxWidth[Left] = maxwL;
+    //maxWidth[Right] = maxwR;
+    //maxWidth[Left] = maxwL;
     weightFuntion = (weightFun == DepArcProfileFunction::Piecewise) ?
                                   dynamic_cast<ArcDepressFunction*>(new ArcDepressPiecewiseFun()) :
                                   dynamic_cast<ArcDepressFunction*>(new ArcDepressSplineFun());
@@ -413,6 +424,23 @@ public:
     assert(tmpO->weightFuntion != NULL);
     return new DepArcMixProfileFunction(boost::shared_ptr<DepArcProfileFunction>(result),
                                         boost::shared_ptr<DepArcProfileFunction>(tmpO), t);
+  }
+  virtual void setFunctionRange(double minZ, double maxZ)
+  {
+    if(!relative)
+    {
+      double hBW = baseWidth * 0.5;
+      for( int i = 0; i < 2; ++i)
+      {
+        if(this->slope[i]  != 0)
+        {
+          this->maxWidth[i] =
+                        std::max( std::abs(hBW) + std::abs((minZ - displacement) / this->slope[i]),
+                                  std::abs(hBW) + std::abs((maxZ - displacement) / this->slope[i]));
+        }
+
+      }
+    }
   }
 private:
   DepArcWedgeProfileFunction()
@@ -953,6 +981,14 @@ private:
     }
   }
 
+  void updateBound(double minZ, double maxZ)
+  {
+    for(unsigned int i = 0; i < functions.size(); ++i)
+    {
+      if(functions[i]) functions[i]->setFunctionRange(minZ, maxZ);
+    }
+  }
+
   std::vector<line_seg> lines;
   std::vector<point *> points;
   std::vector< boost::shared_ptr<DepArcProfileFunction> > functions;
@@ -1174,6 +1210,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
 
   newPoints = vtkPoints::New();
   newPoints->Allocate(numPts,numPts/2);
+  newPoints->DeepCopy(inPts);
   newVerts = vtkCellArray::New();
   newVerts->Allocate(estimatedSize,estimatedSize/2);
   newLines = vtkCellArray::New();
@@ -1188,30 +1225,49 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   {
     if(Arcs[t]!=NULL) Arcs[t]->setUpFunctions();
   }
-  for ( i=0; i < numPts; i++ )
+  bool useNorm = UseNormalDirection && normals != NULL;
+  double currentBounds[2];
+  {
+    double bounds[6];
+    newPoints->GetBounds(bounds);
+    currentBounds[0] = bounds[4];
+    currentBounds[1] = bounds[5];
+  }
+  for(unsigned int j = 0; j < ApplyOrder.size() && numPts != 0; ++j)
+  {
+    int id = ApplyOrder[j];
+    if(id < 0 || Arcs[id] == NULL) continue;
+    DepArcData & dad = *Arcs[id];
+    dad.updateBound(currentBounds[0], currentBounds[1]);
+    double d;
+    size_t lsId;
+    DepArcData::point closestPt;
+    newPoints->GetPoint(0, point);
+    double updateBounds[] = {point[2], point[2]};
+    for ( i=0; i < numPts; i++ )
     {
-    inPts->GetPoint(i, point);
-    if(UseNormalDirection && normals != NULL )
-      normals->GetTuple(i, normal);
-    double pt2d[] = {point[0], point[1]};
-    for(unsigned int j = 0; j < ApplyOrder.size(); ++j)
-      {
-      int id = ApplyOrder[j];
-      if(id < 0 || Arcs[id] == NULL) continue;
-      DepArcData const& dad = *Arcs[id];
-      double d;
-      size_t lsId;
-      DepArcData::point closestPt;
+      newPoints->GetPoint(i, point);
+      double pt2d[] = {point[0], point[1]};
+
       if(dad.getDistance(pt2d, d, lsId, closestPt))
+      {
+        if( useNorm )
         {
-        if(UseNormalDirection && normals != NULL )
+          normals->GetTuple(i, normal);
           closestPt.apply(d,point,normal);
+        }
         else
+        {
           point[2] = closestPt.apply(d, point[2]);
         }
+        if(point[2] < updateBounds[0]) updateBounds[0]=point[2];
+        if(point[2] > updateBounds[1]) updateBounds[1]=point[2];
       }
-    newPoints->InsertNextPoint(point);
+      newPoints->SetPoint(i,point);
     }
+    currentBounds[0] = updateBounds[0];
+    currentBounds[1] = updateBounds[1];
+  }
   newVerts->DeepCopy(input->GetVerts());
   newLines->DeepCopy(input->GetLines());
   newPolys->DeepCopy(input->GetPolys());
@@ -1292,8 +1348,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
 void vtkArcDepressFilter
 ::CreateWedgeFunction( double arc_ind_in, double funId_in, double weightFunType_in,
                        double relative_in, double mode_in, double clamp_in, double basewidth,
-                       double displacement, double slopeLeft, double slopeRight,
-                       double maxWidthLeft, double maxWidthRight)
+                       double displacement, double slopeLeft, double slopeRight)
 {
   int arc_ind = static_cast<int>(arc_ind_in);
   int funId = static_cast<int>(funId_in);
@@ -1317,8 +1372,7 @@ void vtkArcDepressFilter
   td->functions[funId] =
     boost::shared_ptr<DepArcProfileFunction>(
         new DepArcWedgeProfileFunction(weightFunType, relative, disMode, clamp, basewidth,
-                                       displacement, slopeLeft, slopeRight, maxWidthLeft,
-                                       maxWidthRight ));
+                                       displacement, slopeLeft, slopeRight ));
   this->Modified();
 }
 

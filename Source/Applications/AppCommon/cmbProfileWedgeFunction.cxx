@@ -55,47 +55,14 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
   double depth = getDepth();
 
   QList< QVariant > v;
-  double widthLeft = widthLeft = baseWidth * 0.5;
-  if(slopeLeft  != 0)
-  {
-    slopeLeft = 1/slopeLeft;
-    if(Relative)
-    {
-      widthLeft = std::abs(widthLeft) + std::abs(depth/ slopeLeft );
-    }
-    else
-    {
-      double miz = bbox.GetMinPoint()[2];
-      double maz = bbox.GetMaxPoint()[2];
-      widthLeft = std::max(std::abs(widthLeft) + std::abs((miz - depth)/ slopeLeft),
-                           std::abs(widthLeft) + std::abs((maz - depth)/ slopeLeft));
-    }
-  }
-  double widthRight = baseWidth * 0.5;
-  if(slopeRight != 0)
-  {
-    slopeRight = 1.0/slopeRight;
-    if(Relative)
-    {
-      widthRight = std::abs(widthRight) + std::abs(depth/slopeRight);
-    }
-    else
-    {
-      double miz = bbox.GetMinPoint()[2];
-      double maz = bbox.GetMaxPoint()[2];
-      widthRight = std::max(std::abs(widthRight) + std::abs((miz - depth)/ slopeRight),
-                            std::abs(widthRight) + std::abs((maz - depth)/ slopeRight));
-    }
-  }
   v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
-    << Relative << this->getMode() //TODO
+    << Relative << this->getMode()
     << this->clamp
-    << getBaseWidth() << getDepth() << slopeLeft << slopeRight
-    << widthLeft << widthRight;
+    << getBaseWidth() << getDepth() << slopeLeft << slopeRight;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
   source->UpdateVTKObjects();
   v.clear();
-  v << -1 << -1 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
+  v << -1 << -1 << 0 << 0 << 0 << 0 << 0 << 0 << 0 << 0;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
   source->UpdateVTKObjects();
 

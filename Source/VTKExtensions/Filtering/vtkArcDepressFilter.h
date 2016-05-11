@@ -40,8 +40,7 @@ public:
                             int isRelative, int isSymmetric);
   void CreateWedgeFunction(double arc_ind, double funId, double weightFunType, double relative,
                            double mode, double clamp, double basewidth, double displacement,
-                           double slopeLeft, double slopeRight, double maxWidthLeft,
-                           double maxWidthRight);
+                           double slopeLeft, double slopeRight );
   void SetFunctionToPoint(int arc_ind, int ptId, int funId );
   void AddWeightingFunPoint( double arc_ind, double funId,
                              double x, double y, double m, double s);
