@@ -65,6 +65,11 @@ class vtkCMBArcWidgetRepresentation::vtkInternalMap : public vtkInternalMapBase 
 //----------------------------------------------------------------------
 vtkCMBArcWidgetRepresentation::vtkCMBArcWidgetRepresentation()
 {
+  this->LinesMapper->SetScalarModeToUseCellData();
+  this->Property->SetLineWidth(2.0);
+  this->Property->SetPointSize(6.0);
+  this->LinesProperty->SetLineWidth(2.0);
+  this->ActiveProperty->SetLineWidth(2.0);
   this->LoggingEnabled = false;
   this->ModifiedPointMap = new vtkCMBArcWidgetRepresentation::vtkInternalMap();
   this->CanEdit = 1;
