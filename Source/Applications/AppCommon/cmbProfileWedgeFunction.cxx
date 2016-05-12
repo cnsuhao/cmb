@@ -55,6 +55,15 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
   double depth = getDepth();
 
   QList< QVariant > v;
+  double widthLeft = widthLeft = baseWidth * 0.5;
+  if(slopeLeft  != 0)
+  {
+    slopeLeft = 1.0/slopeLeft;
+  }
+  if(slopeRight != 0)
+  {
+    slopeRight = 1.0/slopeRight;
+  }
   v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
     << Relative << this->getMode()
     << this->clamp

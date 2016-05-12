@@ -633,22 +633,18 @@ pqCMBModifierArc::pointFunctionWrapper const*
 pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun)
 {
   std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);
-  if (it == pointsFunctions.end() && fun == NULL) return NULL;
+  assert(CmbArc != NULL && CmbArc->getArcInfo() && CmbArc->getArcInfo()->GetNumberOfPoints() != 0);
+  if (it == pointsFunctions.end())
+  {
+    return NULL;
+  }
   if (fun == NULL)
   {
     this->removeFunctionAtPoint(i);
     return NULL;
   }
-  if (it != pointsFunctions.end() && it->second != NULL)
-  {
-    it->second->function = fun;
-    return it->second;
-  }
-  else
-  {
-    assert(false && "the wrapper should always exist");
-    return pointsFunctions[i];
-  }
+  it->second->function = fun;
+  return it->second;
 }
 
 void pqCMBModifierArc::removeFunctionAtPoint(vtkIdType i)

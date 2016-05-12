@@ -427,7 +427,7 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
 
   this->TableWidget->resizeColumnsToContents();
   connect(dataObj, SIGNAL(functionChanged(int)), this, SLOT(onLineChange(int)));
-  unselectAllRows();
+  //unselectAllRows();
   this->TableWidget->selectRow(row);
   if(visible)
     emit orderChanged();
@@ -660,11 +660,11 @@ void pqCMBModifierArcManager::onSelectionChange()
       {
         QComboBox* combo = new QComboBox();
         combo->addItems(pointModesStrings);
+        combo->setCurrentIndex(ma->getFunctionMode());
         this->TableWidget->setItem(this->Internal->selectedRow, Mode, NULL);
         this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, combo);
-        QObject::connect(combo, SIGNAL(currentIndexChanged(int)),
-                         this,  SLOT(functionModeChanged(int)));
-        combo->setCurrentIndex(ma->getFunctionMode());
+        QObject::connect( combo, SIGNAL(currentIndexChanged(int)),
+                          this,  SLOT(functionModeChanged(int)) );
         break;
       }
     }
@@ -773,7 +773,8 @@ void pqCMBModifierArcManager::selectLine(int sid)
     return;
   }
   else if(sid == -2) //create new one
-    {
+  {
+    this->Internal->mode = EditArc;
     pqCMBModifierArc * dig = new pqCMBModifierArc();
     this->ArcWidgetManager->setActiveArc(dig->GetCmbArc());
     this->ArcWidgetManager->create();
@@ -788,23 +789,17 @@ void pqCMBModifierArcManager::selectLine(int sid)
     QObject::connect(this->Internal->arcEditWidget->ModifyMode, SIGNAL(toggled(bool)),
                      this->Internal->CurrentArcWidget, SLOT(ModifyMode()), Qt::UniqueConnection);
     this->Internal->arcEditWidget->EditMode->setChecked(true);
-    
-    //QObject::connect(arc,SIGNAL(contourDone()),
-    //                 this,SLOT(doneModifyingArc()));
-    //QObject::connect( dig, SIGNAL(requestRender()),
-    //                 this, SIGNAL(requestRender()) );
 
     addNewArc(dig);
 
     this->disableSelection();
     this->Internal->UI->addLineButton->setEnabled(false);
     if(this->Internal->UI_Dialog != NULL)
-      {
+    {
       QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
       applyButton->setEnabled(false);
-      }
-    this->Internal->mode = EditArc;
     }
+  }
   else
     {
     if(static_cast<size_t>(sid)<ArcLines.size() && ArcLines[sid] != NULL)
@@ -813,7 +808,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
       this->CurrentModifierArc->switchToEditable();
       this->Internal->mode = EditFunction;
       this->ArcWidgetManager->setActiveArc(this->CurrentModifierArc->GetCmbArc());
-      //this->ArcWidgetManager->edit();
       this->Internal->UI->removeLineButton->setEnabled(true);
       this->Internal->UI->buttonUpdateLine->setEnabled(true);
       }
@@ -1051,10 +1045,7 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
           CurrentModifierArc->addFunctionAtPoint(wrapper->getPointId(),selectedFunction);
       }
     }
-    //bool isDefault = CurrentModifierArc->getDefaultFun() == fun;
-    //this->Internal->UI->isDefault->setChecked(isDefault);
-    //this->Internal->UI->isDefault->setEnabled(!isDefault);
-    //this->Internal->UI->DeleteFunction->setEnabled(!isDefault); //TODO: FIX This
+
     switch(fun->getType())
     {
       case cmbProfileFunction::MANUAL:
@@ -1586,7 +1577,9 @@ public:
       this->arcInfo->GetPointID(index, id);
       manager->addPoint(id);
     }
+
     widgetRep->SetPointSelectMode(0);
+    this->arcWidget->finishContour();
     this->arcWidget->setWidgetVisible(false);
     this->arcWidget->setVisible(false);
     this->arcWidget->deselect();
