@@ -1726,3 +1726,12 @@ QList<pqSMTKMeshInfo*>  pqCMBModelManager::selectedMeshes() const
     }
   return selMeshInfos;
 }
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
+{
+  smtk::model::EntityRef entity(this->managerProxy()->modelManager(), entid);
+  pqSMTKModelInfo* activeInfo = this->modelInfo(entity);
+  pqPipelineSource* activeSource =  activeInfo ? activeInfo->RepSource : NULL;
+  pqActiveObjects::instance().setActiveSource(activeSource);
+}
