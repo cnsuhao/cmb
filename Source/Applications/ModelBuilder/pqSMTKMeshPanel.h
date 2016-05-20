@@ -16,7 +16,7 @@ class pqCMBModelManager;
 class qtCMBMeshingMonitor;
 class qtRemusMesherSelector;
 
-namespace smtk { namespace  attribute { class qtUIManager; } }
+namespace smtk { namespace  extension { class qtUIManager; } }
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/model/Model.h"
@@ -62,7 +62,7 @@ private:
   QPointer<QWidget> SubmitterWidget;
 
   smtk::attribute::SystemPtr AttSystem;
-  smtk::shared_ptr<smtk::attribute::qtUIManager> AttUIManager;
+  smtk::shared_ptr<smtk::extension::qtUIManager> AttUIManager;
 
   std::vector<smtk::model::Model> ActiveModels;
   remus::proto::JobRequirements ActiveRequirements;

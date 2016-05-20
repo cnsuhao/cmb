@@ -74,7 +74,7 @@ protected slots:
   void onRequestMeshEdgePointSelection(
     const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
   void onMeshSelectionItemCreated(
-  smtk::attribute::qtMeshSelectionItem* meshItem,
+  smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
 
   // Description:

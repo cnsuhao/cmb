@@ -39,11 +39,11 @@ pqModelTreeViewEventTranslator::pqModelTreeViewEventTranslator(QObject* p)
 bool pqModelTreeViewEventTranslator::translateEvent(QObject* senderObject, QEvent* tr_event, bool& Error)
 {
 
-  smtk::model::qtModelView* treeWidget = qobject_cast<smtk::model::qtModelView*>(senderObject);
+  smtk::extension::qtModelView* treeWidget = qobject_cast<smtk::extension::qtModelView*>(senderObject);
   if(!treeWidget)
     {
     // mouse events go to the viewport widget
-    treeWidget = qobject_cast<smtk::model::qtModelView*>(senderObject->parent());
+    treeWidget = qobject_cast<smtk::extension::qtModelView*>(senderObject->parent());
     }
   if(!treeWidget)
     {

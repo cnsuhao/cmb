@@ -42,7 +42,7 @@ public:
   virtual ~pqSimBuilderUIManager();
   smtk::attribute::SystemPtr attributeSystem() const
     {return this->m_AttSystem;}
-  smtk::attribute::qtUIManager* attributeUIManager() const
+  smtk::extension::qtUIManager* attributeUIManager() const
     {return this->m_attUIManager;}
 
   void setServer(pqServer* s)
@@ -55,7 +55,7 @@ public:
   pqRenderView *renderView()
   { return this->RenderView; }
 
-  smtk::attribute::qtBaseView* topView();
+  smtk::extension::qtBaseView* topView();
   void setSMTKView( smtk::common::ViewPtr topView, QWidget* parentWidget,
                     SimBuilderCore* sbCore);
   smtk::model::ManagerPtr attModelManager() const;
@@ -71,13 +71,13 @@ signals:
   void attAssociationChanged();
 
 protected slots:
-  void onFileItemCreated(smtk::attribute::qtFileItem*);
+  void onFileItemCreated(smtk::extension::qtFileItem*);
   void onLaunchFileBrowser();
   void createFunctionWithExpression(
     QString& expression, double initVal,
     double deltaVal, int numVals);
   void onModelEntityItemCreated(
-  smtk::attribute::qtModelEntityItem* entItem);
+  smtk::extension::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
   void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
 
@@ -85,7 +85,7 @@ protected:
   pqServer* ActiveServer;
   pqRenderView* RenderView;
   smtk::attribute::SystemPtr m_AttSystem;
-  smtk::attribute::qtUIManager* m_attUIManager;
+  smtk::extension::qtUIManager* m_attUIManager;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
 
 private:
