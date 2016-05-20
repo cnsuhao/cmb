@@ -4,11 +4,12 @@
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
 
-#include "pqCMBModifierArc.h"
-
 #include <string>
 #include <fstream>
 #include <vtkBoundingBox.h>
+
+class vtkSMSourceProxy;
+class vtkPiecewiseFunction;
 
 class CMBAPPCOMMON_EXPORT cmbProfileFunctionParameters
 {

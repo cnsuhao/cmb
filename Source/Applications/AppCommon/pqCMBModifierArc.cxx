@@ -28,7 +28,102 @@
 #include "qtCMBArcEditWidget.h"
 #include "qtCMBArcWidgetManager.h"
 #include "cmbProfileWedgeFunction.h"
-#include "cmbProfileFunction.h"
+#include "cmbManualProfileFunction.h"
+
+////////////////////////////////////////
+struct pqCMBModifierArc::profileFunctionWrapper
+{
+public:
+  profileFunctionWrapper()
+  :wedgeFunction(new cmbProfileWedgeFunction()), manualFunction(new cmbManualProfileFunction()),
+  function(wedgeFunction)
+  {}
+
+  profileFunctionWrapper(cmbProfileFunction * f)
+  :function(f)
+  {
+    switch(f->getType())
+    {
+      case cmbProfileFunction::WEDGE:
+        wedgeFunction = dynamic_cast<cmbProfileWedgeFunction *>(f);
+        manualFunction = new cmbManualProfileFunction();
+        manualFunction->setName(wedgeFunction->getName());
+        manualFunction->setRelative(wedgeFunction->isRelative());
+        break;
+      case cmbProfileFunction::MANUAL:
+        manualFunction = dynamic_cast<cmbManualProfileFunction *>(f);
+        wedgeFunction = new cmbProfileWedgeFunction();
+        wedgeFunction->setName(manualFunction->getName());
+        wedgeFunction->setRelative(manualFunction->isRelative());
+        break;
+    }
+  }
+
+  profileFunctionWrapper(cmbProfileWedgeFunction * w, cmbManualProfileFunction * m,
+                         cmbProfileFunction * f)
+  :wedgeFunction(dynamic_cast<cmbProfileWedgeFunction *>(w->clone(""))),
+   manualFunction(dynamic_cast<cmbManualProfileFunction *>(m->clone("")))
+  {
+    if(f == w)
+    {
+      function = wedgeFunction;
+    }
+    else
+    {
+      function = manualFunction;
+    }
+  }
+
+  ~profileFunctionWrapper()
+  {
+    delete wedgeFunction;
+    delete manualFunction;
+  }
+
+  profileFunctionWrapper * clone(std::string const& str)
+  {
+    profileFunctionWrapper * result =
+    new profileFunctionWrapper(wedgeFunction, manualFunction, function);
+    result->setName(str);
+    return result;
+  }
+
+  void pickFunction(cmbProfileFunction::FunctionType s)
+  {
+    switch (s)
+    {
+      case cmbProfileFunction::WEDGE:
+        function = wedgeFunction;
+        break;
+      case cmbProfileFunction::MANUAL:
+        function = manualFunction;
+      default:
+        break;
+    }
+  }
+
+  cmbProfileFunction * getFunction() const
+  {
+    return function;
+  }
+
+  void setName(std::string const& name)
+  {
+    wedgeFunction->setName(name);
+    manualFunction->setName(name);
+  }
+
+  void setRelative(bool r)
+  {
+    wedgeFunction->setRelative(r);
+    manualFunction->setRelative(r);
+  }
+protected:
+  cmbProfileWedgeFunction * wedgeFunction;
+  cmbManualProfileFunction * manualFunction;
+  cmbProfileFunction * function;
+};
+
 
 ////////////////////////////////////////
 pqCMBModifierArc::pointFunctionWrapper::pointFunctionWrapper(pointFunctionWrapper const& other)
@@ -45,25 +140,26 @@ void pqCMBModifierArc
   function = other.function;
 }
 
-pqCMBModifierArc::pointFunctionWrapper::pointFunctionWrapper(cmbProfileFunction const* fun)
+pqCMBModifierArc::pointFunctionWrapper
+::pointFunctionWrapper(pqCMBModifierArc::profileFunctionWrapper const* fun)
 :function(fun)
 {
 }
 
 cmbProfileFunction const* pqCMBModifierArc::pointFunctionWrapper::getFunction() const
 {
-  return function;
+  return function->getFunction();
 }
 
 void
-pqCMBModifierArc::pointFunctionWrapper::setFunction(cmbProfileFunction const* f)
+pqCMBModifierArc::pointFunctionWrapper::setFunction(profileFunctionWrapper const* f)
 {
   function = f;
 }
 
 std::string pqCMBModifierArc::pointFunctionWrapper::getName() const
 {
-  if(function) return function->getName();
+  if(function) return function->getFunction()->getName();
   return "NULL";
 }
 
@@ -83,7 +179,7 @@ pqCMBModifierArc::pqCMBModifierArc()
 :CmbArc(new pqCMBArc()), IsExternalArc(false), IsVisible(true), IsRelative(true),
  functionMode(Single)
 {
-  cmbProfileWedgeFunction * fun = new cmbProfileWedgeFunction();
+  profileFunctionWrapper * fun = new profileFunctionWrapper();
   startFunction = new pointFunctionWrapper(fun);
   endFunction = new pointFunctionWrapper(fun);
   fun->setName("FUN0");
@@ -97,7 +193,7 @@ pqCMBModifierArc::pqCMBModifierArc(vtkSMSourceProxy *proxy)
  IsExternalArc(false), IsVisible(true), IsRelative( true )
 {
   IsVisible = true;
-  cmbProfileWedgeFunction * fun = new cmbProfileWedgeFunction();
+  profileFunctionWrapper * fun = new profileFunctionWrapper();
   startFunction = new pointFunctionWrapper(fun);
   endFunction = new pointFunctionWrapper(fun);
   fun->setName("FUN0");
@@ -110,7 +206,7 @@ pqCMBModifierArc::~pqCMBModifierArc()
   delete startFunction;
   delete endFunction;
   if(!IsExternalArc) delete CmbArc;
-  for(std::map<std::string, cmbProfileFunction * >::iterator i = functions.begin();
+  for(std::map<std::string, profileFunctionWrapper * >::iterator i = functions.begin();
       i != functions.end(); ++i)
   {
     delete i->second;
@@ -227,11 +323,11 @@ void pqCMBModifierArc::updateArc(vtkSMSourceProxy* source, vtkBoundingBox bbox)
     case PointAssignment:
     {
       std::map< cmbProfileFunction const*, unsigned int> function_to_id;
-      std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+      std::map<std::string, profileFunctionWrapper * >::const_iterator iter = functions.begin();
       for(unsigned int i = 0; iter != functions.end(); ++i,++iter)
       {
-        iter->second->sendDataToProxy(Id, i, bbox, source);
-        function_to_id[iter->second] = i;
+        iter->second->getFunction()->sendDataToProxy(Id, i, bbox, source);
+        function_to_id[iter->second->getFunction()] = i;
       }
       for(unsigned int i = 0; i < static_cast<unsigned int>(info->GetNumberOfPoints());++i)
       {
@@ -275,10 +371,10 @@ void pqCMBModifierArc::writeFunction(std::ofstream & f)
 {
   f << 2 << '\n'
     << functions.size() << '\n';
-  for(std::map<std::string, cmbProfileFunction * >::const_iterator iter = functions.begin();
+  for(std::map<std::string, profileFunctionWrapper * >::const_iterator iter = functions.begin();
       iter != functions.end(); ++iter)
   {
-    iter->second->write(f);
+    iter->second->getFunction()->write(f);
   }
   switch( functionMode )
   {
@@ -308,11 +404,11 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
   f >> version;
   int size;
   f >> size;
-  std::map<std::string, cmbProfileFunction * > tmp_fun;
+  std::map<std::string, profileFunctionWrapper * > tmp_fun;
   for( int i = 0; i < size; ++i )
   {
     cmbProfileFunction * cpf = cmbProfileFunction::read(f, i);
-    tmp_fun[cpf->getName()] = cpf;
+    tmp_fun[cpf->getName()] = new profileFunctionWrapper(cpf);
   }
 
   if(!import_functions)
@@ -320,7 +416,7 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
     this->functions.clear();
   }
 
-  for(std::map<std::string, cmbProfileFunction * >::const_iterator iter = tmp_fun.begin();
+  for(std::map<std::string, profileFunctionWrapper * >::const_iterator iter = tmp_fun.begin();
       iter != tmp_fun.end(); ++iter)
   {
     std::string str = iter->first;
@@ -332,7 +428,34 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
       ss >> str;
     }
     iter->second->setName(str);
-    this->setFunction(str, iter->second);
+    {
+      profileFunctionWrapper * fun = iter->second;
+      std::string name = str;
+      std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
+      fun->setRelative(IsRelative);
+      if(i == functions.end())
+      {
+        functions[name] = fun;
+      }
+      else
+      {
+        if(startFunction->getFunction() == i->second->getFunction()) startFunction->setFunction(fun);
+        fun->setName(name);
+        for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
+            it != pointsFunctions.end(); ++it)
+        {
+          if(it->second != NULL && it->second->getName() == name)
+          {
+            it->second->setFunction(fun);
+          }
+        }
+        if(i->second->getFunction() == startFunction->getFunction())
+          startFunction->setFunction(fun);
+        if(i->second->getFunction() == endFunction->getFunction())  endFunction->setFunction( fun );
+        delete i->second;
+        i->second = fun;
+      }
+    }
   }
 
   std::string name[2];
@@ -343,19 +466,19 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
       f >> name[0];
       if(!import_functions)
       {
-        cmbProfileFunction * f = tmp_fun[name[0]];
-        setStartFun(f->getName());
-        setEndFun(f->getName());
+        profileFunctionWrapper * f = tmp_fun[name[0]];
+        setStartFun(f->getFunction()->getName());
+        setEndFun(f->getFunction()->getName());
       }
       break;
     case EndPoints:
       f >> name[0] >> name[1];
       if(!import_functions)
       {
-        cmbProfileFunction * f = tmp_fun[name[0]];
-        setStartFun(f->getName());
+        profileFunctionWrapper * f = tmp_fun[name[0]];
+        setStartFun(f->getFunction()->getName());
         f = tmp_fun[name[1]];
-        setEndFun(f->getName());
+        setEndFun(f->getFunction()->getName());
       }
       break;
     case PointAssignment:
@@ -367,7 +490,7 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
         f >> id >> name[0];
         if(!import_functions)
         {
-          cmbProfileFunction * f = tmp_fun[name[0]];
+          profileFunctionWrapper * f = tmp_fun[name[0]];
           this->addFunctionAtPoint(id, f);
         }
       }
@@ -487,22 +610,24 @@ void pqCMBModifierArc::getFunctions(std::vector<cmbProfileFunction*> & funs) con
 {
   funs.clear();
   funs.reserve(functions.size());
-  for(std::map<std::string, cmbProfileFunction * >::const_iterator i = functions.begin();
+  for(std::map<std::string, profileFunctionWrapper * >::const_iterator i = functions.begin();
       i != functions.end(); ++i)
   {
-    funs.push_back(i->second);
+    funs.push_back(i->second->getFunction());
   }
 }
 
 bool pqCMBModifierArc::updateLabel(std::string str, cmbProfileFunction * fun)
 {
   if(str == fun->getName()) return true;
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(str);
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(str);
   if(i == functions.end())
   {
-    functions.erase(functions.find(fun->getName()));
-    functions[str] = fun;
-    fun->setName(str);
+    i = functions.find(fun->getName());
+    profileFunctionWrapper * pfw = i->second;
+    functions.erase(i);
+    functions[str] = pfw;
+    pfw->setName(str);
     return true;
   }
   return false;
@@ -510,7 +635,7 @@ bool pqCMBModifierArc::updateLabel(std::string str, cmbProfileFunction * fun)
 
 bool pqCMBModifierArc::setStartFun(std::string const& name)
 {
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
   if(i == functions.end())
   {
     return false;
@@ -521,7 +646,7 @@ bool pqCMBModifierArc::setStartFun(std::string const& name)
 
 bool pqCMBModifierArc::setEndFun(std::string const& name)
 {
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
   if(i == functions.end())
   {
     return false;
@@ -540,73 +665,57 @@ cmbProfileFunction * pqCMBModifierArc::createFunction()
     ss << "FUN" << count++;
     ss >> name;
   }
-  cmbProfileFunction * result = new cmbProfileWedgeFunction();
+  profileFunctionWrapper * result = new profileFunctionWrapper();
   result->setName(name);
   functions[name] = result;
   result->setRelative(this->IsRelative);
-  return result;
+  return result->getFunction();
 }
 
 bool pqCMBModifierArc::deleteFunction(std::string const& name)
 {
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
   if(i == functions.end())
   {
     return false;
   }
   if(functions.size() == 1) return false;
-  cmbProfileFunction * fun = i->second;
+  profileFunctionWrapper * fun = i->second;
   functions.erase(i);
-  if(fun == startFunction->getFunction()) startFunction->setFunction( functions.begin()->second );
-  if(fun == endFunction->getFunction()) endFunction->setFunction( functions.begin()->second );
+  if(fun->getFunction() == startFunction->getFunction())
+    startFunction->setFunction( functions.begin()->second );
+  if(fun->getFunction() == endFunction->getFunction())
+    endFunction->setFunction( functions.begin()->second );
   delete fun;
   return true;
 }
 
 cmbProfileFunction * pqCMBModifierArc::cloneFunction(std::string const& name)
 {
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
   if(i == functions.end())
   {
     return NULL;
   }
   int count = 1;
-  std::string newname = i->second->getName() + "Clone0";
+  std::string newname = i->second->getFunction()->getName() + "Clone0";
   while(functions.find(newname) != functions.end())
   {
     std::stringstream ss;
-    ss << i->second->getName() + "Clone" << count++;
+    ss << i->second->getFunction()->getName() + "Clone" << count++;
     ss >> newname;
   }
   functions[newname] = i->second->clone(newname);
-  return functions[newname];
+  return functions[newname]->getFunction();
 }
 
-void pqCMBModifierArc::setFunction(std::string const& name, cmbProfileFunction* fun)
+cmbProfileFunction * pqCMBModifierArc::setFunction(std::string const& name,
+                                                   cmbProfileFunction::FunctionType type)
 {
-  std::map<std::string, cmbProfileFunction * >::iterator i = functions.find(name);
-  fun->setRelative(IsRelative);
-  if(i == functions.end())
-  {
-    functions[name] = fun;
-  }
-  else
-  {
-    if(startFunction->getFunction() == i->second) startFunction->setFunction(fun);
-    fun->setName(name);
-    for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
-        it != pointsFunctions.end(); ++it)
-    {
-      if(it->second != NULL && it->second->getName() == name)
-      {
-        it->second->setFunction(fun);
-      }
-    }
-    if(i->second == startFunction->getFunction()) startFunction->setFunction( fun );
-    if(i->second == endFunction->getFunction())   endFunction->setFunction( fun );
-    delete i->second;
-    i->second = fun;
-  }
+  std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
+  assert(i != functions.end());
+  i->second->pickFunction(type);
+  return i->second->getFunction();
 }
 
 pqCMBModifierArc::FunctionMode pqCMBModifierArc::getFunctionMode() const
@@ -622,7 +731,7 @@ void pqCMBModifierArc::setFunctionMode(pqCMBModifierArc::FunctionMode fm)
 void pqCMBModifierArc::setRelative(bool b)
 {
   this->IsRelative = b;
-  for(std::map<std::string, cmbProfileFunction * >::iterator i = functions.begin();
+  for(std::map<std::string, profileFunctionWrapper * >::iterator i = functions.begin();
       i != functions.end(); ++i)
   {
     i->second->setRelative(b);
@@ -631,6 +740,14 @@ void pqCMBModifierArc::setRelative(bool b)
 
 pqCMBModifierArc::pointFunctionWrapper const*
 pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun)
+{
+  std::map<std::string, profileFunctionWrapper *>::iterator fit = functions.find(fun->getName());
+  assert(fit != functions.end());
+  return addFunctionAtPoint(i,fit->second);
+}
+
+pqCMBModifierArc::pqCMBModifierArc::pointFunctionWrapper const*
+pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, profileFunctionWrapper * fun)
 {
   std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);
   assert(CmbArc != NULL && CmbArc->getArcInfo() && CmbArc->getArcInfo()->GetNumberOfPoints() != 0);
@@ -644,7 +761,6 @@ pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun)
     return NULL;
   }
   it->second->function = fun;
-  return it->second;
 }
 
 void pqCMBModifierArc::removeFunctionAtPoint(vtkIdType i)

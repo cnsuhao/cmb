@@ -1066,18 +1066,10 @@ void pqCMBModifierArcManager::functionTypeChanged(int type)
 {
   if(selectedFunction == NULL) return;
   if(type == selectedFunction->getType()) return;
-  cmbProfileFunction* fun = NULL;
   std::string name = selectedFunction->getName();
-  switch( type )
-  {
-    case cmbProfileFunction::MANUAL:
-      fun = new cmbManualProfileFunction();
-      break;
-    case cmbProfileFunction::WEDGE:
-      fun = new cmbProfileWedgeFunction();
-      break;
-  }
-  this->CurrentModifierArc->setFunction(name, fun);
+  cmbProfileFunction* fun =
+        this->CurrentModifierArc->setFunction(name,
+                                              static_cast<cmbProfileFunction::FunctionType>(type));
   int	index = this->Internal->UI->FunctionName->currentIndex();
   if(index != -1)
   {

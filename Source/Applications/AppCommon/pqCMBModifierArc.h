@@ -22,6 +22,7 @@
 
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
+#include "cmbProfileFunction.h"
 
 class qtCMBArcWidget;
 class qtCMBArcEditWidget;
@@ -30,13 +31,13 @@ class pqCMBArc;
 class pqPipelineSource;
 class vtkPiecewiseFunction;
 class vtkSMSourceProxy;
-class cmbManualProfileFunction;
-class cmbProfileFunction;
-class cmbProfileFunctionParameters;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
 {
   Q_OBJECT
+
+private:
+  struct profileFunctionWrapper;
 
 public:
   enum FunctionMode{Single = 0, EndPoints = 1, PointAssignment = 2};
@@ -44,14 +45,14 @@ public:
   {
     friend class pqCMBModifierArc;
   private:
-    cmbProfileFunction const* function;
+    profileFunctionWrapper const* function;
     vtkIdType ptId;
     vtkIdType pointIndex;
-    void setFunction(cmbProfileFunction const* f);
+    void setFunction(profileFunctionWrapper const* f);
   public:
     pointFunctionWrapper(pointFunctionWrapper const& other);
     void operator=(pointFunctionWrapper const& other);
-    pointFunctionWrapper(cmbProfileFunction const* fun = NULL);
+    pointFunctionWrapper(profileFunctionWrapper const* fun = NULL);
     ~pointFunctionWrapper();
     cmbProfileFunction const* getFunction() const;
     std::string getName() const;
@@ -98,7 +99,7 @@ public:
 
   bool deleteFunction(std::string const& name);
 
-  void setFunction(std::string const& name, cmbProfileFunction* fun);
+  cmbProfileFunction * setFunction(std::string const& name, cmbProfileFunction::FunctionType mode);
 
   cmbProfileFunction * cloneFunction(std::string const& name);
 
@@ -133,13 +134,15 @@ signals:
 
 protected:
   //Varable for the path
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
+                                                                   profileFunctionWrapper * fun);
   pqCMBArc * CmbArc;
   std::map<vtkIdType, pointFunctionWrapper *> pointsFunctions;
   bool IsExternalArc;
 
   FunctionMode functionMode;
 
-  std::map<std::string, cmbProfileFunction * > functions;
+  std::map<std::string, profileFunctionWrapper * > functions;
   pointFunctionWrapper * startFunction;
   pointFunctionWrapper * endFunction;
   

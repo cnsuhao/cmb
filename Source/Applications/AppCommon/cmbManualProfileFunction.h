@@ -2,6 +2,7 @@
 #define cmbManualProfileFunction_h_
 
 #include "cmbProfileFunction.h"
+#include "pqCMBModifierArc.h"
 class cmbManualProfileFunction;
 
 class CMBAPPCOMMON_EXPORT cmbManualProfileFunctionParameters : public cmbProfileFunctionParameters
