@@ -669,9 +669,12 @@ private:
     this->clear();
   }
 
+  struct line_seg;
+
   struct point
   {
     double pt[2];
+    line_seg const* ls[2];
 
     void clearPointFunction()
     {
@@ -693,11 +696,14 @@ private:
       pt[0] = pin.pt[0];
       pt[1] = pin.pt[1];
       pointFunction = pin.pointFunction;
+      ls[0] = pin.ls[0];
+      ls[1] = pin.ls[1];
     }
     explicit point(double x = 0, double y = 0)
     {
       pt[0] = x;
       pt[1] = y;
+      ls[0] = ls[1] = NULL;
     }
     ~point()
     {
@@ -708,6 +714,8 @@ private:
       clearPointFunction();
       pt[0] = pin.pt[0];
       pt[1] = pin.pt[1];
+      ls[0] = pin.ls[0];
+      ls[1] = pin.ls[1];
       pointFunction = pin.pointFunction;
     }
     point operator-(point const& pin) const
@@ -776,6 +784,14 @@ private:
       assert(p1 != NULL);
       assert(p2 != NULL);
       dr = *p2 - *p1;
+      pt1->ls[0] = this;
+      pt2->ls[1] = this;
+    }
+
+    ~line_seg()
+    {
+      pt1->ls[0] = NULL;
+      pt2->ls[1] = NULL;
     }
 
     point getPoint(double t) const
@@ -785,6 +801,8 @@ private:
       else if(t == 0) return *pt1;
       point result = *(pt1) + dr * t;
       result.setFunction(interpolate_functions(pt1->getFunction(), pt2->getFunction(), t));
+      result.ls[0] = this;
+      result.ls[1] = NULL;
       return result;
     }
 
@@ -828,6 +846,15 @@ private:
     {
       return std::sqrt(dr.normSquared());
     }
+
+    static bool side(line_seg const* l1, line_seg const* l2, point & pt, point & closePt)
+    {
+      point cpDir = pt - closePt;
+      point testDir = (l1->dr-l2->dr);
+      double t = cpDir.dot(testDir);
+      point tmp = closePt + testDir * t;
+      return l1->side(tmp, closePt);
+    }
   private:
     point * pt1;
     point * pt2;
@@ -844,13 +871,17 @@ private:
     if(at>=1)
     {
       size_t prev = at-1;
-      DepArcData::line_seg l(points[prev],points[at]);
+      DepArcData::line_seg * l = new DepArcData::line_seg(points[prev],points[at]);
       lines.push_back(l);
     }
   }
 
   void clear()
   {
+    for(unsigned int i  = 0; i < lines.size(); ++i)
+    {
+      delete lines[i];
+    }
     lines.clear();
     for(unsigned int i = 0; i < points.size(); ++i)
     {
@@ -870,18 +901,16 @@ private:
     point pt(pin[0], pin[1]);
     point closePt = *(points[0]);
     result = pt.distSquared(closePt);
-    line_seg const* cls = &(lines[0]);
     lsId = 0;
     for (unsigned int i = 0; i<lines.size(); ++i)
     {
-      line_seg const& ls = lines[i];
-      point tmppt = ls.findClosestPoint(pt);
+      line_seg const* ls = lines[i];
+      point tmppt = ls->findClosestPoint(pt);
       double tmp = pt.distSquared(tmppt);
       if(tmp < result)
       {
         result = tmp;
         closePt = tmppt;
-        cls = &ls;
         lsId = i;
       }
     }
@@ -889,10 +918,24 @@ private:
     resultPt = closePt;
     if(closePt.getFunction() == NULL)
     {
-      //TODO: FUNCTION
       return false;
     }
-    if(cls->side(pt, closePt)) result = -result;
+    if(closePt.ls[0] != NULL && closePt.ls[1] != NULL)
+    {
+      if(line_seg::side(closePt.ls[0], closePt.ls[1], pt, closePt)) result = -result;
+      //bool s1 = closePt.ls[0]->side(pt, closePt);
+      //bool s2 = closePt.ls[1]->side(pt, closePt);
+      //if(s1 == s2) if(s1) result = -result;
+      //else return false;
+    }
+    else
+    {
+      line_seg const* cls = (closePt.ls[0] != NULL)?closePt.ls[0]:closePt.ls[1];
+
+      assert(cls != NULL);
+
+      if(cls->side(pt, closePt)) result = -result;
+    }
     return closePt.inside(result);
   }
 
@@ -901,7 +944,7 @@ private:
     if(lines.empty()) return;
 
     size_t prev = points.size()-1;
-    DepArcData::line_seg l(points[prev],points[0]);
+    DepArcData::line_seg * l = new DepArcData::line_seg(points[prev],points[0]);
     lines.push_back(l);
   }
 
@@ -929,14 +972,14 @@ private:
 
     for (size_t i = b; i<e; ++i)
     {
-      total_distance += lines[i].length();
+      total_distance += lines[i]->length();
     }
-    double currentLength = lines[b].length();
+    double currentLength = lines[b]->length();
     for (size_t i = b+1; i<e; ++i)
     {
       double t = currentLength/total_distance;
       points[i]->setFunction(interpolate_functions(fun0,fun1,t));
-      currentLength += lines[i].length();
+      currentLength += lines[i]->length();
     }
   }
 
@@ -989,7 +1032,7 @@ private:
     }
   }
 
-  std::vector<line_seg> lines;
+  std::vector<line_seg *> lines;
   std::vector<point *> points;
   std::vector< boost::shared_ptr<DepArcProfileFunction> > functions;
 };
