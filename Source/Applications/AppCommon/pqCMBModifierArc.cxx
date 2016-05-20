@@ -37,7 +37,10 @@ public:
   profileFunctionWrapper()
   :wedgeFunction(new cmbProfileWedgeFunction()), manualFunction(new cmbManualProfileFunction()),
   function(wedgeFunction)
-  {}
+  {
+    assert(wedgeFunction);
+    assert(manualFunction);
+  }
 
   profileFunctionWrapper(cmbProfileFunction * f)
   :function(f)
@@ -57,6 +60,8 @@ public:
         wedgeFunction->setRelative(manualFunction->isRelative());
         break;
     }
+    assert(wedgeFunction);
+    assert(manualFunction);
   }
 
   profileFunctionWrapper(cmbProfileWedgeFunction * w, cmbManualProfileFunction * m,
@@ -72,6 +77,8 @@ public:
     {
       function = manualFunction;
     }
+    assert(wedgeFunction);
+    assert(manualFunction);
   }
 
   ~profileFunctionWrapper()
@@ -100,10 +107,12 @@ public:
       default:
         break;
     }
+    assert(function);
   }
 
   cmbProfileFunction * getFunction() const
   {
+    assert(function);
     return function;
   }
 
@@ -148,7 +157,7 @@ pqCMBModifierArc::pointFunctionWrapper
 
 cmbProfileFunction const* pqCMBModifierArc::pointFunctionWrapper::getFunction() const
 {
-  return function->getFunction();
+  return (function)?function->getFunction():NULL;
 }
 
 void
@@ -761,6 +770,7 @@ pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, profileFunctionWrapper * fun)
     return NULL;
   }
   it->second->function = fun;
+  return it->second;
 }
 
 void pqCMBModifierArc::removeFunctionAtPoint(vtkIdType i)
