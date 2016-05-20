@@ -27,14 +27,10 @@ class pqPipelineSource;
 class vtkPVInformation;
 
 namespace smtk {
-  namespace attribute {
+  namespace extension {
     class qtFileItem;
     class qtMeshSelectionItem;
     class qtModelEntityItem;
-  }
-}
-namespace smtk {
-  namespace model {
     class qtModelView;
   }
 }
@@ -47,7 +43,7 @@ public:
   ~pqSMTKModelPanel();
 
   pqCMBModelManager* modelManager();
-  smtk::model::qtModelView* modelView();
+  smtk::extension::qtModelView* modelView();
 
   void setBlockVisibility(
     const smtk::common::UUID& sessionid,
@@ -59,10 +55,10 @@ public:
     const smtk::mesh::MeshSets& meshes, const QColor&);
 
   void addMeshSelectionOperation(
-    smtk::attribute::qtMeshSelectionItem* meshItem,
+    smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
   void setCurrentMeshSelectionItem(
-    smtk::attribute::qtMeshSelectionItem* meshItem);
+    smtk::extension::qtMeshSelectionItem* meshItem);
   void startMeshSelectionOperation(
     const QList<pqOutputPort*> &);
   void resetMeshSelectionItems();
@@ -74,17 +70,17 @@ public slots:
   void updateTreeSelection();
   void onEntitiesExpunged(const smtk::model::EntityRefs& expungedEnts);
   void requestEntityAssociation(
-    smtk::attribute::qtModelEntityItem* entItem);
+    smtk::extension::qtModelEntityItem* entItem);
   void requestEntitySelection(const smtk::common::UUIDs& uuids);
   void cancelOperation(const smtk::model::OperatorPtr&);
 
 protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void selectMeshRepresentations(const smtk::mesh::MeshSets& );
-  void onFileItemCreated(smtk::attribute::qtFileItem* fileItem);
+  void onFileItemCreated(smtk::extension::qtFileItem* fileItem);
   void onLaunchFileBrowser();
   void onModelEntityItemCreated(
-    smtk::attribute::qtModelEntityItem* entItem);
+    smtk::extension::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
   void updateMeshSelection(
     const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);

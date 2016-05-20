@@ -7,7 +7,7 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME pqModelTreeViewEventTranslator - The event translator for smtk::attribute::qtModelView
+// .NAME pqModelTreeViewEventTranslator - The event translator for smtk::extension::qtModelView
 // .SECTION Description
 // .SECTION Caveats
 
@@ -24,7 +24,7 @@
 #include "smtk/extension/qt/qtEntityItemModel.h"
 #include "pqEventDispatcher.h"
 
-static QModelIndex GetIndex(smtk::model::qtModelView* View, const QString& Name)
+static QModelIndex GetIndex(smtk::extension::qtModelView* View, const QString& Name)
 {
   QStringList idxs = Name.split('/', QString::SkipEmptyParts);
   
@@ -49,7 +49,7 @@ pqModelTreeViewEventPlayer::pqModelTreeViewEventPlayer(QObject* p)
 bool pqModelTreeViewEventPlayer::playEvent(QObject* Object, const QString& command,
  const QString& arguments, bool& Error)
 {
-  smtk::model::qtModelView* const object = qobject_cast<smtk::model::qtModelView*>(Object);
+  smtk::extension::qtModelView* const object = qobject_cast<smtk::extension::qtModelView*>(Object);
   if(!object)
     {
     return false;

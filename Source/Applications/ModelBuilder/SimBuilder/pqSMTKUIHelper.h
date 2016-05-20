@@ -9,7 +9,7 @@
 //=========================================================================
 
 // .NAME pqSMTKUIHelper -
-// .SECTION Description - Helper for smtk::attribute::qtFileItem
+// .SECTION Description - Helper for smtk::extension::qtFileItem
 //
 
 #ifndef __pqSMTKUIHelper_h
@@ -40,7 +40,7 @@ namespace pqSMTKUIHelper
 {
   //----------------------------------------------------------------------------
   static void process_smtkFileItemRequest(
-    smtk::attribute::qtFileItem* fileItem,
+    smtk::extension::qtFileItem* fileItem,
     pqServer* server, QWidget* parent_Widget = NULL)
   {
     if(!fileItem)
@@ -100,8 +100,8 @@ namespace pqSMTKUIHelper
 
   //----------------------------------------------------------------------------
   static void process_smtkModelEntityItemSelectionRequest(
-    smtk::attribute::qtModelEntityItem* entityItem,
-    smtk::model::qtModelView* modelView)
+    smtk::extension::qtModelEntityItem* entityItem,
+    smtk::extension::qtModelView* modelView)
   {
     if(!entityItem || !modelView)
       {

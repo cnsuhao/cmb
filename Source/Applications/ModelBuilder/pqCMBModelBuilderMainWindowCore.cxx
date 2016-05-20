@@ -115,6 +115,7 @@
 #include "assert.h"
 
 using namespace smtk::attribute;
+using namespace smtk::extension;
 using namespace smtk;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -177,7 +178,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqSMTKMeshPanel> MeshDock;
     QPointer<pqCMBModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
-    QPointer<smtk::attribute::qtAttributeDisplay> AttributeVisWidget;
+    QPointer<smtk::extension::qtAttributeDisplay> AttributeVisWidget;
     QPointer<QAction> AttVisAction;
 
 };
@@ -212,7 +213,7 @@ void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* too
 {
   SimBuilderCore* sbCore = this->getSimBuilder();
   this->Internal->AttributeVisWidget =
-    new smtk::attribute::qtAttributeDisplay(toolbar,
+    new smtk::extension::qtAttributeDisplay(toolbar,
       sbCore->uiManager()->attributeUIManager())
     << pqSetName("colorByAttributeWidget");;
   this->Internal->AttVisAction = toolbar->addWidget(this->Internal->AttributeVisWidget);

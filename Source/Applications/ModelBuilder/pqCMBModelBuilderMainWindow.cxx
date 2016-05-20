@@ -775,9 +775,9 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->getMainDialog()->action_Select->setEnabled(true);
 
   QObject::connect(this->getThisCore()->modelPanel()->modelView(),
-    SIGNAL(meshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
+    SIGNAL(meshSelectionItemCreated(smtk::extension::qtMeshSelectionItem*,
            const std::string&, const smtk::common::UUID&)),
-    this, SLOT(onMeshSelectionItemCreated(smtk::attribute::qtMeshSelectionItem*,
+    this, SLOT(onMeshSelectionItemCreated(smtk::extension::qtMeshSelectionItem*,
                const std::string&, const smtk::common::UUID&)),
     Qt::UniqueConnection);
 
@@ -1179,8 +1179,8 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onRequestMeshSelection()
 {
-  smtk::attribute::qtMeshSelectionItem* const qMeshItem = qobject_cast<
-  smtk::attribute::qtMeshSelectionItem*>(QObject::sender());
+  smtk::extension::qtMeshSelectionItem* const qMeshItem = qobject_cast<
+  smtk::extension::qtMeshSelectionItem*>(QObject::sender());
   this->getThisCore()->modelPanel()->setCurrentMeshSelectionItem(
     qMeshItem);
   if(!qMeshItem)
@@ -1265,7 +1265,7 @@ void pqCMBModelBuilderMainWindow::onRequestMeshEdgePointSelection(
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onMeshSelectionItemCreated(
-  smtk::attribute::qtMeshSelectionItem* meshItem,
+  smtk::extension::qtMeshSelectionItem* meshItem,
   const std::string& opName, const smtk::common::UUID& uuid)
 {
   if(meshItem)
