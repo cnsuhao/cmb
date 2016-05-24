@@ -40,7 +40,7 @@ add_paraview_plugin(ModelBridge_Plugin "1.0"
 target_link_libraries(ModelBridge_Plugin
   LINK_PRIVATE
     smtkCore
-    vtkSMTKExt
+    vtkSMTKSourceExt
   )
 
 target_include_directories(ModelBridge_Plugin

@@ -282,7 +282,8 @@ void vtkSMModelManagerProxy::initFileOperator(
   const std::string& fileName,
   const std::string& engineName)
 {
-  fileOp->ensureSpecification();
+  if(!fileOp->ensureSpecification())
+    return;
   fileOp->specification()->findFile("filename")->setValue(fileName);
   smtk::attribute::StringItem::Ptr enginetypeItem =
     fileOp->specification()->findString("enginetype");
@@ -322,14 +323,14 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
     }
 
   this->initFileOperator(readOp, fileName, engineName);
-  if ( !readOp->ableToOperate() )
+  if (readOp->specification() && readOp->ableToOperate() )
     {
-    std::cout << "Read operator can not operate with the file: "
-              << fileName.c_str() << "\n";
+    return readOp;
     }
   else
     {
-    return readOp;
+    std::cout << "No specs for Read Op or Read Op can not operate with the file: "
+              << fileName.c_str() << "\n";
     }
   // try "import" if there is one
   OperatorPtr importOp = session->op("import");

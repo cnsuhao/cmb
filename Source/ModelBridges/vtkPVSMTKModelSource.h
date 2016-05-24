@@ -12,7 +12,7 @@
 
 #include "ModelBridgeClientModule.h"
 
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/PublicPointerDefs.h"
 
 #include <map>

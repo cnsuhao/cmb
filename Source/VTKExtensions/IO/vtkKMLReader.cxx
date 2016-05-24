@@ -51,8 +51,8 @@
 #include <vtksys/SystemTools.hxx>
 
 // VTKExtensions includes.
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBTriangleMesher.h"
 
 // Import types.
 using kmldom::AbstractViewPtr;
@@ -623,7 +623,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
   vtkSmartPointer<vtkCellArray>tempCells;
   vtkSmartPointer<vtkPoints>   tempPoints;
 
-  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkNew<vtkPrepareForMesher> mapInterface;
 
   std::map<KMLInternalPt, vtkIdType> pt2Id; //prevent duplicate points
@@ -841,7 +841,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
 //-----------------------------------------------------------------------------
 void vtkKMLReaderInternal::Triangulate(vtkPolyData* polyDataIn)
 {
-  typedef smtk::bridge::discrete::vtkCMBTriangleMesher vtkTriangleMesher;
+  typedef smtk::vtk::vtkCMBTriangleMesher vtkTriangleMesher;
   vtkNew<vtkTriangleMesher> cmbMapMesher;
   cmbMapMesher->SetMaxAreaMode(vtkTriangleMesher::NoMaxArea);
   cmbMapMesher->SetInputData(polyDataIn);

@@ -21,10 +21,10 @@
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
 
-#include "smtk/bridge/discrete/extension/meshing/cmbFaceMesherInterface.h"
-#include "smtk/bridge/discrete/extension/meshing/cmbFaceMeshHelper.h"
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBMeshServerLauncher.h"
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/cmbFaceMesherInterface.h"
+#include "smtk/extension/vtk/meshing/cmbFaceMeshHelper.h"
+#include "smtk/extension/vtk/meshing/vtkCMBMeshServerLauncher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 #include <sstream>
 #include <vtksys/SystemTools.hxx>
@@ -32,7 +32,7 @@
 vtkStandardNewMacro(vtkCMBTriangleMultiBlockMesher);
 
 
-using namespace smtk::bridge::discrete::CmbFaceMesherClasses;
+using namespace smtk::vtk::CmbFaceMesherClasses;
 
 //--------------------------------------------------------------------
 vtkCMBTriangleMultiBlockMesher::vtkCMBTriangleMultiBlockMesher()
@@ -97,7 +97,7 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
   std::map<vtkIdType, ModelFaceRep* > pid2Face; // Create a face for every polygon
 
   // Build the data structures required for meshing
-  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(input);
   mapInterface->GetPolyId2ModelFaceRepMap(pid2Face);
@@ -110,7 +110,7 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
   output->SetNumberOfBlocks(pid2Face.size());
   unsigned blocknum = 0;
   // Mesh each polygon individually then append all their polydata together
-  typedef smtk::bridge::discrete::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
+  typedef smtk::vtk::vtkCMBMeshServerLauncher vtkMeshServerLauncher;
   vtkNew<vtkMeshServerLauncher> meshServer;
   std::map<vtkIdType, ModelFaceRep* >::iterator faceIter = pid2Face.begin();
   for(; faceIter != pid2Face.end(); faceIter++)
@@ -155,7 +155,7 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
         break;
       }
 
-    smtk::bridge::discrete::cmbFaceMesherInterface ti(face->numberOfVertices(),
+    smtk::vtk::cmbFaceMesherInterface ti(face->numberOfVertices(),
                                                       face->numberOfEdges(),
                                                       face->numberOfHoles(),
                                                       this->PreserveEdges);

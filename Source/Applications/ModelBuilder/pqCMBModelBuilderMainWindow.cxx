@@ -82,7 +82,7 @@
 #include "smtk/model/StringData.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 

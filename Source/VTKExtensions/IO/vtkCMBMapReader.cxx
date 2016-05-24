@@ -29,7 +29,7 @@
 #include <sys/types.h>
 #include <vtksys/SystemTools.hxx>
 
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 //Turns on the old map file cell data
 //very inefficient, but easy to debug
@@ -156,7 +156,7 @@ vtkCMBMapReader::~vtkCMBMapReader()
 #endif
 
     //Initialize the map interface to create a new map file
-    typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+    typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
     vtkNew<vtkPrepareForMesher> mapInterface;
     mapInterface->SetPolyData(output);
     mapInterface->InitializeNewMapInfo();

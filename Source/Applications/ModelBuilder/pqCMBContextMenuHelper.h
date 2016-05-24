@@ -47,7 +47,7 @@
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
 
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 
 namespace pqCMBContextMenuHelper
 {

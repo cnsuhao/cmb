@@ -26,8 +26,8 @@
 #include "vtkPolyData.h"
 #include "vtkPolygon.h"
 
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBTriangleMesher.h"
 
 #include "vtkMultiBlockDataSet.h"
 #include "vtkXMLPolyDataWriter.h"
@@ -205,7 +205,7 @@ vtkCMBMeshTerrainWithArcs::vtkCMBMeshTerrainWithArcs()
   this->NumberOfProgressSteps = 10;
   this->StepIncrement = 0.1;
 
-  this->Mesher = smtk::bridge::discrete::vtkCMBTriangleMesher::New();
+  this->Mesher = smtk::vtk::vtkCMBTriangleMesher::New();
   this->MesherMaxArea = 0.125;
 }
 
@@ -298,7 +298,7 @@ int vtkCMBMeshTerrainWithArcs::RequestData(vtkInformation*,
     this->Mesher->SetPreserveBoundaries(false);
     this->Mesher->SetPreserveEdgesAndNodes(true);
     this->Mesher->SetMaxAreaMode(
-      smtk::bridge::discrete::vtkCMBTriangleMesher::RelativeToBoundsAndSegments);
+      smtk::vtk::vtkCMBTriangleMesher::RelativeToBoundsAndSegments);
     this->Mesher->SetMaxArea(0.015);
     this->Mesher->SetUseMinAngle(true);
     this->Mesher->SetInputData(groundMesh.GetPointer());
@@ -457,7 +457,7 @@ bool vtkCMBMeshTerrainWithArcs::PrepForMeshing(vtkInformationVector* input,
 bool vtkCMBMeshTerrainWithArcs::AssignPolygonIds(vtkPolyData *mesh,
   const vtkIdType &/*size*/) const
 {
-  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkNew<vtkPrepareForMesher> mapInterface;
   mapInterface->SetPolyData(mesh); //Add necessary field data to the mesh
   mapInterface->SetNumberOfArcs(this->PolygonInfo->Info.size());
@@ -581,7 +581,7 @@ bool vtkCMBMeshTerrainWithArcs::GenerateExtrudedArcSets(vtkPolyData *input,
 
     this->Mesher->SetPreserveBoundaries(true);
     this->Mesher->SetMaxAreaMode(
-        smtk::bridge::discrete::vtkCMBTriangleMesher::AbsoluteArea);
+        smtk::vtk::vtkCMBTriangleMesher::AbsoluteArea);
     this->Mesher->SetMaxArea(this->MesherMaxArea);
     this->Mesher->SetInputData(arcsetMesh.GetPointer());
     this->Mesher->Update();
@@ -652,7 +652,7 @@ void vtkCMBMeshTerrainWithArcs::CreateArcSetForMeshing(vtkPolyData* input,
   vtkIdType size = output->GetNumberOfCells();
   newCells->FastDelete();
 
-  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkNew<vtkPrepareForMesher> mapInterface;
   mapInterface->SetPolyData(output); //Add necessary field data to the mesh
   mapInterface->SetNumberOfArcs(1);
