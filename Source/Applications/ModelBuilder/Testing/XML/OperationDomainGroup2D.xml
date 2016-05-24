@@ -2,8 +2,8 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/toolBar/1QToolButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/2D-CMBModels/test2D.cmb" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::model::qtModelView0" command="expand" arguments="0.0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::model::qtModelView0" command="expand" arguments="0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.347996,0.539162,2,2,0)" />
   <pqevent object="qtCMBMainWindow" command="contextMenu" arguments="" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.347996,0.539162,2,0,0)" />
@@ -18,6 +18,6 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.469208,0.542805,2,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.469208,0.542805,2,0,0)" />
   <pqevent object="PipelineContextMenu/addToGroupMenu" command="activate" arguments="domain group" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::model::qtModelView0" command="expand" arguments="0.0.0.0.4.0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::model::qtModelView0" command="setCurrent" arguments="0.0.0.0.4.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.4.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.4.0" />
 </pqevents>
