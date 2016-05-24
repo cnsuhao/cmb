@@ -37,8 +37,8 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
     {
     return false;
     }
-  smtk::attribute::qtCheckItemComboBox* checkComboSelf =
-    qobject_cast<smtk::attribute::qtCheckItemComboBox*>(Object);
+  smtk::extension::qtCheckItemComboBox* checkComboSelf =
+    qobject_cast<smtk::extension::qtCheckItemComboBox*>(Object);
   // if this is the click on combobox, and not its popup menu, show popUp
   if(checkComboSelf && Event->type() == QEvent::MouseButtonPress)
     {
@@ -53,11 +53,11 @@ bool pqCheckableComboPopupEventTranslator::translateEvent(QObject* Object, QEven
     popView = qobject_cast<QAbstractItemView*>(Object->parent());
     }
 
-  // only record the list view event if it's the popup menu from smtk::attribute::qtCheckItemComboBox
+  // only record the list view event if it's the popup menu from smtk::extension::qtCheckItemComboBox
   checkComboSelf = NULL;
   for(QObject* test = Object; checkComboSelf == NULL && test != NULL; test = test->parent())
     {
-    checkComboSelf = qobject_cast<smtk::attribute::qtCheckItemComboBox*>(test);
+    checkComboSelf = qobject_cast<smtk::extension::qtCheckItemComboBox*>(test);
     }
 
   if(!popView || !checkComboSelf)

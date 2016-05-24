@@ -7,7 +7,7 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME pqModelTreeViewEventTranslator - The event translator for smtk::attribute::qtCheckItemComboBox
+// .NAME pqModelTreeViewEventTranslator - The event translator for smtk::extension::qtCheckItemComboBox
 // .SECTION Description
 // .SECTION Caveats
 
@@ -32,7 +32,7 @@ pqCheckableComboPopupEventPlayer::pqCheckableComboPopupEventPlayer(QObject* p)
 bool pqCheckableComboPopupEventPlayer::playEvent(QObject* Object, const QString& command,
  const QString& /* arguments*/, bool& /*Error*/)
 {
-  smtk::attribute::qtCheckItemComboBox* const object = qobject_cast<smtk::attribute::qtCheckItemComboBox*>(Object);
+  smtk::extension::qtCheckItemComboBox* const object = qobject_cast<smtk::extension::qtCheckItemComboBox*>(Object);
   if(!object)
     {
     return false;

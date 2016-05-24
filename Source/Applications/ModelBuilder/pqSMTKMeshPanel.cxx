@@ -240,7 +240,7 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
     {
     make_InstancedView(this->AttSystem);
     }
-  this->AttUIManager.reset( new smtk::attribute::qtUIManager( *this->AttSystem));
+  this->AttUIManager.reset( new smtk::extension::qtUIManager( *this->AttSystem));
                             this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(),
                                                             useInternalFileBrowser);
   QObject::connect(this->AttUIManager.get(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),

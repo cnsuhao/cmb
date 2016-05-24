@@ -470,11 +470,26 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
           std::pair<int,int>(numPointsInLineCells-1,value));
     }
 
-  // Update the contour representation from the nodes using the line interpolator
-  for (vtkIdType i=1; i <= nPoints; ++i)
+  // Update the contour representation from the nodes using the line interpolator.
+  // NOTE: Don't use UpdateLines(i) for every point because it will call BuildLines(),
+  // which means re-building the line nPoints times!!!
+  if (this->LineInterpolator)
     {
-    this->UpdateLines(i);
+    int indices[2];
+    vtkNew<vtkIntArray> arr;
+    for (vtkIdType i=1; i < nPoints; ++i)
+      {
+      this->LineInterpolator->GetSpan( i, arr.GetPointer(), this );
+      int nNodes = arr->GetNumberOfTuples();
+      for (int i = 0; i < nNodes; i++)
+        {
+        arr->GetTypedTuple( i, indices );
+        this->UpdateLine( indices[0], indices[1] );
+        }
+      }
     }
+
+  this->UpdateLines(nPoints);
   this->BuildRepresentation();
 
   // Show the contour.

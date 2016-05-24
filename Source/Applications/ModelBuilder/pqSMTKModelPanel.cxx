@@ -86,6 +86,7 @@
 
 using namespace std;
 using namespace smtk::model;
+using namespace smtk::extension;
 
 //-----------------------------------------------------------------------------
 class pqSMTKModelPanel::qInternal
@@ -98,9 +99,9 @@ public:
   bool ignorePropertyChange;
 
   // [meshItem, <opName, sessionId>]
-  QMap<QPointer<smtk::attribute::qtMeshSelectionItem>,
+  QMap<QPointer<smtk::extension::qtMeshSelectionItem>,
     QPair<std::string, smtk::common::UUID> >SelectionOperations;
-  QPointer<smtk::attribute::qtMeshSelectionItem> CurrentMeshSelectItem;
+  QPointer<smtk::extension::qtMeshSelectionItem> CurrentMeshSelectItem;
 
   qInternal()
     {
@@ -169,7 +170,7 @@ pqCMBModelManager* pqSMTKModelPanel::modelManager()
   return this->Internal->smtkManager;
 }
 
-smtk::model::qtModelView* pqSMTKModelPanel::modelView()
+smtk::extension::qtModelView* pqSMTKModelPanel::modelView()
 {
   return this->Internal->ModelPanel ?
     this->Internal->ModelPanel->getModelView() : NULL;
@@ -246,11 +247,11 @@ void pqSMTKModelPanel::resetUI()
       SIGNAL(meshesSelected(const smtk::mesh::MeshSets& )),
       this, SLOT(selectMeshRepresentations(const smtk::mesh::MeshSets& )));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
-      SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
-      this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
+      SIGNAL(fileItemCreated(smtk::extension::qtFileItem*)),
+      this, SLOT(onFileItemCreated(smtk::extension::qtFileItem*)));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
-      SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
-      this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
+      SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)),
+      this, SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
       this->Internal->smtkManager,
@@ -276,7 +277,7 @@ void pqSMTKModelPanel::resetUI()
 //  this->linkRepresentations();
 
   qtModelView* modelview = this->Internal->ModelPanel->getModelView();
-  QPointer<smtk::model::QEntityItemModel> qmodel = modelview->getModel();
+  QPointer<smtk::extension::QEntityItemModel> qmodel = modelview->getModel();
   qmodel->clear();
 
   smtk::model::EntityRefs cursors;
@@ -403,7 +404,7 @@ void pqSMTKModelPanel::updateTreeSelection()
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+void pqSMTKModelPanel::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
 {
   if(fileItem)
     {
@@ -415,8 +416,8 @@ void pqSMTKModelPanel::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::onLaunchFileBrowser()
 {
-  smtk::attribute::qtFileItem* const fileItem =
-    qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
+  smtk::extension::qtFileItem* const fileItem =
+    qobject_cast<smtk::extension::qtFileItem*>(QObject::sender());
   if(!fileItem)
     {
     return;
@@ -427,7 +428,7 @@ void pqSMTKModelPanel::onLaunchFileBrowser()
 
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::onModelEntityItemCreated(
-  smtk::attribute::qtModelEntityItem* entItem)
+  smtk::extension::qtModelEntityItem* entItem)
 {
   if(entItem)
     {
@@ -440,7 +441,7 @@ void pqSMTKModelPanel::onModelEntityItemCreated(
 
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::requestEntityAssociation(
-  smtk::attribute::qtModelEntityItem* entItem)
+  smtk::extension::qtModelEntityItem* entItem)
 {
   if(!entItem)
     {
@@ -454,8 +455,8 @@ void pqSMTKModelPanel::requestEntityAssociation(
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::onRequestEntityAssociation()
 {
-  smtk::attribute::qtModelEntityItem* const entItem =
-    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
+  smtk::extension::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::extension::qtModelEntityItem*>(QObject::sender());
   this->requestEntityAssociation(entItem);
 }
 
@@ -467,7 +468,7 @@ void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
 
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::addMeshSelectionOperation(
-    smtk::attribute::qtMeshSelectionItem* meshItem,
+    smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid)
 {
   if(meshItem)
@@ -475,7 +476,7 @@ void pqSMTKModelPanel::addMeshSelectionOperation(
 }
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::setCurrentMeshSelectionItem(
-    smtk::attribute::qtMeshSelectionItem* meshItem)
+    smtk::extension::qtMeshSelectionItem* meshItem)
 {
   this->Internal->CurrentMeshSelectItem = meshItem;
 }
@@ -483,7 +484,7 @@ void pqSMTKModelPanel::setCurrentMeshSelectionItem(
 void pqSMTKModelPanel::startMeshSelectionOperation(
   const QList<pqOutputPort*> & selPorts)
 {
-  smtk::attribute::qtMeshSelectionItem* currSelItem =
+  smtk::extension::qtMeshSelectionItem* currSelItem =
     this->Internal->CurrentMeshSelectItem;
   if(!currSelItem)
     return;
@@ -559,7 +560,7 @@ void pqSMTKModelPanel::updateMeshSelection(
   if(!minfo)
     return;
 
-  smtk::attribute::qtMeshSelectionItem* currSelItem =
+  smtk::extension::qtMeshSelectionItem* currSelItem =
     this->Internal->CurrentMeshSelectItem;
   if(!currSelItem)
     return;
@@ -636,7 +637,7 @@ void pqSMTKModelPanel::updateMeshSelection(
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::resetMeshSelectionItems()
 {
-  foreach(smtk::attribute::qtMeshSelectionItem* meshItem,
+  foreach(smtk::extension::qtMeshSelectionItem* meshItem,
     this->Internal->SelectionOperations.keys())
     if(meshItem)
       meshItem->resetSelectionState();
@@ -645,7 +646,7 @@ void pqSMTKModelPanel::resetMeshSelectionItems()
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
 {
-  smtk::attribute::qtMeshSelectionItem* currSelItem =
+  smtk::extension::qtMeshSelectionItem* currSelItem =
     this->Internal->CurrentMeshSelectItem;
   if(!op || !currSelItem ||
      !this->Internal->SelectionOperations.contains(currSelItem))

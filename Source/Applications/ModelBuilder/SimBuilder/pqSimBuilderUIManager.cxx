@@ -57,7 +57,7 @@ pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
   this->ActiveServer = NULL;
   this->RenderView = NULL;
   this->m_AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->m_attUIManager = new smtk::attribute::qtUIManager(*(this->m_AttSystem));
+  this->m_attUIManager = new smtk::extension::qtUIManager(*(this->m_AttSystem));
   this->Internals = new pqSimBuilderUIManagerInternals;
  }
 
@@ -74,7 +74,7 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
 }
 
 //----------------------------------------------------------------------------
-smtk::attribute::qtBaseView* pqSimBuilderUIManager::topView()
+smtk::extension::qtBaseView* pqSimBuilderUIManager::topView()
 {
   return this->m_attUIManager->topView();
 }
@@ -115,11 +115,11 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     }
 
   this->m_attUIManager->disconnect();
-  QObject::connect(this->m_attUIManager, SIGNAL(fileItemCreated(smtk::attribute::qtFileItem*)),
-    this, SLOT(onFileItemCreated(smtk::attribute::qtFileItem*)));
+  QObject::connect(this->m_attUIManager, SIGNAL(fileItemCreated(smtk::extension::qtFileItem*)),
+    this, SLOT(onFileItemCreated(smtk::extension::qtFileItem*)));
   QObject::connect(this->m_attUIManager,
-    SIGNAL(modelEntityItemCreated(smtk::attribute::qtModelEntityItem*)),
-    this, SLOT(onModelEntityItemCreated(smtk::attribute::qtModelEntityItem*)));
+    SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)),
+    this, SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
   QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
     this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
 
@@ -133,8 +133,8 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     return;
     }
 
-  smtk::attribute::qtGroupView* qTopGroupV =
-    qobject_cast<smtk::attribute::qtGroupView*>(this->topView());
+  smtk::extension::qtGroupView* qTopGroupV =
+    qobject_cast<smtk::extension::qtGroupView*>(this->topView());
   if (!qTopGroupV)
     {
     QMessageBox::warning(parentWidget,
@@ -145,12 +145,12 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     }
 
   // callbacks from Expressions sections
-  QList<smtk::attribute::qtBaseView*> expressions;
+  QList<smtk::extension::qtBaseView*> expressions;
   qTopGroupV->getChildView("SimpleExpression", expressions);
-  foreach(smtk::attribute::qtBaseView* sec, expressions)
+  foreach(smtk::extension::qtBaseView* sec, expressions)
     {
-    smtk::attribute::qtSimpleExpressionView* simpleExpSec =
-      qobject_cast<smtk::attribute::qtSimpleExpressionView*>(sec);
+    smtk::extension::qtSimpleExpressionView* simpleExpSec =
+      qobject_cast<smtk::extension::qtSimpleExpressionView*>(sec);
     if(simpleExpSec)
       {
       QObject::connect(simpleExpSec, SIGNAL(onCreateFunctionWithExpression(
@@ -160,12 +160,12 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     }
 
   // callbacks from Attributes sections
-  QList<smtk::attribute::qtBaseView*> attViews;
+  QList<smtk::extension::qtBaseView*> attViews;
   qTopGroupV->getChildView("Attribute", attViews);
-  foreach(smtk::attribute::qtBaseView* sec, attViews)
+  foreach(smtk::extension::qtBaseView* sec, attViews)
     {
-    smtk::attribute::qtAttributeView* attSec =
-      qobject_cast<smtk::attribute::qtAttributeView*>(sec);
+    smtk::extension::qtAttributeView* attSec =
+      qobject_cast<smtk::extension::qtAttributeView*>(sec);
     if(attSec)
       {
       QObject::connect(attSec, SIGNAL(attColorChanged()), this,
@@ -180,7 +180,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
 }
 
 //----------------------------------------------------------------------------
-void pqSimBuilderUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileItem)
+void pqSimBuilderUIManager::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
 {
   if(fileItem)
     {
@@ -191,8 +191,8 @@ void pqSimBuilderUIManager::onFileItemCreated(smtk::attribute::qtFileItem* fileI
 //----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onLaunchFileBrowser()
 {
-  smtk::attribute::qtFileItem* const fileItem =
-    qobject_cast<smtk::attribute::qtFileItem*>(QObject::sender());
+  smtk::extension::qtFileItem* const fileItem =
+    qobject_cast<smtk::extension::qtFileItem*>(QObject::sender());
   if(!fileItem || !this->topView())
     {
     return;
@@ -203,7 +203,7 @@ void pqSimBuilderUIManager::onLaunchFileBrowser()
 
 //----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onModelEntityItemCreated(
-  smtk::attribute::qtModelEntityItem* entItem)
+  smtk::extension::qtModelEntityItem* entItem)
 {
   if(entItem)
     {
@@ -216,8 +216,8 @@ void pqSimBuilderUIManager::onModelEntityItemCreated(
 //----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onRequestEntityAssociation()
 {
-  smtk::attribute::qtModelEntityItem* const entItem =
-    qobject_cast<smtk::attribute::qtModelEntityItem*>(QObject::sender());
+  smtk::extension::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::extension::qtModelEntityItem*>(QObject::sender());
   if(!entItem || !this->m_ModelPanel)
     {
     return;
@@ -238,8 +238,8 @@ void pqSimBuilderUIManager::createFunctionWithExpression(
   QString& funcExpr, double initVal,
   double deltaVal, int numValues)
 {
-  smtk::attribute::qtSimpleExpressionView* const expressionView =
-    qobject_cast<smtk::attribute::qtSimpleExpressionView*>(
+  smtk::extension::qtSimpleExpressionView* const expressionView =
+    qobject_cast<smtk::extension::qtSimpleExpressionView*>(
     QObject::sender());
   if(!expressionView)
     {
@@ -291,19 +291,19 @@ void pqSimBuilderUIManager::getAttributeDefinitions(
     {
     return;
     }
-  smtk::attribute::qtGroupView* qTopGroupV =
-    qobject_cast<smtk::attribute::qtGroupView*>(this->topView());
+  smtk::extension::qtGroupView* qTopGroupV =
+    qobject_cast<smtk::extension::qtGroupView*>(this->topView());
   if (!qTopGroupV)
     {
     return;
     }
-  QList<smtk::attribute::qtBaseView*> attsections;
+  QList<smtk::extension::qtBaseView*> attsections;
   qTopGroupV->getChildView("Attribute", attsections);
 
-  foreach(smtk::attribute::qtBaseView* sec, attsections)
+  foreach(smtk::extension::qtBaseView* sec, attsections)
     {
-    smtk::attribute::qtAttributeView* attSec =
-      qobject_cast<smtk::attribute::qtAttributeView*>(sec);
+    smtk::extension::qtAttributeView* attSec =
+      qobject_cast<smtk::extension::qtAttributeView*>(sec);
     if(attSec)
       {
       const pqSimBuilderUIManagerInternals::DefMap &attDefMap = attSec->attDefinitionMap();
