@@ -68,6 +68,7 @@
 #include "pqCMBFileExtensions.h"
 #include "pqCMBSceneTree.h"
 #include "pqSMTKMeshPanel.h"
+#include "pqSMTKModelInfo.h"
 #include "pqSMTKModelPanel.h"
 #include "pqCMBModelManager.h"
 #include "pqCMBColorMapWidget.h"
@@ -923,6 +924,18 @@ void pqCMBModelBuilderMainWindow::resetUIPanels()
 
 }
 
+inline bool internal_checkRep(pqDataRepresentation* rep,
+  pqCMBModelManager* cmbModelMgr)
+{
+  if(!rep)
+    {
+    pqSMTKModelInfo* minfo = cmbModelMgr->activateModelRepresentation();
+    if(minfo)
+      rep = minfo->Representation;
+    }
+  return rep != NULL;
+}
+
 //----------------------------------------------------------------------------
 QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
   qtCMBPanelsManager::PanelType enType, bool recreate)
@@ -945,6 +958,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     : NULL;
   QDockWidget* dw = NULL;
   qtCMBPanelsManager* panelManager = this->panelsManager();
+  pqCMBModelManager* cmbModelMgr = this->getThisCore()->modelManager();
   switch(enType)
     {
     case qtCMBPanelsManager::ATTRIBUTE:
@@ -980,8 +994,8 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     case qtCMBPanelsManager::DISPLAY:
     case qtCMBPanelsManager::PROPERTIES:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
-      if(rep)
+      pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
+      if(internal_checkRep(rep, cmbModelMgr))
         {
         // hiding color related components
         for (size_t index = 0; index < rep->getProxy()->GetNumberOfPropertyGroups(); index++)
@@ -1023,7 +1037,8 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       dw->show();
       this->Internal->CurrentDockWidgets[enType] = dw;
 
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
+      pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
+      internal_checkRep(rep, cmbModelMgr);
       pqOutputPort* actPort = rep ? rep->getOutputPortFromInput() : NULL;
       if(this->Internal->InformationWidget &&
          this->Internal->InformationWidget->getOutputPort() != actPort)
@@ -1041,8 +1056,8 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       break;
     case qtCMBPanelsManager::COLORMAP:
       {
-      pqDataRepresentation* rep = this->getThisCore()->modelManager()->activeRepresentation();
-      if(rep)
+      pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
+      if(internal_checkRep(rep, cmbModelMgr))
         {
         pqCMBColorMapWidget* colorWidget = this->colorEditor(this);
         colorWidget->setDataRepresentation(rep);
@@ -1174,6 +1189,7 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
     this->Internal->ColorByArrayBox->blockSignals(false);
     }
 
+  this->getThisCore()->modelManager()->setActiveModelRepresentation(acitveRep);
 }
 
 //----------------------------------------------------------------------------

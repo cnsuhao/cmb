@@ -79,7 +79,10 @@ public:
   int numberOfModels();
 
   QList<pqDataRepresentation*> modelRepresentations() const;
-  pqDataRepresentation* activeRepresentation() const;
+
+  pqSMTKModelInfo* activateModelRepresentation();
+  void setActiveModelRepresentation(pqDataRepresentation* );
+
   bool DetermineFileReader(
     const std::string& filename,
     std::string& bridgeType,
