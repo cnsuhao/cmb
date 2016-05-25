@@ -576,7 +576,7 @@ struct RegionTracker
       it != this->ModelMap.end();
       ++it)
       {
-      this->ModelRegions->GetTupleValue(it->second, entry);
+      this->ModelRegions->GetTypedTuple(it->second, entry);
       vtkIdType r0 = this->Sets.Find(entry[1]);
       vtkIdType r1 = this->Sets.Find(entry[2]);
       cout
@@ -593,7 +593,7 @@ struct RegionTracker
       it != this->ModelMap.end();
       ++it)
       {
-      this->ModelRegions->GetTupleValue(it->second, entry);
+      this->ModelRegions->GetTypedTuple(it->second, entry);
       vtkIdType r0 = this->Collapse[this->Sets.Find(entry[1])];
       vtkIdType r1 = this->Collapse[this->Sets.Find(entry[2])];
       cout
@@ -725,7 +725,7 @@ void InitializeRegions(vtkPolyData* surface, RegionTracker<N>& regions, const T&
   for (std::set<vtkIdType>::iterator it = modelFacets.begin(); it != modelFacets.end(); ++it, ++i)
     {
     vtkIdType tuple[3] = { *it, regions.Sets.NewSet(), regions.Sets.NewSet() };
-    regions.ModelRegions->SetTupleValue(i, tuple);
+    regions.ModelRegions->SetTypedTuple(i, tuple);
     regions.ModelMap[*it] = i;
     }
 }
@@ -833,7 +833,7 @@ bool IntersectWithRay(
       pdIn->GetCellPoints(hit.CellId, npts, conn);
       EstimateNormal<N::Dimension>(pts, npts, conn, norm);
       vtkIdType modelFacet = regions.ModelMap[cell2facet(hit.CellId)];
-      regions.ModelRegions->GetTupleValue(modelFacet, hit.RegionInfo);
+      regions.ModelRegions->GetTypedTuple(modelFacet, hit.RegionInfo);
       double normDotDir;
       if ((normDotDir = norm.Dot(direction)) < 0.)
         {
@@ -977,7 +977,7 @@ void FindPointsInRegions(
     // a cell on the facet for the shell.
     bool sense = (*shellIt) % 2 ? true : false; // positive orientation?
     vtkIdType regionInfo[3];
-    regions.ModelRegions->GetTupleValue(*shellIt / 2, regionInfo);
+    regions.ModelRegions->GetTypedTuple(*shellIt / 2, regionInfo);
     vtkIdType cellOnShell = cell2facet.CellForFacet(regionInfo[0]);
 
     // Get cell normal
@@ -1152,7 +1152,7 @@ vtkIdType DiscoverNestings(
     // a cell on the facet for the shell.
     bool sense = (*shellIt) % 2 ? true : false; // positive orientation?
     vtkIdType regionInfo[3];
-    regions.ModelRegions->GetTupleValue(*shellIt / 2, regionInfo);
+    regions.ModelRegions->GetTypedTuple(*shellIt / 2, regionInfo);
     vtkIdType cellOnShell = cell2facet.CellForFacet(regionInfo[0]);
 
     // Get cell normal
@@ -1367,7 +1367,7 @@ void ReconcileModelFacets(
   for (vtkIdType i = 0; i < numCellRegions; ++i)
     {
     vtkIdType regionIds[3];
-    regions.ModelRegions->GetTupleValue(i, regionIds);
+    regions.ModelRegions->GetTypedTuple(i, regionIds);
     vtkIdType currentModelFace = cell2facet(regionIds[0]);
     vtkIdType revisedModelFace = modelFaceSplitter.SplitFaceByRegion(
       currentModelFace,
@@ -1376,7 +1376,7 @@ void ReconcileModelFacets(
     if (revisedModelFace != currentModelFace)
       {
       regionIds[0] = revisedModelFace;
-      regions.ModelRegions->SetTupleValue(i, regionIds);
+      regions.ModelRegions->SetTypedTuple(i, regionIds);
       modelFaceArray->SetValue(i, revisedModelFace);
       }
     }
@@ -1397,7 +1397,7 @@ void ReconcileModelFacets(
   for (mit = modelFaceSplitter.begin(); mit != modelFaceSplitter.end(); ++i, ++mit)
     {
     vtkIdType regionIds[3] = { mit->second, mit->first.Regions[0], mit->first.Regions[1] };
-    reconciledFaceRegionMap->SetTupleValue(i, regionIds);
+    reconciledFaceRegionMap->SetTypedTuple(i, regionIds);
     }
   regions.ReconciledModelRegions = reconciledFaceRegionMap.GetPointer();
 }
@@ -1512,7 +1512,7 @@ void AssignRegionIDsHolesAndAttributes(
   for (vtkIdType i = 0; i < numModelFacets; ++i)
     {
     vtkIdType facetRegions[3];
-    regions.ModelRegions->GetTupleValue(i, facetRegions);
+    regions.ModelRegions->GetTypedTuple(i, facetRegions);
     for (int j = 1; j < 3; ++j)
       {
       facetRegions[j] = regions.Collapse[regions.Sets.Find(facetRegions[j])];
@@ -1525,7 +1525,7 @@ void AssignRegionIDsHolesAndAttributes(
       facetRegions[1] = facetRegions[2];
       facetRegions[2] = tmp;
       }
-    regions.ModelRegions->SetTupleValue(i, facetRegions);
+    regions.ModelRegions->SetTypedTuple(i, facetRegions);
     //cout << i << ": " << facetRegions[0] << " " << facetRegions[1] << " " << facetRegions[2] << "\n";
     }
 
@@ -1570,10 +1570,10 @@ void PrepareOutput(
     vtkIdType curFaceId = i + cellIdOffset;
     // Get the shell information for both co-facets of this face:
     vtkIdType modelMapEntry = regions.ModelMap[cell2facet(curFaceId)];
-    regions.ModelRegions->GetTupleValue(modelMapEntry, polyRegions);
+    regions.ModelRegions->GetTypedTuple(modelMapEntry, polyRegions);
     //polyRegions[1] = regions.Sets.Find(polyRegions[1]);
     //polyRegions[2] = regions.Sets.Find(polyRegions[2]);
-    //regions.ModelRegions->SetTupleValue(modelMapEntry, polyRegions);
+    //regions.ModelRegions->SetTypedTuple(modelMapEntry, polyRegions);
 
     // Reverse the cell if its normal points inward and it is an outer shell
     // Note that this invalidates regions.EdgeNeighborhoods[...].Sense.
@@ -1585,7 +1585,7 @@ void PrepareOutput(
       polyRegions[2] = tmp;
       }
 
-    cellRegions->SetTupleValue(curFaceId, &polyRegions[1]);
+    cellRegions->SetTypedTuple(curFaceId, &polyRegions[1]);
     connOffset = cells->GetTraversalLocation();
     }
   pdOut->GetCellData()->AddArray(cellRegions.GetPointer());
@@ -1613,7 +1613,7 @@ void PrepareOutput(
     for (vtkIdType i = 0; i < numModelFacets; ++i)
       {
       vtkIdType facetRegions[3];
-      regions.ModelRegions->GetTupleValue(i, facetRegions);
+      regions.ModelRegions->GetTypedTuple(i, facetRegions);
       for (int j = 1; j < 3; ++j)
         {
         facetRegions[j] = regions.Collapse[regions.Sets.Find(facetRegions[j])];
@@ -1625,7 +1625,7 @@ void PrepareOutput(
         facetRegions[1] = facetRegions[2];
         facetRegions[2] = tmp;
         }
-      regions.ModelRegions->SetTupleValue(i, facetRegions);
+      regions.ModelRegions->SetTypedTuple(i, facetRegions);
       //cout << i << ": " << facetRegions[0] << " " << facetRegions[1] << " " << facetRegions[2] << "\n";
       }
     }

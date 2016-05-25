@@ -3576,12 +3576,12 @@ bool pqCMBGeologyBuilderMainWindowCore::AddContourObjectsToModel(
       double point[3];
       if(coords->GetNumberOfTuples() > 1)
         { // assume that there is more than 1 point so that we can make a loop
-        coords->GetTupleValue(0, point);
+        coords->GetTypedTuple(0, point);
         vtkIdType FirstPointId = Points->InsertNextPoint(point);
         vtkIdType PreviousPointId = FirstPointId;
         for(vtkIdType i=1;i<coords->GetNumberOfTuples();i++)
           {
-          coords->GetTupleValue(i, point);
+          coords->GetTypedTuple(i, point);
           vtkIdType CurrentPointId = Points->InsertNextPoint(point);
           vtkIdType LinePointIds[] = {PreviousPointId, CurrentPointId};
           Geometry->InsertNextCell(VTK_LINE, 2, LinePointIds);

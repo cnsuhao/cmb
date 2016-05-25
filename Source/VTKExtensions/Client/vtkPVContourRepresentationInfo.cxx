@@ -178,11 +178,11 @@ void vtkPVContourRepresentationInfo::CopyFromContourRepresentation(
       {
       double pos[3];
       contourRep->GetNthNodeWorldPosition(i, pos);
-      this->AllNodesWorldPositions->InsertNextTupleValue(pos);
+      this->AllNodesWorldPositions->InsertNextTypedTuple(pos);
       if(contourRep->GetNthNodeSelected(i))
         {
         vtkIdType IdTypeValue = i;
-        this->SelectedNodes->InsertNextTupleValue(&IdTypeValue);
+        this->SelectedNodes->InsertNextTypedTuple(&IdTypeValue);
         }
       }
     double* bounds = contourRep->GetBounds();

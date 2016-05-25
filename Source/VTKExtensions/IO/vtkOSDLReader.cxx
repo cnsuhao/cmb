@@ -247,7 +247,7 @@ int vtkOSDLReader::RequestData(
 //  objectFileNameFD->SetNumberOfTuples(numberOfRegions);
 //  for (unsigned int i = 0; i < objectNames.size(); i++)
 //    {
-//    objectFileNameFD->SetTupleValue(i, objectNames[i].c_str());
+//    objectFileNameFD->SetTypedTuple(i, objectNames[i].c_str());
 //    }
 //
 //  output->GetFieldData()->AddArray( volumeConstraintFD );

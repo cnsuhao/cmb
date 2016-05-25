@@ -332,13 +332,13 @@ void vtkCMBGlyphPointSource::GetPoint(vtkIdType index,
 void vtkCMBGlyphPointSource::GetScale(vtkIdType index,
                                       double *s)
 {
-  this->Scaling->GetTupleValue(index, s);
+  this->Scaling->GetTypedTuple(index, s);
 }
 //-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::GetOrientation(vtkIdType index,
                                             double *o)
 {
-  this->Orientation->GetTupleValue(index, o);
+  this->Orientation->GetTypedTuple(index, o);
 }
 //-----------------------------------------------------------------------------
 int vtkCMBGlyphPointSource::GetVisibility(vtkIdType index)
@@ -350,7 +350,7 @@ void vtkCMBGlyphPointSource::GetColor(vtkIdType index,
                                       double *color)
 {
   unsigned char v[4];
-  this->Color->GetTupleValue(index, v);
+  this->Color->GetTypedTuple(index, v);
   color[0] = static_cast<double>(v[0]) / 255.0;
   color[1]= static_cast<double>(v[1]) / 255.0;
   color[2] = static_cast<double>(v[2]) / 255.0;

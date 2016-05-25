@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     {
     double x = static_cast<double>(i);
     double Coord[3] = {x, x, x};
-    Points->SetTupleValue(i, Coord);
+    Points->SetTypedTuple(i, Coord);
     }
 
   VertexIds->SetValue(0, 0);

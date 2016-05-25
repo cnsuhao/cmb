@@ -188,7 +188,7 @@ void vtkPVMultiBlockRootObjectInfo::GetModelFaceIds(vtkIdList* list)
     float vals[4];
     for(int i=0; i<this->ModelFaceColors->GetNumberOfTuples(); i++)
       {
-      this->ModelFaceColors->GetTupleValue(i, vals);
+      this->ModelFaceColors->GetTypedTuple(i, vals);
       if(vals[3] != -2)// this is not a hole
         {
         list->InsertNextId(i);
@@ -210,7 +210,7 @@ void vtkPVMultiBlockRootObjectInfo::GetColorArrayValue(
 {
   if(colorArray && id >=0 && id < colorArray->GetNumberOfTuples())
     {
-    colorArray->GetTupleValue(id, rgba);
+    colorArray->GetTypedTuple(id, rgba);
     }
 }
 

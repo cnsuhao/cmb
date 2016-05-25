@@ -114,7 +114,7 @@ void CreateLookupTable(vtkLookupTable *lut)
 
 //   for (i = 0; i < n; i++)
 //     {
-//     colors->GetTupleValue(i, color);
+//     colors->GetTypedTuple(i, color);
 //     lut->SetTableValue(i, color[0], color[1], color[2]);
 //     }
 
@@ -124,7 +124,7 @@ void CreateLookupTable(vtkLookupTable *lut)
     ci = vtkMath::Round(vtkMath::Random(0, n-1));
     tci = GetNextIndex(ci, avail);
     cout << "Mapping: " << i << ", " << ci << ", " << tci << "\n";
-    colors->GetTupleValue(tci, color);
+    colors->GetTypedTuple(tci, color);
     lut->SetTableValue(i, color[0], color[1], color[2]);
     }
 }
