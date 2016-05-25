@@ -56,18 +56,7 @@ bool cmbForwardingSession::ableToOperateDelegate(
   if (!op)
     return false;
 
-  cJSON* req = cJSON_CreateObject();
-  cJSON* par = cJSON_CreateObject();
-  cJSON_AddItemToObject(req, "jsonrpc", cJSON_CreateString("2.0"));
-  cJSON_AddItemToObject(req, "method", cJSON_CreateString("operator-able"));
-  cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
-  cJSON_AddItemToObject(req, "params", par);
-  op->ensureSpecification();
-  smtk::io::ExportJSON::forOperator(op->specification(), par);
-  // Add the session's session ID so it can be properly instantiated on the server.
-  cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
-
-  cJSON* resp = this->m_proxy->jsonRPCRequest(req); // This deletes req and par.
+  cJSON* resp = this->m_proxy->requestJSONOp(op, "operator-able", this->sessionId());
   cJSON* err = NULL;
   cJSON* res;
 
@@ -77,6 +66,8 @@ bool cmbForwardingSession::ableToOperateDelegate(
     !(res = cJSON_GetObjectItem(resp, "result")) ||
     (res->type != cJSON_True))
     {
+    if(resp)
+      cJSON_Delete(resp);
     if (err && err->valuestring && err->valuestring[0])
       {
       std::cerr << "Unable to operate: \"" << err->valuestring << "\"\n";
@@ -84,27 +75,20 @@ bool cmbForwardingSession::ableToOperateDelegate(
     return false;
     }
 
+  cJSON_Delete(resp);
   return true;
 }
 
 smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
   smtk::model::RemoteOperatorPtr op)
 {
-  cJSON* req = cJSON_CreateObject();
-  cJSON* par = cJSON_CreateObject();
-  cJSON_AddItemToObject(req, "jsonrpc", cJSON_CreateString("2.0"));
-  cJSON_AddItemToObject(req, "method", cJSON_CreateString("operator-apply"));
-  cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
-  cJSON_AddItemToObject(req, "params", par);
-  op->ensureSpecification();
-  smtk::io::ExportJSON::forOperator(op->specification(), par);
-  // Add the session's session ID so it can be properly instantiated on the server.
-  cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(this->sessionId().toString().c_str()));
+  smtk::model::OperatorResult result;
+  if (!op)
+    return result;
 
-  cJSON* resp = this->m_proxy->jsonRPCRequest(req); // This deletes req and par.
+  cJSON* resp = this->m_proxy->requestJSONOp(op, "operator-apply", this->sessionId());
   cJSON* err = NULL;
   cJSON* res;
-  smtk::model::OperatorResult result;
 
   if (
     !resp ||
@@ -112,9 +96,12 @@ smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
     !(res = cJSON_GetObjectItem(resp, "result")) ||
     !smtk::io::ImportJSON::ofOperatorResult(res, result, op))
     {
+    if(resp)
+      cJSON_Delete(resp);
     return op->createResult(smtk::model::OPERATION_FAILED);
     }
 
+  cJSON_Delete(resp);
   return result;
 }
 

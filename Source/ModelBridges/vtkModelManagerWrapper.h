@@ -16,6 +16,7 @@
 #include "smtk/PublicPointerDefs.h"
 
 struct cJSON;
+class vtkSMTKOperator;
 
 // .NAME vtkModelManagerWrapper - The *really* new CMB model
 // .SECTION Description
@@ -52,7 +53,9 @@ public:
 //  vtkGetStringMacro(ModelEntityID);
 //  vtkSetStringMacro(ModelEntityID);
 
-  void ProcessJSONRequest();
+  void ProcessJSONRequest(vtkSMTKOperator* vsOp);
+  void ProcessJSONRequest()
+  { ProcessJSONRequest(NULL); }
 
   vtkGetStringMacro(JSONResponse);
 

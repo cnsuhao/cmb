@@ -41,6 +41,7 @@ target_link_libraries(ModelBridge_Plugin
   LINK_PRIVATE
     smtkCore
     vtkSMTKSourceExt
+    vtkSMTKOperatorsExt
   )
 
 target_include_directories(ModelBridge_Plugin
