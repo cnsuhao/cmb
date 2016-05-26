@@ -149,13 +149,26 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
   if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
+  pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
+  if (!datapanel)
+    return;
   // active rep
   pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
-  pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
-  if (!datapanel || !activeRep)
-    return;
-  pqSMTKModelInfo* modinfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
-  pqSMTKMeshInfo* meshinfo = this->m_modelPanel->modelManager()->meshInfo(activeRep);
+  pqSMTKModelInfo* modinfo = NULL;
+  pqSMTKMeshInfo* meshinfo = NULL;
+  if(!activeRep)
+    {
+    // if no active rep, we try to activate a model rep
+    modinfo = this->m_modelPanel->modelManager()->activateModelRepresentation();
+    if(modinfo)
+      activeRep = modinfo->Representation;
+    }
+  else
+    {
+    modinfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
+    meshinfo = this->m_modelPanel->modelManager()->meshInfo(activeRep);
+    }
+
   if(!modinfo && !meshinfo)
     return;
   if((modinfo && modinfo->ColorMode == colorMode) ||
@@ -305,14 +318,19 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   if(!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
-  // active rep
-  pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
   pqMultiBlockInspectorPanel *datapanel = this->m_dataInspector;
-  if (!datapanel || !activeRep)
+  if (!datapanel)
     return;
-  pqSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
+
+  // active rep
+  pqSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->activateModelRepresentation();
   if(!minfo)
+    {
+    qDebug("There is no model to be colored by!");
     return;
+    }
+
+  pqDataRepresentation* activeRep = minfo->Representation;
 
   smtk::common::UUID modelId = minfo->Info->GetModelUUID();
   smtk::model::Model activeModel(

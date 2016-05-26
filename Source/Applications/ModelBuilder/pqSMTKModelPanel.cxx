@@ -342,6 +342,13 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
                                       modinfo->RepSource);
     }
 
+  // set the last selected rep to be active source
+  if(selmodelblocks.count() > 0)
+    {
+    pqSMTKModelInfo* minfo = selmodelblocks.keys()[selmodelblocks.keys().count() - 1];
+    pqActiveObjects::instance().setActiveSource(minfo->RepSource);
+    }
+
   this->Internal->updateSelectionView();
 }
 

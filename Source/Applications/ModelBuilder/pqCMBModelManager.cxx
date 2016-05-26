@@ -118,6 +118,8 @@ public:
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
   vtkNew<vtkDiscreteLookupTable> ModelColorLUT;
   std::vector<vtkTuple<double, 3> > LUTColors;
+  QPointer<pqDataRepresentation> ActiveRepresentation;
+  QPointer<pqDataRepresentation> previousActiveRepresentation;
 
   void updateEntityGroupFieldArrayAndAnnotations(const smtk::model::EntityRef& model)
   {
@@ -878,9 +880,50 @@ int pqCMBModelManager::numberOfModels()
 }
 
 //----------------------------------------------------------------------------
-pqDataRepresentation* pqCMBModelManager::activeRepresentation() const
+pqSMTKModelInfo* pqCMBModelManager::activateModelRepresentation()
 {
-  return pqActiveObjects::instance().activeRepresentation();
+  pqSMTKModelInfo* minfo = NULL;
+  if(!this->Internal->ActiveRepresentation)
+    {
+    if(this->Internal->previousActiveRepresentation)
+      {
+      minfo = this->modelInfo(this->Internal->previousActiveRepresentation);
+      }
+    else
+      {
+      QList<pqSMTKModelInfo*> selModels(this->selectedModels());
+      QList<pqSMTKModelInfo*> allModels(this->allModels());
+      if(selModels.count() > 0) // use first selected model
+        {
+        minfo = selModels[0];
+        }
+      else if(allModels.count() > 0) // use first model
+        {
+        minfo = allModels[0];
+        }
+      }
+
+    if(minfo)
+      {
+      // this should trigger setActiveModelRepresentation()
+      pqActiveObjects::instance().setActiveSource(minfo->RepSource);
+      }
+    }
+  else
+    {
+    minfo = this->modelInfo(this->Internal->ActiveRepresentation);
+    }
+
+  return minfo;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::setActiveModelRepresentation(pqDataRepresentation* rep)
+{
+  if(this->Internal->ActiveRepresentation)
+    this->Internal->previousActiveRepresentation =
+      this->Internal->ActiveRepresentation;
+  this->Internal->ActiveRepresentation = rep;
 }
 
 //----------------------------------------------------------------------------
