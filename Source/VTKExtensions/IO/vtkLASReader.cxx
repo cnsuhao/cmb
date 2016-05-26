@@ -679,7 +679,7 @@ int vtkLASReader::ReadPoints(vtkMultiBlockDataSet *output)
           }
         }
       }
-    colorArray->InsertNextTupleValue(bytergb);
+    colorArray->InsertNextTypedTuple(bytergb);
     }
 
   // iterate through any sets we created, adding them to the output

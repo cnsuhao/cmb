@@ -506,12 +506,12 @@ void vtkMultiBlockWrapper::SetShellTranslationPoint(vtkIdType ShellId,
       {
       double vals[4] = {translationPoint[0], translationPoint[1],
                         translationPoint[2], 1};
-      array->SetTupleValue(ShellId, vals);
+      array->SetTypedTuple(ShellId, vals);
       }
     else
       {
       double vals[4] = {-1, -1, -1, -1};
-      array->SetTupleValue(ShellId, vals);
+      array->SetTypedTuple(ShellId, vals);
       }
     }
   else
@@ -654,7 +654,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //   int i;
 //   for(i=0;i<numFaces;i++)
 //     {
-//     faceColors->GetTupleValue(i, rgba);
+//     faceColors->GetTypedTuple(i, rgba);
 //     if(rgba[3] >= -1)
 //       {
 //       faces[i] = vtkIdList::New();
@@ -675,7 +675,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //   int numTuples = BCSColors ? BCSColors->GetNumberOfTuples() : 0;
 //   for(i=0;i<numTuples;i++)
 //     {
-//     BCSColors->GetTupleValue(i, rgba);
+//     BCSColors->GetTypedTuple(i, rgba);
 //     if(rgba[3] >= -1)
 //       {
 //       const char* BCSName = this->GetBCSNameFromId(i);
@@ -717,12 +717,12 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //         {
 //         int tmpVals[4];
 //         int vals[3];
-//         fileMFData->GetTupleValue(i, tmpVals);
+//         fileMFData->GetTypedTuple(i, tmpVals);
 //         for(int j=0;j<3;j++)
 //           {
 //           vals[j] = tmpVals[j];
 //           }
-//         mfDataArray->SetTupleValue(i, vals);
+//         mfDataArray->SetTypedTuple(i, vals);
 //         }
 //       mfDataArray->SetName(ModelFaceConvenientArrayName);
 //       fieldData->AddArray(mfDataArray);
@@ -732,7 +732,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 
 //   for(i=0;i<numFaces;i++)
 //     {
-//     faceColors->GetTupleValue(i, rgba);
+//     faceColors->GetTypedTuple(i, rgba);
 //     if(rgba[3] >= -1 && faces[i] && faces[i]->GetNumberOfIds() > 0)
 //       {
 //       vtkIntArray* MFData = vtkIntArray::SafeDownCast(
@@ -741,7 +741,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //       if(MFData)
 //         {
 //         int idVals[3];
-//         MFData->GetTupleValue(i, idVals);
+//         MFData->GetTypedTuple(i, idVals);
 //         loadingFaceId = idVals[modelFaceIdArrayLoc] ;
 //         for(int j=0;j<3;j++)
 //           {
@@ -782,7 +782,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //       // temporarily set this non-existent model face to "exist" so that the
 //       // current model face id numbering does not have to change
 //       rgba[3] = 1;
-//       faceColors->SetTupleValue(i, rgba);
+//       faceColors->SetTypedTuple(i, rgba);
 //       }
 //     }
 //   // now set the "non-existent" faces back to not existing
@@ -822,7 +822,7 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //     double tpoint[4] = {-1, -1, -1, -1};
 //     for(vtkIdType id=0;id<numshells;id++)
 //       {
-//       tpoints->SetTupleValue(id, tpoint);
+//       tpoints->SetTypedTuple(id, tpoint);
 //       }
 //     fieldData->AddArray(tpoints);
 //     tpoints->Delete();
@@ -1014,7 +1014,7 @@ int vtkMultiBlockWrapper::CreateModelFace(vtkIdList* cellIds)
   vtkFloatArray* floatArray = vtkFloatArray::SafeDownCast(
     fieldData->GetArray(ModelFaceColorsString));
   float rgba[4];
-  floatArray->GetTupleValue(oldModelFaceId, rgba);
+  floatArray->GetTypedTuple(oldModelFaceId, rgba);
   // get any existing modelfaceuse1 information
   vtkAbstractArray* usearray = fieldData->GetArray(
     vtkMultiBlockWrapper::GetModelFaceUse1String());
@@ -1280,11 +1280,11 @@ int vtkMultiBlockWrapper::CreateModelFace(
   if(mfData->GetNumberOfTuples() == modelFaceId)
     {
     // append to the array
-    mfData->InsertNextTupleValue(data);
+    mfData->InsertNextTypedTuple(data);
     }
   else
     {
-    mfData->InsertTupleValue(modelFaceId, data);
+    mfData->InsertTypedTuple(modelFaceId, data);
     }
   // now add in rgba data
   vtkFloatArray* RGBA = vtkFloatArray::SafeDownCast(
@@ -1303,19 +1303,19 @@ int vtkMultiBlockWrapper::CreateModelFace(
   int oldSize = RGBA->GetNumberOfTuples();
   if(RGBA->GetNumberOfTuples() == modelFaceId)
     {
-    RGBA->InsertNextTupleValue(rgba);
+    RGBA->InsertNextTypedTuple(rgba);
     }
   else if(RGBA->GetNumberOfTuples() < modelFaceId)
     {
     while(RGBA->GetNumberOfTuples() < modelFaceId)
       {
       float colors[4] = {-1,-1,-1,-2};
-      RGBA->InsertNextTupleValue(colors);
+      RGBA->InsertNextTypedTuple(colors);
       // repeat work to mark this object as not existing
       // but then it is only done in one spot
       this->MarkObjectAsRemoved(RGBA, RGBA->GetNumberOfTuples()-1);
       }
-    RGBA->InsertNextTupleValue(rgba);
+    RGBA->InsertNextTypedTuple(rgba);
     }
   else
     {
@@ -1523,7 +1523,7 @@ int vtkMultiBlockWrapper::GetModelFaceMaterialId(int modelFaceId)
   int vals[3];
   for(int i=0;i<modelFaceData->GetNumberOfTuples();i++)
     {
-    modelFaceData->GetTupleValue(i, vals);
+    modelFaceData->GetTypedTuple(i, vals);
     if(vals[modelFaceIdArrayLoc] == modelFaceId)
       {
       return vals[materialIdArrayLoc];
@@ -1547,7 +1547,7 @@ int vtkMultiBlockWrapper::GetModelFaceShellId(int modelFaceId)
   int vals[3];
   for(int i=0;i<modelFaceData->GetNumberOfTuples();i++)
     {
-    modelFaceData->GetTupleValue(i, vals);
+    modelFaceData->GetTypedTuple(i, vals);
     if(vals[modelFaceIdArrayLoc] == modelFaceId)
       {
       return vals[shellIdArrayLoc];
@@ -1608,16 +1608,16 @@ void vtkMultiBlockWrapper::ChangeMaterialIdOfShell(int shellId,
     }
   if(array->GetNumberOfTuples() == shellId)
     {
-    array->InsertNextTupleValue(&newMaterialId);
+    array->InsertNextTypedTuple(&newMaterialId);
     }
   else if(array->GetNumberOfTuples() < shellId)
     {
     while(array->GetNumberOfTuples() < shellId)
       {
       int neg1 = -1;
-      array->InsertNextTupleValue(&neg1);
+      array->InsertNextTypedTuple(&neg1);
       }
-    array->InsertNextTupleValue(&newMaterialId);
+    array->InsertNextTypedTuple(&newMaterialId);
     }
   else
     {
@@ -1634,11 +1634,11 @@ void vtkMultiBlockWrapper::ChangeMaterialIdOfShell(int shellId,
     int vals[3];
     for(int i=0; i<MFData->GetNumberOfTuples(); i++)
       {
-      MFData->GetTupleValue(i, vals);
+      MFData->GetTypedTuple(i, vals);
       if(vals[shellIdArrayLoc] == shellId)
         {
         vals[materialIdArrayLoc] = newMaterialId;
-        MFData->InsertTupleValue(i, vals);
+        MFData->InsertTypedTuple(i, vals);
         // break;
         }
       }
@@ -2347,11 +2347,11 @@ void vtkMultiBlockWrapper::RemoveModelFaceDataInfo(int modelFaceId)
     {
     for(int i=0; i<MFData->GetNumberOfTuples(); i++)
       {
-      MFData->GetTupleValue(i, vals);
+      MFData->GetTypedTuple(i, vals);
       if(vals[modelFaceIdArrayLoc] == modelFaceId)
         {
         vals[modelFaceIdArrayLoc] = -1;
-        MFData->SetTupleValue(i, vals);
+        MFData->SetTypedTuple(i, vals);
         //MFData->RemoveTuple(i);
         break;
         }
@@ -2434,7 +2434,7 @@ int vtkMultiBlockWrapper::AddShell(const char* ShellUserName, float* RGBA,
       tpoint[2] = translationPoint[2];
       tpoint[3] = 1;
       }
-    translationPointArray->InsertNextTupleValue(tpoint);
+    translationPointArray->InsertNextTypedTuple(tpoint);
     }
   else
     {
@@ -2449,7 +2449,7 @@ int vtkMultiBlockWrapper::AddShell(const char* ShellUserName, float* RGBA,
       tpoint[2] = translationPoint[2];
       tpoint[3] = 1;
       }
-    translationPointArray->SetTupleValue(ShellId, tpoint);
+    translationPointArray->SetTypedTuple(ShellId, tpoint);
     }
 
   return ShellId;
@@ -2770,19 +2770,19 @@ int vtkMultiBlockWrapper::CreateNodalGroup(vtkIntArray* ptIds,
   vtkIdType oldSize = RGBA->GetNumberOfTuples();
   if(RGBA->GetNumberOfTuples() == ngId)
     {
-    RGBA->InsertNextTupleValue(rgba);
+    RGBA->InsertNextTypedTuple(rgba);
     }
   else if(RGBA->GetNumberOfTuples() < ngId)
     {
     while(RGBA->GetNumberOfTuples() < ngId)
       {
       float colors[4] = {-1,-1,-1,-2};
-      RGBA->InsertNextTupleValue(colors);
+      RGBA->InsertNextTypedTuple(colors);
       // repeat work to mark this object as not existing
       // but then it is only done in one spot
       this->MarkObjectAsRemoved(RGBA, RGBA->GetNumberOfTuples()-1);
       }
-    RGBA->InsertNextTupleValue(rgba);
+    RGBA->InsertNextTypedTuple(rgba);
     }
   else
     {

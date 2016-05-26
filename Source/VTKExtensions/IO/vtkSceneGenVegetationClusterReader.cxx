@@ -316,7 +316,7 @@ int vtkSceneGenVegetationClusterReader::RequestData(
     ensightStomatalFD->SetNumberOfTuples( this->EnsightStomatal.size() );
     for (int i = 0; i < static_cast<int>(this->EnsightStomatal.size()); i++)
       {
-      ensightStomatalFD->SetTupleValue(i, this->EnsightStomatal[i].c_str());
+      ensightStomatalFD->SetTypedTuple(i, this->EnsightStomatal[i].c_str());
       }
     output->GetFieldData()->AddArray( ensightStomatalFD.GetPointer() );
     }

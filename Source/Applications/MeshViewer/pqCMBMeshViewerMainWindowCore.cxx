@@ -2259,7 +2259,7 @@ void pqCMBMeshViewerMainWindowCore::getContourDisplayBounds(
     double point[3], transPt[3];
     for(vtkIdType i=0;i<coords->GetNumberOfTuples();i++)
       {
-      coords->GetTupleValue(i, point);
+      coords->GetTypedTuple(i, point);
       viewport->SetWorldPoint(point[0], point[1], point[2], 1.0);
       viewport->WorldToDisplay();
       viewport->GetDisplayPoint(transPt);

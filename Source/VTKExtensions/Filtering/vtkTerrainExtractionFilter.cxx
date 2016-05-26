@@ -883,7 +883,7 @@ vtkPolyData *vtkTerrainExtractionInternal::Visualize(vcl_string &outFileName,
 
     rtvl_tensor<3> const& tensor = tokens.tokens[i];
     double surfaceness = tensor.saliency(0);
-    outSurfaceness->SetTupleValue(i, &surfaceness);
+    outSurfaceness->SetTypedTuple(i, &surfaceness);
     }
 
   if (cacheToDisk)
@@ -1872,7 +1872,7 @@ void vtkTerrainExtractionInternal::ExtractSegmentSearch(TerrainLevelBlock *level
       p(2) = tp.z;
       this->InverseTransform->TransformPoint(p.data_block(), transformed );
       /*tp.id = */outPoints->InsertNextPoint(transformed);
-      outScales->InsertNextTupleValue(&tp.scale);
+      outScales->InsertNextTypedTuple(&tp.scale);
       if (this->PointLocator)
         {
         double dist2;
@@ -2044,7 +2044,7 @@ bool vtkTerrainExtractionInternal::ExtractSegmentLocalMax(TerrainLevelBlock *lev
       this->InverseTransform->TransformPoint(p.data_block(), transformed );
       /*tp.id = */outPoints->InsertNextPoint(transformed);
       double scale = this->Tokens.scale;
-      outScales->InsertNextTupleValue(&scale);
+      outScales->InsertNextTypedTuple(&scale);
       if (this->PointLocator)
         {
         double dist2;

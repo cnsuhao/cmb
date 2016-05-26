@@ -100,7 +100,7 @@ int vtkCMBClassifyPointsFilter::RequestData(
       continue;
       }
     newPoints->InsertNextPoint(p);
-    ids->InsertNextTupleValue(&cellId);
+    ids->InsertNextTypedTuple(&cellId);
     }
   return 1;
 }

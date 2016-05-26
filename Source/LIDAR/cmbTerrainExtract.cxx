@@ -595,9 +595,9 @@ void TerrainExtract::SegmentSearch()
     p(1) = this->SegmentXY[1];
     p(2) = tp.z;
     tp.id = this->OutPoints->InsertNextPoint(p.data_block());
-    this->OutNormals->InsertNextTupleValue(tp.normal.data_block());
-    this->OutLevels->InsertNextTupleValue(&tp.level);
-    this->OutScales->InsertNextTupleValue(&tp.scale);
+    this->OutNormals->InsertNextTypedTuple(tp.normal.data_block());
+    this->OutLevels->InsertNextTypedTuple(&tp.level);
+    this->OutScales->InsertNextTypedTuple(&tp.scale);
     }
 }
 
@@ -750,11 +750,11 @@ bool TerrainExtract::SegmentLocalMax(Location a, Location c)
 
     ++this->IntervalSuccessCount;
     tp.id = this->OutPoints->InsertNextPoint(p.data_block());
-    this->OutNormals->InsertNextTupleValue(this->LastNormal.data_block());
+    this->OutNormals->InsertNextTypedTuple(this->LastNormal.data_block());
     int level = this->LevelIndex;
     double scale = this->Tokens.scale;
-    this->OutLevels->InsertNextTupleValue(&level);
-    this->OutScales->InsertNextTupleValue(&scale);
+    this->OutLevels->InsertNextTypedTuple(&level);
+    this->OutScales->InsertNextTypedTuple(&scale);
     tp.known = true;
     tp.level = this->LevelIndex;
     tp.scale = this->Tokens.scale;

@@ -268,7 +268,7 @@ void pqSimBuilderUIManager::createFunctionWithExpression(
     QStringList strVals;
     for(vtkIdType i=0,j=0;i<result->GetNumberOfTuples();i++, j+=numberOfComponents)
       {
-      result->GetTupleValue(i, &values[0]);
+      result->GetTypedTuple(i, &values[0]);
       for(int c=0; c<numberOfComponents-1; c++)
         {
         strVals << QString::number(values[c]) <<"\t";

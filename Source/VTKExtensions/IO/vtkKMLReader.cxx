@@ -579,7 +579,7 @@ void vtkKMLReaderInternal::HandleLineString(LineStringPtr linePtr, LineStylePtr 
                                      static_cast<unsigned char>(color.get_green()),
                                      static_cast<unsigned char>(color.get_blue())
                                      };
-        colors->InsertNextTupleValue(vtkColor);
+        colors->InsertNextTypedTuple(vtkColor);
         }
       }
 
@@ -588,7 +588,7 @@ void vtkKMLReaderInternal::HandleLineString(LineStringPtr linePtr, LineStylePtr 
       unsigned char vtkColor[3] = {static_cast<unsigned char>(255),
                                    static_cast<unsigned char>(255),
                                    static_cast<unsigned char>(255)};
-      colors->InsertNextTupleValue(vtkColor);
+      colors->InsertNextTypedTuple(vtkColor);
       }
 
     CoordinatesPtr coordinatesPtr = linePtr->get_coordinates();
@@ -653,7 +653,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
       unsigned char vtkColor[3] = {static_cast<unsigned char>(color.get_red()),
                                    static_cast<unsigned char>(color.get_green()),
                                    static_cast<unsigned char>(color.get_blue())};
-      colors->InsertNextTupleValue(vtkColor);
+      colors->InsertNextTypedTuple(vtkColor);
       hasColor = true;
       }
     }
@@ -663,7 +663,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
       unsigned char vtkColor[3] = {static_cast<unsigned char>(255),
                                    static_cast<unsigned char>(255),
                                    static_cast<unsigned char>(255)};
-      colors->InsertNextTupleValue(vtkColor);
+      colors->InsertNextTypedTuple(vtkColor);
       }
 
   if(!renderAsPolyLine)

@@ -202,15 +202,15 @@ void TokenRefine::Visualize(unsigned int level)
     tensor.basis(1).copy_out(binormal);
     tensor.basis(2).copy_out(tangent);
 
-    this->OutNormals->SetTupleValue(i, normal);
-    this->OutBiNormals->SetTupleValue(i, binormal);
-    this->OutCurves->SetTupleValue(i, tangent);
-    this->OutSurfaceness->SetTupleValue(i, &surfaceness);
-    this->OutCurveness->SetTupleValue(i, &curveness);
-    this->OutBallness->SetTupleValue(i, &ballness);
-    this->OutLambda1->SetTupleValue(i, &lambda1);
-    this->OutLambda2->SetTupleValue(i, &lambda2);
-    this->OutLambda3->SetTupleValue(i, &lambda3);
+    this->OutNormals->SetTypedTuple(i, normal);
+    this->OutBiNormals->SetTypedTuple(i, binormal);
+    this->OutCurves->SetTypedTuple(i, tangent);
+    this->OutSurfaceness->SetTypedTuple(i, &surfaceness);
+    this->OutCurveness->SetTypedTuple(i, &curveness);
+    this->OutBallness->SetTypedTuple(i, &ballness);
+    this->OutLambda1->SetTypedTuple(i, &lambda1);
+    this->OutLambda2->SetTypedTuple(i, &lambda2);
+    this->OutLambda3->SetTypedTuple(i, &lambda3);
     }
   this->OutPD->SetVerts(verts);
 
