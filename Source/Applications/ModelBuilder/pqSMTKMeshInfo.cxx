@@ -27,6 +27,7 @@
 #include "vtkSMRepresentationProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkSMPropertyLink.h"
 
 #include "smtk/common/UUID.h"
 #include "smtk/model/Group.h"
@@ -35,6 +36,25 @@
 #include "smtk/model/IntegerData.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
+
+//-----------------------------------------------------------------------------
+pqSMTKMeshInfo::~pqSMTKMeshInfo()
+{
+  this->clearLinks();
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKMeshInfo::clearLinks()
+{
+  if(this->PositionLink)
+    this->PositionLink->RemoveAllLinks();
+  if(this->OrientationLink)
+    this->OrientationLink->RemoveAllLinks();
+  if(this->ScaleLink)
+    this->ScaleLink->RemoveAllLinks();
+  if(this->OriginLink)
+    this->OriginLink->RemoveAllLinks();
+}
 
 //----------------------------------------------------------------------------
 void pqSMTKMeshInfo::init(
@@ -58,6 +78,37 @@ void pqSMTKMeshInfo::init(
     proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
   this->ColorMode = "None";
   this->ModelInfo = modinfo;
+
+  if(modinfo && modinfo->Representation && rep)
+    {
+    vtkSMProxy* modelRepProxy = modinfo->Representation->getProxy();
+    vtkSMProxy* meshRepProxy = rep->getProxy();
+
+    this->PositionLink = vtkSmartPointer<vtkSMPropertyLink>::New();
+    this->PositionLink->AddLinkedProperty(modelRepProxy, "Position",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->PositionLink->AddLinkedProperty(meshRepProxy, "Position",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+
+    this->OrientationLink = vtkSmartPointer<vtkSMPropertyLink>::New();
+    this->OrientationLink->AddLinkedProperty(modelRepProxy, "Orientation",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->OrientationLink->AddLinkedProperty(meshRepProxy, "Orientation",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+
+    this->ScaleLink = vtkSmartPointer<vtkSMPropertyLink>::New();
+    this->ScaleLink->AddLinkedProperty(modelRepProxy, "Scale",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->ScaleLink->AddLinkedProperty(meshRepProxy, "Scale",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+
+    this->OriginLink = vtkSmartPointer<vtkSMPropertyLink>::New();
+    this->OriginLink->AddLinkedProperty(modelRepProxy, "Origin",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->OriginLink->AddLinkedProperty(meshRepProxy, "Origin",
+                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+
+    }
 
   this->updateBlockInfo(mgr);
 }
@@ -112,4 +163,10 @@ pqSMTKMeshInfo::pqSMTKMeshInfo(const pqSMTKMeshInfo& other)
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
   this->ColorMode = other.ColorMode;
   this->ModelInfo = other.ModelInfo;
+
+  this->clearLinks();
+  this->PositionLink = other.PositionLink;
+  this->OrientationLink = other.OrientationLink;
+  this->ScaleLink = other.ScaleLink;
+  this->OriginLink = other.OriginLink;
 }
