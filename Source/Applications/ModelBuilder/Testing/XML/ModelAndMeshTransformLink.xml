@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<pqevents>
+  <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/3D-Meshes/simple.3dm" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0" />
+  <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Display" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,9,249" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,9,249" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Position/LineEdit0" command="key" arguments="45" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Position/LineEdit0" command="set_string" arguments="-2" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Scale/LineEdit0" command="set_string" arguments="1.25" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Orientation/LineEdit0" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Origin/LineEdit0" command="set_string" arguments="0" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Origin/LineEdit0" command="key" arguments="46" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Origin/LineEdit0" command="set_string" arguments="0.5" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.937439,0.220401,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.937439,0.220401,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.937439,0.220401,1,0,0)" />
+</pqevents>
