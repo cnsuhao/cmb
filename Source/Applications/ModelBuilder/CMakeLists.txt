@@ -263,10 +263,11 @@ target_link_libraries(ModelBuilder
 LINK_PRIVATE
   cmbAppCommon
   smtkQtExt
+  smtkPQComponentsExt
   RemusClient
   smtkCore
   ModelBridge_Plugin
-  vtkSMTKExt
+  vtkSMTKSourceExt
   )
 
 #------------------------------------------------------------------------------

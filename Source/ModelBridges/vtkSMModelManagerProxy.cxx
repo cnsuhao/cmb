@@ -16,7 +16,7 @@
 
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
-#include "smtk/model/Operator.h"
+#include "smtk/model/RemoteOperator.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
 
@@ -25,6 +25,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkClientServerStream.h"
 #include "vtkSMPropertyHelper.h"
+#include "vtkSMSession.h"
 #include "cmbForwardingSession.h"
 #include <vtksys/SystemTools.hxx>
 
@@ -282,7 +283,8 @@ void vtkSMModelManagerProxy::initFileOperator(
   const std::string& fileName,
   const std::string& engineName)
 {
-  fileOp->ensureSpecification();
+  if(!fileOp->ensureSpecification())
+    return;
   fileOp->specification()->findFile("filename")->setValue(fileName);
   smtk::attribute::StringItem::Ptr enginetypeItem =
     fileOp->specification()->findString("enginetype");
@@ -322,14 +324,14 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
     }
 
   this->initFileOperator(readOp, fileName, engineName);
-  if ( !readOp->ableToOperate() )
+  if (readOp->specification() && readOp->ableToOperate() )
     {
-    std::cout << "Read operator can not operate with the file: "
-              << fileName.c_str() << "\n";
+    return readOp;
     }
   else
     {
-    return readOp;
+    std::cout << "No specs for Read Op or Read Op can not operate with the file: "
+              << fileName.c_str() << "\n";
     }
   // try "import" if there is one
   OperatorPtr importOp = session->op("import");
@@ -494,25 +496,75 @@ smtk::model::ManagerPtr vtkSMModelManagerProxy::modelManager()
   return this->m_modelMgr;
 }
 
-cJSON* vtkSMModelManagerProxy::jsonRPCRequest(cJSON* req)
+cJSON* vtkSMModelManagerProxy::requestJSONOp(
+  smtk::model::RemoteOperatorPtr op,
+  const std::string& strMethod,
+  const smtk::common::UUID& fwdSessionId)
+{
+  if (!op)
+    return NULL;
+
+  cJSON* req = cJSON_CreateObject();
+  cJSON* par = cJSON_CreateObject();
+  cJSON_AddItemToObject(req, "jsonrpc", cJSON_CreateString("2.0"));
+  cJSON_AddItemToObject(req, "method", cJSON_CreateString(strMethod.c_str()));
+  cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
+  cJSON_AddItemToObject(req, "params", par);
+  op->ensureSpecification();
+  smtk::io::ExportJSON::forOperator(op->specification(), par);
+  // Add the session's session ID so it can be properly instantiated on the server.
+  cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(fwdSessionId.toString().c_str()));
+
+  vtkSMProxy* opHelperProxy = NULL;
+  smtk::attribute::IntItem::Ptr opProxyIdItem =
+    op->specification()->findInt("HelperGlobalID");
+  if(opProxyIdItem && opProxyIdItem->value() > 0)
+    {
+    opHelperProxy = vtkSMProxy::SafeDownCast(
+      this->GetSession()->GetRemoteObject(opProxyIdItem->value()));
+    }
+
+  cJSON* resp = this->jsonRPCRequest(req, opHelperProxy);
+  if(req)
+    cJSON_Delete(req);
+  return resp;
+}
+
+cJSON* vtkSMModelManagerProxy::jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperProxy)
 {
   char* reqStr = cJSON_Print(req);
-  cJSON* response = this->jsonRPCRequest(reqStr);
+  cJSON* response = this->jsonRPCRequest(reqStr, opHelperProxy);
   free(reqStr);
   return response;
 }
 
-cJSON* vtkSMModelManagerProxy::jsonRPCRequest(const std::string& req)
+cJSON* vtkSMModelManagerProxy::jsonRPCRequest(const std::string& req, vtkSMProxy* opHelperProxy)
 {
+  if(req.empty())
+    return NULL;
+
+  // Check if there is a geometryHelper(for example vtkSMTKOperator) proxy in "params",
+  // if yes, pass that to the server too.
   vtkSMPropertyHelper(this, "JSONRequest").Set(req.c_str());
   this->UpdateVTKObjects();
   vtkClientServerStream stream;
   // calls "ProcessJSONRequest" function on object this->GetId() (which gets turned
   // into a pointer on the server)
-  stream  << vtkClientServerStream::Invoke
-          << VTKOBJECT(this)
-          << "ProcessJSONRequest"
-          << vtkClientServerStream::End;
+  if(opHelperProxy)
+    {
+    stream  << vtkClientServerStream::Invoke
+            << VTKOBJECT(this)
+            << "ProcessJSONRequest"
+            << VTKOBJECT(opHelperProxy)
+            << vtkClientServerStream::End;
+    }
+  else
+    {
+    stream  << vtkClientServerStream::Invoke
+            << VTKOBJECT(this)
+            << "ProcessJSONRequest"
+            << vtkClientServerStream::End;
+    }
   this->ExecuteStream(stream);
 
   this->UpdatePropertyInformation();

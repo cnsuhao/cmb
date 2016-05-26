@@ -21,7 +21,7 @@
 #include "vtkAppendPolyData.h"
 #include "vtkSmartPointer.h"
 
-#include "smtk/bridge/discrete/extension/meshing/vtkCMBPrepareForTriangleMesher.h"
+#include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 #include "assert.h"
 #include <vtksys/SystemTools.hxx>
@@ -38,7 +38,7 @@ vtkCMBExtractMapContour::~vtkCMBExtractMapContour()
 {
 }
 //-----------------------------------------------------------------------------
-int vtkCMBExtractMapContour::RequestData(vtkInformation */*request*/,
+int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector)
 {
@@ -51,7 +51,7 @@ int vtkCMBExtractMapContour::RequestData(vtkInformation */*request*/,
   output->SetFieldData(emptyFD);
   emptyFD->FastDelete();
 
-  typedef smtk::bridge::discrete::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
 
   vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(input);

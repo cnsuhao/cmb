@@ -58,7 +58,7 @@
 #include "smtk/attribute/StringItem.h"
 #include "smtk/io/ImportJSON.h"
 #include "smtk/io/ExportJSON.h"
-#include "smtk/extension/vtk/vtkModelMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
@@ -1347,7 +1347,7 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
 bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 {
   this->initialize();
-  if(!this->Internal->ManagerProxy || !brOp || !brOp->ableToOperate())
+  if(!this->Internal->ManagerProxy || !brOp)
     {
     return false;
     }
@@ -1725,4 +1725,13 @@ QList<pqSMTKMeshInfo*>  pqCMBModelManager::selectedMeshes() const
       }
     }
   return selMeshInfos;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
+{
+  smtk::model::EntityRef entity(this->managerProxy()->modelManager(), entid);
+  pqSMTKModelInfo* activeInfo = this->modelInfo(entity);
+  pqPipelineSource* activeSource =  activeInfo ? activeInfo->RepSource : NULL;
+  pqActiveObjects::instance().setActiveSource(activeSource);
 }

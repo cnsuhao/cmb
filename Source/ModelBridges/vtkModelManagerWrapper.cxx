@@ -16,6 +16,7 @@
 #include "smtk/attribute/IntItem.h"
 
 #include "smtk/model/Operator.h"
+#include "smtk/extension/vtk/operators/vtkSMTKOperator.h"
 
 #include "vtkObjectFactory.h"
 
@@ -59,7 +60,7 @@ smtk::model::ManagerPtr vtkModelManagerWrapper::GetModelManager()
   * and, if the request contains an "id" field, stores a response
   * in the JSONResponse member.
   */
-void vtkModelManagerWrapper::ProcessJSONRequest()
+void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
 {
   cJSON* result = cJSON_CreateObject();
   if (!this->JSONRequest || !this->JSONRequest[0])
@@ -87,7 +88,6 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
     else
       {
       std::string methStr(meth->valuestring);
-      std::string specStr(spec->valuestring);
       std::string reqIdStr;
       cJSON* reqId = cJSON_GetObjectItem(req, "id");
       cJSON* param = cJSON_GetObjectItem(req, "params");
@@ -204,7 +204,16 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           }
         else
           {
-          bool able = localOp->ableToOperate();
+          bool able = false;
+          if(vsOp)
+            {
+            vsOp->SetSMTKOperator(localOp);
+            able = vsOp->AbleToOperate();
+            }
+          else
+            {
+            able = localOp->ableToOperate();
+            }
           cJSON_AddItemToObject(result, "result", cJSON_CreateBool(able ? 1 : 0));
           }
         }
@@ -225,7 +234,17 @@ void vtkModelManagerWrapper::ProcessJSONRequest()
           smtk::attribute::IntItem::Ptr ani = localOp->findInt("assign names");
           ani->setIsEnabled(true);
           ani->setValue(1);
-          smtk::model::OperatorResult ores = localOp->operate();
+          smtk::model::OperatorResult ores;
+          if(vsOp)
+            {
+            vsOp->SetSMTKOperator(localOp);
+            ores = vsOp->Operate();
+            }
+          else
+            {
+            ores = localOp->operate();
+            }
+
           cJSON* oresult = cJSON_CreateObject();
           smtk::io::ExportJSON::forOperatorResult(ores, oresult);
           cJSON_AddItemToObject(result, "result", oresult);

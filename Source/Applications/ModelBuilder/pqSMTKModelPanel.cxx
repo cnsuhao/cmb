@@ -13,6 +13,7 @@
 #include "smtk/extension/qt/qtEntityItemModel.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/extension/qt/qtModelEntityItem.h"
+#include "smtk/extension/qt/qtModelOperationWidget.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelPanel.h"
 #include "smtk/attribute/ModelEntityItem.h"
@@ -255,6 +256,11 @@ void pqSMTKModelPanel::resetUI()
       SIGNAL(operationRequested(const smtk::model::OperatorPtr& )),
       this->Internal->smtkManager,
       SLOT(startOperation( const smtk::model::OperatorPtr& )));
+    QObject::connect(this->Internal->ModelPanel->getModelView()->operatorsWidget(),
+       SIGNAL(activateOperationTarget(const smtk::common::UUID&)),
+       this->Internal->smtkManager,
+       SLOT(setActiveModelSource(const smtk::common::UUID&)));
+
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(operationCancelled(const smtk::model::OperatorPtr& )),
       this,

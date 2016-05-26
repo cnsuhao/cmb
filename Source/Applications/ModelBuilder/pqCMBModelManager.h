@@ -118,6 +118,7 @@ public slots:
     const smtk::common::UUID& bridgeSessionId,
     bool &hadNewModels, bool& bModelGeometryChanged,
     bool &hasNewMeshes);
+  void setActiveModelSource(const smtk::common::UUID&);
 
 protected slots:
   void onPluginLoaded();
