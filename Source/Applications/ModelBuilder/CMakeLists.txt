@@ -425,6 +425,8 @@ endif()
     WriteEdge
     Import2dmAndEdgeModify
     ImportExport2dm
+    ModelAndMeshTransformLink
+    ColorByAttribute
     )
 
   set (TESTS_WITHOUT_BASELINES
