@@ -14,7 +14,7 @@
 #include "vtkNew.h"
 #include "smtk/extension/vtk/meshing/vtkDiscoverRegions.h"
 #include "smtk/extension/vtk/meshing/vtkPolylineTriangulator.h"
-#include "smtk/extension/vtk/meshing/vtkPolyFileReader.h"
+#include "smtk/extension/vtk/reader/vtkPolyFileReader.h"
 
 int main(int argc, char* argv[])
 {

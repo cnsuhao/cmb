@@ -47,7 +47,7 @@ target_link_libraries(vtkCMBMeshing
 target_include_directories(vtkCMBMeshing
                            PRIVATE
                            ${REMUS_INCLUDE_DIRS}
-                           ${SMTK_INCLUDE_DIRS}/bridge/discrete/extension/
+                           ${SMTK_INCLUDE_DIRS}/extension/vtk/meshing/
                            )
 
 if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)

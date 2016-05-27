@@ -53,7 +53,10 @@ target_link_libraries(vtkCMBIO
 
 target_include_directories(vtkCMBIO
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-  PRIVATE ${KML_INCLUDE_DIRS}
+  PRIVATE
+    ${KML_INCLUDE_DIRS}
+    ${SMTK_INCLUDE_DIRS}/extension/vtk/meshing/
+    ${SMTK_INCLUDE_DIRS}/extension/vtk/reader/
   )
 
 add_executable(meshingReader
@@ -64,4 +67,6 @@ target_link_libraries(meshingReader
   vtkCMBMeshing
   vtkCMBIO
   vtkFiltersGeneral
+  vtkSMTKReaderExt
+  vtkSMTKMeshingExt
   )
