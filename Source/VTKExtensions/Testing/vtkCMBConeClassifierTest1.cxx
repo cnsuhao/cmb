@@ -19,7 +19,6 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
 #include "vtkUnstructuredGrid.h"
-#include "vtkCMBMeshReader.h"
 #include "vtkGeometryFilter.h"
 #include "vtkCMBConeCellClassifier.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
@@ -27,6 +26,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkCMBConeSource.h"
 #include "vtkNew.h"
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
 
 // Tests Partially inside Classification
 int main(int argc, char** argv)

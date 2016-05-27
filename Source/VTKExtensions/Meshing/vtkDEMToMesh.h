@@ -41,4 +41,4 @@ private:
   void operator = (const vtkDEMToMesh&); // Not implemented.
 };
 
-#endif // __vtkPolylineTriangulator_h
+#endif // __vtkDEMToMesh_h

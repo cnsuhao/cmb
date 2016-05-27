@@ -9,14 +9,9 @@ set(CMB_Meshing_SRC
     vtkCMBPolygonFromArcsOperator.cxx
     vtkCMBSceneGenPolygon.cxx
     vtkCMBTriangleMultiBlockMesher.cxx
-    vtkDiscoverRegions.cxx
     vtkLoopsMesher.cxx
-    vtkPolylineTriangulator.cxx
     vtkMeshModelEdgesFilter.cxx
     vtkDEMToMesh.cxx
-    vtkRayIntersectionLocator.cxx
-    vtkRegionsToLoops.cxx
-    vtkSplitPlanarLines.cxx
     )
 
 if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)

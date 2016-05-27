@@ -4,16 +4,10 @@ find_package(SMTK REQUIRED)
 find_package(KML)
 find_package(GDAL)
 
-# Sources that should not get wrapped - for example methods that
-# return std::string
-set(UNWRAP_SRC vtkCMBReaderHelperFunctions.cxx)
-
 set(CMB_IO_SRC
-    ${UNWRAP_SRC}
     vtkCMBADHReader.cxx
     vtkCMBBorFileReader.cxx
     vtkCMBICMReader.cxx
-    vtkCMBMapReader.cxx
     vtkCMBProjectManagerReader.cxx
     vtkCMBProjectManagerWriter.cxx
     vtkCMBPt123ElementVelocityConversionWriter.cxx
@@ -23,30 +17,16 @@ set(CMB_IO_SRC
     vtkCMBPt123VelocityWriter.cxx
     vtkCMBPtsWriter.cxx
     vtkCMBSceneV2WriterHelper.cxx
-    vtkCMBSTLReader.cxx
     vtkCMBWriter.cxx
-    vtkCUBITReader.cxx
     vtkDelosMeshReader.cxx
-    vtkCMBGeometryReader.cxx
-    vtkCMBGeometry2DReader.cxx
     vtkADHHotStartWriter.cxx
-    vtkCMBMeshReader.cxx
     vtkCMBMeshWriter.cxx
     vtkCMBPolyReader.cxx
-    vtkExtractRegionEdges.cxx
     vtkGAMBITWriter.cxx
-#    vtkGDALRasterReader.cxx # Extents for master
-    vtkGMSSolidReader.cxx
-    vtkGMSTINReader.cxx
-#    vtkKMLExporter.cxx # vtkExporter for OpenGL2
-    # vtkKMLReader.cxx
-    vtkLASReader.cxx
     vtkLIDARPtsWriter.cxx
-    vtkLIDARReader.cxx
     vtkOmicronMeshInputWriter.cxx
     vtkOmicronModelInputReader.cxx
     vtkOSDLReader.cxx
-    vtkPolyFileReader.cxx
     vtkRawDEMReader.cxx
     vtkSceneGenV2ContourWriter.cxx
     vtkSceneGenVegetationClusterReader.cxx
@@ -55,10 +35,6 @@ set(CMB_IO_SRC
     vtkStringReader.cxx
     vtkStringWriter.cxx
     vtkTriangulateConcavePolysFilter.cxx
-)
-set_source_files_properties(
-  ${UNWRAP_SRC}
-  WRAP_EXCLUDE
 )
 
 set(vtkCMBIO_NO_HeaderTest 1)
@@ -70,6 +46,7 @@ target_link_libraries(vtkCMBIO
                       LINK_PRIVATE
                       smtkCore
                       vtkSMTKReaderExt
+                      vtkSMTKMeshingExt
                       ${GDAL_LIBRARY}
                       ${KML_LIBRARIES})
 

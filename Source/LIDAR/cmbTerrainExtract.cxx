@@ -47,7 +47,7 @@
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 
-#include <vtkLIDARReader.h>
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 class TerrainPoint
 {

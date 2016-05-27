@@ -13,15 +13,13 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkDataSetRegionSurfaceFilter.h"
-#include "vtkCMBMeshReader.h"
-#include "vtkExtractRegionEdges.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkMultiBlockWrapper.h"
-
-
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
+#include "smtk/extension/vtk/reader/vtkExtractRegionEdges.h"
 
 vtkStandardNewMacro(vtkCMB3dmReader);
 

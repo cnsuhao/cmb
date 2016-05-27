@@ -7,11 +7,11 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkLIDARReader.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkXMLPolyDataWriter.h"
 #include <string>
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 
 int main(int argc, char *argv[])

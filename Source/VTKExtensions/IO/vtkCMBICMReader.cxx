@@ -12,7 +12,6 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkCellType.h"
-#include "vtkCMBReaderHelperFunctions.h"
 #include "vtkErrorCode.h"
 #include "vtkFieldData.h"
 #include "vtkIdTypeArray.h"
@@ -27,6 +26,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <vtksys/SystemTools.hxx>
+#include "smtk/extension/vtk/reader/vtkCMBReaderHelperFunctions.h"
 
 
 using namespace ReaderHelperFunctions;

@@ -19,7 +19,6 @@
 #include "vtkMultiBlockDataSet.h"
 #include "vtkMultiThreader.h"
 #include "vtkObjectFactory.h"
-#include "vtkLIDARReader.h"
 #include "vtkLIDARPtsWriter.h"
 #include "vtkNew.h"
 #include "vtkPointData.h"
@@ -64,6 +63,7 @@
 
 #include <vtksys/SystemTools.hxx>
 #include <vtksys/Glob.hxx>
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 
 vtkStandardNewMacro(vtkTerrainExtractionFilter);
