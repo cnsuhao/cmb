@@ -9,14 +9,9 @@ set(CMB_Meshing_SRC
     vtkCMBPolygonFromArcsOperator.cxx
     vtkCMBSceneGenPolygon.cxx
     vtkCMBTriangleMultiBlockMesher.cxx
-    vtkDiscoverRegions.cxx
     vtkLoopsMesher.cxx
-    vtkPolylineTriangulator.cxx
     vtkMeshModelEdgesFilter.cxx
     vtkDEMToMesh.cxx
-    vtkRayIntersectionLocator.cxx
-    vtkRegionsToLoops.cxx
-    vtkSplitPlanarLines.cxx
     )
 
 if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)
@@ -52,7 +47,7 @@ target_link_libraries(vtkCMBMeshing
 target_include_directories(vtkCMBMeshing
                            PRIVATE
                            ${REMUS_INCLUDE_DIRS}
-                           ${SMTK_INCLUDE_DIRS}/bridge/discrete/extension/
+                           ${SMTK_INCLUDE_DIRS}/extension/vtk/meshing/
                            )
 
 if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)

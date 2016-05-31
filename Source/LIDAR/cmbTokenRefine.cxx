@@ -30,7 +30,7 @@
 # include <vtkWin32ProcessOutputWindow.h>
 #endif
 
-#include <vtkLIDARReader.h>
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 class TokenRefine
 {

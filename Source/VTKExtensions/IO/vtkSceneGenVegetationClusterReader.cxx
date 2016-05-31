@@ -22,7 +22,6 @@
 #include "vtkNew.h"
 #include "vtkPolyData.h"
 #include "vtkCharArray.h"
-#include "vtkCMBGeometryReader.h"
 #include "vtkErrorCode.h"
 #include "vtkStripper.h"
 #include "vtkTransform.h"
@@ -30,6 +29,7 @@
 #
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 
 
 vtkStandardNewMacro(vtkSceneGenVegetationClusterReader);

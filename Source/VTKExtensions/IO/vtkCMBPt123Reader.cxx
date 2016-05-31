@@ -8,7 +8,6 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBPt123Reader.h"
-#include "vtkCMBMeshReader.h"
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
@@ -24,6 +23,7 @@
 #include <map>
 #include <string>
 #include <vtkNew.h>
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
 
 #include <fstream>
 

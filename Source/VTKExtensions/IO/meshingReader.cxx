@@ -7,14 +7,14 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkPolyFileReader.h"
-#include "vtkPolylineTriangulator.h"
-#include "vtkDiscoverRegions.h"
 #include "vtkXMLPolyDataWriter.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkPassArrays.h"
 
 #include "vtkNew.h"
+#include "smtk/extension/vtk/meshing/vtkDiscoverRegions.h"
+#include "smtk/extension/vtk/meshing/vtkPolylineTriangulator.h"
+#include "smtk/extension/vtk/reader/vtkPolyFileReader.h"
 
 int main(int argc, char* argv[])
 {

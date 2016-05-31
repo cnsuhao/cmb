@@ -14,8 +14,6 @@
 #include "vtkPointData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkLASReader.h"
-#include "vtkLIDARReader.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
@@ -25,7 +23,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <vtksys/SystemTools.hxx>
-
+#include "smtk/extension/vtk/reader/vtkLASReader.h"
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 
 class vtkLIDARMultiFilesReader::InternalLIDARFileInfo

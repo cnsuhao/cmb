@@ -623,7 +623,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
   vtkSmartPointer<vtkCellArray>tempCells;
   vtkSmartPointer<vtkPoints>   tempPoints;
 
-  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkNew<vtkPrepareForMesher> mapInterface;
 
   std::map<KMLInternalPt, vtkIdType> pt2Id; //prevent duplicate points
@@ -841,7 +841,7 @@ void vtkKMLReaderInternal::HandlePolygon(PolygonPtr polygonPtr, PolyStylePtr pol
 //-----------------------------------------------------------------------------
 void vtkKMLReaderInternal::Triangulate(vtkPolyData* polyDataIn)
 {
-  typedef smtk::vtk::vtkCMBTriangleMesher vtkTriangleMesher;
+  typedef vtkCMBTriangleMesher vtkTriangleMesher;
   vtkNew<vtkTriangleMesher> cmbMapMesher;
   cmbMapMesher->SetMaxAreaMode(vtkTriangleMesher::NoMaxArea);
   cmbMapMesher->SetInputData(polyDataIn);

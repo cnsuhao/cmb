@@ -19,10 +19,11 @@
 #include <string>
 #include <math.h>
 #include "vtkTesting.h"
-#include "vtkCMBMeshReader.h"
 #include "vtkGAMBITWriter.h"
 #include "vtkGAMBITReader.h"
 #include "vtkGeometryFilter.h"
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
+
 //----------------------------------------------------------------------------
 
 

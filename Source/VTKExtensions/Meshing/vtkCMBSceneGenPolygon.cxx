@@ -435,7 +435,7 @@ int vtkCMBSceneGenPolygon::RequestData(vtkInformation* /*request*/,
   //now lets mesh it
   if ( readyForMeshing )
     {
-    typedef smtk::vtk::vtkCMBTriangleMesher vtkTriangleMesher;
+    typedef vtkCMBTriangleMesher vtkTriangleMesher;
     vtkNew<vtkTriangleMesher> mesher;
     mesher->SetMaxAreaMode(vtkTriangleMesher::RelativeToBounds);
     mesher->SetMaxArea(.0005);
@@ -534,7 +534,7 @@ void vtkCMBSceneGenPolygon::AppendArcSets(vtkInformationVector* input,
 //----------------------------------------------------------------------------
 bool vtkCMBSceneGenPolygon::DeterminePolygon(vtkPolyData *mesh)
 {
-  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
   vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(mesh);
   mapInterface->InitializeNewMapInfo();

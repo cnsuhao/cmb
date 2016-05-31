@@ -51,7 +51,7 @@ int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
   output->SetFieldData(emptyFD);
   emptyFD->FastDelete();
 
-  typedef smtk::vtk::vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
+  typedef vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
 
   vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(input);

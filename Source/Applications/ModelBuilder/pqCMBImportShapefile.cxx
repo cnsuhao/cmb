@@ -10,7 +10,7 @@
 #include "pqCMBImportShapefile.h"
 #include "ui_pqCMBImportShapefile.h"
 
-#include "vtkCMBGeometry2DReader.h"
+#include "smtk/extension/vtk/reader/vtkCMBGeometry2DReader.h"
 
 #include "pqFileDialog.h"
 

@@ -17,13 +17,13 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkSmartPointer.h"
-#include "vtkCMBGeometryReader.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkInteractorStyleSwitch.h"
 #include "vtkCMBGlyphPointSource.h"
 #include "vtkGlyph3DMapper.h"
 #include <string>
 #include "vtkTesting.h"
+#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 
 //----------------------------------------------------------------------------
 // Tests the GlyphPoint Source InsertNextPoint that sets all properties

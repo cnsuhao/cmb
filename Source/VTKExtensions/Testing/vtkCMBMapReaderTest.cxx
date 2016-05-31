@@ -7,7 +7,6 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkCMBMapReader.h"
 #include "vtkActor.h"
 #include "vtkCamera.h"
 #include "vtkCellArray.h"
@@ -22,6 +21,7 @@
 #include "vtkRenderer.h"
 #include "vtkPolyDataWriter.h"
 #include "vtkTesting.h"
+#include "smtk/extension/vtk/reader/vtkCMBMapReader.h"
 
 int main(int argc, char** argv)
 {

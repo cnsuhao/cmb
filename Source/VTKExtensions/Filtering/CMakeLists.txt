@@ -54,5 +54,7 @@ target_include_directories(vtkCMBFiltering
             )
 
 target_link_libraries(vtkCMBFiltering
-            PRIVATE rtvl
+            PRIVATE
+              rtvl
+              vtkSMTKReaderExt # for vtkLIDARReader
             )

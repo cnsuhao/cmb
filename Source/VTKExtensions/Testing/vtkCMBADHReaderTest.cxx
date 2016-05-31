@@ -7,7 +7,6 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkCMBMeshReader.h"
 #include "vtkCMBADHReader.h"
 #include "vtkGeometryFilter.h"
 #include "vtkActor.h"
@@ -26,6 +25,7 @@
 #include "vtkPointSet.h"
 #include "vtkTesting.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
 
 int main(int argc, char** argv)
 {

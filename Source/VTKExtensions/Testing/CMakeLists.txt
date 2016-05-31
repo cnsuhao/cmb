@@ -13,6 +13,7 @@ set(testing_libraries
   vtkRendering${VTK_RENDERING_BACKEND}
   vtkTestingRendering
   vtksys
+  vtkSMTKReaderExt
 )
 
 #since these tests are going through the vtk test harness, or being built

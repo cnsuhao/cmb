@@ -92,7 +92,7 @@ void vtkCMBArcPolygonProvider::ClearInnerLoops( )
 //----------------------------------------------------------------------------
 vtkPolyData* vtkCMBArcPolygonProvider::CreatePolyDataRepresentation()
 {
-  using namespace smtk::vtk;
+  
 
   vtkCMBArcManager *manager = vtkCMBArcManager::GetInstance();
 

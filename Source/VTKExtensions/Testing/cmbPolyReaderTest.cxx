@@ -17,11 +17,11 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkSmartPointer.h"
-#include "vtkCMBGeometryReader.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkInteractorStyleSwitch.h"
 #include <string>
 #include "vtkTesting.h"
+#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 
 //----------------------------------------------------------------------------
 

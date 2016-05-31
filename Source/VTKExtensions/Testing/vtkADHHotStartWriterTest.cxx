@@ -9,7 +9,6 @@
 //=========================================================================
 #include "vtkADHHotStartWriter.h"
 #include "vtkCMBADHReader.h"
-#include "vtkCMBGeometryReader.h"
 #include "vtkDataSetMapper.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkPointData.h"
@@ -19,6 +18,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkNew.h"
 #include <vtksys/SystemTools.hxx>
+#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 
 int main(int argc, char** argv)
 {

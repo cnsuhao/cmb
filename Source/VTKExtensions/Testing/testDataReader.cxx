@@ -7,10 +7,7 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkLIDARReader.h"
 #include "vtkPolyDataNormals.h"
-#include "vtkLASReader.h"
-#include "vtkCUBITReader.h"
 #include "vtkOBJReader.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
@@ -32,6 +29,9 @@
 
 #include "vtkElevationFilter.h"
 #include "vtkProperty.h"
+#include "smtk/extension/vtk/reader/vtkCUBITReader.h"
+#include "smtk/extension/vtk/reader/vtkLASReader.h"
+#include "smtk/extension/vtk/reader/vtkLIDARReader.h"
 
 int main(int argc, char *argv[])
 {
