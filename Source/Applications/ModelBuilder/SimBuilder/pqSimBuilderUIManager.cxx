@@ -133,14 +133,41 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
     return;
     }
 
+  // Is there any special processing needed to be done for the View?
+  
+  // Is this an Attribute View?
+  smtk::extension::qtAttributeView* qTopAttView =
+    qobject_cast<smtk::extension::qtAttributeView*>(this->topView());
+  if (qTopAttView)
+    {
+      QObject::connect(qTopAttView, SIGNAL(attColorChanged()), this,
+		       SIGNAL(attColorChanged()));
+      QObject::connect(qTopAttView, SIGNAL(attAssociationChanged()), this,
+		       SIGNAL(attAssociationChanged()));
+      QObject::connect(qTopAttView, SIGNAL(numOfAttriubtesChanged()), this,
+		       SIGNAL(numOfAttriubtesChanged()));
+      return;
+    }
+
+  // Is this a Simple Expression View?
+  smtk::extension::qtSimpleExpressionView* qTopExpressView =
+    qobject_cast<smtk::extension::qtSimpleExpressionView*>(this->topView());
+  if (qTopExpressView)
+    {
+      QObject::connect(qTopExpressView,
+		       SIGNAL(onCreateFunctionWithExpression(QString&, double,
+							     double, int)), this,
+		       SLOT(createFunctionWithExpression(QString&, double,
+							 double, int)));
+      return;
+    }
+
+  // If this is not an attribute, simple expression, or group view
+  // just return
   smtk::extension::qtGroupView* qTopGroupV =
     qobject_cast<smtk::extension::qtGroupView*>(this->topView());
   if (!qTopGroupV)
     {
-    QMessageBox::warning(parentWidget,
-      tr("No Root View Warning"),
-      tr("There is no root view created in the UI."),
-      QMessageBox::Ok);
     return;
     }
 
