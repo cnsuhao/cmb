@@ -57,6 +57,7 @@ vtkCMBArc::~vtkCMBArc()
   this->Initialize();
 
   this->ArcManager = NULL;
+  delete[] this->EndNodes;
 }
 
 //----------------------------------------------------------------------------

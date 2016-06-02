@@ -1163,6 +1163,11 @@ vtkArcDepressFilter::vtkArcDepressFilter()
 
 vtkArcDepressFilter::~vtkArcDepressFilter()
 {
+  for(unsigned int i = 0; i < this->Arcs.size(); ++i)
+  {
+    delete this->Arcs[i];
+  }
+  this->Arcs.clear();
 }
 
 void vtkArcDepressFilter::ResizeOrder(int size)

@@ -714,8 +714,9 @@ cmbProfileFunction * pqCMBModifierArc::cloneFunction(std::string const& name)
     ss << i->second->getFunction()->getName() + "Clone" << count++;
     ss >> newname;
   }
-  functions[newname] = i->second->clone(newname);
-  return functions[newname]->getFunction();
+  pqCMBModifierArc::profileFunctionWrapper* fun = i->second->clone(newname);
+  functions.insert(std::pair<std::string, pqCMBModifierArc::profileFunctionWrapper*>(newname,fun));
+  return fun->getFunction();
 }
 
 cmbProfileFunction * pqCMBModifierArc::setFunction(std::string const& name,

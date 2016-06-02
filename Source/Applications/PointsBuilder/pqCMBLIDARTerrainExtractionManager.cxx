@@ -99,6 +99,8 @@ pqCMBLIDARTerrainExtractionManager::~pqCMBLIDARTerrainExtractionManager()
     {
     delete this->Contour;
     }
+  delete this->IconVisible;
+  delete this->IconInvisible;
 }
 
 

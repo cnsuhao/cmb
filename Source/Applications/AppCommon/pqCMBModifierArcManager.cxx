@@ -1455,6 +1455,7 @@ void pqCMBModifierArcManager::deleteFunction()
 {
   if(selectedFunction && CurrentModifierArc)
   {
+    this->Internal->UI->FunctionName->blockSignals(true);
     if(CurrentModifierArc->deleteFunction(selectedFunction->getName()))
     {
       int	index = this->Internal->UI->FunctionName->currentIndex();
@@ -1469,6 +1470,7 @@ void pqCMBModifierArcManager::deleteFunction()
       }
       onFunctionSelectionChange();
     }
+    this->Internal->UI->FunctionName->blockSignals(false);
   }
   this->Internal->UI->DeleteFunction->setEnabled(this->Internal->UI->FunctionName->count() > 1);
 }
