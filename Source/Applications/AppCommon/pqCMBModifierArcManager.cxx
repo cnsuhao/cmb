@@ -870,6 +870,9 @@ void pqCMBModifierArcManager::update()
         applyButton->setEnabled(true);
       }
       break;
+    case NoEditMode:
+    case EditFunction:
+      break;
   }
 
   if(this->CurrentModifierArc == NULL)
@@ -1532,17 +1535,19 @@ void pqCMBModifierArcManager::pointDisplayed(int index)
   this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(name));
 }
 
-void pqCMBModifierArcManager::addPoint(vtkIdType id)
+int pqCMBModifierArcManager::addPoint(vtkIdType id)
 {
   this->addPointMode = false;
   std::vector<cmbProfileFunction*> funs;
   CurrentModifierArc->getFunctions(funs);
+  int result = -1;
   if(!CurrentModifierArc->pointHasFunction(id))
   {
-    this->addItemToTable(CurrentModifierArc->addFunctionAtPoint(id, funs[0]), true);
+    result = this->addItemToTable(CurrentModifierArc->addFunctionAtPoint(id, funs[0]), true);
   }
   this->updateUiControls();
   onSelectionChange();
+  return result;
 }
 
 class vtkPointSelectedCallback : public vtkCommand
@@ -1565,11 +1570,12 @@ public:
     vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
     vtkCMBArcWidgetRepresentation *widgetRep =
     vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+    int row = -1;
     if(index >= 0 && index < this->arcInfo->GetNumberOfPoints())
     {
       vtkIdType id;
       this->arcInfo->GetPointID(index, id);
-      manager->addPoint(id);
+      row = manager->addPoint(id);
     }
 
     widgetRep->SetPointSelectMode(0);
@@ -1581,6 +1587,7 @@ public:
     this->arcWidget->getWidgetProxy()->UpdatePropertyInformation();
     this->arcWidget->setView(NULL);
     this->arcWidget->hide();
+    if(row >= 0) manager->Internal->UI->points->selectRow(row);
   }
 
 private:
@@ -1633,10 +1640,10 @@ void pqCMBModifierArcManager::deletePoint()
   }
 }
 
-void pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp,
+int pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp,
                                              bool select)
 {
-  if(mp == NULL) return;
+  if(mp == NULL) return -1;
   QTableWidget* tmp = this->Internal->UI->points;
 
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -1679,6 +1686,7 @@ void pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrap
   {
     tmp->resizeColumnsToContents();
   }
+  return row;
 }
 
 void pqCMBModifierArcManager::updateUiControls()

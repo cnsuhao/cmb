@@ -172,7 +172,7 @@ protected:
 
   void updateUiControls();
 
-  void addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
+  int addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
 
   pqCMBModifierArcManagerInternal * Internal;
 
@@ -188,7 +188,7 @@ protected slots:
   void pointDisplayed(int);
   void addPoint();
   void deletePoint();
-  void addPoint(vtkIdType);
+  int addPoint(vtkIdType);
   void editArc();
 
 protected slots:
