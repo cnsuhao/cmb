@@ -137,33 +137,32 @@ void qtCMBManualFunctionWidget::setSemetricMode( bool sm )
 
 void qtCMBManualFunctionWidget::updateDepthMax(double d)
 {
-  //this->DisplacementProfile->setMaxY(d);
+  this->DisplacementProfile->setMaxY(d);
   this->function->setDepthRange(pqCMBModifierArc::MAX, d);
-  //this->render();
+  this->render();
 }
 
 void qtCMBManualFunctionWidget::updateDepthMin(double d)
 {
-  //this->DisplacementProfile->setMinY(d);
+  this->DisplacementProfile->setMinY(d);
   this->function->setDepthRange(pqCMBModifierArc::MIN, d);
-  //this->render();
+  this->render();
 }
 
 void qtCMBManualFunctionWidget::updateDistMax(double d)
 {
-  //this->DisplacementProfile->setMinX(d);
-  //this->WeightingFunction->setMaxX(d);
+  this->DisplacementProfile->setMinX(d);
+  this->WeightingFunction->setMaxX(d);
   this->function->setDistanceRange(pqCMBModifierArc::MAX, d);
-  //this->render();
+  this->render();
 }
 
 void qtCMBManualFunctionWidget::updateDistMin(double d)
 {
-  //this->DisplacementProfile->setMinX(d);
-  //this->WeightingFunction->setMinX(d);
+  this->DisplacementProfile->setMinX(d);
+  this->WeightingFunction->setMinX(d);
   this->function->setDistanceRange(pqCMBModifierArc::MIN, d);
-
-  //this->render();
+  this->render();
 }
 
 void qtCMBManualFunctionWidget::render()
