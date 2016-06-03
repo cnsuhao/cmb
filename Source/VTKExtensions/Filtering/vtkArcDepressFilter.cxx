@@ -516,6 +516,7 @@ public:
 
   bool evalFun( double d, double & weight, double & desp ) const
   {
+    if(IsSymmetric) d = std::abs(d);
     if(d < getMinDistance() || d > getMaxDistance())
     {
       return false;

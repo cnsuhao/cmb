@@ -252,8 +252,8 @@ void cmbManualProfileFunction::setDistanceRange(double min, double max)
 
 void cmbManualProfileFunction::setDepthRange(double min, double max)
 {
-  parameters->setDistanceRange(pqCMBModifierArc::MIN,min);
-  parameters->setDistanceRange(pqCMBModifierArc::MAX,max);
+  parameters->setDepthRange(pqCMBModifierArc::MIN,min);
+  parameters->setDepthRange(pqCMBModifierArc::MAX,max);
 }
 
 
