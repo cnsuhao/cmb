@@ -27,7 +27,7 @@
 #include "smtk/model/EntityPhrase.h"
 #include "smtk/model/EntityListPhrase.h"
 #include "smtk/model/Group.h"
-#include "smtk/model/SimpleModelSubphrases.h"
+#include "smtk/model/EntityTypeSubphrases.h"
 #include "smtk/model/EntityTypeBits.h" // for smtk::model::BitFlags
 #include "smtk/model/Operator.h"
 #include "smtk/mesh/Collection.h"
@@ -228,9 +228,8 @@ void pqSMTKModelPanel::resetUI()
     "FileName")).toString().toStdString();
   filename = vtksys::SystemTools::GetFilenameName(filename);
 */
-  smtk::model::BitFlags mask = smtk::model::SESSION;
 
-  smtk::model::ManagerPtr model = this->Internal->smtkManager->managerProxy()->modelManager();
+  smtk::model::ManagerPtr modelMgr = this->Internal->smtkManager->managerProxy()->modelManager();
 //  smtk::io::ImportJSON::intoModelManager(json.c_str(), model);
 //  model->assignDefaultNames();
 
@@ -276,23 +275,8 @@ void pqSMTKModelPanel::resetUI()
 
 //  this->linkRepresentations();
 
-  qtModelView* modelview = this->Internal->ModelPanel->getModelView();
-  QPointer<smtk::extension::QEntityItemModel> qmodel = modelview->getModel();
-  qmodel->clear();
-
-  smtk::model::EntityRefs cursors;
-  smtk::model::EntityRef::EntityRefsFromUUIDs(
-    cursors, model, model->entitiesMatchingFlags(mask, true));
-
-  smtk::model::SimpleModelSubphrases::Ptr spg =
-    smtk::model::SimpleModelSubphrases::create();
-  spg->setDirectLimit(-1);
-  spg->setSkipAttributes(true);
-  spg->setSkipProperties(false);
-  qmodel->setRoot(
-    smtk::model::EntityListPhrase::create()
-      ->setup(cursors)
-      ->setDelegate( spg));// set the subphrase generator
+  this->Internal->ModelPanel->resetView(
+    qtModelPanel::VIEW_BY_TOPOLOGY, modelMgr);
 
   this->Internal->ModelLoaded = true;
 }
