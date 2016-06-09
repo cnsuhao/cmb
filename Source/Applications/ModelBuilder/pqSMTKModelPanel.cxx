@@ -27,7 +27,6 @@
 #include "smtk/model/EntityPhrase.h"
 #include "smtk/model/EntityListPhrase.h"
 #include "smtk/model/Group.h"
-#include "smtk/model/EntityTypeSubphrases.h"
 #include "smtk/model/EntityTypeBits.h" // for smtk::model::BitFlags
 #include "smtk/model/Operator.h"
 #include "smtk/mesh/Collection.h"
