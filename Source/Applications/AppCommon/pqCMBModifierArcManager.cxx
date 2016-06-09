@@ -199,44 +199,47 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->clear();
   this->initialize();
   QObject::connect(this->Internal->UI->addLineButton, SIGNAL(clicked()),
-                   this, SLOT(addLine()));
+                   this, SLOT(addLine()), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->removeLineButton, SIGNAL(clicked()),
-                   this, SLOT(removeArc()));
+                   this, SLOT(removeArc()), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->buttonUpdateLine, SIGNAL(clicked()),
-                   this, SLOT(update()));
+                   this, SLOT(update()), Qt::UniqueConnection);
 
   QObject::connect(this->Internal->UI->EditArc, SIGNAL(clicked()),
-                   this, SLOT(editArc()));
+                   this, SLOT(editArc()), Qt::UniqueConnection);
 
   QObject::connect(this->Internal->UI->DeleteFunction, SIGNAL(clicked()),
-                   this, SLOT(deleteFunction()));
+                   this, SLOT(deleteFunction()), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->CloneFunction, SIGNAL(clicked()),
-                   this, SLOT(cloneFunction()));
+                   this, SLOT(cloneFunction()), Qt::UniqueConnection);
 
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(currentIndexChanged(int)),
-                   this, SLOT(onFunctionSelectionChange()));
+                   this, SLOT(onFunctionSelectionChange()), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->FunctionType, SIGNAL(currentIndexChanged(int)),
-                   this,  SLOT(functionTypeChanged(int)));
+                   this,  SLOT(functionTypeChanged(int)), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveArc()));
-  QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadArc()));
+  QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()),
+                   this, SLOT(onSaveArc()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()),
+                   this, SLOT(onLoadArc()), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->importFunctions, SIGNAL(clicked()),
-                   this, SLOT(importFunction()));
+                   this, SLOT(importFunction()), Qt::UniqueConnection);
 
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
-                   this, SLOT(nameChanged(QString)));
+                   this, SLOT(nameChanged(QString)), Qt::UniqueConnection);
 
   this->ArcWidgetManager = new qtCMBArcWidgetManager(server, renderer);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)),
-                   this, SLOT(doneModifyingArc()));
+                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcModified2(pqCMBArc*)),
-                   this, SLOT(doneModifyingArc()));
+                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
   QObject::connect(this->ArcWidgetManager, SIGNAL(Finish()),
-                   this, SLOT(doneModifyingArc()));
+                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
   QObject::connect( this->ArcWidgetManager, SIGNAL(selectedId(vtkIdType)),
-                    this, SLOT(addPoint(vtkIdType)));
-  QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)));
-  QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()));
+                    this, SLOT(addPoint(vtkIdType)), Qt::UniqueConnection);
+  QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)),
+                   Qt::UniqueConnection);
+  QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()), Qt::UniqueConnection);
   this->check_save();
   this->addPointMode = false;
 
@@ -246,6 +249,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->updateUiControls();
   this->Internal->CurrentArcWidget = NULL;
   this->Internal->selectedRow = -1;
+
+  this->Internal->UI->depthChange->setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -282,13 +287,13 @@ void pqCMBModifierArcManager::initialize()
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
                    this, SLOT(onCurrentObjectChanged()), Qt::QueuedConnection);
   QObject::connect(this->TableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   this, SLOT(onItemChanged(QTableWidgetItem*)));
+                   this, SLOT(onItemChanged(QTableWidgetItem*)), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->DatasetControl, SIGNAL(clicked(bool)),
-                   this->Internal->UI->DatasetTable, SLOT(setVisible(bool)));
+                   this->Internal->UI->DatasetTable, SLOT(setVisible(bool)), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->DatasetTable, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   this, SLOT(onDatasetChange(QTableWidgetItem*)));
+                   this, SLOT(onDatasetChange(QTableWidgetItem*)), Qt::UniqueConnection);
   QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onSelectionChange()));
+                   this, SLOT(onSelectionChange()), Qt::UniqueConnection);
 
   this->Internal->UI->DatasetControl->setChecked(false);
   this->Internal->UI->DatasetTable->hide();
@@ -301,9 +306,11 @@ void pqCMBModifierArcManager::initialize()
   this->Internal->UI->points->verticalHeader()->hide();
 
   QObject::connect(this->Internal->UI->points, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onPointsSelectionChange()));
-  QObject::connect(this->Internal->UI->AddPoint, SIGNAL(clicked()), this, SLOT(addPoint()));
-  QObject::connect(this->Internal->UI->RemovePoint, SIGNAL(clicked()), this, SLOT(deletePoint()));
+                   this, SLOT(onPointsSelectionChange()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->AddPoint, SIGNAL(clicked()),
+                   this, SLOT(addPoint()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->RemovePoint, SIGNAL(clicked()),
+                   this, SLOT(deletePoint()), Qt::UniqueConnection);
 
 }
 
@@ -426,7 +433,8 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
   objItem->setCheckState(visible ? Qt::Checked : Qt::Unchecked);
 
   this->TableWidget->resizeColumnsToContents();
-  connect(dataObj, SIGNAL(functionChanged(int)), this, SLOT(onLineChange(int)));
+  connect(dataObj, SIGNAL(functionChanged(int)),
+          this, SLOT(onLineChange(int)), Qt::UniqueConnection);
   //unselectAllRows();
   this->TableWidget->selectRow(row);
   if(visible)
@@ -664,7 +672,7 @@ void pqCMBModifierArcManager::onSelectionChange()
         this->TableWidget->setItem(this->Internal->selectedRow, Mode, NULL);
         this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, combo);
         QObject::connect( combo, SIGNAL(currentIndexChanged(int)),
-                          this,  SLOT(functionModeChanged(int)) );
+                          this,  SLOT(functionModeChanged(int)), Qt::UniqueConnection );
         break;
       }
     }
@@ -866,7 +874,8 @@ void pqCMBModifierArcManager::update()
       this->Internal->CurrentArcWidget->finishContour();
       if(this->Internal->UI_Dialog != NULL)
       {
-        QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+        QPushButton* applyButton =
+                            this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
         applyButton->setEnabled(true);
       }
       break;
@@ -896,6 +905,38 @@ void pqCMBModifierArcManager::update()
   updateUiControls();
   emit(functionsUpdated());
   emit(requestRender());
+  double removed = 0;
+  double added = 0;
+
+  bool isN1 = false;
+  foreach(QString filename, ServerProxies.keys())
+  {
+    foreach(int pieceIdx, ServerProxies[filename].keys())
+    {
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
+      if(source == NULL) continue;
+      source->UpdatePropertyInformation();
+      double r = pqSMAdaptor::getElementProperty(source->GetProperty("AmountRemoved")).toDouble();
+      double a = pqSMAdaptor::getElementProperty(source->GetProperty("AmountAdded")).toDouble();
+      if(r == -1 || a == -1)
+      {
+        isN1 = true;
+        continue;
+      }
+      removed += r;
+      added += a;
+    }
+  }
+  if(isN1)
+  {
+    this->Internal->UI->depthChange->setVisible(false);
+  }
+  else
+  {
+    this->Internal->UI->depthChange->setVisible(true);
+    this->Internal->UI->amountAdded->setText(QString::number(added));
+    this->Internal->UI->amountRemoved->setText(QString::number(removed));
+  }
 }
 
 void pqCMBModifierArcManager::removeArc()
@@ -995,7 +1036,7 @@ void pqCMBModifierArcManager::updateLineFunctions()
   {
     QVariant qv = selected[0]->data(Qt::UserRole);
     pqCMBModifierArc::pointFunctionWrapper * wrapper =
-      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
     name = wrapper->getName().c_str();
   }
 

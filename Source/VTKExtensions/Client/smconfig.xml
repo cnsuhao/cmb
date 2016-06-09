@@ -5827,6 +5827,26 @@ associates the containing cell ID to the point.
         </Documentation>
       </DoubleVectorProperty>
 
+      <DoubleVectorProperty
+        name="AmountRemoved"
+        label="Get Amount Removed"
+        command="GetAmountRemoved"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AmountAdded"
+        label="Get Amount Added"
+        command="GetAmountAdded"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
       <IntVectorProperty
         name="AddArc"
         command="AddArc"

@@ -29,6 +29,11 @@
 #include <vtkPolyDataNormals.h>
 #include "vtkSmartPointer.h"
 #include "vtkKochanekSpline.h"
+#include "vtkTetra.h"
+#include "vtkWedge.h"
+#include "vtkIntersectionPolyDataFilter.h"
+
+#include <vtkTriangleFilter.h>
 
 #include <algorithm>
 #include <math.h>
@@ -206,8 +211,8 @@ public:
   enum Type {Manual, Mix, Wedge};
   virtual ~DepArcProfileFunction(){}
   virtual Type getType() const = 0;
-  virtual double apply(double d, double pt) const = 0;
-  virtual void apply(double d, double *pt, double *n) const = 0;
+  virtual double apply(double d, double pt, double & dir) const = 0;
+  virtual double apply(double d, double *pt, double *n) const = 0;
   virtual void addWeightPoint(double w, double v, double s, double m) = 0;
   virtual bool inside(double d) const = 0;
   virtual void setFunctionRange(double /*minZ*/, double /*maxZ*/)
@@ -233,21 +238,26 @@ public:
     return DepArcProfileFunction::Mix;
   }
 
-  virtual double apply(double d, double pt) const
+  virtual double apply(double d, double pt, double & dir) const
   {
-    return fun[0]->apply(d,pt)*(1-mix) + fun[1]->apply(d, pt) * mix;
+    double d1, d2;
+    double p1 = fun[0]->apply(d ,pt, d1);
+    double p2 = fun[1]->apply(d, pt, d2);
+    dir =  d1 * (1-mix) + d2 * mix;
+    return p1 * (1-mix) + p2 * mix;
   }
 
-  virtual void apply(double d, double *pt, double *n) const
+  virtual double apply(double d, double *pt, double *n) const
   {
     double pta[3], ptb[3];
-    fun[0]->apply(d, pta, n);
-    fun[1]->apply(d, ptb, n);
+    double dra = fun[0]->apply(d, pta, n);
+    double drb = fun[1]->apply(d, ptb, n);
     double t = mix;
     double tm1 = 1-t;
     pt[0] = tm1 * pta[0] + t*ptb[0];
     pt[1] = tm1 * pta[1] + t*ptb[1];
     pt[2] = tm1 * pta[2] + t*ptb[2];
+    return tm1*dra + t*drb;
   }
 
   bool inside(double d) const
@@ -325,27 +335,50 @@ public:
     return true;
   }
 
-  virtual double apply(double d, double pt) const
+  virtual double apply(double d, double pt, double & dirOut) const
   {
+    dirOut = 0;
     double w, tmpD, tmpR;
     if(!evalFun(d, w, tmpD, tmpR)) return pt;
     double absolute = (1-relative); // 1 or 0
     double dir[] = { tmpD - pt*absolute, tmpR - pt*absolute };
     double ptW = (1-w*absolute);
 
-    if(dispMode & Dig)   pt = (clamp && dir[0] > 0) ? pt : (ptW*pt + w*tmpD);
-    if(dispMode & Raise) pt = (clamp && dir[1] < 0) ? pt : (ptW*pt + w*tmpR);
+    if(dispMode & Dig && !(clamp && dir[0] > 0))
+    {
+      dirOut += dir[0];
+      pt = ptW*pt + w*tmpD;
+    }
+    if(dispMode & Raise && !(clamp && dir[1] < 0))
+    {
+      dirOut += dir[1];
+      pt = ptW*pt + w*tmpR;
+    }
     return pt;
   }
 
-  virtual void apply(double d, double *pt, double *n) const
+  virtual double apply(double d, double *pt, double *n) const
   {
     assert(relative && "Normal direction only makes sense in relative");
     double w, tmpD, tmpR;
-    if(!evalFun(d, w, tmpD, tmpR)) return;
+    if(!evalFun(d, w, tmpD, tmpR)) return 0;
     double wT[] = {(clamp && tmpD > 0)?0:w*tmpD, (clamp && tmpR < 0)?0:w*tmpR};
-    if(dispMode & Dig)   {pt[0] += wT[0]*n[0]; pt[1] += wT[0]*n[1]; pt[2] += wT[0]*n[2];}
-    if(dispMode & Raise) {pt[0] += wT[1]*n[0]; pt[1] += wT[1]*n[1]; pt[2] += wT[1]*n[2];}
+    double r = 0;
+    if(dispMode & Dig)
+    {
+      pt[0] += wT[0]*n[0];
+      pt[1] += wT[0]*n[1];
+      pt[2] += wT[0]*n[2];
+      r += wT[0];
+    }
+    if(dispMode & Raise)
+    {
+      pt[0] += wT[1]*n[0];
+      pt[1] += wT[1]*n[1];
+      pt[2] += wT[1]*n[2];
+      r += wT[1];
+    }
+    return r;
   }
 
   virtual void addWeightPoint(double w, double v, double s, double m)
@@ -525,7 +558,7 @@ public:
     {
       d = d/-getMinDistance();
     }
-    else if( d >= 0)
+    else //if( d >= 0)
     {
       d = d/getMaxDistance();
     }
@@ -534,36 +567,35 @@ public:
     return true;
   }
 
-  virtual double apply(double d, double pt) const
+  virtual double apply(double d, double pt, double & dir) const
   {
     double w, tmp;
+    dir = 0;
     if(!evalFun(d, w, tmp)) return pt;
-    if(IsRelative)
+    double wTmp = w*tmp;
+    double w1 = (1-w);
+    int absolute = (IsRelative)?0:1;
+    dir = wTmp - (1-w)*pt*absolute;
+    return (1 - w*absolute)*pt + wTmp;
+    /*if(IsRelative)
     {
-      return pt + w*tmp;
+      return pt + wTmp;
     }
     else
     {
-      return w*tmp +(1-w)*pt;
-    }
+      return wTmp + w1*pt;
+    }*/
   }
 
-  virtual void apply(double d, double *pt, double *n) const
+  virtual double apply(double d, double *pt, double *n) const
   {
     double w, tmp;
-    if(!evalFun(d, w, tmp)) return;
-    if(IsRelative)
-    {
-      pt[0] = pt[0] + w*tmp*n[0];
-      pt[1] = pt[1] + w*tmp*n[1];
-      pt[2] = pt[2] + w*tmp*n[2];
-    }
-    else
-    {
-      pt[0] = w*tmp*n[0] + (1-w)*pt[0];
-      pt[1] = w*tmp*n[1] + (1-w)*pt[1];
-      pt[2] = w*tmp*n[2] + (1-w)*pt[2];
-    }
+    assert(IsRelative && "Normal direction only makes sense in relative");
+    if(!evalFun(d, w, tmp)) return 0;
+    pt[0] = pt[0] + w*tmp*n[0];
+    pt[1] = pt[1] + w*tmp*n[1];
+    pt[2] = pt[2] + w*tmp*n[2];
+    return w*tmp;
   }
 
   double getMaxDistance() const
@@ -757,16 +789,16 @@ private:
       return pointFunction->inside(d);
     }
 
-    double apply(double d, double pt) const
+    double apply(double d, double pt, double & dir) const
     {
       assert(pointFunction.get() != NULL);
-      return pointFunction->apply(d,pt);
+      return pointFunction->apply(d, pt, dir);
     }
 
-    void apply(double d, double *pt, double *n) const
+    double apply(double d, double *pt, double *n) const
     {
       assert(pointFunction.get() !=NULL);
-      pointFunction->apply(d, pt, n);
+      return pointFunction->apply(d, pt, n);
     }
   private:
     boost::shared_ptr<DepArcProfileFunction> pointFunction;
@@ -1187,6 +1219,33 @@ void vtkArcDepressFilter::SetOrderValue(int loc, int arc_ind)
   this->Modified();
 }
 
+namespace
+{
+  double wedgeVolume( double pts[6][3] )
+  {
+    static int tetra[][4] = { { 0, 2, 1, 3 }, { 1, 3, 5, 4 }, { 1, 2, 5, 3 } };
+    double r = 0;
+    for(unsigned int j = 0; j < 3; ++j)
+    {
+      double tmp = 0;
+      r += tmp = vtkTetra::ComputeVolume(pts[tetra[j][0]], pts[tetra[j][1]],
+                                         pts[tetra[j][2]], pts[tetra[j][3]]);
+      assert(tmp >= 0);
+    }
+    return r;
+  }
+  double pyramidVolume(double pts[6][3])
+  {
+    double r = 0;
+    double tmp = 0;
+    r += tmp = vtkTetra::ComputeVolume(pts[0], pts[1], pts[2], pts[4]);
+    assert(tmp >= 0);
+    r += tmp = vtkTetra::ComputeVolume(pts[1], pts[2], pts[3], pts[4]);
+    assert(tmp >= 0);
+    return r;
+  }
+}
+
 int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
                                      vtkInformationVector **inputVector,
                                      vtkInformationVector *outputVector)
@@ -1201,7 +1260,19 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   vtkPolyData *output =
       vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkSmartPointer<vtkPolyDataNormals> normalGenerator;
+  vtkSmartPointer<vtkTriangleFilter> triangleFilter;
   vtkDataArray* normals = NULL;
+
+  bool hasPolygons = input->GetPolys()->GetNumberOfCells() != 0;
+
+  if(input->GetNumberOfCells() != 0)
+  {
+    triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+    triangleFilter->SetInputData(input);
+    triangleFilter->Update();
+    input = triangleFilter->GetOutput();
+  }
+
   if(UseNormalDirection)
   {
     normals = input->GetPointData()->GetNormals();
@@ -1282,6 +1353,8 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
     currentBounds[0] = bounds[4];
     currentBounds[1] = bounds[5];
   }
+  std::vector<int> pointChanged(numPts, 0); //0 no change, 1 raise, -1 dig
+  int notChanged = -1;
   for(unsigned int j = 0; j < ApplyOrder.size() && numPts != 0; ++j)
   {
     int id = ApplyOrder[j];
@@ -1300,17 +1373,22 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
 
       if(dad.getDistance(pt2d, d, lsId, closestPt))
       {
+        double dir = 0;
         if( useNorm )
         {
           normals->GetTuple(i, normal);
-          closestPt.apply(d,point,normal);
+          dir = closestPt.apply(d,point,normal);
         }
         else
         {
-          point[2] = closestPt.apply(d, point[2]);
+          point[2] = closestPt.apply(d, point[2], dir);
         }
         if(point[2] < updateBounds[0]) updateBounds[0]=point[2];
         if(point[2] > updateBounds[1]) updateBounds[1]=point[2];
+        if(dir != 0)
+        {
+          pointChanged[i] = (dir<0)?-1:1;
+        }
       }
       newPoints->SetPoint(i,point);
     }
@@ -1320,6 +1398,205 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   newVerts->DeepCopy(input->GetVerts());
   newLines->DeepCopy(input->GetLines());
   newPolys->DeepCopy(input->GetPolys());
+  amountAdded = -1;
+  amountRemoved = -1;
+  if(input->GetNumberOfCells() != 0 && input->GetCell(0)->GetNumberOfPoints() == 3)
+  {
+    double * mod[3] = {NULL,&amountAdded,&amountRemoved};
+    amountRemoved = 0;
+    amountAdded = 0;
+    for(unsigned int i = 0; i < input->GetNumberOfCells(); ++i)
+    {
+      vtkCell * cell = input->GetCell(i);
+      bool changed = false;
+      bool allChanged = true;
+      int changeScore = 0;
+      int digRaiseCheck[2] = {0,0};
+      int notChanged = -1;
+      for(unsigned int j = 0; j < 3; ++j)
+      {
+        int tmpPC = pointChanged[cell->GetPointId(j)];
+        changeScore += tmpPC;
+        allChanged = allChanged && tmpPC;
+        changed = changed || tmpPC;
+        if(tmpPC) ++digRaiseCheck[(tmpPC+1)/2];
+        else notChanged = static_cast<int>(j);
+      }
+      if(changed)
+      {
+        double pts[6][3];
+        double * modifier = (digRaiseCheck[0])?&amountRemoved:&amountAdded;
+        vtkIdType ptIds[] = { cell->GetPointId(0), cell->GetPointId(1), cell->GetPointId(2) };
+        if( digRaiseCheck[0] == 3 || digRaiseCheck[1] == 3)
+        {
+          for(unsigned int j = 0; j < 3; ++j)
+          {
+            newPoints->GetPoint(cell->GetPointId(j), pts[j + digRaiseCheck[0]]);
+            inPts->GetPoint(cell->GetPointId(j), pts[j + digRaiseCheck[1]]);
+          }
+          *modifier += wedgeVolume(pts);
+        }
+        else if( (digRaiseCheck[0] == 1 && digRaiseCheck[1] == 0) ||
+                (digRaiseCheck[1] == 1 && digRaiseCheck[0] == 0) )
+        {
+          for(unsigned int j = 0; j < cell->GetNumberOfPoints(); ++j)
+          {
+            vtkIdType id = cell->GetPointId(j);
+            if(pointChanged[id])
+            {
+              if(digRaiseCheck[0])
+              {
+                inPts->GetPoint(id, pts[3]);
+                newPoints->GetPoint(id, pts[j]);
+              }
+              else
+              {
+                inPts->GetPoint(id, pts[j]);
+                newPoints->GetPoint(id, pts[3]);
+              }
+            }
+            else
+            {
+              newPoints->GetPoint(id, pts[j]);
+            }
+          }
+          double tmp = 0;
+          *modifier += tmp = vtkTetra::ComputeVolume(pts[0], pts[1], pts[2], pts[3]);
+          assert(tmp >= 0);
+        }
+        else if(( digRaiseCheck[0] == 2 && digRaiseCheck[1] == 0 ) ||
+                ( digRaiseCheck[1] == 2 && digRaiseCheck[0] == 0 ) )
+        {
+          int index = digRaiseCheck[1]/2;
+          int i1Inx[][5] = {{0,1,2,3,4},{3,2,1,0,4}};
+          int i2 = (!pointChanged[ptIds[0]])?0:(!pointChanged[ptIds[1]])?1:2;
+          int i2Inx[][5] = {{2,1,1,2,0},{0,2,2,0,1},{1,0,0,1,2}};
+          newPoints->GetPoint(ptIds[i2Inx[i2][0]],             pts[i1Inx[index][0]]);
+          newPoints->GetPoint(ptIds[i2Inx[i2][1]],             pts[i1Inx[index][1]]);
+          //TODO, use input points instead of adding points
+          inPts->GetPoint(ptIds[i2Inx[i2][2]], pts[i1Inx[index][2]]);
+          inPts->GetPoint(ptIds[i2Inx[i2][3]], pts[i1Inx[index][3]]);
+          newPoints->GetPoint(ptIds[i2Inx[i2][4]],             pts[i1Inx[index][4]]);
+
+          *modifier += pyramidVolume(pts);
+        }
+        else
+        {
+          for(unsigned int j = 0; j < 3; ++j)
+          {
+            newPoints->GetPoint(cell->GetPointId(j), pts[j]);
+            inPts->GetPoint(cell->GetPointId(j), pts[j+3]);
+          }
+          int coplanar;
+          double intersection[2][3];
+          int r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection(pts[0], pts[1], pts[2],
+                                                                              pts[3], pts[4], pts[5],
+                                                                              coplanar,
+                                                                              intersection[0],
+                                                                              intersection[1]);
+
+          if(( digRaiseCheck[0] == 2 && digRaiseCheck[1] == 1 )||
+             ( digRaiseCheck[0] == 1 && digRaiseCheck[1] == 2 ))
+          {
+            assert(r != 0);
+            static const int at[][2] = {{1,2},{0,2},{0,1}};
+            static const int oatA[][3] = {{3,3,0}, {0,0,3}, {3,3,0}};
+            static const int oatB[][3] = {{0,0,3}, {3,3,0}, {0,0,3}};
+            static const int oatC[][3] = {{0,0,1}, {0,1,0}, {0,0,1}};
+
+            static const int sign[] = {0, -1, 1};
+            int t1 = 0;
+            for(int i = 0; i < 3; ++i)
+            {
+              if(sign[digRaiseCheck[0]]*pointChanged[ptIds[i]] > 0)
+              {
+                t1 = i;
+              }
+            }
+
+            double tmp = 0;
+            tmp = vtkTetra::ComputeVolume(pts[t1], intersection[0], intersection[1], pts[t1+3]);
+            assert(tmp >= 0);
+            *(mod[digRaiseCheck[1]]) += tmp;
+            int const* tat = at[t1];
+            int z = tat[0], o = tat[1];
+            int ota = oatA[t1][digRaiseCheck[0]];
+            int otb = oatB[t1][digRaiseCheck[0]];
+            int otc = oatC[t1][digRaiseCheck[0]];
+            int otd = (otc+1)%2;
+
+            assert(pointChanged[ptIds[z]] == pointChanged[ptIds[o]]);
+            double pts2[6][3] = {{pts[z+ota][0],      pts[z+ota][1],      pts[z+ota][2]},
+              {pts[z+otb][0],      pts[z+otb][1],      pts[z+otb][2]},
+              {intersection[otc][0], intersection[otc][1], intersection[otc][2]},
+              {pts[o+ota][0],   pts[o+ota][1],   pts[o+ota][2]},
+              {pts[o+otb][0],   pts[o+otb][1],   pts[o+otb][2]},
+              {intersection[otd][0], intersection[otd][1], intersection[otd][2]}};
+            assert( (pointChanged[ptIds[z]]<0 && mod[digRaiseCheck[0]] == &amountRemoved) ||
+                   (pointChanged[ptIds[z]]>0 && mod[digRaiseCheck[0]] == &amountAdded) );
+            *(mod[digRaiseCheck[0]]) += wedgeVolume(pts2);
+          }
+          else
+          {
+#define dist(X,Y) (std::pow(X[0]-Y[0],2) + std::pow(X[1]-Y[1],2) + std::pow(X[2]-Y[2],2))
+            static const int at[][2] = {{1,2},{2,0},{0,1}};
+            if(!r) //must intersect by design
+            {
+              //move point a small amount on z of the shared point to handel the numeric instablity
+              double tmpInter[4][3];
+              double z = pts[notChanged][2];
+              pts[notChanged][2] = z + 1e-8;
+              r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
+                                                                              pts[0], pts[1], pts[2],
+                                                                              coplanar,
+                                                                              tmpInter[0],
+                                                                              tmpInter[1]);
+              assert(r);
+              pts[notChanged][2] = z - 1e-8;
+              r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
+                                                                              pts[0], pts[1], pts[2],
+                                                                              coplanar,
+                                                                              tmpInter[2],
+                                                                              tmpInter[3]);
+              assert(r);
+              pts[notChanged][2] = z;
+              for(unsigned int i = 0; i < 3; ++i)
+              {
+                intersection[0][i] = (tmpInter[0][i] + tmpInter[2][i])*0.5;
+                intersection[1][i] = (tmpInter[1][i] + tmpInter[3][i])*0.5;
+              }
+            }
+            double d1 = dist(pts[notChanged],intersection[0]);
+            double d2 = dist(pts[notChanged],intersection[1]);
+            int otherPt = (d2 < d1)?0:1;
+            int npt = (notChanged+1)%3;
+            int addA[] = {0,3};
+            double * mN = &amountAdded;
+            double * mO = &amountRemoved;
+            if(pointChanged[ptIds[at[notChanged][0]]]<0)
+            {
+              addA[0] = 3; addA[1] = 0;
+              mN = &amountRemoved;
+              mO = &amountAdded;
+            }
+            double tmp = 0;
+            *mN += tmp = vtkTetra::ComputeVolume(pts[at[notChanged][0]+addA[0]],
+                                                 pts[notChanged], intersection[otherPt],
+                                                 pts[at[notChanged][0]+addA[1]]);
+            assert(tmp >= 0);
+
+            *mO += tmp = vtkTetra::ComputeVolume(pts[at[notChanged][1]+addA[0]],
+                                                 pts[notChanged], intersection[otherPt],
+                                                 pts[at[notChanged][1]+addA[1]]);
+            assert( (pointChanged[ptIds[at[notChanged][1]]]<0 && mO == &amountRemoved) ||
+                   (pointChanged[ptIds[at[notChanged][1]]]>0 && mO == &amountAdded) );
+            assert(tmp >= 0);
+          }
+        }
+      }
+    }
+    std::cout << "Removed: " << amountRemoved << "    Added: " << amountAdded << std::endl;
+  }
 
   if (newVerts->GetNumberOfCells())
     {
@@ -1334,9 +1611,10 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   newLines->Delete();
 
   if (newPolys->GetNumberOfCells())
-    {
+  {
     output->SetPolys(newPolys);
-    }
+  }
+
   newPolys->Delete();
 
   output->SetPoints(newPoints);

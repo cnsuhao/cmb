@@ -51,6 +51,11 @@ public:
 
   void setUseNormalDirection(int);
 
+  double GetAmountRemoved()
+  { return amountRemoved; }
+  double GetAmountAdded()
+  { return amountAdded; }
+
   //BTX
 protected:
   vtkArcDepressFilter();
@@ -62,6 +67,9 @@ protected:
   std::vector< DepArcData * > Arcs;
   std::vector< unsigned > ApplyOrder;
   bool UseNormalDirection;
+
+  double amountRemoved;
+  double amountAdded;
 
 private:
   vtkArcDepressFilter(const vtkArcDepressFilter&):vtkPolyDataAlgorithm()
