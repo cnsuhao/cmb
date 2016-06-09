@@ -65,7 +65,7 @@ public:
     const QMap<smtk::mesh::MeshSet, QColor >& colorEntities);
 
 signals:
-  void representationBlockPicked(pqDataRepresentation*, unsigned int);
+  void representationBlockPicked(pqDataRepresentation*, unsigned int, bool ctrlKey);
 
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context

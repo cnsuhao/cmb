@@ -156,7 +156,7 @@ public slots:
                         const smtk::model::SessionRef& sref,
                         bool hasNewModels, bool bModelGeometryChanged,
                         bool hasNewMeshes);
-  void selectRepresentationBlock( pqDataRepresentation*, unsigned int );
+  void selectRepresentationBlock( pqDataRepresentation*, unsigned int, bool ctrlKey );
 
   // Called to show the settings dialog.
   // Subclass should override this method to add app-specific options.
