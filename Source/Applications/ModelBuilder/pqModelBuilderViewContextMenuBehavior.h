@@ -33,6 +33,7 @@ class pqSMTKModelPanel;
 class pqEditColorMapReaction;
 class pqSMTKModelInfo;
 class pqSMTKMeshInfo;
+class pqRenderView;
 
 /// @ingroup Behaviors
 ///
@@ -128,6 +129,9 @@ protected:
     QMap<smtk::common::UUID,
     QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> > &sessionBlocks);
   virtual void setSelectedBlocksColor(const QColor& color);
+
+  void pickRepresentationBlock(pqRenderView* view,
+    const QPoint& newPos, QWidget* senderWidget, bool ctrl);
 
   QMenu* m_contextMenu;
   QPoint m_clickPosition;

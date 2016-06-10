@@ -1397,7 +1397,10 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 
   if(outport && selectionManager)
     {
-    outport->setSelectionInput(selectionSourceProxy, 0);
+    if(selIds.size() > 0)
+      outport->setSelectionInput(selectionSourceProxy, 0);
+    else
+      outport->setSelectionInput(0, 0);
 //    this->requestRender();
     this->updateSMTKSelection();
     selectionManager->blockSignals(true);
