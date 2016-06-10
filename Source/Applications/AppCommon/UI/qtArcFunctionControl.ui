@@ -440,14 +440,14 @@
       <item row="0" column="1">
        <widget class="QLabel" name="amountRemoved">
         <property name="text">
-         <string/>
+         <string>NA</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Added</string>
+         <string>Gross Added</string>
         </property>
        </widget>
       </item>
@@ -461,7 +461,7 @@
       <item row="0" column="3">
        <widget class="QLabel" name="amountAdded">
         <property name="text">
-         <string/>
+         <string>NA</string>
         </property>
        </widget>
       </item>

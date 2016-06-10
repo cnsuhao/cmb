@@ -250,7 +250,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->Internal->CurrentArcWidget = NULL;
   this->Internal->selectedRow = -1;
 
-  this->Internal->UI->depthChange->setVisible(false);
+  this->Internal->UI->amountAdded->setText("NA");
+  this->Internal->UI->amountRemoved->setText("NA");
 }
 
 //-----------------------------------------------------------------------------
@@ -929,11 +930,11 @@ void pqCMBModifierArcManager::update()
   }
   if(isN1)
   {
-    this->Internal->UI->depthChange->setVisible(false);
+    this->Internal->UI->amountAdded->setText("NA");
+    this->Internal->UI->amountRemoved->setText("NA");
   }
   else
   {
-    this->Internal->UI->depthChange->setVisible(true);
     this->Internal->UI->amountAdded->setText(QString::number(added));
     this->Internal->UI->amountRemoved->setText(QString::number(removed));
   }

@@ -1329,6 +1329,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
     }
 
   newPoints = vtkPoints::New();
+  newPoints->SetDataType(inPts->GetDataType());
   newPoints->Allocate(numPts,numPts/2);
   newPoints->DeepCopy(inPts);
   newVerts = vtkCellArray::New();
@@ -1339,7 +1340,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
   newPolys->Allocate(estimatedSize,estimatedSize/2);
 
   //Transform points
-  double point[3];
+  double point[3], original[3];
   double normal[3];
   for(size_t t = 0; t < Arcs.size(); ++t)
   {
@@ -1369,6 +1370,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
     for ( i=0; i < numPts; i++ )
     {
       newPoints->GetPoint(i, point);
+      inPts->GetPoint(i, original);
       double pt2d[] = {point[0], point[1]};
 
       if(dad.getDistance(pt2d, d, lsId, closestPt))
@@ -1390,6 +1392,7 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
           pointChanged[i] = (dir<0)?-1:1;
         }
       }
+      assert(useNorm ||(point[0] == original[0] && point[1] == original[1]));
       newPoints->SetPoint(i,point);
     }
     currentBounds[0] = updateBounds[0];
@@ -1433,6 +1436,8 @@ int vtkArcDepressFilter::RequestData(vtkInformation *vtkNotUsed(request),
           {
             newPoints->GetPoint(cell->GetPointId(j), pts[j + digRaiseCheck[0]]);
             inPts->GetPoint(cell->GetPointId(j), pts[j + digRaiseCheck[1]]);
+            assert(useNorm ||(pts[j + digRaiseCheck[0]][0] == pts[j + digRaiseCheck[1]][0] &&
+                              pts[j + digRaiseCheck[0]][1] == pts[j + digRaiseCheck[1]][1]));
           }
           *modifier += wedgeVolume(pts);
         }
