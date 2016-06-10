@@ -20,6 +20,7 @@ int ArcServerAutoConnectTest1( int /*argc*/, char * /*argv*/[] )
 {
   //what happens when given two outer loops that
   //share an edge
+
   double en[4][3]={{0,0,0},
                   {-5,5,0},
                   {0,10,0},
@@ -28,8 +29,10 @@ int ArcServerAutoConnectTest1( int /*argc*/, char * /*argv*/[] )
   for ( int i = 0; i < 3; i+=2)
     {
     vtkCMBArc *arc = vtkCMBArc::New();
-    arc->SetEndNode(0,en[i]);
-    arc->SetEndNode(1,en[i+1]);
+    vtkCMBArc::Point pt1(en[i],i);
+    vtkCMBArc::Point pt2(en[i+1], i+1);
+    arc->SetEndNode(0,pt1);
+    arc->SetEndNode(1,pt2);
     }
 
   vtkSmartPointer<vtkCMBArcAutoConnectOperator> connect =

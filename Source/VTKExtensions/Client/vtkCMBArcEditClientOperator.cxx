@@ -62,7 +62,8 @@ bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
   //reset the widget
   widgetRep->SetLoggingEnabled(0);
   widget->SetEnabled(true);
-  widgetRep->ClearAllNodes();
+  widgetRep->ClearAllNodes(); //Clear nodes clears out the enable
+  widget->SetEnabled(true);
   widget->Initialize();
   // enable it again because Initialize() may have disabled it
   widget->SetEnabled(true);

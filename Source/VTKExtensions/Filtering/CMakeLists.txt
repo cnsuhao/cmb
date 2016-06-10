@@ -15,6 +15,7 @@ set(CMB_Filtering_SRC
     vtkCMBArcGrowOperator.cxx
     vtkCMBArcMergeArcsOperator.cxx
     vtkCMBArcPickPointOperator.cxx
+    vtkCMBArcPointGlyphingFilter.cxx
     vtkCMBArcSplitOnIndexOperator.cxx
     vtkCMBArcSplitOnPositionOperator.cxx
     vtkCMBArcUpdateOperator.cxx

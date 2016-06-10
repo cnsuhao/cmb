@@ -77,11 +77,15 @@ signals:
 
   void editingStarted();
 
+  void selectedId(vtkIdType);
+
 public slots:
   // slot for operations on an arc or sub-arc
   void straightenArc(vtkIdType startIdx, vtkIdType endIdx);
   void collapseSubArc(vtkIdType startIdx, vtkIdType endIdx);
   void makeArc(vtkIdType startIdx, vtkIdType endIdx);
+  void startSelectPoint();
+  void cancelSelectPoint();
 
 protected slots:
   // called when a whole arc is done creating or modifying.

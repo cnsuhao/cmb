@@ -71,13 +71,15 @@ bool vtkCMBSubArcModifyOperator::Operate(
     if(opWholeArc)
       {
       double newEndNode[3];
+      vtkIdType ptId;
+      vtkCMBArc::Point point;
       if(updatedArc->IsClosedArc())
         {
         if(updatedArc->GetArcInternalPoint(
-          updatedArc->GetNumberOfInternalPoints() - 1, newEndNode))
+          updatedArc->GetNumberOfInternalPoints() - 1, point))
           {
           updatedArc->ClearPoints();
-          updatedArc->SetEndNode(1, newEndNode);
+          updatedArc->SetEndNode(1, point);
           result = true;
           }
         }
@@ -112,7 +114,7 @@ bool vtkCMBSubArcModifyOperator::StraightenSubArc(
     return false;
     }
 
-  std::list<vtkVector3d> newPoints;
+  std::list<vtkCMBArc::Point> newPoints;
   bool result = updatedArc->ReplacePoints(
     startPointId, endPointId, newPoints, false);
 
@@ -128,45 +130,49 @@ bool vtkCMBSubArcModifyOperator::CollapseSubArc(
     return false;
     }
 
-  std::list<vtkVector3d> newPoints;
+  std::list<vtkCMBArc::Point> newPoints;
+  std::list<vtkIdType> ptIds;
   // based on where startPoint and EndPoint is, we may need to update
   // the end node. We always merge endPoint to startPoint
   double pos[3];
+  vtkIdType ptId;
   int nodeIndex = -1;
   vtkCMBArcEndNode *endNode = NULL;
+  vtkCMBArc::Point pt;
   if(endPointId == 0)
     {
     endNode = updatedArc->GetEndNode(0);
     nodeIndex = 0;
     // cache the startPoint position, this is where the endNode will be.
-    updatedArc->GetArcInternalPoint(startPointId-1, pos);
+    updatedArc->GetArcInternalPoint(startPointId-1, pt);
     }
   else if(endPointId == updatedArc->GetNumberOfArcPoints() - 1)
     {
     if(updatedArc->IsClosedArc())
       {
       // we need to create a new end node
-      updatedArc->GetArcInternalPoint(endPointId-1, pos);
-      newPoints.push_back(vtkVector3d(pos));
+      updatedArc->GetArcInternalPoint(endPointId-1, pt);
+      newPoints.push_back(pt);
      }
     else
       {
       endNode = updatedArc->GetEndNode(1);
       nodeIndex = 1;
       // cache the startPoint position, this is where the endNode will be.
-      updatedArc->GetArcInternalPoint(startPointId-1, pos);
+      updatedArc->GetArcInternalPoint(startPointId-1, pt);
       }
     }
   else
     {
-    updatedArc->GetArcInternalPoint(startPointId-1, pos);
-    newPoints.push_back(vtkVector3d(pos));
+    updatedArc->GetArcInternalPoint(startPointId-1, pt);
+    newPoints.push_back(pt);
     }
+  //TODO pass the ptids
   bool result = updatedArc->ReplacePoints(
     startPointId, endPointId, newPoints, true);
   if(result && endNode && nodeIndex >=0)
     {
-    updatedArc->MoveEndNode(nodeIndex, pos);
+    updatedArc->MoveEndNode(nodeIndex, pt);
     }
 
   return result;

@@ -39,8 +39,11 @@
 #include "vtkNew.h"
 #include "vtkBoundingBox.h"
 #include "vtkCellArray.h"
+#include "vtkUnsignedIntArray.h"
+#include "vtkCommand.h"
 
 #include <map>
+#include <set>
 
 vtkStandardNewMacro(vtkCMBArcWidgetRepresentation);
 
@@ -62,14 +65,24 @@ class vtkCMBArcWidgetRepresentation::vtkInternalMap : public vtkInternalMapBase 
 //----------------------------------------------------------------------
 vtkCMBArcWidgetRepresentation::vtkCMBArcWidgetRepresentation()
 {
+  this->LinesMapper->SetScalarModeToUseCellData();
+  this->Property->SetLineWidth(2.0);
+  this->Property->SetPointSize(6.0);
+  this->LinesProperty->SetLineWidth(2.0);
+  this->ActiveProperty->SetLineWidth(2.0);
   this->LoggingEnabled = false;
   this->ModifiedPointMap = new vtkCMBArcWidgetRepresentation::vtkInternalMap();
   this->CanEdit = 1;
+  this->PointSelectMode = 0;
+  this->pointId = 0;
+  this->PointSelectCallBack = NULL;
 }
 
 //----------------------------------------------------------------------
 vtkCMBArcWidgetRepresentation::~vtkCMBArcWidgetRepresentation()
 {
+  if(PointSelectCallBack) PointSelectCallBack->Delete();
+  PointSelectCallBack = NULL;
   if ( this->ModifiedPointMap )
     {
     delete this->ModifiedPointMap;
@@ -139,6 +152,7 @@ int vtkCMBArcWidgetRepresentation::ToggleActiveNodeSelected()
 //----------------------------------------------------------------------
 int vtkCMBArcWidgetRepresentation::DeleteNthNode(int n)
 {
+  if(PointSelectMode) return 0;
   if (n <= 0)
     {
     //you can't delete this first node ever!
@@ -202,7 +216,8 @@ void vtkCMBArcWidgetRepresentation::BuildRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-int vtkCMBArcWidgetRepresentation::SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] )
+int vtkCMBArcWidgetRepresentation
+::SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] )
 {
   int ret = this->Superclass::SetActiveNodeToWorldPosition(worldPos,worldOrient);
   if (ret==1)
@@ -223,9 +238,26 @@ int vtkCMBArcWidgetRepresentation::SetActiveNodeToWorldPosition(double worldPos[
   return ret;
 }
 
+void vtkCMBArcWidgetRepresentation::StartWidgetInteraction(double startEventPos[2])
+{
+  if(PointSelectMode)
+  {
+    if( this->GetCurrentOperation() == vtkContourRepresentation::Translate )
+    {
+      this->SetCurrentOperationToInactive();
+    }
+    PointSelectCallBack->Execute(NULL, this->ActiveNode, NULL);
+  }
+  else
+  {
+    this->Superclass::StartWidgetInteraction(startEventPos);
+  }
+}
+
 //----------------------------------------------------------------------
 int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
 {
+  if(PointSelectMode) return 0;
   int idx;
 
   double worldPos[3];
@@ -275,6 +307,8 @@ int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
   node->WorldPosition[1] = worldPos[1];
   node->WorldPosition[2] = worldPos[2];
   node->Selected = 0;
+  node->PointId = this->pointId;
+  pointId++;
 
   this->GetRendererComputedDisplayPositionFromWorldPosition(
           worldPos, worldOrient, node->NormalizedDisplayPosition );
@@ -300,6 +334,19 @@ int vtkCMBArcWidgetRepresentation::AddNodeOnContour(int X, int Y)
   this->NeedToRender = 1;
 
   return 1;
+}
+
+int vtkCMBArcWidgetRepresentation::AddNodeAtDisplayPosition(int X, int Y)
+{
+  int addNode = GetNumberOfNodes();
+  int r = vtkOrientedGlyphContourRepresentation::AddNodeAtDisplayPosition(X,Y);
+  if(r)
+  {
+    vtkContourRepresentationNode * node = GetNthNode( addNode );
+    node->PointId = this->pointId;
+    pointId++;
+  }
+  return r;
 }
 
 //----------------------------------------------------------------------
@@ -338,6 +385,21 @@ vtkPolyData* vtkCMBArcWidgetRepresentation::GetContourRepresentationAsPolyData()
   this->UpdateContour();
   this->BuildLines();
 
+  vtkSmartPointer<vtkUnsignedIntArray> ids =
+                              vtkSmartPointer<vtkUnsignedIntArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetName ("PointIDs");
+  //std::set<vtkIdType> checker;
+
+  for(int i = 0; i < GetNumberOfNodes(); ++i)
+  {
+    //assert( checker.find(GetNthNode( i )->PointId) == checker.end());
+    //checker.insert(GetNthNode( i )->PointId);
+    ids->InsertNextTuple1(GetNthNode( i )->PointId);
+  }
+
+  this->Lines->GetPointData()->SetScalars(ids);
+
   return Lines;
  }
 
@@ -352,6 +414,12 @@ int vtkCMBArcWidgetRepresentation::GetNodeModifiedFlags(int n)
     flag = it->second;
     }
    return flag;
+}
+
+void vtkCMBArcWidgetRepresentation::SetPointSelectCallBack(vtkCommand * cp)
+{
+  if(this->PointSelectCallBack) this->PointSelectCallBack->Delete();
+  this->PointSelectCallBack = cp;
 }
 
 //----------------------------------------------------------------------
@@ -378,6 +446,7 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
     delete this->Internal->Nodes[i];
     }
   this->Internal->Nodes.clear();
+  pointId = 0;
 
   vtkPolyData *tmpPoints = vtkPolyData::New();
   tmpPoints->DeepCopy(pd);
@@ -389,6 +458,7 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
 
   //account for the offset if the input has vert cells
   vtkIdList *pointIds = pd->GetCell(pd->GetNumberOfVerts())->GetPointIds();
+  vtkDataArray * vda = pd->GetPointData()->GetScalars();
   vtkIdType numPointsInLineCells = pointIds->GetNumberOfIds();
 
   // Get the worldOrient from the point placer
@@ -427,6 +497,8 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
     node->WorldPosition[1] = pos[1];
     node->WorldPosition[2] = pos[2];
     node->Selected = 0;
+    node->PointId = vda->GetTuple1(i);
+    pointId = std::max(pointId, static_cast<unsigned int>(node->PointId+1));
 
     node->NormalizedDisplayPosition[0] = displayPos[0];
     node->NormalizedDisplayPosition[1] = displayPos[1];
@@ -537,4 +609,15 @@ void vtkCMBArcWidgetRepresentation::PrintSelf(ostream& os,
 
   os << indent << "Logging Enabled: "
      << (this->LoggingEnabled ? "On\n" : "Off\n");
+}
+
+void vtkCMBArcWidgetRepresentation::SetActiveNode(int a)
+{
+  this->ActiveNode = a;
+  this->NeedToRender = 1;
+  if(this->Renderer && this->Renderer->GetActiveCamera() != NULL)
+  {
+    this->BuildRepresentation();
+  }
+  this->Modified();
 }

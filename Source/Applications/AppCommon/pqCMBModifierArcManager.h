@@ -27,6 +27,8 @@
 #include "cmbSystemConfig.h"
 #include "pqGeneralTransferFunctionWidget.h"
 #include "pqCMBSceneObjectBase.h"
+#include "pqCMBModifierArc.h"
+#include <vtkBoundingBox.h>
 
 class QTableWidget;
 class pqCMBModifierArc;
@@ -40,21 +42,29 @@ class qtCMBArcWidgetManager;
 class pqServer;
 class pqRenderView;
 class pqPipelineSource;
+class qtCMBManualFunctionWidget;
+class qtCMBManualProfilePointFunctionModifier;
+class cmbProfileFunction;
+class qtCMBProfileWedgeFunctionWidget;
+class pqCMBModifierArcManagerInternal;
+class vtkPointSelectedCallback;
 
 class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 {
   Q_OBJECT
 
 public:
+  friend class vtkPointSelectedCallback;
   pqCMBModifierArcManager(QLayout *layout,
-                     pqServer *server,
-                     pqRenderView *renderer);
+                          pqServer *server,
+                          pqRenderView *renderer);
   virtual ~pqCMBModifierArcManager();
 
   QTableWidget *getWidget() const { return this->TableWidget;}
   qtCMBArcWidgetManager* arcWidgetManager() const {return this->ArcWidgetManager;}
 
   void AddLinePiece(pqCMBModifierArc *dataObj, int visible=1);
+  void AddFunction(cmbProfileFunction * fun);
 
   std::vector<int> getCurrentOrder(QString, int pindx);
 
@@ -66,6 +76,8 @@ public:
   pqCMBSceneObjectBase::enumObjectType getSourceType() const
   { return this->SourceType; }
 
+  void setUseNormal(bool un);
+
 public slots:
   void showDialog();
   void clear();
@@ -75,10 +87,12 @@ public slots:
   void onCurrentObjectChanged();
   void unselectAllRows();
   void onSelectionChange();
+  void onFunctionSelectionChange();
+  void onPointsSelectionChange();
   void enableSelection();
   void disableSelection();
   void applyAgain();
-  void addProxy(QString, int pid, pqPipelineSource*);
+  void addProxy(QString, int pid, vtkBoundingBox dataBounds, pqPipelineSource*);
   void clearProxies();
   void addLine();
   void selectLine(int lid);
@@ -86,12 +100,11 @@ public slots:
   void removeArc();
   void doneModifyingArc();
   void sendOrder();
-  void disableAbsolute();
   void enableAbsolute();
-  void onSaveProfile();
-  void onLoadProfile();
+  void disableAbsolute();
   void onSaveArc();
   void onLoadArc();
+  void importFunction();
 
 signals:
   void currentObjectChanged(pqCMBModifierArc*);
@@ -113,38 +126,70 @@ protected:
   QTableWidget * TableWidget;
   std::vector<pqCMBModifierArc*> ArcLines;
   pqCMBModifierArc * CurrentModifierArc;
-  QMap< QString, QMap<int, vtkSMSourceProxy*> > ServerProxies;
+  struct DataSource
+  {
+  public:
+    DataSource(vtkBoundingBox b = vtkBoundingBox(), vtkSMSourceProxy* sm = NULL)
+    :box(b), source(sm)
+    {}
+    vtkBoundingBox box;
+    vtkSMSourceProxy* source;
+  };
+  QMap< QString, QMap<int, DataSource> > ServerProxies;
   QMap< QString, QMap<int, int> > ServerRows;
   std::vector< QMap< QString, QMap<int, bool> > > ArcLinesApply;
   qtCMBArcWidgetManager* ArcWidgetManager;
+  QGridLayout* functionLayout;
+  qtCMBManualFunctionWidget* ManualFunctionWidget;
+  qtCMBProfileWedgeFunctionWidget* WedgeFunctionWidget;
+  cmbProfileFunction * selectedFunction;
   pqCMBSceneObjectBase::enumObjectType SourceType;
+  pqRenderView * view;
+  pqServer * server;
+  bool addPointMode;
+
+  bool useNormal;
 
   void initialize();
   void setRow(int row, pqCMBModifierArc * line);
 
-  Ui_qtArcFunctionControl * UI;
-  Ui_qtModifierArcDialog * UI_Dialog;
   QDialog * Dialog;
 
-  QPointer<pqGeneralTransferFunctionWidget> DisplacementProfile;
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
 
   void addApplyControl();
 
   void setUpTable();
 
+  void setUpPointsTable();
+
   void setDatasetTable(int inId);
 
   void addNewArc(pqCMBModifierArc* arc);
   void check_save();
 
+  void selectFunction(cmbProfileFunction* fun);
+
+  void updateUiControls();
+
+  int addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
+
+  pqCMBModifierArcManagerInternal * Internal;
+
 protected slots:
   void updateLineFunctions();
   void accepted();
-  void dispSplineControlChanged();
-  void weightingSplineControlChanged();
-  void dispSplineBox(bool);
-  void weightSplineBox(bool);
+  void nameChanged(QString);
+  void setToDefault();
+  void deleteFunction();
+  void cloneFunction();
+  void functionTypeChanged(int);
+  void functionModeChanged(int);
+  void pointDisplayed(int);
+  void addPoint();
+  void deletePoint();
+  int addPoint(vtkIdType);
+  void editArc();
 
 protected slots:
   void onLineChange(int Id);

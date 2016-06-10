@@ -21,6 +21,8 @@ set(UI_FORMS
     UI/qtCMBCreateSimpleGeometry.ui
     UI/qtCMBOptionsDialog.ui
     UI/qtCMBArcEditWidget.ui
+    UI/qtCMBFunctionEditor.ui
+    UI/qtCMBFunctionWedgeEditor.ui
     UI/qtCMBSceneArcPolygonMeshingDialog.ui
     UI/qtCMBSceneArcSnappingDialog.ui
     UI/qtCMBGenerateContoursDialog.ui
@@ -28,6 +30,7 @@ set(UI_FORMS
     UI/qtCMBSceneObjectDuplicate.ui
     UI/qtCMBSceneObjectImportNoUnits.ui
     UI/qtCMBSceneSurfaceMesherDialog.ui
+    UI/qtCMBManualFunctionWidget.ui
     UI/qtCMBTINStitcherDialog.ui
     UI/qtContourWidget.ui
     UI/qtDefineGroundPlane.ui
@@ -45,6 +48,7 @@ set(UI_FORMS
     UI/qtCMBStackedTINDialog.ui
     UI/pqContourWidget.ui
     UI/pqLineWidget.ui
+    UI/qtArcEditWidget.ui
     )
 
 qt4_wrap_ui(UI_BUILT_SOURCES
@@ -97,8 +101,12 @@ add_library(cmbAppCommon
   pqCMBColorMapWidget.h
   qtCMBPanelsManager.cxx
   qtCMBPanelsManager.h
-  pqScalarBarWidget.cxx
-  pqScalarBarWidget.h
+  cmbManualProfileFunction.cxx
+  cmbManualProfileFunction.h
+  cmbProfileFunction.cxx
+  cmbProfileFunction.h
+  cmbProfileWedgeFunction.cxx
+  cmbProfileWedgeFunction.h
   qtCMBAboutDialog.cxx
   qtCMBAboutDialog.h
   pqCMBAppCommonInit.cxx
@@ -109,6 +117,8 @@ add_library(cmbAppCommon
   pqCMBDisplayProxyEditor.h
   pqCMBEnumPropertyWidget.cxx
   pqCMBEnumPropertyWidget.h
+  pqScalarBarWidget.cxx
+  pqScalarBarWidget.h
   qtCMBHelpDialog.cxx
   qtCMBHelpDialog.h
   vtkCMBInteractorStyleRubberBand.cxx
@@ -158,12 +168,16 @@ add_library(cmbAppCommon
   qtCMBCreateSimpleGeometry.cxx
   qtCMBCreateSimpleGeometry.h
   qtCMBMeshingMonitor.cxx
+  qtCMBManualFunctionWidget.cxx
+  qtCMBManualFunctionWidget.h
   qtCMBOptionsContainer.cxx
   qtCMBOptionsContainer.h
   qtCMBOptionsDialog.cxx
   qtCMBOptionsDialog.h
   qtCMBOptionsPage.cxx
   qtCMBOptionsPage.h
+  qtCMBProfileWedgeFunctionWidget.cxx
+  qtCMBProfileWedgeFunctionWidget.h
   qtCMBProjectServerManager.cxx
   qtCMBProjectServerManager.h
   qtCMBTreeWidget.cxx

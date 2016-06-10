@@ -221,6 +221,11 @@ void qtCMBArcWidget::ModifyMode()
   this->Internals->ModifyMode->setChecked(true);
 }
 
+void qtCMBArcWidget::EditMode()
+{
+  this->Internals->EditMode->setChecked(true);
+}
+
 //-----------------------------------------------------------------------------
 void qtCMBArcWidget::checkCanBeEdited()
 {
@@ -348,3 +353,4 @@ void qtCMBArcWidget::useArcEditingUI(bool isWholeArc)
   this->Internals->Delete->setVisible(false);
   this->Internals->Closed->setEnabled(isWholeArc);
 }
+

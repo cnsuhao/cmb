@@ -155,7 +155,7 @@ int qtCMBArcWidgetManager::create()
     {
     this->Widget = this->createDefaultContourWidget(normal, planepos);
     QObject::connect(this->Widget,SIGNAL(contourDone()),
-      this,SLOT(updateArcNode()));
+                     this,SLOT(updateArcNode()));
     created = true;
     }
 
@@ -210,6 +210,8 @@ int qtCMBArcWidgetManager::edit()
       this,SLOT(editingFinished()));
     QObject::connect(this->EditWidget,SIGNAL(startArcEditing()),
       this,SIGNAL(editingStarted()));
+    QObject::connect(this->EditWidget,SIGNAL(selectedPointOnLine(vtkIdType)),
+                     this, SIGNAL(selectedId(vtkIdType)));
 
     }
   pqCMBArc* arcObj = this->Arc;
@@ -601,4 +603,14 @@ void qtCMBArcWidgetManager::makeArc(vtkIdType startPID, vtkIdType endPID)
 {
   this->modifyArc(startPID, endPID,
     vtkCMBSubArcModifyClientOperator::OpMAKEARC);
+}
+
+void qtCMBArcWidgetManager::startSelectPoint()
+{
+  this->EditWidget->selectPointMode();
+}
+
+void qtCMBArcWidgetManager::cancelSelectPoint()
+{
+  this->EditWidget->selectedPoint(-1);
 }

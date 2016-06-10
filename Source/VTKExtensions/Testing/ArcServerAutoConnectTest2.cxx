@@ -33,8 +33,10 @@ int ArcServerAutoConnectTest2( int /*argc*/, char * /*argv*/[] )
   for ( int i = 0; i < 8; i+=2)
     {
     vtkCMBArc *arc = vtkCMBArc::New();
-    arc->SetEndNode(0,en[i]);
-    arc->SetEndNode(1,en[i+1]);
+    vtkCMBArc::Point pt1(en[i], i);
+    vtkCMBArc::Point pt2(en[i+1], i+1);
+    arc->SetEndNode(0,pt1);
+    arc->SetEndNode(1,pt2);
     }
 
   vtkSmartPointer<vtkCMBArcAutoConnectOperator> connect =

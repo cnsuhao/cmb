@@ -5755,6 +5755,46 @@ associates the containing cell ID to the point.
 
     </SourceProxy>
 
+    <SourceProxy name="ArcPointGlyphingFilter"
+                 class="vtkCMBArcPointGlyphingFilter"
+                 label="Glyph Arc Points">
+      <Documentation
+        long_help="Glyph arc points">
+        write me.
+      </Documentation>
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkPolyData"/>
+        </DataTypeDomain>
+        <InputArrayDomain name="input_array"
+          attribute_type="point"
+          optional="1"/>
+        <Documentation>
+          Set the input.
+        </Documentation>
+      </InputProperty>
+
+      <IntVectorProperty name="setVisible" command="setVisible"
+        number_of_elements="1" default_values="-1">
+        <Documentation>
+          set point as visiable
+        </Documentation>
+      </IntVectorProperty>
+
+      <DoubleVectorProperty name="setScale"  command="setScale"
+         number_of_elements="1" default_values="-1">
+      </DoubleVectorProperty>
+
+      <Property name="clearVisible" command="clearVisible" />
+
+    </SourceProxy>
+
     <SourceProxy name="ArcDepressFilter" class="vtkArcDepressFilter"
       label="Depress PolyData">
       <Documentation
@@ -5788,16 +5828,6 @@ associates the containing cell ID to the point.
       </DoubleVectorProperty>
 
       <IntVectorProperty
-        name="SetFunctionModes"
-        command="SetFunctionModes"
-        number_of_elements="3"
-        default_values="-1 0 1">
-        <Documentation>
-          Sets relative and symmetry control.
-        </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
         name="AddArc"
         command="AddArc"
         number_of_elements="1"
@@ -5818,22 +5848,12 @@ associates the containing cell ID to the point.
       </IntVectorProperty>
 
       <IntVectorProperty
-        name="ClearFunctions"
-        command="ClearFunctions"
-        number_of_elements="1"
-        default_values="-1">
-        <Documentation>
-         Clears the weighting and desp functions
-        </Documentation>
-      </IntVectorProperty>
-
-      <IntVectorProperty
-        name="SelectFunctionType"
-        command="SelectFunctionType"
+        name="SetFunctionToPoint"
+        command="SetFunctionToPoint"
         number_of_elements="3"
-        default_values="-1 0 0">
+        default_values="-1 -1 -1">
         <Documentation>
-          Selects function type.
+          Set a profile function to a point
         </Documentation>
       </IntVectorProperty>
 
@@ -5897,34 +5917,55 @@ associates the containing cell ID to the point.
         </Documentation>
       </IntVectorProperty>
 
+      <IntVectorProperty
+          name="CreateManualFunction"
+          command="CreateManualFunction"
+          number_of_elements="6"
+          default_values="-1 -1 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </IntVectorProperty>
+
+
+      <DoubleVectorProperty
+          name="CreateWedgeFunction"
+          command="CreateWedgeFunction"
+          number_of_elements="10"
+          default_values="-1 -1 0 0 0 0 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </DoubleVectorProperty>
+
       <DoubleVectorProperty
         name="AddWeightPoint"
         label="Add Weighting Point"
         command="AddWeightingFunPoint"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Add point to wighting function.
         </Documentation>
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
-        name="AddDespPoint"
+        name="AddManualDespPoint"
         label="Add Desp Point"
-        command="AddDispFunPoint"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        command="AddManualDispFunPoint"
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Point to be used in closest point calculation.
         </Documentation>
       </DoubleVectorProperty>
 
       <DoubleVectorProperty
-        name="SetControlVars"
+        name="SetManualControlVars"
         label="Set the control Varables"
-        command="SetControlRanges"
-        number_of_elements="5"
-        default_values="-1.0 0.0 0.0 0.0 0.0" >
+        command="SetManualControlRanges"
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
         <Documentation>
           Point to be used in closest point calculation.
         </Documentation>

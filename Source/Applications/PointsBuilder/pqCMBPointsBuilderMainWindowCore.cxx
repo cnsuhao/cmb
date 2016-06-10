@@ -221,6 +221,17 @@ public:
     {
     delete this->FilterDlg;
     }
+  foreach(QString filename, this->FilePieceIdObjectMap.keys())
+    {
+    foreach(int pieceIdx, this->FilePieceIdObjectMap[filename].keys())
+      {
+      pqCMBLIDARPieceObject* dataObj = this->FilePieceIdObjectMap[filename].value(pieceIdx);
+      if(dataObj)
+        {
+        delete dataObj;
+        }
+      }
+    }
   }
 
   vtkSMPropertyLink* RepPropLink;

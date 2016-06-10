@@ -13,6 +13,16 @@
 #include <QObject>
 #include <QAbstractItemView>
 #include <fstream>
+#include <vector>
+#include <map>
+#include <string>
+
+#include "vtkDataObject.h"
+#include "vtkBoundingBox.h"
+
+#include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
+#include "cmbProfileFunction.h"
 
 class qtCMBArcWidget;
 class qtCMBArcEditWidget;
@@ -22,11 +32,33 @@ class pqPipelineSource;
 class vtkPiecewiseFunction;
 class vtkSMSourceProxy;
 
-class pqCMBModifierArc :  public QObject
+class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
 {
   Q_OBJECT
 
+private:
+  struct profileFunctionWrapper;
+
 public:
+  enum FunctionMode{Single = 0, EndPoints = 1, PointAssignment = 2};
+  struct pointFunctionWrapper
+  {
+    friend class pqCMBModifierArc;
+  private:
+    profileFunctionWrapper const* function;
+    vtkIdType ptId;
+    vtkIdType pointIndex;
+    void setFunction(profileFunctionWrapper const* f);
+  public:
+    pointFunctionWrapper(pointFunctionWrapper const& other);
+    void operator=(pointFunctionWrapper const& other);
+    pointFunctionWrapper(profileFunctionWrapper const* fun = NULL);
+    ~pointFunctionWrapper();
+    cmbProfileFunction const* getFunction() const;
+    std::string getName() const;
+    vtkIdType getPointId() const;
+    vtkIdType getPointIndex() const;
+  };
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
   pqCMBModifierArc(vtkSMSourceProxy *proxy);
@@ -42,65 +74,56 @@ public:
 
   void setVisablity(bool vis);
 
-  vtkPiecewiseFunction * getDisplacementProfile();
-  vtkPiecewiseFunction * getWeightingFunction();
-
-  double getDisplacementDepth(RangeLable r)
-  {
-    return DisplacementDepthRange[r];
-  }
-
-  double getDistanceRange(RangeLable r)
-  {
-    return DistanceRange[r];
-  }
-
-  bool getSymmetry() const
-  {
-    return Symmetric;
-  }
-
-  bool getRelative() const
-  {
-    return Relative;
-  }
-
-  bool getDisplacementFunctionUseSpline()
-  {
-    return DispUseSpline;
-  }
-
-  bool getWeightingFunctionUseSpline()
-  {
-    return WeightUseSpline;
-  }
-
-  void getDisplacementSplineControl(double&, double&, double&);
-  void getWeightingSplineControl(double&, double&, double&);
-
   void writeFunction(std::ofstream & f);
-  void readFunction(std::ifstream & f);
+  void readFunction(std::ifstream & f, bool import_functions = false);
 
   void write(std::ofstream & f);
-  void read(std::ifstream & f);
+  void read(std::ifstream & f, bool import_functions = false);
+
+  bool updateLabel(std::string str, cmbProfileFunction * fun);
+
+  cmbProfileFunction * getStartFun()
+  {
+    return const_cast<cmbProfileFunction *>(startFunction->getFunction());
+  }
+  cmbProfileFunction * getEndFun()
+  {
+    return const_cast<cmbProfileFunction *>(endFunction->getFunction());
+  }
+  bool setStartFun(std::string const& name);
+  bool setEndFun(std::string const& name);
+
+  void getFunctions(std::vector<cmbProfileFunction*> & funs) const;
+
+  cmbProfileFunction * createFunction();
+
+  bool deleteFunction(std::string const& name);
+
+  cmbProfileFunction * setFunction(std::string const& name, cmbProfileFunction::FunctionType mode);
+
+  cmbProfileFunction * cloneFunction(std::string const& name);
+
+  pointFunctionWrapper * getPointFunction(vtkIdType i);
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
+                                                                   cmbProfileFunction * fun);
+  void removeFunctionAtPoint(vtkIdType i);
+  bool pointHasFunction(vtkIdType i) const;
+
+  FunctionMode getFunctionMode() const;
+  void setFunctionMode(FunctionMode fm);
+
+  void getPointFunctions(std::vector<pointFunctionWrapper const*>& result) const;
+
+  bool isRelative() const;
 
 public slots:
-  void setLeftDistance(double dist);
-  void setRightDistance(double dist);
-  void setMinDisplacementDepth(double d);
-  void setMaxDisplacementDepth(double d);
-  void setDisplacementFunctionType(bool);
-  void setWeightingFunctionType(bool);
-  void setSymmetry(bool);
-  void setRelative(bool);
   void sendChangeSignals();
-  void updateArc(vtkSMSourceProxy* source);
+  void updateArc(vtkSMSourceProxy* source, vtkBoundingBox bbox);
   void switchToNotEditable();
   void switchToEditable();
   void removeFromServer(vtkSMSourceProxy* source);
   bool setCMBArc(pqCMBArc *);
-  void setDisplacementSplineControl(double, double, double);
-  void setWeightingSplineControl(double,double,double);
+  void setRelative(bool b);
 
 signals:
   void functionChanged(int);
@@ -111,22 +134,25 @@ signals:
 
 protected:
   //Varable for the path
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
+                                                                   profileFunctionWrapper * fun);
   pqCMBArc * CmbArc;
+  std::map<vtkIdType, pointFunctionWrapper *> pointsFunctions;
   bool IsExternalArc;
-  double DistanceRange[2];
-  double DisplacementDepthRange[2];
-  double DispSplineControl[3];
-  double WeightSplineControl[3];
-  vtkPiecewiseFunction * DisplacementProfile;
-  vtkPiecewiseFunction * WeightingFunction;
-  qtCMBArcEditWidget* Modifier;
+
+  FunctionMode functionMode;
+
+  std::map<std::string, profileFunctionWrapper * > functions;
+  pointFunctionWrapper * startFunction;
+  pointFunctionWrapper * endFunction;
+  
   int Id;
-  bool Symmetric;
-  bool Relative;
+  
   bool IsVisible;
-  bool DispUseSpline;
-  bool WeightUseSpline;
-  void sendRanges(vtkSMSourceProxy*);
+
+  bool IsRelative;
+
+  void setUpFunction();
 };
 
 #endif

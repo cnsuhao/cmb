@@ -14,6 +14,8 @@
 #include "pq3DWidget.h"
 #include <QColor>
 #include "cmbSystemConfig.h"
+#include "vtkContourWidget.h"
+#include "vtkCMBArcWidgetRepresentation.h"
 
 class pqServer;
 class vtkSMProxy;
@@ -70,6 +72,9 @@ public slots:
 
   /// Move to modify mode
   void ModifyMode( );
+
+  ///Move to Edit mode
+  void EditMode();
 
   /// Check if the loop can even go to edit mode
   void checkCanBeEdited();

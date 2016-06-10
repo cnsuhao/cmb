@@ -26,6 +26,10 @@ struct iPoint
   {
   public:
   double x,y,z;
+  vtkIdType ptId;
+  iPoint(double xin, double yin, double zin, vtkIdType id)
+  : x(xin), y(yin), z(zin), ptId(id)
+  {}
   };
 }
 
@@ -59,14 +63,15 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
     }
 
   //copy of all points we iterate before the split position
-  std::list<iPoint> originalPoints;
+  std::list<vtkCMBArc::Point> originalPoints;
 
   //go through the points of the arc and split it on the index
   int i=0;
   double position[3];
+  vtkCMBArc::Point point;
   bool foundSplitPoint = false;
   arc->InitTraversal();
-  while (arc->GetNextPoint(position))
+  while (arc->GetNextPoint(point))
     {
     if (i == this->Index)
       {
@@ -75,8 +80,7 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
       }
     else
       {
-      iPoint p={position[0],position[1],position[2]};
-      originalPoints.push_back(p);
+      originalPoints.push_back(point);
       }
     ++i;
     }
@@ -94,27 +98,28 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
   this->CreatedArcId = createdArc->GetId();
 
   //setup the new end nodes for both arcs
-  createdArc->SetEndNode(0,position);
+  createdArc->SetEndNode(0, point);
   double position2[3];
-  arc->GetEndNode(1)->GetPosition(position2);
-  createdArc->SetEndNode(1,position2);
-  arc->SetEndNode(1,position);
+  vtkCMBArc::Point point2;
+  arc->GetEndNode(1)->GetPosition(point2);
+  createdArc->SetEndNode(1, point2);
+  arc->SetEndNode(1,point);
 
   //now move all the interal end points after the split
   //point to the createdArc
-  while (arc->GetNextPoint(position))
+  while (arc->GetNextPoint(point))
     {
-    createdArc->InsertNextPoint(position);
+    createdArc->InsertNextPoint(point);
     }
 
   //now clear the original arc internal points
   //and reset its internal points to all the points before the split
   arc->ClearPoints();
 
-  std::list<iPoint>::iterator it;
+  std::list<vtkCMBArc::Point>::iterator it;
   for (it = originalPoints.begin(); it != originalPoints.end(); it++)
     {
-    arc->InsertNextPoint(it->x,it->y,it->z);
+    arc->InsertNextPoint(*it);
     }
   return true;
 }

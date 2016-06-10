@@ -30,17 +30,21 @@ public:
   void SetAxis(int axis);
   void AddPointToArc(double arc_ind, double v1, double v2);
   void SetArcAsClosed(int arc_ind);
-  void SetControlRanges(double arc_ind,
-                        double minDispDist, double maxDispDist,
-                        double minWeightDist, double maxWeightDist);
+  void SetManualControlRanges(double arc_ind, double pointId,
+                              double minDispDist, double maxDispDist,
+                              double minWeightDist, double maxWeightDist);
   void AddArc(int arc_ind);
   void RemoveArc(int arc_ind);
   void SetArcEnable(int arc_ind, int isEnabled);
-  void SetFunctionModes(int arc_ind, int isRelative, int isSymmetric);
-  void ClearFunctions( int arc_ind );
-  void AddWeightingFunPoint( double arc_ind, double x, double y, double m, double s);
-  void AddDispFunPoint( double arc_ind, double x, double y, double m, double s);
-  void SelectFunctionType( int arc_ind, int weightT, int dispT);
+  void CreateManualFunction(int arc_ind, int funId, int desptFunctionType, int weightFunType,
+                            int isRelative, int isSymmetric);
+  void CreateWedgeFunction(double arc_ind, double funId, double weightFunType, double relative,
+                           double mode, double clamp, double basewidth, double displacement,
+                           double slopeLeft, double slopeRight );
+  void SetFunctionToPoint(int arc_ind, int ptId, int funId );
+  void AddWeightingFunPoint( double arc_ind, double funId,
+                             double x, double y, double m, double s);
+  void AddManualDispFunPoint( double arc_ind, double funId, double x, double y, double m, double s);
 
   void ResizeOrder(int size);
   void SetOrderValue(int loc, int arc_ind);

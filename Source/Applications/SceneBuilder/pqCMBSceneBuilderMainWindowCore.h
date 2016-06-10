@@ -21,6 +21,7 @@ class pqCMBSceneTree;
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
 class vtkTransform;
+class vtkBoundingBox;
 class QWidget;
 class pqCMBGlyphObject;
 class vtkHydroModelPolySource;
@@ -189,6 +190,7 @@ private:
   double getMinVOIBounds();
   void setupBoxWidget();
   void CreatTransPipelineMesh(const QStringList &selectedNames,
+                              vtkBoundingBox & bbox,
                               QList<pqPipelineSource*> &transformFilters,
                               pqCMBSceneObjectBase::enumObjectType dt);
 

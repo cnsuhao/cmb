@@ -19,6 +19,8 @@
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
+#include "vtkUnsignedIntArray.h"
+#include "vtkPointData.h"
 
 vtkStandardNewMacro(vtkCMBArcProvider);
 //----------------------------------------------------------------------------
@@ -115,7 +117,13 @@ vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
   vtkIdTypeArray *cellArray = vtkIdTypeArray::New();
   vtkCellArray *cells = vtkCellArray::New();
 
+  vtkSmartPointer<vtkUnsignedIntArray> ids =
+    vtkSmartPointer<vtkUnsignedIntArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetName ("PointIDs");
+
   points->SetNumberOfPoints(pointSize);
+  ids->SetNumberOfTuples(pointSize);
   cellArray->SetNumberOfValues(cellSize+1); //make room for the cell size value
   vertCell->InsertNextCell(numEndNodes);
 
@@ -123,16 +131,19 @@ vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
   vtkIdType index = 0;
   cellArray->SetValue(index,cellSize); //setup the size of the cell
   points->SetPoint(index,this->Arc->GetEndNode(0)->GetPosition());
+  ids->SetTuple1(index,this->Arc->GetEndNode(0)->GetPointId());
   vertCell->InsertCellPoint(index);
   cellArray->SetValue(index+1,index);
   ++index;
 
   //add all the points in the internal point list
   this->Arc->InitTraversal();
-  double point[3];
+  //TODO Save id to output polydata
+  vtkCMBArc::Point point;
   while(this->Arc->GetNextPoint(point))
     {
     points->SetPoint(index,point[0],point[1],point[2]);
+    ids->SetTuple1(index,point.GetId());
     cellArray->SetValue(index+1,index);
     ++index;
     }
@@ -145,6 +156,7 @@ vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
   else if ( numEndNodes == 2 )
     {
     points->SetPoint(index,this->Arc->GetEndNode(1)->GetPosition());
+    ids->SetTuple1(index,this->Arc->GetEndNode(1)->GetPointId());
     vertCell->InsertCellPoint(index);
     cellArray->SetValue(index+1,index);
     }
@@ -154,6 +166,8 @@ vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
 
   representation->SetPoints(points);
   points->FastDelete();
+
+  representation->GetPointData()->SetScalars(ids);
 
   representation->SetVerts(vertCell);
   vertCell->FastDelete();
@@ -209,10 +223,16 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
   vtkCellArray *vertCell = vtkCellArray::New();
   vtkIdTypeArray *cellArray = vtkIdTypeArray::New();
   vtkCellArray *cells = vtkCellArray::New();
+  vtkSmartPointer<vtkUnsignedIntArray> ids =
+      vtkSmartPointer<vtkUnsignedIntArray>::New();
+  ids->SetNumberOfComponents(1);
+  ids->SetName ("PointIDs");
 
   //the sub-arc can only be an open line
   vtkIdType cellSize = pointSize;
   points->SetNumberOfPoints(pointSize);
+  ids->SetNumberOfTuples(pointSize);
+
   cellArray->SetNumberOfValues(cellSize+1);
   cellArray->SetValue(0,cellSize); //setup the size of the cell
 
@@ -225,6 +245,7 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
     {
     int nodeIndex = this->StartPointId == 0 ? 0 : 1;
     points->SetPoint(index,this->Arc->GetEndNode(nodeIndex)->GetPosition());
+    ids->SetTuple1(index,this->Arc->GetEndNode(nodeIndex)->GetPointId());
     vertCell->InsertNextCell(1,&index);
     cellArray->SetValue(index+1,index);
      // then set the start point for arc traversal
@@ -252,13 +273,14 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
 
   //add all the points in the internal point list
   this->Arc->InitTraversal(startIndex, numPoints, forwardDir);
-  double point[3];
   // if this is the very first point, make it a vertex
+  vtkCMBArc::Point point;
   if(index == 0)
     {
     if(this->Arc->GetNextPoint(point))
       {
       points->SetPoint(index,point[0],point[1],point[2]);
+      ids->SetTuple1(index,point.GetId());
       vertCell->InsertNextCell(1, &index);
       cellArray->SetValue(index+1,index);
       ++index;
@@ -269,6 +291,7 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
   while(this->Arc->GetNextPoint(point))
     {
     points->SetPoint(index,point[0],point[1],point[2]);
+    ids->SetTuple1(index,point.GetId());
     cellArray->SetValue(index+1,index);
     ++index;
     }
@@ -277,6 +300,7 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
     {
     int nodeIndex = this->EndPointId == 0 ? 0 : 1;
     points->SetPoint(pointSize - 1,this->Arc->GetEndNode(nodeIndex)->GetPosition());
+    ids->SetTuple1(pointSize - 1,this->Arc->GetEndNode(nodeIndex)->GetPointId());
     cellArray->SetValue(pointSize,pointSize - 1);
     }
   // if we are doing an invert on a closed arc, and the end point is not an end node
@@ -285,6 +309,7 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
   else if(invertClosedArc && index < pointSize)
     {
     points->SetPoint(index,this->Arc->GetEndNode(0)->GetPosition());
+    ids->SetTuple1(index,this->Arc->GetEndNode(0)->GetPointId());
     cellArray->SetValue(index+1,index);
     index++;
     //add all the points in the internal point list
@@ -293,6 +318,7 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
     while(this->Arc->GetNextPoint(point))
       {
       points->SetPoint(index,point[0],point[1],point[2]);
+      ids->SetTuple1(index,point.GetId());
       cellArray->SetValue(index+1,index);
       ++index;
       }
@@ -306,6 +332,8 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
 
   representation->SetPoints(points);
   points->FastDelete();
+
+  representation->GetPointData()->SetScalars(ids);
 
   representation->SetVerts(vertCell);
   vertCell->FastDelete();

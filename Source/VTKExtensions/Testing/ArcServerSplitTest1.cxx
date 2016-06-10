@@ -22,8 +22,8 @@ int ArcServerSplitTest1( int /*argc*/, char * /*argv*/ [] )
   double mpos[3]={50,50,100};
 
   vtkCMBArc *arc = vtkCMBArc::New();
-  arc->SetEndNode(0,en1);
-  arc->SetEndNode(1,en2);
+  arc->SetEndNode(0, vtkCMBArc::Point(en1, 0));
+  arc->SetEndNode(1, vtkCMBArc::Point(en2, 1));
 
   //attempt to split an arc with no internal points
   vtkSmartPointer<vtkCMBArcSplitOnIndexOperator> splitIndex =
@@ -44,7 +44,7 @@ int ArcServerSplitTest1( int /*argc*/, char * /*argv*/ [] )
     }
 
   //now add a single internal point
-  arc->InsertNextPoint(mpos);
+  arc->InsertNextPoint(2, mpos);
   splitIndex->SetIndex(-1);
   if (splitIndex->Operate(arc->GetId()))
     {

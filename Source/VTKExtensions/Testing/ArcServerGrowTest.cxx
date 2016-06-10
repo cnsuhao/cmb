@@ -30,14 +30,14 @@ int ArcServerGrowTest( int /*argc*/, char * /*argv*/[] )
   for ( int i = 0; i < 4; i++)
     {
     vtkCMBArc *arc = vtkCMBArc::New();
-    arc->SetEndNode(0,en[i]);
-    arc->SetEndNode(1,en[i+1]);
+    arc->SetEndNode(0, vtkCMBArc::Point(en[i], i));
+    arc->SetEndNode(1, vtkCMBArc::Point(en[i+1], i+1));
     }
 
   //make the loop invalid by splitting it down the middle
   vtkCMBArc *arc = vtkCMBArc::New();
-  arc->SetEndNode(0,en[2]);
-  arc->SetEndNode(1,en[0]);
+  arc->SetEndNode(0, vtkCMBArc::Point(en[2], 2));
+  arc->SetEndNode(1, vtkCMBArc::Point(en[0], 0));
 
   vtkSmartPointer<vtkCMBArcGrowOperator> grow =
       vtkSmartPointer<vtkCMBArcGrowOperator>::New();

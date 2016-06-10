@@ -60,11 +60,15 @@ public:
   // Get the number of selected nodes
   virtual int GetNumberOfSelectedNodes();
 
+  void SetActiveNode(int a);
+
   //overloaded for logging purposes
   virtual int DeleteNthNode(int n);
   virtual int SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] );
   virtual int SetActiveNodeToWorldPosition(double worldPos[3]);
   virtual int AddNodeOnContour(int X, int Y);
+  virtual int AddNodeAtDisplayPosition(int X, int Y);
+  virtual void StartWidgetInteraction(double startEventPos[2]);
 
 
   // Description:
@@ -82,6 +86,12 @@ public:
   vtkSetMacro( CanEdit, int );
   vtkGetMacro( CanEdit, int );
   vtkBooleanMacro( CanEdit, int );
+
+  vtkSetMacro( PointSelectMode, int );
+  vtkGetMacro( PointSelectMode, int );
+  vtkBooleanMacro( PointSelectMode, int );
+
+  void SetPointSelectCallBack(vtkCommand * cp); //takes ownership
 
   //Description:
   // Generate a closed rectangle arc with four points, based on the
@@ -115,6 +125,9 @@ protected:
   //suppor the ability to disable editing of the arc
   int CanEdit;
 
+  int PointSelectMode;
+  vtkCommand * PointSelectCallBack;
+
   class vtkInternalMap;
   vtkInternalMap *ModifiedPointMap;
 
@@ -125,6 +138,8 @@ protected:
 private:
   vtkCMBArcWidgetRepresentation(const vtkCMBArcWidgetRepresentation&);  //Not implemented
   void operator=(const vtkCMBArcWidgetRepresentation&);  //Not implemented
+
+  unsigned pointId;
 };
 
 #endif
