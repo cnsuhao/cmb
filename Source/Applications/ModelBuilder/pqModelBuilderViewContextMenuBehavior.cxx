@@ -31,6 +31,8 @@
 #include "vtkPVCompositeDataInformation.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVGeneralSettings.h"
+#include "vtkSMRenderViewProxy.h"
+#include "vtkRenderWindowInteractor.h"
 
 #include <QAction>
 #include <QApplication>
@@ -475,10 +477,33 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
     return Superclass::eventFilter(caller, e);
     }
 
-  if (e->type() == QEvent::MouseButtonPress)
+  pqRenderView* view = qobject_cast<pqRenderView*>(
+    pqActiveObjects::instance().activeView());
+  vtkSMRenderViewProxy* rmp =view->getRenderViewProxy();
+  if (!rmp)
+    return Superclass::eventFilter(caller, e);
+  QWidget* senderWidget = qobject_cast<QWidget*>(caller);
+
+  bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
+  // Left-mouse double clicked will trigger a pick of the underneath representation, and
+  // if Ctrl-key is down the same time, the picked block will be toggle its selection.
+  if (e->type() == QEvent::MouseButtonDblClick)
     {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
-    if (me->button() & Qt::RightButton)
+    if ((me->button() & Qt::LeftButton) && view && senderWidget) // left mouse double-clicked
+      {
+      QPoint newPos = me->pos();
+      this->pickRepresentationBlock(view, newPos, senderWidget, false);
+      }
+    }
+  // Right-mouse single click, if there is no selection yet, it will trigger a pick first,
+  // then builds context menu with the newly selected (if any) block, otherwise
+  // it will just use existing selection to build context menu.
+  else if (e->type() == QEvent::MouseButtonPress)
+    {
+    QMouseEvent* me = static_cast<QMouseEvent*>(e);
+    if (me->button() & Qt::RightButton ||
+        (me->button() & Qt::LeftButton && ctrl))
       {
       this->m_clickPosition = me->pos();
       }
@@ -486,40 +511,28 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
   else if (e->type() == QEvent::MouseButtonRelease)
     {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
-    if (me->button() & Qt::RightButton && !this->m_clickPosition.isNull())
+    bool rightB = me->button() & Qt::RightButton;
+    bool leftB = me->button() & Qt::LeftButton;
+    if ((rightB || (leftB && ctrl))
+       && !this->m_clickPosition.isNull())
       {
-      QPoint newPos = static_cast<QMouseEvent*>(e)->pos();
+      QPoint newPos = me->pos();
       QPoint delta = newPos - this->m_clickPosition;
-      QWidget* senderWidget = qobject_cast<QWidget*>(caller);
-      if (delta.manhattanLength() < 3 && senderWidget != NULL)
+      if (delta.manhattanLength() < 3 && senderWidget != NULL && view)
         {
-        pqRenderView* view = qobject_cast<pqRenderView*>(
-          pqActiveObjects::instance().activeView());
-        if (view)
+        // For right-click, if we already have selection in representation(s) in the render view,
+        // do not do picking, just use the existing selection to build the context menu.
+        if((rightB &&
+           this->m_modelPanel->modelManager()->selectedModels().count() == 0 &&
+           this->m_modelPanel->modelManager()->selectedMeshes().count() == 0) ||
+           (leftB && ctrl)) // pick a block from click
           {
-          // If we already have selection in representation(s) in the render view,
-          // do not do picking, just use the existing selection to build the context menu.
-          if(this->m_modelPanel->modelManager()->selectedModels().count() == 0 &&
-             this->m_modelPanel->modelManager()->selectedMeshes().count() == 0) // pick a block from click
-            {
-            int pos[2] = { newPos.x(), newPos.y() } ;
-            // we need to flip Y.
-            int height = senderWidget->size().height();
-            pos[1] = height - pos[1];
-            unsigned int blockIndex = 0;
-            
-            pqDataRepresentation* pickedRepresentation = view->pickBlock(pos, blockIndex);
-
-//            this->buildMenu(this->PickedRepresentation, blockIndex);
-
-            // we want to select this block.
-            if(pickedRepresentation)
-              {
-              emit this->representationBlockPicked(pickedRepresentation, blockIndex);
-              }
-            }
+          this->pickRepresentationBlock(view, newPos, senderWidget, rightB ? false : ctrl);
+          }
+        if(rightB)
+          {
           this->buildMenuFromSelections();
-          this->m_contextMenu->popup(senderWidget->mapToGlobal(newPos));
+          this->m_contextMenu->popup(senderWidget->mapToGlobal(newPos));       
           }
         }
       this->m_clickPosition = QPoint();
@@ -527,6 +540,24 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
     }
 
   return Superclass::eventFilter(caller, e);
+}
+
+//-----------------------------------------------------------------------------
+void pqModelBuilderViewContextMenuBehavior::pickRepresentationBlock(
+  pqRenderView* view, const QPoint& newPos, QWidget* senderWidget, bool ctrl)
+{
+  int pos[2] = { newPos.x(), newPos.y() } ;
+  // we need to flip Y.
+  int height = senderWidget->size().height();
+  pos[1] = height - pos[1];
+  unsigned int blockIndex = 0;
+  
+  pqDataRepresentation* pickedRepresentation = view->pickBlock(pos, blockIndex);
+  // we want to select this block.
+  if(pickedRepresentation)
+    {
+    emit this->representationBlockPicked(pickedRepresentation, blockIndex, ctrl);
+    }
 }
 
 //-----------------------------------------------------------------------------

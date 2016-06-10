@@ -865,8 +865,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     const smtk::model::SessionRef&, bool, bool, bool)));
 
   QObject::connect(this->Internal->ViewContextBehavior,
-    SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int)),
-    this, SLOT(selectRepresentationBlock( pqDataRepresentation*, unsigned int )));
+    SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)),
+    this, SLOT(selectRepresentationBlock( pqDataRepresentation*, unsigned int, bool)));
 
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
@@ -1352,7 +1352,7 @@ void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(
 
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
-  pqDataRepresentation* repr, unsigned int blockIndex)
+  pqDataRepresentation* repr, unsigned int blockIndex, bool ctrlKey)
 {
   if(!repr)
     return;
@@ -1361,13 +1361,27 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
   if(!modinfo && !meshinfo)
     return;
 
-  this->Internal->smtkModelManager->clearModelSelections();
-
   vtkSMProxy* selectionSource = modinfo ?
     modinfo->BlockSelectionSource : meshinfo->BlockSelectionSource;
   vtkSMPropertyHelper prop(selectionSource, "Blocks");
   std::vector<vtkIdType> selIds;
-  selIds.push_back(static_cast<vtkIdType>(blockIndex));
+  // if ctrlKey, we will flip selection of the block being picked
+  if(ctrlKey)
+    {
+    selIds = prop.GetIdTypeArray();
+    std::vector<vtkIdType>::iterator it = std::find(
+      selIds.begin(), selIds.end(), blockIndex);
+    if(it != selIds.end())
+      selIds.erase(it);
+    else
+      selIds.push_back(blockIndex);
+    }
+  else
+    {
+    this->Internal->smtkModelManager->clearModelSelections();
+    selIds.push_back(static_cast<vtkIdType>(blockIndex));
+    }
+
   // set selected blocks
   prop.Set(&selIds[0], static_cast<unsigned int>(
     selIds.size()));
@@ -1383,7 +1397,10 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
 
   if(outport && selectionManager)
     {
-    outport->setSelectionInput(selectionSourceProxy, 0);
+    if(selIds.size() > 0)
+      outport->setSelectionInput(selectionSourceProxy, 0);
+    else
+      outport->setSelectionInput(0, 0);
 //    this->requestRender();
     this->updateSMTKSelection();
     selectionManager->blockSignals(true);
