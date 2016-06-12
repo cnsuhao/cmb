@@ -756,7 +756,7 @@ pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, cmbProfileFunction * fun)
   return addFunctionAtPoint(i,fit->second);
 }
 
-pqCMBModifierArc::pqCMBModifierArc::pointFunctionWrapper const*
+pqCMBModifierArc::pointFunctionWrapper const*
 pqCMBModifierArc::addFunctionAtPoint(vtkIdType i, profileFunctionWrapper * fun)
 {
   std::map<vtkIdType, pointFunctionWrapper *>::iterator it = pointsFunctions.find(i);

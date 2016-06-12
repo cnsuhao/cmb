@@ -52,6 +52,7 @@ target_include_directories(vtkCMBFiltering
             PRIVATE ${VXL_RPL_INCLUDE_DIR}
                     ${VXL_VCL_INCLUDE_DIR}
                     ${VXL_CORE_INCLUDE_DIR}
+                    ${Boost_INCLUDE_DIRS}
             )
 
 target_link_libraries(vtkCMBFiltering

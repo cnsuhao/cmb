@@ -1405,7 +1405,7 @@ void vtkArcDepressFilter
               static_cast<DepArcProfileFunction::FunctionType>(static_cast<int>(weightFunType_in));
   bool relative = relative_in != 0;
   DepArcWedgeProfileFunction::DisplacementMode disMode =
-                            static_cast< DepArcWedgeProfileFunction::DisplacementMode > (mode_in+1);
+                            static_cast< DepArcWedgeProfileFunction::DisplacementMode > (static_cast<int>(mode_in+1));
   bool clamp = clamp_in != 0;
 
   if(arc_ind < 0 || static_cast<size_t>(arc_ind) >= Arcs.size() || Arcs[arc_ind] == NULL)
