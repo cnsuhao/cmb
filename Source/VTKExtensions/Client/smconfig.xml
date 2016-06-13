@@ -5991,6 +5991,13 @@ associates the containing cell ID to the point.
         </Documentation>
       </DoubleVectorProperty>
 
+      <DoubleVectorProperty
+        name="computeDisplacementChange"
+        command="computeDisplacementChangeOnPointsViaBathymetry"
+        number_of_elements="2"
+        default_values="-1.0 -1.0" >
+      </DoubleVectorProperty>
+
       <!-- End of ArcDepressFilter -->
     </SourceProxy>
 

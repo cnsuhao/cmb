@@ -19,6 +19,9 @@
 
 class vtkPoints;
 
+/** this filter takes two inputs, 0 is the data to apply the filter to, 1 is the 
+ * data used to create the filter */
+
 class VTKCMBFILTERING_EXPORT vtkCMBApplyBathymetryFilter : public vtkDataSetAlgorithm
 {
 public:
@@ -75,6 +78,11 @@ public:
   vtkSetMacro(NoOP, bool);
   vtkGetMacro(NoOP, bool);
 
+  // Description:
+  // Value for when bathymetry field has no supporting data
+  vtkSetMacro(InvalidValue, double);
+  vtkGetMacro(InvalidValue, double);
+
   //Description:
   //Remove all connections on port 0, dataset that will be altered
   //with bathymetry
@@ -108,6 +116,7 @@ protected:
   double FlatZValue;
   bool FlattenZValues;
   bool NoOP;
+  double InvalidValue;
 
   //BTX
   class vtkCmbInternalTerrainInfo;

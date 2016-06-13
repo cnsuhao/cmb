@@ -240,6 +240,9 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)),
                    Qt::UniqueConnection);
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()), Qt::UniqueConnection);
+
+  QObject::connect(this->Internal->UI->ComputeChange, SIGNAL(clicked()),
+                   this, SLOT(computeChange()), Qt::UniqueConnection);
   this->check_save();
   this->addPointMode = false;
 
@@ -252,6 +255,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 
   this->Internal->UI->amountAdded->setText("NA");
   this->Internal->UI->amountRemoved->setText("NA");
+  this->Internal->UI->PointBathChangeControl->hide();
 }
 
 //-----------------------------------------------------------------------------
@@ -910,12 +914,14 @@ void pqCMBModifierArcManager::update()
   double added = 0;
 
   bool isN1 = false;
+  bool allNull = true;
   foreach(QString filename, ServerProxies.keys())
   {
     foreach(int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       if(source == NULL) continue;
+      allNull = false;
       source->UpdatePropertyInformation();
       double r = pqSMAdaptor::getElementProperty(source->GetProperty("AmountRemoved")).toDouble();
       double a = pqSMAdaptor::getElementProperty(source->GetProperty("AmountAdded")).toDouble();
@@ -932,12 +938,47 @@ void pqCMBModifierArcManager::update()
   {
     this->Internal->UI->amountAdded->setText("NA");
     this->Internal->UI->amountRemoved->setText("NA");
+    if(!allNull) this->Internal->UI->PointBathChangeControl->show();
   }
   else
   {
     this->Internal->UI->amountAdded->setText(QString::number(added));
     this->Internal->UI->amountRemoved->setText(QString::number(removed));
   }
+  if(allNull) this->Internal->UI->PointBathChangeControl->hide();
+}
+
+void pqCMBModifierArcManager::computeChange()
+{
+  double spacing = this->Internal->UI->SamplingSize->value();
+  double radius = this->Internal->UI->SearchRadius->value();
+  double removed = 0;
+  double added = 0;
+
+  QList< QVariant > v;
+  v << spacing << radius;
+
+  foreach(QString filename, ServerProxies.keys())
+  {
+    foreach(int pieceIdx, ServerProxies[filename].keys())
+    {
+      vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
+      if(source == NULL) continue;
+      pqSMAdaptor::setMultipleElementProperty(source->GetProperty("computeDisplacementChange"), v);
+      source->UpdateVTKObjects();
+      source->UpdatePropertyInformation();
+      double r = pqSMAdaptor::getElementProperty(source->GetProperty("AmountRemoved")).toDouble();
+      double a = pqSMAdaptor::getElementProperty(source->GetProperty("AmountAdded")).toDouble();
+      if(r == -1 || a == -1)
+      {
+        continue;
+      }
+      removed += r;
+      added += a;
+    }
+  }
+  this->Internal->UI->amountAdded->setText(QString::number(added));
+  this->Internal->UI->amountRemoved->setText(QString::number(removed));
 }
 
 void pqCMBModifierArcManager::removeArc()

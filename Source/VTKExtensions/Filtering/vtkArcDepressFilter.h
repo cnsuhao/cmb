@@ -56,12 +56,20 @@ public:
   double GetAmountAdded()
   { return amountAdded; }
 
+  void computeDisplacementChangeOnPointsViaBathymetry(double stepSize, double radius);
+
   //BTX
 protected:
   vtkArcDepressFilter();
   ~vtkArcDepressFilter();
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  void computeDisplacement( vtkPolyData *input, vtkPolyData *output,
+                            std::vector<int> &pointChanged);
+
+  void computeChange( vtkPolyData *input, vtkPoints *originalPts, vtkPoints *newPoints,
+                     std::vector<int> &pointChanged);
 
   int Axis;
   std::vector< DepArcData * > Arcs;
@@ -78,6 +86,8 @@ private:
 
   bool IsProcessing;
   //ETX
+
+  vtkPolyData * currentData;
 };
 
 #endif
