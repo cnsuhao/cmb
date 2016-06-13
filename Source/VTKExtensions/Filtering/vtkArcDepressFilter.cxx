@@ -1697,12 +1697,13 @@ void vtkArcDepressFilter
     }
   }
   bethPlane->RemoveDeletedCells();
-  vtkSmartPointer<vtkPolyData> out = bethPlane->NewInstance();
+  vtkPolyData * out = bethPlane->NewInstance();
   //Apply the displacment
   std::vector<int> pointChanged; //0 no change, 1 raise, -1 dig
   this->computeDisplacement( bethPlane, out, pointChanged );
   //calculate displacment vol change
   this->computeChange( bethPlane, bethPlane->GetPoints(), out->GetPoints(), pointChanged );
+  out->Delete();
 }
 
 void vtkArcDepressFilter::setUseNormalDirection(int in)
