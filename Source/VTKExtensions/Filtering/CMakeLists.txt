@@ -59,4 +59,5 @@ target_link_libraries(vtkCMBFiltering
             PRIVATE
               rtvl
               vtkSMTKReaderExt # for vtkLIDARReader
+              vtkFiltersSources
             )

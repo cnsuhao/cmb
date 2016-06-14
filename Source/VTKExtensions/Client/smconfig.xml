@@ -5827,6 +5827,26 @@ associates the containing cell ID to the point.
         </Documentation>
       </DoubleVectorProperty>
 
+      <DoubleVectorProperty
+        name="AmountRemoved"
+        label="Get Amount Removed"
+        command="GetAmountRemoved"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AmountAdded"
+        label="Get Amount Added"
+        command="GetAmountAdded"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
       <IntVectorProperty
         name="AddArc"
         command="AddArc"
@@ -5969,6 +5989,13 @@ associates the containing cell ID to the point.
         <Documentation>
           Point to be used in closest point calculation.
         </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="computeDisplacementChange"
+        command="computeDisplacementChangeOnPointsViaBathymetry"
+        number_of_elements="2"
+        default_values="-1.0 -1.0" >
       </DoubleVectorProperty>
 
       <!-- End of ArcDepressFilter -->

@@ -275,7 +275,8 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
     SIGNAL(triggered()), mainWinCore, SLOT(onSpawnSurfaceMesher()));
 
   QObject::connect(this->getMainDialog()->actionModify_With_Arc_Functions,
-                   SIGNAL(triggered()), mainWinCore, SLOT(onSpawnArcModifier()));
+                   SIGNAL(triggered()), mainWinCore, SLOT(onSpawnArcModifier()),
+                   Qt::UniqueConnection);
 
   QObject::connect(this->Tree,
     SIGNAL(lockedNodesChanged()), mainWinCore, SLOT(updateBoxWidget()));

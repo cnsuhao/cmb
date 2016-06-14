@@ -190,6 +190,7 @@ protected slots:
   void deletePoint();
   int addPoint(vtkIdType);
   void editArc();
+  void computeChange();
 
 protected slots:
   void onLineChange(int Id);

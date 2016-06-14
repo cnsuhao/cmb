@@ -51,6 +51,13 @@ public:
 
   void setUseNormalDirection(int);
 
+  double GetAmountRemoved()
+  { return amountRemoved; }
+  double GetAmountAdded()
+  { return amountAdded; }
+
+  void computeDisplacementChangeOnPointsViaBathymetry(double stepSize, double radius);
+
   //BTX
 protected:
   vtkArcDepressFilter();
@@ -58,10 +65,19 @@ protected:
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  void computeDisplacement( vtkPolyData *input, vtkPolyData *output,
+                            std::vector<int> &pointChanged);
+
+  void computeChange( vtkPolyData *input, vtkPoints *originalPts, vtkPoints *newPoints,
+                     std::vector<int> &pointChanged);
+
   int Axis;
   std::vector< DepArcData * > Arcs;
   std::vector< unsigned > ApplyOrder;
   bool UseNormalDirection;
+
+  double amountRemoved;
+  double amountAdded;
 
 private:
   vtkArcDepressFilter(const vtkArcDepressFilter&):vtkPolyDataAlgorithm()
@@ -70,6 +86,8 @@ private:
 
   bool IsProcessing;
   //ETX
+
+  vtkPolyData * currentData;
 };
 
 #endif
