@@ -33,7 +33,7 @@
 #include "vtkIntersectionPolyDataFilter.h"
 #include "vtkPlaneSource.h"
 
-#include "vtkCMBApplyBathymetryFilter.h"
+#include "smtk/extension/vtk/filter/vtkCMBApplyBathymetryFilter.h"
 
 #include <vtkTriangleFilter.h>
 

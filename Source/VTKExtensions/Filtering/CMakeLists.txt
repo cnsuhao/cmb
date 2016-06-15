@@ -8,7 +8,6 @@ set(CMB_Filtering_SRC
     vtkArcDepressFilter.cxx
     vtkClipPolygons.cxx
     vtkClosestPointFilter.cxx
-    vtkCMBApplyBathymetryFilter.cxx
     vtkCMBArcAutoConnectOperator.cxx
     vtkCMBArcCreateOperator.cxx
     vtkCMBArcDeleteOperator.cxx
@@ -52,6 +51,7 @@ target_include_directories(vtkCMBFiltering
             PRIVATE ${VXL_RPL_INCLUDE_DIR}
                     ${VXL_VCL_INCLUDE_DIR}
                     ${VXL_CORE_INCLUDE_DIR}
+                    ${SMTK_INCLUDE_DIRS}/extension/vtk/filtering/
                     ${Boost_INCLUDE_DIRS}
             )
 
@@ -59,5 +59,6 @@ target_link_libraries(vtkCMBFiltering
             PRIVATE
               rtvl
               vtkSMTKReaderExt # for vtkLIDARReader
+              vtkSMTKFilterExt
               vtkFiltersSources
             )
