@@ -51,7 +51,7 @@ target_include_directories(vtkCMBFiltering
             PRIVATE ${VXL_RPL_INCLUDE_DIR}
                     ${VXL_VCL_INCLUDE_DIR}
                     ${VXL_CORE_INCLUDE_DIR}
-                    ${SMTK_INCLUDE_DIRS}/extension/vtk/filtering/
+                    ${SMTK_INCLUDE_DIRS}/extension/vtk/filter/
                     ${Boost_INCLUDE_DIRS}
             )
 
