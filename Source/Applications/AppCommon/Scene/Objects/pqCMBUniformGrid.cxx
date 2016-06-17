@@ -52,28 +52,7 @@
 
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
-/*
-void TEST_DEM_TO_MESH(std::string fname)
-{
-  vtkGDALRasterReader * GDAL = vtkGDALRasterReader::New();
-  GDAL->SetFileName(fname.c_str());
-  GDAL->Update();
-  vtkDEMToMesh * Mesher = vtkDEMToMesh::New();
-  Mesher->SetUseScalerForZ(false);
-  Mesher->SetInputData(GDAL->GetOutput());
-  Mesher->Update();
-  vtkXMLDataSetWriter* const writer = vtkXMLDataSetWriter::New();
-  writer->SetInputData(Mesher->GetOutput());
-  writer->SetFileName("test_mesh.vtp");
-  writer->Write();
-  Mesher->SetUseScalerForZ(true);
-  Mesher->SetInputData(GDAL->GetOutput());
-  Mesher->Update();
-  writer->SetInputData(Mesher->GetOutput());
-  writer->SetFileName("test_mesh3D.vtp");
-  writer->Write();
-}
-*/
+
 //-----------------------------------------------------------------------------
 pqCMBUniformGrid::pqCMBUniformGrid() : pqCMBSceneObjectBase()
 {
