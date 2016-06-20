@@ -52,28 +52,7 @@
 
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
-/*
-void TEST_DEM_TO_MESH(std::string fname)
-{
-  vtkGDALRasterReader * GDAL = vtkGDALRasterReader::New();
-  GDAL->SetFileName(fname.c_str());
-  GDAL->Update();
-  vtkDEMToMesh * Mesher = vtkDEMToMesh::New();
-  Mesher->SetUseScalerForZ(false);
-  Mesher->SetInputData(GDAL->GetOutput());
-  Mesher->Update();
-  vtkXMLDataSetWriter* const writer = vtkXMLDataSetWriter::New();
-  writer->SetInputData(Mesher->GetOutput());
-  writer->SetFileName("test_mesh.vtp");
-  writer->Write();
-  Mesher->SetUseScalerForZ(true);
-  Mesher->SetInputData(GDAL->GetOutput());
-  Mesher->Update();
-  writer->SetInputData(Mesher->GetOutput());
-  writer->SetFileName("test_mesh3D.vtp");
-  writer->Write();
-}
-*/
+
 //-----------------------------------------------------------------------------
 pqCMBUniformGrid::pqCMBUniformGrid() : pqCMBSceneObjectBase()
 {
@@ -88,7 +67,9 @@ pqCMBUniformGrid::pqCMBUniformGrid(pqPipelineSource *source,
   : pqCMBSceneObjectBase(source)
 {
   this->FileName = filename;
-  this->prepGridObject(server, view, updateRep);
+  QFileInfo finfo(filename);
+  this->prepGridObject(server, view, updateRep,
+                       finfo.completeSuffix().toLower() != "tif");
   HasInvalidValue = false;
 }
 
@@ -106,12 +87,22 @@ pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
   builder->blockSignals(true);
   pqPipelineSource* source;
   QFileInfo finfo(filename);
+  if(finfo.completeSuffix().toLower() == "tif")
+  {
+    source =  builder->createReader("sources", "GDALRasterReader", files, server);
+    HasInvalidValue = true;
+    this->Source = source;
+    this->ImageSource = source;
+    this->setFileName(filename);
+    this->prepGridObject(server, view, updateRep, false);
+    return;
+  }
   if (this->isRawDEM(filename))
       {
       source =  builder->createReader("sources", "RawDEMReader", files, server);
       vtkSMPropertyHelper(source->getProxy(), "OutputImageData").Set(1);
       }
-  else if(finfo.completeSuffix().toLower() == "dem")
+  else if(finfo.completeSuffix().toLower() == "dem" || finfo.completeSuffix().toLower() == "tif")
       {
       //TEST_DEM_TO_MESH(filename);
       source =  builder->createReader("sources", "GDALRasterReader", files, server);
@@ -127,13 +118,14 @@ pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
   this->Source = mesh;
   this->ImageSource = source;
   this->setFileName(filename);
-  this->prepGridObject(server, view, updateRep);
+  this->prepGridObject(server, view, updateRep, true);
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBUniformGrid::prepGridObject(pqServer *server,
-                                         pqRenderView *view,
-                                         bool updateRep)
+                                      pqRenderView *view,
+                                      bool updateRep,
+                                      bool transferColor)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
@@ -149,23 +141,29 @@ void pqCMBUniformGrid::prepGridObject(pqServer *server,
     "Elevation", vtkDataObject::POINT);
 
   // use "Bob's" color table
-  vtkSMProxy* lut = builder->createProxy("transfer_functions", "ColorTransferFunction",
+  if(transferColor)
+    {
+    vtkSMProxy* lut = builder->createProxy("transfer_functions", "ColorTransferFunction",
                                          server, "transfer_functions");
-  QList<QVariant> values;
-  values << -1000.0 << 0.0 << 0.0 << 0
-         << 1000.0 << 0.0 << 0.0 << 0.498
-         << 2000.0 << 0.0 << 0.0 << 1.0
-         << 2200.0 << 0.0 << 1.0 << 1.0
-         << 2400.0 << 0.333 << 1.0 << 0.0
-         << 2600.0 << 0.1216 << 0.3725 << 0.0
-         << 2800.0 << 1.0 << 1.0 << 0.0
-         << 3000.0 << 1.0 << 0.333 << 0.0;
-  pqSMAdaptor::setMultipleElementProperty(
-      lut->GetProperty("RGBPoints"), values);
-  lut->UpdateVTKObjects();
-  pqSMAdaptor::setProxyProperty(
+    QList<QVariant> values;
+    values << -1000.0 << 0.0 << 0.0 << 0
+          << 1000.0 << 0.0 << 0.0 << 0.498
+          << 2000.0 << 0.0 << 0.0 << 1.0
+          << 2200.0 << 0.0 << 1.0 << 1.0
+          << 2400.0 << 0.333 << 1.0 << 0.0
+          << 2600.0 << 0.1216 << 0.3725 << 0.0
+          << 2800.0 << 1.0 << 1.0 << 0.0
+          << 3000.0 << 1.0 << 0.333 << 0.0;
+    pqSMAdaptor::setMultipleElementProperty(lut->GetProperty("RGBPoints"), values);
+    lut->UpdateVTKObjects();
+    pqSMAdaptor::setProxyProperty(
       this->getRepresentation()->getProxy()->GetProperty("LookupTable"), lut);
-  vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "SelectionVisibility").Set(0);
+    vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "SelectionVisibility").Set(0);
+    }
+  else
+    {
+    vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "MapScalars").Set(0);
+    }
   this->Source->getProxy()->UpdateVTKObjects();
   if (updateRep)
       {

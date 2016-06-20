@@ -169,6 +169,7 @@ set (XML_TESTS_WITH_BASELINES
   # XXX: nodata(SceneGen.osd.txt): DuplicateNodeTest
   # XXX: nodata(Ballard_veg_mask.jpg): EditTexturePointsTest
   ExportArcSetsTest
+  GeotiffOpenTest
   # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphSelectionTest_Playback
   # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphTest
   # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphTest_Playback
