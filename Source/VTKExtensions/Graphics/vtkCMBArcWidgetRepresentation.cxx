@@ -104,6 +104,35 @@ int vtkCMBArcWidgetRepresentation::GetNumberOfSelectedNodes()
   return numSelected;
 }
 
+int vtkCMBArcWidgetRepresentation::ComputeInteractionState(int X, int Y, int modified)
+{
+  if(this->FocalPoint->GetNumberOfPoints() == 0)
+  {
+    int numPoints = this->GetNumberOfNodes();
+    //Some times the focal point has no data with it.  This results in a
+    //segfault in Superclass::ComputeInteractionState, since when there is
+    //no data, part of FocalPoint is NULL. there is no check on FocalPoint
+    //in the superclass.
+    for ( int i = 0; i < numPoints; i++ )
+    {
+      if ( i != this->ActiveNode )
+      {
+        double worldPos[3];
+        double worldOrient[9];
+        this->GetNthNodeWorldPosition( i, worldPos );
+        this->GetNthNodeWorldOrientation( i, worldOrient );
+        this->FocalPoint->InsertNextPoint(worldPos );
+        this->FocalData->GetPointData()->GetNormals()->InsertNextTuple(worldOrient+6);
+      }
+    }
+  }
+  if(this->FocalPoint->GetNumberOfPoints() == 0)
+  {
+    return 0;
+  }
+  return Superclass::ComputeInteractionState(X,Y,modified);
+}
+
 //----------------------------------------------------------------------
 int vtkCMBArcWidgetRepresentation::SetNthNodeSelected(int n)
 {
