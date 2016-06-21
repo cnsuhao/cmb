@@ -432,6 +432,7 @@ endif()
   set (TESTS_WITHOUT_BASELINES
     AboutDialog
     HelpDialog
+    AttributeOptionalItemUI
     )
 
   set (TEST_WITH_POSTPROCESS
