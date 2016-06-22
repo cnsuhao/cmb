@@ -69,6 +69,7 @@ public:
   virtual int AddNodeOnContour(int X, int Y);
   virtual int AddNodeAtDisplayPosition(int X, int Y);
   virtual void StartWidgetInteraction(double startEventPos[2]);
+  virtual int ComputeInteractionState(int X, int Y, int modified);
 
 
   // Description:

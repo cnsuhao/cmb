@@ -126,7 +126,11 @@ bool vtkCMBArcUpdateOperator::Operate(vtkPolyData *source)
     for ( vtkIdType i=0; i < ids->GetNumberOfIds(); ++i)
       {
       source->GetPoint(ids->GetId(i),pos);
-      unsigned int pointID = vda->GetTuple1(ids->GetId(i));
+      unsigned int pointID = static_cast<unsigned int>(i);
+      if(vda != NULL)
+        {
+        pointID = static_cast<unsigned int>(vda->GetTuple1(ids->GetId(i)));
+        }
       if (currentIndex != 0 && currentIndex != numberOfInternalEndNodes-1)
         {
         updatedArc->InsertNextPoint(pointID, pos);
@@ -179,7 +183,7 @@ bool vtkCMBArcUpdateOperator::UpdateSubArc(
     for ( vtkIdType i=0; i < ids->GetNumberOfIds(); ++i)
       {
       source->GetPoint(ids->GetId(i),pos);
-      unsigned int pointID = vda->GetTuple1(ids->GetId(i));
+      unsigned int pointID = static_cast<unsigned int>(vda->GetTuple1(ids->GetId(i)));
       // if there is an end node involved
       if(currentIndex == 0 && (this->StartPointId==0 ||
         this->StartPointId == numArcPoints - 1))
