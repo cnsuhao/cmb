@@ -16,6 +16,7 @@
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
 #include "pqSMAdaptor.h"
+#include "vtkSMPVRepresentationProxy.h"
 #include <vtkProcessModule.h>
 #include <vtkSMDataSourceProxy.h>
 #include <vtkSMIntVectorProperty.h>
@@ -300,6 +301,7 @@ pqCMBLIDARPieceObject *pqCMBLIDARPieceObject::createObject(pqPipelineSource* sou
   obj->Representation =
     builder->createDataRepresentation(
     obj->ElevationSource->getOutputPort(0), view, "GeometryRepresentation");
+  vtkSMPVRepresentationProxy::SafeDownCast(obj->Representation->getProxy())->SetRepresentationType("Point Gaussian");
 
   vtkSMPropertyHelper(obj->Representation->getProxy(), "PointSize").Set(2);
 
