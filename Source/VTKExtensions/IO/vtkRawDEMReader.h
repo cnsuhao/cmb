@@ -149,6 +149,8 @@ public:
   vtkSetMacro(ConvertFromLatLongToXYZ, bool);
   vtkGetMacro(ConvertFromLatLongToXYZ, bool);
 
+  vtkSetVector3Macro(Origin, double);
+
   // Description:
   vtkBooleanMacro(TransformForZUp, bool);
   vtkSetMacro(TransformForZUp, bool);
@@ -242,6 +244,8 @@ protected:
   vtkIdType Dimensions[2];
 
   vtkRawDEMReaderInternals* Internals;
+
+  double Origin[3];
 
 private:
   vtkRawDEMReader(const vtkRawDEMReader&);  // Not implemented.
