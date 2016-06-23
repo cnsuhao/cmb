@@ -16,9 +16,6 @@ set(UI_FORMS
   pqCMBImportShapefile.ui
   pqCMBModelBuilderOptions.ui
   qtMesherSelector.ui
-  SimBuilder/qtSimBuilderExportADHDialog.ui
-  SimBuilder/qtSimBuilderExportDialog.ui
-  SimBuilder/qtSimBuilderEMSExportDialog.ui
   )
 
 qt4_wrap_ui(UI_BUILT_SOURCES
@@ -59,7 +56,6 @@ source_group("Generated" FILES
 set(SimBuilder_SOURCES
   SimBuilder/SimBuilderCore.cxx
   SimBuilder/SimBuilderCustomExportDialog.cxx
-  SimBuilder/SimBuilderEMSExportDialog.cxx
   SimBuilder/qtSimBuilderUIPanel.cxx
   SimBuilder/pqSimBuilderUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx
