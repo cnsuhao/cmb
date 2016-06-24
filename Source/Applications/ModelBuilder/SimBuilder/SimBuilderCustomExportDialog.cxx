@@ -264,6 +264,7 @@ void SimBuilderCustomExportDialog::updatePanel()
     delete this->ExportUIManager;
     }
   this->ExportUIManager = new pqSimBuilderUIManager();
+  this->ExportUIManager->setModelManager(this->SimAttSystem->refModelManager());
 
   // Serialize export system
   smtk::io::Logger logger;
@@ -284,14 +285,13 @@ void SimBuilderCustomExportDialog::updatePanel()
     return;
     }
 
-    // Lets get the toplevel view
+  // Lets get the toplevel view
   smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
   if (!topView)
     {
     QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
     return;
     }
-  
 
   this->ExportUIManager->setSMTKView(topView, this->ContentWidget, NULL);
 

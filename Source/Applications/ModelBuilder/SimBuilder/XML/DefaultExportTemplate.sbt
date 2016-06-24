@@ -1,9 +1,14 @@
 <?xml version="1.0"?>
 <!-- Default export-dialog template for CMB -->
-<SMTK_AttributeManager Version="1">
+<SMTK_AttributeSystem Version="2">
   <Definitions>
-    <AttDef Type="ExportSpec" BaseType="" Version="0" Unique="true">
+    <AttDef Type="ExportSpec" BaseType="" Version="1" Unique="true">
+      <AssociationsDef Name="model" Label="Model" Version="0"
+        NumberOfRequiredValues="1">
+        <MembershipMask>model</MembershipMask>
+      </AssociationsDef>
       <ItemDefinitions>
+        <MeshEntity Name="mesh" Label="Mesh" Version="0" NumberOfRequiredValues="1" />
         <String Name="AnalysisTypes" Label="Analysis Types" AdvanceLevel="99" Version="0"
                 Extensible="true" NumberOfRequiredValues="0" />
         <File Name="PythonScript" Label="Python script" Version="0"  NumberOfRequiredValues="1"
@@ -14,15 +19,13 @@
     </AttDef>
   </Definitions>
   <Attributes />
-  <RootView Title="Export">
-    <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
-    <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
-    <AdvancedFontEffects Bold="0" Italic="0" />
 
-    <InstancedView Title="ExportSpec">
+  <Views>
+    <View Type="Instanced" Title="ExportSpec" TopLevel="true"
+      FilterByAdvanceLevel="false" FilterByCategory="false">
       <InstancedAttributes>
-        <Att Type="ExportSpec">Options</Att>
+        <Att Name="Export Specification" Type="ExportSpec">Options</Att>
       </InstancedAttributes>
-    </InstancedView>
-  </RootView>
+    </View>
+  </Views>
 </SMTK_AttributeManager>
