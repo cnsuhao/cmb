@@ -276,6 +276,7 @@ vtkRawDEMReader::vtkRawDEMReader()
 
   this->OutputDataTypeIsDouble = false;
   this->Internals = new vtkRawDEMReaderInternals;
+  this->Origin[0] = this->Origin[1] = this->Origin[2] = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -724,6 +725,9 @@ void vtkRawDEMReader::ReadData(RawDEMReaderFileInfo &fileInfo,
                 }
               }
             }
+          pt[0] -= Origin[0];
+          pt[1] -= Origin[1];
+          pt[2] -= Origin[2];
           bbox.AddPoint(pt[0], pt[1], pt[2]);
 
           // add the point, but 1st make sure it is in the ReadBounds (if specified);

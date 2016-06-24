@@ -632,6 +632,20 @@ int pqCMBPointsBuilderMainWindowCore::ImportLIDARFile(const char *filename)
                                             this->Internal->PieceMainTable,
                                             this->Internal->pqCMBModifierArcTable,
                                             this->Internal->FilePieceIdObjectMap);
+  if(res != 0 && this->ReaderManager->userRequestsOrigin())
+  {
+    if (this->ReaderManager->setOrigin())
+    {
+      QList<pqCMBLIDARPieceObject*> allPieces =
+                                              this->Internal->PieceMainTable->getAllPieceObjects();
+      this->updatePieceRepresentations( allPieces, true );
+      this->setupReadClipping();
+      this->setupElevationFilter(this->Internal->DataBounds[4], this->Internal->DataBounds[5]);
+      this->activeRenderView()->forceRender();
+      this->activeRenderView()->resetCamera();
+      this->activeRenderView()->render();
+    }
+  }
 
   if (res!=0 && this->ReaderManager->userRequestsDoubleData())
     {

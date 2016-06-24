@@ -36,6 +36,9 @@ public:
   pqCMBLIDARReaderManager(pqCMBPointsBuilderMainWindowCore*,pqObjectBuilder*);
   virtual ~pqCMBLIDARReaderManager();
 
+  bool userRequestsOrigin();
+  bool setOrigin();
+
   bool userRequestsDoubleData();
   bool setOutputDataTypeToDouble();
   void convertFromLatLongToXYZ(int convertFromLatLong);
@@ -128,6 +131,9 @@ protected:
   QList<pqPipelineSource*> TemporaryPDSources;
   QList<pqPipelineSource*> TemporaryThresholdFilters;
   QList<pqPipelineSource*> TemporaryContourFilters;
+
+  bool ChangeOrigin;
+  double Origin[3];
 
 private:
   struct LASPieceInfo

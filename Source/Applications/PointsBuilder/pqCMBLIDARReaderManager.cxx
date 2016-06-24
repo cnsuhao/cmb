@@ -60,6 +60,7 @@ pqCMBLIDARReaderManager::pqCMBLIDARReaderManager(pqCMBPointsBuilderMainWindowCor
   this->ActiveReader = NULL;
   this->DEMTransformForZOrigin[0]=this->DEMTransformForZOrigin[1]=90.0;
   this->DEMZRotationAngle=0.0;
+  this->ChangeOrigin = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -160,6 +161,41 @@ vtkIdType pqCMBLIDARReaderManager::scanTotalNumPointsInfo(
 }
 
 //-----------------------------------------------------------------------------
+
+bool pqCMBLIDARReaderManager::setOrigin()
+{
+  if (!this->ReaderSourceMap.count())
+  {
+    return false;
+  }
+  Origin[0] = (this->CurrentReaderBounds[1] + this->CurrentReaderBounds[0])*0.5;
+  Origin[1] = (this->CurrentReaderBounds[3] + this->CurrentReaderBounds[2])*0.5;
+  Origin[2] = (this->CurrentReaderBounds[5] + this->CurrentReaderBounds[4])*0.5;
+  this->ChangeOrigin = true;
+  vtkSMProxy* readerProxy;
+  foreach(QString filename, this->ReaderSourceMap.uniqueKeys())
+  {
+    readerProxy = this->ReaderSourceMap[filename]->getProxy();
+    QString readerName(readerProxy->GetXMLName());
+    if(readerName.compare(SM_LIDAR_READER_NAME)==0 ||
+       readerName.compare(SM_LAS_READER_NAME)==0 ||
+       readerName.compare(SM_DEM_READER_NAME)==0 ||
+       readerName.compare(SM_GDAL_READER_NAME) == 0 ||
+       readerProxy->GetProperty("Origin")) // Could be from plugin
+    {
+      vtkSMPropertyHelper(readerProxy, "Origin").Set(Origin, 3);
+      readerProxy->UpdateProperty("Origin");
+    }
+  }
+  this->CurrentReaderBounds[0] -= Origin[0];
+  this->CurrentReaderBounds[1] -= Origin[0];
+  this->CurrentReaderBounds[2] -= Origin[1];
+  this->CurrentReaderBounds[3] -= Origin[1];
+  this->CurrentReaderBounds[4] -= Origin[2];
+  this->CurrentReaderBounds[5] -= Origin[2];
+  return true;
+}
+
 bool pqCMBLIDARReaderManager::setOutputDataTypeToDouble()
 {
   if (!this->ReaderSourceMap.count())
@@ -303,6 +339,31 @@ int pqCMBLIDARReaderManager::computeApproximateRepresentingFloatDigits(double mi
   // not rounding, but  throw in 0.2 offset so that can be close to 4 digits and
   // be ok
   return static_cast<int>(7.0 - ceil(logMaxComponent - logRange - 0.2));
+}
+
+bool pqCMBLIDARReaderManager::userRequestsOrigin()
+{
+  if (this->CurrentReaderBounds[1] < this->CurrentReaderBounds[0] || ChangeOrigin)
+  {
+    return false;
+  }
+  double dx = this->CurrentReaderBounds[1] - this->CurrentReaderBounds[0];
+  double dy = this->CurrentReaderBounds[3] - this->CurrentReaderBounds[2];
+  double dz = this->CurrentReaderBounds[5] - this->CurrentReaderBounds[4];
+  double rx = this->CurrentReaderBounds[0]/dx,
+         ry = this->CurrentReaderBounds[2]/dy,
+         rz = this->CurrentReaderBounds[4]/dz;
+  double max = std::max(rx, std::max(ry,rz));
+  if (max > 10000 &&
+      QMessageBox::question(this->Core->parentWidget(), "Data might be too far from origin",
+                            tr("Data might be too far from 0,0,0 for proper rendering.  "
+                               "Do you want to change the origin of the data"),
+                            QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) ==
+      QMessageBox::Yes)
+  {
+    return true;
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -533,6 +594,11 @@ int pqCMBLIDARReaderManager::importLIDARData(
     return 0;
     }
 
+  if(ChangeOrigin)
+  {
+    vtkSMPropertyHelper(readerProxy, "Origin").Set(Origin, 3);
+  }
+
   // 1, -1 used to indicate CurrentReaderBounds not yet set
   this->CurrentReaderBounds[0] = 1;
   this->CurrentReaderBounds[1] = -1;
@@ -632,6 +698,12 @@ int pqCMBLIDARReaderManager::importLASData(
     {
     return 0;
     }
+
+  if(ChangeOrigin)
+  {
+    vtkSMPropertyHelper(readerProxy, "Origin").Set(Origin, 3);
+  }
+
   // 1, -1 used to indicate CurrentReaderBounds not yet set
   this->CurrentReaderBounds[0] = 1;
   this->CurrentReaderBounds[1] = -1;
@@ -731,6 +803,11 @@ int pqCMBLIDARReaderManager::importDEMData(
     return 0;
     }
 
+  if(ChangeOrigin)
+  {
+    vtkSMPropertyHelper(readerProxy, "Origin").Set(Origin, 3);
+  }
+
   // 1, -1 used to indicate CurrentReaderBounds not yet set
   this->CurrentReaderBounds[0] = 1;
   this->CurrentReaderBounds[1] = -1;
@@ -823,6 +900,11 @@ pqCMBLIDARReaderManager
   if(!readerProxy)
   {
     return 0;
+  }
+
+  if(ChangeOrigin)
+  {
+    vtkSMPropertyHelper(readerProxy, "Origin").Set(Origin, 3);
   }
 
   // 1, -1 used to indicate CurrentReaderBounds not yet set
@@ -1334,6 +1416,7 @@ void pqCMBLIDARReaderManager::updateLASPieces(const char* filename,
     vtkSMDataSourceProxy* pdSource =
       vtkSMDataSourceProxy::SafeDownCast(dataObj->getSource()->getProxy());
     pdSource->CopyData( vtkSMSourceProxy::SafeDownCast(extract->getProxy()) );
+    pdSource->UpdateVTKObjects();
     pdSource->UpdatePipeline();
     this->Builder->destroy(extract);
 
@@ -1603,6 +1686,7 @@ void pqCMBLIDARReaderManager::destroyAllReaders()
       this->Builder->destroy(this->ReaderSourceMap[filename]);
       }
     }
+  this->ChangeOrigin = false;
   this->ReaderSourceMap.clear();
   this->ActiveReader = NULL;
   this->DEMTransformForZOrigin[0]=this->DEMTransformForZOrigin[1]=90.0;

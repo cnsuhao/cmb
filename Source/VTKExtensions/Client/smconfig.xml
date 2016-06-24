@@ -753,6 +753,18 @@
         command="ClearTransforms">
       </Property>
 
+      <DoubleVectorProperty
+        name = "Origin"
+        label = "change the origin"
+        command = "SetOrigin"
+        argument_is_array="1"
+        default_values='0 0 0'
+        number_of_elements="3">
+        <Documentation>
+          subtracts off the value.
+        </Documentation>
+      </DoubleVectorProperty>
+
 
       <DoubleVectorProperty
         name="Transform"
@@ -881,6 +893,18 @@
         short_help="Read LIDAR input file">
         long_help="Read a file of format (pts bin.pts or bin) for LIDAR object"
       </Documentation>
+
+      <DoubleVectorProperty
+        name = "Origin"
+        label = "change the origin"
+        command = "SetOrigin"
+        argument_is_array="1"
+        default_values='0 0 0'
+        number_of_elements="3">
+        <Documentation>
+          subtracts off the value.
+        </Documentation>
+      </DoubleVectorProperty>
 
       <StringVectorProperty
         name="FileName"
@@ -1052,6 +1076,18 @@
 
       <Property name="GatherDimensions" command="GatherDimensions">
       </Property>
+
+      <DoubleVectorProperty
+        name = "Origin"
+        label = "change the origin"
+        command = "SetOrigin"
+        argument_is_array="1"
+        default_values='0 0 0'
+        number_of_elements="3">
+        <Documentation>
+          subtracts off the value.
+        </Documentation>
+      </DoubleVectorProperty>
 
       <IdTypeVectorProperty name="Dimensions"
                             command="GetRasterDimensions"
@@ -1244,6 +1280,18 @@
 
       <Property name="GatherDimensions" command="GatherDimensions">
       </Property>
+
+      <DoubleVectorProperty
+        name = "Origin"
+        label = "change the origin"
+        command = "SetOrigin"
+        argument_is_array="1"
+        default_values='0 0 0'
+        number_of_elements="3">
+        <Documentation>
+          subtracts off the value.
+        </Documentation>
+      </DoubleVectorProperty>
 
       <IdTypeVectorProperty name="Dimensions"
         command="GetDimensions"
