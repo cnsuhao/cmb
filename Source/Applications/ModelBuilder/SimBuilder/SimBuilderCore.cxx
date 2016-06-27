@@ -101,14 +101,12 @@ int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
     }
   else if(templateOnly)
     {
-    filters= "SimBuilder Template Files (*crf *sbt);;"
-             "SimBuilder Resource Files (*crf);;"
+    filters= "SimBuilder Template Files (*crf);;"
              "SimBuilder Legacy Files (*sbt);;";
     }
   else
     {
-    filters= "SimBuilder Instance Files (*crf *sbi);;"
-             "SimBuilder Resource Files (*crf);;"
+    filters= "SimBuilder Instance Files (*crf);;"
              "SimBuilder Legacy Files (*sbi);;";
     }
   filters +=  "All Files (*)";
