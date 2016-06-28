@@ -1,31 +1,4 @@
 
-#we have a problem where things designed with the old source layout,
-#use this as the root of the project, and new scripts and code expects
-#the parent directory to be the root of the project. So to handle both use
-#cases we conditional call the project call based on if the project name
-#has been set. Project is the default string if the project command hasn't been
-#called.
-if(NOT ConceptualModelBuilder_Project_Name_Set)
-  cmake_minimum_required(VERSION 2.8.11)
-
-  if(POLICY CMP0025)
-    #setup policy rules for CMake 3.0 while we have a minimum required of 2.8.X
-    #both 42 and 25 were introduced in the same cmake version
-    cmake_policy(SET CMP0025 NEW)  # Clang is now Clang and Apple Clang
-    cmake_policy(SET CMP0042 OLD)  # Disable @rpath on Apple
-  endif()
-
-  project(ConceptualModelBuilder)
-
-  #just like the project name we can only call ctest once, and we want to
-  #do it in the root directory of the project
-  option(BUILD_TESTING "Build CMB Testing" ON)
-  if(BUILD_TESTING)
-    enable_testing()
-    include(CTest)
-  endif()
-endif()
-
 #Specify which tests we want to build.
 option(BUILD_SHORT_TESTS "Build short tests (10 second timeout tests)" ON)
 option(BUILD_MEDIUM_TESTS "Build medium tests (60 second timeout tests)" ON)
