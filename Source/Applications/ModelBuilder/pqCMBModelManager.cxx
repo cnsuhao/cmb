@@ -492,6 +492,51 @@ public:
       }
   }
 
+  void removeMeshRepresentations(smtk::mesh::ManagerPtr meshMgr,
+                                 const smtk::common::UUIDs& collectionids,
+                                 pqRenderView* view)
+  {
+    bool meshRemoved = false;
+    for (smtk::common::UUIDs::const_iterator cit = collectionids.begin();
+        cit != collectionids.end(); ++cit)
+      {
+      smtk::mesh::CollectionPtr collection = meshMgr->collection(*cit);
+      if(!collection->isValid())
+        {
+        continue;
+        }
+      smtk::common::UUID modelid = collection->associatedModel();
+      if(this->ModelInfos.find(modelid) == this->ModelInfos.end())
+        {
+        continue;
+        }
+      pqSMTKModelInfo* modelInfo = &this->ModelInfos[modelid];
+      for(qInternal::itMeshInfo meshiter = modelInfo->MeshInfos.begin();
+          meshiter != modelInfo->MeshInfos.end(); ++meshiter)
+        {
+        if(meshiter->second.Info->GetMeshCollectionID() == *cit)
+          {
+          pqApplicationCore::instance()->getObjectBuilder()->destroy(
+            meshiter->second.RepSource);
+          pqApplicationCore::instance()->getObjectBuilder()->destroy(
+            meshiter->second.MeshSource);
+          meshRemoved = true;
+          break;
+          }
+        }
+      if(meshRemoved)
+        {
+        modelInfo->MeshInfos.erase(*cit);
+        meshMgr->removeCollection(collection);
+        }
+      else
+        {
+        std::cerr << "Mesh collection is not removed from client: " << collection->name() << std::endl;
+        }
+      }
+  if(meshRemoved)
+    view->render();
+  }
 
   // If the group has already been removed from the model, the modelInfo(entityID)
   // will not return the modelInfo it requests, because the record is removed from
@@ -1580,6 +1625,21 @@ bool pqCMBModelManager::handleOperationResult(
       remmodels.insert(mit->first);
     }
   this->Internal->removeModelRepresentations(remmodels, view);
+
+  // remove expunged mesh collection representations
+  smtk::attribute::MeshItem::Ptr remMeshes =
+    result->findMesh("mesh_expunged");
+  if(remMeshes)
+    {
+    smtk::common::UUIDs meshcollections;
+    smtk::mesh::MeshList::const_iterator mit;
+    for(mit = remMeshes->begin(); mit != remMeshes->end(); ++mit)
+      {
+      meshcollections.insert((*mit).collection()->entity());
+      }
+    this->Internal->removeMeshRepresentations(
+      pxy->modelManager()->meshes(), meshcollections, view);
+    }
 
   smtk::model::Models modelEnts =
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
