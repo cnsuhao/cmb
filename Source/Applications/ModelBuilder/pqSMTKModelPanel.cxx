@@ -371,6 +371,13 @@ void pqSMTKModelPanel::selectMeshRepresentations(
                                       meshinfo->RepSource);
     }
 
+  // set the last selected rep to be active source
+  if(selmeshblocks.count() > 0)
+    {
+    pqSMTKMeshInfo* minfo = selmeshblocks.keys()[selmeshblocks.keys().count() - 1];
+    pqActiveObjects::instance().setActiveSource(minfo->RepSource);
+    }
+
   this->Internal->updateSelectionView();
 }
 //-----------------------------------------------------------------------------
