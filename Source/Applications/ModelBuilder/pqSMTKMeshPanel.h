@@ -38,14 +38,16 @@ public:
 
 
   void updateModel( QPointer<pqCMBModelManager> mmgr,
-                     QPointer<qtCMBMeshingMonitor> monitor);
+                    QPointer<qtCMBMeshingMonitor> monitor);
 
 protected slots:
-  void displayRequirements(const std::vector<smtk::model::Model>& models,
+  void displayRequirements(const smtk::model::Model& model,
                            const QString & workerName,
                            const remus::proto::JobRequirements& reqs);
 
   void clearActiveModel();
+
+  void clearActiveMesh();
 
   bool submitMeshJob();
 
@@ -54,6 +56,10 @@ signals:
   void entitiesSelected(const smtk::common::UUIDs&);
 
 private:
+  void cacheAtts(const std::string& atts);
+  const std::string& fetchCachedAtts() const;
+  bool hasCachedAtts(const remus::proto::JobRequirements& reqs) const;
+
   QPointer<pqCMBModelManager> ModelManager;
   QPointer<qtCMBMeshingMonitor> MeshMonitor;
   QPointer<qtRemusMesherSelector> MeshSelector;
@@ -64,6 +70,18 @@ private:
   smtk::attribute::SystemPtr AttSystem;
   smtk::shared_ptr<smtk::extension::qtUIManager> AttUIManager;
 
-  std::vector<smtk::model::Model> ActiveModels;
+  smtk::model::Model ActiveModel;
   remus::proto::JobRequirements ActiveRequirements;
+
+  struct AttCacheKey
+  {
+    smtk::model::Model m_model;
+    std::string m_workerName;
+
+    bool operator<( const AttCacheKey& other ) const
+    { return m_model < other.m_model ||
+             (m_model == other.m_model && m_workerName < other.m_workerName);
+    }
+  };
+  std::map< AttCacheKey, std::string > CachedAttributes;
 };

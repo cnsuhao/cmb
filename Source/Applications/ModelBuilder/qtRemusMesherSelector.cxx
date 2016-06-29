@@ -49,46 +49,65 @@ qtRemusMesherSelector::qtRemusMesherSelector(
   connect( this->Internal->cb_meshers, SIGNAL(currentIndexChanged ( int )),
            this, SLOT( mesherChanged( int )) );
 
-  this->rebuildModelList();
+  this->rebuildModelList(true);
 }
 
 //-----------------------------------------------------------------------------
-void qtRemusMesherSelector::rebuildModelList()
+void qtRemusMesherSelector::rebuildModelList(bool shouldRebuild)
 {
+  if(!shouldRebuild)
+    { //only rebuild when the visibilty / shouldRebuild becomes true
+    return;
+    }
   smtk::model::EntityRefArray allModels =
       this->ModelManager->findEntitiesOfType( smtk::model::MODEL_ENTITY );
 
-  //remove any current models
-  this->Internal->cb_models->blockSignals(true);
-  this->Internal->cb_models->clear();
-  this->Internal->cb_models->blockSignals(false);
-
-  //fill the model combo box based on the contents of the model Manager.
-  //todo, everytime a new model is added/removed we need to refresh this list
-  int index = 1;
-  smtk::model::EntityRefArray::const_iterator i;
-  for(i=allModels.begin(); i != allModels.end(); ++i, ++index)
+  //First determine if the models need to be cleared
+  bool rebuild = true;
+  if(static_cast<int>(allModels.size()) == this->Internal->cb_models->count())
     {
-    smtk::model::Model model = i->as<smtk::model::Model>();
-    if(model.isValid())
+    rebuild = false;
+    int index = 0;
+    smtk::model::EntityRefArray::const_iterator i;
+    for(i=allModels.begin(); i != allModels.end() && rebuild == false; ++i, ++index)
       {
-      std::stringstream fancyModelName;
-      fancyModelName << i->name( ) << " (" << i->dimension() << "D)";
-      this->Internal->cb_models->insertItem(index,
-                                            QString::fromStdString( fancyModelName.str() ),
-                                            QVariant::fromValue(model) );
+      smtk::model::Model new_model = i->as<smtk::model::Model>();
+      smtk::model::Model current_model =
+      fromItemData<smtk::model::Model>( this->Internal->cb_models, index);
+      rebuild = !(new_model == current_model);
       }
     }
+
+  if(rebuild)
+    {
+    this->Internal->cb_models->blockSignals(true);
+    this->Internal->cb_models->clear();
+
+    //fill the model combo box based on the contents of the model Manager.
+    //todo, everytime a new model is added/removed we need to refresh this list
+    smtk::model::EntityRefArray::const_iterator i;
+    for(i=allModels.begin(); i != allModels.end(); ++i)
+      {
+      smtk::model::Model model = i->as<smtk::model::Model>();
+      if(model.isValid())
+        {
+        std::stringstream fancyModelName;
+        fancyModelName << i->name( ) << " (" << i->dimension() << "D)";
+        this->Internal->cb_models->addItem(QString::fromStdString( fancyModelName.str() ),
+                                           QVariant::fromValue(model) );
+        }
+      }
+    this->Internal->cb_models->blockSignals(false);
+    }
+
+  this->modelChanged( this->Internal->cb_models->currentIndex() );
+
+
 }
 
 //-----------------------------------------------------------------------------
 void qtRemusMesherSelector::modelChanged(int index)
 {
-
-  //clear any existing elements in the combo box.
-  this->Internal->cb_meshers->blockSignals(true);
-  this->Internal->cb_meshers->clear();
-  this->Internal->cb_meshers->blockSignals(false);
 
   //grab the current model to determine the dimension
   smtk::model::Model model =
@@ -124,16 +143,41 @@ void qtRemusMesherSelector::modelChanged(int index)
       possibleWorkers.insert(meshWorkers.begin(),meshWorkers.end());
       }
 
-    int index = 1;
-    remus::proto::JobRequirementsSet::const_iterator i;
-    for(i = possibleWorkers.begin(); i != possibleWorkers.end(); ++i, ++index)
+    bool rebuild = true;
+    if(static_cast<int>(possibleWorkers.size()) == this->Internal->cb_meshers->count())
       {
-      this->Internal->cb_meshers->insertItem(index,
-                                      QString::fromStdString(i->workerName()),
-                                      QVariant::fromValue(*i) );
+      rebuild = false;
+      int index = 0;
+      remus::proto::JobRequirementsSet::const_iterator i;
+      for(i = possibleWorkers.begin(); i != possibleWorkers.end() && rebuild == false; ++i, ++index)
+        {
+        remus::proto::JobRequirements current_reqs =
+              fromItemData<remus::proto::JobRequirements>( this->Internal->cb_meshers, index);
+        rebuild = !(*i == current_reqs);
+        }
       }
-    }
 
+    if(rebuild)
+      {
+      //clear any existing elements in the combo box.
+      this->Internal->cb_meshers->blockSignals(true);
+      this->Internal->cb_meshers->clear();
+
+      remus::proto::JobRequirementsSet::const_iterator i;
+      for(i = possibleWorkers.begin(); i != possibleWorkers.end(); ++i, ++index)
+        {
+        this->Internal->cb_meshers->addItem(QString::fromStdString(i->workerName()),
+                                            QVariant::fromValue(*i) );
+        }
+      this->Internal->cb_meshers->blockSignals(false);
+      }
+
+    this->mesherChanged(  this->Internal->cb_meshers->currentIndex() );
+    }
+  else
+    {
+    emit this->noMesherForModel();
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -177,13 +221,11 @@ void qtRemusMesherSelector::mesherChanged( int index )
 {
   if(index >= 0)
     {
-    std::vector<smtk::model::Model> models(1, this->currentModel());
-
     QString workerName = this->Internal->cb_meshers->itemText( index );
     remus::proto::JobRequirements reqs  =
         fromItemData<remus::proto::JobRequirements>(this->Internal->cb_meshers,
                                                   index);
-    emit this->currentMesherChanged( models, workerName, reqs );
+    emit this->currentMesherChanged( this->currentModel(), workerName, reqs );
     }
 }
 
