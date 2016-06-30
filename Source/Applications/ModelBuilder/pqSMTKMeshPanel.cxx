@@ -46,46 +46,6 @@
 using namespace std;
 using namespace smtk::model;
 
-
-namespace
-{
-//-----------------------------------------------------------------------------
-void make_InstancedView(smtk::attribute::SystemPtr attSystem)
-{
-  // Generate list of all concrete definitions in the manager
-  typedef std::vector<smtk::attribute::DefinitionPtr>::const_iterator
-                                                            DefIterType;
-
-  smtk::common::ViewPtr root = attSystem->findTopLevelView();
-  int pos = root->details().findChild("Views");
-  smtk::common::View::Component &vcomp = root->details().child(pos);
-  std::vector<smtk::attribute::DefinitionPtr> baseDefinitions;
-
-  attSystem->findBaseDefinitions(baseDefinitions);
-  for (DefIterType baseIter = baseDefinitions.begin();
-       baseIter != baseDefinitions.end();baseIter++)
-    {
-    std::vector<smtk::attribute::DefinitionPtr> derivedDefs;
-    attSystem->findAllDerivedDefinitions(*baseIter, true, derivedDefs);
-
-    // Instantiate attribute for each concrete definition
-    for (DefIterType defIter = derivedDefs.begin();
-         defIter != derivedDefs.end(); defIter++)
-      {
-      smtk::common::ViewPtr view =
-        smtk::common::View::New("Instanced", (*defIter)->type());
-      smtk::common::View::Component &comp = view->details().addChild("InstancedAttributes");
-
-      smtk::attribute::AttributePtr instance =
-        attSystem->createAttribute((*defIter)->type());
-      comp.addChild("Att").setAttribute("Type", instance->definition()->type())
-        .setAttribute("Name",instance->name());
-      vcomp.addChild("View").setAttribute("Title", view->title());
-      }
-    }
-}
-}
-
 //-----------------------------------------------------------------------------
 pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
                                  QPointer<qtCMBMeshingMonitor> monitor,
@@ -100,8 +60,9 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
   SubmitterWidget( new QWidget(this) ),
   AttSystem(),
   AttUIManager(),
-  ActiveModels( ),
-  ActiveRequirements()
+  ActiveModel(),
+  ActiveRequirements(),
+  CachedAttributes()
 {
   this->setObjectName("smtkMeshDockWidget");
 
@@ -131,21 +92,21 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 
   QObject::connect(
     this->MeshSelector,
-    SIGNAL(currentMesherChanged(const std::vector<smtk::model::Model>&, const QString&, const remus::proto::JobRequirements&)),
+    SIGNAL(currentMesherChanged(const smtk::model::Model&, const QString&, const remus::proto::JobRequirements&)),
     this,
-    SLOT( displayRequirements(const std::vector<smtk::model::Model>&, const QString&, const remus::proto::JobRequirements&) ) );
+    SLOT( displayRequirements(const smtk::model::Model&, const QString&, const remus::proto::JobRequirements&) ) );
 
   QObject::connect(
     this,
     SIGNAL( visibilityChanged(bool) ),
     this->MeshSelector,
-    SLOT( rebuildModelList() ) );
+    SLOT( rebuildModelList(bool) ) );
 
   QObject::connect(
     this->MeshSelector,
-    SIGNAL( currentModelChanged( ) ),
+    SIGNAL( noMesherForModel( ) ),
     this,
-    SLOT( clearActiveModel() ) );
+    SLOT( clearActiveMesh() ) );
 
   QObject::connect(
     this,
@@ -182,34 +143,60 @@ void pqSMTKMeshPanel::updateModel(QPointer<pqCMBModelManager> mmgr,
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>& modelsToDisplay,
+void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDisplay,
                                           const QString & workerName,
                                           const remus::proto::JobRequirements& reqs)
 {
-  (void) workerName;
-  //determine the session that this modelId is part of.
-  //we can
-  this->ActiveModels = modelsToDisplay;
-  this->ActiveRequirements = reqs;
 
-  //now that we have a requirements lets display them in the dock widget,
+  if(modelToDisplay == this->ActiveModel &&
+     reqs == this->ActiveRequirements &&
+     this->AttSystem &&
+     this->AttUIManager )
+    {
+    //We don't need to clear anything!, use the existing setup we build
+    //before. This only works if the AttUIManager hasn't been cleared, which
+    //can occur if that mesher type goes away from the avialable list
+    //and than the UI moves away from the mesh tab
+    emit this->meshingPossible( true );
+    return;
+    }
+
+  //This check requires
+  if(this->AttSystem)
+    {
+    //At this point we need to cache the current attributes the user
+    //could be filling out the requirements for a given mesher and switch
+    //to another mesh/model
+    smtk::io::Logger inputLogger;
+    smtk::io::AttributeWriter writer;
+    std::string serializedAttributes;
+
+    writer.writeContents(*this->AttSystem, serializedAttributes, inputLogger);
+    this->cacheAtts(serializedAttributes);
+    }
+
   //each time a new mesher is selected this needs to rebuild the UI
-  //build up the smtk attributes.
+  this->ActiveModel = modelToDisplay;
+  this->ActiveRequirements = reqs;
   this->AttSystem.reset( new smtk::attribute::System() );
   this->AttSystem->setRefModelManager( this->ModelManager->managerProxy()->modelManager() );
 
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
 
-
   bool err = false;
-  if(reqs.sourceType() == (remus::common::ContentSource::File) )
+  if (this->hasCachedAtts(reqs) )
+    {
+    reader.readContents(*this->AttSystem, this->fetchCachedAtts(), inputLogger);
+    }
+  else if(reqs.sourceType() == (remus::common::ContentSource::File) )
     { //the requirements are the file name so pass that to the attribute reader
     const std::string p(reqs.requirements(), reqs.requirementsSize());
     err = reader.read(*this->AttSystem, p, true, inputLogger);
     }
   else
     { //the requirements are in memory xml contents
+
     err = reader.readContents(*this->AttSystem,
                               reqs.requirements(),
                               reqs.requirementsSize(),
@@ -217,29 +204,7 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
     }
 
   smtk::common::ViewPtr root = this->AttSystem->findTopLevelView();
-  if (!root)
-    {
-    // Create a new Group View called MeshView
-    root = smtk::common::View::New("Group", ("MeshView"));
-    root->details().setAttribute("TopLevel", "true");
-    this->AttSystem->addView(root);
-    }
-  // Get the Views Component ifit exists - else create it
-  int pos = root->details().findChild("Views");
-  if (pos < 0)
-    {
-    root->details().addChild("Views");
-    pos = root->details().findChild("Views");
-    }
-
-  smtk::common::View::Component &vcomp = root->details().child(pos);
-
-  // If manager contains no views, create InstancedView by default
   const bool useInternalFileBrowser = true;
-  if (vcomp.numberOfChildren() == 0)
-    {
-    make_InstancedView(this->AttSystem);
-    }
   this->AttUIManager.reset( new smtk::extension::qtUIManager( *this->AttSystem));
                             this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(),
                                                             useInternalFileBrowser);
@@ -251,22 +216,20 @@ void pqSMTKMeshPanel::displayRequirements(const std::vector<smtk::model::Model>&
 
 //-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::clearActiveModel()
-  {
-  this->ActiveModels = std::vector<smtk::model::Model>();
-  this->ActiveRequirements = remus::proto::JobRequirements();
-  this->AttUIManager.reset();
-  this->AttSystem.reset();
-
+{ //this happens we we switch away from the mesh tab
   emit this->meshingPossible( false );
-  }
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKMeshPanel::clearActiveMesh()
+{ //this happens when we have no meshers at all!
+  this->AttUIManager.reset();
+  emit this->meshingPossible( false );
+}
 
 //-----------------------------------------------------------------------------
 bool pqSMTKMeshPanel::submitMeshJob()
 {
-  if(this->ActiveModels.empty())
-    {
-    return false;
-    }
 
   smtk::io::Logger inputLogger;
   smtk::io::AttributeWriter writer;
@@ -281,44 +244,72 @@ bool pqSMTKMeshPanel::submitMeshJob()
     return false;
     }
 
+  //At this point we need to cache the active attributes. We cache the
+  //attributes so that between meshing operations we don't lose the values
+  //that the user has specified
+  this->cacheAtts(serializedAttributes);
+
   const std::string meshOperatorName = "mesh";
   const std::string serializedReqs = remus::proto::to_string(this->ActiveRequirements);
 
-  //for each model that we have, call the related sessions mesh operator
-  std::vector< smtk::model::Model >::const_iterator model_iter;
-  for( model_iter = this->ActiveModels.begin();
-       model_iter != this->ActiveModels.end();
-       ++model_iter)
+  //for the model that we have, call the related sessions mesh operator
+  smtk::model::SessionRef session = this->ActiveModel.session();
+  const bool is_valid_op = !!session.opDef(meshOperatorName);
+
+  if(is_valid_op)
     {
-    smtk::model::SessionRef session = model_iter->session();
-    const bool is_valid_op = !!session.opDef(meshOperatorName);
-    if(is_valid_op)
+    //determine if this session has a mesh operator
+    smtk::model::OperatorPtr meshOp = session.op(meshOperatorName);
+    meshOp->ensureSpecification();
+
+    smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
+
+    //send what model inside the session that we want to operate on
+    //currently we will only take the first model
+    meshSpecification->findModelEntity("model")->setValue( this->ActiveModel );
+
+    meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
+
+
+    meshSpecification->findString("remusRequirements")->setValue( serializedReqs );
+
+    //send to the operator the serialized instance information
+    meshSpecification->findString("meshingControlAttributes")->setValue(serializedAttributes);
+
+    const bool meshCreated = this->ModelManager->startOperation( meshOp );
+    if(!meshCreated)
       {
-      //determine if this session has a mesh operator
-      smtk::model::OperatorPtr meshOp = session.op(meshOperatorName);
-      meshOp->ensureSpecification();
-
-      smtk::attribute::AttributePtr meshSpecification = meshOp->specification();
-
-      //send what model inside the session that we want to operate on
-      //currently we will only take the first model
-      meshSpecification->findModelEntity("model")->setValue( *model_iter );
-
-      meshSpecification->findString("endpoint")->setValue(this->MeshMonitor->connection().endpoint());
-
-
-      meshSpecification->findString("remusRequirements")->setValue( serializedReqs );
-
-      //send to the operator the serialized instance information
-      meshSpecification->findString("meshingControlAttributes")->setValue(serializedAttributes);
-
-      const bool meshCreated = this->ModelManager->startOperation( meshOp );
-      if(!meshCreated)
-        {
-        return false;
-        }
+      return false;
       }
     }
   return true;
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKMeshPanel::cacheAtts(const std::string& atts)
+{
+  AttCacheKey key = { this->ActiveModel, this->ActiveRequirements.workerName() };
+  //our key needs to become smaller since reqs is fairly 'heavy'
+  this->CachedAttributes[key] = atts;
+}
+
+//-----------------------------------------------------------------------------
+const std::string& pqSMTKMeshPanel::fetchCachedAtts() const
+{
+  typedef std::map< AttCacheKey, std::string >::const_iterator c_it;
+
+  AttCacheKey key = { this->ActiveModel, this->ActiveRequirements.workerName() };
+  c_it result = this->CachedAttributes.find(key);
+  return result->second;
+}
+
+//-----------------------------------------------------------------------------
+bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& reqs) const
+{
+  typedef std::map< AttCacheKey, std::string >::const_iterator c_it;
+
+  AttCacheKey key = { this->ActiveModel, this->ActiveRequirements.workerName() };
+  c_it result = this->CachedAttributes.find(key);
+  return result != this->CachedAttributes.end();
 }
 

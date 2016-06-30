@@ -48,12 +48,14 @@ public:
   remus::proto::JobRequirements currentMesherRequirements() const;
 
 public slots:
-  void rebuildModelList();
+  void rebuildModelList(bool shouldRebuild);
 
 signals:
   void currentModelChanged( );
 
-  void currentMesherChanged(const std::vector<smtk::model::Model>& models,
+  void noMesherForModel();
+
+  void currentMesherChanged(const smtk::model::Model& model,
                             const QString & workerName,
                             const remus::proto::JobRequirements& reqs);
 
