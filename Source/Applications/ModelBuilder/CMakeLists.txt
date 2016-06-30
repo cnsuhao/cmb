@@ -97,35 +97,13 @@ configure_file(
 
 
 #------------------------------------------------------------------------------
-# Specify template files to install
-SET(SIMBUILDER_TEMPLATE_NAMES
-  AdHShallowWater.crf
-  AdHShallowWater.sbt
-  AdHSurfaceWater.crf
-  AdHSurfaceWaterDefinitions.sbt
-  AdHSurfaceWater.sbt
-  AdHSurfaceWaterViews.sbt
-  EMS.crf
-  EMS.sbt
-  ProteusPoisson.crf
-  ProteusPoisson.sbt
-  Proteus_Template.sbt
-  )
- foreach(name ${SIMBUILDER_TEMPLATE_NAMES})
-    list(APPEND SIMBUILDER_TEMPLATE_FILES "SimBuilder/XML/${name}")
- endforeach()
-
 if(NOT APPLE)
   #windows or unix
   install(DIRECTORY Icons DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/Resources")
-  install(FILES ${SIMBUILDER_TEMPLATE_FILES} DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/Resources//SimBuilderTemplateFiles/")
-  install(DIRECTORY SimBuilder/PythonExporters DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/Resources")
 else()
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/qt.conf
     DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/Resources")
   install(DIRECTORY Icons DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/Resources")
-  install(FILES ${SIMBUILDER_TEMPLATE_FILES}   DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/Resources/SimBuilderTemplateFiles/")
-  install(DIRECTORY SimBuilder/PythonExporters DESTINATION "${VTK_INSTALL_RUNTIME_DIR}/${PROJECT_NAME}.app/Contents/Resources")
 endif()
 
 # Copy certain files that are used for tests.
