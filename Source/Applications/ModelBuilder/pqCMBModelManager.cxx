@@ -1452,6 +1452,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "operator failed: " << brOp->name() << "\n";
+    brOp->eraseResult(result);
 //    pxy->endSession(sessId);
     return false;
     }
