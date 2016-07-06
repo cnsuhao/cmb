@@ -235,19 +235,33 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
           ani->setIsEnabled(true);
           ani->setValue(1);
           smtk::model::OperatorResult ores;
-          if(vsOp)
+          bool exeptionCaught = false;
+          try
             {
-            vsOp->SetSMTKOperator(localOp);
-            ores = vsOp->Operate();
+            if(vsOp)
+              {
+              vsOp->SetSMTKOperator(localOp);
+              ores = vsOp->Operate();
+              }
+            else
+              {
+              ores = localOp->operate();
+              }
             }
-          else
+          catch(...)
             {
-            ores = localOp->operate();
+            std::string errMsg("Exception was thrown while executing operator: ");
+            errMsg += localOp->name();
+            this->GenerateError(result, errMsg, "");
+            exeptionCaught = true;
             }
 
-          cJSON* oresult = cJSON_CreateObject();
-          smtk::io::ExportJSON::forOperatorResult(ores, oresult);
-          cJSON_AddItemToObject(result, "result", oresult);
+          if(!exeptionCaught)
+            {
+            cJSON* oresult = cJSON_CreateObject();
+            smtk::io::ExportJSON::forOperatorResult(ores, oresult);
+            cJSON_AddItemToObject(result, "result", oresult);
+            }
           }
         }
       // II. Notifications:
