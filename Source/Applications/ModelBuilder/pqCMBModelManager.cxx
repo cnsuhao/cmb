@@ -1447,7 +1447,17 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     return false;
     }
 
-  smtk::model::OperatorResult result = brOp->operate();
+  smtk::model::OperatorResult result;
+  try
+    {
+    result = brOp->operate();
+    }
+  catch(...)
+    {
+    qCritical() << "Exception was thrown while executing operator: " << brOp->name().c_str();
+    return false;
+    }
+
   if (result->findInt("outcome")->value() !=
     smtk::model::OPERATION_SUCCEEDED)
     {
