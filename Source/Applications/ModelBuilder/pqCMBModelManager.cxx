@@ -188,7 +188,19 @@ public:
       // if this is a submodel, we don't want it to be child of the session.
       // Instead its parent should be the child of the session.
       if(!model.parent().isModel())
-        model.setSession(sref);
+        {
+        model.setSession(smtk::model::SessionRef());
+        if (model.parent().isValid())
+          { // The model knows its session but the session didn't know about the model.
+          model.removeArrangement(smtk::model::SUBSET_OF);
+          smtk::model::SessionRef mutableSession(sref);
+          mutableSession.addModel(model);
+          }
+        else
+          {
+          model.setSession(sref);
+          }
+        }
       // for any model that has cells, we will create a representation for it.
       if(model.cells().size() > 0 || model.groups().size() > 0)
         {
