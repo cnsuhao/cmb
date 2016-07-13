@@ -63,7 +63,6 @@
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
 
-#include "smtk/io/ImportJSON.h"
 #include "cJSON.h"
 
 #include <fstream>
@@ -1474,6 +1473,13 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "operator failed: " << brOp->name() << "\n";
+    smtk::io::Logger log;
+    smtk::attribute::StringItem::Ptr logItem = result->findString("log");
+    if (logItem && logItem->numberOfValues() > 0)
+      {
+      smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+      }
+    emit operationLog(log);
     brOp->eraseResult(result);
 //    pxy->endSession(sessId);
     return false;
@@ -1518,6 +1524,16 @@ bool pqCMBModelManager::handleOperationResult(
   bool &hasNewModels, bool& bModelGeometryChanged,
   bool &hasNewMeshes)
 {
+  smtk::io::Logger log;
+  smtk::attribute::StringItem::Ptr logItem;
+  if (result &&
+    (logItem = result->findString("log")) &&
+    logItem->numberOfValues() > 0)
+    {
+    smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+    }
+  emit operationLog(log);
+
 /*
   cJSON* json = cJSON_CreateObject();
   smtk::io::ExportJSON::forOperatorResult(result, json);

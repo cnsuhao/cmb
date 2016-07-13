@@ -278,6 +278,9 @@ void pqSMTKModelPanel::resetUI()
     qtModelPanel::VIEW_BY_TOPOLOGY, modelMgr);
 
   this->Internal->ModelLoaded = true;
+  QObject::connect(
+    this->Internal->smtkManager, SIGNAL(operationLog(const smtk::io::Logger&)),
+    this->modelView()->operatorsWidget(), SLOT(displayResult(const smtk::io::Logger&)));
 }
 
 //-----------------------------------------------------------------------------
