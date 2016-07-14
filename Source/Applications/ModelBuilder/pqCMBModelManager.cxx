@@ -166,13 +166,13 @@ public:
 
     smtk::model::CellEntities modVols =
       model.as<smtk::model::Model>().cells();
-    for(smtk::model::CellEntities::iterator it = modVols.begin();
-       it != modVols.end(); ++it)
+    for(smtk::model::CellEntities::iterator mvit = modVols.begin();
+       mvit != modVols.end(); ++mvit)
       {
-      if((*it).isVolume())
+      if((*mvit).isVolume())
         {
-        modelInfo->vol_annotations.push_back( it->entity().toString());
-        modelInfo->vol_annotations.push_back( it->name());
+        modelInfo->vol_annotations.push_back( mvit->entity().toString());
+        modelInfo->vol_annotations.push_back( mvit->name());
         }
       }
   }
@@ -1434,6 +1434,7 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 //  std::cout << "Should start session \"" << sessionType << "\"\n";
   smtk::common::UUID sessId = pxy->beginSession(sessionType);
+  (void)sessId;
 //  std::cout << "Started " << sessionType << " session: " << sessId << "\n";
 
   smtk::model::OperatorPtr fileOp = this->managerProxy()->newFileOperator(
