@@ -261,6 +261,23 @@ void pqCMBRubberBandHelper::setView(pqView* view)
   pqTimer::singleShot(10, this, SLOT(emitEnabledSignals()));
 }
 
+inline void internal_setInteractionMode(vtkSMProxy* rmp,
+  int &previous_interaction_mode, const int& new_mode)
+{
+  // if previous_interaction_mode == new_mode (this could happen if we are in
+  // the middle of another selection triggered from somewhere else, for example,
+  // a pqRenderViewSelectionReaction from a model operation), in this case,
+  // we want to set the previous_interaction_mode to be vtkPVRenderView::INTERACTION_MODE_3D
+  if(previous_interaction_mode == new_mode)
+    {
+    previous_interaction_mode = vtkPVRenderView::INTERACTION_MODE_3D;
+    vtkSMPropertyHelper(rmp, "InteractionMode").Set(previous_interaction_mode);
+    rmp->UpdateVTKObjects();
+    }
+  vtkSMPropertyHelper(rmp, "InteractionMode").Set(new_mode);
+  rmp->UpdateVTKObjects();
+}
+
 //-----------------------------------------------------------------------------
 int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
 {
@@ -289,7 +306,7 @@ int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
 
   if (selectionMode == ZOOM)
     {
-    vtkSMPropertyHelper(rmp, "InteractionMode").Set(
+    internal_setInteractionMode(rmp, this->Internal->PreviousInteractionMode,
       vtkPVRenderView::INTERACTION_MODE_ZOOM);
     this->Internal->AddZoomObserver(rmp->GetInteractor());
     rmp->UpdateVTKObjects();
@@ -298,7 +315,7 @@ int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
     }
   else if (selectionMode == POLYGON_POINTS || selectionMode == POLYGON_CELLS)
     {
-    vtkSMPropertyHelper(rmp, "InteractionMode").Set(
+    internal_setInteractionMode(rmp, this->Internal->PreviousInteractionMode,
       vtkPVRenderView::INTERACTION_MODE_POLYGON);
     this->Internal->AddPolygonObserver(rmp);
     rmp->UpdateVTKObjects();
@@ -310,7 +327,7 @@ int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
     }
   else // FAST_INTERSECT, SELECT, SELECT_POINTS, FRUSTUM, FRUSTUM_POINTS, BLOCKS, PICK
     {
-    vtkSMPropertyHelper(rmp, "InteractionMode").Set(
+    internal_setInteractionMode(rmp, this->Internal->PreviousInteractionMode,
       vtkPVRenderView::INTERACTION_MODE_SELECTION);
     this->Internal->AddSelectionObserver(rmp);
     rmp->UpdateVTKObjects();
