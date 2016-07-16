@@ -63,7 +63,6 @@
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
 
-#include "smtk/io/ImportJSON.h"
 #include "cJSON.h"
 
 #include <fstream>
@@ -167,13 +166,13 @@ public:
 
     smtk::model::CellEntities modVols =
       model.as<smtk::model::Model>().cells();
-    for(smtk::model::CellEntities::iterator it = modVols.begin();
-       it != modVols.end(); ++it)
+    for(smtk::model::CellEntities::iterator mvit = modVols.begin();
+       mvit != modVols.end(); ++mvit)
       {
-      if((*it).isVolume())
+      if((*mvit).isVolume())
         {
-        modelInfo->vol_annotations.push_back( it->entity().toString());
-        modelInfo->vol_annotations.push_back( it->name());
+        modelInfo->vol_annotations.push_back( mvit->entity().toString());
+        modelInfo->vol_annotations.push_back( mvit->name());
         }
       }
   }
@@ -188,7 +187,19 @@ public:
       // if this is a submodel, we don't want it to be child of the session.
       // Instead its parent should be the child of the session.
       if(!model.parent().isModel())
-        model.setSession(sref);
+        {
+        model.setSession(smtk::model::SessionRef());
+        if (model.parent().isValid())
+          { // The model knows its session but the session didn't know about the model.
+          model.removeArrangement(smtk::model::SUBSET_OF);
+          smtk::model::SessionRef mutableSession(sref);
+          mutableSession.addModel(model);
+          }
+        else
+          {
+          model.setSession(sref);
+          }
+        }
       // for any model that has cells, we will create a representation for it.
       if(model.cells().size() > 0 || model.groups().size() > 0)
         {
@@ -1423,6 +1434,7 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
 //  std::cout << "Should start session \"" << sessionType << "\"\n";
   smtk::common::UUID sessId = pxy->beginSession(sessionType);
+  (void)sessId;
 //  std::cout << "Started " << sessionType << " session: " << sessId << "\n";
 
   smtk::model::OperatorPtr fileOp = this->managerProxy()->newFileOperator(
@@ -1462,6 +1474,13 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::model::OPERATION_SUCCEEDED)
     {
     std::cerr << "operator failed: " << brOp->name() << "\n";
+    smtk::io::Logger log;
+    smtk::attribute::StringItem::Ptr logItem = result->findString("log");
+    if (logItem && logItem->numberOfValues() > 0)
+      {
+      smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+      }
+    emit operationLog(log);
     brOp->eraseResult(result);
 //    pxy->endSession(sessId);
     return false;
@@ -1506,6 +1525,16 @@ bool pqCMBModelManager::handleOperationResult(
   bool &hasNewModels, bool& bModelGeometryChanged,
   bool &hasNewMeshes)
 {
+  smtk::io::Logger log;
+  smtk::attribute::StringItem::Ptr logItem;
+  if (result &&
+    (logItem = result->findString("log")) &&
+    logItem->numberOfValues() > 0)
+    {
+    smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+    }
+  emit operationLog(log);
+
 /*
   cJSON* json = cJSON_CreateObject();
   smtk::io::ExportJSON::forOperatorResult(result, json);

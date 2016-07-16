@@ -27,11 +27,12 @@
 #include <set>
 #include <vector>
 
-namespace smtk
-{
-  namespace attribute
-  {
+namespace smtk {
+  namespace attribute {
     class qtMeshSelectionItem;
+  }
+  namespace io {
+    class Logger;
   }
 }
 
@@ -108,6 +109,7 @@ signals:
     bool hasNewModels, bool bModelGeometryChanged, bool hasNewMeshes);
   void requestMeshSelectionUpdate(
     const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
+  void operationLog(const smtk::io::Logger& summary);
 
 public slots:
   void clear();
