@@ -180,6 +180,7 @@ void pqSMTKModelPanel::clearUI()
 {
   if(this->Internal->ModelPanel)
     {
+    this->Internal->ModelPanel->getModelView()->onOperationPanelClosing();
     delete this->Internal->ModelPanel;
     this->Internal->ModelPanel = NULL;
     }
