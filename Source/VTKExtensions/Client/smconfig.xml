@@ -1632,9 +1632,9 @@ The Spherical Point source can be used to add a set of points to the 3D scene.
         <SimpleIdTypeInformationHelper/>
       </IdTypeVectorProperty>
 
+      <PropertyGroup panel_widget="ContourWidget" label="Contour">
+      </PropertyGroup>
       <Hints>
-        <PropertyGroup type="ContourWidget" label="Contour">
-  </PropertyGroup>
       </Hints>
 
     </SceneContourSourceProxy>
@@ -1793,11 +1793,11 @@ The Line source can be used to interactively (using a 3D widget) or manually (us
         </Documentation>
       </DoubleVectorProperty>
 
+      <PropertyGroup panel_widget="LineSource" label="Line">
+        <Property function="Point1WorldPosition" name="Point1" />
+        <Property function="Point2WorldPosition" name="Point2" />
+      </PropertyGroup>
       <Hints>
-        <PropertyGroup type="LineSource" label="Line">
-          <Property function="Point1WorldPosition" name="Point1" />
-          <Property function="Point2WorldPosition" name="Point2" />
-        </PropertyGroup>
       </Hints>
    <!-- End Line -->
    </SourceProxy>
@@ -2723,11 +2723,11 @@ The CMB Stream Tracer filter generates streamlines in a vector field from a coll
         <BooleanDomain name="bool"/>
       </IntVectorProperty>
 
+      <PropertyGroup panel_widget="Line" label="Elevation Widget">
+        <Property function="Point1WorldPosition" name="LowPoint" />
+        <Property function="Point2WorldPosition" name="HighPoint" />
+      </PropertyGroup>
       <Hints>
-        <PropertyGroup type="Line" label="Elevation Widget">
-          <Property function="Point1WorldPosition" name="LowPoint" />
-          <Property function="Point2WorldPosition" name="HighPoint" />
-        </PropertyGroup>
       </Hints>
       <!-- End LIDARElevationFilter -->
     </SourceProxy>
