@@ -64,7 +64,8 @@ public:
     pqPluginIOBehavior* pluginBhv = NULL,
     const QStringList& specialExtensions = QStringList(),
     bool multiFiles = false,
-    const FileExtMap& readerExtensionMap = FileExtMap());
+    const FileExtMap& readerExtensionMap = FileExtMap(),
+    pqCMBLoadDataReaction * reaction = NULL);
 
   /// Loads data files. Uses reader factory to determine what reader are
   /// supported. Returns the reader is creation successful, otherwise returns
@@ -103,6 +104,8 @@ public slots:
   /// it is read in by an model operator.
   virtual void addSpecialExtensions(const QStringList& exts);
 
+  virtual void getFileHeader(const QStringList&);
+
 signals:
   /// fire a signal when the files selected can not be loaded here,
   /// so that applications may have some special readers to handle.
@@ -118,6 +121,10 @@ protected:
   QString m_programDir;
   bool m_MultiFiles;
   FileExtMap m_ReaderExtensionMap;
+
+private:
+signals:
+  void fileheaders(QStringList const&);
 
 private:
   Q_DISABLE_COPY(pqCMBLoadDataReaction)
