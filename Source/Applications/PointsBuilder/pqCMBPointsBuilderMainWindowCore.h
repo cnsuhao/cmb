@@ -172,7 +172,8 @@ private slots:
   void onElevationMaxChanged(double maxZ);
   void onModifierArcWidgetStart();
   void onModifierArcWidgetFinish();
-
+  //slot for dealing with changes to preferences
+  void onDefaultMaxNumberOfTargetPointsChanged();
 private:
 
   void saveContour(const char* filename);

@@ -52,6 +52,9 @@ public:
   std::string defaultRepresentationType(){ return "Surface"; }
   void loadGlobalPropertiesFromSettings();
 
+ signals:
+  void defaultMaxNumberOfPointsChanged();
+
 protected slots:
   void chooseMeshStorageDir();
   void chooseTempScratchDir();

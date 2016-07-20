@@ -152,6 +152,9 @@ qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget *widgetParent)
 
   QIntValidator* validator = new QIntValidator(this->Internal->maxNumberCloudPoints);
   this->Internal->maxNumberCloudPoints->setValidator(validator);
+  int currentMax = this->maxNumberOfCloudPoints();
+  this->Internal->maxNumberCloudPoints->setText(QString::number(currentMax));
+
 
   // start fresh
   this->loadGlobalPropertiesFromSettings();
@@ -159,6 +162,10 @@ qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget *widgetParent)
   QObject::connect(this->Internal->maxNumberCloudPoints,
                   SIGNAL(textChanged(const QString&)),
                   this, SIGNAL(changesAvailable()));
+  
+  QObject::connect(this->Internal->maxNumberCloudPoints,
+                  SIGNAL(editingFinished()),
+                  this, SIGNAL(defaultMaxNumberOfPointsChanged()));
 
   QObject::connect(this->Internal->dirMeshBrowserButton,
     SIGNAL(clicked()), this, SLOT(chooseMeshStorageDir()));
@@ -203,8 +210,13 @@ QStringList qtCMBApplicationOptions::getPageList()
 void qtCMBApplicationOptions::applyChanges()
 {
   pqSettings* cmbSettings = this->cmbAppSettings();
-  cmbSettings->setValue("MaxNumberOfCloudPoints",
-    this->Internal->maxNumberCloudPoints->text().toInt());
+  int currentMax = this->maxNumberOfCloudPoints();
+  int newMax = this->Internal->maxNumberCloudPoints->text().toInt();
+  if (currentMax != newMax)
+    {
+      cmbSettings->setValue("MaxNumberOfCloudPoints", newMax);
+      emit defaultMaxNumberOfPointsChanged();
+    }
   // temp dirs
   cmbSettings->setValue("DefaultTempScratchDirectory",
     this->Internal->dirTempScratchFiles->text());
