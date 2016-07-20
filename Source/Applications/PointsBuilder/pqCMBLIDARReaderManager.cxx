@@ -27,6 +27,7 @@
 #include "pqServer.h"
 #include "pqSMAdaptor.h"
 #include "pqFileDialogModel.h"
+#include "pqOutputPort.h"
 #include "pqPipelineSource.h"
 
 #include "vtkNew.h"
@@ -41,6 +42,7 @@
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkTransform.h"
+#include <vtksys/SystemTools.hxx>
 
 #include "pqPluginIOBehavior.h"
 
@@ -49,6 +51,7 @@ namespace {
   const char *SM_LAS_READER_NAME = "LASReader";
   const char *SM_DEM_READER_NAME = "RawDEMReader";
   const char *SM_GDAL_READER_NAME = "GDALRasterPolydataWrapper";
+  const char *SM_VTP_READER_NAME = "XMLPolyDataReader";
   };
 
 //-----------------------------------------------------------------------------
@@ -319,6 +322,15 @@ void pqCMBLIDARReaderManager::getDataBounds(double bounds[6])
         readerProxy->GetProperty("DataBounds"))->GetElements();
       bb.AddBounds(dataBounds);
       }
+    else if(readerName.compare(SM_VTP_READER_NAME) == 0)
+      {
+      readerProxy->UpdatePropertyInformation();
+      vtkPVDataInformation* dataInfo = this->ReaderSourceMap[filename]->
+        getOutputPort(0)->getDataInformation();
+      double bounds[6];
+      dataInfo->GetBounds(bounds);
+      bb.AddBounds(bounds);
+      }
     }
   if(bb.IsValid())
     {
@@ -426,6 +438,10 @@ int pqCMBLIDARReaderManager::importData(
     {
     res = importGDALData(filename, table, arcManager, FilePieceIdMap);
     }
+  else if(readerName.compare(SM_VTP_READER_NAME)==0)
+    {
+    res = importVTPData(filename, table, arcManager, FilePieceIdMap);
+    }
   else if(pqPluginIOBehavior::isPluginReader(
           this->ReaderSourceMap[filename]->getProxy()->GetHints()))
     {
@@ -491,6 +507,14 @@ vtkIdType pqCMBLIDARReaderManager::scanFileNumberOfPoints(
     readerProxy->UpdatePipeline();
     readerProxy->UpdatePropertyInformation();
     totNumPts = pqSMAdaptor::getElementProperty(readerProxy->GetProperty("TotalNumberOfPoints")).toInt();
+    }
+  else if(readerName.compare(SM_VTP_READER_NAME) == 0)
+    {
+    readerProxy->UpdateVTKObjects();
+    readerProxy->UpdatePipeline();
+    readerProxy->UpdatePropertyInformation();
+    vtkPVDataInformation* dataInfo = reader->getOutputPort(0)->getDataInformation();
+    totNumPts = dataInfo->GetNumberOfPoints();
     }
   else if(pqPluginIOBehavior::isPluginReader(readerProxy->GetHints()) &&
     readerProxy->GetProperty("TotalNumberOfPoints")) // Could be from plugin
@@ -973,6 +997,89 @@ pqCMBLIDARReaderManager
   return 1;
 }
 
+int
+pqCMBLIDARReaderManager::importVTPData(
+  const char* filename, pqCMBLIDARPieceTable *table,
+  pqCMBModifierArcManager* arcManager,
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+{
+  vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
+  if(!readerProxy)
+    {
+    return 0;
+    }
+
+  QMessageBox::warning(this->Core->parentWidget(),
+    tr("Load VTP File Warning"),
+    tr("Currently all points in vtp dataset will be loaded in, "
+    "and they will NOT be filtered by number of target points or ROI!"),
+    QMessageBox::Ok);
+
+  // 1, -1 used to indicate CurrentReaderBounds not yet set
+  this->CurrentReaderBounds[0] = 1;
+  this->CurrentReaderBounds[1] = -1;
+
+  readerProxy->UpdateVTKObjects();
+  readerProxy->UpdatePropertyInformation();
+  vtkPVDataInformation *dataInfo = this->ReaderSourceMap[filename]->getOutputPort(0)->getDataInformation();
+  int totalNumberOfPoints = dataInfo->GetNumberOfPoints();
+  int mainOnRatio = 1;
+
+  this->Core->enableAbort(true); //make sure progress bar is enabled
+  vtkBoundingBox bbox;
+  QList<QVariant> pieceOnRatioList;
+  pieceOnRatioList << 0 << mainOnRatio;
+
+  QList<pqPipelineSource*> pdSource;
+  this->readPieces(this->ReaderSourceMap[filename],
+                   pieceOnRatioList, pdSource);
+
+  if(!pdSource.count() || !pdSource[0])
+    {
+    QMessageBox::critical(this->Core->parentWidget(),
+                          "VTP File Reading",
+                          tr("Failed to load VTP File: ").append(filename));
+    return 0;
+    }
+  int visible = totalNumberOfPoints > this->Core->getMinimumNumberOfPointsPerPiece() ? 1 : 0;
+
+  readerProxy->UpdatePropertyInformation();
+  dataInfo = pdSource[0]->getOutputPort(0)->getDataInformation();
+  int numberOfPointsRead = dataInfo->GetNumberOfPoints();
+
+  // numberOfPointsRead should be the same as totalNumberOfPoints;
+  double bounds[6];
+  dataInfo->GetBounds(bounds);
+
+  bbox.AddBounds(bounds);
+  pqCMBLIDARPieceObject* dataObj = pqCMBLIDARPieceObject::createObject(pdSource[0], bounds,
+                                                                       this->Core->getActiveServer(),
+                                                                       this->Core->activeRenderView(),
+                                                                       visible);
+
+  dataObj->setPieceIndex(0);
+  dataObj->setDisplayOnRatio(mainOnRatio);
+  dataObj->setReadOnRatio( mainOnRatio );
+  dataObj->setNumberOfPoints( totalNumberOfPoints );
+  dataObj->setNumberOfReadPoints( numberOfPointsRead );
+  dataObj->setNumberOfDisplayPointsEstimate( numberOfPointsRead );
+  dataObj->setNumberOfSavePointsEstimate( totalNumberOfPoints );
+  dataObj->setFileName(filename);
+  table->AddLIDARPiece(dataObj, visible);
+  
+  FilePieceIdMap[filename].insert(0,dataObj);
+  arcManager->addProxy(filename, 0, bbox, dataObj->getDiggerSource());
+  // The following effect is like OnPreviewSelected();
+  if(visible) // update the render window
+    {
+    this->Core->activeRenderView()->resetCamera();
+    this->Core->activeRenderView()->render();
+    }
+
+  bbox.GetBounds(this->CurrentReaderBounds);
+  return 1;
+}
+
 //-----------------------------------------------------------------------------
 vtkIdType pqCMBLIDARReaderManager::getPieceNumPointsInfo(
   const char* filename, QList<vtkIdType> &pieceInfo)
@@ -1017,8 +1124,9 @@ void pqCMBLIDARReaderManager::readPieces(pqPipelineSource* reader,
     }
 
   this->readData(readerProxy, pieces);
-  int aborted = pqSMAdaptor::getElementProperty(
-    readerProxy->GetProperty("AbortExecute")).toInt();
+  int aborted = readerProxy->GetProperty("AbortExecute") ?
+    pqSMAdaptor::getElementProperty(
+      readerProxy->GetProperty("AbortExecute")).toInt() : 0;
   if(aborted)
     {
     return;
@@ -1028,6 +1136,7 @@ void pqCMBLIDARReaderManager::readPieces(pqPipelineSource* reader,
   if(readerName.compare(SM_LIDAR_READER_NAME)==0 ||
      readerName.compare(SM_DEM_READER_NAME)==0 ||
      readerName.compare(SM_GDAL_READER_NAME)==0 ||
+     readerName.compare(SM_VTP_READER_NAME)==0 ||
      pqPluginIOBehavior::isPluginReader(readerProxy->GetHints()))
     {
     pqPipelineSource *pdSource = this->Builder->createSource("sources",
@@ -1078,8 +1187,11 @@ int pqCMBLIDARReaderManager::readData(
     }
   this->ActiveReader = readerProxy;
   int numberOfPointsRead = 0;
-  pqSMAdaptor::setElementProperty(
-    readerProxy->GetProperty("AbortExecute"), 0);
+  if(readerProxy->GetProperty("AbortExecute"))
+    {
+    pqSMAdaptor::setElementProperty(
+      readerProxy->GetProperty("AbortExecute"), 0);
+    }
   this->Core->enableAbort(true); //make sure progressbar is enabled
   QString readerName(readerProxy->GetXMLName());
   if(readerName.compare(SM_LIDAR_READER_NAME)==0)
@@ -1117,6 +1229,18 @@ int pqCMBLIDARReaderManager::readData(
     readerProxy->UpdatePipeline();
     readerProxy->UpdatePropertyInformation();
     numberOfPointsRead = pqSMAdaptor::getElementProperty(readerProxy->GetProperty("RealNumberOfOutputPoints")).toInt();
+    }
+  else if(readerName.compare(SM_VTP_READER_NAME) == 0)
+    {
+    readerProxy->UpdateVTKObjects();
+    readerProxy->UpdatePipeline();
+    readerProxy->UpdatePropertyInformation();
+    std::string filename = vtksys::SystemTools::CollapseFullPath(
+      pqSMAdaptor::getElementProperty(readerProxy->GetProperty(
+      "FileName")).toString().toStdString());
+
+    vtkPVDataInformation *dataInfo = this->ReaderSourceMap[filename.c_str()]->getOutputPort(0)->getDataInformation();
+    numberOfPointsRead = dataInfo->GetNumberOfPoints();
     }
   else if(pqPluginIOBehavior::isPluginReader(readerProxy->GetHints()) && // assume plugin readers have these
           readerProxy->GetProperty("RequestedPiecesForRead") &&
@@ -1276,8 +1400,9 @@ void pqCMBLIDARReaderManager::updateLIDARPieces(const char* filename,
         }
 
       int numberOfPointsRead = this->readData(readerProxy,pieceOnRatioList);
-      int aborted = pqSMAdaptor::getElementProperty(
-        readerProxy->GetProperty("AbortExecute")).toInt();
+      int aborted = readerProxy->GetProperty("AbortExecute") ?
+        pqSMAdaptor::getElementProperty(
+        readerProxy->GetProperty("AbortExecute")).toInt() : 0;
       if(aborted)
         {
         return;
@@ -1469,6 +1594,7 @@ bool pqCMBLIDARReaderManager::getSourcesForOutput(
     if(readerName.compare(SM_LIDAR_READER_NAME)==0 ||
        readerName.compare(SM_DEM_READER_NAME)==0 ||
        readerName.compare(SM_GDAL_READER_NAME) == 0 ||
+       readerName.compare(SM_VTP_READER_NAME) == 0 ||
       pqPluginIOBehavior::isPluginReader(readerProxy->GetHints()))
       {
       result = this->getSourcesForOutputLIDAR(
