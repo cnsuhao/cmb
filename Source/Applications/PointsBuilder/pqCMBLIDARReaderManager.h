@@ -102,6 +102,9 @@ protected:
   int importGDALData(const char* filenmame,pqCMBLIDARPieceTable*,
                      pqCMBModifierArcManager*,
                      QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+  int importVTPData(const char* filenmame,pqCMBLIDARPieceTable*,
+                     pqCMBModifierArcManager*,
+                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
   vtkIdType getPieceNumPointsInfo(const char* filename, QList<vtkIdType> &pieceInfo);
 
   int readData(vtkSMSourceProxy* readerProxy,QList<QVariant> &pieces);
