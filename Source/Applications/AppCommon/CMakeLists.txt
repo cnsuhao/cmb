@@ -146,6 +146,10 @@ add_library(cmbAppCommon
   qtCMBTableWidget.h
   pqCMBFileDialog.cxx
   pqCMBFileDialog.h
+  pqCMBFileDialogEventPlayer.h
+  pqCMBFileDialogEventPlayer.cxx
+  pqCMBFileDialogEventTranslator.h
+  pqCMBFileDialogEventTranslator.cxx
   pqCMBTreeWidgetEventTranslator.cxx
   pqCMBTreeWidgetEventTranslator.h
   vtkQtCMBConnectComboBox.cxx

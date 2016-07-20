@@ -95,6 +95,9 @@
 #include "vtkSMSceneContourSourceProxy.h"
 #include "pqCMBTabWidgetTranslator.h"
 
+#include "pqCMBFileDialogEventTranslator.h"
+#include "pqCMBFileDialogEventPlayer.h"
+
 #include <QVTKWidget.h>
 
 #include "vtkEvent.h"
@@ -338,6 +341,11 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
   //setup the override for the tab widget testing translator
   core->testUtility()->eventTranslator()->addWidgetEventTranslator(
                     new pqCMBTabWidgetTranslator( core->testUtility() ) );
+  core->testUtility()->eventTranslator()->addWidgetEventTranslator(
+                    new pqCMBFileDialogEventTranslator( core->testUtility() ) );
+
+  core->testUtility()->eventPlayer()->addWidgetEventPlayer(
+             new pqCMBFileDialogEventPlayer(core->testUtility() ));
 
 }
 
@@ -1698,6 +1706,12 @@ void pqCMBCommonMainWindowCore::applicationInitialize()
   pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
     new pqCMBTreeWidgetEventTranslator(
                       pqApplicationCore::instance()->testUtility() ));
+
+  pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
+      new pqCMBFileDialogEventTranslator( pqApplicationCore::instance()->testUtility() ));
+
+  pqApplicationCore::instance()->testUtility()->eventPlayer()->addWidgetEventPlayer(
+      new pqCMBFileDialogEventPlayer(pqApplicationCore::instance()->testUtility() ));
 
   this->InitializePythonEnvironment();
 
