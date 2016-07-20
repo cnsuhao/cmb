@@ -71,7 +71,7 @@ namespace pqCMBFileExtensions
   // PointsBuilder file types
   static QString PointsBuilder_FileTypes()
   {
-    return "LIDAR (*.pts *.bin *.bin.pts);;LAS (*.las);;DEM (*.dem *.hdr *.FLT *.ftw);;All files (*)";
+    return "Supported LIDAR files (*.pts *.bin *.bin.pts *.las *.dem *.hdr *.FLT *.ftw *.vtp);;PTS (*.pts *.bin *.bin.pts);;LAS (*.las);;DEM (*.dem *.hdr *.FLT *.ftw);;VTK (*.vtp);;All files (*)";
   }
 
   // MeshViewer file types

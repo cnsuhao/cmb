@@ -353,6 +353,13 @@ void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(const QStringList& files
       this->Internal->AddingMoreFiles=true;
       }
     }
+  else if ((files.size() > 1) && (!hasDataLoaded))
+    {
+    //  If the are no files loaded and user has selected multiple files
+    // load them all in
+    this->Internal->AddingMoreFiles=true;
+    }
+    
 
   if(!this->Internal->AddingMoreFiles && hasDataLoaded)
     {
@@ -1446,6 +1453,19 @@ void pqCMBPointsBuilderMainWindowCore::setupControlPanel(QWidget* parent)
   QObject::connect(this->Internal->pqCMBModifierArcTable->arcWidgetManager(),
                    SIGNAL(Finish()),
                    this, SLOT(onModifierArcWidgetFinish()));
+  QObject::connect(this->cmbAppOptions(), SIGNAL(defaultMaxNumberOfPointsChanged()),
+		   this, SLOT(onDefaultMaxNumberOfTargetPointsChanged()));
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBPointsBuilderMainWindowCore::onDefaultMaxNumberOfTargetPointsChanged()
+{
+  this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->
+    setText( QString::number(
+    this->cmbAppOptions()->maxNumberOfCloudPoints()) );
+  int num = this->cmbAppOptions()->maxNumberOfCloudPoints();
+
+  this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->update();
 }
 
 //-----------------------------------------------------------------------------
