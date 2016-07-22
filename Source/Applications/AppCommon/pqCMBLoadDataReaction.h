@@ -91,6 +91,9 @@ public:
   void addReaderExtensionMap(const QString &fileext,
     const QString &readergroup, const QString &readername);
 
+  void sendMultiFileLoad();
+  void sendDoneMultiFileLoad();
+
 public slots:
   /// Updates the enabled state. Applications need not explicitly call
   /// this.
@@ -110,6 +113,9 @@ signals:
   /// fire a signal when the files selected can not be loaded here,
   /// so that applications may have some special readers to handle.
   void filesSelected(const QStringList& files);
+  void multiFileLoad();
+  void doneMultiFileLoad();
+  
 
 protected:
   /// Called when the action is triggered.

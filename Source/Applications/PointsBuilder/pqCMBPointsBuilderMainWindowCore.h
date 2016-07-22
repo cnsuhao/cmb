@@ -72,6 +72,9 @@ public:
   pqCMBLIDARReaderManager *getReaderManager()
     { return this->ReaderManager; }
 
+  void startMultiFileRead();
+  void endMultiFileRead();
+
 signals:
   void newDataLoaded();
   void requestingRender();

@@ -587,6 +587,12 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   // new plugin io behavior to add more readers from plugin
   this->Internal->LoadDataReaction =
     new pqCMBLoadDataReaction(this->Internal->UI.action_Open_File);
+
+  QObject::connect(this->Internal->LoadDataReaction, SIGNAL(multiFileLoad()),
+                   this, SLOT(loadMultiFilesStart()));
+  QObject::connect(this->Internal->LoadDataReaction, SIGNAL(doneMultiFileLoad()),
+                   this, SLOT(loadMultiFilesStop()));
+
   this->Internal->LoadDataReaction->setPluginIOBehavior(
     new pqPluginIOBehavior(this));
   if(this->MainWindowCore->programDirectory())

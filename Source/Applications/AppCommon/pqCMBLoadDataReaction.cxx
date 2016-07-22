@@ -170,6 +170,10 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
     {
     cancelled = false;
     QList<QStringList> files = fileDialog.getAllSelectedFiles();
+    if(reaction && files.size() != 0)
+      {
+      reaction->sendMultiFileLoad();
+      }
     QStringList file;
     foreach(file,files)
       {
@@ -180,6 +184,10 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
         {
         sources << source;
         }
+      }
+    if(reaction && files.size() != 0)
+      {
+      reaction->sendDoneMultiFileLoad();
       }
     }
   return sources;
@@ -292,4 +300,14 @@ void pqCMBLoadDataReaction::addReaderExtensionMap(const QString &fileext,
 {
   m_ReaderExtensionMap.insert(fileext, QPair<QString, QString>(
                               readergroup, readername));
+}
+
+void pqCMBLoadDataReaction::sendMultiFileLoad()
+{
+  emit(multiFileLoad());
+}
+
+void pqCMBLoadDataReaction::sendDoneMultiFileLoad()
+{
+  emit(doneMultiFileLoad());
 }
