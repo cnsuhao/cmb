@@ -85,6 +85,6 @@ bool pqModelTreeViewEventTranslator::translateEvent(QObject* senderObject, QEven
     }
 
   // always return false so that its super class can still do its event recording
-  return pqTreeViewEventTranslator::translateEvent(senderObject, tr_event, Error);
+  return pqWidgetEventTranslator::translateEvent(senderObject, tr_event, Error);
 
 }
