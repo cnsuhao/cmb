@@ -31,6 +31,7 @@
 #include <vtkImageData.h>
 #include <vtkPointHandleRepresentation3D.h>
 #include <vtkProperty.h>
+#include "vtkPVRenderView.h"
 #include <vtkSMNewWidgetRepresentationProxy.h>
 #include <vtkSMPropertyHelper.h>
 #include <vtkSMProxyManager.h>
@@ -128,6 +129,7 @@ void pqPlanarTextureRegistrationDialog::initializeTexture(
   const int *manipTypes = &TwoDManipulatorTypes[0];
   vtkSMProxy* viewproxy = this->imageRenderView->getProxy();
   vtkSMPropertyHelper( viewproxy->GetProperty("Camera2DManipulators")).Set(manipTypes, 9);
+  vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
   viewproxy->UpdateVTKObjects();
 
   //Create 6 point widget representation proxies(invisible and disabled)
@@ -619,7 +621,7 @@ vtkSMNewWidgetRepresentationProxy* pqPlanarTextureRegistrationDialog::setupPoint
   QList<QVariant> center;
   center << 0.0 << 0.0 << 0.0;
   widget = pqApplicationCore::instance()->get3DWidgetFactory()->
-           get3DWidget("PointSourceWidgetRepresentation", server);
+           get3DWidget("HandleWidgetRepresentation", server);
   pqSMAdaptor::setElementProperty(widget->GetProperty("Visibility"),false);
   pqSMAdaptor::setElementProperty(widget->GetProperty("Enabled"),false);
   pqSMAdaptor::setElementProperty(widget->GetProperty("NumberOfPoints"),1);
