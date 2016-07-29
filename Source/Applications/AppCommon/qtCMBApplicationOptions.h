@@ -51,6 +51,7 @@ public:
   std::string defaultTempScratchDirectory();
   std::string defaultRepresentationType(){ return "Surface"; }
   void loadGlobalPropertiesFromSettings();
+  void loadBuiltinColorPresets();
 
  signals:
   void defaultMaxNumberOfPointsChanged();
