@@ -37,7 +37,6 @@ set(CMB_Filtering_SRC
     vtkMergeFacesFilter.cxx
     vtkOmicronMeshInputFilter.cxx
     vtkPointThresholdFilter.cxx
-    vtkPolyDataStatsFilter.cxx
     vtkRegisterPlanarTextureMap.cxx
     vtkTerrainExtractionFilter.cxx
     vtkTexturePointIntensityFilter.cxx

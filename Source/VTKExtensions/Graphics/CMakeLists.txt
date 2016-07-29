@@ -3,7 +3,6 @@
 find_package(SMTK REQUIRED)
 
 set(CMB_Graphics_SRC
-  vtkCleanPolylines.cxx
   vtkCMBArcWidgetRepresentation.cxx
   vtkCMBBandedPolyDataContourFilter.cxx
   vtkCMBExtractCellFromDataSet.cxx
@@ -15,7 +14,6 @@ set(CMB_Graphics_SRC
   vtkCMBInitialValueProblemSolver.cxx
   vtkCMBStreamTracer.cxx
   vtkExtractLeafBlock.cxx
-  vtkExtractLine.cxx
   vtkExtractMultiBlockBlock.cxx
   vtkImageTextureCrop.cxx
   vtkOrientedGlyphContourRepresentation2.cxx
