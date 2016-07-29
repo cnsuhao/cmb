@@ -35,6 +35,7 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
+#include "pqSMAdaptor.h"
 #include "pqSMTKModelInfo.h"
 
 #include "smtk/common/UUID.h"
@@ -69,7 +70,6 @@
 #include <iostream>
 
 #include "vtksys/SystemTools.hxx"
-#include "cJSON.h"
 
 #include <map>
 #include <set>
@@ -112,6 +112,11 @@ public:
   typedef std::map<smtk::common::UUID, pqSMTKModelInfo >::iterator itModelInfo;
   typedef std::map<smtk::common::UUID, pqSMTKMeshInfo >::iterator itMeshInfo;
   std::map<smtk::common::UUID, smtk::common::UUID> Entity2Models;
+
+  // Information for related images <image_url, smtkImageInfo>
+  std::map<std::string, smtkImageInfo> ImageInfos;
+  std::map<smtk::common::UUID, std::set<std::string> > ModelImages;
+  typedef std::map<smtk::common::UUID, std::set<std::string> >::iterator itModelImage;
 
   pqServer* Server;
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
@@ -296,6 +301,30 @@ public:
         this->Entity2Models.erase(it->first);
         }
 
+      for(std::set<std::string>::const_iterator imgit = this->ModelImages[*mit].begin();
+          imgit != this->ModelImages[*mit].end(); ++imgit)
+        {
+        bool used = false;
+        // check whether this image is also used by other models, if yes, don't remove
+        for(qInternal::itModelImage miit = this->ModelImages.begin();
+            miit != this->ModelImages.end(); ++miit)
+          {
+          if(miit->first == *mit)
+            continue;
+          if(miit->second.find(*imgit) != miit->second.end())
+            {
+            used = true;
+            break;
+            }
+          }
+        if(!used)
+          {
+          pqApplicationCore::instance()->getObjectBuilder()->destroy(
+            this->ImageInfos[*imgit].ImageSource);
+          this->ImageInfos.erase(*imgit);
+          }
+        }
+
       this->ModelInfos.erase(*mit);
       modelRemoved = true;
       }
@@ -451,6 +480,93 @@ public:
     }
   }
 
+  void createImageRepresentation(smtk::model::ManagerPtr manager,
+                                const smtk::model::EntityRef& model,
+                                pqRenderView* view,
+                                const std::string& imageurl)
+  {
+     // if the image is already loaded, just return
+    if(this->ImageInfos.find(imageurl) != this->ImageInfos.end())
+      {
+      this->ModelImages[model.entity()].insert(imageurl);
+      return;
+      }
+    pqApplicationCore* core = pqApplicationCore::instance();
+    pqObjectBuilder* builder = core->getObjectBuilder();
+    builder->blockSignals(true);
+
+    pqServer* server = this->Server;
+    QStringList files;
+    files << imageurl.c_str();
+
+    smtkImageInfo imageinfo;
+    imageinfo.URL = imageurl;
+    pqPipelineSource* source;
+    QFileInfo finfo(imageurl.c_str());
+    if (finfo.completeSuffix().toLower() == "tif" || finfo.completeSuffix().toLower() == "dem")
+      {
+      source =  builder->createReader("sources", "GDALRasterReader", files, server);
+      }
+    else
+      {
+      source =  builder->createReader("sources", "XMLImageDataReader", files, server);
+      }
+    builder->blockSignals(false);
+
+    if(source)
+      {
+      imageinfo.ImageSource = builder->createFilter("filters", "cmbStructedToMesh", source);
+      vtkSMPropertyHelper(imageinfo.ImageSource->getProxy(), "UseScalerForZ").Set(0);
+
+      imageinfo.Representation = builder->createDataRepresentation(
+            imageinfo.ImageSource->getOutputPort(0), view);
+      if(imageinfo.Representation)
+        {
+        // If there is an elevation field on the points then use it.
+        RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+          imageinfo.Representation->getProxy(),
+          "Elevation", vtkDataObject::POINT);
+
+        vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
+                                             server, "transfer_functions");
+
+        QList<QVariant> values;
+        values << -5000.0  << 0.0 << 0.0 << 0
+         << -1000.0  << 0.0 << 0.0 << 1.0
+         <<  -100.0  << 0.129412 << 0.345098 << 0.996078
+         <<   -50.0  << 0.0 << 0.501961 << 1.0
+         <<   -10.0  << 0.356863 << 0.678431 << 1.0
+         <<    -0.0  << 0.666667 << 1.0 << 1.0
+         <<     0.01 << 0.0 << 0.250998 << 0.0
+         <<    10.0 << 0.301961 << 0.482353 << 0.0
+         <<    25.0 << 0.501961 << 1.0 << 0.501961
+         <<   500.0 << 0.188224 << 1.0 << 0.705882
+         <<  1000.0 << 1.0 << 1.0 << 0.0
+         <<  2500.0 << 0.505882 << 0.211765 << 0.0
+         <<  3200.0 << 0.752941 << 0.752941 << 0.752941
+         <<  6000.0 << 1.0 << 1.0 << 1.0;
+        pqSMAdaptor::setMultipleElementProperty(lut->GetProperty("RGBPoints"), values);
+        vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
+         vtkSMPropertyHelper(lut, "Discretize").Set(0);
+        lut->UpdateVTKObjects();
+        vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "LookupTable").Set(lut);
+        vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
+
+        imageinfo.ImageSource->getProxy()->UpdateVTKObjects();
+        imageinfo.Representation->getProxy()->UpdateVTKObjects();
+        imageinfo.Representation->renderViewEventually();
+        this->ImageInfos[imageurl] = imageinfo;
+        this->ModelImages[model.entity()].insert(imageurl);
+        }
+      }
+
+    if(!imageinfo.ImageSource || !imageinfo.Representation)
+      {
+      qCritical() << "Failed to create an image pqRepresentation for the file: "
+        << imageurl.c_str();
+      }
+  }
+
   void updateModelMeshRepresentations(const smtk::model::Model& model)
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
@@ -585,9 +701,20 @@ public:
         pqApplicationCore::instance()->getObjectBuilder()->destroy(
           meshiter->second.MeshSource);
         }
+
+      for(std::set<std::string>::const_iterator imgit = this->ModelImages[mit->first].begin();
+          imgit != this->ModelImages[mit->first].end(); ++imgit)
+        {
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          this->ImageInfos[*imgit].ImageSource);
+        this->ImageInfos.erase(*imgit);
+        }
+
       }
     this->Entity2Models.clear();
     this->ModelInfos.clear();
+    this->ImageInfos.clear();
+    this->ModelImages.clear();
   }
 
   qInternal(pqServer* server): Server(server)
@@ -1719,6 +1846,23 @@ bool pqCMBModelManager::handleOperationResult(
         {
         if((minfo = this->modelInfo(*it)))
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
+        }
+
+      // check if the modified model has an "image_url" property, if yes,
+      // we will generate an image representation from that url.
+      // NOTE: once we have the "image" auxiliary geometry type entity in smtk, we
+      // will not have to read the image_url here if an "image" is already there in the model
+      //
+      if(generalModifiedModels.find(it->entity()) != generalModifiedModels.end() &&
+         it->hasStringProperty("image_url"))
+        {
+        smtk::model::StringList const& urlprop(it->stringProperty("image_url"));
+        if (!urlprop.empty())
+          {
+          std::string imageurl = urlprop[0];
+          this->Internal->createImageRepresentation(this->managerProxy()->modelManager(),
+                                                 *it, view, imageurl);
+          }
         }
 
       // Handle new meshes for a model

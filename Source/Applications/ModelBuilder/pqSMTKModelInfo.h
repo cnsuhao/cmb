@@ -31,6 +31,15 @@ class vtkSMProxy;
 class pqDataRepresentation;
 class pqPipelineSource;
 
+class smtkImageInfo
+{
+  public:
+    smtkImageInfo(){}
+    QPointer<pqPipelineSource> ImageSource;
+    QPointer<pqDataRepresentation> Representation;
+    std::string URL;
+};
+
 //The object to keep smtk model related info:
 // pqSource, pvModelInfo, smSelectionSource
 class pqSMTKModelInfo: public QObject

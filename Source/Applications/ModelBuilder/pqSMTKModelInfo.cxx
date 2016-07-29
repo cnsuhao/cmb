@@ -180,5 +180,6 @@ pqSMTKModelInfo::pqSMTKModelInfo(const pqSMTKModelInfo& other)
   this->BlockSelectionSource = other.BlockSelectionSource;
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
   this->ShowMesh = other.ShowMesh;
+  this->MeshInfos.clear();
   this->MeshInfos.insert(other.MeshInfos.begin(), other.MeshInfos.end());
 }

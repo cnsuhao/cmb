@@ -110,6 +110,7 @@ protected:
 
   QShortcut *SelectionShortcut;
   QShortcut *ResetCameraShortcut;
+  bool m_isExiting;
 
 private:
   pqCMBCommonMainWindow(const pqCMBCommonMainWindow&); // Not implemented.

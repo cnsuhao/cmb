@@ -164,6 +164,7 @@ Internal(new vtkInternal(this))
 //----------------------------------------------------------------------------
 pqCMBModelBuilderMainWindow::~pqCMBModelBuilderMainWindow()
 {
+  this->m_isExiting = true;
   delete this->MainWindowCore;
   delete this->Internal;
   this->MainWindowCore = NULL;
@@ -1189,6 +1190,10 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
     this->Internal->ColorByArrayBox->blockSignals(false);
     }
 
+  if(this->m_isExiting)
+    {
+    return;
+    }
   this->getThisCore()->modelManager()->setActiveModelRepresentation(acitveRep);
 }
 
