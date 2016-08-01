@@ -1487,7 +1487,20 @@ void pqCMBModelManager::updateModelMeshRepresentations(const smtk::model::Model&
 {
   this->Internal->updateModelMeshRepresentations(model);
 }
-
+//----------------------------------------------------------------------------
+void pqCMBModelManager::updateImageRepresentation(
+  const std::string& image_url, bool visible)
+{
+  if(this->Internal->ImageInfos.find(image_url) != this->Internal->ImageInfos.end())
+    {
+    pqDataRepresentation* rep = this->Internal->ImageInfos[image_url].Representation;
+    if(rep)
+      {
+      rep->setVisible(visible);
+      rep->renderViewEventually();
+      }
+    }
+}
 //----------------------------------------------------------------------------
 smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
@@ -1848,13 +1861,14 @@ bool pqCMBModelManager::handleOperationResult(
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
 
-      // check if the modified model has an "image_url" property, if yes,
+      // check if the modified model or newModel has an "image_url" property, if yes,
       // we will generate an image representation from that url.
       // NOTE: once we have the "image" auxiliary geometry type entity in smtk, we
       // will not have to read the image_url here if an "image" is already there in the model
       //
-      if(generalModifiedModels.find(it->entity()) != generalModifiedModels.end() &&
-         it->hasStringProperty("image_url"))
+      if((newModel.isValid() && newModel.hasStringProperty("image_url")) ||
+         (generalModifiedModels.find(it->entity()) != generalModifiedModels.end() &&
+         it->hasStringProperty("image_url")))
         {
         smtk::model::StringList const& urlprop(it->stringProperty("image_url"));
         if (!urlprop.empty())

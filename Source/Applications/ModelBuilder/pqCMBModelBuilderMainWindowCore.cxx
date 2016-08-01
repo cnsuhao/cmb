@@ -1003,7 +1003,8 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   // all models under it should change
   QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
   QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
-
+  // Map for image_url visibility
+  QMap<std::string, bool> imageUrls;
   smtk::model::EntityRefArray::const_iterator it;
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
     {
@@ -1047,6 +1048,26 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
           }
         }
       }
+
+    // HACK: For potential visibility changes of "image_url" of the model.
+    // Once we have auxiliary geometry to repersent images, we will change how
+    // to handle this.
+    if(curRef.isModel() && curRef.hasStringProperty("image_url") &&
+       (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
+      {
+      const smtk::model::StringList& sprop(curRef.stringProperty("image_url"));
+      if(!sprop.empty())
+        {
+        std::string imgurl = sprop[0];
+        if(curRef.hasVisibility())
+          {
+          const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
+          if(!vprop.empty())
+            visible = (vprop[0] != 0);
+          imageUrls[imgurl] = visible;
+          }
+        }
+      }
     }
 
   // update visibility
@@ -1071,6 +1092,13 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       minfo->Representation->renderViewEventually();
       }
     }
+
+  // update image visibility
+  foreach(std::string image_url, imageUrls.keys())
+    {
+    this->Internal->smtkModelManager->updateImageRepresentation(image_url, imageUrls[image_url]);
+    }
+
 }
 
 // we may need to update mesh representation for display properties
