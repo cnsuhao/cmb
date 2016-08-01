@@ -550,6 +550,8 @@ pqCMBSceneNode *pqCMBSceneTree::createRoot(const char *name)
                                             QHeaderView::ResizeToContents);
 
   this->Root->setExplicitColor(this->InitialSceneObjectColor);
+  this->Root->getWidget()->setSelected(true);
+  this->nodesSelected();
   return this->Root;
 }
 
@@ -1702,6 +1704,7 @@ void pqCMBSceneTree::deleteSelected()
       {
       continue;
       }
+    
     obj = this->Selected[i]->getDataObject();
     if (obj && (obj->getType() ==  pqCMBSceneObjectBase::Arc))
       {
@@ -1761,8 +1764,11 @@ void pqCMBSceneTree::deleteSelected()
         }
       }
     }
-
+  //Lets select the root after the deletion
   this->Selected.clear();
+  this->Root->getWidget()->setSelected(true);
+  this->nodesSelected();
+
   this->nodesSelected();
 }
 //-----------------------------------------------------------------------------

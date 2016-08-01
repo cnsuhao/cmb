@@ -174,6 +174,7 @@ if(BUILD_TESTING)
     # XXX: nodata(LIDARTest.pts): LIDARZoomToBox
     LIDARRotation
     MercedRiver
+    TestFarPoints
     # XXX: nodata(LIDARTest.pts): SelectPieces
     # XXX: nodata(LIDARTest.pts): LIDARThresholdSave
     # XXX: nodata(clipped5Subset.pts): MultiLIDARFiles

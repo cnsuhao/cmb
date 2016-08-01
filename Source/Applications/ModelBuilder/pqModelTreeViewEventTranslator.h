@@ -34,6 +34,7 @@ class pqModelTreeViewEventTranslator : public pqTreeViewEventTranslator
 public:
   pqModelTreeViewEventTranslator(QObject* p=0);
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  using pqTreeViewEventTranslator::translateEvent;
 
 private:
   pqModelTreeViewEventTranslator(const pqModelTreeViewEventTranslator&);

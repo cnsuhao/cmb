@@ -104,7 +104,6 @@
 #include <pqSetData.h>
 #include <pqSetName.h>
 #include <pqUndoStack.h>
-#include <pqWriterDialog.h>
 #include <pqWaitCursor.h>
 #include "pqActiveObjects.h"
 #include "qtCMBArcEditWidget.h"

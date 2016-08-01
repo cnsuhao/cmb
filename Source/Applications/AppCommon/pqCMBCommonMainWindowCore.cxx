@@ -88,7 +88,6 @@
 
 #include <pqCoreTestUtility.h>
 #include <pqUndoStack.h>
-#include <pqWriterDialog.h>
 #include <pqWaitCursor.h>
 #include "pqContourWidget.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
@@ -100,6 +99,7 @@
 
 #include <QVTKWidget.h>
 
+#include "vtkCamera.h"
 #include "vtkEvent.h"
 #include "vtkEventQtSlotConnect.h"
 #include "vtkImageData.h"
@@ -1892,53 +1892,52 @@ pqContourWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlan
   this->Internal->RenderView->forceRender();
 
   pqContourWidget* contourWidget = this->createDefaultContourWidget();
+  vtkCamera *camera = this->activeRenderView()->getRenderViewProxy()->GetActiveCamera();
 
-  double focalPt[3], position[3], viewUp[3], viewDirection[3];
-  double cameraDistance, parallelScale;
-  this->getCameraInfo(focalPt, position, viewDirection, cameraDistance,
-    viewUp, parallelScale);
-  orthoPlane = 2; // z axis
-  if (viewDirection[0] < -.99 || viewDirection[0] > .99)
+  // We need to find the best plane to put the widget.  The plane must be aligned with
+  // either the X, Y, or Z Axis.  This is calculted based on the largest component of
+  // the Camera's direction of projection.  We also need to determine teh location of
+  // the plane - this is assumed to be the focal point but if the point is outside
+  // of the Camera's clipping range it is moved to be somewhere between the near
+  // and far clip planes,
+  
+  double focalPt[3], position[3], viewDirection[3], clipRange[2];
+  camera->GetFocalPoint(focalPt);
+  camera->GetDirectionOfProjection(viewDirection);
+  camera->GetClippingRange(clipRange);
+  camera->GetPosition(position);
+
+  // Determine the primary view direction (x, y, or z)
+  double x = fabs(viewDirection[0]);
+  double y = fabs(viewDirection[1]);
+  double z = fabs(viewDirection[2]);
+  if ( x > y)
     {
-    orthoPlane = 0; // x axis
+    orthoPlane = (x>z)? 0: 2;
     }
-  else if (viewDirection[1] < -.99 || viewDirection[1] > .99)
+  else
     {
-    orthoPlane = 1; // y axis;
+    orthoPlane = (y>z)? 1: 2;
     }
 
-  QList<QVariant> values =
-  pqSMAdaptor::getMultipleElementProperty(
-                                          this->activeRenderView()->getProxy()->GetProperty("CameraFocalPointInfo"));
-  double projpos = values[orthoPlane].toDouble();;
-  values =
-  pqSMAdaptor::getMultipleElementProperty(
-                                          this->activeRenderView()->getProxy()->GetProperty("CameraClippingRange"));
-
-  double small_offset = (values[1].toDouble() - values[0].toDouble())*0.01;
+  double projpos = focalPt[orthoPlane];
+  double small_offset = (clipRange[1] - clipRange[0])*0.01;
   double direction = viewDirection[orthoPlane];
   double min, max;
   if(direction <0)
   {
-    min = position[orthoPlane] - values[1].toDouble() + small_offset;
-    max = position[orthoPlane] - values[0].toDouble() - small_offset;
+    min = position[orthoPlane] - clipRange[1] + small_offset;
+    max = position[orthoPlane] - clipRange[0] - small_offset;
   }
   else
   {
-    min = position[orthoPlane] + values[0].toDouble() + small_offset;
-    max = position[orthoPlane] + values[1].toDouble() - small_offset;
+    min = position[orthoPlane] + clipRange[0] + small_offset;
+    max = position[orthoPlane] + clipRange[1] - small_offset;
   }
-  if(projpos <= min)
+  if((projpos <= min) || (projpos >= max))
   {
-    projpos =  position[orthoPlane] + viewDirection[orthoPlane]*((values[1].toDouble() + values[0].toDouble())*0.5);
+    projpos =  position[orthoPlane] + viewDirection[orthoPlane]*((clipRange[1] + clipRange[0])*0.5);
   }
-  else if(projpos >= max)
-  {
-    projpos =  position[orthoPlane] + viewDirection[orthoPlane]*((values[1].toDouble() + values[0].toDouble())*0.5);
-  }
-  //   pqSMAdaptor::getMultipleElementProperty(
-  //     this->activeRenderView()->getProxy()->GetProperty("CameraClippingRange"));
-  //double projpos = position[orthoPlane] + viewDirection[orthoPlane]*((values[1].toDouble() + values[0].toDouble())*0.5);
 
   this->setContourPlane(contourWidget, orthoPlane, projpos);
 

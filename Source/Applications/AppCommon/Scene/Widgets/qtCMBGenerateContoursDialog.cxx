@@ -34,6 +34,7 @@
 #include "vtkPVArrayInformation.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVDataSetAttributesInformation.h"
+#include "vtkPVRenderView.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMRepresentationProxy.h"
@@ -159,6 +160,7 @@ qtCMBGenerateContoursDialog::qtCMBGenerateContoursDialog(
   vtkSMProxy* viewproxy = this->RenderView->getProxy();
   vtkSMPropertyHelper(
     viewproxy->GetProperty("Camera2DManipulators")).Set(manipTypes, 9);
+  vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
   viewproxy->UpdateVTKObjects();
 
   this->Grid = dynamic_cast<pqCMBUniformGrid *>
