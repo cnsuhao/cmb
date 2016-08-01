@@ -53,7 +53,7 @@ target_include_directories(ModelBridge_Plugin
   )
 
 #now that the target has been created we can do the header generation
-generate_export_header(ModelBridge_Plugin BASE_NAME ModelBridgeClient
+vtk_generate_export_header(ModelBridge_Plugin BASE_NAME ModelBridgeClient
                                    EXPORT_FILE_NAME ModelBridgeClientModule.h)
 
 install(FILES

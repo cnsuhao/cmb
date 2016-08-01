@@ -87,16 +87,6 @@ pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
   builder->blockSignals(true);
   pqPipelineSource* source;
   QFileInfo finfo(filename);
-  if(finfo.completeSuffix().toLower() == "tif")
-  {
-    source =  builder->createReader("sources", "GDALRasterReader", files, server);
-    HasInvalidValue = true;
-    this->Source = source;
-    this->ImageSource = source;
-    this->setFileName(filename);
-    this->prepGridObject(server, view, updateRep, false);
-    return;
-  }
   if (this->isRawDEM(filename))
       {
       source =  builder->createReader("sources", "RawDEMReader", files, server);
@@ -140,21 +130,29 @@ void pqCMBUniformGrid::prepGridObject(pqServer *server,
     this->getRepresentation()->getProxy(),
     "Elevation", vtkDataObject::POINT);
 
-  // use "Bob's" color table
+  // use CMB Elevation 2 Color Table
   if(transferColor)
     {
-    vtkSMProxy* lut = builder->createProxy("transfer_functions", "ColorTransferFunction",
+    vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
                                          server, "transfer_functions");
     QList<QVariant> values;
-    values << -1000.0 << 0.0 << 0.0 << 0
-          << 1000.0 << 0.0 << 0.0 << 0.498
-          << 2000.0 << 0.0 << 0.0 << 1.0
-          << 2200.0 << 0.0 << 1.0 << 1.0
-          << 2400.0 << 0.333 << 1.0 << 0.0
-          << 2600.0 << 0.1216 << 0.3725 << 0.0
-          << 2800.0 << 1.0 << 1.0 << 0.0
-          << 3000.0 << 1.0 << 0.333 << 0.0;
+    values << -5000.0  << 0.0 << 0.0 << 0
+	   << -1000.0  << 0.0 << 0.0 << 1.0
+	   <<  -100.0  << 0.129412 << 0.345098 << 0.996078
+	   <<   -50.0  << 0.0 << 0.501961 << 1.0
+	   <<   -10.0  << 0.356863 << 0.678431 << 1.0
+	   <<    -0.0  << 0.666667 << 1.0 << 1.0
+	   <<     0.01 << 0.0 << 0.250998 << 0.0
+	   <<    10.0 << 0.301961 << 0.482353 << 0.0
+	   <<    25.0 << 0.501961 << 1.0 << 0.501961
+	   <<   500.0 << 0.188224 << 1.0 << 0.705882
+	   <<  1000.0 << 1.0 << 1.0 << 0.0
+	   <<  2500.0 << 0.505882 << 0.211765 << 0.0
+	   <<  3200.0 << 0.752941 << 0.752941 << 0.752941
+	   <<  6000.0 << 1.0 << 1.0 << 1.0;
     pqSMAdaptor::setMultipleElementProperty(lut->GetProperty("RGBPoints"), values);
+    vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
+    vtkSMPropertyHelper(lut, "Discretize").Set(0);
     lut->UpdateVTKObjects();
     pqSMAdaptor::setProxyProperty(
       this->getRepresentation()->getProxy()->GetProperty("LookupTable"), lut);

@@ -30,6 +30,7 @@
 #include "pqRenderView.h"
 #include "pqProxyWidget.h"
 
+#include "vtkNew.h"
 #include "vtkProcessModule.h"
 #include "vtkPVProxyDefinitionIterator.h"
 #include "vtkPVXMLElement.h"
@@ -41,6 +42,7 @@
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSettings.h"
+#include "vtkSMTransferFunctionPresets.h"
 
 #include <QMenu>
 #include <QDoubleValidator>
@@ -81,6 +83,9 @@ qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget *widgetParent)
   this->Internal = new pqInternal;
   this->Internal->setupUi(this);
 
+  // Load in color table presets
+  this->loadBuiltinColorPresets();
+  
   QList<vtkSMProxy*> proxies_to_show;
   // Add RenderView proxy
 //  pqRenderView* ren = qobject_cast<pqRenderView*>(
@@ -234,6 +239,59 @@ void qtCMBApplicationOptions::loadGlobalPropertiesFromSettings()
 {
   foreach(pqProxyWidget* pw, this->Internal->ProxyWidgets)
     pw->apply();
+}
+
+//-----------------------------------------------------------------------------
+void qtCMBApplicationOptions::loadBuiltinColorPresets()
+{
+  vtkNew<vtkSMTransferFunctionPresets> presets;
+  // See if we need to add the elivation presets
+  unsigned int num = presets->GetNumberOfPresets();
+  bool foundEli1 = false, foundEli2 = false;
+  for (unsigned int i = 0; i < num; i++)
+    {
+    if (presets->GetPresetName(i) == "CMB Elevation Map 1")
+      {
+      foundEli1 = true;
+      }
+    else if (presets->GetPresetName(i) == "CMB Elevation Map 2")
+      {
+      foundEli2 = true;
+      }
+    }
+  if (!foundEli1)
+    {
+    std::string preset = "{ \"ColorSpace\" : \"RGB\", \"NanColor\" : [ 1, 1, 0 ], \"Discretize\" : 0,\
+\"RGBPoints\" : [\
+-1000.0, 0.0, 0.0, 0.498,\
+ -100.0, 0.0, 0.0, 1.0,\
+    0.0, 0.0, 1.0, 1.0,\
+    1.0, 0.333, 1.0, 0.0,\
+    2.0, 0.1216, 0.3725, 0.0,\
+  250.0, 1.0, 1.0, 0.0,\
+  750.0, 1.0, 0.333, 0.0]}";
+    presets->AddPreset("CMB Elevation Map 1", preset);
+    }
+  if (!foundEli2)
+    {
+    std::string preset = "{ \"ColorSpace\" : \"RGB\", \"NanColor\" : [ 1, 1, 0 ], \"Discretize\" : 0,\
+\"RGBPoints\" : [\
+-5000.0, 0.0, 0.0, 0.0,\
+-1000.0, 0.0, 0.0, 1.0,\
+ -100.0, 0.129412, 0.345098, 0.996078,\
+  -50.0, 0.0, 0.501961, 1.0,\
+  -10.0, 0.356863, 0.678431, 1.0,\
+   -0.0, 0.666667, 1.0, 1.0,\
+    0.01, 0.0, 0.250998, 0.0,\
+   10.0, 0.301961, 0.482353, 0.0,\
+   25.0, 0.501961, 1.0, 0.501961,\
+  500.0, 0.188224, 1.0, 0.705882,\
+ 1000.0, 1.0, 1.0, 0.0,\
+ 2500.0, 0.505882, 0.211765, 0.0,\
+ 3200.0, 0.752941, 0.752941, 0.752941,\
+ 6000.0, 1.0, 1.0, 1.0]}";
+    presets->AddPreset("CMB Elevation Map 2", preset);
+    }
 }
 
 //-----------------------------------------------------------------------------
