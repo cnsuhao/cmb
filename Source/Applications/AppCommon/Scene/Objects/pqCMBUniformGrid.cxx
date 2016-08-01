@@ -135,24 +135,7 @@ void pqCMBUniformGrid::prepGridObject(pqServer *server,
     {
     vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
                                          server, "transfer_functions");
-    QList<QVariant> values;
-    values << -5000.0  << 0.0 << 0.0 << 0
-	   << -1000.0  << 0.0 << 0.0 << 1.0
-	   <<  -100.0  << 0.129412 << 0.345098 << 0.996078
-	   <<   -50.0  << 0.0 << 0.501961 << 1.0
-	   <<   -10.0  << 0.356863 << 0.678431 << 1.0
-	   <<    -0.0  << 0.666667 << 1.0 << 1.0
-	   <<     0.01 << 0.0 << 0.250998 << 0.0
-	   <<    10.0 << 0.301961 << 0.482353 << 0.0
-	   <<    25.0 << 0.501961 << 1.0 << 0.501961
-	   <<   500.0 << 0.188224 << 1.0 << 0.705882
-	   <<  1000.0 << 1.0 << 1.0 << 0.0
-	   <<  2500.0 << 0.505882 << 0.211765 << 0.0
-	   <<  3200.0 << 0.752941 << 0.752941 << 0.752941
-	   <<  6000.0 << 1.0 << 1.0 << 1.0;
-    pqSMAdaptor::setMultipleElementProperty(lut->GetProperty("RGBPoints"), values);
-    vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
-    vtkSMPropertyHelper(lut, "Discretize").Set(0);
+    vtkSMTransferFunctionProxy::ApplyPreset(lut, "CMB Elevation Map 2", false);
     lut->UpdateVTKObjects();
     pqSMAdaptor::setProxyProperty(
       this->getRepresentation()->getProxy()->GetProperty("LookupTable"), lut);
