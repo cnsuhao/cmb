@@ -503,7 +503,9 @@ public:
     imageinfo.URL = imageurl;
     pqPipelineSource* source;
     QFileInfo finfo(imageurl.c_str());
-    if (finfo.completeSuffix().toLower() == "tif" || finfo.completeSuffix().toLower() == "dem")
+    if (finfo.completeSuffix().toLower() == "tiff" ||
+        finfo.completeSuffix().toLower() == "tif" ||
+        finfo.completeSuffix().toLower() == "dem")
       {
       source =  builder->createReader("sources", "GDALRasterReader", files, server);
       }
@@ -515,9 +517,7 @@ public:
 
     if(source)
       {
-      imageinfo.ImageSource = builder->createFilter("filters", "cmbStructedToMesh", source);
-      vtkSMPropertyHelper(imageinfo.ImageSource->getProxy(), "UseScalerForZ").Set(0);
-
+      imageinfo.ImageSource = source;
       imageinfo.Representation = builder->createDataRepresentation(
             imageinfo.ImageSource->getOutputPort(0), view);
       if(imageinfo.Representation)
