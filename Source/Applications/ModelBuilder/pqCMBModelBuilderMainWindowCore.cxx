@@ -1052,8 +1052,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
     // HACK: For potential visibility changes of "image_url" of the model.
     // Once we have auxiliary geometry to repersent images, we will change how
     // to handle this.
-    if(curRef.isModel() && curRef.hasStringProperty("image_url") &&
-       (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
+    if(curRef.isModel() && curRef.hasStringProperty("image_url"))
       {
       const smtk::model::StringList& sprop(curRef.stringProperty("image_url"));
       if(!sprop.empty())
