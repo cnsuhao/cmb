@@ -998,6 +998,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
       if(internal_checkRep(rep, cmbModelMgr))
         {
+        /* // Don't hide this anymore. See what feedbacks we will get.
         // hiding color related components
         for (size_t index = 0; index < rep->getProxy()->GetNumberOfPropertyGroups(); index++)
           {
@@ -1016,6 +1017,7 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
             group->SetPanelVisibility("never");
             }
           }
+        */
         //this->displayPanel()->setVisible(true);
         pqProxyWidget* pwidget = this->displayPanel(rep->getProxy());
 
