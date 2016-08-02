@@ -182,6 +182,7 @@ static void add_python_path(std::string const& path)
 pqCMBCommonMainWindow::pqCMBCommonMainWindow():
 SelectionShortcut(NULL),
 ResetCameraShortcut(NULL),
+m_isExiting(false),
 Internal(new vtkInternal(this))
 {
   this->MainWindowCore = NULL;
@@ -267,6 +268,7 @@ Internal(new vtkInternal(this))
 //----------------------------------------------------------------------------
 pqCMBCommonMainWindow::~pqCMBCommonMainWindow()
 {
+  this->m_isExiting = true;
   delete this->Internal;
 
   if (this->SelectionShortcut)

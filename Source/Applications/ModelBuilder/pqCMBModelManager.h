@@ -93,6 +93,7 @@ public:
   void updateModelRepresentation(const smtk::model::EntityRef& model);
   void updateModelRepresentation(pqSMTKModelInfo* minfo);
   void updateModelMeshRepresentations(const smtk::model::Model& model);
+  void updateImageRepresentation(const std::string& image_url, bool visible);
 
   pqSMTKMeshInfo* meshInfo(const smtk::mesh::MeshSet& mesh);
   pqSMTKMeshInfo* meshInfo(pqDataRepresentation* rep);

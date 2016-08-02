@@ -47,9 +47,6 @@
 #include <QFileInfo>
 #include <QVariant>
 
-#include "vtkGDALRasterReader.h"
-#include "vtkDEMToMesh.h"
-
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 

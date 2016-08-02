@@ -11,7 +11,6 @@ set(CMB_Meshing_SRC
     vtkCMBTriangleMultiBlockMesher.cxx
     vtkLoopsMesher.cxx
     vtkMeshModelEdgesFilter.cxx
-    vtkDEMToMesh.cxx
     )
 
 if(OMICRON_FOUND AND BUILD_OMICRON_MESH_WORKER)
