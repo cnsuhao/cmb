@@ -3,10 +3,12 @@
 find_package(SMTK REQUIRED)
 find_package(KML)
 find_package(GDAL)
+include_directories(${GDAL_INCLUDE_DIR})
 
 set(CMB_IO_SRC
     vtkCMBADHReader.cxx
     vtkCMBBorFileReader.cxx
+    vtkDEMRasterWriter.cxx
     vtkCMBICMReader.cxx
     vtkCMBProjectManagerReader.cxx
     vtkCMBProjectManagerWriter.cxx

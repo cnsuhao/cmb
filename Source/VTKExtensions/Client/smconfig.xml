@@ -2139,6 +2139,83 @@ The Cone source can be used to add a polygonal cone to the 3D scene. The output 
       </DoubleVectorProperty>
 
     </SourceProxy>
+
+    <SourceProxy name="DemDataExtractor" class="vtkCMBDEMExportDataExtractor">
+      <Documentation
+        long_help="Used to extract information from point cloud for export of dem">
+      </Documentation>
+
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type" composite_data_supported="1">
+          <DataType value="vtkPolyData"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Extract Leaf Block filter.
+        </Documentation>
+      </InputProperty>
+
+      <DoubleVectorProperty
+        name="Max"
+        label="Max"
+        command="GetMax"
+        number_of_elements="2"
+        information_only="1"
+        default_values="1 1" >
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="Min"
+        label="Min"
+        command="GetMin"
+        number_of_elements="2"
+        information_only="1"
+        default_values="1 1" >
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="Scale"
+        label="Scale"
+        command="GetScale"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1" >
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="Spacing"
+        label="Spacing"
+        command="GetSpacing"
+        number_of_elements="2"
+        information_only="1"
+        default_values="-1 -1" >
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <IntVectorProperty name="Zone"
+        command="GetZone"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+      </IntVectorProperty>
+
+      <IntVectorProperty name="IsNorth"
+        command="GetIsNorth"
+        number_of_elements="1"
+        information_only="1"
+        default_values="0">
+      </IntVectorProperty>
+
+    </SourceProxy>
+
     <SourceProxy name="CmbSmoothMeshFilter" class="vtkCMBSmoothMeshFilter"
                  label="Smooth">
       <Documentation
@@ -7557,6 +7634,99 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
       </Hints>
 
     </WriterProxy>
+
+<WriterProxy name="DEMWriter"
+  class="vtkDEMRasterWriter"
+  label="DEM Pts Writer">
+  <Documentation
+    short_help="Write DEM pts file">
+    long_help="write points to a dem file"
+  </Documentation>
+  <InputProperty
+    name="Input"
+    command="AddInputConnection"
+    clean_command="RemoveAllInputs"
+    multiple_input="1">
+    <ProxyGroupDomain name="groups">
+      <Group name="sources"/>
+      <Group name="filters"/>
+    </ProxyGroupDomain>
+    <DataTypeDomain name="input_type">
+      <DataType value="vtkPolyData"/>
+    </DataTypeDomain>
+    <Documentation>
+      Add input to the LIDAR writer.
+    </Documentation>
+  </InputProperty>
+
+  <IntVectorProperty name="WriteAsSinglePiece"
+    command="SetWriteAsSinglePiece"
+    number_of_elements="1"
+    default_values="0" >
+    <BooleanDomain name="bool"/>
+  </IntVectorProperty>
+
+  <IntVectorProperty name="RasterSize"
+    command="SetRasterSize"
+    number_of_elements="2"
+    default_values="-1 -1" >
+  </IntVectorProperty>
+
+  <DoubleVectorProperty name="RadiusX"
+    command="SetRadiusX"
+    number_of_elements="1"
+    default_values="-1" >
+  </DoubleVectorProperty>
+
+  <DoubleVectorProperty name="RadiusY"
+    command="SetRadiusY"
+    number_of_elements="1"
+    default_values="-1" >
+  </DoubleVectorProperty>
+
+  <DoubleVectorProperty name="Scale"
+    command="SetScale"
+    number_of_elements="1"
+    default_values="1" >
+  </DoubleVectorProperty>
+
+  <IntVectorProperty name="IsNorth"
+    command="SetIsNorth"
+    number_of_elements="1"
+    default_values="0" >
+    <BooleanDomain name="bool"/>
+  </IntVectorProperty>
+
+  <IntVectorProperty name="Zone"
+    command="SetZone"
+    number_of_elements="1"
+    default_values="-1" >
+  </IntVectorProperty>
+
+  <StringVectorProperty
+    name="FileName"
+    command="SetFileName"
+    animateable="0"
+    number_of_elements="1">
+    <FileListDomain name="files"/>
+    <Documentation>
+      This property specifies the output file name for the writer.
+    </Documentation>
+  </StringVectorProperty>
+
+  <IntVectorProperty
+    name="AbortExecute"
+    command="SetAbortExecute"
+    number_of_elements="1"
+    default_values="0" >
+    <BooleanDomain name="bool"/>
+    <Documentation>
+      vtkAlgorithm::SetAbortExecute()
+    </Documentation>
+  </IntVectorProperty>
+  
+</WriterProxy>
+
 
     <!-- ==================================================================== -->
     <WriterProxy name="CmbPt123VelocityWriter"
