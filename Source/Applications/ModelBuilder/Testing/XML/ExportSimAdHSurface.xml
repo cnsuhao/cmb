@@ -19,9 +19,12 @@
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0/qt_scrollarea_viewport/1QExpandingLineEdit0" command="set_string" arguments="3" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,51,536870912,3,0,1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,51,536870912,3,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,16777221,536870912,,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,
+,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,
+,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,16777221,536870912,
+,0,1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="mousePress" arguments="1,1,0,8,14,/2:1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="mouseRelease" arguments="1,0,0,8,14,/2:1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="mouseDblClick" arguments="1,1,0,8,14,/2:1" />
@@ -29,9 +32,12 @@
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0/qt_scrollarea_viewport/1QExpandingLineEdit0" command="set_string" arguments="4" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,52,536870912,4,0,1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,52,536870912,4,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,,0,1" />
-  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,16777221,536870912,,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,
+,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="6,16777221,536870912,
+,0,1" />
+  <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="keyEvent" arguments="7,16777221,536870912,
+,0,1" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab" arguments="4" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabMaterials/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame1/1QFrame1/1QPushButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabMaterials/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/qtAttributeAssociation/boundaryGroup/AvailableList" command="mousePress" arguments="1,1,0,28,4,/0:0" />
@@ -73,39 +79,19 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/1QComboBoxPrivateContainer0/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,143,7,/1:0" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0" command="hidePopup" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame2/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="/media/ssd/sim/cmb_core/build-gitlab/cmb-11/Testing/Temporary" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT" />
   <pqevent object="SimulationExportDialog" command="key" arguments="16777248" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="E" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="Exp" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="Expor" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="Expor" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="Expor" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="Export" />
-  <pqevent object="SimulationExportDialog" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSi" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSim" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSim" />
-  <pqevent object="SimulationExportDialog" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimA" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAd" />
-  <pqevent object="SimulationExportDialog" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdH" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="key" arguments="16777248" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHS" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSur" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSur" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSurfa" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSurfa" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSurfac" />
+
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QLineEdit0" command="set_string" arguments="ExportSimAdHSurface" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
 
-  <!--pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/PythonExporters/AdHSurfaceWater.py" /-->
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/PythonExporters/AdHSurfaceWater.py" />
+  <!--
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="/media/ssd/sim/cmb_core/gitlab/workflows-adh/ADH/AdHSurfaceWater.py" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/FileBrowsingFrame/1QFrame0/1QComboBox0" command="set_string" arguments="/media/ssd/sim/cmb_core/gitlab/workflows-adh/ADH/AdHSurfaceWater.py" />
+  -->
 
   <pqevent object="SimulationExportDialog/ExportButtonBox/1QPushButton0" command="activate" arguments="" />
 </pqevents>
