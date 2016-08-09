@@ -173,6 +173,7 @@ if(BUILD_TESTING)
     # XXX: nodata(clipped5Subset.pts): LIDARTerrainExtraction
     # XXX: nodata(LIDARTest.pts): LIDARZoomToBox
     LIDARRotation
+    LIDARSaveDem
     MercedRiver
     TestFarPoints
     # XXX: nodata(LIDARTest.pts): SelectPieces
