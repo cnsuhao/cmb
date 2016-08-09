@@ -3447,3 +3447,26 @@ void pqCMBPointsBuilderMainWindowCore::onModifierArcWidgetFinish()
 {
   this->setCameraManipulationMode(0);
 }
+
+void pqCMBPointsBuilderMainWindowCore::startMultiFileRead()
+{
+  bool hasDataLoaded = this->IsDataLoaded();
+  if(!this->Internal->AddingMoreFiles && hasDataLoaded)
+  {
+    int answer = QMessageBox::question(this->parentWidget(),
+                                       "Closing Loaded Files?",
+                                       "Do you want to close all current files? \n" +
+                                       QString("Answer No, if you want to keep current files open."),
+                                       QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes) ;
+    if(answer == QMessageBox::Yes)
+    {
+      onCloseData();
+    }
+  }
+  this->Internal->AddingMoreFiles=true;
+}
+
+void pqCMBPointsBuilderMainWindowCore::endMultiFileRead()
+{
+  this->Internal->AddingMoreFiles=false;
+}

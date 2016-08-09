@@ -12,7 +12,7 @@
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqCoreUtilities.h"
-#include "pqFileDialog.h"
+#include "pqCMBFileDialog.h"
 #include "pqLoadDataReaction.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
@@ -24,6 +24,8 @@
 #include "vtkSMProxy.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMReaderFactory.h"
+
+#include <smtk/extension/vtk/reader/vtkLASReader.h>
 
 #include <QDebug>
 #include <QMapIterator>
@@ -82,7 +84,7 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(
   return pqCMBLoadDataReaction::loadData(cancelled, files,
     this->m_fileTypes, this->m_programDir,
     this->m_pluginBehavior, this->Internals->CMBSpecialExtensions,
-    this->m_MultiFiles, this->m_ReaderExtensionMap);
+    this->m_MultiFiles, this->m_ReaderExtensionMap, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -136,7 +138,8 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
   QStringList& selfiles, const QString& fileTypes,
   const QString& pgmDir, pqPluginIOBehavior* pluginBhv,
   const QStringList& specialExts, bool multiFiles,
-  const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap)
+  const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap,
+  pqCMBLoadDataReaction * reaction)
 {
   pqServer* server = pqActiveObjects::instance().activeServer();
   QString filters = pluginBhv ?
@@ -148,12 +151,18 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
     filters += ";;";
     filters += filetype;
     }
-  pqFileDialog fileDialog(server,
-    pqCoreUtilities::mainWidget(),
-    tr("Open File:"), pgmDir, filters);
+  pqCMBFileDialog fileDialog(server, pqCoreUtilities::mainWidget(),
+                             tr("Open File:"), pgmDir, filters);
+  if(reaction != NULL)
+  {
+    connect(&fileDialog, SIGNAL(currentSelectedFilesChanged(QStringList const& )),
+            reaction, SLOT(getFileHeader( QStringList const&)));
+    connect(reaction, SIGNAL(fileheaders( QStringList const&)),
+            &fileDialog, SLOT(setMetadata(QStringList const& )));
+  }
   fileDialog.setObjectName("FileOpenDialog");
-  fileDialog.setFileMode(multiFiles ?
-    pqFileDialog::ExistingFiles : pqFileDialog::ExistingFile);
+  fileDialog.setFileMode(multiFiles ? pqCMBFileDialog::ExistingFiles :
+                                      pqCMBFileDialog::ExistingFile);
   cancelled = true;
 
   QList<pqPipelineSource*> sources;
@@ -161,6 +170,10 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
     {
     cancelled = false;
     QList<QStringList> files = fileDialog.getAllSelectedFiles();
+    if(reaction && files.size() != 0)
+      {
+      reaction->sendMultiFileLoad();
+      }
     QStringList file;
     foreach(file,files)
       {
@@ -172,8 +185,38 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
         sources << source;
         }
       }
+    if(reaction && files.size() != 0)
+      {
+      reaction->sendDoneMultiFileLoad();
+      }
     }
   return sources;
+}
+
+void pqCMBLoadDataReaction::getFileHeader(QStringList const& files)
+{
+  QStringList headers;
+  foreach(QString f, files)
+  {
+    QFileInfo fi(f);
+    std::string fs = f.toStdString();
+    if(fi.isFile())
+    {
+      if(fi.suffix().toLower() == "las")
+      {
+        vtkLASReader * l = vtkLASReader::New();
+        l->SetFileName(fs.c_str());
+        std::string s = l->GetHeaderInfo();
+        headers.append(s.c_str());
+        l->Delete();
+      }
+      else
+      {
+        headers.append("");
+      }
+    }
+  }
+  emit fileheaders(headers);
 }
 
 //-----------------------------------------------------------------------------
@@ -257,4 +300,14 @@ void pqCMBLoadDataReaction::addReaderExtensionMap(const QString &fileext,
 {
   m_ReaderExtensionMap.insert(fileext, QPair<QString, QString>(
                               readergroup, readername));
+}
+
+void pqCMBLoadDataReaction::sendMultiFileLoad()
+{
+  emit(multiFileLoad());
+}
+
+void pqCMBLoadDataReaction::sendDoneMultiFileLoad()
+{
+  emit(doneMultiFileLoad());
 }

@@ -49,6 +49,7 @@ set(UI_FORMS
     UI/pqContourWidget.ui
     UI/pqLineWidget.ui
     UI/qtArcEditWidget.ui
+    UI/pqCMBFileDialog.ui
     )
 
 qt4_wrap_ui(UI_BUILT_SOURCES
@@ -143,6 +144,12 @@ add_library(cmbAppCommon
   qtCMBProgressWidget.h
   qtCMBTableWidget.cxx
   qtCMBTableWidget.h
+  pqCMBFileDialog.cxx
+  pqCMBFileDialog.h
+  pqCMBFileDialogEventPlayer.h
+  pqCMBFileDialogEventPlayer.cxx
+  pqCMBFileDialogEventTranslator.h
+  pqCMBFileDialogEventTranslator.cxx
   pqCMBTreeWidgetEventTranslator.cxx
   pqCMBTreeWidgetEventTranslator.h
   vtkQtCMBConnectComboBox.cxx
@@ -243,6 +250,7 @@ target_link_libraries(cmbAppCommon
     smtkDiscreteSession
     vtkSMTKDiscreteModel
     vtksys
+    vtkSMTKReaderExt
   )
 
 set(python_path_sources)

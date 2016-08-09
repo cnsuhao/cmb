@@ -305,3 +305,15 @@ pqCMBPointsBuilderMainWindowCore* pqCMBPointsBuilderMainWindow::getThisCore()
 {
   return qobject_cast<pqCMBPointsBuilderMainWindowCore*>(this->MainWindowCore);
 }
+
+void pqCMBPointsBuilderMainWindow::loadMultiFilesStart()
+{
+  pqCMBPointsBuilderMainWindowCore* core = this->getThisCore();
+  core->startMultiFileRead();
+}
+
+void pqCMBPointsBuilderMainWindow::loadMultiFilesStop()
+{
+  pqCMBPointsBuilderMainWindowCore* core = this->getThisCore();
+  core->endMultiFileRead();
+}

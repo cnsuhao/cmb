@@ -55,6 +55,10 @@ protected slots:
   void onViewSelected(pqOutputPort*);
   void onEnableMenuItems(bool state);
 
+  virtual void loadMultiFilesStart();
+  virtual void loadMultiFilesStop();
+
+
 protected:
 
   void setupMenuActions();

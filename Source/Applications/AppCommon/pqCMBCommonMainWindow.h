@@ -92,6 +92,9 @@ protected slots:
   virtual void onRecordTest();
   virtual void onRecordTestStopped();
 
+  virtual void loadMultiFilesStart(){}
+  virtual void loadMultiFilesStop(){}
+
 protected:
 
   virtual void clearGUI();
