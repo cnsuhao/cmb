@@ -13,14 +13,14 @@
 #define _pqCMBFileDialogEventPlayer_h
 
 #include <pqWidgetEventPlayer.h>
-#include "pqCoreModule.h"
+#include "cmbAppCommonExport.h"
 
 /**
 Concrete implementation of pqWidgetEventPlayer that handles playback of recorded file dialog user input.
 
 \sa pqEventPlayer
 */
-class PQCORE_EXPORT pqCMBFileDialogEventPlayer :
+class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventPlayer :
   public pqWidgetEventPlayer
 {
     Q_OBJECT
