@@ -14,7 +14,7 @@
 #define _pqCMBFileDialogEventTranslator_h
 
 #include <pqWidgetEventTranslator.h>
-#include "pqCoreModule.h"
+#include "cmbAppCommonExport.h"
 #include <QPointer>
 
 class pqCMBFileDialog;
@@ -25,7 +25,7 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class PQCORE_EXPORT pqCMBFileDialogEventTranslator :
+class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT

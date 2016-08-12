@@ -13,7 +13,7 @@
 #ifndef _pqCMBFileDialog_h
 #define _pqCMBFileDialog_h
 
-#include "pqCoreModule.h"
+#include "cmbAppCommonExport.h"
 #include <QStringList>
 #include <QDialog>
 
@@ -62,7 +62,7 @@ class QShowEvent;
   \sa pqFileDialogModel
 */
 
-class PQCORE_EXPORT pqCMBFileDialog :
+class CMBAPPCOMMON_EXPORT pqCMBFileDialog :
   public QDialog
 {
   typedef QDialog Superclass;
