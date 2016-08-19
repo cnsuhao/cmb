@@ -43,6 +43,7 @@ set(CMB_Filtering_SRC
     vtkTexturePointIntensityFilter.cxx
 
     vtkCMBGrabCutFilter.cxx
+    vtkCMBWatershedFilter.cxx
 )
 
 set(vtkCMBFiltering_NO_HeaderTest 1)
