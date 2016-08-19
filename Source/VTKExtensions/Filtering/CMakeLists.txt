@@ -1,5 +1,6 @@
 # VXL is needed.
 find_package(VXL)
+find_package(opencv)
 include(${VXL_CMAKE_DIR}/UseVXL.cmake)
 
 set(CMB_Filtering_SRC
@@ -40,6 +41,8 @@ set(CMB_Filtering_SRC
     vtkRegisterPlanarTextureMap.cxx
     vtkTerrainExtractionFilter.cxx
     vtkTexturePointIntensityFilter.cxx
+
+    vtkCMBGrabCutFilter.cxx
 )
 
 set(vtkCMBFiltering_NO_HeaderTest 1)
@@ -56,7 +59,8 @@ target_include_directories(vtkCMBFiltering
 
 target_link_libraries(vtkCMBFiltering
             PRIVATE
-              rtvl
+              rtvl ${OpenCV_LIBS}
+              vtkIOImage
               vtkSMTKReaderExt # for vtkLIDARReader
               vtkSMTKFilterExt
               vtkFiltersSources

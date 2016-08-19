@@ -8,6 +8,7 @@ set(testing_libraries
   vtkCMBMeshing
   vtkInteractionStyle
   vtkInteractionWidgets
+  vtkIOGDAL
   vtkRenderingCore
   vtkRenderingFreeType
   vtkRendering${VTK_RENDERING_BACKEND}
@@ -47,6 +48,10 @@ target_link_libraries(delosMeshReader ${testing_libraries})
 # not acually a test (as its name suggests), but could/should be made into one?
 add_executable(testDataReader testDataReader.cxx)
 target_link_libraries(testDataReader ${testing_libraries})
+
+# not acually a test (as its name suggests), but could/should be made into one?
+add_executable(testGrabCuts vtkCMBGrabCutTest.cxx)
+target_link_libraries(testGrabCuts ${testing_libraries})
 
 add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 
