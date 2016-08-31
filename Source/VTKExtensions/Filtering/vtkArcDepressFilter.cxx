@@ -686,7 +686,7 @@ namespace
     DepArcWedgeProfileFunction * w1 = dynamic_cast<DepArcWedgeProfileFunction*>(fun1.get());
     return boost::shared_ptr<DepArcProfileFunction>(w0->interpolate(w1, weight));
   }
-  
+
 }
 
 class DepArcData
@@ -1454,11 +1454,14 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
         }
         int coplanar;
         double intersection[2][3];
+        double surfaceid[2];
+        double tolerance = 0.;
         int r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection(pts[0], pts[1], pts[2],
                                                                             pts[3], pts[4], pts[5],
                                                                             coplanar,
                                                                             intersection[0],
-                                                                            intersection[1]);
+                                                                            intersection[1],
+                                                                            surfaceid, tolerance);
 
         if(( digRaiseCheck[0] == 2 && digRaiseCheck[1] == 1 )||
            ( digRaiseCheck[0] == 1 && digRaiseCheck[1] == 2 ))
@@ -1509,20 +1512,26 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
           {
             //move point a small amount on z of the shared point to handel the numeric instablity
             double tmpInter[4][3];
+            double surfaceid[2];
+            double tolerance = 0.;
             double z = pts[notChanged][2];
             pts[notChanged][2] = z + 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
                                                                             pts[0], pts[1], pts[2],
                                                                             coplanar,
                                                                             tmpInter[0],
-                                                                            tmpInter[1]);
+                                                                            tmpInter[1],
+                                                                            surfaceid,
+                                                                            tolerance);
             assert(r);
             pts[notChanged][2] = z - 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
                                                                             pts[0], pts[1], pts[2],
                                                                             coplanar,
                                                                             tmpInter[2],
-                                                                            tmpInter[3]);
+                                                                            tmpInter[3],
+                                                                            surfaceid,
+                                                                            tolerance);
             assert(r);
             pts[notChanged][2] = z;
             for(unsigned int i = 0; i < 3; ++i)
@@ -1769,4 +1778,3 @@ void vtkArcDepressFilter
                                        displacement, slopeLeft, slopeRight ));
   this->Modified();
 }
-
