@@ -109,10 +109,11 @@ int vtkCMBWatershedFilter::RequestData(vtkInformation *vtkNotUsed(request),
   }
 
   vtkSmartPointer<vtkPolyData> poly = vtkSmartPointer<vtkPolyData>::New();
-  vtkCMBOpenCVHelper::ExtractContours(outputLabledImageCV, ForegroundValue, poly);
+  vtkCMBOpenCVHelper::ExtractContours(outputLabledImageCV, image->GetOrigin(), image->GetSpacing(),
+                                      ForegroundValue, poly);
 
-  cv::flip(outputLabledImageCV, outputLabledImageCV, 0);
-  vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, outputLable);
+  vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, maskVTK->GetOrigin(), maskVTK->GetSpacing(),
+                                  outputLable);
   outputNext->DeepCopy(maskVTK);
 
   outputPoly->DeepCopy(poly);

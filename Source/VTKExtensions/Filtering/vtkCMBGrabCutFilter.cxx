@@ -28,6 +28,17 @@
 
 vtkStandardNewMacro(vtkCMBGrabCutFilter);
 
+class vtkCMBGrabCutFilter::InternalData
+{
+public:
+  InternalData()
+  {
+    poly = vtkSmartPointer<vtkPolyData>::New();
+  }
+  vtkSmartPointer<vtkPolyData> poly;
+  cv::Mat maskCV;
+};
+
 vtkCMBGrabCutFilter::vtkCMBGrabCutFilter()
 : NumberOfIterations(12),
   PotentialForegroundValue(25),
@@ -37,6 +48,13 @@ vtkCMBGrabCutFilter::vtkCMBGrabCutFilter()
 {
   this->SetNumberOfInputPorts(2);
   this->SetNumberOfOutputPorts(3);
+  RunGrabCuts = false;
+  internal = new InternalData;
+}
+
+vtkCMBGrabCutFilter::~vtkCMBGrabCutFilter()
+{
+  delete internal;
 }
 
 int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
@@ -61,24 +79,31 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
   vtkPolyData * outputPoly =
                     vtkPolyData::SafeDownCast(outPolyDataInfo->Get(vtkDataObject::DATA_OBJECT()));
 
+  if(!RunGrabCuts)
+  {
+    outputPoly->DeepCopy(this->internal->poly);
+    //Might need to fill outputNext and outputLable if how their use changes
+    return 1;
+  }
+
   vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
   vtkSmartPointer<vtkImageData> mask = vtkSmartPointer<vtkImageData>::New();
   mask->DeepCopy(maskVTK);
   image->DeepCopy(inputVTK);
 
-  cv::Mat imageCV, maskCV;
+  cv::Mat imageCV;
   vtkCMBOpenCVHelper::VTKToOpenCV(image, imageCV);
-  vtkCMBOpenCVHelper::VTKToOpenCV(mask, maskCV, /*to_gray*/ true);
+  vtkCMBOpenCVHelper::VTKToOpenCV(mask, this->internal->maskCV, /*to_gray*/ true);
 
   //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
-  //cv::imshow( "Display window", maskCV );                   // Show our image inside it.
+  //cv::imshow( "Display window", this->internal->maskCV );                   // Show our image inside it.
 
-  //cv::waitKey(0);
+  cv::waitKey(0);
 
-  for(int i = 0; i < maskCV.rows; i++)
+  for(int i = 0; i < this->internal->maskCV.rows; i++)
   {
-    uchar* Mi = maskCV.ptr<uchar>(i);
-    for(int j = 0; j < maskCV.cols; j++)
+    uchar* Mi = this->internal->maskCV.ptr<uchar>(i);
+    for(int j = 0; j < this->internal->maskCV.cols; j++)
     {
       if(Mi[j] != PotentialBackgroundValue &&
          Mi[j] != PotentialForegroundValue &&
@@ -98,33 +123,35 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
   }
 
   {
-    cv::Mat pBG = maskCV == PotentialBackgroundValue;
-    cv::Mat pFG = maskCV == PotentialForegroundValue;
-    cv::Mat BG = maskCV == BackgroundValue;
-    cv::Mat FG = maskCV == ForegroundValue;
-    maskCV.setTo(cv::GC_PR_BGD, pBG);
-    maskCV.setTo(cv::GC_PR_FGD, pFG);
-    maskCV.setTo(cv::GC_FGD, FG);
-    maskCV.setTo(cv::GC_BGD, BG);
+    cv::Mat pBG = this->internal->maskCV == PotentialBackgroundValue;
+    cv::Mat pFG = this->internal->maskCV == PotentialForegroundValue;
+    cv::Mat BG  = this->internal->maskCV == BackgroundValue;
+    cv::Mat FG  = this->internal->maskCV == ForegroundValue;
+    this->internal->maskCV.setTo(cv::GC_PR_BGD, pBG);
+    this->internal->maskCV.setTo(cv::GC_PR_FGD, pFG);
+    this->internal->maskCV.setTo(cv::GC_FGD, FG);
+    this->internal->maskCV.setTo(cv::GC_BGD, BG);
   }
 
   cv::Mat bgdModel, fgdModel;
   cv::Rect rect;
 
-  cv::grabCut(imageCV, maskCV, rect,bgdModel,fgdModel,NumberOfIterations,cv::GC_INIT_WITH_MASK);
+  cv::grabCut(imageCV, this->internal->maskCV, rect,
+              bgdModel, fgdModel, NumberOfIterations, cv::GC_INIT_WITH_MASK);
+  RunGrabCuts = false;
 
-  cv::Mat outputLabledImageCV = maskCV.clone();
+  cv::Mat outputLabledImageCV = this->internal->maskCV.clone();
 
   {
-    cv::Mat pBG = maskCV == cv::GC_PR_BGD;
-    cv::Mat pFG = maskCV == cv::GC_PR_FGD;
-    cv::Mat BG = maskCV == cv::GC_BGD;
-    cv::Mat FG = maskCV == cv::GC_FGD;
+    cv::Mat pBG = this->internal->maskCV == cv::GC_PR_BGD;
+    cv::Mat pFG = this->internal->maskCV == cv::GC_PR_FGD;
+    cv::Mat BG  = this->internal->maskCV == cv::GC_BGD;
+    cv::Mat FG  = this->internal->maskCV == cv::GC_FGD;
 
-    maskCV.setTo(PotentialBackgroundValue, pBG);
-    maskCV.setTo(ForegroundValue, FG);
-    maskCV.setTo(PotentialForegroundValue, pFG);
-    maskCV.setTo(BackgroundValue, BG);
+    this->internal->maskCV.setTo(PotentialBackgroundValue, pBG);
+    this->internal->maskCV.setTo(ForegroundValue, FG);
+    this->internal->maskCV.setTo(PotentialForegroundValue, pFG);
+    this->internal->maskCV.setTo(BackgroundValue, BG);
 
     outputLabledImageCV.setTo(BackgroundValue, pBG);
     outputLabledImageCV.setTo(ForegroundValue, FG);
@@ -132,15 +159,16 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
     outputLabledImageCV.setTo(BackgroundValue, BG);
   }
 
-  vtkSmartPointer<vtkPolyData> poly = vtkSmartPointer<vtkPolyData>::New();
-  vtkCMBOpenCVHelper::ExtractContours(outputLabledImageCV, ForegroundValue, poly);
+  this->internal->poly = vtkSmartPointer<vtkPolyData>::New();
+  vtkCMBOpenCVHelper::ExtractContours(outputLabledImageCV, image->GetOrigin(),
+                                      image->GetSpacing(), ForegroundValue, this->internal->poly);
 
-  cv::flip(outputLabledImageCV, outputLabledImageCV, 0);
-  vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, outputLable);
-  cv::flip(maskCV, maskCV, 0);
-  vtkCMBOpenCVHelper::OpenCVToVTK(maskCV, outputNext);
+  vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, maskVTK->GetOrigin(), maskVTK->GetSpacing(),
+                                  outputLable);
+  vtkCMBOpenCVHelper::OpenCVToVTK(this->internal->maskCV, maskVTK->GetOrigin(),
+                                  maskVTK->GetSpacing(), outputNext);
 
-  outputPoly->DeepCopy(poly);
+  outputPoly->DeepCopy(this->internal->poly);
   
   return 1;
 }

@@ -24,11 +24,17 @@
 class vtkCMBOpenCVHelper
 {
 public:
-  static bool OpenCVToVTK( cv::Mat const& src, vtkImageData* dest )
+  static bool OpenCVToVTK( cv::Mat const& src, double * origin,
+                          double * spacing, vtkImageData* dest )
   {
     if(src.data == NULL )
     {
       return false;
+    }
+    cv::Mat src_c = src.clone();
+    if(spacing[1] > 0)
+    {
+      cv::flip(src_c, src_c, 0);
     }
     vtkSmartPointer<vtkImageImport> importer = vtkSmartPointer<vtkImageImport>::New();
     if ( dest )
@@ -39,8 +45,8 @@ public:
     {
       return false;
     }
-    importer->SetDataSpacing( 1, 1, 1 );
-    importer->SetDataOrigin( 0, 0, 0 );
+    importer->SetDataSpacing( spacing );
+    importer->SetDataOrigin( origin );
     importer->SetWholeExtent(0, src.size().width-1, 0, src.size().height-1, 0, 0 );
     importer->SetDataExtentToWholeExtent();
     importer->SetDataScalarTypeToUnsignedChar();
@@ -50,7 +56,8 @@ public:
     return true;
   }
 
-  static bool VTKToOpenCV( vtkImageData* src, cv::Mat& dest, bool convert_to_gray = false)
+  static bool VTKToOpenCV( vtkImageData* src, cv::Mat& dest,
+                           bool convert_to_gray = false)
   {
     const int numComponents =  src->GetNumberOfScalarComponents();
     int type = 0;
@@ -76,7 +83,8 @@ public:
     return true;
   }
 
-  static bool ExtractContours( cv::Mat const& src, int objToContour, vtkPolyData * poly )
+  static bool ExtractContours( cv::Mat const& src, double * origin,
+                               double * spacing, int objToContour, vtkPolyData * poly )
   {
     cv::Mat m = src.clone();
     cv::Mat mV = src == objToContour;
@@ -98,11 +106,13 @@ public:
     {
       std::vector<cv::Point> const& c = contours[i];
       if(c.empty()) continue;
-      startId = endId = points->InsertNextPoint(c[0].x, c[0].y, 0);
+      startId = endId = points->InsertNextPoint(origin[0] + c[0].x*spacing[0],
+                                                origin[1] + c[0].y*spacing[1], 0);
       for(unsigned int j = 1; j < c.size(); ++j)
       {
         ptIDs[0] = endId;
-        ptIDs[1] = endId = points->InsertNextPoint(c[j].x, c[j].y, 0);
+        ptIDs[1] = endId = points->InsertNextPoint(origin[0] + c[j].x*spacing[0],
+                                                   origin[1] + c[j].y*spacing[1], 0);
         cells->InsertNextCell(2,ptIDs);
       }
       ptIDs[0] = endId;

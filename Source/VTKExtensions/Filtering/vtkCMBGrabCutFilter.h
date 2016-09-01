@@ -36,6 +36,14 @@ public:
   vtkSetMacro(BackgroundValue,int);
   vtkGetMacro(BackgroundValue,int);
 
+  void DoGrabCut()
+  {
+    RunGrabCuts = true;
+    this->Modified();
+  }
+
+  virtual ~vtkCMBGrabCutFilter();
+
 protected:
 
   int NumberOfIterations;
@@ -54,6 +62,9 @@ protected:
 private:
   vtkCMBGrabCutFilter(const vtkCMBGrabCutFilter&);  // Not implemented.
   void operator=(const vtkCMBGrabCutFilter&);  // Not implemented.
+  bool RunGrabCuts;
+  class InternalData;
+  InternalData * internal;
 };
 
 #endif
