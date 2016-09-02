@@ -28,10 +28,9 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-The following files and directories come from third parties. Check the
+The following files and directories under the Source directory come from third parties. Check the
 contents of these for details on the specifics of their respective
 licenses.
 - - - - - - - - - - - - - - - - - - - - - - - - do not remove this line
 LIDAR/rtvl
-CMake/FindDocutils.cmake
 CMake/FindUUID.cmake
