@@ -34,8 +34,10 @@ public:
   InternalData()
   {
     poly = vtkSmartPointer<vtkPolyData>::New();
+    mask = vtkSmartPointer<vtkImageData>::New();
   }
   vtkSmartPointer<vtkPolyData> poly;
+  vtkSmartPointer<vtkImageData> mask;
   cv::Mat maskCV;
 };
 
@@ -82,6 +84,7 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
   if(!RunGrabCuts)
   {
     outputPoly->DeepCopy(this->internal->poly);
+    outputLable->DeepCopy(this->internal->mask);
     //Might need to fill outputNext and outputLable if how their use changes
     return 1;
   }
@@ -133,7 +136,8 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
     this->internal->maskCV.setTo(cv::GC_BGD, BG);
   }
 
-  cv::Mat bgdModel, fgdModel;
+  cv::Mat bgdModel(1,65,CV_64F, cv::Scalar::all(0)),
+          fgdModel(1,65,CV_64F, cv::Scalar::all(0));
   cv::Rect rect;
 
   cv::grabCut(imageCV, this->internal->maskCV, rect,
@@ -164,11 +168,12 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
                                       image->GetSpacing(), ForegroundValue, this->internal->poly);
 
   vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, maskVTK->GetOrigin(), maskVTK->GetSpacing(),
-                                  outputLable);
+                                  this->internal->mask);
   vtkCMBOpenCVHelper::OpenCVToVTK(this->internal->maskCV, maskVTK->GetOrigin(),
                                   maskVTK->GetSpacing(), outputNext);
 
   outputPoly->DeepCopy(this->internal->poly);
+  outputLable->DeepCopy(this->internal->mask);
   
   return 1;
 }

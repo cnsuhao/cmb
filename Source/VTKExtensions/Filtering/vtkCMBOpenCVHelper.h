@@ -107,12 +107,12 @@ public:
       std::vector<cv::Point> const& c = contours[i];
       if(c.empty()) continue;
       startId = endId = points->InsertNextPoint(origin[0] + c[0].x*spacing[0],
-                                                origin[1] + c[0].y*spacing[1], 0);
+                                                origin[1] + c[0].y*spacing[1], 0.001);
       for(unsigned int j = 1; j < c.size(); ++j)
       {
         ptIDs[0] = endId;
         ptIDs[1] = endId = points->InsertNextPoint(origin[0] + c[j].x*spacing[0],
-                                                   origin[1] + c[j].y*spacing[1], 0);
+                                                   origin[1] + c[j].y*spacing[1], 0.001);
         cells->InsertNextCell(2,ptIDs);
       }
       ptIDs[0] = endId;

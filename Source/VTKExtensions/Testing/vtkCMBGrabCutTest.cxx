@@ -8,6 +8,9 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
+#include "vtkCMBGrabCutUI.h"
+#include <QApplication>
+#if 0
 #include "vtkSmartPointer.h"
 #include "vtkCMBGrabCutFilter.h"
 #include "vtkCMBWatershedFilter.h"
@@ -596,10 +599,18 @@ private:
   vtkCornerAnnotation*  Annotation;  // Pointer to the annotation
   vtkImageCanvasSource2D* Drawer;
 };
+#endif
 
 int main(int argc, char** argv)
 {
+  QApplication app( argc, argv );
 
+  vtkCMBGrabCutUI gui;
+  gui.show();
+
+  return app.exec();
+
+#if 0
   if ( argc != 2 )
   {
     std::cout << "Usage: " << argv[0]
@@ -730,6 +741,6 @@ int main(int argc, char** argv)
 
   renderWindowInteractor->Initialize();
   renderWindowInteractor->Start();
-
   return 0;
+#endif
 }
