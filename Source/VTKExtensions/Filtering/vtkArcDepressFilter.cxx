@@ -38,7 +38,12 @@
 #include <vtkTriangleFilter.h>
 
 #include <algorithm>
+#ifdef __cplusplus
+#  include <cmath>
+using std::isnan;
+#else
 #include <math.h>
+#endif
 #include <limits>
 #include <cassert>
 
