@@ -28,4 +28,4 @@
       </InstancedAttributes>
     </View>
   </Views>
-</SMTK_AttributeManager>
+</SMTK_AttributeSystem>
