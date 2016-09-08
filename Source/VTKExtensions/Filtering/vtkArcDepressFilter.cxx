@@ -38,11 +38,11 @@
 #include <vtkTriangleFilter.h>
 
 #include <algorithm>
-#ifdef __cplusplus
+#if defined (__GNUC__) && (__GNUC__ > 4) && (__cplusplus)
 #  include <cmath>
 using std::isnan;
 #else
-#include <math.h>
+#  include <math.h>
 #endif
 #include <limits>
 #include <cassert>
