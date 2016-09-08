@@ -130,7 +130,7 @@ public:
 
   // Description:
   // Return the mtime also considering the contour function.
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
   // Description:
   // Set contour function

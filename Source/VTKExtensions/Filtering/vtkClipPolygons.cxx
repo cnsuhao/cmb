@@ -205,10 +205,10 @@ void vtkClipPolygons::SetTransform(double elements[16])
 //----------------------------------------------------------------------------
 // Overload standard modified time function. If Clip functions is modified,
 // then this object is modified as well.
-unsigned long vtkClipPolygons::GetMTime()
+vtkMTimeType vtkClipPolygons::GetMTime()
 {
-  unsigned long mTime=this->Superclass::GetMTime();
-  unsigned long time;
+  vtkMTimeType mTime=this->Superclass::GetMTime();
+  vtkMTimeType time;
 
   for(std::map<int, std::vector<PolygonInfo*> >::iterator itMap=this->Polygons.begin();
     itMap != this->Polygons.end(); itMap++)
