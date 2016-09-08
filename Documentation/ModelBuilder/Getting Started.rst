@@ -78,7 +78,7 @@ Custom views can be configured here. Configurations can be loaded and saved here
 Interacting with the Model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Right-clicking on a face within the viewport will select the face and bring up a context menu. From this menu, you can hide faces, change color, and change representation (of the object).
+Right double clicking on a face within the viewport will select the face and bring up a context menu. From this menu, you can hide faces, change color, and change representation (of the object).
 
 .. findfigure:: ModelFaceRightClick.*
 
