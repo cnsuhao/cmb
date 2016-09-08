@@ -124,7 +124,7 @@ public:
 
   // Description:
   // Return the mtime also considering the locator and clip function.
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
   // Description:
   // Transform to apply to the pts being read in for determining whether the
