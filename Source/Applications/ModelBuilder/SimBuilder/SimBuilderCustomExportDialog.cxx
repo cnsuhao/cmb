@@ -15,6 +15,7 @@
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/FileItem.h"
+#include "smtk/attribute/FileSystemItemDefinition.h"
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/StringItem.h"
@@ -31,14 +32,19 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QEventLoop>
+#include <QFile>
+#include <QFileInfo>
 #include <QFrame>
 #include <QLabel>
 #include <QMessageBox>
 #include <QRadioButton>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -274,6 +280,11 @@ void SimBuilderCustomExportDialog::updatePanel()
   hasError =
     attWriter.writeContents(*this->ExportAttSystem, serializedSystem, logger);
 
+  std::string filename("export.sbt");
+  hasError =
+    attWriter.write(*this->ExportAttSystem, filename, logger);
+  std::cout << "Wrote " << filename  << std::endl;
+
   // Reload into export panel
   smtk::io::AttributeReader attReader;
   hasError = attReader.readContents(*(this->ExportUIManager->attributeSystem()),
@@ -300,10 +311,7 @@ void SimBuilderCustomExportDialog::updatePanel()
   if (fileItem)
     {
     std::string script = this->getPythonScriptPath(fileItem);
-    if (script != "")
-      {
-      fileItem->setValue(0, script);
-      }
+    fileItem->setValue(0, script);
     }
 
   // Update selection widget for analysis types
@@ -495,8 +503,8 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
 {
   std::string script = fileItem->valueAsString(0);
 
-  // If path is empty, return it
-  if ("" == script)
+  // If empty string
+  if (script.empty())
     {
     return script;
     }
@@ -513,48 +521,39 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
   if (server->isRemote())
     {
     // Currently we punt if the server is remote
-    return script;
+    return std::string();  // return empty string
     }
 
-  // Make list of directories to look for python script
-  std::vector<std::string> testDirList;
-  std::string appDir = QCoreApplication::applicationDirPath().toStdString();
-
-  // Add path for standard CMB install
-  std::string installPath = appDir;
+  // Look for installed workflow directory
+  QString appDirPath = QCoreApplication::applicationDirPath();
 #ifdef __APPLE__
-  //installPath += "/ModelBuilder.app/Contents";
-  installPath += "/..";
+  QString workflowsPath = appDirPath + "/../../../../../Workflows";
+#else
+  QString workflowsPath = appDirPath + "/../share/cmb/workflows";
 #endif
-  installPath += "/Resources/PythonExporters/";
-  //std::cout << "installPath: " << installPath << std::endl;
-  testDirList.push_back(installPath);
-
-  // Add path for CMB dev/testing (CMB_TEST_DIR)
-  std::string testPath = appDir + "/../Source/Testing/Temporary/";
-#ifdef __APPLE__
-  testPath = appDir + "/../../../../Source/Testing/Temporary/";
-#endif
-  testDirList.push_back(testPath);
-
-  size_t i;
-  for (i=0; i<testDirList.size(); ++i)
+  if (!QFile::exists(workflowsPath))
     {
-    std::string path = testDirList[i] + script;
-    if (vtksys::SystemTools::FileExists(path.c_str(), true))
+    return std::string();
+    }
+  QDir workflowsDir(workflowsPath);
+
+  // Traverse subfolders to look for script file.
+  // Note that this presumes each solver's script file has a unique name.
+  QString fragment = QString("/") + QString::fromStdString(script);
+  QStringList subfolderList = workflowsDir.entryList(
+    QDir::Dirs | QDir::NoDotAndDotDot);
+  foreach(QString subfolder, subfolderList)
+    {
+    QString path = workflowsPath + "/" + subfolder + fragment;
+    //qDebug() << "Checking" << path;
+    if (QFile::exists(path))
       {
-      return path;
+      // Get the canonical path
+      QFileInfo fileInfo(path);
+      QString canonicalPath = fileInfo.canonicalFilePath();
+      return canonicalPath.toStdString();
       }
     }
-
-  // List out paths that were unsuccessful
-  std::cerr << "Unable to find python script \"" << script << "\".\n"
-            << "Looked in these directories:\n";
-  for (i=0; i<testDirList.size(); ++i)
-    {
-    std::cerr << "  " << testDirList[i] << "\n";
-    }
-  std::cerr << std::endl;
 
   // If we reach this point, code did *not* find python script
   if (warnIfMissing)
@@ -563,5 +562,5 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
     ss << "Unable to find python export script \"" << script << "\"";
     QMessageBox::critical(NULL, "Export Error", QString::fromStdString(ss.str()));
     }
-  return "";
+  return std::string();
 }
