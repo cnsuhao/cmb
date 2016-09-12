@@ -129,7 +129,7 @@ public:
   // Description:
   // Overload GetMTime because we delegate to vtkContourValues so its
   // modified time must be taken into account.
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
 protected:
   vtkCMBBandedPolyDataContourFilter();

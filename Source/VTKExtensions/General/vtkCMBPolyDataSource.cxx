@@ -59,9 +59,9 @@ int vtkCMBPolyDataSource::RequestData(
 
 
 //----------------------------------------------------------------------------
-unsigned long vtkCMBPolyDataSource::GetMTime()
+vtkMTimeType vtkCMBPolyDataSource::GetMTime()
 {
-  unsigned long mTime = this->Superclass::GetMTime();
+  vtkMTimeType mTime = this->Superclass::GetMTime();
 
   if (this->Source && this->Source->GetMTime() > mTime)
     {

@@ -57,10 +57,10 @@ vtkCMBMeshConeSelector::~vtkCMBMeshConeSelector()
 //----------------------------------------------------------------------------
 // Overload standard modified time function. If ConeSource is modified,
 // then this object is modified as well.
-unsigned long vtkCMBMeshConeSelector::GetMTime()
+vtkMTimeType vtkCMBMeshConeSelector::GetMTime()
 {
-  unsigned long mTime=this->Superclass::GetMTime();
-  unsigned long time;
+  vtkMTimeType mTime=this->Superclass::GetMTime();
+  vtkMTimeType time;
 
   if ( this->ConeSource != NULL )
     {

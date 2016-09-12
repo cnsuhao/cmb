@@ -82,7 +82,7 @@ public:
 
   // Description:
   // Return the mtime also considering the cone source.
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
   // Description:
   // Flag to indicate whether the output selection is empty, which

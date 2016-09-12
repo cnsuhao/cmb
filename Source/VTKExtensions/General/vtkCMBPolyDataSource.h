@@ -32,7 +32,7 @@ public:
 
   // Description:
   // Include Source in the MTime for this object
-  virtual unsigned long GetMTime();
+  virtual vtkMTimeType GetMTime();
 
 protected:
   vtkCMBPolyDataSource();

@@ -43,7 +43,7 @@ public:
 
   // Description:
   // Return the mtime also considering the arc.
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
 protected:
   vtkCMBArcProvider();

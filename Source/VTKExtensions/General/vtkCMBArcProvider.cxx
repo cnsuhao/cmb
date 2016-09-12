@@ -78,12 +78,12 @@ void vtkCMBArcProvider::SetEndPointId(vtkIdType ptId)
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkCMBArcProvider::GetMTime()
+vtkMTimeType vtkCMBArcProvider::GetMTime()
 {
-  unsigned long mTime=this->Superclass::GetMTime();
+  vtkMTimeType mTime=this->Superclass::GetMTime();
   if (this->Arc)
     {
-    unsigned long time = this->Arc->GetMTime();
+    vtkMTimeType time = this->Arc->GetMTime();
     mTime = ( time > mTime ? time : mTime );
 
     }
