@@ -50,12 +50,6 @@ target_link_libraries(delosMeshReader ${testing_libraries})
 add_executable(testDataReader testDataReader.cxx)
 target_link_libraries(testDataReader ${testing_libraries})
 
-# not acually a test (as its name suggests), but could/should be made into one?
-QT4_WRAP_UI(UISrcs grabCuts.ui)
-QT4_WRAP_CPP(MOCSrcs vtkCMBGrabCutUI.h)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-add_executable(testGrabCuts vtkCMBGrabCutTest.cxx vtkCMBGrabCutUI.cxx ${UISrcs} ${MOCSrcs})
-target_link_libraries(testGrabCuts ${testing_libraries} ${VTK_LIBRARIES})
 
 add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 
