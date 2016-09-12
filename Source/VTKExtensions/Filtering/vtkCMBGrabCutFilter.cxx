@@ -98,11 +98,6 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
   vtkCMBOpenCVHelper::VTKToOpenCV(image, imageCV);
   vtkCMBOpenCVHelper::VTKToOpenCV(mask, this->internal->maskCV, /*to_gray*/ true);
 
-  //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
-  //cv::imshow( "Display window", this->internal->maskCV );                   // Show our image inside it.
-
-  cv::waitKey(0);
-
   for(int i = 0; i < this->internal->maskCV.rows; i++)
   {
     uchar* Mi = this->internal->maskCV.ptr<uchar>(i);
