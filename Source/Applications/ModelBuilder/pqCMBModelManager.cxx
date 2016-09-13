@@ -919,6 +919,16 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 }
 
 //----------------------------------------------------------------------------
+smtkImageInfo* pqCMBModelManager::imageInfo(const std::string& imageurl)
+{
+  if(this->Internal->ImageInfos.find(imageurl) != this->Internal->ImageInfos.end())
+    {
+    return &this->Internal->ImageInfos[imageurl];
+    }
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
 pqSMTKMeshInfo* pqCMBModelManager::meshInfo(const smtk::mesh::MeshSet& mesh)
 {
   smtk::common::UUID modelId = mesh.collection()->associatedModel();
@@ -2026,6 +2036,46 @@ QList<pqSMTKMeshInfo*>  pqCMBModelManager::selectedMeshes() const
       }
     }
   return selMeshInfos;
+}
+
+//----------------------------------------------------------------------------
+QList<smtkImageInfo*>  pqCMBModelManager::selectedImages() const
+{
+  QList<smtkImageInfo*> selImageInfos;
+  std::map<std::string, smtkImageInfo>::iterator it;
+  for(it = this->Internal->ImageInfos.begin();
+      it != this->Internal->ImageInfos.end(); ++it)
+    {
+    if(!it->second.ImageSource)
+      {
+      continue;
+      }
+
+    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
+      it->second.ImageSource->getProxy());
+    if(smSource && smSource->GetSelectionInput(0))
+      {
+      selImageInfos.append(&it->second);
+      }
+    }
+  return selImageInfos;
+}
+
+//----------------------------------------------------------------------------
+smtk::common::UUIDs pqCMBModelManager::imageRelatedModels(
+  const std::string& imgurl) const
+{
+  smtk::common::UUIDs relatedmodels;
+  // check whether this image is also used by other models, if yes, don't remove
+  for(qInternal::itModelImage mit = this->Internal->ModelImages.begin();
+      mit != this->Internal->ModelImages.end(); ++mit)
+    {
+    if(mit->second.find(imgurl) != mit->second.end())
+      {
+      relatedmodels.insert(mit->first);
+      }
+    }
+  return relatedmodels;
 }
 
 //----------------------------------------------------------------------------
