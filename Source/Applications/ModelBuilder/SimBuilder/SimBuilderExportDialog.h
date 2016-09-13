@@ -7,14 +7,14 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME SimBuilderCustomExportDialog - Options for exporting CMB simulation file.
+// .NAME SimBuilderExportDialog - Options for exporting CMB simulation file.
 // .SECTION Description
 // Dialog is customized by input smtk::attribute::System
 // .SECTION Caveats
 
 
-#ifndef __SimBuilderCustomExportDialog_h
-#define __SimBuilderCustomExportDialog_h
+#ifndef __SimBuilderExportDialog_h
+#define __SimBuilderExportDialog_h
 
 #include "cmbSystemConfig.h"
 #include "pqSimBuilderUIManager.h"
@@ -34,13 +34,13 @@ class QFrame;
 class QWidget;
 class pqServer;
 
-class SimBuilderCustomExportDialog : public QObject
+class SimBuilderExportDialog : public QObject
 {
   Q_OBJECT
 
 public:
-  SimBuilderCustomExportDialog();
-  virtual ~SimBuilderCustomExportDialog();
+  SimBuilderExportDialog();
+  virtual ~SimBuilderExportDialog();
 
   QWidget *contentWidget() const
   { return this->ContentWidget; }
@@ -85,4 +85,4 @@ private:
   std::set<std::string> SelectedAnalyses;
 };
 
-#endif /* __SimBuilderCustomExportDialog_h */
+#endif /* __SimBuilderExportDialog_h */

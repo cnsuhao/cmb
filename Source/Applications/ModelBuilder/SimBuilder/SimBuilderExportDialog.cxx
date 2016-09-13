@@ -11,7 +11,7 @@
 // .SECTION Description
 // .SECTION Caveats
 
-#include "SimBuilderCustomExportDialog.h"
+#include "SimBuilderExportDialog.h"
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/FileItem.h"
@@ -54,7 +54,7 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
+SimBuilderExportDialog::SimBuilderExportDialog() :
   Status(-1), ActiveServer(0), IsPanelSet(false), IsMultipleSelect(false)
 {
   // Instantiate dialog
@@ -92,14 +92,14 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
 }
 
 //-----------------------------------------------------------------------------
-SimBuilderCustomExportDialog::~SimBuilderCustomExportDialog()
+SimBuilderExportDialog::~SimBuilderExportDialog()
 {
   delete this->ExportUIManager;
   delete this->MainDialog;
 }
 
 //-----------------------------------------------------------------------------
-int SimBuilderCustomExportDialog::exec()
+int SimBuilderExportDialog::exec()
 {
   if (!this->IsPanelSet)
     {
@@ -161,7 +161,7 @@ int SimBuilderCustomExportDialog::exec()
 // Returns absolute path to python script,
 // Obtained from export attribute system
 std::string
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getPythonScript(bool warnIfMissing) const
 {
   smtk::attribute::FileItemPtr
@@ -177,7 +177,7 @@ getPythonScript(bool warnIfMissing) const
 
 //-----------------------------------------------------------------------------
 // [Slot] Handles analysis selection from radio buttons
-void SimBuilderCustomExportDialog::analysisSelected()
+void SimBuilderExportDialog::analysisSelected()
 {
   QRadioButton *button = dynamic_cast<QRadioButton *>(QObject::sender());
   if (button)
@@ -207,7 +207,7 @@ void SimBuilderCustomExportDialog::analysisSelected()
 
 //-----------------------------------------------------------------------------
 // [Slot] Handles multiple-selection checkbox changing state
-void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
+void SimBuilderExportDialog::multipleSelectChanged(int state)
 {
   bool boolState = static_cast<bool>(state);
   this->IsMultipleSelect = boolState;
@@ -229,7 +229,7 @@ void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
 // loaded in the dialog, otherwise return the copy used in the export panel
 // (which might be empty, or might have been edited).
 smtk::attribute::SystemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 exportAttSystem(bool baseline) const
 {
   if (baseline)
@@ -240,21 +240,21 @@ exportAttSystem(bool baseline) const
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
 {
   this->ExportAttSystem = system;
   this->IsPanelSet = false;
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
 {
   this->SimAttSystem = system;
   this->IsPanelSet = false;
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setActiveServer(pqServer* server)
+void SimBuilderExportDialog::setActiveServer(pqServer* server)
 {
   this->ActiveServer = server;
 }
@@ -262,7 +262,7 @@ void SimBuilderCustomExportDialog::setActiveServer(pqServer* server)
 //-----------------------------------------------------------------------------
 // Rebuilds ExportSystem with copy of ExportAttSystem,
 // For now, does brute-force copy
-void SimBuilderCustomExportDialog::updatePanel()
+void SimBuilderExportDialog::updatePanel()
 {
   // Blow away current export system
   if(this->ExportUIManager)
@@ -323,7 +323,7 @@ void SimBuilderCustomExportDialog::updatePanel()
 
 //-----------------------------------------------------------------------------
 // Rebuilds selection list of analyis types
-void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
+void SimBuilderExportDialog::updateAnalysisTypesWidget()
 {
   if (!this->SimAttSystem)
     {
@@ -425,7 +425,7 @@ void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
 //-----------------------------------------------------------------------------
 // Retrieves PythonScript item from export attributes
 smtk::attribute::FileItemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getPythonScriptItem(bool warnIfMissing) const
 {
   smtk::attribute::ItemPtr item =
@@ -445,7 +445,7 @@ getPythonScriptItem(bool warnIfMissing) const
 //-----------------------------------------------------------------------------
 // Retrieves item with specified name from ExportSpec attribute
 smtk::attribute::ItemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getExportSpecItem(const std::string& name, bool warnIfMissing) const
 {
   smtk::attribute::SystemPtr system =
@@ -497,7 +497,7 @@ getExportSpecItem(const std::string& name, bool warnIfMissing) const
 //-----------------------------------------------------------------------------
 // Finds absolute path to script file, by checking "standard" locations
 std::string
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
                     bool warnIfMissing) const
 {
