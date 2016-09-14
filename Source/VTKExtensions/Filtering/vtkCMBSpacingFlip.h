@@ -8,8 +8,8 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-#ifndef __vtkCMBSpacingFlip_h
-#define __vtkCMBSpacingFlip_h
+#ifndef vtkCMBSpacingFlip_h
+#define vtkCMBSpacingFlip_h
 
 #include "vtkCMBFilteringModule.h" // For export macro
 
