@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
   <pqevent object="qtCMBMainWindow/toolBar_View/cameraManipulationModeBox" command="set_string" arguments="2D Manipulation" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.546005,0.376271,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.22276,0.30678,1,0,0)" />

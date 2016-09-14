@@ -5,13 +5,13 @@
   <pqevent object="FileOpenDialog" command="cancelled" arguments="" />
   <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/clipped5Subset.pts" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/point_cloud/clipped5Subset.pts" />
   <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/pushButtonAddFiles" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/JercSite_100x40_30.bin" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/point_cloud/JercSite_100x40_30.bin" />
   <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/pushButtonAddFiles" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/LIDARTest.pts" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/point_cloud/LIDARTest.pts" />
   <pqevent object="qtCMBMainWindow" command="pause" arguments="1000" />
 
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/PieceFrame/frame/clipGroupBox" command="mousePress" arguments="1,1,0,17,8" />
