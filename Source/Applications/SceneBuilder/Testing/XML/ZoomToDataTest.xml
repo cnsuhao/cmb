@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
    <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,-15,8,/0:0" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mouseRelease" arguments="1,0,0,-15,8,/0:0" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph" command="mousePress" arguments="1,1,0,-6,13,/0:0/1:0" />

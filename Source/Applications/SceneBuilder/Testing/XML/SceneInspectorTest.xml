@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
- <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/SceneGen.osd.txt" />
+ <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
   <pqevent object="qtCMBMainWindow/menubar/menu_View/menuShow" command="activate" arguments="Inspector" />
   <pqevent object="qtCMBMainWindow/menubar/menu_View/menuShow" command="activate" arguments="Inspector" />
   <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,87,-1" />

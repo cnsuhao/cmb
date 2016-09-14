@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/3D-Meshes/mesh_hardpoints_test.3dm" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/mesh/3d/mesh_hardpoints_test.3dm" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.285881,0.244898,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.615403,0.612567,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.615403,0.612567,1,0,0)" />

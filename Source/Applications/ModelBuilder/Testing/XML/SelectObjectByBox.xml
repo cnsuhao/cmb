@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/2D-CMBModels/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/test2D.cmb" />
   
   <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.354839,0.204668,1,1,0)" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/LIDAR/JercSite_100x40_30.bin" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/point_cloud/JercSite_100x40_30.bin" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mousePress" arguments="1,1,0,78,6" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mouseMove" arguments="1,0,0,78,7" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/elevationGroup" command="mouseRelease" arguments="1,0,0,78,7" />

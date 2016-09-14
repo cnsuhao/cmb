@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/3D-Meshes/simple.3dm" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/mesh/3d/simple.3dm" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0" />
