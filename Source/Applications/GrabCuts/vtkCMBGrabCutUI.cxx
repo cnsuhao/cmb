@@ -32,6 +32,7 @@
 #include <vtkGDALRasterReader.h>
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkProperty.h>
 
 #include <QFileDialog>
 
@@ -123,6 +124,7 @@ public:
     lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     lineMapper->SetInputConnection(filter->GetOutputPort(2));
     lineActor = vtkSmartPointer<vtkActor>::New();
+    lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0);
     lineActor->SetMapper(lineMapper);
 
     imageViewer->GetRenderer()->AddActor(lineActor);
