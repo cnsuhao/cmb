@@ -105,7 +105,7 @@ ENDFOREACH(test)
 if ( TARGET paraview )
 
   set( PV_TEST_XML_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-  set( PV_TEST_IMG_DIR ${CMB_TEST_DATA_ROOT}/Baseline )
+  set( PV_TEST_IMG_DIR ${CMB_TEST_DATA_ROOT}/baseline/cmb_application )
 
   # Tests that don't work on Apple
   set( APPLE_EXCLUDE_TESTS

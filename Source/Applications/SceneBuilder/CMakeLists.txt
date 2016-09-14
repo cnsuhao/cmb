@@ -139,7 +139,7 @@ endif(BUILD_TESTING)
 
 if(BUILD_TESTING)
   set(TEST_XML ${SceneBuilder_SOURCE_DIR}/Testing/XML)
-  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/Baseline)
+  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baseline/cmb_application)
 
   #Tests that don't work on Apple
   #
