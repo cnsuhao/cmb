@@ -200,7 +200,7 @@ public:
       }
     }
     drawing->SetDrawColor(currentColor);
-    vtkRenderWindowInteractor *interactor = this->imageViewer->GetRenderWindow()->GetInteractor();
+    vtkRenderWindowInteractor *interactor = imageViewer->GetRenderWindow()->GetInteractor();
     interactor->Render();
   }
 };
@@ -622,6 +622,8 @@ void vtkCMBGrabCutUI::run()
     }
   }
   internal->drawing->SetDrawColor(color);
+  vtkRenderWindowInteractor *interactor = this->internal->imageViewer->GetRenderWindow()->GetInteractor();
+  interactor->Render();
 }
 
 void vtkCMBGrabCutUI::pointSize(int i)
@@ -637,7 +639,7 @@ void vtkCMBGrabCutUI::numberOfIterations(int j)
 void vtkCMBGrabCutUI::showPossibleLabel(bool b)
 {
   internal->UpdatePotAlpha = b;
-  if(b)
+  if(internal->UpdatePotAlpha)
   {
     internal->PotAlpha = internal->Alpha;
   }
