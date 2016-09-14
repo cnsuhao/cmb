@@ -2365,6 +2365,60 @@ The Cone source can be used to add a polygonal cone to the 3D scene. The output 
       <!-- End SmoothPolyDataFilter -->
     </SourceProxy>
 
+<SourceProxy name="cmbStructedToMesh"
+  class="vtkDEMToMesh"
+  label="Takes a structured image data and creates polydata">
+  <Documentation
+    short_help="creates Polydata from image data."
+    long_help="creates Polydata from image data.">
+  </Documentation>
+  <InputProperty
+    name="Input"
+    command="SetInputConnection">
+    <ProxyGroupDomain name="groups">
+      <Group name="sources"/>
+      <Group name="filters"/>
+    </ProxyGroupDomain>
+    <DataTypeDomain name="input_type">
+      <DataType value="vtkDataSet"/>
+    </DataTypeDomain>
+    <Documentation>
+      Set the input to the vtkDEMToMesh filter.
+    </Documentation>
+  </InputProperty>
+  <IntVectorProperty
+    name="UseScalerForZ"
+    label="Cache Refine Results To Disk"
+    command="SetUseScalerForZ"
+    number_of_elements="1"
+    default_values="0" >
+    <Documentation>
+      controls coping elevation to z value.
+    </Documentation>
+  </IntVectorProperty>
+</SourceProxy>
+
+<SourceProxy name="CMBSpacingFlip"
+  class="vtkCMBSpacingFlip"
+  label="Flip image based on spacing">
+  <Documentation
+    short_help="Flip image based on spacing."
+    long_help="Flip image based on spacing.">
+  </Documentation>
+  <InputProperty
+    name="Input"
+    command="SetInputConnection">
+    <ProxyGroupDomain name="groups">
+      <Group name="sources"/>
+      <Group name="filters"/>
+    </ProxyGroupDomain>
+    <DataTypeDomain name="input_type">
+      <DataType value="vtkImageData"/>
+    </DataTypeDomain>
+  </InputProperty>
+
+</SourceProxy>
+
     <SourceProxy name="cmbStructedToMesh"
                  class="vtkDEMToMesh"
                  label="Takes a structured image data and creates polydata">
