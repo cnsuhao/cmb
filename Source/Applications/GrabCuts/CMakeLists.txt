@@ -1,6 +1,6 @@
 project (GrabCuts)
 
-find_package(OpenCV)
+find_package(OpenCV REQUIRED)
 
 set(grabcuts_libraries vtkCMBFiltering
                        vtkCMBGeneral
