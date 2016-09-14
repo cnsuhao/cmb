@@ -17,6 +17,7 @@
 #include "vtkImageData.h"
 #include "vtkDataObject.h"
 #include "vtkImageFlip.h"
+#include "vtkNew.h"
 
 vtkStandardNewMacro(vtkCMBSpacingFlip);
 
@@ -45,7 +46,7 @@ int vtkCMBSpacingFlip
   }
   else
   {
-    vtkImageFlip * flipper = vtkImageFlip::New();
+    vtkNew<vtkImageFlip> flipper;
     if(spacing[0] < 0 && spacing[1] >= 0 && spacing[2] >= 0)
     {
       flipper->SetFilteredAxis(0);
@@ -63,12 +64,11 @@ int vtkCMBSpacingFlip
       //Error message for now
       vtkErrorMacro(<< " Currently only supports on dimension being negative.");
       output->DeepCopy(input);
-      return -1;
+      return 1;
     }
     flipper->SetInputData(input);
     flipper->Update();
     output->DeepCopy(flipper->GetOutput());
-    flipper->Delete();
   }
 
   return 1;
