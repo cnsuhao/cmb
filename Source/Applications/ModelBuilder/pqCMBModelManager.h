@@ -46,6 +46,7 @@ class pqRenderView;
 class pqServer;
 class pqSMTKModelInfo;
 class pqSMTKMeshInfo;
+class smtkImageInfo;
 
 class pqCMBModelManager : public QObject
 {
@@ -74,6 +75,7 @@ public:
 
   pqSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   pqSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
+  smtkImageInfo* imageInfo(const std::string& imageurl);
   QList<pqSMTKModelInfo*> selectedModels() const;
   QList<pqSMTKModelInfo*> allModels() const;
 
@@ -100,6 +102,9 @@ public:
   QList<pqSMTKMeshInfo*> selectedMeshes() const;
   QList<pqDataRepresentation*> meshRepresentations() const;
   QList<pqSMTKMeshInfo*> allMeshes() const;
+
+  QList<smtkImageInfo*> selectedImages() const;
+  smtk::common::UUIDs imageRelatedModels(const std::string& imageurl) const;
 
 signals:
   void currentModelCleared();

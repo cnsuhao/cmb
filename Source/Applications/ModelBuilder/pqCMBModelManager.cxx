@@ -520,37 +520,35 @@ public:
       imageinfo.ImageSource = source;
       imageinfo.Representation = builder->createDataRepresentation(
             imageinfo.ImageSource->getOutputPort(0), view);
+
       if(imageinfo.Representation)
         {
-        // If there is an elevation field on the points then use it.
-        RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-          imageinfo.Representation->getProxy(),
-          "Elevation", vtkDataObject::POINT);
+        bool scalarColoring = false;
+        if(model.hasIntegerProperty("UseScalarColoring"))
+          {
+          const smtk::model::IntegerList& uprop(model.integerProperty("UseScalarColoring"));
+          scalarColoring = !uprop.empty() ? (uprop[0] != 0) : scalarColoring;
+          }
+        if(scalarColoring)
+          {
+          // If there is an elevation field on the points then use it.
+          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+            imageinfo.Representation->getProxy(),
+            "Elevation", vtkDataObject::POINT);
 
-        vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
-                                             server, "transfer_functions");
-
-        QList<QVariant> values;
-        values << -5000.0  << 0.0 << 0.0 << 0
-         << -1000.0  << 0.0 << 0.0 << 1.0
-         <<  -100.0  << 0.129412 << 0.345098 << 0.996078
-         <<   -50.0  << 0.0 << 0.501961 << 1.0
-         <<   -10.0  << 0.356863 << 0.678431 << 1.0
-         <<    -0.0  << 0.666667 << 1.0 << 1.0
-         <<     0.01 << 0.0 << 0.250998 << 0.0
-         <<    10.0 << 0.301961 << 0.482353 << 0.0
-         <<    25.0 << 0.501961 << 1.0 << 0.501961
-         <<   500.0 << 0.188224 << 1.0 << 0.705882
-         <<  1000.0 << 1.0 << 1.0 << 0.0
-         <<  2500.0 << 0.505882 << 0.211765 << 0.0
-         <<  3200.0 << 0.752941 << 0.752941 << 0.752941
-         <<  6000.0 << 1.0 << 1.0 << 1.0;
-        pqSMAdaptor::setMultipleElementProperty(lut->GetProperty("RGBPoints"), values);
-        vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
-         vtkSMPropertyHelper(lut, "Discretize").Set(0);
-        lut->UpdateVTKObjects();
-        vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "LookupTable").Set(lut);
-        vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
+          vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
+                                               server, "transfer_functions");
+          vtkSMTransferFunctionProxy::ApplyPreset(lut, "CMB Elevation Map 2", false);
+          vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
+          vtkSMPropertyHelper(lut, "Discretize").Set(0);
+          lut->UpdateVTKObjects();
+          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "LookupTable").Set(lut);
+          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
+          }
+        else
+          {
+          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "MapScalars").Set(0);
+          }
 
         imageinfo.ImageSource->getProxy()->UpdateVTKObjects();
         imageinfo.Representation->getProxy()->UpdateVTKObjects();
@@ -701,16 +699,19 @@ public:
         pqApplicationCore::instance()->getObjectBuilder()->destroy(
           meshiter->second.MeshSource);
         }
-
-      for(std::set<std::string>::const_iterator imgit = this->ModelImages[mit->first].begin();
-          imgit != this->ModelImages[mit->first].end(); ++imgit)
-        {
-        pqApplicationCore::instance()->getObjectBuilder()->destroy(
-          this->ImageInfos[*imgit].ImageSource);
-        this->ImageInfos.erase(*imgit);
-        }
-
       }
+
+    std::map<std::string, smtkImageInfo>::iterator it;
+    for(it = this->ImageInfos.begin(); it != this->ImageInfos.end(); ++it)
+      {
+      if(!it->second.ImageSource)
+        {
+        continue;
+        }
+      pqApplicationCore::instance()->getObjectBuilder()->destroy(
+        it->second.ImageSource);
+      }
+
     this->Entity2Models.clear();
     this->ModelInfos.clear();
     this->ImageInfos.clear();
@@ -919,6 +920,16 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 }
 
 //----------------------------------------------------------------------------
+smtkImageInfo* pqCMBModelManager::imageInfo(const std::string& imageurl)
+{
+  if(this->Internal->ImageInfos.find(imageurl) != this->Internal->ImageInfos.end())
+    {
+    return &this->Internal->ImageInfos[imageurl];
+    }
+  return NULL;
+}
+
+//----------------------------------------------------------------------------
 pqSMTKMeshInfo* pqCMBModelManager::meshInfo(const smtk::mesh::MeshSet& mesh)
 {
   smtk::common::UUID modelId = mesh.collection()->associatedModel();
@@ -1059,7 +1070,14 @@ void pqCMBModelManager::clearMeshSelections()
 //----------------------------------------------------------------------------
 int pqCMBModelManager::numberOfModels()
 {
-  return (int)this->Internal->ModelInfos.size();
+  if(this->managerProxy())
+    {
+    smtk::common::UUIDs modelids =
+     this->managerProxy()->modelManager()->entitiesMatchingFlags(
+    smtk::model::MODEL_ENTITY);
+    return (int)modelids.size();
+    }
+  return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -2026,6 +2044,46 @@ QList<pqSMTKMeshInfo*>  pqCMBModelManager::selectedMeshes() const
       }
     }
   return selMeshInfos;
+}
+
+//----------------------------------------------------------------------------
+QList<smtkImageInfo*>  pqCMBModelManager::selectedImages() const
+{
+  QList<smtkImageInfo*> selImageInfos;
+  std::map<std::string, smtkImageInfo>::iterator it;
+  for(it = this->Internal->ImageInfos.begin();
+      it != this->Internal->ImageInfos.end(); ++it)
+    {
+    if(!it->second.ImageSource)
+      {
+      continue;
+      }
+
+    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
+      it->second.ImageSource->getProxy());
+    if(smSource && smSource->GetSelectionInput(0))
+      {
+      selImageInfos.append(&it->second);
+      }
+    }
+  return selImageInfos;
+}
+
+//----------------------------------------------------------------------------
+smtk::common::UUIDs pqCMBModelManager::imageRelatedModels(
+  const std::string& imgurl) const
+{
+  smtk::common::UUIDs relatedmodels;
+  // check whether this image is also used by other models, if yes, don't remove
+  for(qInternal::itModelImage mit = this->Internal->ModelImages.begin();
+      mit != this->Internal->ModelImages.end(); ++mit)
+    {
+    if(mit->second.find(imgurl) != mit->second.end())
+      {
+      relatedmodels.insert(mit->first);
+      }
+    }
+  return relatedmodels;
 }
 
 //----------------------------------------------------------------------------

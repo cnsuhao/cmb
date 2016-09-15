@@ -15,6 +15,7 @@
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/mesh/MeshSet.h"
+#include "smtk/model/DescriptivePhrase.h" // for selectPropertyRepresentations
 
 class vtkObject;
 class pqCMBModelManager;
@@ -75,6 +76,9 @@ public slots:
   void cancelOperation(const smtk::model::OperatorPtr&);
 
 protected slots:
+  void onSelectionChanged(const smtk::model::EntityRefs&,
+       const smtk::mesh::MeshSets& ,
+       const smtk::model::DescriptivePhrases& );
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void selectMeshRepresentations(const smtk::mesh::MeshSets& );
   void onFileItemCreated(smtk::extension::qtFileItem* fileItem);
@@ -88,14 +92,8 @@ protected slots:
                            vtkPVInformation* pvInfo,
                            smtk::common::UUIDs& uuids,
                            smtk::mesh::MeshSets& meshes);
-
-//  void propertyChanged(
-//    vtkObject* caller, unsigned long, void*);
-//  void linkRepresentation(pqDataRepresentation *representation);
-//  void updateEntityVisibility(vtkSMIntVectorProperty* ivp,
-//                              pqDataRepresentation* representation);
-//  void updateEntityColor(vtkSMDoubleMapProperty* dmp,
-//                         pqDataRepresentation* representation);
+  void selectPropertyRepresentations(
+    const smtk::model::DescriptivePhrases& selproperties);
 
 private:
   class qInternal;

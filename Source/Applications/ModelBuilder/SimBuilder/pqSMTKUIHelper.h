@@ -116,12 +116,14 @@ namespace pqSMTKUIHelper
       eItem->definition().get());
 
     smtk::model::EntityRefs selentityrefs;
+    smtk::model::DescriptivePhrases selproperties;
     // search current selection
-    modelView->currentSelectionByMask(selentityrefs, eItemDef->membershipMask());
+    modelView->currentSelectionByMask(selentityrefs,
+      eItemDef->membershipMask(), selproperties);
     // if current selection does not match the item mask, search the parents.
     if(selentityrefs.size() == 0)
       modelView->currentSelectionByMask(selentityrefs,
-        eItemDef->membershipMask(), true);
+        eItemDef->membershipMask(), selproperties, true);
     if(selentityrefs.size() > 0)
       entityItem->associateEntities(selentityrefs);
   }
