@@ -62,15 +62,28 @@ def verifyAdHShallow(baselinedir, testDir, testName):
     basefile_mt = os.path.join(baselinedir, 'test.mt')
     testfile_mt = os.path.join(testDir,testName+'.mt')
 
-    if  filecmp.cmp(basefile_2dm,testfile_2dm) == True and \
-        filecmp.cmp(basefile_bc,testfile_bc) == True and \
-        filecmp.cmp(basefile_hot,testfile_hot) == True and \
-        filecmp.cmp(basefile_mt,testfile_mt) == True:
-        print("Output is the same!")
-        return 0
-    else:
-        print("Output not the same!")
-        return -1
+    # Compare .bc files
+    retval = 0
+
+    cmp_bc = filecmp.cmp(basefile_bc,testfile_bc)
+    if not (cmp_bc):
+        print("ERROR: .bc output not the same!")
+        retval = -1
+
+    # Compare .mt files
+    cmp_mt = filecmp.cmp(basefile_mt,testfile_mt)
+    if not cmp_mt:
+        print("ERROR: .mt output not the same!")
+        retval = -1
+
+    # Check that .2dm file exists
+    if not os.path.isfile(testfile_2dm):
+        print('ERROR: missing 2dm file %s' % testfile_2dm)
+        retval = -1
+
+    # Todo check .hot file
+
+    return retval
 
 def verifyExportSimProteus(baselinedir, testDir, testName):
     basefile_n = os.path.join(baselinedir, 'test_n.py')
