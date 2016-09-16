@@ -98,6 +98,7 @@ public:
 
     cv::findContours(m, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
     vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+    points->SetDataTypeToFloat();
     vtkSmartPointer<vtkCellArray> cells = vtkSmartPointer<vtkCellArray>::New();
     vtkIdType startId;
     vtkIdType endId;
@@ -106,14 +107,17 @@ public:
     {
       std::vector<cv::Point> const& c = contours[i];
       if(c.empty()) continue;
+      //std::cout << "Contour i: " << i << " " <<  c.size() << std::endl;
       startId = endId = points->InsertNextPoint(origin[0] + c[0].x*spacing[0],
                                                 origin[1] + c[0].y*spacing[1], 0.001);
+      //std::cout << "\t" << c[0].x << " " << c[0].y << std::endl;
       for(unsigned int j = 1; j < c.size(); ++j)
       {
         ptIDs[0] = endId;
         ptIDs[1] = endId = points->InsertNextPoint(origin[0] + c[j].x*spacing[0],
                                                    origin[1] + c[j].y*spacing[1], 0.001);
         cells->InsertNextCell(2,ptIDs);
+        //std::cout << "\t" << c[j].x << " " << c[j].y << std::endl;
       }
       ptIDs[0] = endId;
       ptIDs[1] = startId;

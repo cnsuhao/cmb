@@ -33,6 +33,9 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
+#include <vtkContourFilter.h>
+#include <vtkTransformPolyDataFilter.h>
+#include <vtkTransform.h>
 
 #include <QFileDialog>
 
@@ -115,14 +118,14 @@ public:
 
     filter->SetInputData(0, image);
     filter->SetInputConnection(1, drawing->GetOutputPort());
-    filter->SetNumberOfIterations(24);
+    filter->SetNumberOfIterations(20);
     filter->SetPotentialForegroundValue(PotentialFG);
     filter->SetPotentialBackgroundValue(PotentialBG);
     filter->SetForegroundValue(Forground);
     filter->SetBackgroundValue(Background);
 
     lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    lineMapper->SetInputConnection(filter->GetOutputPort(2));
+    //lineMapper->SetInputConnection(filter->GetOutputPort(2));
     lineActor = vtkSmartPointer<vtkActor>::New();
     lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0);
     lineActor->SetMapper(lineMapper);
@@ -135,6 +138,19 @@ public:
     propPicker->PickFromListOn();
     vtkImageActor* imageActor = imageViewer->GetImageActor();
     propPicker->AddPickList(imageActor);
+
+    contFilter = vtkSmartPointer<vtkContourFilter>::New();
+    contFilter->SetValue(0,127.5);
+    contFilter->ComputeGradientsOn();
+    contFilter->ComputeScalarsOff();
+
+    vtkSmartPointer<vtkTransform> translation =
+    vtkSmartPointer<vtkTransform>::New();
+    translation->Translate(0.0, 0.0, 0.0001);
+
+    transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+    transformFilter->SetInputConnection(contFilter->GetOutputPort());
+    transformFilter->SetTransform(translation);
   }
 
   int Alpha;
@@ -151,6 +167,8 @@ public:
   vtkSmartPointer<vtkActor> lineActor;
   vtkSmartPointer<vtkImageViewer2> imageViewer;
   vtkSmartPointer<vtkPropPicker> propPicker;
+  vtkSmartPointer<vtkContourFilter> contFilter;
+  vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter;
 
   bool leftMousePressed;
   double LastPt[2];
@@ -575,7 +593,7 @@ void vtkCMBGrabCutUI::saveVTP()
 
   vtkSmartPointer<vtkXMLPolyDataWriter> writer =vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetFileName(fileName.toStdString().c_str());
-  writer->SetInputConnection(internal->filter->GetOutputPort(2));
+  writer->SetInputConnection(internal->contFilter->GetOutputPort());//internal->filter->GetOutputPort(2));
   writer->Write();
 }
 
@@ -600,6 +618,11 @@ void vtkCMBGrabCutUI::run()
 {
   internal->filter->DoGrabCut();
   internal->filter->Update();
+
+  internal->contFilter->SetInputData(internal->filter->GetOutput(0));
+  internal->contFilter->Update();
+  internal->transformFilter->Update();
+  internal->lineMapper->SetInputData(internal->transformFilter->GetOutput());
   vtkImageData* updateMask = internal->filter->GetOutput(1);
   vtkImageData* currentMask = internal->drawing->GetOutput();
 
@@ -647,6 +670,13 @@ void vtkCMBGrabCutUI::showPossibleLabel(bool b)
   {
     internal->PotAlpha = 0;
   }
+  double currentColor[4];
+  internal->drawing->GetDrawColor(currentColor);
+  if(currentColor[0] == internal->PotentialBG || currentColor[0] == internal->PotentialFG)
+  {
+    currentColor[3] = internal->PotAlpha;
+    internal->drawing->SetDrawColor(currentColor);
+  }
   internal->updateAlphas();
 }
 
@@ -655,10 +685,18 @@ void vtkCMBGrabCutUI::setTransparency(int t)
   if(t != internal->Alpha)
   {
     internal->Alpha = t;
+    double currentColor[4];
+    internal->drawing->GetDrawColor(currentColor);
     if(internal->UpdatePotAlpha)
     {
       internal->PotAlpha = internal->Alpha;
+      currentColor[3] = internal->Alpha;
     }
+    else if(currentColor[0] == internal->Background || currentColor[0] == internal->Forground)
+    {
+      currentColor[3] = internal->Alpha;
+    }
+    internal->drawing->SetDrawColor(currentColor);
     internal->updateAlphas();
   }
 }
