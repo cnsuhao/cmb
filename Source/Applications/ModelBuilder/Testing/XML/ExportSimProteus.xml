@@ -50,7 +50,6 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <!--pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog/mainSplitter/widget/Files" command="setCurrent" arguments="0.0" /-->
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Proteus/ProteusPoisson.py" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/1QFrame0/1QComboBox0" command="editTextChanged" arguments="/media/ssd/sim/projects/erdc/git/bob-testing-data/simulation_workflow/Proteus/ProteusPoisson.py" />
   <pqevent object="SimulationExportDialog" command="key" arguments="16777249" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame0/1QLineEdit0" command="key" arguments="67" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame0/1QLineEdit0" command="key" arguments="16777249" />
