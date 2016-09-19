@@ -303,7 +303,7 @@ pqCMBLIDARPieceObject *pqCMBLIDARPieceObject::createObject(pqPipelineSource* sou
     obj->ElevationSource->getOutputPort(0), view, "GeometryRepresentation");
   vtkSMPVRepresentationProxy::SafeDownCast(obj->Representation->getProxy())->SetRepresentationType("Point Gaussian");
 
-  vtkSMPropertyHelper(obj->Representation->getProxy(), "PointSize").Set(2);
+  vtkSMPropertyHelper(obj->Representation->getProxy(), "GaussianRadius").Set(0);
 
   if (updateRep)
     {
