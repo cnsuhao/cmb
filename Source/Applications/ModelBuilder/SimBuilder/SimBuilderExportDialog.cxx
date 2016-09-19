@@ -14,9 +14,11 @@
 #include "SimBuilderExportDialog.h"
 
 #include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/Definition.h"
 #include "smtk/attribute/FileItem.h"
-#include "smtk/attribute/FileSystemItemDefinition.h"
+#include "smtk/attribute/FileItemDefinition.h"
 #include "smtk/attribute/Item.h"
+#include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/extension/qt/qtBaseView.h"
@@ -158,20 +160,16 @@ int SimBuilderExportDialog::exec()
 }
 
 //-----------------------------------------------------------------------------
-// Returns absolute path to python script,
-// Obtained from export attribute system
-std::string
-SimBuilderExportDialog::
-getPythonScript(bool warnIfMissing) const
+// Returns python script "value" as stored in the export attribute system
+std::string SimBuilderExportDialog::getPythonScript() const
 {
-  smtk::attribute::FileItemPtr
-    fileItem = this->getPythonScriptItem(warnIfMissing);
-  if (!fileItem)
+  smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
+  if (!fileItem || !fileItem->isSet(0))
     {
     return "";
     }
 
-  std::string script = this->getPythonScriptPath(fileItem, warnIfMissing);
+  std::string script = fileItem->value(0);
   return script;
 }
 
@@ -280,10 +278,10 @@ void SimBuilderExportDialog::updatePanel()
   hasError =
     attWriter.writeContents(*this->ExportAttSystem, serializedSystem, logger);
 
-  std::string filename("export.sbt");
-  hasError =
-    attWriter.write(*this->ExportAttSystem, filename, logger);
-  std::cout << "Wrote " << filename  << std::endl;
+  // std::string filename("export.sbt");
+  // hasError =
+  //   attWriter.write(*this->ExportAttSystem, filename, logger);
+  // std::cout << "Wrote " << filename  << std::endl;
 
   // Reload into export panel
   smtk::io::AttributeReader attReader;
@@ -296,22 +294,38 @@ void SimBuilderExportDialog::updatePanel()
     return;
     }
 
-  // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
+  // If python script def has default value, look for script on local filesystem
+  std::string scriptPath;
+  smtk::attribute::FileItemDefinitionPtr fileDef = this->getPythonScriptDef(
+    this->ExportUIManager->attributeSystem());
+  if (fileDef && fileDef->hasDefault())
+    {
+    scriptPath = this->findPythonScriptPath(fileDef->defaultValue());
+    if (scriptPath.empty())
+      {
+      // Not found: unset the default value, so that UI shows it missing
+      fileDef->setDefaultValue("");
+      fileDef->unsetDefaultValue();
+      }
+    }
+
+  // Get toplevel view
+  smtk::common::ViewPtr topView =
+    this->ExportUIManager->attributeSystem()->findTopLevelView();
   if (!topView)
     {
-    QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
+    QMessageBox::critical(
+      NULL, "Export Error", "There is no TopLevel View in Export Script!");
     return;
     }
 
   this->ExportUIManager->setSMTKView(topView, this->ContentWidget, NULL);
 
-  // Update python script item
-  smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
-  if (fileItem)
+  // Initialize script path
+  if (!scriptPath.empty())
     {
-    std::string script = this->getPythonScriptPath(fileItem);
-    fileItem->setValue(0, script);
+      smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
+      fileItem->setValue(0, scriptPath);
     }
 
   // Update selection widget for analysis types
@@ -423,6 +437,53 @@ void SimBuilderExportDialog::updateAnalysisTypesWidget()
 }
 
 //-----------------------------------------------------------------------------
+// Retrieves PythonScript item definition from export attributes
+smtk::attribute::FileItemDefinitionPtr
+SimBuilderExportDialog::getPythonScriptDef(
+  const smtk::attribute::SystemPtr attributeSystem,
+  bool warnIfMissing) const
+{
+  smtk::attribute::DefinitionPtr exportDef = attributeSystem->findDefinition(
+    "ExportSpec");
+  if (!exportDef)
+    {
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "ExportSpec definition not found");
+      return smtk::attribute::FileItemDefinitionPtr();
+      }
+    }
+
+  // Traverse item definitions looking for "PythonScript" item def
+  for (std::size_t i=0; i < exportDef->numberOfItemDefinitions(); ++i)
+    {
+    smtk::attribute::ItemDefinitionPtr itemDef = exportDef->itemDefinition(i);
+    if (itemDef->name() == "PythonScript")
+      {
+      smtk::attribute::FileItemDefinitionPtr fileDef =
+        smtk::dynamic_pointer_cast<smtk::attribute::FileItemDefinition>(itemDef);
+      if (!fileDef && warnIfMissing)
+        {
+        QMessageBox::critical(
+          NULL,
+          "Export Error",
+          "PythonScript item definition is *not* a FileItemDefinition type");
+        return smtk::attribute::FileItemDefinitionPtr();
+        }
+
+      // (else)
+      return fileDef;
+      }
+    }
+
+  // (else) not found
+  QMessageBox::critical(
+    NULL, "Export Error", "PythonScript item not found");
+  return smtk::attribute::FileItemDefinitionPtr();
+}
+
+//-----------------------------------------------------------------------------
 // Retrieves PythonScript item from export attributes
 smtk::attribute::FileItemPtr
 SimBuilderExportDialog::
@@ -496,23 +557,45 @@ getExportSpecItem(const std::string& name, bool warnIfMissing) const
 
 //-----------------------------------------------------------------------------
 // Finds absolute path to script file, by checking "standard" locations
-std::string
-SimBuilderExportDialog::
-getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
-                    bool warnIfMissing) const
+std::string SimBuilderExportDialog::findPythonScriptPath(
+  smtk::attribute::FileItemPtr fileItem,
+  bool warnIfMissing) const
 {
-  std::string script = fileItem->valueAsString(0);
-
-  // If empty string
-  if (script.empty())
+  if (fileItem->numberOfValues() == 0)
     {
-    return script;
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "Attribute item for python script not set");
+      }
+    return std::string();
+    }
+
+  std::string scriptName = fileItem->valueAsString(0);
+  return this->findPythonScriptPath(scriptName, warnIfMissing);
+}
+
+//-----------------------------------------------------------------------------
+// Finds absolute path to script file, by checking "standard" locations
+std::string SimBuilderExportDialog::findPythonScriptPath(
+  const std::string& scriptName,
+  bool warnIfMissing) const
+{
+  // If empty string
+  if (scriptName.empty())
+    {
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "Python script name is empty string");
+      }
+    return scriptName;
     }
 
   // If script path is absolute, pass it on
-  if (vtksys::SystemTools::FileIsFullPath(script.c_str()))
+  if (vtksys::SystemTools::FileIsFullPath(scriptName.c_str()))
     {
-    return script;
+    return scriptName;
     }
 
   // If path is relative, can search if the server is running locally
@@ -539,7 +622,7 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
 
   // Traverse subfolders to look for script file.
   // Note that this presumes each solver's script file has a unique name.
-  QString fragment = QString("/") + QString::fromStdString(script);
+  QString fragment = QString("/") + QString::fromStdString(scriptName);
   QStringList subfolderList = workflowsDir.entryList(
     QDir::Dirs | QDir::NoDotAndDotDot);
   foreach(QString subfolder, subfolderList)
@@ -559,7 +642,7 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
   if (warnIfMissing)
     {
     std::stringstream ss;
-    ss << "Unable to find python export script \"" << script << "\"";
+    ss << "Unable to find python export script \"" << scriptName << "\"";
     QMessageBox::critical(NULL, "Export Error", QString::fromStdString(ss.str()));
     }
   return std::string();

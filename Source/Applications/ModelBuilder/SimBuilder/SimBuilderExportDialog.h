@@ -50,15 +50,24 @@ public:
 
   void setActiveServer(pqServer* server);
   int exec();
-  std::string getPythonScript(bool warnIfMissing=false) const;
+  std::string getPythonScript() const;
 
 protected slots:
   void analysisSelected();
   void multipleSelectChanged(int state);
 
 protected:
+  std::string findPythonScriptPath(
+    smtk::attribute::FileItemPtr fileItem,
+    bool warnIfMissing = false) const;
+  std::string findPythonScriptPath(
+    const std::string& name,
+    bool warnIfMissing = false) const;
   void updatePanel();
   void updateAnalysisTypesWidget();
+  smtk::attribute::FileItemDefinitionPtr getPythonScriptDef(
+    const smtk::attribute::SystemPtr attributeSystem,
+    bool warnIfMissing=false) const;
   smtk::attribute::FileItemPtr
     getPythonScriptItem(bool warnIfMissing=false) const;
   std::string getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
