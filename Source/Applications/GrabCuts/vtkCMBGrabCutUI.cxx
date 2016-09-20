@@ -1,3 +1,13 @@
+//=========================================================================
+//  Copyright (c) Kitware, Inc.
+//  All rights reserved.
+//  See LICENSE.txt for details.
+//
+//  This software is distributed WITHOUT ANY WARRANTY; without even
+//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+//  PURPOSE.  See the above copyright notice for more information.
+//=========================================================================
+
 #include "vtkCMBGrabCutUI.h"
 #include "ui_grabCuts.h"
 
@@ -36,6 +46,8 @@
 #include <vtkContourFilter.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
+
+#include "vtkCMBImageClassFilter.h"
 
 #include <QFileDialog>
 
@@ -125,7 +137,6 @@ public:
     filter->SetBackgroundValue(Background);
 
     lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    //lineMapper->SetInputConnection(filter->GetOutputPort(2));
     lineActor = vtkSmartPointer<vtkActor>::New();
     lineActor->GetProperty()->SetColor(1.0, 1.0, 0.0);
     lineActor->SetMapper(lineMapper);
@@ -139,7 +150,12 @@ public:
     vtkImageActor* imageActor = imageViewer->GetImageActor();
     propPicker->AddPickList(imageActor);
 
+    imageClassFilter = vtkSmartPointer<vtkCMBImageClassFilter>::New();
+    imageClassFilter->SetForegroundValue(Forground);
+    imageClassFilter->SetBackgroundValue(Background);
+
     contFilter = vtkSmartPointer<vtkContourFilter>::New();
+    contFilter->SetInputConnection(imageClassFilter->GetOutputPort());
     contFilter->SetValue(0,127.5);
     contFilter->ComputeGradientsOn();
     contFilter->ComputeScalarsOff();
@@ -169,6 +185,7 @@ public:
   vtkSmartPointer<vtkPropPicker> propPicker;
   vtkSmartPointer<vtkContourFilter> contFilter;
   vtkSmartPointer<vtkTransformPolyDataFilter> transformFilter;
+  vtkSmartPointer<vtkCMBImageClassFilter> imageClassFilter;
 
   bool leftMousePressed;
   double LastPt[2];
@@ -512,6 +529,9 @@ vtkCMBGrabCutUI::vtkCMBGrabCutUI()
   connect(this->ui->NumberOfIter, SIGNAL(valueChanged(int)), this, SLOT(numberOfIterations(int)));
   connect(this->ui->DrawSize, SIGNAL(valueChanged(int)), this, SLOT(pointSize(int)));
 
+  connect(this->ui->MinLandSize, SIGNAL(valueChanged(int)), this, SLOT(setBGFilterSize(int)));
+  connect(this->ui->MinWaterSize, SIGNAL(valueChanged(int)), this, SLOT(setFGFilterSize(int)));
+
   connect(this->ui->DrawMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setDrawMode(int)));
 
   connect(this->ui->LabelTrans, SIGNAL(valueChanged(int)), this, SLOT(setTransparency(int)));
@@ -609,7 +629,7 @@ void vtkCMBGrabCutUI::saveMask()
 
   vtkSmartPointer<vtkPNGWriter> writer_label = vtkSmartPointer<vtkPNGWriter>::New();
   writer_label->SetFileName(fileName.toStdString().c_str());
-  vtkImageData * tmp = internal->filter->GetOutput(0);
+  vtkImageData * tmp = internal->imageClassFilter->GetOutput();
   writer_label->SetInputData(tmp);
   writer_label->Write();
 }
@@ -619,7 +639,8 @@ void vtkCMBGrabCutUI::run()
   internal->filter->DoGrabCut();
   internal->filter->Update();
 
-  internal->contFilter->SetInputData(internal->filter->GetOutput(0));
+  internal->imageClassFilter->SetInputData(internal->filter->GetOutput(0));
+  internal->imageClassFilter->Update();
   internal->contFilter->Update();
   internal->transformFilter->Update();
   internal->lineMapper->SetInputData(internal->transformFilter->GetOutput());
@@ -699,6 +720,29 @@ void vtkCMBGrabCutUI::setTransparency(int t)
     internal->drawing->SetDrawColor(currentColor);
     internal->updateAlphas();
   }
+}
+
+void vtkCMBGrabCutUI::setFGFilterSize(int f)
+{
+
+  internal->imageClassFilter->SetMinFGSize(f);
+  internal->imageClassFilter->Update();
+  internal->contFilter->Update();
+  internal->transformFilter->Update();
+  internal->lineMapper->SetInputData(internal->transformFilter->GetOutput());
+  vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
+  interactor->Render();
+}
+
+void vtkCMBGrabCutUI::setBGFilterSize(int b)
+{
+  internal->imageClassFilter->SetMinBGSize(b);
+  internal->imageClassFilter->Update();
+  internal->contFilter->Update();
+  internal->transformFilter->Update();
+  internal->lineMapper->SetInputData(internal->transformFilter->GetOutput());
+  vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
+  interactor->Render();
 }
 
 void vtkCMBGrabCutUI::setDrawMode(int m)

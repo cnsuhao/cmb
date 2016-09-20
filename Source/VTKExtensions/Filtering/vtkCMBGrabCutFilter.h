@@ -8,8 +8,8 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-#ifndef __vtkCMBGrabCutFilter_h
-#define __vtkCMBGrabCutFilter_h
+#ifndef vtkCMBGrabCutFilter_h
+#define vtkCMBGrabCutFilter_h
 
 #include "vtkCMBFilteringModule.h" // For export macro
 

@@ -63,17 +63,21 @@ public:
     int type = 0;
     if(numComponents == 3) type = CV_8UC3;
     else if(numComponents == 4) type = CV_8UC4;
+    else if(numComponents == 1) type = CV_8UC1;
 
     int dims[3];
     src->GetDimensions(dims);
     dest = cv::Mat(dims[1], dims[0], type, src->GetScalarPointer());
-    if(convert_to_gray)
+    if(numComponents != 1)
     {
-      cv::cvtColor( dest, dest, CV_RGBA2GRAY);
-    }
-    else
-    {
-      cv::cvtColor( dest, dest, CV_RGB2BGR);
+      if(convert_to_gray)
+      {
+        cv::cvtColor( dest, dest, CV_RGBA2GRAY);
+      }
+      else
+      {
+        cv::cvtColor( dest, dest, CV_RGB2BGR);
+      }
     }
 
     if(src->GetSpacing()[1] > 0)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>939</height>
+    <height>937</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -117,6 +117,26 @@
           </property>
          </item>
         </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Min Water Size</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="MinWaterSize"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Min Land Size</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="MinLandSize"/>
        </item>
        <item>
         <spacer name="verticalSpacer">
