@@ -1,6 +1,6 @@
 # VXL is needed.
 find_package(VXL)
-find_package(opencv)
+find_package(OpenCV REQUIRED)
 include(${VXL_CMAKE_DIR}/UseVXL.cmake)
 
 set(CMB_Filtering_SRC
