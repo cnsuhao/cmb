@@ -22,7 +22,6 @@
 #include <vtkImageCanvasSource2D.h>
 #include <vtkImageViewer2.h>
 #include <vtkRenderer.h>
-#include <vtkImageViewer2.h>
 #include <vtkPropPicker.h>
 #include <vtkImageData.h>
 #include <vtkRenderWindow.h>
@@ -160,8 +159,7 @@ public:
     contFilter->ComputeGradientsOn();
     contFilter->ComputeScalarsOff();
 
-    vtkSmartPointer<vtkTransform> translation =
-    vtkSmartPointer<vtkTransform>::New();
+    vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
     translation->Translate(0.0, 0.0, 0.0001);
 
     transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
@@ -188,6 +186,7 @@ public:
   vtkSmartPointer<vtkCMBImageClassFilter> imageClassFilter;
 
   bool leftMousePressed;
+  bool shiftButtonPressed;
   double LastPt[2];
 
   bool UpdatePotAlpha;
@@ -268,6 +267,14 @@ public:
       return;
     }
 
+    if ( internal->shiftButtonPressed )
+    {
+      internal->leftMousePressed = false;
+      internal->shiftButtonPressed = false;
+      style->OnLeftButtonUp();
+      return;
+    }
+
     // Pick at the mouse location provided by the interactor
     internal->propPicker->Pick(interactor->GetEventPosition()[0],
                                interactor->GetEventPosition()[1],
@@ -331,7 +338,7 @@ public:
     vtkImageData* image = internal->imageViewer->GetInput();
     vtkInteractorStyle *style = vtkInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
 
-    if(!internal->leftMousePressed)
+    if(!internal->leftMousePressed || internal->shiftButtonPressed )
     {
       style->OnMouseMove();
       return;
@@ -424,13 +431,18 @@ public:
 
   virtual void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *)
   {
-    //std::cout << "Mouse pressed" << std::endl;
     internal->leftMousePressed = true;
     vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
     vtkRenderer* renderer = internal->imageViewer->GetRenderer();
     vtkImageActor* actor = internal->imageViewer->GetImageActor();
     vtkImageData* image = internal->imageViewer->GetInput();
     vtkInteractorStyle *style = vtkInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
+
+    bool shiftKey = interactor->GetShiftKey();
+    if(shiftKey && !internal->shiftButtonPressed)
+    {
+      internal->shiftButtonPressed = true;
+    }
 
     // Pick at the mouse location provided by the interactor
     this->internal->propPicker->Pick(interactor->GetEventPosition()[0],
@@ -463,18 +475,11 @@ public:
       return;
     }
 
-    //if (ShiftButtonPressed )
-    //{
-    //  style->OnLeftButtonDown();
-    //  return;
-    //}
-
-    /*if(ShiftButtonReleased)
-     {
-     ShiftButtonReleased = false;
-     style->OnLeftButtonDown();
-     return;
-     }*/
+    if( internal->shiftButtonPressed )
+    {
+      style->OnLeftButtonDown();
+      return;
+    }
 
     // Get the world coordinates of the pick
     double pos[3];
