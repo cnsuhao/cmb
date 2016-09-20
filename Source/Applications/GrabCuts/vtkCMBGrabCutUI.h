@@ -36,6 +36,7 @@ public slots:
   void saveVTP();
   void saveMask();
   void run();
+  void clear();
   void pointSize(int i);
   void numberOfIterations(int j);
   void showPossibleLabel(bool b);

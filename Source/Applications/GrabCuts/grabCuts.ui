@@ -108,12 +108,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Possible Water</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Possible Land</string>
+           <string>Delete</string>
           </property>
          </item>
         </widget>
@@ -137,6 +132,13 @@
        </item>
        <item>
         <widget class="QSpinBox" name="MinLandSize"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="clear">
+         <property name="text">
+          <string>Clear</string>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer">

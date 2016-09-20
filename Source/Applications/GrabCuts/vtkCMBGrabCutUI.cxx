@@ -119,6 +119,8 @@ public:
     drawing     = vtkSmartPointer<vtkDEMImageCanvasSource2D>::New();
     filter      = vtkSmartPointer<vtkCMBGrabCutFilter>::New();
 
+    drawing->SetDrawColor(Forground, Forground, Forground, Alpha);
+
     vtkSmartPointer<vtkImageData> image = vtkSmartPointer<vtkImageData>::New();
 
     imageViewer->SetInputData(image);
@@ -529,6 +531,7 @@ vtkCMBGrabCutUI::vtkCMBGrabCutUI()
   connect(this->ui->Open, SIGNAL(clicked()), this, SLOT(open()));
   connect(this->ui->SaveVTP, SIGNAL(clicked()), this, SLOT(saveVTP()));
   connect(this->ui->SaveMask, SIGNAL(clicked()), this, SLOT(saveMask()));
+  connect(this->ui->clear, SIGNAL(clicked()), this, SLOT(clear()));
   connect(this->ui->Run, SIGNAL(clicked()), this, SLOT(run()));
 
   connect(this->ui->NumberOfIter, SIGNAL(valueChanged(int)), this, SLOT(numberOfIterations(int)));
@@ -594,12 +597,14 @@ void vtkCMBGrabCutUI::open()
   internal->drawing->SetExtent(image->GetExtent());
   internal->drawing->SetOrigin(image->GetOrigin());
   internal->drawing->SetSpacing(image->GetSpacing());
+
+  double currentColor[4];
+  internal->drawing->GetDrawColor(currentColor);
   internal->drawing->SetDrawColor(internal->PotentialBG, internal->PotentialBG,
-                                  internal->PotentialBG, 0.0);
+                                  internal->PotentialBG, this->internal->PotAlpha);
   internal->drawing->FillBox(image->GetExtent()[0], image->GetExtent()[1],
                              image->GetExtent()[2], image->GetExtent()[3]);
-  internal->drawing->SetDrawColor(internal->Forground, internal->Forground,
-                                  internal->Forground, 255.0);
+  internal->drawing->SetDrawColor(currentColor);
   internal->imageViewer->GetRenderer()->ResetCamera();
 
   vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
@@ -672,6 +677,28 @@ void vtkCMBGrabCutUI::run()
   }
   internal->drawing->SetDrawColor(color);
   vtkRenderWindowInteractor *interactor = this->internal->imageViewer->GetRenderWindow()->GetInteractor();
+  interactor->Render();
+}
+
+void vtkCMBGrabCutUI::clear()
+{
+  vtkImageData * image = this->internal->imageViewer->GetInput();
+  internal->drawing->SetNumberOfScalarComponents(4);
+  internal->drawing->SetScalarTypeToUnsignedChar();
+  internal->drawing->SetExtent(image->GetExtent());
+  internal->drawing->SetOrigin(image->GetOrigin());
+  internal->drawing->SetSpacing(image->GetSpacing());
+  double currentColor[4];
+  internal->drawing->GetDrawColor(currentColor);
+  internal->drawing->SetDrawColor(internal->PotentialBG, internal->PotentialBG,
+                                  internal->PotentialBG, this->internal->PotAlpha);
+  internal->drawing->FillBox(image->GetExtent()[0], image->GetExtent()[1],
+                             image->GetExtent()[2], image->GetExtent()[3]);
+  internal->drawing->SetDrawColor(currentColor);
+
+  internal->lineMapper->SetInputData(NULL);
+
+  vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
   interactor->Render();
 }
 
@@ -762,12 +789,9 @@ void vtkCMBGrabCutUI::setDrawMode(int m)
       internal->drawing->SetDrawColor(internal->Forground, internal->Forground,
                                       internal->Forground, internal->Alpha);
       break;
-    case 3:
+    case 2:
       internal->drawing->SetDrawColor(internal->PotentialBG, internal->PotentialBG,
                                       internal->PotentialBG, internal->PotAlpha);
       break;
-    case 2:
-      internal->drawing->SetDrawColor(internal->PotentialFG, internal->PotentialFG,
-                                      internal->PotentialFG, internal->PotAlpha);
   }
 }
