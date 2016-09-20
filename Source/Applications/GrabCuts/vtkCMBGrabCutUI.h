@@ -8,8 +8,8 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-#ifndef vtkCMBGrabCutUI_H
-#define vtkCMBGrabCutUI_H
+#ifndef vtkCMBGrabCutUI_h
+#define vtkCMBGrabCutUI_h
 
 #include <vtkSmartPointer.h>
 

@@ -8,8 +8,8 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-#ifndef __vtkCMBOpenCVHelper_h
-#define __vtkCMBOpenCVHelper_h
+#ifndef vtkCMBOpenCVHelper_h
+#define vtkCMBOpenCVHelper_h
 
 #include "vtkImageData.h"
 #include "vtkPolyData.h"

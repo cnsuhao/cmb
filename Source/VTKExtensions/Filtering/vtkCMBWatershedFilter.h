@@ -8,8 +8,8 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-#ifndef __vtkCMBWatershedFilter_h
-#define __vtkCMBWatershedFilter_h
+#ifndef vtkCMBWatershedFilter_h
+#define vtkCMBWatershedFilter_h
 
 #include "vtkCMBFilteringModule.h" // For export macro
 

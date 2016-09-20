@@ -68,10 +68,11 @@ int vtkCMBWatershedFilter::RequestData(vtkInformation *vtkNotUsed(request),
   vtkCMBOpenCVHelper::VTKToOpenCV(image, imageCV);
   vtkCMBOpenCVHelper::VTKToOpenCV(mask, maskCV, /*to_gray*/ true);
 
-  //cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
-  //cv::imshow( "Display window", maskCV );                   // Show our image inside it.
-
-  //cv::waitKey(0);
+#ifdef DEBUG_GUI
+  cv::namedWindow( "Display window", cv::WINDOW_AUTOSIZE );// Create a window for display.
+  cv::imshow( "Display window", maskCV );                  // Show our image inside it.
+  cv::waitKey(0);
+#endif
 
   for(int i = 0; i < maskCV.rows; i++)
   {
