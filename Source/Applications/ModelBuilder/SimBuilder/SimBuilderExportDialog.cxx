@@ -103,6 +103,16 @@ SimBuilderExportDialog::~SimBuilderExportDialog()
 //-----------------------------------------------------------------------------
 int SimBuilderExportDialog::exec()
 {
+  if (!this->SimAttSystem)
+    {
+    QMessageBox::warning(
+      NULL,
+      "Export Error",
+      "Cannot export becauuse no simulation template or attributes have been loaded",
+      QMessageBox::Ok);
+    return 0;
+    }
+
   if (!this->IsPanelSet)
     {
     this->updatePanel();

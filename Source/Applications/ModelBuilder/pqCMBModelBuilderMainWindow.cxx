@@ -190,6 +190,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     SIGNAL(triggered()), this->getThisCore(), SLOT(onSaveSimulation()));
   QObject::connect(this->getMainDialog()->actionExport_Simulation_File,
     SIGNAL(triggered()), this->getThisCore(), SLOT(onExportSimFile()));
+  this->getMainDialog()->actionExport_Simulation_File->setEnabled(false);
 
   QObject::connect(this->getMainDialog()->action_Select,
     SIGNAL(triggered(bool)),
@@ -477,6 +478,7 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
   // if there is a SimBuilder model loaded, the left panel needs to be enabled.
   bool isSimLoaded = this->getThisCore()->getSimBuilder()->isSimModelLoaded();
   this->getMainDialog()->actionSave_Simulation->setEnabled(isSimLoaded);
+  this->getMainDialog()->actionExport_Simulation_File->setEnabled(isSimLoaded);
   this->Internal->SaveScenarioAction->setEnabled(isSimLoaded);
   if(isSimLoaded)
     {
