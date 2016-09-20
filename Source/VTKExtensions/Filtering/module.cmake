@@ -1,6 +1,9 @@
 vtk_module(vtkCMBFiltering
   DEPENDS
     vtkCMBIO
+    vtkCommonComputationalGeometry
+    vtkCommonSystem
+    vtkImagingCore
     vtkFiltersCore
     vtkFiltersExtraction
     vtkFiltersGeometry
