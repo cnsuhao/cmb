@@ -1244,9 +1244,6 @@ p, li { white-space: pre-wrap; }
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse</set>
                  </property>
-                 <property name="buddy">
-                  <cstring></cstring>
-                 </property>
                 </widget>
                </item>
                <item row="0" column="1">
