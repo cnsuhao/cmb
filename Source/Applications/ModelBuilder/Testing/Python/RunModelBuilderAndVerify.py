@@ -12,6 +12,7 @@
 # This script runs ModelBuilder (assuming it produces something)
 # and then a python verification script (calls a function called "test")
 
+import os
 import sys
 from subprocess import call, check_call
 from pprint import pprint
@@ -38,9 +39,15 @@ def RunMBAndVerify():
 
 	# run ModelBuilder
 	try:
+		# Remove any test env vars
+		modelbuilder_env = os.environ.copy()
+		modelbuilder_env.pop('DYLD_LIBRARY_PATH', None)
+		modelbuilder_env.pop('LD_LIBRARY_PATH', None)
+		modelbuilder_env.pop('PYTHONPATH', None)
+
 		c = [modelBuilder, "-dr", "--test-directory=%s" % testdir, "--test-script=%s" % testScript, "--exit"]
 		print("Trying call: %s" % c)
-		status = call(c)
+		status = call(c, env=modelbuilder_env)
 	except Exception, e:
 		print("ModelBuilder call failed: %s" % e)
 		status = -1

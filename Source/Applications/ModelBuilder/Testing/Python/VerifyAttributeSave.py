@@ -33,15 +33,13 @@ def verifyAssociation():
     try:
         datadir = sys.argv[1]
         print("datadir=%s" % datadir)
-        modelpath = os.path.join(datadir,'2D-CMBModels')
-        modelpath = os.path.join(modelpath, 'test2D.cmb')
+        modelpath = os.path.join(datadir,'model', '2d', 'cmb', 'test2D.cmb')
     except:
         print 'Failed to determine model path'
         return -1
 
     print "modelpath", modelpath
     model = smtk.model.Model(Read(modelpath)[0])
-
     # read the model tree
     faces = model.cells() # list of faces
     edges = []
@@ -90,7 +88,7 @@ def verifyAssociation():
     # verify the matches
     matches = list(set(matches)) # remove duplicate matches
 
-    correctMatches = [ ('mat1', 'Face1'), ('mat1', 'Face4'), ('mat2', 'Face3'), ('VelocityBound-0', 'Edge4'), ('VelocityBound-0', 'Edge7') ]
+    correctMatches = [ ('mat1', 'Face1'), ('mat1', 'Face4'), ('mat2', 'Face2'), ('VelocityBound-0', 'Edge4'), ('VelocityBound-0', 'Edge7') ]
     for m in correctMatches:
         if m not in matches:
             print m, "match not found"
