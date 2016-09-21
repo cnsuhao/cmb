@@ -70,4 +70,5 @@
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ConeSceneTest.sg" />
+  <pqevent object="qtCMBMainWindow" command="pause" arguments="300" />
 </pqevents>

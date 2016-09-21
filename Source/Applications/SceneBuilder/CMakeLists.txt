@@ -147,17 +147,11 @@ if(BUILD_TESTING)
     )
 
 set (XML_TESTS_WITH_BASELINES
-  # XXX: nodata(SceneGen.osd.txt): 2DTest
   ApplyBathymetry
   ArcAutoConnect1
-  ArcAutoConnect2
   ArcCreate1
   ArcGrow
-  ArcMerge1
-  ArcMerge2
-  ArcMesh1
-  # XXX: nodata(pueblo.map): ArcMesh2
-  ArcSnap
+   ArcSnap
   ArcSplit1
   ArcSplit2
   # XXX: nodata(SceneGen.osd.txt): CameraOrientationTest
@@ -168,7 +162,6 @@ set (XML_TESTS_WITH_BASELINES
   # XXX: nodata(SceneGen.osd.txt): DisplayTypeTest
   # XXX: nodata(SceneGen.osd.txt): DuplicateNodeTest
   # XXX: nodata(Ballard_veg_mask.jpg): EditTexturePointsTest
-  ExportArcSetsTest
   GeotiffOpenTest
   # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphSelectionTest_Playback
   # XXX: nodata(SmallCeosoteCorrected.vtp): GlyphTest
@@ -214,7 +207,6 @@ set (XML_TESTS_WITH_BASELINES
   # XXX: nodata(SceneGen.osd.txt): RejectMeshTest
   # XXX: nodata(SceneGen.osd.txt): CreateMeshTest
   # XXX: nodata(SceneGen.osd.txt): InfoPanelTest
-  ChesapeakeBayToCMB
     )
 
   foreach(test ${TESTS_WITHOUT_BASELINES})
