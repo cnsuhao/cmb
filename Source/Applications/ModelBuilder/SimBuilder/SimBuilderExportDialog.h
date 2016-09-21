@@ -7,14 +7,14 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME SimBuilderCustomExportDialog - Options for exporting CMB simulation file.
+// .NAME SimBuilderExportDialog - Options for exporting CMB simulation file.
 // .SECTION Description
 // Dialog is customized by input smtk::attribute::System
 // .SECTION Caveats
 
 
-#ifndef __SimBuilderCustomExportDialog_h
-#define __SimBuilderCustomExportDialog_h
+#ifndef __SimBuilderExportDialog_h
+#define __SimBuilderExportDialog_h
 
 #include "cmbSystemConfig.h"
 #include "pqSimBuilderUIManager.h"
@@ -34,13 +34,13 @@ class QFrame;
 class QWidget;
 class pqServer;
 
-class SimBuilderCustomExportDialog : public QObject
+class SimBuilderExportDialog : public QObject
 {
   Q_OBJECT
 
 public:
-  SimBuilderCustomExportDialog();
-  virtual ~SimBuilderCustomExportDialog();
+  SimBuilderExportDialog();
+  virtual ~SimBuilderExportDialog();
 
   QWidget *contentWidget() const
   { return this->ContentWidget; }
@@ -50,15 +50,24 @@ public:
 
   void setActiveServer(pqServer* server);
   int exec();
-  std::string getPythonScript(bool warnIfMissing=false) const;
+  std::string getPythonScript() const;
 
 protected slots:
   void analysisSelected();
   void multipleSelectChanged(int state);
 
 protected:
+  std::string findPythonScriptPath(
+    smtk::attribute::FileItemPtr fileItem,
+    bool warnIfMissing = false) const;
+  std::string findPythonScriptPath(
+    const std::string& name,
+    bool warnIfMissing = false) const;
   void updatePanel();
   void updateAnalysisTypesWidget();
+  smtk::attribute::FileItemDefinitionPtr getPythonScriptDef(
+    const smtk::attribute::SystemPtr attributeSystem,
+    bool warnIfMissing=false) const;
   smtk::attribute::FileItemPtr
     getPythonScriptItem(bool warnIfMissing=false) const;
   std::string getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
@@ -85,4 +94,4 @@ private:
   std::set<std::string> SelectedAnalyses;
 };
 
-#endif /* __SimBuilderCustomExportDialog_h */
+#endif /* __SimBuilderExportDialog_h */

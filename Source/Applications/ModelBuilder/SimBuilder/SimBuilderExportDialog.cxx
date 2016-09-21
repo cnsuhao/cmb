@@ -11,11 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-#include "SimBuilderCustomExportDialog.h"
+#include "SimBuilderExportDialog.h"
 
 #include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/Definition.h"
 #include "smtk/attribute/FileItem.h"
+#include "smtk/attribute/FileItemDefinition.h"
 #include "smtk/attribute/Item.h"
+#include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/extension/qt/qtBaseView.h"
@@ -31,14 +34,19 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QDir>
 #include <QEventLoop>
+#include <QFile>
+#include <QFileInfo>
 #include <QFrame>
 #include <QLabel>
 #include <QMessageBox>
 #include <QRadioButton>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -48,7 +56,7 @@
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
+SimBuilderExportDialog::SimBuilderExportDialog() :
   Status(-1), ActiveServer(0), IsPanelSet(false), IsMultipleSelect(false)
 {
   // Instantiate dialog
@@ -86,15 +94,25 @@ SimBuilderCustomExportDialog::SimBuilderCustomExportDialog() :
 }
 
 //-----------------------------------------------------------------------------
-SimBuilderCustomExportDialog::~SimBuilderCustomExportDialog()
+SimBuilderExportDialog::~SimBuilderExportDialog()
 {
   delete this->ExportUIManager;
   delete this->MainDialog;
 }
 
 //-----------------------------------------------------------------------------
-int SimBuilderCustomExportDialog::exec()
+int SimBuilderExportDialog::exec()
 {
+  if (!this->SimAttSystem)
+    {
+    QMessageBox::warning(
+      NULL,
+      "Export Error",
+      "Cannot export becauuse no simulation template or attributes have been loaded",
+      QMessageBox::Ok);
+    return 0;
+    }
+
   if (!this->IsPanelSet)
     {
     this->updatePanel();
@@ -143,7 +161,7 @@ int SimBuilderCustomExportDialog::exec()
         this->SelectedAnalyses.begin();
       for (int i=0; iter != this->SelectedAnalyses.end(); i++, iter++)
         {
-        bool ok = typesItem->setValue(i, *iter);
+        typesItem->setValue(i, *iter);
         }
       }
     }
@@ -152,26 +170,22 @@ int SimBuilderCustomExportDialog::exec()
 }
 
 //-----------------------------------------------------------------------------
-// Returns absolute path to python script,
-// Obtained from export attribute system
-std::string
-SimBuilderCustomExportDialog::
-getPythonScript(bool warnIfMissing) const
+// Returns python script "value" as stored in the export attribute system
+std::string SimBuilderExportDialog::getPythonScript() const
 {
-  smtk::attribute::FileItemPtr
-    fileItem = this->getPythonScriptItem(warnIfMissing);
-  if (!fileItem)
+  smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
+  if (!fileItem || !fileItem->isSet(0))
     {
     return "";
     }
 
-  std::string script = this->getPythonScriptPath(fileItem, warnIfMissing);
+  std::string script = fileItem->value(0);
   return script;
 }
 
 //-----------------------------------------------------------------------------
 // [Slot] Handles analysis selection from radio buttons
-void SimBuilderCustomExportDialog::analysisSelected()
+void SimBuilderExportDialog::analysisSelected()
 {
   QRadioButton *button = dynamic_cast<QRadioButton *>(QObject::sender());
   if (button)
@@ -201,7 +215,7 @@ void SimBuilderCustomExportDialog::analysisSelected()
 
 //-----------------------------------------------------------------------------
 // [Slot] Handles multiple-selection checkbox changing state
-void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
+void SimBuilderExportDialog::multipleSelectChanged(int state)
 {
   bool boolState = static_cast<bool>(state);
   this->IsMultipleSelect = boolState;
@@ -209,7 +223,7 @@ void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
     {
     // Clear all buttons
     QList<QAbstractButton *> buttonList = this->AnalysisButtonGroup->buttons();
-    for (size_t i; i<buttonList.size(); ++i)
+    for (int i = 0; i<buttonList.size(); ++i)
       {
       buttonList.value(i)->setChecked(false);
       }
@@ -223,7 +237,7 @@ void SimBuilderCustomExportDialog::multipleSelectChanged(int state)
 // loaded in the dialog, otherwise return the copy used in the export panel
 // (which might be empty, or might have been edited).
 smtk::attribute::SystemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 exportAttSystem(bool baseline) const
 {
   if (baseline)
@@ -234,21 +248,21 @@ exportAttSystem(bool baseline) const
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
 {
   this->ExportAttSystem = system;
   this->IsPanelSet = false;
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
 {
   this->SimAttSystem = system;
   this->IsPanelSet = false;
 }
 
 //-----------------------------------------------------------------------------
-void SimBuilderCustomExportDialog::setActiveServer(pqServer* server)
+void SimBuilderExportDialog::setActiveServer(pqServer* server)
 {
   this->ActiveServer = server;
 }
@@ -256,7 +270,7 @@ void SimBuilderCustomExportDialog::setActiveServer(pqServer* server)
 //-----------------------------------------------------------------------------
 // Rebuilds ExportSystem with copy of ExportAttSystem,
 // For now, does brute-force copy
-void SimBuilderCustomExportDialog::updatePanel()
+void SimBuilderExportDialog::updatePanel()
 {
   // Blow away current export system
   if(this->ExportUIManager)
@@ -274,6 +288,11 @@ void SimBuilderCustomExportDialog::updatePanel()
   hasError =
     attWriter.writeContents(*this->ExportAttSystem, serializedSystem, logger);
 
+  // std::string filename("export.sbt");
+  // hasError =
+  //   attWriter.write(*this->ExportAttSystem, filename, logger);
+  // std::cout << "Wrote " << filename  << std::endl;
+
   // Reload into export panel
   smtk::io::AttributeReader attReader;
   hasError = attReader.readContents(*(this->ExportUIManager->attributeSystem()),
@@ -285,25 +304,38 @@ void SimBuilderCustomExportDialog::updatePanel()
     return;
     }
 
-  // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
+  // If python script def has default value, look for script on local filesystem
+  std::string scriptPath;
+  smtk::attribute::FileItemDefinitionPtr fileDef = this->getPythonScriptDef(
+    this->ExportUIManager->attributeSystem());
+  if (fileDef && fileDef->hasDefault())
+    {
+    scriptPath = this->findPythonScriptPath(fileDef->defaultValue());
+    if (scriptPath.empty())
+      {
+      // Not found: unset the default value, so that UI shows it missing
+      fileDef->setDefaultValue("");
+      fileDef->unsetDefaultValue();
+      }
+    }
+
+  // Get toplevel view
+  smtk::common::ViewPtr topView =
+    this->ExportUIManager->attributeSystem()->findTopLevelView();
   if (!topView)
     {
-    QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
+    QMessageBox::critical(
+      NULL, "Export Error", "There is no TopLevel View in Export Script!");
     return;
     }
 
   this->ExportUIManager->setSMTKView(topView, this->ContentWidget, NULL);
 
-  // Update python script item
-  smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
-  if (fileItem)
+  // Initialize script path
+  if (!scriptPath.empty())
     {
-    std::string script = this->getPythonScriptPath(fileItem);
-    if (script != "")
-      {
-      fileItem->setValue(0, script);
-      }
+      smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
+      fileItem->setValue(0, scriptPath);
     }
 
   // Update selection widget for analysis types
@@ -315,7 +347,7 @@ void SimBuilderCustomExportDialog::updatePanel()
 
 //-----------------------------------------------------------------------------
 // Rebuilds selection list of analyis types
-void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
+void SimBuilderExportDialog::updateAnalysisTypesWidget()
 {
   if (!this->SimAttSystem)
     {
@@ -337,7 +369,7 @@ void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
     {
     typesItem->setValue(0, "(Use selection buttons above)");
     }
-  for (size_t i=1; i<typesItem->numberOfValues(); ++i)
+  for (std::size_t i=1; i<typesItem->numberOfValues(); ++i)
     {
     typesItem->setValue(i, "");
     }
@@ -415,9 +447,56 @@ void SimBuilderCustomExportDialog::updateAnalysisTypesWidget()
 }
 
 //-----------------------------------------------------------------------------
+// Retrieves PythonScript item definition from export attributes
+smtk::attribute::FileItemDefinitionPtr
+SimBuilderExportDialog::getPythonScriptDef(
+  const smtk::attribute::SystemPtr attributeSystem,
+  bool warnIfMissing) const
+{
+  smtk::attribute::DefinitionPtr exportDef = attributeSystem->findDefinition(
+    "ExportSpec");
+  if (!exportDef)
+    {
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "ExportSpec definition not found");
+      return smtk::attribute::FileItemDefinitionPtr();
+      }
+    }
+
+  // Traverse item definitions looking for "PythonScript" item def
+  for (std::size_t i=0; i < exportDef->numberOfItemDefinitions(); ++i)
+    {
+    smtk::attribute::ItemDefinitionPtr itemDef = exportDef->itemDefinition(i);
+    if (itemDef->name() == "PythonScript")
+      {
+      smtk::attribute::FileItemDefinitionPtr fileDef =
+        smtk::dynamic_pointer_cast<smtk::attribute::FileItemDefinition>(itemDef);
+      if (!fileDef && warnIfMissing)
+        {
+        QMessageBox::critical(
+          NULL,
+          "Export Error",
+          "PythonScript item definition is *not* a FileItemDefinition type");
+        return smtk::attribute::FileItemDefinitionPtr();
+        }
+
+      // (else)
+      return fileDef;
+      }
+    }
+
+  // (else) not found
+  QMessageBox::critical(
+    NULL, "Export Error", "PythonScript item not found");
+  return smtk::attribute::FileItemDefinitionPtr();
+}
+
+//-----------------------------------------------------------------------------
 // Retrieves PythonScript item from export attributes
 smtk::attribute::FileItemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getPythonScriptItem(bool warnIfMissing) const
 {
   smtk::attribute::ItemPtr item =
@@ -437,7 +516,7 @@ getPythonScriptItem(bool warnIfMissing) const
 //-----------------------------------------------------------------------------
 // Retrieves item with specified name from ExportSpec attribute
 smtk::attribute::ItemPtr
-SimBuilderCustomExportDialog::
+SimBuilderExportDialog::
 getExportSpecItem(const std::string& name, bool warnIfMissing) const
 {
   smtk::attribute::SystemPtr system =
@@ -488,23 +567,45 @@ getExportSpecItem(const std::string& name, bool warnIfMissing) const
 
 //-----------------------------------------------------------------------------
 // Finds absolute path to script file, by checking "standard" locations
-std::string
-SimBuilderCustomExportDialog::
-getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
-                    bool warnIfMissing) const
+std::string SimBuilderExportDialog::findPythonScriptPath(
+  smtk::attribute::FileItemPtr fileItem,
+  bool warnIfMissing) const
 {
-  std::string script = fileItem->valueAsString(0);
-
-  // If path is empty, return it
-  if ("" == script)
+  if (fileItem->numberOfValues() == 0)
     {
-    return script;
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "Attribute item for python script not set");
+      }
+    return std::string();
+    }
+
+  std::string scriptName = fileItem->valueAsString(0);
+  return this->findPythonScriptPath(scriptName, warnIfMissing);
+}
+
+//-----------------------------------------------------------------------------
+// Finds absolute path to script file, by checking "standard" locations
+std::string SimBuilderExportDialog::findPythonScriptPath(
+  const std::string& scriptName,
+  bool warnIfMissing) const
+{
+  // If empty string
+  if (scriptName.empty())
+    {
+    if (warnIfMissing)
+      {
+      QMessageBox::critical(
+        NULL, "Export Error", "Python script name is empty string");
+      }
+    return scriptName;
     }
 
   // If script path is absolute, pass it on
-  if (vtksys::SystemTools::FileIsFullPath(script.c_str()))
+  if (vtksys::SystemTools::FileIsFullPath(scriptName.c_str()))
     {
-    return script;
+    return scriptName;
     }
 
   // If path is relative, can search if the server is running locally
@@ -513,55 +614,46 @@ getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
   if (server->isRemote())
     {
     // Currently we punt if the server is remote
-    return script;
+    return std::string();  // return empty string
     }
 
-  // Make list of directories to look for python script
-  std::vector<std::string> testDirList;
-  std::string appDir = QCoreApplication::applicationDirPath().toStdString();
-
-  // Add path for standard CMB install
-  std::string installPath = appDir;
+  // Look for installed workflow directory
+  QString appDirPath = QCoreApplication::applicationDirPath();
 #ifdef __APPLE__
-  //installPath += "/ModelBuilder.app/Contents";
-  installPath += "/..";
+  QString workflowsPath = appDirPath + "/../../../../../Workflows";
+#else
+  QString workflowsPath = appDirPath + "/../share/cmb/workflows";
 #endif
-  installPath += "/Resources/PythonExporters/";
-  //std::cout << "installPath: " << installPath << std::endl;
-  testDirList.push_back(installPath);
-
-  // Add path for CMB dev/testing (CMB_TEST_DIR)
-  std::string testPath = appDir + "/../Source/Testing/Temporary/";
-#ifdef __APPLE__
-  testPath = appDir + "/../../../../Source/Testing/Temporary/";
-#endif
-  testDirList.push_back(testPath);
-
-  size_t i;
-  for (i=0; i<testDirList.size(); ++i)
+  if (!QFile::exists(workflowsPath))
     {
-    std::string path = testDirList[i] + script;
-    if (vtksys::SystemTools::FileExists(path.c_str(), true))
+    return std::string();
+    }
+  QDir workflowsDir(workflowsPath);
+
+  // Traverse subfolders to look for script file.
+  // Note that this presumes each solver's script file has a unique name.
+  QString fragment = QString("/") + QString::fromStdString(scriptName);
+  QStringList subfolderList = workflowsDir.entryList(
+    QDir::Dirs | QDir::NoDotAndDotDot);
+  foreach(QString subfolder, subfolderList)
+    {
+    QString path = workflowsPath + "/" + subfolder + fragment;
+    //qDebug() << "Checking" << path;
+    if (QFile::exists(path))
       {
-      return path;
+      // Get the canonical path
+      QFileInfo fileInfo(path);
+      QString canonicalPath = fileInfo.canonicalFilePath();
+      return canonicalPath.toStdString();
       }
     }
-
-  // List out paths that were unsuccessful
-  std::cerr << "Unable to find python script \"" << script << "\".\n"
-            << "Looked in these directories:\n";
-  for (i=0; i<testDirList.size(); ++i)
-    {
-    std::cerr << "  " << testDirList[i] << "\n";
-    }
-  std::cerr << std::endl;
 
   // If we reach this point, code did *not* find python script
   if (warnIfMissing)
     {
     std::stringstream ss;
-    ss << "Unable to find python export script \"" << script << "\"";
+    ss << "Unable to find python export script \"" << scriptName << "\"";
     QMessageBox::critical(NULL, "Export Error", QString::fromStdString(ss.str()));
     }
-  return "";
+  return std::string();
 }

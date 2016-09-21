@@ -55,7 +55,7 @@ source_group("Generated" FILES
 # Add SimBuilder files here
 set(SimBuilder_SOURCES
   SimBuilder/SimBuilderCore.cxx
-  SimBuilder/SimBuilderCustomExportDialog.cxx
+  SimBuilder/SimBuilderExportDialog.cxx
   SimBuilder/qtSimBuilderUIPanel.cxx
   SimBuilder/pqSimBuilderUIManager.cxx
   SimBuilder/vtkSBFunctionParser.cxx

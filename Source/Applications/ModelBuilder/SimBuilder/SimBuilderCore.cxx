@@ -11,7 +11,7 @@
 #include "SimBuilderCore.h"
 
 #include "qtSimBuilderUIPanel.h"
-#include "SimBuilderCustomExportDialog.h"
+#include "SimBuilderExportDialog.h"
 #include "DefaultExportTemplate.h"
 
 #include "pqApplicationCore.h"
@@ -68,7 +68,7 @@ SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
   this->Initialize();
   this->setServer(pvServer);
   this->setRenderView(view);
-  this->ExportDialog = new SimBuilderCustomExportDialog();
+  this->ExportDialog = new SimBuilderExportDialog();
   this->m_attUIManager = NULL;
 }
 
@@ -644,6 +644,7 @@ void SimBuilderCore::clearCMBModel()
 //----------------------------------------------------------------------------
 void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 {
+  (void)emitSignal;
 }
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()

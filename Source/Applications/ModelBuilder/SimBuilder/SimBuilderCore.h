@@ -25,7 +25,7 @@ class pqPipelineSource;
 class vtkSMProxy;
 class pqRenderView;
 class pqSimBuilderUIManager;
-class SimBuilderCustomExportDialog;
+class SimBuilderExportDialog;
 class vtkSMModelManagerProxy;
 
 class SimBuilderCore : public QObject
@@ -98,7 +98,7 @@ private:
   pqServer* ActiveServer;
   pqRenderView* RenderView;
   bool IsSimModelLoaded;
-  SimBuilderCustomExportDialog *ExportDialog;
+  SimBuilderExportDialog *ExportDialog;
 
   std::string CurrentSimFile;
 
