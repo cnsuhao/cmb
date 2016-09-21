@@ -42,6 +42,7 @@ public slots:
   void showPossibleLabel(bool b);
   void setTransparency(int t);
   void setDrawMode(int m);
+  void setAlgorithm(int a);
   void setFGFilterSize(int f);
   void setBGFilterSize(int b);
 

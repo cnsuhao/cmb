@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>937</height>
+    <height>933</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,6 +61,27 @@
          <property name="value">
           <number>3</number>
          </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Algorithm</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="Algorithm">
+         <item>
+          <property name="text">
+           <string>Grab Cuts</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Watershed</string>
+          </property>
+         </item>
         </widget>
        </item>
        <item>
