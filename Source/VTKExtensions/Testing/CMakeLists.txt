@@ -8,6 +8,7 @@ set(testing_libraries
   vtkCMBMeshing
   vtkInteractionStyle
   vtkInteractionWidgets
+  vtkIOGDAL
   vtkRenderingCore
   vtkRenderingFreeType
   vtkRendering${VTK_RENDERING_BACKEND}
@@ -28,7 +29,8 @@ include_directories(${vtkCMBGeneral_INCLUDE_DIRS}
                     ${vtkCMBFiltering_INCLUDE_DIRS}
                     ${vtkCMBMeshing_INCLUDE_DIRS}
                     ${vtkCMBGraphics_INCLUDE_DIRS}
-                    ${vtkCMBIO_INCLUDE_DIRS})
+                    ${vtkCMBIO_INCLUDE_DIRS}
+                    ${vtkIOGDAL_INCLUDE_DIRS})
 
 add_executable(testDiscreteColorLookupTable testDiscreteColorLookupTable.cxx)
 add_executable(testVTKObjectMethods testVTKObjectMethods.cxx)
@@ -47,6 +49,7 @@ target_link_libraries(delosMeshReader ${testing_libraries})
 # not acually a test (as its name suggests), but could/should be made into one?
 add_executable(testDataReader testDataReader.cxx)
 target_link_libraries(testDataReader ${testing_libraries})
+
 
 add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 

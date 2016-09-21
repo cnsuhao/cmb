@@ -1,5 +1,6 @@
 # VXL is needed.
 find_package(VXL)
+find_package(OpenCV REQUIRED)
 include(${VXL_CMAKE_DIR}/UseVXL.cmake)
 
 set(CMB_Filtering_SRC
@@ -23,6 +24,7 @@ set(CMB_Filtering_SRC
     vtkCMBContourGroupFilter.cxx
     vtkCMBExtractContours.cxx
     vtkCMBGlyphPointSource.cxx
+    vtkCMBImageClassFilter.cxx
     vtkCMBMeshConeSelector.cxx
     vtkCMBMeshContourSelector.cxx
     vtkCMBMeshSelectionConverter.cxx
@@ -41,6 +43,9 @@ set(CMB_Filtering_SRC
     vtkRegisterPlanarTextureMap.cxx
     vtkTerrainExtractionFilter.cxx
     vtkTexturePointIntensityFilter.cxx
+
+    vtkCMBGrabCutFilter.cxx
+    vtkCMBWatershedFilter.cxx
 )
 
 set(vtkCMBFiltering_NO_HeaderTest 1)
@@ -57,7 +62,8 @@ target_include_directories(vtkCMBFiltering
 
 target_link_libraries(vtkCMBFiltering
             PRIVATE
-              rtvl
+              rtvl ${OpenCV_LIBS}
+              vtkIOImage
               vtkSMTKReaderExt # for vtkLIDARReader
               vtkSMTKFilterExt
               vtkFiltersSources
