@@ -426,7 +426,7 @@ int vtkSceneGenVegetationClusterReader::AddBlock(vtkMultiBlockDataSet *output,
   transformFD->SetName( "Transformation" );
   transformFD->SetNumberOfComponents(16);
   transform->Identity();
-  transformFD->InsertNextTuple( transform->GetMatrix()->GetElement(0, 0) );
+  transformFD->InsertNextTuple( transform->GetMatrix()[0][0] );
   block->GetFieldData()->AddArray( transformFD.GetPointer() );
 
   return VTK_OK;

@@ -225,7 +225,7 @@ vtkPVSceneGenObjectInformation::CopyToStream(vtkClientServerStream* css)
   css->Reset();
   *css << vtkClientServerStream::Reply;
   vtkMatrix4x4 *matrix = this->Transform->GetMatrix();
-  *css << vtkClientServerStream::InsertArray(matrix->GetElement(0, 0), 16) <<
+  *css << vtkClientServerStream::InsertArray(matrix[0][0], 16) <<
     vtkClientServerStream::InsertArray(this->Translation, 3) <<
     vtkClientServerStream::InsertArray(this->Orientation, 3) <<
     vtkClientServerStream::InsertArray(this->Scale, 3) <<
