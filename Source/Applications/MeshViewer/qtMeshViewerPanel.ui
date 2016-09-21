@@ -338,7 +338,7 @@
           </widget>
          </item>
          <item>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout">
            <item row="0" column="0">
             <widget class="QPushButton" name="pushButton_SelectAll">
              <property name="text">
