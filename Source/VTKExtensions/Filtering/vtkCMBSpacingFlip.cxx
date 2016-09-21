@@ -69,6 +69,7 @@ int vtkCMBSpacingFlip
     flipper->SetInputData(input);
     flipper->Update();
     output->DeepCopy(flipper->GetOutput());
+    output->SetSpacing(fabs(spacing[0]),fabs(spacing[1]),fabs(spacing[2]));
   }
 
   return 1;
