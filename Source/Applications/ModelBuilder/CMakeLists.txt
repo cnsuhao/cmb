@@ -375,7 +375,6 @@ endif()
     RendererSurfaceWithEdges
     RendererWireframe
     OpacityLower
-    ShowAxis
     OpenCMBFile2
     HideFace
     HideOtherFaces
