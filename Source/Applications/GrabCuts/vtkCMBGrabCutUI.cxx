@@ -117,7 +117,8 @@ public:
     maskActor   = vtkSmartPointer<vtkImageActor>::New();
     imageViewer = vtkSmartPointer<vtkImageViewer2>::New();
     drawing     = vtkSmartPointer<vtkDEMImageCanvasSource2D>::New();
-    filter      = vtkSmartPointer<vtkCMBGrabCutFilter>::New();
+    filter      = vtkSmartPointer<vtkCMBWatershedFilter>::New(); //vtkSmartPointer<vtkCMBGrabCutFilter>::New();
+    //vtkSmartPointer<vtkCMBWatershedFilter> filter = vtkSmartPointer<vtkCMBWatershedFilter>::New();
 
     drawing->SetDrawColor(Forground, Forground, Forground, Alpha);
 
@@ -131,11 +132,12 @@ public:
 
     filter->SetInputData(0, image);
     filter->SetInputConnection(1, drawing->GetOutputPort());
-    filter->SetNumberOfIterations(20);
-    filter->SetPotentialForegroundValue(PotentialFG);
-    filter->SetPotentialBackgroundValue(PotentialBG);
+    //filter->SetNumberOfIterations(20);
+    //filter->SetPotentialForegroundValue(PotentialFG);
+    //filter->SetPotentialBackgroundValue(PotentialBG);
     filter->SetForegroundValue(Forground);
     filter->SetBackgroundValue(Background);
+    filter->SetUnlabeledValue(PotentialBG);
 
     lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     lineActor = vtkSmartPointer<vtkActor>::New();
@@ -162,7 +164,7 @@ public:
     contFilter->ComputeScalarsOff();
 
     vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
-    translation->Translate(0.0, 0.0, 0.0001);
+    translation->Translate(0.0, 0.0, 0.00œ1);
 
     transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     transformFilter->SetInputConnection(contFilter->GetOutputPort());
@@ -178,7 +180,8 @@ public:
   int Radius;
   vtkSmartPointer<vtkImageActor> maskActor;
   vtkSmartPointer<vtkDEMImageCanvasSource2D> drawing;
-  vtkSmartPointer<vtkCMBGrabCutFilter> filter;
+  vtkSmartPointer<vtkCMBWatershedFilter> filter;
+  //vtkSmartPointer<vtkCMBGrabCutFilter> filter;
   vtkSmartPointer<vtkPolyDataMapper> lineMapper;
   vtkSmartPointer<vtkActor> lineActor;
   vtkSmartPointer<vtkImageViewer2> imageViewer;
@@ -646,7 +649,7 @@ void vtkCMBGrabCutUI::saveMask()
 
 void vtkCMBGrabCutUI::run()
 {
-  internal->filter->DoGrabCut();
+  //internal->filter->DoGrabCut();
   internal->filter->Update();
 
   internal->imageClassFilter->SetInputData(internal->filter->GetOutput(0));
@@ -709,7 +712,7 @@ void vtkCMBGrabCutUI::pointSize(int i)
 
 void vtkCMBGrabCutUI::numberOfIterations(int j)
 {
-  internal->filter->SetNumberOfIterations(j);
+  //internal->filter->SetNumberOfIterations(j);
 }
 
 void vtkCMBGrabCutUI::showPossibleLabel(bool b)
