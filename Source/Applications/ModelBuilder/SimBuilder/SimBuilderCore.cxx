@@ -644,6 +644,7 @@ void SimBuilderCore::clearCMBModel()
 //----------------------------------------------------------------------------
 void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 {
+  (void)emitSignal;
 }
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()

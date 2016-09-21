@@ -161,7 +161,7 @@ int SimBuilderExportDialog::exec()
         this->SelectedAnalyses.begin();
       for (int i=0; iter != this->SelectedAnalyses.end(); i++, iter++)
         {
-        bool ok = typesItem->setValue(i, *iter);
+        typesItem->setValue(i, *iter);
         }
       }
     }
@@ -223,7 +223,7 @@ void SimBuilderExportDialog::multipleSelectChanged(int state)
     {
     // Clear all buttons
     QList<QAbstractButton *> buttonList = this->AnalysisButtonGroup->buttons();
-    for (size_t i; i<buttonList.size(); ++i)
+    for (int i = 0; i<buttonList.size(); ++i)
       {
       buttonList.value(i)->setChecked(false);
       }
@@ -369,7 +369,7 @@ void SimBuilderExportDialog::updateAnalysisTypesWidget()
     {
     typesItem->setValue(0, "(Use selection buttons above)");
     }
-  for (size_t i=1; i<typesItem->numberOfValues(); ++i)
+  for (std::size_t i=1; i<typesItem->numberOfValues(); ++i)
     {
     typesItem->setValue(i, "");
     }
