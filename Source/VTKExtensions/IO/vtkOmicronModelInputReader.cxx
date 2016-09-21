@@ -296,7 +296,9 @@ vtkPolyData* vtkOmicronModelInputReader::AddBlock(vtkMultiBlockDataSet *output,
     vtkSmartPointer<vtkDoubleArray>::New();
   transformFD->SetName( "Transformation" );
   transformFD->SetNumberOfComponents(16);
-  transformFD->InsertNextTuple( transform->GetMatrix()[0][0] );
+  double transformData[16];
+  vtkMatrix4x4::DeepCopy(transformData, transform->GetMatrix());
+  transformFD->InsertNextTuple( transformData );
   block->GetFieldData()->AddArray( transformFD );
 
   vtkSmartPointer<vtkStringArray> objectType =
