@@ -413,7 +413,7 @@ int vtkSceneGenVegetationReader::AddBlock(vtkMultiBlockDataSet *output,
     vtkSmartPointer<vtkDoubleArray>::New();
   transformFD->SetName( "Transformation" );
   transformFD->SetNumberOfComponents(16);
-  transformFD->InsertNextTuple( transform->GetMatrix()->GetElement(0, 0) );
+  transformFD->InsertNextTuple( transform->GetMatrix()[0][0] );
   block->GetFieldData()->AddArray( transformFD );
 
   return VTK_OK;
