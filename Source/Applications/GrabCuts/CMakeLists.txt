@@ -40,7 +40,10 @@ set(GrabCuts_SRCS vtkCMBGrabCutUI.cxx)
 
 add_executable(GrabCuts MACOSX_BUNDLE GrabCuts.cxx ${GrabCuts_SRCS} ${UISrcs} ${MOCSrcs})
 target_link_libraries(GrabCuts ${grabcuts_libraries} ${VTK_LIBRARIES})
-install(TARGETS GrabCuts BUNDLE DESTINATION ${VTK_INSTALL_RUNTIME_DIR})
+install(TARGETS GrabCuts
+  RUNTIME DESTINATION ${VTK_INSTALL_RUNTIME_DIR}
+  BUNDLE DESTINATION ${VTK_INSTALL_RUNTIME_DIR})
+
 
 
 #------------------------------------------------------------------------------
