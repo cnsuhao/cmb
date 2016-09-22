@@ -77,9 +77,9 @@ public:
   }
 
 protected:
-  virtual int RequestInformation (vtkInformation *request,
+  int RequestInformation (vtkInformation *request,
                                   vtkInformationVector** inputVector,
-                                  vtkInformationVector *outputVector)
+                                  vtkInformationVector *outputVector) override
   {
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
@@ -95,7 +95,7 @@ protected:
   }
   vtkDEMImageCanvasSource2D():vtkImageCanvasSource2D()
   {}
-  ~vtkDEMImageCanvasSource2D()
+  ~vtkDEMImageCanvasSource2D() override
   {}
   double Origin[3];
   double Spacing[3];
@@ -255,7 +255,7 @@ public:
     this->internal = i;
   }
 
-  virtual void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *)
+  void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *) override
   {
     vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
     vtkRenderer* renderer = internal->imageViewer->GetRenderer();
@@ -322,7 +322,7 @@ public:
     this->internal     = NULL;
   }
 
-  ~vtkCMBGrabMouseMoveCallback()
+  ~vtkCMBGrabMouseMoveCallback() override
   {
     this->internal     = NULL;
   }
@@ -332,7 +332,7 @@ public:
     this->internal = i;
   }
 
-  virtual void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *)
+  void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *) override
   {
     vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
     vtkRenderer* renderer = internal->imageViewer->GetRenderer();
@@ -421,7 +421,7 @@ public:
     this->internal     = NULL;
   }
 
-  ~vtkCMBGrabLeftMousePressCallback()
+  ~vtkCMBGrabLeftMousePressCallback() override
   {
     this->internal     = NULL;
   }
@@ -431,7 +431,7 @@ public:
     this->internal = i;
   }
 
-  virtual void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *)
+  void Execute(vtkObject *, unsigned long vtkNotUsed(event), void *) override
   {
     internal->leftMousePressed = true;
     vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
