@@ -80,6 +80,10 @@ protected slots:
   void disableAxisChange();
   void enableAxisChange();
 
+  // Descripion:
+  // Create a Ruler Dialog
+  void createRulerDialog();
+
   // Description:
   // Called when starting and external process (to disable starting another)
   // and when completing an external process (to reenable)

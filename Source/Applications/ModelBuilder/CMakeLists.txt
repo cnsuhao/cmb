@@ -374,6 +374,7 @@ endif()
     RendererPoints
     RendererSurfaceWithEdges
     RendererWireframe
+    RulerDialog
     OpacityLower
     OpenCMBFile2
     HideFace

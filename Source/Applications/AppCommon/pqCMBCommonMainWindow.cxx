@@ -89,9 +89,9 @@
 #include "pqPluginIOBehavior.h"
 #include "qtCMBPanelsManager.h"
 #include "pqActiveObjects.h"
-#include "pqProxyWidget.h"
 #include "vtkCommand.h"
 #include "pqCMBColorMapWidget.h"
+#include "pqCMBRulerDialog.h"
 
 #include "vtkPVConfig.h"
 
@@ -480,6 +480,14 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   QObject::connect(action, SIGNAL(triggered()),
     pqApplicationCore::instance(),
     SLOT(showOutputWindow()));
+
+// Add Ruler
+  this->Internal->UI.menu_Tools->addSeparator();
+  QAction* actionRuler = this->Internal->UI.menu_Tools->addAction("&Ruler")
+    << pqSetName("actionToolsRuler");
+  QObject::connect(actionRuler, SIGNAL(triggered()),
+    this, SLOT(createRulerDialog()));
+  
   this->Internal->UI.menu_Tools->addSeparator();
 
 #ifdef BUILD_SHARED_LIBS
@@ -764,6 +772,14 @@ void pqCMBCommonMainWindow::enableAxisChange()
   this->Internal->UI.actionView_Negative_Y->setDisabled(dis);
   this->Internal->UI.actionView_Positive_Z->setDisabled(dis);
   this->Internal->UI.actionView_Negative_Z->setDisabled(dis);
+}
+
+
+void pqCMBCommonMainWindow::createRulerDialog()
+{
+  pqCMBRulerDialog* rulerDialog = new pqCMBRulerDialog(this);
+  rulerDialog->setAttribute(Qt::WA_DeleteOnClose);
+  rulerDialog->show();
 }
 
 //----------------------------------------------------------------------------
