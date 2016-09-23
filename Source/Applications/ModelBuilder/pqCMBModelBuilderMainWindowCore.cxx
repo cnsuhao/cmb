@@ -1442,6 +1442,11 @@ void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
 {
   this->getSimBuilder()->uiManager()->setModelManager(
       this->modelManager()->managerProxy()->modelManager());
+  if(this->Internal->ModelDock)
+    {
+    this->getSimBuilder()->uiManager()->setModelPanel(this->Internal->ModelDock);
+    }
+
   QObject::connect(this->getSimBuilder()->uiManager(),
     SIGNAL(attColorChanged()), this,
     SLOT(onColorByAttribute()));
