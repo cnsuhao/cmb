@@ -87,8 +87,11 @@ void SimBuilderCore::Initialize()
   this->LoadingScenario = false;
   this->ScenarioEntitiesCreated = false;
   this->CurrentSimFile = "";
-  delete this->m_attUIManager;
-  this->m_attUIManager = NULL;
+  if(this->m_attUIManager)
+    {
+    delete this->m_attUIManager;
+    this->m_attUIManager = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
