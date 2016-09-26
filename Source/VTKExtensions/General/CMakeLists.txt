@@ -5,7 +5,6 @@ set(CMB_General_Unwrapped_srcs
   vtkCMBArc.cxx
   vtkCMBArcEndNode.cxx
   vtkCMBArcManager.cxx
-  #vtkDateFormatter.cxx
   ${UI_BUILT_SRCS}
 )
 
@@ -18,7 +17,6 @@ set(CMB_General_SRC
   vtkCMBScalarLineSource.cxx
   vtkCMBSphericalPointSource.cxx
   vtkContourPointCollection.cxx
-  #vtkDateFormatter.cxx
   #vtkDateTime.cxx
   vtkDiscreteLookupTable.cxx
   vtkGMSMeshSource.cxx
