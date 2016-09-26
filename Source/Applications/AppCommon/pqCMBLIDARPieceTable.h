@@ -33,7 +33,7 @@ class CMBAPPCOMMON_EXPORT pqCMBLIDARPieceTable : public QObject
 
 public:
   pqCMBLIDARPieceTable(QTableWidget *widget, bool advancedTable = false);
-  virtual ~pqCMBLIDARPieceTable();
+  ~pqCMBLIDARPieceTable() override;
 
   QTableWidget *getWidget() const { return this->TableWidget;}
 

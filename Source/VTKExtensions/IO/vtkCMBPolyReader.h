@@ -27,7 +27,7 @@ class VTKCMBIO_EXPORT vtkCMBPolyReader : public vtkPolyDataAlgorithm
 public:
   static vtkCMBPolyReader *New();
   vtkTypeMacro(vtkCMBPolyReader,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -36,12 +36,12 @@ public:
 
 protected:
   vtkCMBPolyReader();
-  ~vtkCMBPolyReader();
+  ~vtkCMBPolyReader() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+                         vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   char *FileName;
 
   //BTX

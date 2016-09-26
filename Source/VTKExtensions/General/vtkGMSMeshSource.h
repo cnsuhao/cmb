@@ -30,7 +30,7 @@ class VTKCMBGENERAL_EXPORT vtkGMSMeshSource : public vtkUnstructuredGridAlgorith
 public:
   static vtkGMSMeshSource *New();
   vtkTypeMacro(vtkGMSMeshSource,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   virtual void CopyData(vtkUnstructuredGrid *source);
@@ -41,9 +41,9 @@ public:
 
 protected:
   vtkGMSMeshSource();
-  ~vtkGMSMeshSource();
+  ~vtkGMSMeshSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   bool MoveVolumePoints(vtkIdTypeArray* meshCellArray,
     vtkIdList* meshIdList, vtkPoints* transformedPts);
   bool MoveSurfacePoints(vtkIdTypeArray* meshCellArray,

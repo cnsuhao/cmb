@@ -26,7 +26,7 @@ protected:
   vtkCMBSpacingFlip();
 
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 private:
   vtkCMBSpacingFlip(const vtkCMBSpacingFlip&);  // Not implemented.

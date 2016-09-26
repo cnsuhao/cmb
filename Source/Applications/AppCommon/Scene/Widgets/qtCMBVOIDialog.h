@@ -44,7 +44,7 @@ protected slots:
 
 protected:
   qtCMBVOIDialog(pqCMBSceneNode *n);
-  virtual ~qtCMBVOIDialog();
+  ~qtCMBVOIDialog() override;
   int exec();
   int Status;
   Ui::qtDefineVOI *VOIDialog;

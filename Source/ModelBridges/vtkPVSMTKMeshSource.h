@@ -29,7 +29,7 @@ class MODELBRIDGECLIENT_EXPORT vtkPVSMTKMeshSource : public vtkMeshMultiBlockSou
 {
 public:
   static vtkPVSMTKMeshSource* New();
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkPVSMTKMeshSource,vtkMeshMultiBlockSource);
 
   // Description:
@@ -40,25 +40,25 @@ public:
   // Description:
   // Model entity ID that this source will be built upon.
   // Forwarded to vtkMeshMultiBlockSource
-  virtual void SetModelEntityID(const char*);
-  virtual char* GetModelEntityID();
+  void SetModelEntityID(const char*) override;
+  char* GetModelEntityID() override;
 
   // Description:
   // Forwarded to vtkMeshMultiBlockSource
   // Mesh collection ID that this source will be built upon.
   // Forwarded to vtkMeshMultiBlockSource
-  virtual void SetMeshCollectionID(const char*);
-  virtual char* GetMeshCollectionID();
+  void SetMeshCollectionID(const char*) override;
+  char* GetMeshCollectionID() override;
 
   void MarkDirty() {this->Dirty();}
 protected:
   vtkPVSMTKMeshSource();
-  virtual ~vtkPVSMTKMeshSource();
+  ~vtkPVSMTKMeshSource() override;
 
-  virtual int RequestData(
+  int RequestData(
     vtkInformation* request,
     vtkInformationVector** inInfo,
-    vtkInformationVector* outInfo);
+    vtkInformationVector* outInfo) override;
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;

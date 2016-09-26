@@ -45,7 +45,7 @@ protected slots:
 
 protected:
   qtCMBGroundPlaneDialog(pqCMBSceneNode *n);
-  virtual ~qtCMBGroundPlaneDialog();
+  ~qtCMBGroundPlaneDialog() override;
   int exec();
   int Status;
   Ui::qtDefineGroundPlane *GroundPlaneDialog;

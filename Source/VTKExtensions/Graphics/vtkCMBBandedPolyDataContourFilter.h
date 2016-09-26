@@ -51,7 +51,7 @@ class VTK_EXPORT vtkCMBBandedPolyDataContourFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkCMBBandedPolyDataContourFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Values that OutputEdges may take on; these determine whether isocontours and mesh boundary edges are output.
@@ -129,13 +129,13 @@ public:
   // Description:
   // Overload GetMTime because we delegate to vtkContourValues so its
   // modified time must be taken into account.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
 protected:
   vtkCMBBandedPolyDataContourFilter();
-  ~vtkCMBBandedPolyDataContourFilter();
+  ~vtkCMBBandedPolyDataContourFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int ComputeScalarIndex(double);
   int IsContourValue(double val);

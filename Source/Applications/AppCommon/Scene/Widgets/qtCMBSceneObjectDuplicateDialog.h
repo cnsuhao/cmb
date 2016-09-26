@@ -57,7 +57,7 @@ protected:
   qtCMBSceneObjectDuplicateDialog():
     CopyDialog(NULL), MainDialog(NULL), Parent(NULL), Count(0)
     {}
-  virtual ~qtCMBSceneObjectDuplicateDialog();
+  ~qtCMBSceneObjectDuplicateDialog() override;
   int exec(QMap<pqCMBSceneNode*, int> &constraints,
            bool &okToUseGlyphs,
            bool &useTextureConstraint,

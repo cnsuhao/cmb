@@ -22,7 +22,7 @@ class VTKCMBIO_EXPORT vtkSceneGenV2ContourWriter : public vtkPolyDataAlgorithm
 public:
   static vtkSceneGenV2ContourWriter *New();
   vtkTypeMacro(vtkSceneGenV2ContourWriter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetStringMacro(FileName);
   vtkSetStringMacro(FileName);
@@ -32,12 +32,12 @@ public:
 
 protected:
   vtkSceneGenV2ContourWriter();
-  ~vtkSceneGenV2ContourWriter();
+  ~vtkSceneGenV2ContourWriter() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
-  virtual int RequestData(vtkInformation* request,
+  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation* request,
                                  vtkInformationVector** inputVector,
-                                 vtkInformationVector* outputVector);
+                                 vtkInformationVector* outputVector) override;
 
   char* FileName;
 private:

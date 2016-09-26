@@ -26,10 +26,10 @@ public slots:
   /// changes will be propogated down to the server manager
   /// subclasses should only change properties when accept is called to work
   /// properly with undo/redo
-  virtual void accept();
+  void accept() override;
 
 protected slots:
-  void updateInformationAndDomains();
+  void updateInformationAndDomains() override;
   void updateTestLocationsUI();
   void onTestLocationChanged();
 

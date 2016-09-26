@@ -23,7 +23,7 @@ class qtSimBuilderUIPanel : public QDockWidget
 
 public:         
   qtSimBuilderUIPanel(QWidget* pW=NULL);
-  virtual ~qtSimBuilderUIPanel();  
+  ~qtSimBuilderUIPanel() override;  
 
   QWidget* panelWidget();
   void initialize();

@@ -25,7 +25,7 @@ class VTKCMBGENERAL_EXPORT vtkModelLineSource : public vtkPolyDataAlgorithm
 public:
   static vtkModelLineSource *New();
   vtkTypeMacro(vtkModelLineSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set position of first end point.
@@ -50,10 +50,10 @@ public:
 
 protected:
   vtkModelLineSource(int res=1);
-  ~vtkModelLineSource() {};
+  ~vtkModelLineSource() override {};
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   double Point1[3];
   double Point2[3];
   int Resolution;

@@ -72,7 +72,7 @@ class VTKCMBFILTERING_EXPORT vtkTerrainExtractionFilter : public vtkMultiBlockDa
 {
 public:
   vtkTypeMacro(vtkTerrainExtractionFilter,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkTerrainExtractionFilter *New();
 
   // Description:
@@ -230,10 +230,10 @@ public:
 //BTX
 protected:
   vtkTerrainExtractionFilter();
-  ~vtkTerrainExtractionFilter();
+  ~vtkTerrainExtractionFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int, vtkInformation *) override;
 
 
 private:

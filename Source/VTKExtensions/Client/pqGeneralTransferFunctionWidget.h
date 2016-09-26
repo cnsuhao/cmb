@@ -27,7 +27,7 @@ class VTKCMBCLIENT_EXPORT pqGeneralTransferFunctionWidget : public QWidget
   typedef QWidget Superclass;
 public:
   pqGeneralTransferFunctionWidget(QWidget* parent=0);
-  virtual ~pqGeneralTransferFunctionWidget();
+  ~pqGeneralTransferFunctionWidget() override;
 
   /// Clears the functions
   void clear();

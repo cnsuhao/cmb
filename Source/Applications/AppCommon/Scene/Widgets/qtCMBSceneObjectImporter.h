@@ -68,7 +68,7 @@ protected:
   qtCMBSceneObjectImporter():
     ImportDialog(NULL), MainDialog(NULL), Node(NULL), Parent(NULL)
     {}
-  virtual ~qtCMBSceneObjectImporter();
+  ~qtCMBSceneObjectImporter() override;
   void assignUnits(pqCMBSceneObjectBase *obj);
   void setupObjectTypes();
   void updateDEMExtents();

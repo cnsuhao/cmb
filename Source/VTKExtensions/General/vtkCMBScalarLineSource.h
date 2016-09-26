@@ -22,7 +22,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBScalarLineSource : public vtkPolyDataAlgorithm
 public:
   static vtkCMBScalarLineSource *New();
   vtkTypeMacro(vtkCMBScalarLineSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get the first point of the line
@@ -46,9 +46,9 @@ public:
 
 protected:
   vtkCMBScalarLineSource();
-  ~vtkCMBScalarLineSource();
+  ~vtkCMBScalarLineSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double Point1[3];
   double Point2[3];

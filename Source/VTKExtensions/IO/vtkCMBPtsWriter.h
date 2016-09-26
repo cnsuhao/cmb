@@ -29,7 +29,7 @@ public:
 
   static vtkCMBPtsWriter* New();
   vtkTypeMacro(vtkCMBPtsWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -60,7 +60,7 @@ public:
 //BTX
 protected:
   vtkCMBPtsWriter();
-  ~vtkCMBPtsWriter();
+  ~vtkCMBPtsWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
@@ -69,7 +69,7 @@ protected:
   bool WriteFooter(ostream& fp);
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
   char * Header;
   bool UseScientificNotation;
@@ -77,7 +77,7 @@ protected:
   vtkDataSet *MyGeom;
   vtkIdTypeArray *MyData;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkCMBPtsWriter(const vtkCMBPtsWriter&); // Not implemented.
   void operator=(const vtkCMBPtsWriter&); // Not implemented.

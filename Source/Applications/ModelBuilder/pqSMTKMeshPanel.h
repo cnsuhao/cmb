@@ -32,7 +32,7 @@ public:
   pqSMTKMeshPanel(QPointer<pqCMBModelManager> mmgr,
                   QPointer<qtCMBMeshingMonitor> monitor,
                   QWidget* p);
-  ~pqSMTKMeshPanel();
+  ~pqSMTKMeshPanel() override;
 
   QPointer<pqCMBModelManager> modelManager();
 

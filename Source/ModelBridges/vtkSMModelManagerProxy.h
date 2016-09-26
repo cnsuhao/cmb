@@ -22,7 +22,7 @@ class MODELBRIDGECLIENT_EXPORT vtkSMModelManagerProxy : public vtkSMProxy
 public:
   static vtkSMModelManagerProxy* New();
   vtkTypeMacro(vtkSMModelManagerProxy,vtkSMProxy);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   std::vector<std::string> sessionNames(bool forceFetch = false);
 
@@ -56,7 +56,7 @@ protected:
   friend class cmbForwardingSession;
 
   vtkSMModelManagerProxy();
-  virtual ~vtkSMModelManagerProxy();
+  ~vtkSMModelManagerProxy() override;
 
   cJSON* requestJSONOp(smtk::model::RemoteOperatorPtr op,
                        const std::string& strMethod,

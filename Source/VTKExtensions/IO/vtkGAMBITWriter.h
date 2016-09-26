@@ -31,7 +31,7 @@ class VTKCMBIO_EXPORT vtkGAMBITWriter : public vtkWriter
 public:
   static vtkGAMBITWriter* New();
   vtkTypeMacro(vtkGAMBITWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -55,7 +55,7 @@ protected:
   };
 
   vtkGAMBITWriter();
-  ~vtkGAMBITWriter();
+  ~vtkGAMBITWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
@@ -65,13 +65,13 @@ protected:
   bool WriteGroups(ostream& fp);
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
 
   vtkUnstructuredGrid* InputGrid;
   vtkPolyData* InputPoly;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkGAMBITWriter(const vtkGAMBITWriter&); // Not implemented.
   void operator=(const vtkGAMBITWriter&); // Not implemented.

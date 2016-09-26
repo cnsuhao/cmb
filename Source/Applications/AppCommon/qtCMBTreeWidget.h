@@ -36,16 +36,16 @@ class CMBAPPCOMMON_EXPORT qtCMBTreeWidget : public QTreeWidget
 public:
 
   qtCMBTreeWidget(QWidget* p = NULL);
-  ~qtCMBTreeWidget();
+  ~qtCMBTreeWidget() override;
 
   // Description:
   // Handle tree widget events
-  bool event(QEvent* e);
+  bool event(QEvent* e) override;
 
   // Description:
   // give a hint on the size
-  QSize sizeHint() const;
-  QSize minimumSizeHint() const;
+  QSize sizeHint() const override;
+  QSize minimumSizeHint() const override;
 
   // Description:
   // Get the item index of the tree item
@@ -79,12 +79,12 @@ protected slots:
 protected:
   // Description:
   // Support for customized drag-n-drop events
-  virtual Qt::DropActions supportedDropActions() const;
-  void dragEnterEvent( QDragEnterEvent * event );
-  void dragMoveEvent( QDragMoveEvent * event );
-  virtual void startDrag ( Qt::DropActions supportedActions );
+  Qt::DropActions supportedDropActions() const override;
+  void dragEnterEvent( QDragEnterEvent * event ) override;
+  void dragMoveEvent( QDragMoveEvent * event ) override;
+  void startDrag ( Qt::DropActions supportedActions ) override;
 
-  virtual void mouseReleaseEvent( QMouseEvent * );
+  void mouseReleaseEvent( QMouseEvent * ) override;
 
 private slots:
   void updateCheckStateInternal();
@@ -93,13 +93,13 @@ protected:
 
   // Description:
   // Customize drop-event
-  virtual void dropEvent(QDropEvent* event);
+  void dropEvent(QDropEvent* event) override;
 
   // Description:
   // Move the cursor in the way described by cursorAction,
   // using the information provided by the button modifiers.
-  virtual QModelIndex moveCursor(CursorAction cursorAction,
-    Qt::KeyboardModifiers modifiers);
+  QModelIndex moveCursor(CursorAction cursorAction,
+    Qt::KeyboardModifiers modifiers) override;
 
   // Description:
   // ivars

@@ -32,7 +32,7 @@ class qtCMBMeshViewerPanelWidget : public QWidget
 
 public:
   qtCMBMeshViewerPanelWidget(QWidget* parent=0);
-  virtual ~qtCMBMeshViewerPanelWidget();
+  ~qtCMBMeshViewerPanelWidget() override;
 
   Ui::qtMeshViewerPanel* getGUIPanel();
   QIcon* iconVisible();

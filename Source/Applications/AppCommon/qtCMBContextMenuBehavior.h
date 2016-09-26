@@ -33,7 +33,7 @@ class CMBAPPCOMMON_EXPORT qtCMBContextMenuBehavior : public QObject
   typedef QObject Superclass;
 public:
   qtCMBContextMenuBehavior(QObject* parent=0);
-  virtual ~qtCMBContextMenuBehavior();
+  ~qtCMBContextMenuBehavior() override;
 
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context
@@ -54,7 +54,7 @@ protected:
   /// from QWidget to popup the context menu since all of those mechanism seem
   /// to eat away the right button release, leaving the render window in a
   /// dragging state.
-  virtual bool eventFilter(QObject* caller, QEvent* e);
+  bool eventFilter(QObject* caller, QEvent* e) override;
 
   QMenu* Menu;
   QPoint Position;

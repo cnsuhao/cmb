@@ -30,7 +30,7 @@ class MODELBRIDGECLIENT_EXPORT vtkPythonExporter : public vtkObject
 public:
   static vtkPythonExporter * New();
   vtkTypeMacro(vtkPythonExporter,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // This method is for standard paraview client-server apps
   virtual void Operate(vtkModelManagerWrapper *modelMgrWrapper,
@@ -71,7 +71,7 @@ public:
 
 protected:
   vtkPythonExporter();
-  virtual ~vtkPythonExporter();
+  ~vtkPythonExporter() override;
 
   // Description:
   // Check to see if everything is properly set for the operator.

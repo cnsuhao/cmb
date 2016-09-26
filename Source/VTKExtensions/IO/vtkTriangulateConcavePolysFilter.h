@@ -26,7 +26,7 @@ class VTKCMBIO_EXPORT vtkTriangulateConcavePolysFilter : public vtkPolyDataAlgor
 public:
   static vtkTriangulateConcavePolysFilter* New();
   vtkTypeMacro(vtkTriangulateConcavePolysFilter, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Tests whether the cell is concave
   static bool IsPolygonConcave(vtkPoints *points, vtkIdType npts, vtkIdType *pts);
@@ -34,16 +34,16 @@ public:
 //BTX
 protected:
   vtkTriangulateConcavePolysFilter() {};
-  ~vtkTriangulateConcavePolysFilter() {};
+  ~vtkTriangulateConcavePolysFilter() override {};
 
   // Description:
   // This is called within ProcessRequest when a request asks the algorithm
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  virtual int RequestData(vtkInformation*,
+  int RequestData(vtkInformation*,
                           vtkInformationVector**,
-                          vtkInformationVector*);
+                          vtkInformationVector*) override;
 
 private:
   vtkTriangulateConcavePolysFilter(const vtkTriangulateConcavePolysFilter&); // Not implemented.

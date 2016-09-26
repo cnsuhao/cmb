@@ -35,7 +35,7 @@ class CMBAPPCOMMON_EXPORT qtCMBTableWidget : public QTableWidget
 public:
 
   qtCMBTableWidget(QWidget* p = NULL);
-  ~qtCMBTableWidget();
+  ~qtCMBTableWidget() override;
 
   QModelIndexList getSelectedIndexes() const
     {
@@ -47,7 +47,7 @@ signals:
   void keyPressed(QKeyEvent*);
 
 protected slots:
-  virtual void keyPressEvent(QKeyEvent*);
+  void keyPressEvent(QKeyEvent*) override;
 
 };
 

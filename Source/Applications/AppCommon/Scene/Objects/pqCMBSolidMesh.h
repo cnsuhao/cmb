@@ -34,17 +34,17 @@ public:
                  pqServer *server, pqRenderView *view,
                  bool updateRep = true);
 
-  virtual ~pqCMBSolidMesh();
+  ~pqCMBSolidMesh() override;
 
 
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true);
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                    bool updateRep = true) override;
 
   pqPipelineSource * getTransformedSource(pqServer *server) const;
 
   void setFileName(const char *type)
     {this->FileName = type;}
-  virtual enumObjectType getType() const;
+  enumObjectType getType() const override;
   std::string getFileName() const
     {return this->FileName;}
 

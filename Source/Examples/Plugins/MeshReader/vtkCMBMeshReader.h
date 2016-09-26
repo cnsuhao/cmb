@@ -21,7 +21,7 @@ class vtkCMBMeshReader : public vtkUnstructuredGridAlgorithm
 public:
   static vtkCMBMeshReader *New();
   vtkTypeMacro(vtkCMBMeshReader,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Specify the file name of the GAMBIT data file to read.
@@ -45,9 +45,9 @@ public:
 
 protected:
   vtkCMBMeshReader();
-  ~vtkCMBMeshReader();
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  ~vtkCMBMeshReader() override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char *FileName;
 

@@ -29,7 +29,7 @@ class VTKCMBIO_EXPORT vtkStringReader : public vtkPolyDataAlgorithm
 public:
   static vtkStringReader *New();
   vtkTypeMacro(vtkStringReader,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -41,15 +41,15 @@ public:
 
 protected:
   vtkStringReader();
-  ~vtkStringReader();
+  ~vtkStringReader() override;
 
   char *FileName;
   std::string FileContents;
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
+                         vtkInformationVector *) override;
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 private:
   vtkStringReader(const vtkStringReader&);  // Not implemented.

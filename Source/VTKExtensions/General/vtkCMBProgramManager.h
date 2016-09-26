@@ -25,7 +25,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBProgramManager : public vtkObject
 public:
   static vtkCMBProgramManager* New();
   vtkTypeMacro(vtkCMBProgramManager,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //BTX
   //Description:
@@ -54,7 +54,7 @@ public:
 
 protected:
   vtkCMBProgramManager();
-  ~vtkCMBProgramManager();
+  ~vtkCMBProgramManager() override;
 
   friend class vtkCMBProjectManager;
 

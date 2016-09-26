@@ -62,7 +62,7 @@ public:
   enum RangeLable{ MIN = 0, MAX = 1};
   pqCMBModifierArc();
   pqCMBModifierArc(vtkSMSourceProxy *proxy);
-  ~pqCMBModifierArc();
+  ~pqCMBModifierArc() override;
 
   pqCMBArc * GetCmbArc()
   { return CmbArc; }

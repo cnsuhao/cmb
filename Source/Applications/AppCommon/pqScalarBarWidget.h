@@ -29,7 +29,7 @@ class CMBAPPCOMMON_EXPORT pqScalarBarWidget : public QObject
 
 public:
   pqScalarBarWidget(pqDataRepresentation* display, QWidget* p = NULL);
-  virtual ~pqScalarBarWidget();
+  ~pqScalarBarWidget() override;
 
 public:
 

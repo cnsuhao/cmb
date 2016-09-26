@@ -20,8 +20,8 @@ class CMBAPPCOMMON_EXPORT cmbManualProfileFunctionParameters : public cmbProfile
 public:
   friend class cmbManualProfileFunction;
   cmbManualProfileFunctionParameters();
-  virtual ~cmbManualProfileFunctionParameters();
-  virtual cmbProfileFunctionParameters * clone();
+  ~cmbManualProfileFunctionParameters() override;
+  cmbProfileFunctionParameters * clone() override;
 
   double getDistanceRange(pqCMBModifierArc::RangeLable i);
   double getDepthRange(pqCMBModifierArc::RangeLable i);
@@ -41,20 +41,20 @@ class CMBAPPCOMMON_EXPORT cmbManualProfileFunction : public cmbProfileFunction
 public:
   friend class cmbProfileFunction;
   cmbManualProfileFunction();
-  ~cmbManualProfileFunction();
-  virtual cmbProfileFunction::FunctionType getType() const;
+  ~cmbManualProfileFunction() override;
+  cmbProfileFunction::FunctionType getType() const override;
   virtual vtkPiecewiseFunction * getDisplacementProfile() const;
   virtual vtkPiecewiseFunction * getWeightingFunction() const;
-  virtual cmbProfileFunction * clone(std::string const& name) const;
-  virtual void sendDataToProxy(int arc_ID, int pointID,
+  cmbProfileFunction * clone(std::string const& name) const override;
+  void sendDataToProxy(int arc_ID, int pointID,
                                vtkBoundingBox bbox,
-                               vtkSMSourceProxy* source) const;
+                               vtkSMSourceProxy* source) const override;
   virtual cmbProfileFunctionParameters * getParameters() const;
 
   bool isSymmetric() const;
   bool isRelative() const;
   void setSymmetric(bool is);
-  virtual void setRelative(bool ir);
+  void setRelative(bool ir) override;
   bool isDispSpline() const;
   bool isWeightSpline() const;
   void setDispSpline(bool s);
@@ -70,8 +70,8 @@ public:
   void setDepthRange(double min, double max);
 
 protected:
-  virtual bool readData(std::ifstream & in, int version);
-  virtual bool writeData(std::ofstream & out) const;
+  bool readData(std::ifstream & in, int version) override;
+  bool writeData(std::ofstream & out) const override;
 private:
   vtkPiecewiseFunction * DisplacementProfile;
   vtkPiecewiseFunction * WeightingFunction;

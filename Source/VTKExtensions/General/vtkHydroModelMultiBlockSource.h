@@ -23,7 +23,7 @@ class VTKCMBGENERAL_EXPORT vtkHydroModelMultiBlockSource : public vtkMultiBlockD
 public:
   static vtkHydroModelMultiBlockSource *New();
   vtkTypeMacro(vtkHydroModelMultiBlockSource,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   void CopyData(vtkMultiBlockDataSet *source);
@@ -31,9 +31,9 @@ public:
 
 protected:
   vtkHydroModelMultiBlockSource();
-  ~vtkHydroModelMultiBlockSource();
+  ~vtkHydroModelMultiBlockSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkMultiBlockDataSet *Source;
 

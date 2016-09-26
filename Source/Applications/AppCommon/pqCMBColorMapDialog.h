@@ -29,7 +29,7 @@ class CMBAPPCOMMON_EXPORT pqCMBColorMapDialog : public QObject
 
 public:
   pqCMBColorMapDialog(pqDataRepresentation* display, QWidget* p = NULL);
-  virtual ~pqCMBColorMapDialog();
+  ~pqCMBColorMapDialog() override;
 
 public:
   int exec();

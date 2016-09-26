@@ -31,7 +31,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBArcProvider : public vtkPolyDataAlgorithm
 public:
   static vtkCMBArcProvider *New();
   vtkTypeMacro(vtkCMBArcProvider,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 
   void SetArcId(vtkIdType arcId);
@@ -43,18 +43,18 @@ public:
 
   // Description:
   // Return the mtime also considering the arc.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
 protected:
   vtkCMBArcProvider();
-  ~vtkCMBArcProvider();
+  ~vtkCMBArcProvider() override;
 
   // Description:
   // This is called by the superclass.
   // This is the method you should override.
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) override;
 
   //Description:
   //Generate the polyData representation for the associated arc

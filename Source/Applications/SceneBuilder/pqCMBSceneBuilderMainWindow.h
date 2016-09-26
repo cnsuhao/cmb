@@ -34,14 +34,14 @@ class pqCMBSceneBuilderMainWindow : public pqCMBCommonMainWindow
 
 public:
   pqCMBSceneBuilderMainWindow();
-  virtual ~pqCMBSceneBuilderMainWindow();
+  ~pqCMBSceneBuilderMainWindow() override;
 
 public slots:
 
   void onSceneLoaded();
   void onSceneSaved();
   void onSelectGlyph(bool checked);
-  virtual void onSelectionModeChanged(int);
+  void onSelectionModeChanged(int) override;
   void setToolbarsEnabled(bool enable);
 
 protected slots:
@@ -51,8 +51,8 @@ protected slots:
 
   // Description:
   // open About dialog
-  void onHelpAbout();
-  void onHelpHelp();
+  void onHelpAbout() override;
+  void onHelpHelp() override;
 
   // For processing selections via the Scene Tree's nodes
   void onSceneNodeSelected(const QList<pqCMBSceneNode *> *unselected,
@@ -64,7 +64,7 @@ protected slots:
   // Description:
   // Called when starting and external process (to disable starting another)
   // and when completing an external process (to reenable)
-  void onEnableExternalProcesses(bool state);
+  void onEnableExternalProcesses(bool state) override;
 
   // Description:
   // Called when the Surface Cell Selection is triggered
@@ -72,13 +72,13 @@ protected slots:
 
   // Description:
   // Called to lock and unlock the program from a modal state
-  virtual void onEnableMenuItems(bool state);
+  void onEnableMenuItems(bool state) override;
 
 protected:
   // Description
 
-  virtual void clearGUI();
-  virtual void updateSelection();
+  void clearGUI() override;
+  void updateSelection() override;
   void setupMenuActions();
   pqCMBSceneBuilderMainWindowCore* getThisCore();
 

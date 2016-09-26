@@ -35,7 +35,7 @@ class pqCMBLIDARContourTree :  public QObject
 
 public:
   pqCMBLIDARContourTree(QWidget* parent);
-  virtual ~pqCMBLIDARContourTree();
+  ~pqCMBLIDARContourTree() override;
 
   // enum for different column types
   enum enumColumns

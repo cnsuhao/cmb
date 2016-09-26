@@ -26,7 +26,7 @@ class VTKCMBIO_EXPORT vtkCMBWriter : public vtkMultiBlockDataSetAlgorithm
 public:
   static vtkCMBWriter *New();
   vtkTypeMacro(vtkCMBWriter,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
@@ -41,12 +41,12 @@ public:
 
 protected:
   vtkCMBWriter();
-  ~vtkCMBWriter();
+  ~vtkCMBWriter() override;
 
   char* FileName;
   bool BinaryOutput;
-  virtual int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **,
+                          vtkInformationVector *) override;
 
 private:
   vtkCMBWriter(const vtkCMBWriter&);  // Not implemented.

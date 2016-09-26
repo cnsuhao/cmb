@@ -27,7 +27,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBSubArcModifyOperator : public vtkObject
 public:
   static vtkCMBSubArcModifyOperator * New();
   vtkTypeMacro(vtkCMBSubArcModifyOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //BTX
   enum EnumOperationType
@@ -54,7 +54,7 @@ public:
 
 protected:
   vtkCMBSubArcModifyOperator();
-  virtual ~vtkCMBSubArcModifyOperator();
+  ~vtkCMBSubArcModifyOperator() override;
 
   // clears the operator back to default values
   void Reset();

@@ -27,17 +27,17 @@ class CMBAPPCOMMON_EXPORT vtkCMBInteractorStyleRubberBand : public vtkInteractor
 public:
   static vtkCMBInteractorStyleRubberBand *New();
   vtkTypeMacro(vtkCMBInteractorStyleRubberBand, vtkInteractorStyleRubberBandPick);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Event bindings
-  virtual void OnMouseMove();
-  virtual void OnLeftButtonDown();
-  virtual void OnLeftButtonUp();
+  void OnMouseMove() override;
+  void OnLeftButtonDown() override;
+  void OnLeftButtonUp() override;
 
 protected:
   vtkCMBInteractorStyleRubberBand();
-  ~vtkCMBInteractorStyleRubberBand();
+  ~vtkCMBInteractorStyleRubberBand() override;
 
 private:
   vtkCMBInteractorStyleRubberBand(const vtkCMBInteractorStyleRubberBand&);  // Not implemented

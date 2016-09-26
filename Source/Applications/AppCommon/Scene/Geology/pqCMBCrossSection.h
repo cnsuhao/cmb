@@ -26,10 +26,10 @@ public:
   pqCMBCrossSection(pqPipelineSource*source,
               pqRenderView *view, pqServer *server);
 
-  virtual ~pqCMBCrossSection();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
+  ~pqCMBCrossSection() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
 };
 
 #endif /* __pqCMBCrossSection_h */

@@ -32,7 +32,7 @@ class pqCMBLIDARTerrainExtractionManager :  public QObject
 public:
   pqCMBLIDARTerrainExtractionManager(pqCMBPointsBuilderMainWindowCore *core,
     qtCMBLIDARPanelWidget *panel);
-  virtual ~pqCMBLIDARTerrainExtractionManager();
+  ~pqCMBLIDARTerrainExtractionManager() override;
 
   pqPipelineSource *getTerrainFilter()
     { return this->TerrainExtractFilter; }

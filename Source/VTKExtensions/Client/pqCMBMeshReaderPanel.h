@@ -21,6 +21,6 @@ public:
   pqCMBMeshReaderPanel(pqProxy* pxy, QWidget* p);
 
 protected slots:
-  void updateInformationAndDomains();
+  void updateInformationAndDomains() override;
   void updateMaterialControls(int state);
 };

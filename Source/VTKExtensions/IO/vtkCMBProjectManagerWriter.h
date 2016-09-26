@@ -25,7 +25,7 @@ class VTKCMBIO_EXPORT vtkCMBProjectManagerWriter : public vtkObject
 public:
   static vtkCMBProjectManagerWriter* New();
   vtkTypeMacro(vtkCMBProjectManagerWriter,vtkObject);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get/Set the name of the input file.
@@ -36,7 +36,7 @@ public:
 
 protected:
   vtkCMBProjectManagerWriter();
-  ~vtkCMBProjectManagerWriter();
+  ~vtkCMBProjectManagerWriter() override;
 
   char* ProjectFileName;
 private:

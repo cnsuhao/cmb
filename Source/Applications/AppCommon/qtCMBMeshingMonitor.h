@@ -89,7 +89,7 @@ public:
   //creating a server side class that does the same
   qtCMBMeshingMonitor(const remus::client::ServerConnection& conn );
   qtCMBMeshingMonitor(const LocalMeshServer& localProcessHandle);
-  ~qtCMBMeshingMonitor();
+  ~qtCMBMeshingMonitor() override;
 
   //will create a local mesh server and will return a struct containing
   //if server was constructed and the needed info to connect to it.

@@ -26,7 +26,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcAutoConnectClientOperator : public vtkSMSourc
 public:
   static vtkCMBArcAutoConnectClientOperator* New();
   vtkTypeMacro(vtkCMBArcAutoConnectClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   // Returns the arc id of the newly created arc
@@ -38,7 +38,7 @@ public:
 
 protected:
   vtkCMBArcAutoConnectClientOperator();
-  ~vtkCMBArcAutoConnectClientOperator();
+  ~vtkCMBArcAutoConnectClientOperator() override;
   vtkIdType ArcId;
 
 private:

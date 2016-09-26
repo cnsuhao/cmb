@@ -28,7 +28,7 @@ class VTKCMBIO_EXPORT vtkCMBPt123Reader : public vtkMultiBlockDataSetAlgorithm
 {
   public:
     static vtkCMBPt123Reader* New();
-    virtual void PrintSelf( ostream&os, vtkIndent indent );
+    void PrintSelf( ostream&os, vtkIndent indent ) override;
     vtkTypeMacro(vtkCMBPt123Reader, vtkMultiBlockDataSetAlgorithm);
 
     vtkSetStringMacro(FileName);
@@ -38,7 +38,7 @@ class VTKCMBIO_EXPORT vtkCMBPt123Reader : public vtkMultiBlockDataSetAlgorithm
 
   protected:
     vtkCMBPt123Reader();
-    virtual ~vtkCMBPt123Reader();
+    ~vtkCMBPt123Reader() override;
 
     void ResetAllData();
 
@@ -51,8 +51,8 @@ class VTKCMBIO_EXPORT vtkCMBPt123Reader : public vtkMultiBlockDataSetAlgorithm
     int ReadBinaryStreams(vtkPolyData* polyData,const char* filename);
     vtkDoubleArray *GetDataAtTime(Pt123TemporalData *dat, double ts);
 
-    int RequestInformation( vtkInformation*, vtkInformationVector**, vtkInformationVector* );
-    int RequestData( vtkInformation*, vtkInformationVector**, vtkInformationVector* );
+    int RequestInformation( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
+    int RequestData( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
 
     char* FileName;
     char* OldFileName;

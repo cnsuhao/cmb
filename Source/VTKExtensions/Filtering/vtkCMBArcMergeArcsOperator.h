@@ -24,7 +24,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcMergeArcsOperator : public vtkObject
 public:
   static vtkCMBArcMergeArcsOperator * New();
   vtkTypeMacro(vtkCMBArcMergeArcsOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool Operate(vtkIdType firstId, vtkIdType secondId);
 
@@ -40,7 +40,7 @@ public:
 
 protected:
   vtkCMBArcMergeArcsOperator();
-  virtual ~vtkCMBArcMergeArcsOperator();
+  ~vtkCMBArcMergeArcsOperator() override;
 
   vtkIdType CreatedArcId;
   vtkIdType ArcIdToDelete;

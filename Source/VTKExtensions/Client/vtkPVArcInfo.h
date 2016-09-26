@@ -25,7 +25,7 @@ class VTKCMBCLIENT_EXPORT vtkPVArcInfo : public vtkPVInformation
 public:
   static vtkPVArcInfo* New();
   vtkTypeMacro(vtkPVArcInfo, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Tell the gather to only fill if the arc is a closed loop
@@ -38,12 +38,12 @@ public:
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   //Description:
   //Returns if the this arc is a closed loop
@@ -75,7 +75,7 @@ public:
   //BTX
 protected:
   vtkPVArcInfo();
-  ~vtkPVArcInfo();
+  ~vtkPVArcInfo() override;
 
   void GatherLoopInfo();
   void GatherDetailedInfo();

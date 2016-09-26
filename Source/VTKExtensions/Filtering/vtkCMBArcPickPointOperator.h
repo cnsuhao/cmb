@@ -25,7 +25,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcPickPointOperator : public vtkObject
 public:
   static vtkCMBArcPickPointOperator * New();
   vtkTypeMacro(vtkCMBArcPickPointOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Convert the passed in the selection into a selection that only has
@@ -37,7 +37,7 @@ public:
   vtkGetMacro(PickedPointId,vtkIdType);
 protected:
   vtkCMBArcPickPointOperator();
-  virtual ~vtkCMBArcPickPointOperator();
+  ~vtkCMBArcPickPointOperator() override;
 
   vtkIdType ArcId;
   vtkIdType PickedPointId;

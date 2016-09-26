@@ -25,20 +25,20 @@ class VTKCMBCLIENT_EXPORT vtkPVModelVertexObjectInformation : public vtkPVInform
 public:
   static vtkPVModelVertexObjectInformation* New();
   vtkTypeMacro(vtkPVModelVertexObjectInformation, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Merge another information object. Calls AddInformation(info, 0).
-  virtual void AddInformation(vtkPVInformation* info);
+  void AddInformation(vtkPVInformation* info) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   vtkGetVector3Macro(Location, double);
   vtkGetMacro(IsInfoValid, int);
@@ -46,7 +46,7 @@ public:
   //BTX
 protected:
   vtkPVModelVertexObjectInformation();
-  ~vtkPVModelVertexObjectInformation();
+  ~vtkPVModelVertexObjectInformation() override;
 
   // Data information collected from remote processes.
   double         Location[3];

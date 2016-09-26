@@ -26,18 +26,18 @@ class MODELBRIDGECLIENT_EXPORT vtkPVSMTKMeshInformation : public vtkPVInformatio
 public:
   static vtkPVSMTKMeshInformation* New();
   vtkTypeMacro(vtkPVSMTKMeshInformation, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Merge another information object. Calls AddInformation(info, 0).
-  virtual void AddInformation(vtkPVInformation* info);
+  void AddInformation(vtkPVInformation* info) override;
 
-  virtual void CopyToStream(vtkClientServerStream*){;}
-  virtual void CopyFromStream(const vtkClientServerStream*){;}
+  void CopyToStream(vtkClientServerStream*) override{;}
+  void CopyFromStream(const vtkClientServerStream*) override{;}
 
   // Description:
   // return the blockid given a meshet.
@@ -57,7 +57,7 @@ public:
 
 protected:
   vtkPVSMTKMeshInformation();
-  ~vtkPVSMTKMeshInformation();
+  ~vtkPVSMTKMeshInformation() override;
 
   std::map<smtk::mesh::MeshSet, unsigned int> Mesh2BlockIdMap;
   std::map<unsigned int, smtk::mesh::MeshSet> BlockId2MeshMap;

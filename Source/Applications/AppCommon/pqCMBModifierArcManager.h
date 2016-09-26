@@ -58,7 +58,7 @@ public:
   pqCMBModifierArcManager(QLayout *layout,
                           pqServer *server,
                           pqRenderView *renderer);
-  virtual ~pqCMBModifierArcManager();
+  ~pqCMBModifierArcManager() override;
 
   QTableWidget *getWidget() const { return this->TableWidget;}
   qtCMBArcWidgetManager* arcWidgetManager() const {return this->ArcWidgetManager;}

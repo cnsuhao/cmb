@@ -44,7 +44,7 @@ public:
   pqPlanarTextureRegistrationDialog(
     pqServer* server, pqRenderView* view,
     const QString &strTitle, QWidget* parent);
-  virtual ~pqPlanarTextureRegistrationDialog();
+  ~pqPlanarTextureRegistrationDialog() override;
 
   void initializeTexture(
     const double bounds[6], const QStringList & textureFiles,

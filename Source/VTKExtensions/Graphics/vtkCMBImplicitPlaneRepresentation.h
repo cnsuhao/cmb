@@ -35,7 +35,7 @@ public:
   // Description:
   // Standard methods for the class.
   vtkTypeMacro(vtkCMBImplicitPlaneRepresentation,vtkPVImplicitPlaneRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Turn on/off the ability to scale the widget with the mouse.
@@ -45,12 +45,12 @@ public:
 
   // Description:
   // Methods to interface with the vtkSliderWidget.
-  virtual int ComputeInteractionState(int X, int Y, int modify=0);
-  virtual void WidgetInteraction(double newEventPos[2]);
+  int ComputeInteractionState(int X, int Y, int modify=0) override;
+  void WidgetInteraction(double newEventPos[2]) override;
 
 protected:
   vtkCMBImplicitPlaneRepresentation();
-  ~vtkCMBImplicitPlaneRepresentation();
+  ~vtkCMBImplicitPlaneRepresentation() override;
 
   void TranslateAlongNormal(double *p1, double *p2);
 

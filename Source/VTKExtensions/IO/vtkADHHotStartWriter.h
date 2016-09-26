@@ -31,7 +31,7 @@ public:
 
   static vtkADHHotStartWriter* New();
   vtkTypeMacro(vtkADHHotStartWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get/Set the filename.
@@ -46,20 +46,20 @@ public:
 //BTX
 protected:
   vtkADHHotStartWriter();
-  ~vtkADHHotStartWriter();
+  ~vtkADHHotStartWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   //bool WriteHeader(ostream& fp);
   bool WriteArrays(ostream& fp);
   bool WriteArrayHeader(ostream& fp, vtkDataArray* darray);
   bool WriteArray(ostream& fp, vtkDataArray* darray);
   bool WriteArrayFooter(ostream& fp);
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
 
   char* FileName;

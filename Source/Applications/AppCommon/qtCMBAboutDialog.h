@@ -28,7 +28,7 @@ class CMBAPPCOMMON_EXPORT qtCMBAboutDialog : public QDialog
 
 public:
   qtCMBAboutDialog(QWidget* Parent);
-  virtual ~qtCMBAboutDialog();
+  ~qtCMBAboutDialog() override;
 
   void setVersionText(const QString& versionText);
   void setPixmap(const QPixmap& pixMap ) ;

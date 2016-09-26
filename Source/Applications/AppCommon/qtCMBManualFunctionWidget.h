@@ -25,7 +25,7 @@ class qtCMBManualFunctionWidget: public QWidget
 public:
   qtCMBManualFunctionWidget(cmbManualProfileFunction * fun,
                             QWidget * parent);
-  ~qtCMBManualFunctionWidget();
+  ~qtCMBManualFunctionWidget() override;
 
 public slots:
   void setSemetricMode(bool);

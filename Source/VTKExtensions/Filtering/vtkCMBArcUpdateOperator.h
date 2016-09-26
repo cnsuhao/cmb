@@ -27,7 +27,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcUpdateOperator : public vtkObject
 public:
   static vtkCMBArcUpdateOperator * New();
   vtkTypeMacro(vtkCMBArcUpdateOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //BTX
   enum EndNodeStatus
@@ -76,7 +76,7 @@ public:
 
 protected:
   vtkCMBArcUpdateOperator();
-  virtual ~vtkCMBArcUpdateOperator();
+  ~vtkCMBArcUpdateOperator() override;
 
   // clears the operator back to default values
   void Reset();

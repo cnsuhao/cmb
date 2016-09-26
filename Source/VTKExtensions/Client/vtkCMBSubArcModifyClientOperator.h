@@ -39,7 +39,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBSubArcModifyClientOperator : public vtkSMSourceP
 public:
   static vtkCMBSubArcModifyClientOperator* New();
   vtkTypeMacro(vtkCMBSubArcModifyClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //BTX
   enum EnumModificationType
@@ -70,7 +70,7 @@ public:
 
 protected:
   vtkCMBSubArcModifyClientOperator();
-  ~vtkCMBSubArcModifyClientOperator();
+  ~vtkCMBSubArcModifyClientOperator() override;
 
   virtual bool UpdateArc( vtkIdType arcId,
     vtkSMNewWidgetRepresentationProxy *widgetProxy,

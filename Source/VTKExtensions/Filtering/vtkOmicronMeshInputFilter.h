@@ -26,7 +26,7 @@ class VTKCMBFILTERING_EXPORT vtkOmicronMeshInputFilter : public vtkMultiBlockDat
 public:
   static vtkOmicronMeshInputFilter* New();
   vtkTypeMacro(vtkOmicronMeshInputFilter, vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -35,16 +35,16 @@ public:
 //BTX
 protected:
   vtkOmicronMeshInputFilter();
-  ~vtkOmicronMeshInputFilter();
+  ~vtkOmicronMeshInputFilter() override;
 
   // Description:
   // This is called within ProcessRequest when a request asks the algorithm
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  virtual int RequestData(vtkInformation*,
+  int RequestData(vtkInformation*,
                           vtkInformationVector**,
-                          vtkInformationVector*);
+                          vtkInformationVector*) override;
 
 private:
   vtkOmicronMeshInputFilter(const vtkOmicronMeshInputFilter&); // Not implemented.

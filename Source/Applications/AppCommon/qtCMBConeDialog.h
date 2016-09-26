@@ -31,7 +31,7 @@ class CMBAPPCOMMON_EXPORT qtCMBConeDialog : public QObject
 public:
   qtCMBConeDialog(pqPipelineSource* coneSource,
     pqRenderView* view);
-  virtual ~qtCMBConeDialog();
+  ~qtCMBConeDialog() override;
 
   int exec();
 

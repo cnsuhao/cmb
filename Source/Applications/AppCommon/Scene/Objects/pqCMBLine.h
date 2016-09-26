@@ -27,7 +27,7 @@ class CMBAPPCOMMON_EXPORT pqCMBLine : public pqCMBSceneObjectBase
 {
 public:
   pqCMBLine();
-  virtual ~pqCMBLine();
+  ~pqCMBLine() override;
 
   pqCMBLine(pqCMBSceneObjectBase* refObj,
                pqServer *server,
@@ -42,19 +42,19 @@ public:
 
   static void getDefaultBounds(pqRenderView* theView, double bounds[6]);
 
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
 
- virtual void setSelectionInput(vtkSMSourceProxy *selectionInput);
+ void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
  virtual void select();
  virtual void deselect();
- virtual vtkSMSourceProxy *getSelectionInput() const
+ vtkSMSourceProxy *getSelectionInput() const override
   {return NULL;}
 
- virtual void getColor(double color[4]) const;
- virtual void setColor(double color[4], bool updateRep = true);
- virtual void getBounds(double bounds[6]) const;
- virtual void getDataBounds(double bounds[6]) const;
+ void getColor(double color[4]) const override;
+ void setColor(double color[4], bool updateRep = true) override;
+ void getBounds(double bounds[6]) const override;
+ void getDataBounds(double bounds[6]) const override;
 
  //return 1 on success; 0 on failure.
  virtual int getPointPosition( int pointIdx, double &x, double &y, double &z);
@@ -63,15 +63,15 @@ public:
  virtual int getPoint2Position(double &x, double &y, double &z)
     {return getPointPosition( 2, x, y, z);}
 
- virtual void setVisibility(bool mode);
+ void setVisibility(bool mode) override;
 
- virtual void updateRepresentation();
+ void updateRepresentation() override;
 
  pqCMBLineWidget* getLineWidget()
   { return this->LineWidget;}
 
- virtual pqCMBSceneObjectBase::enumObjectType getType() const;
- virtual bool isDefaultConstrained() const{return true;}
+ pqCMBSceneObjectBase::enumObjectType getType() const override;
+ bool isDefaultConstrained() const override{return true;}
 
 protected:
  void initialize(double point1[3],

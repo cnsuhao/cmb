@@ -26,7 +26,7 @@ class VTKCMBGRAPHICS_EXPORT vtkCMBExtractCellFromDataSet : public vtkDataSetAlgo
 public:
   static vtkCMBExtractCellFromDataSet* New();
   vtkTypeMacro(vtkCMBExtractCellFromDataSet, vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(CellIndex, int);
   vtkGetMacro(CellIndex, int);
@@ -34,12 +34,12 @@ public:
 //BTX
 protected:
   vtkCMBExtractCellFromDataSet();
-  ~vtkCMBExtractCellFromDataSet() {};
+  ~vtkCMBExtractCellFromDataSet() override {};
 
   /// Implementation of the algorithm.
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                           vtkInformationVector **,
-                          vtkInformationVector *);
+                          vtkInformationVector *) override;
 
 
         int CellIndex;

@@ -23,7 +23,7 @@ public:
 
   static vtkDelosMeshReader *New();
   vtkTypeMacro(vtkDelosMeshReader,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Determine whether the file can be read by this reader.
@@ -36,14 +36,14 @@ public:
 
 protected:
   vtkDelosMeshReader();
-  ~vtkDelosMeshReader();
+  ~vtkDelosMeshReader() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
+                         vtkInformationVector *) override;
   int RequestData(vtkInformation *,
                   vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
   char * FileName;
 

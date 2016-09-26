@@ -61,7 +61,7 @@ class VTKCMBMESHING_EXPORT vtkLoopsMesher : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLoopsMesher,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with OnRatio=1, Offset=0. DistanceFactor=3.0,
@@ -100,10 +100,10 @@ public:
 
 protected:
   vtkLoopsMesher();
-  ~vtkLoopsMesher();
+  ~vtkLoopsMesher() override;
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   int   UseQuads;
   int   UseSubLoops;
   int   PassLines;

@@ -41,7 +41,7 @@ class VTKCMBMESHING_EXPORT vtkCMBTriangleMultiBlockMesher : public vtkMultiBlock
   public:
     static vtkCMBTriangleMultiBlockMesher *New();
     vtkTypeMacro(vtkCMBTriangleMultiBlockMesher,vtkMultiBlockDataSetAlgorithm );
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
 
     //For info on properties see vtkCMBTriangleMesher.h
@@ -74,7 +74,7 @@ class VTKCMBMESHING_EXPORT vtkCMBTriangleMultiBlockMesher : public vtkMultiBlock
 
   protected:
     vtkCMBTriangleMultiBlockMesher();
-    ~vtkCMBTriangleMultiBlockMesher();
+    ~vtkCMBTriangleMultiBlockMesher() override;
 
     bool UseOldMesher;
     double MinAngle;
@@ -89,8 +89,8 @@ class VTKCMBMESHING_EXPORT vtkCMBTriangleMultiBlockMesher : public vtkMultiBlock
     //Used to configure triangle's 'V' flag
     bool VerboseOutput;
 
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-    int FillInputPortInformation(int port, vtkInformation* info);
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+    int FillInputPortInformation(int port, vtkInformation* info) override;
   private:
     vtkCMBTriangleMultiBlockMesher(const vtkCMBTriangleMultiBlockMesher&);  // Not implemented.
     void operator=(const vtkCMBTriangleMultiBlockMesher&);  // Not implemented.

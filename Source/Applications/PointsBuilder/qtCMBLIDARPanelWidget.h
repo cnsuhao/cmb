@@ -29,7 +29,7 @@ class qtCMBLIDARPanelWidget : public QWidget
 
 public:
   qtCMBLIDARPanelWidget(QWidget* parent=0);
-  virtual ~qtCMBLIDARPanelWidget();
+  ~qtCMBLIDARPanelWidget() override;
 
   Ui::qtLIDARPanel* getGUIPanel();
 

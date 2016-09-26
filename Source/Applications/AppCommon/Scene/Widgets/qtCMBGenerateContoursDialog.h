@@ -41,7 +41,7 @@ class CMBAPPCOMMON_EXPORT qtCMBGenerateContoursDialog : public QDialog
 public:
   qtCMBGenerateContoursDialog(pqCMBSceneNode *parentNode,
     QWidget *parent = NULL, Qt::WindowFlags flags= 0);
-  virtual ~qtCMBGenerateContoursDialog();
+  ~qtCMBGenerateContoursDialog() override;
 
   int exec();
 
@@ -85,7 +85,7 @@ class CMBAPPCOMMON_EXPORT InternalDoubleValidator : public QDoubleValidator
   Q_OBJECT
 public:
     InternalDoubleValidator(QObject * parent);
-    virtual void fixup(QString &input) const;
+    void fixup(QString &input) const override;
 };
 
 #endif

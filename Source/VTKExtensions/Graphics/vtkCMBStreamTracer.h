@@ -31,7 +31,7 @@ public:
     // Construct object using vtkCMBInitialValueProblemSolver
     static vtkCMBStreamTracer *New();
     vtkTypeMacro(vtkCMBStreamTracer, vtkStreamTracer);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     // Description:
     // Set/Get the number of test locations for each agent
@@ -60,14 +60,14 @@ public:
   protected:
 
      vtkCMBStreamTracer();
-    ~vtkCMBStreamTracer();
+    ~vtkCMBStreamTracer() override;
 
     //
     // Generate output
     //
-    virtual int RequestData(vtkInformation* request,
+    int RequestData(vtkInformation* request,
                             vtkInformationVector** inputVector,
-                            vtkInformationVector* outputVector);
+                            vtkInformationVector* outputVector) override;
 
     virtual void Integrate(vtkDataSet *input,
       vtkPolyData* output,

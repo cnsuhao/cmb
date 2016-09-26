@@ -32,7 +32,7 @@ class CMBAPPCOMMON_EXPORT pq3DWidget : public pqProxyPanel
   typedef pqProxyPanel Superclass;
 public:
   pq3DWidget(vtkSMProxy* referenceProxy, vtkSMProxy* proxy, QWidget* parent=0);
-  virtual ~pq3DWidget();
+  ~pq3DWidget() override;
 
   // This method creates widgets using the hints provided by 
   // the proxy. If a proxy needs more that one
@@ -98,27 +98,27 @@ public slots:
   void hideWidget();
 
   /// Activates the widget. Respects the visibility flag.
-  virtual void select();
+  void select() override;
 
   /// Deactivates the widget.
-  virtual void deselect();
+  void deselect() override;
 
   /// Accepts pending changes. Default implementation
   /// pushes the 3D widget information property values to
   /// the corresponding properties on the controlled widget.
   /// The correspondence is determined from the <Hints />
   /// associated with the controlled proxy.
-  virtual void accept();
+  void accept() override;
 
   /// Resets pending changes. Default implementation
   /// pushes the property values of the controlled widget to the
   /// 3D widget properties.
   /// The correspondence is determined from the <Hints />
   /// associated with the controlled proxy.
-  virtual void reset();
+  void reset() override;
 
   /// Set the view that this panel works with
-  virtual void setView(pqView*);
+  void setView(pqView*) override;
 
   /// Resets the bounds of the 3D widget to the reference proxy bounds.
   /// This typically calls PlaceWidget on the underlying 3D Widget 

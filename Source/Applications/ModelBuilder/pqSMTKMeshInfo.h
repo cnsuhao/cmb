@@ -39,7 +39,7 @@ class pqSMTKMeshInfo: public QObject
   public:
     pqSMTKMeshInfo(){
     }
-    ~pqSMTKMeshInfo();
+    ~pqSMTKMeshInfo() override;
     pqSMTKMeshInfo(const pqSMTKMeshInfo& other);
     void init(pqPipelineSource* meshSource, pqPipelineSource* repSource,
       pqDataRepresentation*, const std::string& filename,

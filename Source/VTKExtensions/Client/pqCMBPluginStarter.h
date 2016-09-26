@@ -20,7 +20,7 @@ class pqCMBPluginStarter : public QObject
   typedef QObject Superclass;
 public:
   pqCMBPluginStarter(QObject* p=0);
-  ~pqCMBPluginStarter();
+  ~pqCMBPluginStarter() override;
 
   // Callback for shutdown.
   void onShutdown();

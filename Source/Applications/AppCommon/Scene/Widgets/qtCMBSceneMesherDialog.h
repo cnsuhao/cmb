@@ -31,7 +31,7 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneMesherDialog : public QDialog
   Q_OBJECT
 public:
   qtCMBSceneMesherDialog(pqCMBSceneTree *tree, QWidget *parent = NULL, Qt::WindowFlags flags= 0);
-  virtual ~qtCMBSceneMesherDialog();
+  ~qtCMBSceneMesherDialog() override;
 
   void insertMesherPath(int i, const char *mpath);
   void removeMesherPath(int i);

@@ -36,7 +36,7 @@ class pqCMBModelBuilderMainWindow : public pqCMBCommonMainWindow
 
 public:
   pqCMBModelBuilderMainWindow();
-  virtual ~pqCMBModelBuilderMainWindow();
+  ~pqCMBModelBuilderMainWindow() override;
 
 public slots:
   // Description:
@@ -49,7 +49,7 @@ public slots:
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
   // because the new model mapper is controlling display list separately.
-  virtual void onViewChanged();
+  void onViewChanged() override;
 
   // Description:
   // Texture related slots
@@ -83,8 +83,8 @@ protected slots:
 
   // Description:
   // open About and Help dialog
-  void onHelpAbout();
-  void onHelpHelp();
+  void onHelpAbout() override;
+  void onHelpHelp() override;
 
   // Description:
   // Tree widgets interaction slots
@@ -122,7 +122,7 @@ protected:
   void updateSMTKSelection();
 
   // Overwrite base class to use CMB's selection helper
-  virtual void setupZoomToBox();
+  void setupZoomToBox() override;
 
   // Description:
   // Called whenever a selection is made. converts the selection to a value
@@ -143,7 +143,7 @@ protected:
 
   // Description
   // Some convenient methods
-  void clearGUI();
+  void clearGUI() override;
   void UpdateInfoTable();
   void updateDataInfo();
   void setToolbarEnableState(QToolBar* toolbar, bool enabled);
@@ -155,9 +155,9 @@ protected:
   pqProxyInformationWidget* getInfoWidget();
 
   // override base class, because ModelBuilder is providing its own color editor
-  virtual QDockWidget* initPVColorEditorDock() {return NULL;}
+  QDockWidget* initPVColorEditorDock() override {return NULL;}
   // ModelBuilder is not using the InspectorPanel provided from base class
-  virtual void initInspectorDock();
+  void initInspectorDock() override;
 
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.

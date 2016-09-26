@@ -48,7 +48,7 @@ protected slots:
 protected:
   pqDEMExportDialog(QWidget *parent, pqServer *server, double *min, double * max,
                     double * spacing, int zone, bool isnorth, double scale);
-  virtual ~pqDEMExportDialog();
+  ~pqDEMExportDialog() override;
   int exec();
   int Status;
   Ui::qtDEMExporter *ExportDialog;

@@ -26,7 +26,7 @@ class pqPlanarTextureRegistrationPanel : public pqObjectPanel
 
 public:
   pqPlanarTextureRegistrationPanel(pqProxy* proxy, QWidget* p);
-  ~pqPlanarTextureRegistrationPanel();
+  ~pqPlanarTextureRegistrationPanel() override;
 
 public slots:
 

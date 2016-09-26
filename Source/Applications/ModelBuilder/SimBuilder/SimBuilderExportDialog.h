@@ -40,7 +40,7 @@ class SimBuilderExportDialog : public QObject
 
 public:
   SimBuilderExportDialog();
-  virtual ~SimBuilderExportDialog();
+  ~SimBuilderExportDialog() override;
 
   QWidget *contentWidget() const
   { return this->ContentWidget; }

@@ -35,7 +35,7 @@ class pqCMBMeshViewerMainWindow : public pqCMBCommonMainWindow
 
 public:
   pqCMBMeshViewerMainWindow();
-  virtual ~pqCMBMeshViewerMainWindow();
+  ~pqCMBMeshViewerMainWindow() override;
 
   enum enumInputTreeColumn
     {
@@ -48,7 +48,7 @@ public slots:
 
   void onMeshLoaded();
   void onMeshModified();
-  virtual void onSelectionModeChanged(int);
+  void onSelectionModeChanged(int) override;
   void onFilterPropertiesModified(bool);
   void updateChangeMaterialButton();
   void setSelectionMode();
@@ -84,13 +84,13 @@ protected slots:
 
   // Description:
   // open About dialog
-  void onHelpAbout();
-  void onHelpHelp();
+  void onHelpAbout() override;
+  void onHelpHelp() override;
 
   // Description:
   // Called when starting and external process (to disable starting another)
   // and when completing an external process (to reenable)
-  void onEnableExternalProcesses(bool state);
+  void onEnableExternalProcesses(bool state) override;
 
   // Description:
   // Called when "Find Data" action is invoked.
@@ -98,7 +98,7 @@ protected slots:
 
   // Description:
   // Invoked when selection is changed.
-  virtual void updateSelection();
+  void updateSelection() override;
 
   // Description:
   // Invoked when "Set Selection Material ID to" button is clicked, which

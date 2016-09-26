@@ -19,12 +19,12 @@ public:
   friend class cmbProfileFunction;
   enum DisplacmentMode{Dig,Raise,Level};
   cmbProfileWedgeFunction();
-  ~cmbProfileWedgeFunction();
-  virtual cmbProfileFunction::FunctionType getType() const;
-  virtual cmbProfileFunction * clone(std::string const& name) const;
-  virtual void sendDataToProxy(int arc_ID, int pointID,
+  ~cmbProfileWedgeFunction() override;
+  cmbProfileFunction::FunctionType getType() const override;
+  cmbProfileFunction * clone(std::string const& name) const override;
+  void sendDataToProxy(int arc_ID, int pointID,
                                vtkBoundingBox bbox,
-                               vtkSMSourceProxy* source) const;
+                               vtkSMSourceProxy* source) const override;
 
   virtual vtkPiecewiseFunction * getWeightingFunction() const
   {
@@ -42,7 +42,7 @@ public:
   void setSlopeRight(double d);
 
   bool isRelative() const;
-  virtual void setRelative(bool ir);
+  void setRelative(bool ir) override;
 
   bool isSymmetric() const;
   void setSymmetry(bool);
@@ -57,8 +57,8 @@ public:
   DisplacmentMode getMode() const;
 
 protected:
-  virtual bool readData(std::ifstream & in, int version);
-  virtual bool writeData(std::ofstream & out) const;
+  bool readData(std::ifstream & in, int version) override;
+  bool writeData(std::ofstream & out) const override;
 private:
   double depth;
   double baseWidth;

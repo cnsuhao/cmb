@@ -28,7 +28,7 @@ class CMBAPPCOMMON_EXPORT pqPluginIOBehavior : public QObject
   typedef QMap<QString, QPair<QString, QString> > FileExtMap;
 public:
   pqPluginIOBehavior(QObject* parent=0);
-  ~pqPluginIOBehavior();
+  ~pqPluginIOBehavior() override;
 
   // Description:
   // Returns a formatted string with all supported file types.

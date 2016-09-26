@@ -25,7 +25,7 @@ class VTKCMBIO_EXPORT vtkOmicronMeshInputWriter : public vtkWriter
 public:
   static vtkOmicronMeshInputWriter* New();
   vtkTypeMacro(vtkOmicronMeshInputWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -49,15 +49,15 @@ public:
 
 protected:
   vtkOmicronMeshInputWriter();
-  ~vtkOmicronMeshInputWriter();
+  ~vtkOmicronMeshInputWriter() override;
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
   char* GeometryFileName;
   double VolumeConstraint;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkOmicronMeshInputWriter(const vtkOmicronMeshInputWriter&); // Not implemented.
   void operator=(const vtkOmicronMeshInputWriter&); // Not implemented.

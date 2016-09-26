@@ -42,7 +42,7 @@ public:
     this->Modified();
   }
 
-  virtual ~vtkCMBGrabCutFilter();
+  ~vtkCMBGrabCutFilter() override;
 
 protected:
 
@@ -54,10 +54,10 @@ protected:
 
   vtkCMBGrabCutFilter();
 
-  virtual int FillOutputPortInformation(int port, vtkInformation *info);
+  int FillOutputPortInformation(int port, vtkInformation *info) override;
 
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 private:
   vtkCMBGrabCutFilter(const vtkCMBGrabCutFilter&);  // Not implemented.

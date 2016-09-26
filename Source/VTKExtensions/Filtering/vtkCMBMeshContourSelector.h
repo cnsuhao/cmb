@@ -40,7 +40,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBMeshContourSelector : public vtkSelectionAlgo
 {
 public:
   vtkTypeMacro(vtkCMBMeshContourSelector,vtkSelectionAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkCMBMeshContourSelector *New();
 
   // Description:
@@ -130,7 +130,7 @@ public:
 
   // Description:
   // Return the mtime also considering the contour function.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   // Description:
   // Set contour function
@@ -140,11 +140,11 @@ public:
 //BTX
 protected:
   vtkCMBMeshContourSelector();
-  ~vtkCMBMeshContourSelector();
+  ~vtkCMBMeshContourSelector() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
-  virtual int FillOutputPortInformation(int port, vtkInformation* info);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+  int FillOutputPortInformation(int port, vtkInformation* info) override;
 
   virtual void DoSurfaceSelectionCheck(int selType, vtkIdList* tmpIds,
     bool bVolume, vtkIdType selId, vtkUnstructuredGrid* input,

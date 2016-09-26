@@ -31,7 +31,7 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneSurfaceMesherDialog : public QDialog
   Q_OBJECT
 public:
   qtCMBSceneSurfaceMesherDialog(pqCMBSceneTree *tree, QWidget *parent = NULL, Qt::WindowFlags flags= 0);
-  virtual ~qtCMBSceneSurfaceMesherDialog();
+  ~qtCMBSceneSurfaceMesherDialog() override;
 
   void insertSurfaceName(int i, const char *vname);
   void removeAllSurfaceNames();

@@ -27,7 +27,7 @@ class CMBAPPCOMMON_EXPORT qtCMBProgressWidget : public QWidget
   Q_OBJECT
 public:
   qtCMBProgressWidget(QWidget* parent=0);
-  virtual ~qtCMBProgressWidget();
+  ~qtCMBProgressWidget() override;
 
   QToolButton* getAbortButton() const
     {

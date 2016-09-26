@@ -45,8 +45,8 @@ public:
                      pqCMBSceneObjectBase::enumSurfaceType surfaceType);
   void addObjectTypeFilter(pqCMBSceneObjectBase::enumObjectType objectType);
   void clearTypeFilter();
-  virtual ~SceneObjectNodeIterator();
-  virtual pqCMBSceneNode *next();
+  ~SceneObjectNodeIterator() override;
+  pqCMBSceneNode *next() override;
 protected:
   bool NoTypeSet;
   bool NoSurfaceTypeSet;

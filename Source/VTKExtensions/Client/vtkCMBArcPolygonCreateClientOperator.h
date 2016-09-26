@@ -27,7 +27,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcPolygonCreateClientOperator : public vtkSMSou
 public:
   static vtkCMBArcPolygonCreateClientOperator* New();
   vtkTypeMacro(vtkCMBArcPolygonCreateClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   // Returns the arc ids of the newly created polygon
@@ -44,7 +44,7 @@ public:
 
 protected:
   vtkCMBArcPolygonCreateClientOperator();
-  ~vtkCMBArcPolygonCreateClientOperator();
+  ~vtkCMBArcPolygonCreateClientOperator() override;
   vtkIdTypeArray* ArcIds;
   std::list<vtkIdType> InputArcIds;
 

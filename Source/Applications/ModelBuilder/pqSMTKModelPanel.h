@@ -41,7 +41,7 @@ class pqSMTKModelPanel : public QDockWidget
   Q_OBJECT
 public:
   pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
-  ~pqSMTKModelPanel();
+  ~pqSMTKModelPanel() override;
 
   pqCMBModelManager* modelManager();
   smtk::extension::qtModelView* modelView();

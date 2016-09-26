@@ -30,7 +30,7 @@ class VTKCMBCLIENT_EXPORT pqCMBTabWidgetTranslator :
 public:
   pqCMBTabWidgetTranslator(QObject* p=0);
 
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 protected slots:
   void indexChanged(int);

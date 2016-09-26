@@ -25,7 +25,7 @@ class VTKCMBFILTERING_EXPORT vtkMergeFacesFilter : public vtkMultiBlockDataSetAl
 public:
   static vtkMergeFacesFilter* New();
   vtkTypeMacro(vtkMergeFacesFilter, vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Merge face with id \c id1 with face with id \c id2.
@@ -54,7 +54,7 @@ public:
 //BTX
 protected:
   vtkMergeFacesFilter();
-  ~vtkMergeFacesFilter();
+  ~vtkMergeFacesFilter() override;
 
   //vtkIdList* NewIds;
 
@@ -63,10 +63,10 @@ protected:
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  virtual int RequestData(vtkInformation*,
+  int RequestData(vtkInformation*,
                           vtkInformationVector**,
-                          vtkInformationVector*);
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+                          vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
   vtkMergeFacesFilter(const vtkMergeFacesFilter&); // Not implemented.

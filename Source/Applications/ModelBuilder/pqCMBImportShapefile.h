@@ -22,7 +22,7 @@ class pqCMBImportShapefile : public QDialog
 
 public:
   pqCMBImportShapefile(pqServer* activeServer, QWidget* parent = 0, Qt::WindowFlags f = 0);
-  virtual ~pqCMBImportShapefile();
+  ~pqCMBImportShapefile() override;
 
   int boundaryStyle();
   int marginStyle();

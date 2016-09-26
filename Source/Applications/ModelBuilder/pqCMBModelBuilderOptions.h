@@ -24,20 +24,20 @@ public:
   static pqCMBModelBuilderOptions* instance();
 
   pqCMBModelBuilderOptions(QWidget *parent=0);
-  virtual ~pqCMBModelBuilderOptions();
+  ~pqCMBModelBuilderOptions() override;
 
   // set the current page
-  virtual void setPage(const QString &page);
+  void setPage(const QString &page) override;
   // return a list of strings for pages we have
-  virtual QStringList getPageList();
+  QStringList getPageList() override;
 
   // apply the changes
-  virtual void applyChanges();
+  void applyChanges() override;
   // reset the changes
-  virtual void resetChanges();
+  void resetChanges() override;
 
   // tell qtCMBOptionsDialog that we want an apply button
-  virtual bool isApplyUsed() const { return true; }
+  bool isApplyUsed() const override { return true; }
 
   // Get the options
   std::string defaultSimBuilderTemplateDirectory();

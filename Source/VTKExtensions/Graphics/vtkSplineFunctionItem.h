@@ -24,7 +24,7 @@ class VTKCMBGRAPHICS_EXPORT vtkSplineFunctionItem: public vtkScalarsToColorsItem
 public:
   static vtkSplineFunctionItem* New();
   vtkTypeMacro(vtkSplineFunctionItem, vtkScalarsToColorsItem);
-  virtual void PrintSelf(ostream &os, vtkIndent indent);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 
   void SetSplineFunction(vtkPiecewiseFunction* t);
   vtkGetObjectMacro(PiecewiseFunction, vtkPiecewiseFunction);
@@ -44,15 +44,15 @@ public:
 
 protected:
   vtkSplineFunctionItem();
-  virtual ~vtkSplineFunctionItem();
+  ~vtkSplineFunctionItem() override;
 
   // Description:
   // Reimplemented to return the range of the piecewise function
-  virtual void ComputeBounds(double bounds[4]);
+  void ComputeBounds(double bounds[4]) override;
 
   // Description
   // Compute the texture from the PiecewiseFunction
-  virtual void ComputeTexture();
+  void ComputeTexture() override;
 
   vtkSmartPointer<vtkKochanekSpline> SplineFunction;
   vtkPiecewiseFunction *PiecewiseFunction;

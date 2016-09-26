@@ -28,7 +28,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcFindPickPointOperator : public vtkSMSourcePro
 public:
   static vtkCMBArcFindPickPointOperator* New();
   vtkTypeMacro(vtkCMBArcFindPickPointOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // convert the multi point selection to the middle point of the selection.
@@ -36,7 +36,7 @@ public:
 
 protected:
   vtkCMBArcFindPickPointOperator();
-  ~vtkCMBArcFindPickPointOperator();
+  ~vtkCMBArcFindPickPointOperator() override;
   vtkIdType PickedPointId;
 
 private:

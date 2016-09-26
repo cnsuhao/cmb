@@ -41,7 +41,7 @@ public:
   // Description:
   // Standard methods for instances of this class.
   vtkTypeMacro(vtkOrientedGlyphContourRepresentation2,vtkOrientedGlyphContourRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Controls whether the contour widget should
@@ -54,14 +54,14 @@ public:
   vtkBooleanMacro( LoggingEnabled, int );
 
   //overloaded for logging purposes
-  virtual int DeleteNthNode(int n);
-  virtual int SetNthNodeSelected(int);
+  int DeleteNthNode(int n) override;
+  int SetNthNodeSelected(int) override;
 
-  virtual int AddNodeOnContour(int X, int Y);
+  int AddNodeOnContour(int X, int Y) override;
 
   // Description:
   // Get the points in this contour as a vtkPolyData.
-  virtual vtkPolyData * GetContourRepresentationAsPolyData();
+  vtkPolyData * GetContourRepresentationAsPolyData() override;
 
   //Description:
   // Get the flags for a given point
@@ -72,13 +72,13 @@ public:
   // Description:
   // Methods to make this class behave as a vtkProp. Using openGL
   // to do AlwaysOnTop.
-  virtual int RenderOpaqueGeometry(vtkViewport *viewport);
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
 
 protected:
   vtkOrientedGlyphContourRepresentation2();
-  ~vtkOrientedGlyphContourRepresentation2();
+  ~vtkOrientedGlyphContourRepresentation2() override;
 
-  virtual void UpdateLines(int index);
+  void UpdateLines(int index) override;
 
   // Description:
   // Build a contour representation from externally supplied PolyData. This
@@ -91,7 +91,7 @@ protected:
   //Note: While this method will only render the first line cell in the polydata
   //it will compute if the contour is closed based on this first cell number of points
   //versus the number of points in the polydata. So don't have any extra points
-  virtual void Initialize( vtkPolyData * );
+  void Initialize( vtkPolyData * ) override;
 
   //support logging of point changes
   int LoggingEnabled;

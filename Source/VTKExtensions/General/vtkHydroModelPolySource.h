@@ -23,7 +23,7 @@ class VTKCMBGENERAL_EXPORT vtkHydroModelPolySource : public vtkPolyDataAlgorithm
 public:
   static vtkHydroModelPolySource *New();
   vtkTypeMacro(vtkHydroModelPolySource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   void CopyData(vtkPolyData *source);
@@ -31,9 +31,9 @@ public:
 
 protected:
   vtkHydroModelPolySource();
-  ~vtkHydroModelPolySource();
+  ~vtkHydroModelPolySource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData *Source;
 

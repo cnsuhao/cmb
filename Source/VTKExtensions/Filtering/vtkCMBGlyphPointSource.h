@@ -31,7 +31,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBGlyphPointSource : public vtkPolyDataAlgorith
 public:
   static vtkCMBGlyphPointSource *New();
   vtkTypeMacro(vtkCMBGlyphPointSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Insert the next point into the object
@@ -113,9 +113,9 @@ public:
 
 protected:
   vtkCMBGlyphPointSource();
-  ~vtkCMBGlyphPointSource();
+  ~vtkCMBGlyphPointSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkSmartPointer<vtkPolyData>Source;
   vtkSmartPointer<vtkPoints> Points;

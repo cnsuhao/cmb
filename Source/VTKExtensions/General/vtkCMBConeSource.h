@@ -28,7 +28,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBConeSource : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkCMBConeSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with default resolution 6, height 1.0, radius 0.5, and
@@ -78,10 +78,10 @@ public:
 
 protected:
   vtkCMBConeSource(int res=6);
-  ~vtkCMBConeSource() {}
+  ~vtkCMBConeSource() override {}
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double Height;
   double BaseRadius;

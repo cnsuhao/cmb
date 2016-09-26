@@ -28,7 +28,7 @@ class VTKCMBIO_EXPORT vtkLIDARPtsWriter : public vtkWriter
 public:
   static vtkLIDARPtsWriter *New();
   vtkTypeMacro(vtkLIDARPtsWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get/Set the filename.
@@ -58,10 +58,10 @@ public:
 
 protected:
   vtkLIDARPtsWriter();
-  ~vtkLIDARPtsWriter();
+  ~vtkLIDARPtsWriter() override;
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   // return write_status: OK, Abort, or Error
   int WriteFile(ofstream& ofp);
   int ComputeRequiredAxisPrecision(double min, double max);
@@ -76,7 +76,7 @@ protected:
   int OutputIsBinary;
   bool WriteAsSinglePiece;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
 
 private:

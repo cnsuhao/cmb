@@ -34,7 +34,7 @@ public:
 
   // Description:
   // Print default values of the member variables.
-  void PrintSelf(ostream &os, vtkIndent indent);
+  void PrintSelf(ostream &os, vtkIndent indent) override;
 \
   // Description:
   // Set / Get the function. This could be a vector funtion or scalar function.
@@ -83,7 +83,7 @@ protected:
   // Description:
   // Constructor / Destructor.
   vtkSBFunctionParser();
-  virtual ~vtkSBFunctionParser();
+  ~vtkSBFunctionParser() override;
 
   // Description:
   void Initialize();

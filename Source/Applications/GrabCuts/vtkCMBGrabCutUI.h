@@ -27,7 +27,7 @@ public:
   friend class vtkCMBGrabLeftMouseReleasedCallback;
   // Constructor/Destructor
   vtkCMBGrabCutUI();
-  ~vtkCMBGrabCutUI();
+  ~vtkCMBGrabCutUI() override;
 
 public slots:
 

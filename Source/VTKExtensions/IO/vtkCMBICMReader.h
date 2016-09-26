@@ -30,7 +30,7 @@ class VTKCMBIO_EXPORT vtkCMBICMReader : public vtkUnstructuredGridAlgorithm
   public:
     static vtkCMBICMReader *New();
     vtkTypeMacro(vtkCMBICMReader,vtkUnstructuredGridAlgorithm);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     // Description:
     // Name of the file to be read.
@@ -50,12 +50,12 @@ class VTKCMBIO_EXPORT vtkCMBICMReader : public vtkUnstructuredGridAlgorithm
     vtkGetMacro(DataIsPositiveEast,bool);
   protected:
     vtkCMBICMReader();
-    ~vtkCMBICMReader();
+    ~vtkCMBICMReader() override;
 
     int RequestInformation(vtkInformation *,
         vtkInformationVector **,
-        vtkInformationVector *);
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+        vtkInformationVector *) override;
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
     int ReadGeometryData(vtkInformationVector *outputVector);
     int ReadTemporalData(vtkInformationVector *outputVector);

@@ -20,7 +20,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcPointGlyphingFilter : public vtkPolyDataAl
 {
 public:
   vtkTypeMacro(vtkCMBArcPointGlyphingFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkCMBArcPointGlyphingFilter *New();
 
@@ -30,9 +30,9 @@ public:
 
 protected:
   vtkCMBArcPointGlyphingFilter();
-  ~vtkCMBArcPointGlyphingFilter();
+  ~vtkCMBArcPointGlyphingFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   std::set<int> visible;
   double scale;

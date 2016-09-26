@@ -31,7 +31,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcEditClientOperator : public vtkSMSourceProxy
 public:
   static vtkCMBArcEditClientOperator* New();
   vtkTypeMacro(vtkCMBArcEditClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Copy the proxy poly data into the widget representation
@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkCMBArcEditClientOperator();
-  ~vtkCMBArcEditClientOperator();
+  ~vtkCMBArcEditClientOperator() override;
   bool ArcIsClosed;
 
 private:

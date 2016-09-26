@@ -38,7 +38,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcUpdateAndSplitClientOperator : public vtkSMSo
 public:
   static vtkCMBArcUpdateAndSplitClientOperator* New();
   vtkTypeMacro(vtkCMBArcUpdateAndSplitClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Update
@@ -47,7 +47,7 @@ public:
   vtkGetObjectMacro(CreatedArcs,vtkIdTypeArray);
 protected:
   vtkCMBArcUpdateAndSplitClientOperator();
-  ~vtkCMBArcUpdateAndSplitClientOperator();
+  ~vtkCMBArcUpdateAndSplitClientOperator() override;
 
   bool FindArcsInWidgetOutput(vtkCMBArcWidgetRepresentation *widgetRep);
   bool UpdateOperation(const vtkIdType& arcId,

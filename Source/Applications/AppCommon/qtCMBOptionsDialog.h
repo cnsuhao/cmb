@@ -33,7 +33,7 @@ class CMBAPPCOMMON_EXPORT qtCMBOptionsDialog : public QDialog
 
 public:
   qtCMBOptionsDialog(QWidget *parent=0);
-  virtual ~qtCMBOptionsDialog();
+  ~qtCMBOptionsDialog() override;
 
   /// \brief
   ///   Gets whether or not there are changes to apply.
@@ -76,7 +76,7 @@ public:
 
 public slots:
   /// when OK button is clicked
-  virtual void accept();
+  void accept() override;
 
   /// \brief
   ///   Sets the current options page.

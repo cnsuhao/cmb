@@ -26,16 +26,16 @@ public:
   pqCMBBoreHole(pqPipelineSource*source,
               pqRenderView *view, pqServer *server);
 
-  virtual ~pqCMBBoreHole();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
+  ~pqCMBBoreHole() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
   virtual void setTubeRadius(double);
   /// Returns the Bounds of the data. - Returns the output of the TubeFilter
-  virtual void getDataBounds(double bounds[6]) const;
-  virtual pqPipelineSource * getSelectionSource() const;
-  virtual void setSelectionInput(vtkSMSourceProxy *selectionInput);
-  virtual vtkSMSourceProxy *getSelectionInput() const;
+  void getDataBounds(double bounds[6]) const override;
+  pqPipelineSource * getSelectionSource() const override;
+  void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
+  vtkSMSourceProxy *getSelectionInput() const override;
 
 protected:
   QPointer<pqPipelineSource> TubeFilter;

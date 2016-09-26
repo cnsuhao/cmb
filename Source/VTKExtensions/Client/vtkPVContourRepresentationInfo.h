@@ -33,16 +33,16 @@ class VTKCMBCLIENT_EXPORT vtkPVContourRepresentationInfo : public vtkPVInformati
 public:
   static vtkPVContourRepresentationInfo* New();
   vtkTypeMacro(vtkPVContourRepresentationInfo, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   // Description:
   // Convenient method to get the world locations for all the nodes,
@@ -75,7 +75,7 @@ public:
   //BTX
 protected:
   vtkPVContourRepresentationInfo();
-  ~vtkPVContourRepresentationInfo();
+  ~vtkPVContourRepresentationInfo() override;
 
   void CopyFromContourPolySource( vtkSceneContourSource* source );
   void CopyFromContourRepresentation(vtkContourRepresentation* contourRep);

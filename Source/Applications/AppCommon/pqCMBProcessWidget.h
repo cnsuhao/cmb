@@ -23,7 +23,7 @@ class CMBAPPCOMMON_EXPORT pqCMBProcessWidget : public QWidget
   Q_OBJECT
 public:
   pqCMBProcessWidget(QWidget* parent=0);
-  virtual ~pqCMBProcessWidget();
+  ~pqCMBProcessWidget() override;
 
   QToolButton* getAbortButton() const
     {

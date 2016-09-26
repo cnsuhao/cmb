@@ -33,7 +33,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBArc : public vtkDataObject
 friend class vtkCMBArcManager;
 public:
   vtkTypeMacro(vtkCMBArc,vtkDataObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkCMBArc *New();
 
   struct Point
@@ -106,7 +106,7 @@ public:
 
   //Description:
   //Removes the End Nodes and all the internal end nodes
-  void Initialize();
+  void Initialize() override;
 
   //Description:
   //Clear all the internal points from the given arc
@@ -238,7 +238,7 @@ public:
 
 protected:
   vtkCMBArc();
-  virtual ~vtkCMBArc();
+  ~vtkCMBArc() override;
 
   //Description:
   //Replaces the oldEndNode with the newEndNode, this method is called by the arc

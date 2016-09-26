@@ -366,7 +366,7 @@ public:
   void ChangeUserColorOfNodalGroup(int ngId, float* userRGBA);
   void ChangeUserNameOfNodalGroup(int ngId, const char* userName);
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get the model face system id of the given cell id.  Note that
@@ -380,7 +380,7 @@ public:
 
 protected:
   vtkMultiBlockWrapper();
-  virtual ~vtkMultiBlockWrapper();
+  ~vtkMultiBlockWrapper() override;
 
   // Description:
   // Returns the next system id to use for the color array of given name.

@@ -26,7 +26,7 @@ class VTKCMBMESHING_EXPORT vtkCMBArcPolygonProvider : public vtkPolyDataAlgorith
 public:
   static vtkCMBArcPolygonProvider *New();
   vtkTypeMacro(vtkCMBArcPolygonProvider,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Set the ids of the outer loop
@@ -52,14 +52,14 @@ public:
 
 protected:
   vtkCMBArcPolygonProvider();
-  ~vtkCMBArcPolygonProvider();
+  ~vtkCMBArcPolygonProvider() override;
 
   // Description:
   // This is called by the superclass.
   // This is the method you should override.
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) override;
 
   //Description:
   //Generate the polyData representation for the associated arc

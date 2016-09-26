@@ -24,7 +24,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcAutoConnectOperator : public vtkObject
 public:
   static vtkCMBArcAutoConnectOperator * New();
   vtkTypeMacro(vtkCMBArcAutoConnectOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool Operate(vtkIdType firstId, vtkIdType secondId);
 
@@ -35,7 +35,7 @@ public:
 
 protected:
   vtkCMBArcAutoConnectOperator();
-  virtual ~vtkCMBArcAutoConnectOperator();
+  ~vtkCMBArcAutoConnectOperator() override;
 
   vtkIdType CreatedArcId;
 

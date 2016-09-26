@@ -27,20 +27,20 @@ class VTKCMBCLIENT_EXPORT vtkPVSceneGenFileInformation : public vtkPVInformation
 public:
   static vtkPVSceneGenFileInformation* New();
   vtkTypeMacro(vtkPVSceneGenFileInformation, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Merge another information object. Calls AddInformation(info, 0).
-  virtual void AddInformation(vtkPVInformation* info);
+  void AddInformation(vtkPVInformation* info) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   const char *GetFileContents() { return this->FileContents.c_str(); }
   const char *GetFileName() { return this->FileName.c_str(); }
@@ -48,7 +48,7 @@ public:
   //BTX
 protected:
   vtkPVSceneGenFileInformation();
-  ~vtkPVSceneGenFileInformation();
+  ~vtkPVSceneGenFileInformation() override;
 
   // Data information collected from remote processes.
   std::string FileContents;

@@ -28,7 +28,7 @@ class MODELBRIDGECLIENT_EXPORT vtkSMTKModelFieldArrayFilter : public vtkMultiBlo
 {
 public:
   static vtkSMTKModelFieldArrayFilter* New();
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkSMTKModelFieldArrayFilter,vtkMultiBlockDataSetAlgorithm);
 
   // Description:
@@ -58,13 +58,13 @@ public:
 
 protected:
   vtkSMTKModelFieldArrayFilter();
-  virtual ~vtkSMTKModelFieldArrayFilter();
+  ~vtkSMTKModelFieldArrayFilter() override;
 
-  virtual int RequestData(
+  int RequestData(
     vtkInformation* request,
     vtkInformationVector** inInfo,
-    vtkInformationVector* outInfo);
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+    vtkInformationVector* outInfo) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;

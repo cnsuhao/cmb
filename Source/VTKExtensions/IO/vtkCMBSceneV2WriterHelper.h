@@ -28,7 +28,7 @@ class VTKCMBIO_EXPORT vtkCMBSceneV2WriterHelper : public vtkPolyDataAlgorithm
 public:
   static vtkCMBSceneV2WriterHelper *New();
   vtkTypeMacro(vtkCMBSceneV2WriterHelper,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to write.
@@ -63,13 +63,13 @@ public:
 
 protected:
   vtkCMBSceneV2WriterHelper();
-  ~vtkCMBSceneV2WriterHelper();
+  ~vtkCMBSceneV2WriterHelper() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
+                         vtkInformationVector *) override;
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
   void ProcessFileNames();
 

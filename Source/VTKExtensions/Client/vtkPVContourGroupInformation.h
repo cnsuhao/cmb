@@ -27,28 +27,28 @@ class VTKCMBCLIENT_EXPORT vtkPVContourGroupInformation : public vtkPVInformation
 public:
   static vtkPVContourGroupInformation* New();
   vtkTypeMacro(vtkPVContourGroupInformation, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Merge another information object. Calls AddInformation(info, 0).
-  virtual void AddInformation(vtkPVInformation* info);
+  void AddInformation(vtkPVInformation* info) override;
 
   vtkGetObjectMacro(ProjectionPositionArray, vtkDoubleArray);
   vtkGetObjectMacro(ProjectionPlaneArray, vtkIntArray);
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*){;}
-  virtual void CopyFromStream(const vtkClientServerStream*){;}
+  void CopyToStream(vtkClientServerStream*) override{;}
+  void CopyFromStream(const vtkClientServerStream*) override{;}
 
   //BTX
 protected:
   vtkPVContourGroupInformation();
-  ~vtkPVContourGroupInformation();
+  ~vtkPVContourGroupInformation() override;
 
   // Data information collected from remote processes.
   vtkDoubleArray* ProjectionPositionArray;

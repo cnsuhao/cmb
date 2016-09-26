@@ -34,7 +34,7 @@ class pqCMBLIDARReaderManager :  public QObject
 
 public:
   pqCMBLIDARReaderManager(pqCMBPointsBuilderMainWindowCore*,pqObjectBuilder*);
-  virtual ~pqCMBLIDARReaderManager();
+  ~pqCMBLIDARReaderManager() override;
 
   bool userRequestsOrigin();
   bool setOrigin();

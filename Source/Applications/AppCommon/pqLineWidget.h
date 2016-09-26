@@ -27,7 +27,7 @@ class CMBAPPCOMMON_EXPORT pqLineWidget : public pq3DWidget
 public:
   pqLineWidget(vtkSMProxy* o, vtkSMProxy* pxy, QWidget* p = 0, 
     const char* xmlname="LineWidgetRepresentation");
-  ~pqLineWidget();
+  ~pqLineWidget() override;
 
   /// Resets the bounds of the 3D widget to the reference proxy bounds.
   /// This typically calls PlaceWidget on the underlying 3D Widget 
@@ -35,9 +35,9 @@ public:
   /// This should be explicitly called after the panel is created
   /// and the widget is initialized i.e. the reference proxy, controlled proxy
   /// and hints have been set.
-  virtual void resetBounds()
+  void resetBounds() override
     { this->Superclass::resetBounds(); }
-  virtual void resetBounds(double bounds[6]);
+  void resetBounds(double bounds[6]) override;
 
   void setControlledProperties(vtkSMProperty* point1, vtkSMProperty* point2);
   void setLineColor(const QColor& color);
@@ -48,11 +48,11 @@ public slots:
   void onZAxis();
 
 protected:
-  virtual void setControlledProperty(const char* function,
-    vtkSMProperty * controlled_property);
+  void setControlledProperty(const char* function,
+    vtkSMProperty * controlled_property) override;
 
   /// Called on pick.
-  virtual void pick(double, double, double);
+  void pick(double, double, double) override;
 
 private slots:
   void onWidgetVisibilityChanged(bool visible);

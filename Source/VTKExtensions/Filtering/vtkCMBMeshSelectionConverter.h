@@ -32,7 +32,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBMeshSelectionConverter : public vtkSelectionA
 public:
   static vtkCMBMeshSelectionConverter *New();
   vtkTypeMacro(vtkCMBMeshSelectionConverter, vtkSelectionAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Specify the vtkSelection object used for selecting the
@@ -54,14 +54,14 @@ public:
 
 protected:
   vtkCMBMeshSelectionConverter();
-  ~vtkCMBMeshSelectionConverter();
+  ~vtkCMBMeshSelectionConverter() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // runs the algorithm and fills the output with results
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                   vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
   int CreateSelectionLists(
     vtkSelectionNode* selNode, vtkIdTypeArray* outSelectionList,

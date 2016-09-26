@@ -46,7 +46,7 @@ public:
   vtkTypeMacro(vtkCMBArcManager,vtkObject);
   // Description:
   // Print ObjectFactor to stream.
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description
   //Constructs a special temporary arc manager
@@ -54,7 +54,7 @@ public:
   //the arcs you created with, as you will not be able to add new arcs
   //or change any of the relationships
   vtkCMBArcManager(std::set<vtkCMBArc*> arcs);
-  virtual ~vtkCMBArcManager();
+  ~vtkCMBArcManager() override;
 
   // Description:
   // This is a singleton pattern New.  There will only be ONE

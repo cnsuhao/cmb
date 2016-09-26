@@ -68,7 +68,7 @@ public:
             QPixmap *snapPixMap, QPixmap *lockPixMap,
             QTreeWidget *widget,
             QTreeWidget *infoWidget = NULL);
-  virtual ~pqCMBSceneTree();
+  ~pqCMBSceneTree() override;
 
   void empty();
   bool isEmpty() const {return (this->Root == NULL);}

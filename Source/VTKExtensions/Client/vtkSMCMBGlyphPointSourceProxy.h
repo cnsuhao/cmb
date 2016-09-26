@@ -31,7 +31,7 @@ class VTKCMBCLIENT_EXPORT vtkSMCMBGlyphPointSourceProxy : public vtkSMSourceProx
 public:
   static vtkSMCMBGlyphPointSourceProxy* New();
   vtkTypeMacro(vtkSMCMBGlyphPointSourceProxy, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Insert the next point into the object
@@ -72,7 +72,7 @@ public:
 //BTX
 protected:
   vtkSMCMBGlyphPointSourceProxy();
-  ~vtkSMCMBGlyphPointSourceProxy();
+  ~vtkSMCMBGlyphPointSourceProxy() override;
   void SendString(const char *func,
                   const char *data);
   void SendDouble3Vector(const char *func,
