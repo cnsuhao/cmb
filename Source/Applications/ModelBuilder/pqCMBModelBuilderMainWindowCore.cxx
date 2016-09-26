@@ -439,6 +439,25 @@ void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(
 }
 
 //-----------------------------------------------------------------------------
+
+/**\brief Updated UI when the model manager changes.
+  *
+  * When notified by this->Internal->smtkModelManager that the model manager
+  * has changed, tell the mesher panel to use the new one.
+  *
+  * Any other panels that hold onto an smtk::model::ManagerPtr instead
+  * of the pqCMBModelManager (which owns the instance for the application)
+  * should be updated here.
+  */
+void pqCMBModelBuilderMainWindowCore::modelManagerChanged(vtkSMModelManagerProxy* proxy)
+{
+  (void)proxy;
+  this->meshPanel()->updateModel(
+    this->Internal->smtkModelManager,
+    this->meshServiceMonitor());
+}
+
+//-----------------------------------------------------------------------------
 SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
 {
   if(!this->Internal->SimBuilder)
@@ -863,6 +882,10 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     const smtk::model::SessionRef&, bool, bool, bool)),
     this, SLOT(processOperatorResult( const smtk::model::OperatorResult&,
     const smtk::model::SessionRef&, bool, bool, bool)));
+
+  QObject::connect(
+    this->Internal->smtkModelManager, SIGNAL(newModelManagerProxy(vtkSMModelManagerProxy*)),
+    this, SLOT(modelManagerChanged(vtkSMModelManagerProxy*)));
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)),

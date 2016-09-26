@@ -107,6 +107,7 @@ public:
   smtk::common::UUIDs imageRelatedModels(const std::string& imageurl) const;
 
 signals:
+  void newModelManagerProxy(vtkSMModelManagerProxy*); // Emitted each time a new model manager is created on the server.
   void currentModelCleared();
   void newSessionLoaded(const QStringList& bridgeNames);
   void newFileTypesAdded(const QStringList& fileTypes);
