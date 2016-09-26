@@ -21,7 +21,6 @@
 #include "cmbSystemConfig.h"
 
 class QDialog;
-class pqCMBLIDARDataImporter;
 class pqPipelineSource;
 class pqServer;
 
