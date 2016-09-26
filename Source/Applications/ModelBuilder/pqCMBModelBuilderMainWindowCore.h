@@ -26,6 +26,7 @@ class pqCMBSceneTree;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqSMTKMeshPanel;
+class vtkSMModelManagerProxy;
 
 class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 {
@@ -121,6 +122,10 @@ public slots:
   // Description:
   // Called when a new VTK connection is setup for the rep.
   void onVTKConnectionChanged(pqDataRepresentation*);
+
+  // Description:
+  // Called when the pqCMBModelManager initializes/re-initializes with a new model manager.
+  void modelManagerChanged(vtkSMModelManagerProxy* proxy);
 
   // Description:
   // Selection related slots

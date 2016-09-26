@@ -813,6 +813,7 @@ void pqCMBModelManager::initialize()
         SIGNAL(pluginsUpdated()),
         this, SLOT(onPluginLoaded()));
       this->Internal->ManagerProxy->sessionNames();//fetch session names
+      emit newModelManagerProxy(this->Internal->ManagerProxy.GetPointer());
       }
     }
 }
