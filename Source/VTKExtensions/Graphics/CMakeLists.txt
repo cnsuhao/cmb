@@ -9,7 +9,6 @@ set(CMB_Graphics_SRC
   vtkCMBExtractMapContour.cxx
   vtkCMBImplicitPlaneRepresentation.cxx
   vtkCMBLargeTextureSurfaceRepresentation.cxx
-  # vtkCMBPolylineRepresentation.cxx
   vtkCMBInitialValueProblemSolver.cxx
   vtkCMBStreamTracer.cxx
   vtkExtractLeafBlock.cxx
