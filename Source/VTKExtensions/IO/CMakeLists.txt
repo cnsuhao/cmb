@@ -1,7 +1,6 @@
 
-# SMTK, KML, and GDAL is needed.
+# SMTK, and GDAL is needed.
 find_package(SMTK REQUIRED)
-find_package(KML)
 find_package(GDAL)
 include_directories(${GDAL_INCLUDE_DIR})
 
@@ -49,14 +48,12 @@ target_link_libraries(vtkCMBIO
                       smtkCore
                       vtkSMTKReaderExt
                       vtkSMTKMeshingExt
-                      ${GDAL_LIBRARY}
-                      ${KML_LIBRARIES})
+                      ${GDAL_LIBRARY})
 
 
 target_include_directories(vtkCMBIO
   INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   PRIVATE
-    ${KML_INCLUDE_DIRS}
     ${SMTK_INCLUDE_DIRS}/extension/vtk/meshing/
     ${SMTK_INCLUDE_DIRS}/extension/vtk/reader/
   )

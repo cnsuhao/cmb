@@ -2,7 +2,6 @@ SET(CTEST_CUSTOM_COVERAGE_EXCLUDE
   # exclude superbuild submodules
   "/ParaView-prefix/src"
   "/[Qq]t/src/"
-  "/KML-prefix/include/"
   # exclude ParaView3
   "ParaView3"
   # Exclude qt from coverage
