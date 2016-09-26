@@ -117,7 +117,9 @@ public:
     maskActor   = vtkSmartPointer<vtkImageActor>::New();
     imageViewer = vtkSmartPointer<vtkImageViewer2>::New();
     drawing     = vtkSmartPointer<vtkDEMImageCanvasSource2D>::New();
-    filter      = vtkSmartPointer<vtkCMBGrabCutFilter>::New();
+    filterWaterShed = vtkSmartPointer<vtkCMBWatershedFilter>::New();
+    filterGrabCuts  = vtkSmartPointer<vtkCMBGrabCutFilter>::New();
+    filter          = filterGrabCuts;
 
     drawing->SetDrawColor(Forground, Forground, Forground, Alpha);
 
@@ -129,13 +131,19 @@ public:
 
     imageViewer->GetRenderer()->AddActor(maskActor);
 
-    filter->SetInputData(0, image);
-    filter->SetInputConnection(1, drawing->GetOutputPort());
-    filter->SetNumberOfIterations(20);
-    filter->SetPotentialForegroundValue(PotentialFG);
-    filter->SetPotentialBackgroundValue(PotentialBG);
-    filter->SetForegroundValue(Forground);
-    filter->SetBackgroundValue(Background);
+    filterWaterShed->SetInputData(0, image);
+    filterWaterShed->SetInputConnection(1, drawing->GetOutputPort());
+    filterWaterShed->SetForegroundValue(Forground);
+    filterWaterShed->SetBackgroundValue(Background);
+    filterWaterShed->SetUnlabeledValue(PotentialBG);
+
+    filterGrabCuts->SetInputData(0, image);
+    filterGrabCuts->SetInputConnection(1, drawing->GetOutputPort());
+    filterGrabCuts->SetNumberOfIterations(20);
+    filterGrabCuts->SetPotentialForegroundValue(PotentialFG);
+    filterGrabCuts->SetPotentialBackgroundValue(PotentialBG);
+    filterGrabCuts->SetForegroundValue(Forground);
+    filterGrabCuts->SetBackgroundValue(Background);
 
     lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
     lineActor = vtkSmartPointer<vtkActor>::New();
@@ -162,7 +170,7 @@ public:
     contFilter->ComputeScalarsOff();
 
     vtkSmartPointer<vtkTransform> translation = vtkSmartPointer<vtkTransform>::New();
-    translation->Translate(0.0, 0.0, 0.0001);
+    translation->Translate(0.0, 0.0, 0.001);
 
     transformFilter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     transformFilter->SetInputConnection(contFilter->GetOutputPort());
@@ -178,7 +186,9 @@ public:
   int Radius;
   vtkSmartPointer<vtkImageActor> maskActor;
   vtkSmartPointer<vtkDEMImageCanvasSource2D> drawing;
-  vtkSmartPointer<vtkCMBGrabCutFilter> filter;
+  vtkImageAlgorithm * filter;
+  vtkSmartPointer<vtkCMBWatershedFilter> filterWaterShed;
+  vtkSmartPointer<vtkCMBGrabCutFilter> filterGrabCuts;
   vtkSmartPointer<vtkPolyDataMapper> lineMapper;
   vtkSmartPointer<vtkActor> lineActor;
   vtkSmartPointer<vtkImageViewer2> imageViewer;
@@ -541,6 +551,7 @@ vtkCMBGrabCutUI::vtkCMBGrabCutUI()
   connect(this->ui->MinWaterSize, SIGNAL(valueChanged(int)), this, SLOT(setFGFilterSize(int)));
 
   connect(this->ui->DrawMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setDrawMode(int)));
+  connect(this->ui->Algorithm, SIGNAL(currentIndexChanged(int)), this, SLOT(setAlgorithm(int)));
 
   connect(this->ui->LabelTrans, SIGNAL(valueChanged(int)), this, SLOT(setTransparency(int)));
   connect(this->ui->DrawPossible, SIGNAL(clicked(bool)), this, SLOT(showPossibleLabel(bool)));
@@ -591,7 +602,8 @@ void vtkCMBGrabCutUI::open()
   gdal_reader->Update();
   vtkImageData * image = gdal_reader->GetOutput();
   this->internal->imageViewer->SetInputData(image);
-  internal->filter->SetInputData(0, image);
+  internal->filterGrabCuts->SetInputData(0, image);
+  internal->filterWaterShed->SetInputData(0, image);
   internal->drawing->SetNumberOfScalarComponents(4);
   internal->drawing->SetScalarTypeToUnsignedChar();
   internal->drawing->SetExtent(image->GetExtent());
@@ -646,7 +658,10 @@ void vtkCMBGrabCutUI::saveMask()
 
 void vtkCMBGrabCutUI::run()
 {
-  internal->filter->DoGrabCut();
+  if(internal->filter == internal->filterGrabCuts.GetPointer())
+  {
+    internal->filterGrabCuts->DoGrabCut();
+  }
   internal->filter->Update();
 
   internal->imageClassFilter->SetInputData(internal->filter->GetOutput(0));
@@ -709,7 +724,7 @@ void vtkCMBGrabCutUI::pointSize(int i)
 
 void vtkCMBGrabCutUI::numberOfIterations(int j)
 {
-  internal->filter->SetNumberOfIterations(j);
+  internal->filterGrabCuts->SetNumberOfIterations(j);
 }
 
 void vtkCMBGrabCutUI::showPossibleLabel(bool b)
@@ -792,6 +807,21 @@ void vtkCMBGrabCutUI::setDrawMode(int m)
     case 2:
       internal->drawing->SetDrawColor(internal->PotentialBG, internal->PotentialBG,
                                       internal->PotentialBG, internal->PotAlpha);
+      break;
+  }
+}
+
+void vtkCMBGrabCutUI::setAlgorithm(int a)
+{
+  switch(a)
+  {
+    case 0:
+      internal->filter = internal->filterGrabCuts;
+      this->ui->NumberOfIter->setEnabled(true);
+      break;
+    case 1:
+      internal->filter = internal->filterWaterShed;
+      this->ui->NumberOfIter->setEnabled(false);
       break;
   }
 }
