@@ -591,6 +591,4 @@ endif()
     add_medium_test(${testname} ${CMAKE_COMMAND} -Dcfg=$<CONFIGURATION> -P "${CMAKE_BINARY_DIR}/Run${testname}.cmake")
   endfunction()
 
-  add_subdirectory(Testing/Cxx)
-
 endif(BUILD_TESTING)
