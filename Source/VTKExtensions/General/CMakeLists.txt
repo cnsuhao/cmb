@@ -17,7 +17,6 @@ set(CMB_General_SRC
   vtkCMBScalarLineSource.cxx
   vtkCMBSphericalPointSource.cxx
   vtkContourPointCollection.cxx
-  #vtkDateTime.cxx
   vtkDiscreteLookupTable.cxx
   vtkGMSMeshSource.cxx
   vtkHydroModelMultiBlockSource.cxx
