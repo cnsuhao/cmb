@@ -39,7 +39,7 @@ Q_OBJECT
 
 public:
   pqSimBuilderUIManager(QObject* parent = NULL);
-  virtual ~pqSimBuilderUIManager();
+  ~pqSimBuilderUIManager() override;
   smtk::attribute::SystemPtr attributeSystem() const
     {return this->m_AttSystem;}
   smtk::extension::qtUIManager* attributeUIManager() const

@@ -26,7 +26,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcGrowOperator : public vtkObject
 public:
   static vtkCMBArcGrowOperator * New();
   vtkTypeMacro(vtkCMBArcGrowOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Add an Id of an arc to the set of arcs to grow from
@@ -48,7 +48,7 @@ public:
 
 protected:
   vtkCMBArcGrowOperator();
-  virtual ~vtkCMBArcGrowOperator();
+  ~vtkCMBArcGrowOperator() override;
 
   typedef std::set<vtkIdType> ArcSet;
   ArcSet InputArcs;

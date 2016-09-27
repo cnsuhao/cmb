@@ -27,7 +27,7 @@ class VTKCMBCLIENT_EXPORT vtkSMCMBConeCellClassifierProxy : public vtkSMSourcePr
 public:
   static vtkSMCMBConeCellClassifierProxy* New();
   vtkTypeMacro(vtkSMCMBConeCellClassifierProxy, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Insert a cone classifier to the list of cones to be used.  The cone
@@ -52,7 +52,7 @@ public:
 //BTX
 protected:
   vtkSMCMBConeCellClassifierProxy();
-  ~vtkSMCMBConeCellClassifierProxy();
+  ~vtkSMCMBConeCellClassifierProxy() override;
 
 private:
   vtkSMCMBConeCellClassifierProxy(const vtkSMCMBConeCellClassifierProxy&); // Not implemented

@@ -30,7 +30,7 @@ class VTKCMBGRAPHICS_EXPORT vtkImageTextureCrop : public vtkPolyDataAlgorithm
 public:
   static vtkImageTextureCrop *New();
   vtkTypeMacro(vtkImageTextureCrop,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the vtkImageData which is the actual texture input
@@ -60,7 +60,7 @@ public:
 
 protected:
   vtkImageTextureCrop();
-  ~vtkImageTextureCrop();
+  ~vtkImageTextureCrop() override;
 
   vtkRenderer *Renderer;
   vtkExtractSelectedFrustum *ExtractFrustum;
@@ -70,16 +70,16 @@ protected:
   int OutputExtents[6];
   double MagnificationFactor[2];
 
-  virtual int RequestInformation (vtkInformation *,
+  int RequestInformation (vtkInformation *,
                                   vtkInformationVector **,
-                                  vtkInformationVector *);
+                                  vtkInformationVector *) override;
   vtkImageData *AllocateOutputData(vtkDataObject *output);
 
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                           vtkInformationVector **,
-                          vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
-  virtual int FillOutputPortInformation(int, vtkInformation *);
+                          vtkInformationVector *) override;
+  int FillInputPortInformation(int, vtkInformation *) override;
+  int FillOutputPortInformation(int, vtkInformation *) override;
 
   int ComputeSAndTRangeBasedOnRenderer(vtkPolyData *inputPD,
     vtkFloatArray *tCoords, vtkSignedCharArray *&insidedness,

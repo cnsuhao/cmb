@@ -31,7 +31,7 @@ class VTKCMBCLIENT_EXPORT vtkSMSceneContourSourceProxy : public vtkSMSourceProxy
 public:
   static vtkSMSceneContourSourceProxy* New();
   vtkTypeMacro(vtkSMSceneContourSourceProxy, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Copies data from a widget proxy to object represented by this
@@ -49,7 +49,7 @@ public:
 //BTX
 protected:
   vtkSMSceneContourSourceProxy();
-  ~vtkSMSceneContourSourceProxy();
+  ~vtkSMSceneContourSourceProxy() override;
 
 private:
   vtkSMSceneContourSourceProxy(const vtkSMSceneContourSourceProxy&); // Not implemented

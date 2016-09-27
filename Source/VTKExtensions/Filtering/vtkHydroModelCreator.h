@@ -25,16 +25,16 @@ class VTKCMBFILTERING_EXPORT vtkHydroModelCreator : public vtkMultiBlockDataSetA
 public:
   static vtkHydroModelCreator *New();
   vtkTypeMacro(vtkHydroModelCreator,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 
 
 protected:
   vtkHydroModelCreator();
-  ~vtkHydroModelCreator();
+  ~vtkHydroModelCreator() override;
 
-  virtual int FillInputPortInformation(int, vtkInformation* info);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int FillInputPortInformation(int, vtkInformation* info) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkHydroModelCreator(const vtkHydroModelCreator&);  // Not implemented.

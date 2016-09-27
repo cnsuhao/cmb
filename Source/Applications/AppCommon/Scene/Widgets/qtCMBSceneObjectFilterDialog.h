@@ -34,7 +34,7 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneObjectFilterDialog : public QDialog
 
 public:
   qtCMBSceneObjectFilterDialog(QWidget* parent=0);
-  virtual ~qtCMBSceneObjectFilterDialog();
+  ~qtCMBSceneObjectFilterDialog() override;
 
 
   void setBounds(double bounds[6]);
@@ -50,7 +50,7 @@ public:
   void setUseBoundsConstraint(bool);
 
 public slots:
-  virtual void accept();
+  void accept() override;
 
 protected:
 

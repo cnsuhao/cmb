@@ -47,7 +47,7 @@ class VTKCMBIO_EXPORT vtkCMBADHReader : public vtkPointSetAlgorithm
     vtkSetMacro(PrimaryDataSet,int);
   protected:
     vtkCMBADHReader();
-    ~vtkCMBADHReader();
+    ~vtkCMBADHReader() override;
 
     int ReadTemporalData();
 
@@ -56,11 +56,11 @@ class VTKCMBIO_EXPORT vtkCMBADHReader : public vtkPointSetAlgorithm
     //vtkPointSetAlgorithm is changed to RequestInformation
     int ExecuteInformation(vtkInformation*,
         vtkInformationVector**,
-        vtkInformationVector*);
+        vtkInformationVector*) override;
     int RequestInformation(vtkInformation *,
         vtkInformationVector **,
         vtkInformationVector *);
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
     char *FileName;
     char *OldFileName;

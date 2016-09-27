@@ -27,7 +27,7 @@ class VTKCMBFILTERING_EXPORT vtkClosestPointFilter : public vtkPolyDataAlgorithm
 public:
   static vtkClosestPointFilter *New();
   vtkTypeMacro(vtkClosestPointFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get/Set the Test Point - note that this will not
@@ -107,7 +107,7 @@ public:
 
 protected:
   vtkClosestPointFilter();
-  ~vtkClosestPointFilter();
+  ~vtkClosestPointFilter() override;
 
   double TestPoint[3];
   double TestLine[6];
@@ -120,7 +120,7 @@ protected:
   vtkAbstractTransform *TransformInverse;
   vtkCellLocator *Locator;
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
   vtkTimeStamp BuildTime;  // time at which the transform was built
 
 private:

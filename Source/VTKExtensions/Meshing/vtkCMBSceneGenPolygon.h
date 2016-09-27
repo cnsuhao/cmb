@@ -26,16 +26,16 @@ class VTKCMBMESHING_EXPORT vtkCMBSceneGenPolygon : public vtkPolyDataAlgorithm
 public:
   static vtkCMBSceneGenPolygon *New();
   vtkTypeMacro(vtkCMBSceneGenPolygon,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   vtkCMBSceneGenPolygon();
-  ~vtkCMBSceneGenPolygon();
+  ~vtkCMBSceneGenPolygon() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
-  virtual int RequestData(vtkInformation* request,
+  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation* request,
                                  vtkInformationVector** inputVector,
-                                 vtkInformationVector* outputVector);
+                                 vtkInformationVector* outputVector) override;
 
   bool PrepForMeshing(vtkInformationVector* input, vtkPolyData *mesh);
   void AppendArcSets(vtkInformationVector* input, vtkPolyData *mesh);

@@ -30,9 +30,9 @@ class CMBAPPCOMMON_EXPORT vtkQtCMBConnectComboBox : public QComboBox
 public:
 
   vtkQtCMBConnectComboBox(QWidget* p = NULL);
-  ~vtkQtCMBConnectComboBox();
+  ~vtkQtCMBConnectComboBox() override;
 
-  virtual void showPopup();
+  void showPopup() override;
   virtual void setVTKConnectObject(vtkObject* obj, unsigned long evt);
 
 signals:

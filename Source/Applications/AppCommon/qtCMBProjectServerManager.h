@@ -26,7 +26,7 @@ class CMBAPPCOMMON_EXPORT qtCMBProjectServerManager : public QObject
 public:
   qtCMBProjectServerManager( );
   qtCMBProjectServerManager(QString const& path);
-  ~qtCMBProjectServerManager();
+  ~qtCMBProjectServerManager() override;
 
   enum PROGRAM
   {

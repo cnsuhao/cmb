@@ -61,13 +61,13 @@ class pqCMBPointsBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 
 public:
   pqCMBPointsBuilderMainWindowCore(QWidget* parent);
-  virtual ~pqCMBPointsBuilderMainWindowCore();
+  ~pqCMBPointsBuilderMainWindowCore() override;
 
   bool IsDataLoaded();
   void setupControlPanel(QWidget* parent);
   QWidget* getControlPanel();
   void updateSelection(pqOutputPort* selPort);
-  void setupProgressBar(QStatusBar*);
+  void setupProgressBar(QStatusBar*) override;
   pqCMBLIDARTerrainExtractionManager *getTerrainExtractionManager();
   pqCMBLIDARReaderManager *getReaderManager()
     { return this->ReaderManager; }
@@ -83,7 +83,7 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  virtual void onServerCreationFinished(pqServer *server);
+  void onServerCreationFinished(pqServer *server) override;
 
   virtual void onOpenMoreFiles(pqCMBLoadDataReaction*);
 
@@ -95,17 +95,17 @@ public slots:
 
   // Resets the center of rotation to the center of the active
   // source in the active view.
-  void resetCenterOfRotationToCenterOfCurrentData();
+  void resetCenterOfRotationToCenterOfCurrentData() override;
 
   // Description:
   // Closes the currently opened solid.
-  void onCloseData();
-  void closeData();
+  void onCloseData() override;
+  void closeData() override;
 
   // Description:
   // Saves the data (geometry + region and material IDs) in a file.
-  void onSaveData();
-  void onSaveAsData();
+  void onSaveData() override;
+  void onSaveAsData() override;
   void onAcceptToLoad();
 
   // Description:

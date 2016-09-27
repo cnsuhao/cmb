@@ -29,7 +29,7 @@ public:
   ///   Constructs an options page.
   /// \param parent The parent widget.
   qtCMBOptionsPage(QWidget *parent=0);
-  virtual ~qtCMBOptionsPage() {}
+  ~qtCMBOptionsPage() override {}
 
   /// \brief
   ///   Gets whether or not the apply button is used by the options.

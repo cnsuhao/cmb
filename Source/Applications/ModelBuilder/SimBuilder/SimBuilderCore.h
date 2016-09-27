@@ -34,7 +34,7 @@ class SimBuilderCore : public QObject
 
 public:
   SimBuilderCore(pqServer*, pqRenderView* view);
-  virtual ~SimBuilderCore();
+  ~SimBuilderCore() override;
 
   bool isSimModelLoaded() const {return this->IsSimModelLoaded;}
   void clearSimulationModel();

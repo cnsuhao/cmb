@@ -27,7 +27,7 @@ class qtCMBProfileWedgeFunctionWidget: public QWidget
   Q_OBJECT
 public:
   qtCMBProfileWedgeFunctionWidget(QWidget * parent, cmbProfileWedgeFunction * function);
-  ~qtCMBProfileWedgeFunctionWidget();
+  ~qtCMBProfileWedgeFunctionWidget() override;
   void setRelative(bool);
 protected slots:
   void setLeftSlope(double);

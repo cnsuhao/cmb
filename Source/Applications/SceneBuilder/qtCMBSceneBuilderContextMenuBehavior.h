@@ -31,7 +31,7 @@ class qtCMBSceneBuilderContextMenuBehavior : public QObject
   typedef QObject Superclass;
 public:
   qtCMBSceneBuilderContextMenuBehavior(pqCMBSceneTree *tree, QObject* parent=0);
-  virtual ~qtCMBSceneBuilderContextMenuBehavior();
+  ~qtCMBSceneBuilderContextMenuBehavior() override;
   void setTree(pqCMBSceneTree *tree){Tree=tree;}
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context
@@ -46,7 +46,7 @@ protected:
   /// from QWidget to popup the context menu since all of those mechanism seem
   /// to eat away the right button release, leaving the render window in a
   /// dragging state.
-  virtual bool eventFilter(QObject* caller, QEvent* e);
+  bool eventFilter(QObject* caller, QEvent* e) override;
 
   pqCMBSceneTree* Tree;
   QPoint Position;

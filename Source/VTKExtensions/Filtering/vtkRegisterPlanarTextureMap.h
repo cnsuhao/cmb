@@ -40,7 +40,7 @@ class VTKCMBFILTERING_EXPORT vtkRegisterPlanarTextureMap : public vtkDataSetAlgo
 {
 public:
   vtkTypeMacro(vtkRegisterPlanarTextureMap,vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with identity mapping with clipping off.
@@ -117,9 +117,9 @@ public:
 
 protected:
   vtkRegisterPlanarTextureMap();
-  ~vtkRegisterPlanarTextureMap() {};
+  ~vtkRegisterPlanarTextureMap() override {};
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double SMap[3];
   double TMap[3];

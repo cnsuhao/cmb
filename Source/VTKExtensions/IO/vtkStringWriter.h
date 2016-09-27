@@ -28,7 +28,7 @@ class VTKCMBIO_EXPORT vtkStringWriter : public vtkPolyDataAlgorithm
 public:
   static vtkStringWriter *New();
   vtkTypeMacro(vtkStringWriter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to write.
@@ -42,13 +42,13 @@ public:
 
 protected:
   vtkStringWriter();
-  ~vtkStringWriter();
+  ~vtkStringWriter() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
+                         vtkInformationVector *) override;
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
   char *FileName;
   char *Text;

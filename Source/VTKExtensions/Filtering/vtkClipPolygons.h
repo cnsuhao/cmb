@@ -64,7 +64,7 @@ class VTKCMBFILTERING_EXPORT vtkClipPolygons : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkClipPolygons,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with user-specified implicit function; InsideOut turned off;
@@ -124,7 +124,7 @@ public:
 
   // Description:
   // Return the mtime also considering the locator and clip function.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   // Description:
   // Transform to apply to the pts being read in for determining whether the
@@ -158,9 +158,9 @@ public:
 //BTX
 protected:
   vtkClipPolygons();
-  ~vtkClipPolygons();
+  ~vtkClipPolygons() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkIncrementalPointLocator *Locator;
   int GenerateClippedOutput;

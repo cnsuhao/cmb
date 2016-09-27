@@ -24,7 +24,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcDeleteOperator : public vtkObject
 public:
   static vtkCMBArcDeleteOperator * New();
   vtkTypeMacro(vtkCMBArcDeleteOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Set the mode for the delete operator to work in
@@ -39,7 +39,7 @@ public:
 
 protected:
   vtkCMBArcDeleteOperator();
-  virtual ~vtkCMBArcDeleteOperator();
+  ~vtkCMBArcDeleteOperator() override;
   int DeleteMode;
 
 private:

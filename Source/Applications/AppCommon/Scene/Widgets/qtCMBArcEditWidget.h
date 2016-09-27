@@ -58,7 +58,7 @@ Q_OBJECT
 
 public:
   ArcPointPicker(QObject * parent);
-  virtual ~ArcPointPicker();
+  ~ArcPointPicker() override;
 signals:
   //called by the selector when a valid selection is finished.
   void pickFinished();
@@ -98,7 +98,7 @@ public:
   friend class pqCmbModifierArcManager;
 
   explicit qtCMBArcEditWidget(QWidget *parent = 0);
-  virtual ~qtCMBArcEditWidget();
+  ~qtCMBArcEditWidget() override;
 
   virtual void setView(pqRenderView* view) { this->View=view; }
   virtual void setArc(pqCMBArc* arc);

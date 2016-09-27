@@ -28,7 +28,7 @@ class CMBAPPCOMMON_EXPORT qtCMBTINStitcherDialog : public QDialog
   Q_OBJECT
 public:
   qtCMBTINStitcherDialog(QWidget *parent = NULL, Qt::WindowFlags flags= 0);
-  virtual ~qtCMBTINStitcherDialog();
+  ~qtCMBTINStitcherDialog() override;
 
   // minimum angle for use inside Triangle
   void setMinimumAngle(double angle);

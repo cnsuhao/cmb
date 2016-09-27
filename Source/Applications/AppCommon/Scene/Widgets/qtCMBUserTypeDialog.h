@@ -39,7 +39,7 @@ protected slots:
 
 protected:
   qtCMBUserTypeDialog(pqCMBSceneNode *node);
-  virtual ~qtCMBUserTypeDialog();
+  ~qtCMBUserTypeDialog() override;
   void exec();
 
   Ui::qtObjectTypeDialog *TypeDialog;

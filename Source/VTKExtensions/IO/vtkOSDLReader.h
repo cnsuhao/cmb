@@ -26,7 +26,7 @@ class VTKCMBIO_EXPORT vtkOSDLReader : public vtkMultiBlockDataSetAlgorithm
 public:
   static vtkOSDLReader *New();
   vtkTypeMacro(vtkOSDLReader,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -35,14 +35,14 @@ public:
 
 protected:
   vtkOSDLReader();
-  ~vtkOSDLReader();
+  ~vtkOSDLReader() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
+                         vtkInformationVector *) override;
   int RequestData(vtkInformation *,
                   vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
   void AppendBlocks( vtkMultiBlockDataSet *output, vtkDataObject *dataObject );
   char *FileName;

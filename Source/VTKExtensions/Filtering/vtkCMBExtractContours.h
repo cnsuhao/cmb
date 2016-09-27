@@ -23,7 +23,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBExtractContours : public vtkPolyDataAlgorithm
 public:
   static vtkCMBExtractContours *New();
   vtkTypeMacro(vtkCMBExtractContours,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(ContourIndex,vtkIdType);
   vtkGetMacro(ContourIndex,vtkIdType);
@@ -33,11 +33,11 @@ public:
 
 protected:
   vtkCMBExtractContours();
-  ~vtkCMBExtractContours();
+  ~vtkCMBExtractContours() override;
 
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                                  vtkInformationVector** inputVector,
-                                 vtkInformationVector* outputVector);
+                                 vtkInformationVector* outputVector) override;
 
 
   void BuildSelectedIds(vtkPolyData* input);

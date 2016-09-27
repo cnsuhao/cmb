@@ -32,7 +32,7 @@ class CMBAPPCOMMON_EXPORT pqCMBColorMapWidget : public QWidget
   typedef QWidget Superclass;
 public:
   pqCMBColorMapWidget(QWidget* parent=0);
-  virtual ~pqCMBColorMapWidget();
+  ~pqCMBColorMapWidget() override;
 
 public slots:
   void setDataRepresentation(pqDataRepresentation* repr);

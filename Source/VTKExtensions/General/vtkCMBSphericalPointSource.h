@@ -32,7 +32,7 @@ class VTKCMBGENERAL_EXPORT vtkCMBSphericalPointSource : public vtkPolyDataAlgori
 {
 public:
   vtkTypeMacro(vtkCMBSphericalPointSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with default position at (0,0,0), a radius of 0, phi Resolution = 3, and theta and r Resolutions = 1
@@ -74,9 +74,9 @@ public:
 
 protected:
   vtkCMBSphericalPointSource();
-  ~vtkCMBSphericalPointSource() {}
+  ~vtkCMBSphericalPointSource() override {}
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   double Radius;
   double Center[3];
   double RResolution;

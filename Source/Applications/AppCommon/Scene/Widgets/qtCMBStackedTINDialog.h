@@ -46,7 +46,7 @@ protected slots:
 
 protected:
   qtCMBStackedTINDialog(pqCMBSceneNode *n);
-  virtual ~qtCMBStackedTINDialog();
+  ~qtCMBStackedTINDialog() override;
   int exec();
   int Status;
   Ui::qtSceneGenqtCMBStackedTINDialog *StackDialog;

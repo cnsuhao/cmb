@@ -33,7 +33,7 @@ class VTKCMBIO_EXPORT vtkOmicronModelInputReader : public vtkMultiBlockDataSetAl
 public:
   static vtkOmicronModelInputReader *New();
   vtkTypeMacro(vtkOmicronModelInputReader,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -49,7 +49,7 @@ public:
   //BTX
 protected:
   vtkOmicronModelInputReader();
-  ~vtkOmicronModelInputReader();
+  ~vtkOmicronModelInputReader() override;
 
   char *FileName;
   bool LoadGeometry;
@@ -62,8 +62,8 @@ protected:
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+                         vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkOmicronModelInputReader(const vtkOmicronModelInputReader&);  // Not implemented.

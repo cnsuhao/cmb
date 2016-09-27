@@ -32,7 +32,7 @@ class pqCMBPointsBuilderMainWindow : public pqCMBCommonMainWindow
 
 public:
   pqCMBPointsBuilderMainWindow();
-  virtual ~pqCMBPointsBuilderMainWindow();
+  ~pqCMBPointsBuilderMainWindow() override;
 
 public slots:
 
@@ -48,15 +48,15 @@ protected slots:
 
   // Description:
   // open About dialog
-  void onHelpAbout();
-  void onHelpHelp();
+  void onHelpAbout() override;
+  void onHelpHelp() override;
 
  // void onRenderRequested();
   void onViewSelected(pqOutputPort*);
-  void onEnableMenuItems(bool state);
+  void onEnableMenuItems(bool state) override;
 
-  virtual void loadMultiFilesStart();
-  virtual void loadMultiFilesStop();
+  void loadMultiFilesStart() override;
+  void loadMultiFilesStop() override;
 
 
 protected:
@@ -65,7 +65,7 @@ protected:
 
   // Description:
   // 3D Selection from the scene methods
-  virtual void updateSelection();
+  void updateSelection() override;
 
   // Initializes the application.
   virtual void initializeApplication();

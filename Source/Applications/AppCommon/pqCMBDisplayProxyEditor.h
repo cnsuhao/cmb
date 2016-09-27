@@ -28,7 +28,7 @@ class CMBAPPCOMMON_EXPORT pqCMBDisplayProxyEditor : public pqProxyWidget
 
 public:
   pqCMBDisplayProxyEditor(pqDataRepresentation* display, QWidget* p = NULL);
-  virtual ~pqCMBDisplayProxyEditor();
+  ~pqCMBDisplayProxyEditor() override;
 
 public:
 

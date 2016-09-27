@@ -44,7 +44,7 @@ protected:
     NewUnitsDialog(NULL), MainDialog(NULL), NewUnits(cmbSceneUnits::Unknown),
     Status(false)
     {}
-  virtual ~qtCMBNewSceneUnitsDialog();
+  ~qtCMBNewSceneUnitsDialog() override;
   bool exec(cmbSceneUnits::Enum &newUnits);
 
   Ui::qtNewSceneUnitsDialog *NewUnitsDialog;

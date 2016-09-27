@@ -29,7 +29,7 @@ public:
   vtkTypeMacro(vtkCMBDEMExportDataExtractor, vtkPolyDataAlgorithm);
 
   vtkCMBDEMExportDataExtractor();
-  virtual ~vtkCMBDEMExportDataExtractor();
+  ~vtkCMBDEMExportDataExtractor() override;
 
   // Description:
   // Return proj4 spatial reference.
@@ -49,11 +49,11 @@ public:
 
 protected:
 
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
 protected:
 

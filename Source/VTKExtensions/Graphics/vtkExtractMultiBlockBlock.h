@@ -27,7 +27,7 @@ class VTKCMBGRAPHICS_EXPORT vtkExtractMultiBlockBlock : public vtkMultiBlockData
 public:
   static vtkExtractMultiBlockBlock* New();
   vtkTypeMacro(vtkExtractMultiBlockBlock, vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the block index to be extracted.
@@ -37,14 +37,14 @@ public:
 //BTX
 protected:
   vtkExtractMultiBlockBlock();
-  ~vtkExtractMultiBlockBlock() {};
+  ~vtkExtractMultiBlockBlock() override {};
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   /// Implementation of the algorithm.
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                           vtkInformationVector **,
-                          vtkInformationVector *);
+                          vtkInformationVector *) override;
 
 
 private:

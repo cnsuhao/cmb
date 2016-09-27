@@ -29,7 +29,7 @@ class VTKCMBIO_EXPORT vtkDEMRasterWriter : public vtkWriter
 public:
   static vtkDEMRasterWriter *New();
   vtkTypeMacro(vtkDEMRasterWriter,vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get/Set the filename.
@@ -70,7 +70,7 @@ public:
 
 protected:
   vtkDEMRasterWriter();
-  ~vtkDEMRasterWriter();
+  ~vtkDEMRasterWriter() override;
 
   int Zone;
   bool IsNorth;
@@ -81,12 +81,12 @@ protected:
   double Scale;
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
 
   char* FileName;
   bool WriteAsSinglePiece;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   void createOutputFile(std::string fname, vtkPolyData *inputPoly);
 

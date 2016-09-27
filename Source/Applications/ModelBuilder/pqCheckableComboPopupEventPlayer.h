@@ -29,7 +29,7 @@ class pqCheckableComboPopupEventPlayer : public pqWidgetEventPlayer
 public:
   pqCheckableComboPopupEventPlayer(QObject* p=0);
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqCheckableComboPopupEventPlayer(const pqCheckableComboPopupEventPlayer&);

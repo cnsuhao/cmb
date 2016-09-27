@@ -29,7 +29,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcSnapClientOperator : public vtkSMSourceProxy
 public:
   static vtkCMBArcSnapClientOperator* New();
   vtkTypeMacro(vtkCMBArcSnapClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   // Returns the radius of the snapping setting.
@@ -43,7 +43,7 @@ public:
 
 protected:
   vtkCMBArcSnapClientOperator();
-  ~vtkCMBArcSnapClientOperator();
+  ~vtkCMBArcSnapClientOperator() override;
 
 private:
   vtkCMBArcSnapClientOperator(const vtkCMBArcSnapClientOperator&); // Not implemented

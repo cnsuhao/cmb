@@ -32,13 +32,13 @@ class  CMBAPPCOMMON_EXPORT pqCMBPolygon : public pqCMBTexturedObject
 public:
   pqCMBPolygon(double minAngle, double edgeLength,
     std::vector<pqCMBSceneNode*> &inputNodes);
-  virtual ~pqCMBPolygon();
+  ~pqCMBPolygon() override;
 
-  virtual bool isDefaultConstrained() const{return true;}
+  bool isDefaultConstrained() const override{return true;}
 
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true);
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                    bool updateRep = true) override;
 
   bool writeToFile();
   std::string getFileName() const;
@@ -57,7 +57,7 @@ public:
   const std::set<pqCMBArc*>& arcsUsedByPolygon() const
     { return this->InputArcs; }
 
-  virtual void updateRepresentation();
+  void updateRepresentation() override;
 
 protected:
   //remesh the polygon, if the input arcs have changed.

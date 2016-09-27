@@ -31,7 +31,7 @@ class VTKCMBCLIENT_EXPORT vtkSMMeshSourceProxy : public vtkSMDataSourceProxy
 public:
   static vtkSMMeshSourceProxy* New();
   vtkTypeMacro(vtkSMMeshSourceProxy, vtkSMDataSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Modify the mesh according to the transformed moved input proxy
@@ -41,7 +41,7 @@ public:
 //BTX
 protected:
   vtkSMMeshSourceProxy();
-  ~vtkSMMeshSourceProxy();
+  ~vtkSMMeshSourceProxy() override;
 
 private:
   vtkSMMeshSourceProxy(const vtkSMMeshSourceProxy&); // Not implemented

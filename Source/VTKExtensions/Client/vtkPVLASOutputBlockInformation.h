@@ -27,20 +27,20 @@ class VTKCMBCLIENT_EXPORT vtkPVLASOutputBlockInformation : public vtkPVInformati
 public:
   static vtkPVLASOutputBlockInformation* New();
   vtkTypeMacro(vtkPVLASOutputBlockInformation, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Merge another information object. Calls AddInformation(info, 0).
-  virtual void AddInformation(vtkPVInformation* info);
+  void AddInformation(vtkPVInformation* info) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   vtkGetMacro(NumberOfPoints, vtkIdType);
   vtkGetMacro(NumberOfPointsInClassification, vtkIdType);
@@ -51,7 +51,7 @@ public:
   //BTX
 protected:
   vtkPVLASOutputBlockInformation();
-  ~vtkPVLASOutputBlockInformation();
+  ~vtkPVLASOutputBlockInformation() override;
 
   // Data information collected from remote processes.
   vtkIdType      NumberOfPoints;

@@ -29,10 +29,10 @@ public:
   pqCMBVOI(pqPipelineSource*source,
               pqRenderView *view, pqServer *server);
 
-  virtual ~pqCMBVOI();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
+  ~pqCMBVOI() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
   void setVOI(double minPnt[3], double maxPnt[3]);
   int getVOI(double minPnt[3], double maxPnt[3]) const;
 

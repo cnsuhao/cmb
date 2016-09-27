@@ -18,7 +18,7 @@ public:
   rtvl_votee_d(vnl_vector_fixed<double, N> const& votee_location,
                vnl_matrix_fixed<double, N, N>& votee_tensor,
                vnl_matrix_fixed<double, N, N> (&votee_dtensor)[N]);
-  virtual void go(rtvl_vote_internal<N>& vi, double saliency);
+  void go(rtvl_vote_internal<N>& vi, double saliency) override;
 private:
   vnl_matrix_fixed<double, N, N> (&dtensor_)[N];
 };

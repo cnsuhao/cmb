@@ -38,16 +38,16 @@ class qtCMBOptionsDialogModel : public QAbstractItemModel
 {
 public:
   qtCMBOptionsDialogModel(QObject *parent=0);
-  virtual ~qtCMBOptionsDialogModel();
+  ~qtCMBOptionsDialogModel() override;
 
-  virtual int rowCount(const QModelIndex &parent=QModelIndex()) const;
-  virtual int columnCount(const QModelIndex &parent=QModelIndex()) const;
-  virtual QModelIndex index(int row, int column,
-      const QModelIndex &parent=QModelIndex()) const;
-  virtual QModelIndex parent(const QModelIndex &child) const;
+  int rowCount(const QModelIndex &parent=QModelIndex()) const override;
+  int columnCount(const QModelIndex &parent=QModelIndex()) const override;
+  QModelIndex index(int row, int column,
+      const QModelIndex &parent=QModelIndex()) const override;
+  QModelIndex parent(const QModelIndex &child) const override;
 
-  virtual QVariant data(const QModelIndex &index,
-      int role=Qt::DisplayRole) const;
+  QVariant data(const QModelIndex &index,
+      int role=Qt::DisplayRole) const override;
 
   QModelIndex getIndex(const QString &path) const;
   QString getPath(const QModelIndex &index) const;

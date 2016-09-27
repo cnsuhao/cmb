@@ -32,7 +32,7 @@ class qtCMBLIDARFilterDialog : public QDialog
 
 public:
   qtCMBLIDARFilterDialog(QWidget *parent = NULL);
-  virtual ~qtCMBLIDARFilterDialog();
+  ~qtCMBLIDARFilterDialog() override;
 
   //sets the thresholdSource's values to dialog's values
   void UpdateThresholdSource(vtkSMSourceProxy* thresholdSource);

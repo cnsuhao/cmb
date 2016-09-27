@@ -33,7 +33,7 @@ class pqCMBSceneBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 
 public:
   pqCMBSceneBuilderMainWindowCore(QWidget* parent);
-  virtual ~pqCMBSceneBuilderMainWindowCore();
+  ~pqCMBSceneBuilderMainWindowCore() override;
 
   void setpqCMBSceneTree(pqCMBSceneTree * tree);
 
@@ -47,20 +47,20 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  virtual void onServerCreationFinished(pqServer *server);
+  void onServerCreationFinished(pqServer *server) override;
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
-  void onReaderCreated(pqPipelineSource* reader, const QString& filename);
+  void onReaderCreated(pqPipelineSource* reader, const QString& filename) override;
 
   // Resets the center of rotation to the center of the active
   // source in the active view.
-  void resetCenterOfRotationToCenterOfCurrentData();
+  void resetCenterOfRotationToCenterOfCurrentData() override;
 
   // Description:
   // Closes the currently opened solid.
-  void onCloseData();
-  void closeData();
+  void onCloseData() override;
+  void closeData() override;
   void onPackageScene();
 
   // Description:
@@ -84,12 +84,12 @@ public slots:
 
   // Description:
   // Saves the data (geometry + region and material IDs) in a file.
-  void onSaveData();
-  void onSaveAsData();
+  void onSaveData() override;
+  void onSaveAsData() override;
 
   void onRubberBandSelect(bool);
-  virtual void onPreviewAccepted();
-  virtual void onPreviewRejected();
+  void onPreviewAccepted() override;
+  void onPreviewRejected() override;
   void selectGlyph(QList<pqCMBGlyphObject*> &glyphList);
 
   // Description:
@@ -112,7 +112,7 @@ public slots:
   void updateNodeColor();
 
   // Zoom onto the selected object
-  void zoomOnSelection();
+  void zoomOnSelection() override;
 
   // stitch selected TINs
   void stitchTINs();
@@ -123,16 +123,16 @@ public slots:
   // Subclass should override this method to add app-specific options.
   // This superclass method will add app-common options to the dialog
   // See also, applyAppSettings
-  virtual void onEditSettings();
+  void onEditSettings() override;
 
   // Description:
   // Subclass should override this method to load app-specific
   // settings, and this Superclass method will load common settings.
   // See Also, onEditSettings()
-  virtual void applyAppSettings();
+  void applyAppSettings() override;
 
 protected:
-  virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
+  void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
 
 private slots:
 
@@ -162,7 +162,7 @@ private slots:
 
   // Description:
   // Save the model.
-  void saveData(const QString& filename);
+  void saveData(const QString& filename) override;
 
   void boxWidgetInteraction();
 

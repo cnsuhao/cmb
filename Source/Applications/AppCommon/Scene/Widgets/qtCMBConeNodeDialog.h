@@ -44,7 +44,7 @@ protected slots:
 
 protected:
   qtCMBConeNodeDialog(pqCMBSceneNode *n);
-  virtual ~qtCMBConeNodeDialog();
+  ~qtCMBConeNodeDialog() override;
   int exec();
   int Status;
   Ui::qtCMBConicalSourceDialog *ConeDialog;

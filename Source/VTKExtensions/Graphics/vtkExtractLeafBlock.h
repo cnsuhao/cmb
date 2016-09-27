@@ -30,7 +30,7 @@ class VTKCMBGRAPHICS_EXPORT vtkExtractLeafBlock : public vtkPolyDataAlgorithm
 public:
   static vtkExtractLeafBlock* New();
   vtkTypeMacro(vtkExtractLeafBlock, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Select the block index to be extracted.  The filter will iterate through
@@ -41,14 +41,14 @@ public:
 //BTX
 protected:
   vtkExtractLeafBlock();
-  ~vtkExtractLeafBlock() {};
+  ~vtkExtractLeafBlock() override {};
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   /// Implementation of the algorithm.
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                           vtkInformationVector **,
-                          vtkInformationVector *);
+                          vtkInformationVector *) override;
 
 
 private:

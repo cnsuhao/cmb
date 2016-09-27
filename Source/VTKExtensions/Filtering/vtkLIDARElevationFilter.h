@@ -32,7 +32,7 @@ class VTKCMBFILTERING_EXPORT vtkLIDARElevationFilter : public vtkDataSetAlgorith
 public:
   static vtkLIDARElevationFilter* New();
   vtkTypeMacro(vtkLIDARElevationFilter, vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Define one end of the line (small scalar values).  Default is
@@ -69,11 +69,11 @@ public:
 
 protected:
   vtkLIDARElevationFilter();
-  ~vtkLIDARElevationFilter();
+  ~vtkLIDARElevationFilter() override;
 
   int RequestData(vtkInformation*,
                   vtkInformationVector**,
-                  vtkInformationVector*);
+                  vtkInformationVector*) override;
 
   vtkTransform *Transform;
   double LowPoint[3];

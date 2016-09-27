@@ -14,7 +14,7 @@ class MyToolBarActions : public QActionGroup
   Q_OBJECT
 public:
   MyToolBarActions(QObject* p);
-  ~MyToolBarActions();
+  ~MyToolBarActions() override;
 
 public slots:
   void onAction();

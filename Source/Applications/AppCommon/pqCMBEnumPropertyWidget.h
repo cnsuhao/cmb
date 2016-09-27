@@ -29,7 +29,7 @@ class CMBAPPCOMMON_EXPORT pqCMBEnumPropertyWidget : public QWidget
 
 public:
   pqCMBEnumPropertyWidget(QWidget* parent=0);
-  virtual ~pqCMBEnumPropertyWidget();
+  ~pqCMBEnumPropertyWidget() override;
 
   // Description:
   // Set the property name of the proxy that will be linked to the widget

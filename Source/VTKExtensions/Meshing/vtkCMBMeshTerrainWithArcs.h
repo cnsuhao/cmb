@@ -26,7 +26,7 @@ class VTKCMBMESHING_EXPORT vtkCMBMeshTerrainWithArcs : public vtkPolyDataAlgorit
 public:
   static vtkCMBMeshTerrainWithArcs *New();
   vtkTypeMacro(vtkCMBMeshTerrainWithArcs,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Set/Get the bounds of the VOI.
@@ -48,12 +48,12 @@ public:
 
 protected:
   vtkCMBMeshTerrainWithArcs();
-  ~vtkCMBMeshTerrainWithArcs();
+  ~vtkCMBMeshTerrainWithArcs() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
-  virtual int RequestData(vtkInformation*,
+  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation*,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) override;
 
   void DetermineNumberOfProgressSteps(const int &numInputs);
   void NextProgressStep();

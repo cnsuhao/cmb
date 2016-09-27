@@ -31,7 +31,7 @@ class VTKCMBFILTERING_EXPORT vtkGMSMeshSelectionRegionFilter : public vtkUnstruc
 public:
   static vtkGMSMeshSelectionRegionFilter *New();
   vtkTypeMacro(vtkGMSMeshSelectionRegionFilter, vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Specify the vtkSelection object used for selecting the
@@ -58,14 +58,14 @@ public:
 
 protected:
   vtkGMSMeshSelectionRegionFilter();
-  ~vtkGMSMeshSelectionRegionFilter();
+  ~vtkGMSMeshSelectionRegionFilter() override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // runs the algorithm and fills the output with results
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                   vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 
   int ModifySelectedCellRegions(

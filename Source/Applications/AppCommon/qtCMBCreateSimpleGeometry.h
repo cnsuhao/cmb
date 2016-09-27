@@ -29,7 +29,7 @@ class CMBAPPCOMMON_EXPORT qtCMBCreateSimpleGeometry : public QDialog
 
 public:
   qtCMBCreateSimpleGeometry(QWidget* Parent);
-  virtual ~qtCMBCreateSimpleGeometry();
+  ~qtCMBCreateSimpleGeometry() override;
 
   int getGeometryType();
   void getGeometryValues(std::vector<double>& values);

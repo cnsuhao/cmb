@@ -28,7 +28,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcDeleteClientOperator : public vtkSMSourceProx
 public:
   static vtkCMBArcDeleteClientOperator* New();
   vtkTypeMacro(vtkCMBArcDeleteClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Delete the arc with the provided id on the server
@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkCMBArcDeleteClientOperator();
-  ~vtkCMBArcDeleteClientOperator();
+  ~vtkCMBArcDeleteClientOperator() override;
 
   enum Mode{
     Delete_Mode = 0,

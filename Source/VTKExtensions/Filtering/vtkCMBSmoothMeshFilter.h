@@ -31,7 +31,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBSmoothMeshFilter : public vtkPolyDataAlgorith
 {
 public:
   vtkTypeMacro(vtkCMBSmoothMeshFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkCMBSmoothMeshFilter *New();
 
   // Description:
@@ -101,10 +101,10 @@ public:
 //BTX
 protected:
   vtkCMBSmoothMeshFilter();
-  ~vtkCMBSmoothMeshFilter();
+  ~vtkCMBSmoothMeshFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
   void ExtractSurfaceCells(bool bVolume,
     vtkIdList* tmpIds, vtkIdList* nxtPts, vtkIdType cellId, vtkUnstructuredGrid* input,
     vtkIdTypeArray* meshCellIdArray, vtkIdTypeArray* meshNodeIdArray,

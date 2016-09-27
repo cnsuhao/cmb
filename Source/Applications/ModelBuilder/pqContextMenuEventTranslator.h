@@ -29,9 +29,9 @@ class pqContextMenuEventTranslator :
   
 public:
   pqContextMenuEventTranslator(QObject* p=0);
-  ~pqContextMenuEventTranslator();
+  ~pqContextMenuEventTranslator() override;
   
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 private:
   pqContextMenuEventTranslator(const pqContextMenuEventTranslator&);

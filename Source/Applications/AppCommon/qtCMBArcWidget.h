@@ -27,7 +27,7 @@ class CMBAPPCOMMON_EXPORT qtCMBArcWidget : public pq3DWidget
   typedef pq3DWidget Superclass;
 public:
   qtCMBArcWidget(vtkSMProxy* refProxy, vtkSMProxy* proxy, QWidget* parent);
-  virtual ~qtCMBArcWidget();
+  ~qtCMBArcWidget() override;
 
   /// Resets the bounds of the 3D widget to the reference proxy bounds.
   /// This typically calls PlaceWidget on the underlying 3D Widget
@@ -35,8 +35,8 @@ public:
   /// This should be explicitly called after the panel is created
   /// and the widget is initialized i.e. the reference proxy, controlled proxy
   /// and hints have been set.
-  virtual void resetBounds(double /*bounds*/[6]) {}
-  virtual void resetBounds()
+  void resetBounds(double /*bounds*/[6]) override {}
+  void resetBounds() override
     { return this->Superclass::resetBounds(); }
 
   // Some convenient methods
@@ -45,9 +45,9 @@ public:
   virtual void setLineInterpolator(vtkSMProxy*);
 
   /// Activates the widget. Respects the visibility flag.
-  virtual void select();
+  void select() override;
   /// Deactivates the widget.
-  virtual void deselect();
+  void deselect() override;
 
   /// Set the line color
   virtual void setLineColor(const QColor& color);
@@ -94,14 +94,14 @@ public slots:
   /// 3D widget properties.
   /// The correspondence is determined from the <Hints />
   /// associated with the controlled proxy.
-  virtual void reset();
+  void reset() override;
 
 protected:
   /// Internal method to create the widget.
   virtual void createWidget(pqServer*);
 
   /// Update the widget visibility according to the WidgetVisible and Selected flags
-  virtual void updateWidgetVisibility();
+  void updateWidgetVisibility() override;
 
   /// Internal method to cleanup widget.
   void cleanupWidget();

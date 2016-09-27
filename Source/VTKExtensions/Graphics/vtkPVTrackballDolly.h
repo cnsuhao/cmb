@@ -25,21 +25,21 @@ class VTKCMBGRAPHICS_EXPORT vtkPVTrackballDolly : public vtkCameraManipulator
 public:
   static vtkPVTrackballDolly *New();
   vtkTypeMacro(vtkPVTrackballDolly, vtkCameraManipulator);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Event bindings controlling the effects of pressing mouse buttons
   // or moving the mouse.
-  virtual void OnMouseMove(int x, int y, vtkRenderer *ren,
-                           vtkRenderWindowInteractor *rwi);
-  virtual void OnButtonDown(int x, int y, vtkRenderer *ren,
-                            vtkRenderWindowInteractor *rwi);
-  virtual void OnButtonUp(int x, int y, vtkRenderer *ren,
-                          vtkRenderWindowInteractor *rwi);
+  void OnMouseMove(int x, int y, vtkRenderer *ren,
+                           vtkRenderWindowInteractor *rwi) override;
+  void OnButtonDown(int x, int y, vtkRenderer *ren,
+                            vtkRenderWindowInteractor *rwi) override;
+  void OnButtonUp(int x, int y, vtkRenderer *ren,
+                          vtkRenderWindowInteractor *rwi) override;
 
 protected:
   vtkPVTrackballDolly();
-  ~vtkPVTrackballDolly();
+  ~vtkPVTrackballDolly() override;
 
   double ZoomScale;
 

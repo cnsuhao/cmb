@@ -30,7 +30,7 @@ public:
 
   static vtkCMBPt123PointsWriter* New();
   vtkTypeMacro(vtkCMBPt123PointsWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -61,7 +61,7 @@ public:
 //BTX
 protected:
   vtkCMBPt123PointsWriter();
-  ~vtkCMBPt123PointsWriter();
+  ~vtkCMBPt123PointsWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
@@ -70,7 +70,7 @@ protected:
   bool WriteFooter(ostream& fp);
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
   char * Header;
   bool UseScientificNotation;
@@ -78,7 +78,7 @@ protected:
   vtkDataSet *MyGeom;
   vtkIdTypeArray *MyData;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkCMBPt123PointsWriter(const vtkCMBPt123PointsWriter&); // Not implemented.
   void operator=(const vtkCMBPt123PointsWriter&); // Not implemented.

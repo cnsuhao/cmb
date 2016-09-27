@@ -40,7 +40,7 @@ class pqCMBMeshViewerMainWindowCore :  public pqCMBCommonMainWindowCore
 
 public:
   pqCMBMeshViewerMainWindowCore(QWidget* parent);
-  virtual ~pqCMBMeshViewerMainWindowCore();
+  ~pqCMBMeshViewerMainWindowCore() override;
 
   void destroyInputRepresentations();
 
@@ -116,25 +116,25 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  virtual void onServerCreationFinished(pqServer *server);
+  void onServerCreationFinished(pqServer *server) override;
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
-  void onReaderCreated(pqPipelineSource* reader, const QString& filename);
+  void onReaderCreated(pqPipelineSource* reader, const QString& filename) override;
 
   // Resets the center of rotation to the center of the active
   // source in the active view.
-  void resetCenterOfRotationToCenterOfCurrentData();
+  void resetCenterOfRotationToCenterOfCurrentData() override;
 
   // Description:
   // Closes the currently opened solid.
-  void onCloseData();
-  void closeData();
+  void onCloseData() override;
+  void closeData() override;
 
   // Description:
   // Saves the data (geometry + region/material IDs) in a file.
-  void onSaveData();
-  void onSaveAsData();
+  void onSaveData() override;
+  void onSaveAsData() override;
 
   void onFrustumSelect(bool);
   void onRubberBandSelectCell(bool checked);
@@ -155,7 +155,7 @@ public slots:
 
   // Description:
   // Zoom onto the selected object
-  void zoomOnSelection();
+  void zoomOnSelection() override;
 
   // Description:
   // Accept/Reset changes on the filters, and update the representation

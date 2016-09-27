@@ -38,10 +38,10 @@ protected:
 
   vtkCMBWatershedFilter();
 
-  virtual int FillOutputPortInformation(int port, vtkInformation *info);
+  int FillOutputPortInformation(int port, vtkInformation *info) override;
 
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 private:
   vtkCMBWatershedFilter(const vtkCMBWatershedFilter&);  // Not implemented.

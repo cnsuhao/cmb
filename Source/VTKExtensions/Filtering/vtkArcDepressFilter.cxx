@@ -72,29 +72,29 @@ public:
     assert(mix>=0 && mix <= 1);
   }
 
-  ~MixArcDepressFunction()
+  ~MixArcDepressFunction() override
   {
     delete fun0;
     delete fun1;
   }
 
-  virtual double evaluate(double d, double minF, double maxF)
+  double evaluate(double d, double minF, double maxF) override
   {
     return (1-mix)*fun0->evaluate(d, minF, maxF) + (mix)*fun1->evaluate(d, minF, maxF);
   }
 
-  virtual double evaluate(double d)
+  double evaluate(double d) override
   {
     return (1-mix)*fun0->evaluate(d) + (mix)*fun1->evaluate(d);
   }
 
-  virtual void addPoint(double w, double v, double s, double m)
+  void addPoint(double w, double v, double s, double m) override
   {assert(false && "Do not add point on mixing function");}
 
-  virtual void clearPoints()
+  void clearPoints() override
   {assert(false && "Do not clear point on mixing function");}
 
-  ArcDepressFunction* clone() const
+  ArcDepressFunction* clone() const override
   {
     return new MixArcDepressFunction(fun0->clone(), fun1->clone(), mix);
   }
@@ -111,29 +111,29 @@ public:
       fun = vtkPiecewiseFunction::New();
       fun->SetAllowDuplicateScalars(1);
     }
-  virtual ~ArcDepressPiecewiseFun()
+  ~ArcDepressPiecewiseFun() override
   {
     fun->Delete();
   }
-  virtual double evaluate(double d, double minF, double maxF)
+  double evaluate(double d, double minF, double maxF) override
   {
     double wd = this->evaluate(d);
     return (1-wd)*minF+(wd)*maxF;
   }
-  virtual double evaluate(double d)
+  double evaluate(double d) override
   {
     return fun->GetValue(d);
   }
-  void addPoint(double w, double v, double s, double m)
+  void addPoint(double w, double v, double s, double m) override
   {
     fun->AddPoint(w, v, s, m);
   }
-  void clearPoints()
+  void clearPoints() override
   {
     fun->RemoveAllPoints();
   }
 
-  ArcDepressFunction* clone() const
+  ArcDepressFunction* clone() const override
   {
     ArcDepressPiecewiseFun* result = new ArcDepressPiecewiseFun();
     result->fun->DeepCopy(fun);
@@ -151,11 +151,11 @@ public:
     fun = vtkKochanekSpline::New();
     computed= false;
   }
-  virtual ~ArcDepressSplineFun()
+  ~ArcDepressSplineFun() override
   {
     fun->Delete();
   }
-  virtual double evaluate(double d, double minF, double maxF)
+  double evaluate(double d, double minF, double maxF) override
   {
     if(!computed)
     {
@@ -168,7 +168,7 @@ public:
     return minF+(wd)*dist;
   }
 
-  virtual double evaluate(double d)
+  double evaluate(double d) override
   {
     if(!computed)
     {
@@ -181,7 +181,7 @@ public:
     return tmp;
   }
 
-  void addPoint(double w, double v, double /*s*/, double /*m*/ )
+  void addPoint(double w, double v, double /*s*/, double /*m*/ ) override
   {
     if(fun->GetNumberOfPoints()!=0 && prev == w)
     {
@@ -191,14 +191,14 @@ public:
     prev = w;
   }
 
-  ArcDepressFunction* clone() const
+  ArcDepressFunction* clone() const override
   {
     ArcDepressSplineFun* result = new ArcDepressSplineFun();
     result->fun->DeepCopy(fun);
     return result;
   }
 
-  void clearPoints()
+  void clearPoints() override
   {
     fun->RemoveAllPoints();
     computed = false;
@@ -240,12 +240,12 @@ public:
     assert(mix >0 && mix < 1.0);
   }
 
-  virtual DepArcProfileFunction::Type getType() const
+  DepArcProfileFunction::Type getType() const override
   {
     return DepArcProfileFunction::Mix;
   }
 
-  virtual double apply(double d, double pt, double & dir) const
+  double apply(double d, double pt, double & dir) const override
   {
     double d1, d2;
     double p1 = fun[0]->apply(d ,pt, d1);
@@ -254,7 +254,7 @@ public:
     return p1 * (1-mix) + p2 * mix;
   }
 
-  virtual double apply(double d, double *pt, double *n) const
+  double apply(double d, double *pt, double *n) const override
   {
     double pta[3], ptb[3];
     double dra = fun[0]->apply(d, pta, n);
@@ -267,17 +267,17 @@ public:
     return tm1*dra + t*drb;
   }
 
-  bool inside(double d) const
+  bool inside(double d) const override
   {
     return fun[0]->inside(d) || fun[1]->inside(d);
   }
-  virtual void setFunctionRange(double minZ, double maxZ)
+  void setFunctionRange(double minZ, double maxZ) override
   {
     fun[0]->setFunctionRange(minZ, maxZ);
     fun[1]->setFunctionRange(minZ, maxZ);
   }
 
-  virtual void addWeightPoint(double w, double v, double s, double m)
+  void addWeightPoint(double w, double v, double s, double m) override
   {
     assert(false && " do not use for the mixing function");
   }
@@ -311,11 +311,11 @@ public:
     assert(!relative || (relative && ((dispMode == Dig && disp < 0) ||
                                       (dispMode == Raise && disp > 0)) ));
   }
-  ~DepArcWedgeProfileFunction()
+  ~DepArcWedgeProfileFunction() override
   {
     delete weightFuntion;
   }
-  virtual DepArcProfileFunction::Type getType() const
+  DepArcProfileFunction::Type getType() const override
   {
     return DepArcProfileFunction::Wedge;
   }
@@ -342,7 +342,7 @@ public:
     return true;
   }
 
-  virtual double apply(double d, double pt, double & dirOut) const
+  double apply(double d, double pt, double & dirOut) const override
   {
     dirOut = 0;
     double w, tmpD, tmpR;
@@ -364,7 +364,7 @@ public:
     return pt;
   }
 
-  virtual double apply(double d, double *pt, double *n) const
+  double apply(double d, double *pt, double *n) const override
   {
     assert(relative && "Normal direction only makes sense in relative");
     double w, tmpD, tmpR;
@@ -388,12 +388,12 @@ public:
     return r;
   }
 
-  virtual void addWeightPoint(double w, double v, double s, double m)
+  void addWeightPoint(double w, double v, double s, double m) override
   {
     weightFuntion->addPoint(w,v,s,m);
   }
 
-  virtual bool inside(double d) const
+  bool inside(double d) const override
   {
     if(d<0) return -d <= maxWidth[Left];
     return d <= maxWidth[Right];
@@ -465,7 +465,7 @@ public:
     return new DepArcMixProfileFunction(boost::shared_ptr<DepArcProfileFunction>(result),
                                         boost::shared_ptr<DepArcProfileFunction>(tmpO), t);
   }
-  virtual void setFunctionRange(double minZ, double maxZ)
+  void setFunctionRange(double minZ, double maxZ) override
   {
     if(!relative)
     {
@@ -528,18 +528,18 @@ public:
     this->setMinMaxDesplacementDepth(0, 0);
   }
 
-  ~DepArcManualProfileFunction()
+  ~DepArcManualProfileFunction() override
   {
     delete SelectedFunction[0];
     delete SelectedFunction[1];
   }
 
-  virtual DepArcProfileFunction::Type getType() const
+  DepArcProfileFunction::Type getType() const override
   {
     return DepArcProfileFunction::Manual;
   }
 
-  virtual void addWeightPoint(double w, double v, double s, double m)
+  void addWeightPoint(double w, double v, double s, double m) override
   {
     addPoint(WeightFun, w, v, s, m);
   }
@@ -574,7 +574,7 @@ public:
     return true;
   }
 
-  virtual double apply(double d, double pt, double & dir) const
+  double apply(double d, double pt, double & dir) const override
   {
     double w, tmp;
     dir = 0;
@@ -594,7 +594,7 @@ public:
     }*/
   }
 
-  virtual double apply(double d, double *pt, double *n) const
+  double apply(double d, double *pt, double *n) const override
   {
     double w, tmp;
     assert(IsRelative && "Normal direction only makes sense in relative");
@@ -637,7 +637,7 @@ public:
     MinMaxDist[MAX] = right;
   }
 
-  bool inside(double d) const
+  bool inside(double d) const override
   {
     assert(getMaxDistance() != 0);
     if(isSymmetric())

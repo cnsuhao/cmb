@@ -1644,9 +1644,9 @@ public:
     return cb;
   }
 
-  virtual void Execute(vtkObject *vtkNotUsed(caller),
+  void Execute(vtkObject *vtkNotUsed(caller),
                        unsigned long pointID,
-                       void *vtkNotUsed(callData))
+                       void *vtkNotUsed(callData)) override
   {
     int index = static_cast<int>(pointID);
     vtkSMNewWidgetRepresentationProxy * widgetProxy = this->arcWidget->getWidgetProxy();

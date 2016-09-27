@@ -43,7 +43,7 @@ public:
   //to call createArc on.
   pqCMBArc(vtkSMSourceProxy *proxy);
 
-  virtual ~pqCMBArc();
+  ~pqCMBArc() override;
 
   //Description:
   //The server side arc has already been created, we just
@@ -85,10 +85,10 @@ public:
   //the arcs
   virtual vtkIdType autoConnect(const vtkIdType& secondArcId);
 
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
-  virtual bool isDefaultConstrained() const{return true;}
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true);
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
+  bool isDefaultConstrained() const override{return true;}
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                    bool updateRep = true) override;
   vtkPVArcInfo* getArcInfo();
 
   vtkIdType getArcId(){return ArcId;}
@@ -113,21 +113,21 @@ public:
       {PlaneProjectionPosition=pos;}
 
   // Overwrite the databounds
-  virtual void getDataBounds(double bounds[6]) const
+  void getDataBounds(double bounds[6]) const override
     {this->getBounds(bounds);}
 
-  virtual void setSelectionInput(vtkSMSourceProxy *selectionInput);
+  void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
   virtual void select();
   virtual void deselect();
 
-  virtual void getColor(double color[4]) const;
-  virtual void setColor(double color[4], bool updateRep = true);
+  void getColor(double color[4]) const override;
+  void setColor(double color[4], bool updateRep = true) override;
 
-  virtual void setMarkedForDeletion();
-  virtual void unsetMarkedForDeletion();
+  void setMarkedForDeletion() override;
+  void unsetMarkedForDeletion() override;
 
   void arcIsModified();
-  virtual void updateRepresentation();
+  void updateRepresentation() override;
 protected:
   //make pqCMBPolygon a friend class so that we can have
   //arcs and polygons refresh each other if needed
@@ -144,7 +144,7 @@ protected:
   //returns true if it created the arc
   virtual bool createArc(vtkSMSourceProxy *proxy);
 
-  virtual void setRepresentation(pqDataRepresentation *rep);
+  void setRepresentation(pqDataRepresentation *rep) override;
   void updatePlaneProjectionInfo(vtkSMNewWidgetRepresentationProxy *widget);
 
   // Indicates the projection normal as lying along the

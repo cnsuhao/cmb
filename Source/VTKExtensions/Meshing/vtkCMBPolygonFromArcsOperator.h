@@ -29,7 +29,7 @@ class VTKCMBMESHING_EXPORT vtkCMBPolygonFromArcsOperator : public vtkObject
 public:
   static vtkCMBPolygonFromArcsOperator *New();
   vtkTypeMacro(vtkCMBPolygonFromArcsOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Add this arc id to the list of ids to use to create the polygon
@@ -56,7 +56,7 @@ public:
 
 protected:
   vtkCMBPolygonFromArcsOperator();
-  ~vtkCMBPolygonFromArcsOperator();
+  ~vtkCMBPolygonFromArcsOperator() override;
 
   void BuildArcsToUse();
   void BuildLoops();

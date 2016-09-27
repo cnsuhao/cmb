@@ -38,7 +38,7 @@ class vtkCMBPointsReader : public vtkPolyDataAlgorithm
 public:
   static vtkCMBPointsReader *New();
   vtkTypeMacro(vtkCMBPointsReader,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum FileReadingStatus
     {
@@ -163,14 +163,14 @@ public:
 
 protected:
   vtkCMBPointsReader();
-  ~vtkCMBPointsReader();
+  ~vtkCMBPointsReader() override;
 
   friend class vtkLIDARMultiFilesReader;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+                         vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   int MoveToStartOfPiece(ifstream &fin, int pieceIndex);
 
   int ReadPiece(ifstream &fin, int pieceIndex, int onRatio, long totalNumPts,

@@ -77,7 +77,7 @@ class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindowCore :  public QObject
 
 public:
   pqCMBCommonMainWindowCore(QWidget* parent);
-  virtual ~pqCMBCommonMainWindowCore();
+  ~pqCMBCommonMainWindowCore() override;
 
   QWidget* parentWidget() const;
 
@@ -400,7 +400,7 @@ protected:
 
 
   /// Event filter callback.
-  bool eventFilter(QObject* caller, QEvent* e);
+  bool eventFilter(QObject* caller, QEvent* e) override;
 
   qtCMBProjectServerManager::PROGRAM ProgramKey;
 

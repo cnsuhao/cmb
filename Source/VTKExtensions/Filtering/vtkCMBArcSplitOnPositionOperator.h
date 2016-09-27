@@ -26,7 +26,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcSplitOnPositionOperator : public vtkObject
 public:
   static vtkCMBArcSplitOnPositionOperator * New();
   vtkTypeMacro(vtkCMBArcSplitOnPositionOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Tolerance to consider the split position equal to a
@@ -50,7 +50,7 @@ public:
 
 protected:
   vtkCMBArcSplitOnPositionOperator();
-  virtual ~vtkCMBArcSplitOnPositionOperator();
+  ~vtkCMBArcSplitOnPositionOperator() override;
 
   double PositionTolerance;
   double SplitPosition[3];

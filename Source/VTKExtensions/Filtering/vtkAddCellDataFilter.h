@@ -24,21 +24,21 @@ class VTKCMBFILTERING_EXPORT vtkAddCellDataFilter : public vtkDataSetAlgorithm
 public:
   static vtkAddCellDataFilter* New();
   vtkTypeMacro(vtkAddCellDataFilter, vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 //BTX
 protected:
   vtkAddCellDataFilter();
-  ~vtkAddCellDataFilter();
+  ~vtkAddCellDataFilter() override;
 
   // Description:
   // This is called within ProcessRequest when a request asks the algorithm
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  virtual int RequestData(vtkInformation*,
+  int RequestData(vtkInformation*,
                           vtkInformationVector**,
-                          vtkInformationVector*);
+                          vtkInformationVector*) override;
 
 private:
   vtkAddCellDataFilter(const vtkAddCellDataFilter&); // Not implemented.

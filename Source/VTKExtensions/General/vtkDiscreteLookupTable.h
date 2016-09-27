@@ -31,14 +31,14 @@ class VTKCMBGENERAL_EXPORT vtkDiscreteLookupTable : public vtkDiscretizableColor
 public:
   static vtkDiscreteLookupTable* New();
   vtkTypeMacro(vtkDiscreteLookupTable, vtkDiscretizableColorTransferFunction);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Generate discretized lookup table using HSV color space, if applicable.
   // This method must be called after changes to the ColorTransferFunction
   // otherwise the discretized version will be inconsitent with the
   // non-discretized one.
-  virtual void Build();
+  void Build() override;
 
   static vtkIdType GetNextIndex(
     vtkIdType i, vtkUnsignedCharArray *avail);
@@ -48,7 +48,7 @@ public:
 
 protected:
   vtkDiscreteLookupTable();
-  ~vtkDiscreteLookupTable();
+  ~vtkDiscreteLookupTable() override;
 
   double ValueMin;
   double ValueMax;

@@ -35,7 +35,7 @@ class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
 
 public:
   pqCMBModelBuilderMainWindowCore(QWidget* parent);
-  virtual ~pqCMBModelBuilderMainWindowCore();
+  ~pqCMBModelBuilderMainWindowCore() override;
 
   // Description
   // Setup a representation-selection toolbar
@@ -89,14 +89,14 @@ signals:
 public slots:
   // Description
   /// Called when a new server is connected.
-  virtual void onRemovingServer(pqServer*);
-  virtual void onServerCreationFinished(pqServer *server);
+  void onRemovingServer(pqServer*) override;
+  void onServerCreationFinished(pqServer *server) override;
   virtual void onColorByModeChanged(const QString &);
   virtual void onColorByAttribute();
   virtual void colorByAttributeFieldSelected(const QString& attdeftype,
         const QString& itemname);
 
-  virtual void onFileOpen(const QStringList& Files);
+  void onFileOpen(const QStringList& Files) override;
   void onCloseData(bool modelOnly=false);
   void clearSimBuilder();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);
@@ -112,7 +112,7 @@ public slots:
 
   // Resets the center of rotation to the center of the active
   // source in the active view.
-  virtual void resetCenterOfRotationToCenterOfCurrentData();
+  void resetCenterOfRotationToCenterOfCurrentData() override;
 
   // Description:
   // Called when a CMB model is loaded/cleared
@@ -132,7 +132,7 @@ public slots:
   void onRubberBandSelect(bool);
   void onRubberBandSelectPoints(bool);
   void onRubberBandSelectCells(bool);
-  void zoomOnSelection();
+  void zoomOnSelection() override;
   void updateSMTKSelection();
 
   // Description:
@@ -143,7 +143,7 @@ public slots:
   // Description:
   // Called when a new reader is created by the GUI.
   // We add the reader to the recent files menu.
-  void onReaderCreated(pqPipelineSource* reader, const QString& filename);
+  void onReaderCreated(pqPipelineSource* reader, const QString& filename) override;
 
   void updateScalarBarWidget(
     pqScalarBarWidget* scalarBar,
@@ -167,16 +167,16 @@ public slots:
   // Subclass should override this method to add app-specific options.
   // This superclass method will add app-common options to the dialog
   // See also, applyAppSettings
-  virtual void onEditSettings();
+  void onEditSettings() override;
 
   // Description:
   // Subclass should override this method to load app-specific
   // settings, and this Superclass method will load common settings.
   // See Also, onEditSettings()
-  virtual void applyAppSettings();
+  void applyAppSettings() override;
 
 protected:
-  virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
+  void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
   virtual void setSimBuilderModelManager();
   virtual void processModifiedMeshes(
     const smtk::attribute::MeshItemPtr& modifiedMeshes);

@@ -27,7 +27,7 @@ class VTKCMBCLIENT_EXPORT vtkSMArcOperatorProxy : public vtkSMProxy
 public:
   static vtkSMArcOperatorProxy* New();
   vtkTypeMacro(vtkSMArcOperatorProxy, vtkSMProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Operate on the source proxy on the server
@@ -64,7 +64,7 @@ public:
 
 protected:
   vtkSMArcOperatorProxy();
-  ~vtkSMArcOperatorProxy();
+  ~vtkSMArcOperatorProxy() override;
 
 private:
   vtkSMArcOperatorProxy(const vtkSMArcOperatorProxy&); // Not implemented

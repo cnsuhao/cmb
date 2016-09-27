@@ -37,7 +37,7 @@ class CMBAPPCOMMON_EXPORT qtCMBArcWidgetManager : public QObject
 
 public:
   qtCMBArcWidgetManager(pqServer *server, pqRenderView *view);
-  virtual ~qtCMBArcWidgetManager();
+  ~qtCMBArcWidgetManager() override;
 
   pqCMBArc* createpqCMBArc();
 

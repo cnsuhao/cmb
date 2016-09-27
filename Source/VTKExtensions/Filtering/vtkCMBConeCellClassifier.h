@@ -24,7 +24,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBConeCellClassifier : public vtkUnstructuredGr
 public:
   static vtkCMBConeCellClassifier *New();
   vtkTypeMacro(vtkCMBConeCellClassifier,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Set/Get the Base Center of the cone.  The default is (0, 0, 0).
@@ -92,11 +92,11 @@ public:
 
 protected:
   vtkCMBConeCellClassifier();
-  ~vtkCMBConeCellClassifier();
+  ~vtkCMBConeCellClassifier() override;
 
-  virtual int RequestData(vtkInformation* request,
+  int RequestData(vtkInformation* request,
                           vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector);
+                          vtkInformationVector* outputVector) override;
 
 
   double BaseCenter[3];

@@ -74,7 +74,7 @@ class pq3DWidget::pqStandardWidgets : public pq3DWidgetInterface
 public:
   pq3DWidget* newWidget(const QString& name,
     vtkSMProxy* referenceProxy,
-    vtkSMProxy* controlledProxy)
+    vtkSMProxy* controlledProxy) override
     {
     pq3DWidget *widget = 0;
 /*    if (name == "Plane")

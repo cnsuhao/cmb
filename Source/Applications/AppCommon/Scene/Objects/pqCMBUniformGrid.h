@@ -35,15 +35,15 @@ public:
                  pqServer *server, pqRenderView *view,
                  bool updateRep = true);
 
-  virtual ~pqCMBUniformGrid();
+  ~pqCMBUniformGrid() override;
 
 
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true);
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                    bool updateRep = true) override;
 
   void setFileName(const char *type)
     {this->FileName = type;}
-  virtual enumObjectType getType() const;
+  enumObjectType getType() const override;
   std::string getFileName() const
     {return this->FileName;}
 
@@ -60,13 +60,13 @@ public:
   void setExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2]);
   void getExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2]) const;
 
-  virtual void getAreaStats(double* areaStats);
-  virtual void getGeometryBounds(double* geoBounds) const;
-  virtual void getPolySideStats(double* polySide);
-  virtual double getSurfaceArea();
-  virtual vtkIdType getNumberOfPoints();
-  virtual vtkIdType getNumberOfPolygons();
-  virtual void updatePolyDataStats();
+  void getAreaStats(double* areaStats) override;
+  void getGeometryBounds(double* geoBounds) const override;
+  void getPolySideStats(double* polySide) override;
+  double getSurfaceArea() override;
+  vtkIdType getNumberOfPoints() override;
+  vtkIdType getNumberOfPolygons() override;
+  void updatePolyDataStats() override;
 
   pqPipelineSource* getImageSource()
   { return ImageSource; }

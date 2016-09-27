@@ -31,7 +31,7 @@ class CMBAPPCOMMON_EXPORT pqCMBLoadDataReaction : public pqReaction
 public:
   /// Constructor. Parent cannot be NULL.
   pqCMBLoadDataReaction(QAction* parent, bool multiFiles = false);
-  ~pqCMBLoadDataReaction();
+  ~pqCMBLoadDataReaction() override;
 
   /// Set the filters for supported file types, which will be used in the
   /// file open dialog as file extensions. The format should be like this
@@ -97,7 +97,7 @@ public:
 public slots:
   /// Updates the enabled state. Applications need not explicitly call
   /// this.
-  virtual void updateEnableState();
+  void updateEnableState() override;
 
   /// These extensions are handled by CMB Applications
   /// or bridge-plugins, not traditional SM vtk readers.
@@ -119,7 +119,7 @@ signals:
 
 protected:
   /// Called when the action is triggered.
-  virtual void onTriggered();
+  void onTriggered() override;
 
   /// Internal parameters
   QPointer<pqPluginIOBehavior> m_pluginBehavior;

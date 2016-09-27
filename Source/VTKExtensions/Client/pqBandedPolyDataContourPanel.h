@@ -24,7 +24,7 @@ class pqBandedPolyDataContourPanel : public pqObjectPanel
 
 public:
   pqBandedPolyDataContourPanel(pqProxy* proxy, QWidget* p);
-  ~pqBandedPolyDataContourPanel();
+  ~pqBandedPolyDataContourPanel() override;
 
 private slots:
   /// Called if the user accepts pending modifications

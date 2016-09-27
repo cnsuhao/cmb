@@ -35,7 +35,7 @@ class VTKCMBIO_EXPORT vtkCMBBorFileReader : public vtkMultiBlockDataSetAlgorithm
 {
   public:
     static vtkCMBBorFileReader* New();
-    virtual void PrintSelf( ostream&os, vtkIndent indent );
+    void PrintSelf( ostream&os, vtkIndent indent ) override;
     vtkTypeMacro(vtkCMBBorFileReader, vtkMultiBlockDataSetAlgorithm);
 
     vtkSetStringMacro(FileName);
@@ -46,13 +46,13 @@ class VTKCMBIO_EXPORT vtkCMBBorFileReader : public vtkMultiBlockDataSetAlgorithm
 //BTX
   protected:
     vtkCMBBorFileReader();
-    virtual ~vtkCMBBorFileReader();
+    ~vtkCMBBorFileReader() override;
     //Reader functions for various file formats found in the output of BorFile
     int ReadBorFile(const char* filename);
     int ProcessBorFileInfo(vtkMultiBlockDataSet* output);
 
-    int RequestInformation( vtkInformation*, vtkInformationVector**, vtkInformationVector* );
-    int RequestData( vtkInformation*, vtkInformationVector**, vtkInformationVector* );
+    int RequestInformation( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
+    int RequestData( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
 
     char* FileName;
     double BHDisplayWidth;

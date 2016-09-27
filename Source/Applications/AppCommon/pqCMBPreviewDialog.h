@@ -31,7 +31,7 @@ class CMBAPPCOMMON_EXPORT pqCMBPreviewDialog : public QDialog
 
 public:
   pqCMBPreviewDialog(QWidget* Parent);
-  ~pqCMBPreviewDialog();
+  ~pqCMBPreviewDialog() override;
 
   // Description:
   // Set teh representation and view for the preview dialog

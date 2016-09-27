@@ -26,7 +26,7 @@ class VTKCMBGENERAL_EXPORT vtkSceneContourSource : public vtkPolyDataAlgorithm
 public:
   static vtkSceneContourSource *New();
   vtkTypeMacro(vtkSceneContourSource,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   void CopyData(vtkPolyData *source);
@@ -66,9 +66,9 @@ public:
 
 protected:
   vtkSceneContourSource();
-  ~vtkSceneContourSource();
+  ~vtkSceneContourSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void InitSourceData(vtkPolyData *source);
   void EditSourceData(vtkPolyData *source);

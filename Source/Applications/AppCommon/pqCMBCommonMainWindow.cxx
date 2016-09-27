@@ -109,8 +109,8 @@ public:
   void setCore(pqCMBCommonMainWindowCore* core)
     { this->Core = core; }
 
-  virtual bool open(
-    pqServer* server, const pqServerResource& resource) const
+  bool open(
+    pqServer* server, const pqServerResource& resource) const override
     {
     if (this->Core && server && !resource.path().isEmpty())
       {

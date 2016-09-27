@@ -39,15 +39,15 @@ public:
                  pqPipelineSource* source, int pieceIndex,
                  int onRatio, bool doublePrecision);
 
-  virtual ~pqCMBPoints();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
+  ~pqCMBPoints() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
 
   pqPipelineSource * getTransformedSource(pqServer *server) const;
 
   void setFileName(const char *type)
     {this->FileName = type;}
-  virtual enumObjectType getType() const;
+  enumObjectType getType() const override;
   std::string getFileName() const
     {return this->FileName;}
 

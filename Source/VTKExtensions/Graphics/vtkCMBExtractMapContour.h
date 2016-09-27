@@ -25,7 +25,7 @@ class VTKCMBGRAPHICS_EXPORT vtkCMBExtractMapContour : public vtkPolyDataAlgorith
   public:
     static vtkCMBExtractMapContour *New();
     vtkTypeMacro(vtkCMBExtractMapContour,vtkPolyDataAlgorithm);
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
 
     void AddContourToExtract(int index);
     void ExtractSingleContour(int index);
@@ -33,9 +33,9 @@ class VTKCMBGRAPHICS_EXPORT vtkCMBExtractMapContour : public vtkPolyDataAlgorith
 
   protected:
     vtkCMBExtractMapContour();
-    ~vtkCMBExtractMapContour();
+    ~vtkCMBExtractMapContour() override;
 
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
     std::vector<int> contoursToExtract;
   private:

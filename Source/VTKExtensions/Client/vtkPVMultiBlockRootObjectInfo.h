@@ -30,16 +30,16 @@ class VTKCMBCLIENT_EXPORT vtkPVMultiBlockRootObjectInfo : public vtkPVInformatio
 public:
   static vtkPVMultiBlockRootObjectInfo* New();
   vtkTypeMacro(vtkPVMultiBlockRootObjectInfo, vtkPVInformation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Transfer information about a single object into this object.
-  virtual void CopyFromObject(vtkObject*);
+  void CopyFromObject(vtkObject*) override;
 
   // Description:
   // Manage a serialized version of the information.
-  virtual void CopyToStream(vtkClientServerStream*);
-  virtual void CopyFromStream(const vtkClientServerStream*);
+  void CopyToStream(vtkClientServerStream*) override;
+  void CopyFromStream(const vtkClientServerStream*) override;
 
   vtkGetObjectMacro(MaterialNames, vtkStringArray);
   vtkGetObjectMacro(ShellNames, vtkStringArray);
@@ -61,7 +61,7 @@ public:
   //BTX
 protected:
   vtkPVMultiBlockRootObjectInfo();
-  ~vtkPVMultiBlockRootObjectInfo();
+  ~vtkPVMultiBlockRootObjectInfo() override;
 
   // Data information collected from remote processes.
 

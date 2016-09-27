@@ -33,7 +33,7 @@ public:
   ///   Constructs an options container.
   /// \param parent The parent widget.
   qtCMBOptionsContainer(QWidget *parent=0);
-  virtual ~qtCMBOptionsContainer();
+  ~qtCMBOptionsContainer() override;
 
   /// \brief
   ///   Gets the page path prefix.

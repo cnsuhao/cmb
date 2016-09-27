@@ -76,7 +76,7 @@ class VTKCMBFILTERING_EXPORT vtkPointThresholdFilter : public vtkPolyDataAlgorit
 public:
   static vtkPointThresholdFilter *New();
   vtkTypeMacro(vtkPointThresholdFilter, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void AddFilter()
   {
@@ -400,7 +400,7 @@ public:
 
 protected:
   vtkPointThresholdFilter();
-  ~vtkPointThresholdFilter();
+  ~vtkPointThresholdFilter() override;
 
   int ActiveFilterIndex;
 
@@ -412,7 +412,7 @@ protected:
   //ETX
 
   int RequestData(vtkInformation *request, vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector);
+    vtkInformationVector *outputVector) override;
 
 private:
   vtkPointThresholdFilter(const vtkPointThresholdFilter&); // Not implemented

@@ -25,7 +25,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcSplitOnIndexOperator : public vtkObject
 public:
   static vtkCMBArcSplitOnIndexOperator * New();
   vtkTypeMacro(vtkCMBArcSplitOnIndexOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Point Index to split on. If passed in 0 it will
@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkCMBArcSplitOnIndexOperator();
-  virtual ~vtkCMBArcSplitOnIndexOperator();
+  ~vtkCMBArcSplitOnIndexOperator() override;
 
   int Index;
   vtkIdType CreatedArcId;

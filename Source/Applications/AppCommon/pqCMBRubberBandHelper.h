@@ -37,7 +37,7 @@ public:
   // @deprecated Please modify your code to use pqRenderViewSelectionReaction
   // instead.
   pqCMBRubberBandHelper(QObject* parent=NULL);
-  virtual ~pqCMBRubberBandHelper();
+  ~pqCMBRubberBandHelper() override;
 
   /// Returns the currently selected render view.
   pqRenderView* getRenderView() const;

@@ -25,7 +25,7 @@ class VTKCMBFILTERING_EXPORT vtkExtractModelFaceBlock : public vtkPolyDataAlgori
 public:
   static vtkExtractModelFaceBlock* New();
   vtkTypeMacro(vtkExtractModelFaceBlock, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Select the face id to be extracted.  The filter will iterate through
@@ -36,14 +36,14 @@ public:
 //BTX
 protected:
   vtkExtractModelFaceBlock();
-  ~vtkExtractModelFaceBlock() {};
+  ~vtkExtractModelFaceBlock() override {};
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   /// Implementation of the algorithm.
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                           vtkInformationVector **,
-                          vtkInformationVector *);
+                          vtkInformationVector *) override;
 
 
 private:

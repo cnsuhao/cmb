@@ -22,7 +22,7 @@ class VTKCMBFILTERING_EXPORT vtkArcDepressFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkArcDepressFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkArcDepressFilter *New();
 
@@ -61,9 +61,9 @@ public:
   //BTX
 protected:
   vtkArcDepressFilter();
-  ~vtkArcDepressFilter();
+  ~vtkArcDepressFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void computeDisplacement( vtkPolyData *input, vtkPolyData *output,
                             std::vector<int> &pointChanged);

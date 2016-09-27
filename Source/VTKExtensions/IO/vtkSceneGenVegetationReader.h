@@ -29,7 +29,7 @@ class VTKCMBIO_EXPORT vtkSceneGenVegetationReader : public vtkMultiBlockDataSetA
 public:
   static vtkSceneGenVegetationReader *New();
   vtkTypeMacro(vtkSceneGenVegetationReader,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -40,7 +40,7 @@ public:
 
 protected:
   vtkSceneGenVegetationReader();
-  ~vtkSceneGenVegetationReader();
+  ~vtkSceneGenVegetationReader() override;
 
   char *FileName;
   std::string NodeFile;
@@ -76,8 +76,8 @@ protected:
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+                         vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkSceneGenVegetationReader(const vtkSceneGenVegetationReader&);  // Not implemented.

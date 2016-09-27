@@ -51,7 +51,7 @@ class VTKCMBIO_EXPORT vtkRawDEMReader : public vtkDataSetAlgorithm
 public:
   static vtkRawDEMReader *New();
   vtkTypeMacro(vtkRawDEMReader,vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
@@ -188,14 +188,14 @@ public:
 
 protected:
   vtkRawDEMReader();
-  ~vtkRawDEMReader();
+  ~vtkRawDEMReader() override;
 
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
-                         vtkInformationVector *);
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int RequestDataObject(vtkInformation *, vtkInformationVector **,
-                                vtkInformationVector *);
+                         vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestDataObject(vtkInformation *, vtkInformationVector **,
+                                vtkInformationVector *) override;
   vtkImageData *AllocateOutputData(vtkDataObject *out);
 
   void ReadPolyDataOutput(vtkPolyData *output);

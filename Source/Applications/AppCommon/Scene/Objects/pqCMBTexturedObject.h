@@ -26,13 +26,13 @@ public:
   pqCMBTexturedObject(pqPipelineSource *source,
                          pqRenderView *view,
                          pqServer *server);
-  virtual ~pqCMBTexturedObject();
+  ~pqCMBTexturedObject() override;
 
   /// Returns the Bounds of the data. - Returns the output of the Bathymetry
-  virtual void getDataBounds(double bounds[6]) const;
-  virtual pqPipelineSource * getSelectionSource() const;
-  virtual void setSelectionInput(vtkSMSourceProxy *selectionInput);
-  virtual vtkSMSourceProxy *getSelectionInput() const;
+  void getDataBounds(double bounds[6]) const override;
+  pqPipelineSource * getSelectionSource() const override;
+  void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
+  vtkSMSourceProxy *getSelectionInput() const override;
 
   void showElevation(bool flag);
   void toggleElevation()
@@ -81,7 +81,7 @@ protected:
   double ElevationRadious;
   bool ShowElevation;
   void prepTexturedObject(pqServer *server, pqRenderView *view);
-  virtual void duplicateInternals(pqCMBSceneObjectBase *obj);
+  void duplicateInternals(pqCMBSceneObjectBase *obj) override;
 
 };
 

@@ -23,7 +23,7 @@ public:
   smtkSharedFromThisMacro(Session);
   smtkDeclareModelingKernel();
 
-  virtual ~cmbForwardingSession();
+  ~cmbForwardingSession() override;
 
   vtkSMModelManagerProxy* proxy() { return this->m_proxy; }
   virtual void setProxy(vtkSMModelManagerProxy* proxy);
@@ -32,8 +32,8 @@ protected:
   cmbForwardingSession();
 
   virtual smtk::model::SessionInfoBits transcribeInternal(const smtk::model::EntityRef& entity, smtk::model::SessionInfoBits flags);
-  virtual bool ableToOperateDelegate(smtk::model::RemoteOperatorPtr op);
-  virtual smtk::model::OperatorResult operateDelegate(smtk::model::RemoteOperatorPtr op);
+  bool ableToOperateDelegate(smtk::model::RemoteOperatorPtr op) override;
+  smtk::model::OperatorResult operateDelegate(smtk::model::RemoteOperatorPtr op) override;
 
   vtkSMModelManagerProxy* m_proxy;
 

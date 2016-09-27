@@ -30,7 +30,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBMeshConeSelector : public vtkSelectionAlgorit
   {
 public:
   vtkTypeMacro(vtkCMBMeshConeSelector,vtkSelectionAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkCMBMeshConeSelector *New();
 
   // Description:
@@ -82,7 +82,7 @@ public:
 
   // Description:
   // Return the mtime also considering the cone source.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   // Description:
   // Flag to indicate whether the output selection is empty, which
@@ -93,11 +93,11 @@ public:
     //BTX
 protected:
   vtkCMBMeshConeSelector();
-  ~vtkCMBMeshConeSelector();
+  ~vtkCMBMeshConeSelector() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
-  virtual int FillOutputPortInformation(int port, vtkInformation* info);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+  int FillOutputPortInformation(int port, vtkInformation* info) override;
 
   virtual bool DoCellConeCheck(
     vtkIdType npts, vtkIdType* pts, vtkUnstructuredGrid* input,

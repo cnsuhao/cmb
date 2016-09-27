@@ -40,7 +40,7 @@ public:
   vtkTypeMacro(vtkCMBProjectManager,vtkObject);
   // Description:
   // Print ObjectFactor to stream.
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // This is a singleton pattern New.  There will only be ONE
@@ -109,7 +109,7 @@ public:
 
 protected:
   vtkCMBProjectManager();
-  virtual ~vtkCMBProjectManager();
+  ~vtkCMBProjectManager() override;
 
   // Description:
   // Returns the default folder for the give program, this is used

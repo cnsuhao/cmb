@@ -90,7 +90,7 @@ public:
     const QString& Title = QString(),
     const QString& Directory = QString(),
     const QString& Filter = QString());
-  ~pqCMBFileDialog();
+  ~pqCMBFileDialog() override;
 
   /// set the file mode
   void setFileMode(FileMode);
@@ -105,7 +105,7 @@ public:
   QList<QStringList> getAllSelectedFiles();
 
   /// accept this dialog
-  void accept();
+  void accept() override;
 
   /// set a file current to support test playback
   bool selectFile(const QString&);
@@ -149,7 +149,7 @@ protected:
 
   QStringList buildFileGroup(const QString &filename);
 
-  virtual void showEvent( QShowEvent *showEvent );
+  void showEvent( QShowEvent *showEvent ) override;
 
 private slots:
   void onModelReset();

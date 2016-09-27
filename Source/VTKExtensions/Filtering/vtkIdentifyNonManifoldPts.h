@@ -28,7 +28,7 @@ public:
 //BTX
 protected:
   vtkIdentifyNonManifoldPts() {};
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   vtkIdentifyNonManifoldPts(const vtkIdentifyNonManifoldPts&);  // Not implemented.

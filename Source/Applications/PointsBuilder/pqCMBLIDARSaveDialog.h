@@ -47,7 +47,7 @@ protected slots:
 
 protected:
   pqCMBLIDARSaveDialog(QWidget *parent, pqServer *server, bool enableSavePieces);
-  virtual ~pqCMBLIDARSaveDialog();
+  ~pqCMBLIDARSaveDialog() override;
   int exec();
   int Status;
   Ui::qtSaveScatterData *SaveDialog;

@@ -54,7 +54,7 @@ class pqCMBModelManager : public QObject
 
 public:
   pqCMBModelManager(pqServer*);
-  virtual ~pqCMBModelManager();
+  ~pqCMBModelManager() override;
   vtkSMModelManagerProxy* managerProxy();
   smtk::model::StringData fileModelSessions(const std::string& filename);
   std::set<std::string> supportedFileTypes(

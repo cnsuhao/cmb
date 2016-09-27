@@ -49,7 +49,7 @@ class VTKCMBMESHING_EXPORT vtkMeshModelEdgesFilter : public vtkPolyDataAlgorithm
 public:
   static vtkMeshModelEdgesFilter *New();
   vtkTypeMacro(vtkMeshModelEdgesFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get name of cell array holding desired segment length for each cell.
@@ -67,9 +67,9 @@ public:
 //BTX
 protected:
   vtkMeshModelEdgesFilter();
-  ~vtkMeshModelEdgesFilter();
+  ~vtkMeshModelEdgesFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void MeshPolyLine(vtkIdType npts, vtkIdType *pts, vtkPoints *inputPoints,
     double startTargetSegmentLength, double endTargetSegmentLength,

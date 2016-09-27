@@ -33,7 +33,7 @@ public:
   vtkSetMacro(MinBGSize,int);
   vtkGetMacro(MinBGSize,int);
 
-  virtual ~vtkCMBImageClassFilter();
+  ~vtkCMBImageClassFilter() override;
 
 protected:
 
@@ -46,7 +46,7 @@ protected:
   vtkCMBImageClassFilter();
 
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
 private:
   vtkCMBImageClassFilter(const vtkCMBImageClassFilter&);  // Not implemented.

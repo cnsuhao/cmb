@@ -41,7 +41,7 @@ public:
   // Description:
   // Standard methods for instances of this class.
   vtkTypeMacro(vtkCMBArcWidgetRepresentation,vtkOrientedGlyphContourRepresentation);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Controls whether the contour widget should
@@ -54,8 +54,8 @@ public:
   vtkBooleanMacro( LoggingEnabled, int );
 
   //needed to make sure selected nodes are highlighted properly
-  virtual int SetNthNodeSelected(int);
-  int ToggleActiveNodeSelected();
+  int SetNthNodeSelected(int) override;
+  int ToggleActiveNodeSelected() override;
 
   // Get the number of selected nodes
   virtual int GetNumberOfSelectedNodes();
@@ -63,18 +63,18 @@ public:
   void SetActiveNode(int a);
 
   //overloaded for logging purposes
-  virtual int DeleteNthNode(int n);
-  virtual int SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] );
-  virtual int SetActiveNodeToWorldPosition(double worldPos[3]);
-  virtual int AddNodeOnContour(int X, int Y);
-  virtual int AddNodeAtDisplayPosition(int X, int Y);
-  virtual void StartWidgetInteraction(double startEventPos[2]);
-  virtual int ComputeInteractionState(int X, int Y, int modified);
+  int DeleteNthNode(int n) override;
+  int SetActiveNodeToWorldPosition( double worldPos[3],double worldOrient[9] ) override;
+  int SetActiveNodeToWorldPosition(double worldPos[3]) override;
+  int AddNodeOnContour(int X, int Y) override;
+  int AddNodeAtDisplayPosition(int X, int Y) override;
+  void StartWidgetInteraction(double startEventPos[2]) override;
+  int ComputeInteractionState(int X, int Y, int modified) override;
 
 
   // Description:
   // Get the points in this contour as a vtkPolyData.
-  virtual vtkPolyData * GetContourRepresentationAsPolyData();
+  vtkPolyData * GetContourRepresentationAsPolyData() override;
 
   //Description:
   // Get the flags for a given point
@@ -102,10 +102,10 @@ public:
 
 protected:
   vtkCMBArcWidgetRepresentation();
-  ~vtkCMBArcWidgetRepresentation();
+  ~vtkCMBArcWidgetRepresentation() override;
 
-  virtual void UpdateLines(int index);
-  virtual void BuildRepresentation();
+  void UpdateLines(int index) override;
+  void BuildRepresentation() override;
 
   // Description:
   // Build a contour representation from externally supplied PolyData. This
@@ -118,7 +118,7 @@ protected:
   //Note: While this method will only render the first line cell in the polydata
   //it will compute if the contour is closed based on this first cell number of points
   //versus the number of points in the polydata. So don't have any extra points
-  virtual void Initialize( vtkPolyData * );
+  void Initialize( vtkPolyData * ) override;
 
   //support logging of point changes
   int LoggingEnabled;

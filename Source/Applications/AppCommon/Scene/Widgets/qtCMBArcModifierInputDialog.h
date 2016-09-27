@@ -32,7 +32,7 @@ class CMBAPPCOMMON_EXPORT qtCMBArcModifierInputDialog : public QDialog
   Q_OBJECT
 public:
   qtCMBArcModifierInputDialog(pqCMBSceneTree *tree, QWidget *parent = NULL, Qt::WindowFlags flags= 0);
-  virtual ~qtCMBArcModifierInputDialog();
+  ~qtCMBArcModifierInputDialog() override;
 
   void insertSourceName(int i, const char *vname);
   void removeAllSourceNames();

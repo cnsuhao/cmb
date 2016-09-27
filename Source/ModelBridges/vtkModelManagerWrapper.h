@@ -42,7 +42,7 @@ class MODELBRIDGECLIENT_EXPORT vtkModelManagerWrapper : public vtkObject
 {
 public:
   static vtkModelManagerWrapper* New();
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   vtkTypeMacro(vtkModelManagerWrapper,vtkObject);
 
   smtk::model::ManagerPtr GetModelManager();
@@ -67,7 +67,7 @@ public:
 
 protected:
   vtkModelManagerWrapper();
-  virtual ~vtkModelManagerWrapper();
+  ~vtkModelManagerWrapper() override;
 
   vtkSetStringMacro(JSONResponse);
 

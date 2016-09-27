@@ -22,7 +22,7 @@ class CMBAPPCOMMON_EXPORT qtCMBHelpDialog : public QDialog
 
 public:
   qtCMBHelpDialog(const char *helpFileResource, QWidget* Parent);
-  virtual ~qtCMBHelpDialog();
+  ~qtCMBHelpDialog() override;
 
   void setToTop();
 

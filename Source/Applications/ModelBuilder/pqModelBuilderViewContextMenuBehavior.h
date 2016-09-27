@@ -47,7 +47,7 @@ class pqModelBuilderViewContextMenuBehavior : public QObject
   typedef QObject Superclass;
 public:
   pqModelBuilderViewContextMenuBehavior(QObject* parent=0);
-  virtual ~pqModelBuilderViewContextMenuBehavior();
+  ~pqModelBuilderViewContextMenuBehavior() override;
 
   void setModelPanel(pqSMTKModelPanel*);
 
@@ -116,7 +116,7 @@ protected:
   /// from QWidget to popup the context menu since all of those mechanism seem
   /// to eat away the right button release, leaving the render window in a
   /// dragging state.
-  virtual bool eventFilter(QObject* caller, QEvent* e);
+  bool eventFilter(QObject* caller, QEvent* e) override;
 
   /// return the name of the block from its flat index
   QString lookupBlockName(unsigned int flatIndex, pqSMTKModelInfo* minfo) const;

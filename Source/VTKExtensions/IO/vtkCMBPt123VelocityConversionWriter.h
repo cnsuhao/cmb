@@ -28,7 +28,7 @@ public:
 
   static vtkCMBPt123VelocityConversionWriter* New();
   vtkTypeMacro(vtkCMBPt123VelocityConversionWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -54,7 +54,7 @@ public:
 //BTX
 protected:
   vtkCMBPt123VelocityConversionWriter();
-  ~vtkCMBPt123VelocityConversionWriter();
+  ~vtkCMBPt123VelocityConversionWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
@@ -63,13 +63,13 @@ protected:
   bool WriteFooter(ostream& fp);
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
   bool UseScientificNotation;
   int FloatPrecision;
   vtkDataArray *MyData;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkCMBPt123VelocityConversionWriter(const vtkCMBPt123VelocityConversionWriter&); // Not implemented.
   void operator=(const vtkCMBPt123VelocityConversionWriter&); // Not implemented.

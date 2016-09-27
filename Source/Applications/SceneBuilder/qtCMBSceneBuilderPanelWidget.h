@@ -29,7 +29,7 @@ class qtCMBSceneBuilderPanelWidget : public QWidget
 
 public:
   qtCMBSceneBuilderPanelWidget(QWidget* parent=0);
-  virtual ~qtCMBSceneBuilderPanelWidget();
+  ~qtCMBSceneBuilderPanelWidget() override;
 
   Ui::qtCMBSceneBuilderPanel* getGUIPanel();
 

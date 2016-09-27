@@ -43,7 +43,7 @@ public:
       };
 
   qtCMBPanelsManager(QObject* p);
-  virtual ~qtCMBPanelsManager();
+  ~qtCMBPanelsManager() override;
 
   QDockWidget* createDockWidget (QMainWindow* mw,
     QWidget* content, const std::string& title,

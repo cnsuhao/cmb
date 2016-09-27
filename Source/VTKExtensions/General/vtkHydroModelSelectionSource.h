@@ -24,7 +24,7 @@ class VTKCMBGENERAL_EXPORT vtkHydroModelSelectionSource : public vtkSelectionAlg
 public:
   static vtkHydroModelSelectionSource *New();
   vtkTypeMacro(vtkHydroModelSelectionSource,vtkSelectionAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   void CopyData(vtkSelection *selection);
@@ -51,9 +51,9 @@ public:
 //BTX
 protected:
   vtkHydroModelSelectionSource();
-  ~vtkHydroModelSelectionSource();
+  ~vtkHydroModelSelectionSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkSelectionSource *Source;
   vtkSelection* Selection;

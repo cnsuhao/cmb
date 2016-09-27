@@ -28,7 +28,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBClassifyPointsFilter : public vtkPolyDataAlgo
 {
 public:
   vtkTypeMacro(vtkCMBClassifyPointsFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkCMBClassifyPointsFilter *New();
 
@@ -39,10 +39,10 @@ public:
 
 protected:
   vtkCMBClassifyPointsFilter();
-  ~vtkCMBClassifyPointsFilter() {}
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
+  ~vtkCMBClassifyPointsFilter() override {}
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 private:
   vtkCMBClassifyPointsFilter(const vtkCMBClassifyPointsFilter&);  // Not implemented.
   void operator=(const vtkCMBClassifyPointsFilter&);  // Not implemented.

@@ -28,7 +28,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcMergeArcsClientOperator : public vtkSMSourceP
 public:
   static vtkCMBArcMergeArcsClientOperator* New();
   vtkTypeMacro(vtkCMBArcMergeArcsClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   // Returns the arc id of the merged arc
@@ -44,7 +44,7 @@ public:
 
 protected:
   vtkCMBArcMergeArcsClientOperator();
-  ~vtkCMBArcMergeArcsClientOperator();
+  ~vtkCMBArcMergeArcsClientOperator() override;
 
   vtkIdType ArcId;
   vtkIdType ArcIdToDelete;

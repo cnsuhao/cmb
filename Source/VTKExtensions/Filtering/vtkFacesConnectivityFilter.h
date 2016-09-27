@@ -28,7 +28,7 @@ class VTKCMBFILTERING_EXPORT vtkFacesConnectivityFilter : public vtkMultiBlockDa
 public:
   static vtkFacesConnectivityFilter* New();
   vtkTypeMacro(vtkFacesConnectivityFilter, vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Returns a list of new block indices,
@@ -61,7 +61,7 @@ public:
 //BTX
 protected:
   vtkFacesConnectivityFilter();
-  ~vtkFacesConnectivityFilter();
+  ~vtkFacesConnectivityFilter() override;
 
   // Description:
   // This is called within ProcessRequest when a request asks the algorithm
@@ -73,8 +73,8 @@ protected:
   //                        vtkInformationVector*);
 
   // Usual data generation method
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
 private:
   vtkFacesConnectivityFilter(const vtkFacesConnectivityFilter&); // Not implemented.

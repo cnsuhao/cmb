@@ -29,7 +29,7 @@ class VTKCMBCLIENT_EXPORT vtkCMBArcGrowClientOperator : public vtkSMSourceProxy
 public:
   static vtkCMBArcGrowClientOperator* New();
   vtkTypeMacro(vtkCMBArcGrowClientOperator, vtkSMSourceProxy);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //If the grow works this these are the arc ids of the grow
@@ -41,7 +41,7 @@ public:
 
 protected:
   vtkCMBArcGrowClientOperator();
-  ~vtkCMBArcGrowClientOperator();
+  ~vtkCMBArcGrowClientOperator() override;
 
   vtkIdTypeArray* GrownArcIds;
 

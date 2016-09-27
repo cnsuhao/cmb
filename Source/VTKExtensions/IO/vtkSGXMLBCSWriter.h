@@ -32,14 +32,14 @@ class VTKCMBIO_EXPORT vtkSGXMLBCSWriter : public vtkXMLWriter
 public:
   static vtkSGXMLBCSWriter *New();
   vtkTypeMacro(vtkSGXMLBCSWriter,vtkXMLWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  virtual const char* GetDefaultFileExtension();
+  const char* GetDefaultFileExtension() override;
 
   // Description:
   // Methods to define the file's major and minor version numbers.
-  virtual int GetDataSetMajorVersion();
-  virtual int GetDataSetMinorVersion();
+  int GetDataSetMajorVersion() override;
+  int GetDataSetMinorVersion() override;
 
 //BTX
   void SetCoords(vtkDoubleArray*);
@@ -51,10 +51,10 @@ public:
 
 protected:
   vtkSGXMLBCSWriter();
-  ~vtkSGXMLBCSWriter();
+  ~vtkSGXMLBCSWriter() override;
 
-  virtual int WriteData();
-  const char* GetDataSetName();
+  int WriteData() override;
+  const char* GetDataSetName() override;
 
 private:
   vtkSGXMLBCSWriter(const vtkSGXMLBCSWriter&);  // Not implemented.

@@ -26,7 +26,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBContourGroupFilter : public vtkMultiBlockData
 {
 public:
   vtkTypeMacro(vtkCMBContourGroupFilter,vtkMultiBlockDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with PointIds and CellIds on; and ids being generated
@@ -75,13 +75,13 @@ public:
 
 protected:
   vtkCMBContourGroupFilter();
-  ~vtkCMBContourGroupFilter();
+  ~vtkCMBContourGroupFilter() override;
 
-  virtual int RequestData(vtkInformation *,
+  int RequestData(vtkInformation *,
                   vtkInformationVector **,
-                  vtkInformationVector *);
+                  vtkInformationVector *) override;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 
   // Description:
   // Check if the valid group is valid

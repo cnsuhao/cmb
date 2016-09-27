@@ -32,33 +32,33 @@ class VTKCMBGRAPHICS_EXPORT vtkCMBLargeTextureSurfaceRepresentation :
 public:
   static vtkCMBLargeTextureSurfaceRepresentation* New();
   vtkTypeMacro(vtkCMBLargeTextureSurfaceRepresentation, vtkGeometryRepresentationWithFaces);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // vtkAlgorithm::ProcessRequest() equivalent for rendering passes. This is
   // typically called by the vtkView to request meta-data from the
   // representations or ask them to perform certain tasks e.g.
   // PrepareForRendering.
-  virtual int ProcessViewRequest(vtkInformationRequestKey* request_type,
-    vtkInformation* inInfo, vtkInformation* outInfo);
+  int ProcessViewRequest(vtkInformationRequestKey* request_type,
+    vtkInformation* inInfo, vtkInformation* outInfo) override;
 
   void RemoveLargeTextureInput();
 
 //BTX
 protected:
   vtkCMBLargeTextureSurfaceRepresentation();
-  ~vtkCMBLargeTextureSurfaceRepresentation();
+  ~vtkCMBLargeTextureSurfaceRepresentation() override;
 
-  virtual bool AddToView(vtkView* view);
+  bool AddToView(vtkView* view) override;
 
   // Description:
   // Fill input port information.
-  virtual int FillInputPortInformation(int port, vtkInformation* info);
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // Description:
   // Overriding to connect in the vtkImageTextureCrop filter
-  virtual int RequestData(vtkInformation*,
-    vtkInformationVector**, vtkInformationVector*);
+  int RequestData(vtkInformation*,
+    vtkInformationVector**, vtkInformationVector*) override;
 
   vtkImageTextureCrop *LODTextureCrop;
   vtkImageTextureCrop *TextureCrop;

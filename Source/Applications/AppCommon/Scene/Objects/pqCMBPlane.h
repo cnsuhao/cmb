@@ -29,10 +29,10 @@ public:
   pqCMBPlane(pqPipelineSource*source,
               pqRenderView *view, pqServer *server);
 
-  virtual ~pqCMBPlane();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
+  ~pqCMBPlane() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
   int getPlaneInfo(double p1[3], double p2[3]) const;
   void setPlaneInfo(double p1[3], double p2[3]);
 

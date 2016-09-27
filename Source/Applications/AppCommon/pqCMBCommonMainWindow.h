@@ -37,7 +37,7 @@ class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindow : public QMainWindow
   Q_OBJECT
 public:
   pqCMBCommonMainWindow();
-  virtual ~pqCMBCommonMainWindow();
+  ~pqCMBCommonMainWindow() override;
 
   virtual bool compareView(const QString& ReferenceImage, double Threshold, ostream& Output, const QString& TempDirectory);
   void addControlPanel(QWidget* panel);

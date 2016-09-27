@@ -20,13 +20,13 @@ class CMBAPPCOMMON_EXPORT pqCMBLineWidget : public pqLineWidget
   typedef pqLineWidget Superclass;
 public:
   pqCMBLineWidget(vtkSMProxy* o, vtkSMProxy* pxy, QWidget* p = 0);
-  virtual ~pqCMBLineWidget();
+  ~pqCMBLineWidget() override;
 
   /// Activates the widget. Respects the visibility flag.
-  virtual void select();
+  void select() override;
 
   /// Deactivates the widget.
-  virtual void deselect();
+  void deselect() override;
 
   /// set the ProcessEvents flag
   virtual void setProcessEvents(bool);
@@ -35,7 +35,7 @@ public:
   void getColor(double c[3]) const;
 protected:
   /// Update the widget visibility according to the WidgetVisible and Selected flags
-  virtual void updateWidgetVisibility();
+  void updateWidgetVisibility() override;
 
   /// updates the enable state of the picking shortcut.
   // virtual void updatePickShortcut();

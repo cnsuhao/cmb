@@ -25,7 +25,7 @@ class VTKCMBFILTERING_EXPORT vtkCMBArcCreateOperator : public vtkObject
 public:
   static vtkCMBArcCreateOperator * New();
   vtkTypeMacro(vtkCMBArcCreateOperator,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Convert the passed in the polydata into an arc
@@ -38,7 +38,7 @@ public:
 
 protected:
   vtkCMBArcCreateOperator();
-  virtual ~vtkCMBArcCreateOperator();
+  ~vtkCMBArcCreateOperator() override;
 
   vtkIdType CreatedArcId;
 private:

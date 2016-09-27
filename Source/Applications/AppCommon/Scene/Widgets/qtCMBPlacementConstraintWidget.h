@@ -32,7 +32,7 @@ class CMBAPPCOMMON_EXPORT qtCMBPlacementConstraintWidget : public QWidget
 
 public:
   qtCMBPlacementConstraintWidget(pqCMBSceneNode* n, QWidget* parent=0);
-  virtual ~qtCMBPlacementConstraintWidget();
+  ~qtCMBPlacementConstraintWidget() override;
 
   Ui::qtObjectPlacementConstraint* getWidget();
   const QMap <pqCMBSceneNode*, int>& getSelectedConstraints() const;

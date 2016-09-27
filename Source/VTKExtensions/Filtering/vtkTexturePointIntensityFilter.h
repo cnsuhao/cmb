@@ -28,7 +28,7 @@ class VTKCMBFILTERING_EXPORT vtkTexturePointIntensityFilter : public vtkPolyData
 public:
   static vtkTexturePointIntensityFilter *New();
   vtkTypeMacro(vtkTexturePointIntensityFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the image being used as the texture
@@ -82,7 +82,7 @@ public:
 
 protected:
   vtkTexturePointIntensityFilter();
-  ~vtkTexturePointIntensityFilter();
+  ~vtkTexturePointIntensityFilter() override;
 
   double TestPoint[3];
   double Translation[3];
@@ -95,8 +95,8 @@ protected:
   vtkTimeStamp BuildTime;  // time at which the transform was built
 
   int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+                  vtkInformationVector *) override;
+  int FillInputPortInformation(int, vtkInformation *) override;
 
 private:
   vtkTexturePointIntensityFilter(const vtkTexturePointIntensityFilter&);  // Not implemented.

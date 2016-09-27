@@ -25,10 +25,10 @@ class CMBAPPCOMMON_EXPORT cmbSceneNodeReplaceEvent : public cmbEvent
 
 public:
   cmbSceneNodeReplaceEvent(std::size_t creationSize, std::size_t deletionSize);
-    ~cmbSceneNodeReplaceEvent();
+    ~cmbSceneNodeReplaceEvent() override;
 
-    virtual void undo();
-    virtual void redo();
+    void undo() override;
+    void redo() override;
 
     void addCreatedNode(pqCMBSceneNode *node)
     {

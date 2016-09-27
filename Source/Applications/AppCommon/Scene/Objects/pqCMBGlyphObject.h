@@ -47,13 +47,13 @@ public:
                       pqServer *server, pqRenderView *view,
                       bool updateRep = true);
 
-  virtual ~pqCMBGlyphObject();
+  ~pqCMBGlyphObject() override;
 
 
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true);
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                    bool updateRep = true) override;
 
-  virtual enumObjectType getType() const;
+  enumObjectType getType() const override;
 
   std::string getGlyphFileName() const
     {return this->GlyphFileName;}
@@ -89,14 +89,14 @@ public:
   {return this->SurfaceType;}
   std::string getSurfaceTypeAsString() const;
   // Overwrite the databounds
-  virtual void getDataBounds(double bounds[6]) const
+  void getDataBounds(double bounds[6]) const override
     {this->getBounds(bounds);}
 
-  virtual void getColor(double color[4]) const;
-  virtual void setColor(double color[4], bool updateRep = true);
-  virtual void applyTransform(double scaleDelta[3],
+  void getColor(double color[4]) const override;
+  void setColor(double color[4], bool updateRep = true) override;
+  void applyTransform(double scaleDelta[3],
                               double orientationDelta[3],
-                              double translationDelta[3]);
+                              double translationDelta[3]) override;
   void copyAttributes(pqCMBSceneObjectBase*);
 
   // Duplicate the pipeline source of the object being glyphed

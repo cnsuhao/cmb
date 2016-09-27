@@ -58,7 +58,7 @@ public:
   // Construct a vtkCMBInitialValueProblemSolver with no initial FunctionSet.
   static vtkCMBInitialValueProblemSolver *New();
   vtkTypeMacro(vtkCMBInitialValueProblemSolver, vtkInitialValueProblemSolver);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Given initial values, xprev , initial time, t and a requested time
@@ -72,9 +72,9 @@ public:
   // OutOfDomain = 1,
   // NotInitialized = 2,
   // UnexpectedValue = 3
-  virtual int ComputeNextStep(double* xprev, double* xnext, double t,
+  int ComputeNextStep(double* xprev, double* xnext, double t,
     double& delT, double maxError,
-    double& error)
+    double& error) override
   {
     double minStep = delT;
     double maxStep = delT;
@@ -82,9 +82,9 @@ public:
     return this->ComputeNextStep(xprev, 0, xnext, t, delT, delTActual,
       minStep, maxStep, maxError, error);
   }
-  virtual int ComputeNextStep(double* xprev, double* dxprev, double* xnext,
+  int ComputeNextStep(double* xprev, double* dxprev, double* xnext,
     double t, double& delT, double maxError,
-    double& error)
+    double& error) override
   {
     double minStep = delT;
     double maxStep = delT;
@@ -92,18 +92,18 @@ public:
     return this->ComputeNextStep(xprev, dxprev, xnext, t, delT, delTActual,
       minStep, maxStep, maxError, error);
   }
-  virtual int ComputeNextStep(double* xprev, double* xnext,
+  int ComputeNextStep(double* xprev, double* xnext,
     double t, double& delT, double& delTActual,
     double minStep, double maxStep,
-    double maxError, double& error)
+    double maxError, double& error) override
   {
     return this->ComputeNextStep(xprev, 0, xnext, t, delT, delTActual,
       minStep, maxStep, maxError, error);
   }
-  virtual int ComputeNextStep(double* xprev, double* dxprev, double* xnext,
+  int ComputeNextStep(double* xprev, double* dxprev, double* xnext,
                               double t, double& delT, double& delTActual,
                               double minStep, double maxStep,
-                              double maxError, double& error);
+                              double maxError, double& error) override;
 
 //BTX
   // Description:
@@ -152,7 +152,7 @@ public:
 
 protected:
   vtkCMBInitialValueProblemSolver();
-  ~vtkCMBInitialValueProblemSolver();
+  ~vtkCMBInitialValueProblemSolver() override;
 
   virtual void ClearTestLocations();
   int NumberOfTestLocations;

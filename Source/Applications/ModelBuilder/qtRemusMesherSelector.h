@@ -37,7 +37,7 @@ public:
                         const remus::client::ServerConnection& connection,
                         QWidget* parent);
 
-  ~qtRemusMesherSelector();
+  ~qtRemusMesherSelector() override;
 
   void updateModel(smtk::model::ManagerPtr modelManager,
                    const remus::client::ServerConnection& connection);

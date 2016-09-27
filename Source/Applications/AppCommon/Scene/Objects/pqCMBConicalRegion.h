@@ -31,10 +31,10 @@ public:
   pqCMBConicalRegion(pqPipelineSource*source,
               pqRenderView *view, pqServer *server);
 
-  virtual ~pqCMBConicalRegion();
-  virtual pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true);
-  virtual pqCMBSceneObjectBase::enumObjectType getType() const;
+  ~pqCMBConicalRegion() override;
+  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
+                                bool updateRep = true) override;
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
   void setBaseCenter(double pnt[3]);
   void getBaseCenter(double pnt[3]) const;
   void setDirection(double pnt[3]);

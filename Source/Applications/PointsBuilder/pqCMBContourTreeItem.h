@@ -22,7 +22,7 @@ class  pqCMBContourTreeItem : public QTreeWidgetItem
 {
 public:
   pqCMBContourTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType=0);
-  virtual ~pqCMBContourTreeItem();
+  ~pqCMBContourTreeItem() override;
 
   // Description:
   // Get/Set the model entity object

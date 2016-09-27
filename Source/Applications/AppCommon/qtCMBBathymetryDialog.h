@@ -41,7 +41,7 @@ public:
   static int manageBathymetry(pqCMBSceneNode *node);
 
   qtCMBBathymetryDialog(pqCMBSceneTree* sceneTree);
-  virtual ~qtCMBBathymetryDialog();
+  ~qtCMBBathymetryDialog() override;
   pqCMBSceneObjectBase* bathymetrySourceObject() const;
   double elevationRadius();
   double highElevationLimit();

@@ -41,7 +41,7 @@ public:
 
   static vtkCMBMeshWriter* New();
   vtkTypeMacro(vtkCMBMeshWriter, vtkWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set the input to this writer.
@@ -88,7 +88,7 @@ public:
 //BTX
 protected:
   vtkCMBMeshWriter();
-  ~vtkCMBMeshWriter();
+  ~vtkCMBMeshWriter() override;
 
   ostream* OpenFile();
   void CloseFile(ostream* fp);
@@ -99,7 +99,7 @@ protected:
   bool ValidateFileFormat();
 
   // Actual writing.
-  virtual void WriteData();
+  void WriteData() override;
   char* FileName;
   int FileFormat;
 
@@ -109,7 +109,7 @@ protected:
   int FloatPrecision;
   int MeshDimension;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  int FillInputPortInformation(int port, vtkInformation *info) override;
 private:
   vtkCMBMeshWriter(const vtkCMBMeshWriter&); // Not implemented.
   void operator=(const vtkCMBMeshWriter&); // Not implemented.
