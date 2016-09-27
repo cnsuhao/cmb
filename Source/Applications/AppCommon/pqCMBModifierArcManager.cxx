@@ -716,7 +716,6 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
     this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
     selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
-      double pt[3];
       vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
       pointDisplaySource->InvokeCommand("clearVisible");
       double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;

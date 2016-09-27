@@ -261,7 +261,6 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
 
   const char *pszFormat = "MEM";
   GDALDriver *poDriver;
-  char **papszMetadata;
 
   poDriver = GetGDALDriverManager()->GetDriverByName(pszFormat);
 
@@ -309,7 +308,6 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
 
   const char *demFormat = "USGSDEM";
   GDALDriver *demDriver;
-  char **demMetadata;
 
   demDriver = GetGDALDriverManager()->GetDriverByName(demFormat);
   char **demOptions = NULL;

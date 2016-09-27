@@ -67,7 +67,6 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
 
   //go through the points of the arc and split it on the index
   int i=0;
-  double position[3];
   vtkCMBArc::Point point;
   bool foundSplitPoint = false;
   arc->InitTraversal();
@@ -99,7 +98,6 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
 
   //setup the new end nodes for both arcs
   createdArc->SetEndNode(0, point);
-  double position2[3];
   vtkCMBArc::Point point2;
   arc->GetEndNode(1)->GetPosition(point2);
   createdArc->SetEndNode(1, point2);
