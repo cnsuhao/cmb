@@ -151,7 +151,7 @@ int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* outputVector)
     this->CellData.push_back(cellData);
     this->UpdateProgress(static_cast<double>(file.tellg())/static_cast<double>(numBytes));
     }
-  this->NumberOfTimeSteps = TimeSteps_vector.size();
+  this->NumberOfTimeSteps = static_cast<int>(TimeSteps_vector.size());
   if(this->TimeSteps)
     {
     delete []this->TimeSteps;

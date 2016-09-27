@@ -308,7 +308,7 @@ int vtkSceneGenVegetationReader::RequestData(
     vtkSmartPointer<vtkCharArray> ensightStomatalFD =
       vtkSmartPointer<vtkCharArray>::New();
     ensightStomatalFD->SetName("ensightStomatalFD");
-    unsigned int maxSize = 0;
+    size_t maxSize = 0;
     for (size_t i = 0; i < this->EnsightStomatal.size(); i++)
       {
       if (this->EnsightStomatal[i].size() > maxSize)

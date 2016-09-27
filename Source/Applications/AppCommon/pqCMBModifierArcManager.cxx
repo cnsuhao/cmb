@@ -716,7 +716,6 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
     this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
     selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
-      double pt[3];
       vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
       pointDisplaySource->InvokeCommand("clearVisible");
       double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;
@@ -847,7 +846,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
 void pqCMBModifierArcManager::addNewArc(pqCMBModifierArc* dig)
 {
   this->CurrentModifierArc = dig;
-  int sid = ArcLines.size();
+  int sid = static_cast<int>(ArcLines.size());
   ArcLines.push_back(dig);
   addApplyControl();
   //TODO THIS NEEDS TO BE BETTER
@@ -1410,7 +1409,7 @@ void pqCMBModifierArcManager::onLoadArc()
   }
 
   std::string fname = fileNames[0].toStdString();
-  unsigned int start = ArcLines.size();
+  size_t start = ArcLines.size();
   int rc = this->TableWidget->rowCount();
   {
     QFileInfo fi(fileNames[0]);
@@ -1452,7 +1451,7 @@ void pqCMBModifierArcManager::onLoadArc()
   int version;
   in >> version;
 
-  unsigned int at = start + 0;
+  size_t at = start + 0;
   ArcLines[at]->read(in);
   this->setRow( rc+0, ArcLines[at] );
   ArcLines[at]->switchToNotEditable();

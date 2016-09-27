@@ -536,7 +536,6 @@ void pqCMBModifierArc::read(std::ifstream & f, bool import_function)
   if(!hasInfo) return;
   if(import_function)
   {
-    bool v;
     f >> IsVisible;
     int t;
     f >> t;

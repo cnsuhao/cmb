@@ -233,7 +233,7 @@ int vtkCMBADHReader::ScanFile()
       }
     else if(card == "ENDDS")
       {
-      timeData->NumberOfTimeSteps = timeValues.size();
+      timeData->NumberOfTimeSteps = static_cast<int>(timeValues.size());
       timeData->TimeSteps = new double[timeData->NumberOfTimeSteps];
       std::copy(timeValues.begin(),timeValues.end(),timeData->TimeSteps);
       timeData->TimeStepRange[0] = timeData->TimeSteps[0];

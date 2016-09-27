@@ -96,7 +96,7 @@ int vtkCMBDEMExportDataExtractor::RequestData(vtkInformation* /*request*/,
 
     int in;
     Zone = oSRS.GetUTMZone(&in);
-    IsNorth = static_cast<bool>(in);
+    IsNorth = (in == TRUE);
     }
   else
     {

@@ -177,7 +177,7 @@ vtkDoubleArray* vtkSBFunctionParser::GetResult()
 
   this->Result = vtkDoubleArray::New();
 
-  this->IsVectorResult = this->Implementation->Parser->IsVectorResult();
+  this->IsVectorResult = this->Implementation->Parser->IsVectorResult() != 0;
   if(this->IsVectorResult)
     {
     this->Result->SetNumberOfComponents(4);

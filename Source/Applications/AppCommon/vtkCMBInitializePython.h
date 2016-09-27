@@ -92,7 +92,7 @@ namespace
       strcat(system_path, ";");
       strcat(system_path, oldpath);
       }
-    putenv(system_path);
+    _putenv(system_path);
 #endif // if defined(_WIN32)
     }
 

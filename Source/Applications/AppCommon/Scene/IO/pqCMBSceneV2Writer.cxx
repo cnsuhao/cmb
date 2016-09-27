@@ -865,7 +865,7 @@ void pqCMBSceneV2Writer::processPolygon(pqCMBSceneNode *node, vtkXMLDataElement 
     {
     vtkXMLDataElement *arcsDE = vtkXMLDataElement::New();
     arcsDE->SetName("Arcs");
-    arcsDE->SetIntAttribute("Size",arcs.size());
+    arcsDE->SetIntAttribute("Size",static_cast<int>(arcs.size()));
     typedef std::set< pqCMBArc* >::const_iterator arc_it;
     for(arc_it i = arcs.begin(); i != arcs.end(); ++i)
       {

@@ -304,7 +304,7 @@ int vtkSceneGenVegetationClusterReader::RequestData(
     // string; thus using vtkCharArray, which is less elegant
     vtkNew<vtkCharArray> ensightStomatalFD;
     ensightStomatalFD->SetName("ensightStomatalFD");
-    unsigned int maxSize = 0;
+    size_t maxSize = 0;
     for (size_t i = 0; i < this->EnsightStomatal.size(); i++)
       {
       if (this->EnsightStomatal[i].size() > maxSize)

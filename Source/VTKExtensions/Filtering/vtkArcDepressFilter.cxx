@@ -494,7 +494,7 @@ private:
     this->maxWidth[0] = other->maxWidth[0];
     this->maxWidth[1] = other->maxWidth[1];
     this->relative = other->relative;
-    this->clamp = other->relative;
+    this->clamp = other->relative != 0;
     this->dispMode = other->dispMode;
     weightFuntion = other->weightFuntion->clone();
     assert(weightFuntion != NULL);
@@ -1749,7 +1749,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
                             new DepArcManualProfileFunction(
                                 static_cast<DepArcProfileFunction::FunctionType>(desptFunctionType),
                                 static_cast<DepArcProfileFunction::FunctionType>(weightFunType),
-                                isSymmetric, isRelative));
+                                (isSymmetric != 0), (isRelative != 0)));
   this->Modified();
 }
 

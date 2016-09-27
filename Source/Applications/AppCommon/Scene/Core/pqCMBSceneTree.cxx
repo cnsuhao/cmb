@@ -1904,7 +1904,7 @@ void pqCMBSceneTree::setNewObjectPosition(pqCMBSceneNode *node, bool randomPlace
       QMessageBox::critical(this->TreeWidget, "Glyph Playback File", QString(tr("Invalid point format. Read %1 values that does not give a valid set of 3D points")).arg(glyphPoints->size()));
       return;
       }
-    repeatCount = glyphPoints->size()/3;
+    repeatCount = static_cast<int>(glyphPoints->size()/3);
     }
 
   if (gobj)
@@ -2597,7 +2597,7 @@ void pqCMBSceneTree::duplicateSelectedRandomly()
         }
       glyphPoints->push_back(p);
       }
-    count = glyphPoints->size()/3;
+    count = static_cast<int>(glyphPoints->size()/3);
     }
 
   std::vector<pqCMBSceneNode*> nodes =

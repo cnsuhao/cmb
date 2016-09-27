@@ -83,7 +83,7 @@ void vtkDEMRasterWriter::WriteData()
         continue;
         }
       //create a file name if more than 1
-      int lastindex = std::string(FileName).find_last_of(".");
+      size_t lastindex = std::string(FileName).find_last_of('.');
       std::string rawname = std::string(FileName).substr(0, lastindex);
       std::stringstream ss;
       ss << idx;
@@ -261,7 +261,6 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
 
   const char *pszFormat = "MEM";
   GDALDriver *poDriver;
-  char **papszMetadata;
 
   poDriver = GetGDALDriverManager()->GetDriverByName(pszFormat);
 
@@ -309,7 +308,6 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
 
   const char *demFormat = "USGSDEM";
   GDALDriver *demDriver;
-  char **demMetadata;
 
   demDriver = GetGDALDriverManager()->GetDriverByName(demFormat);
   char **demOptions = NULL;

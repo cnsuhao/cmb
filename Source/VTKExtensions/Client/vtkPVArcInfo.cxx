@@ -210,7 +210,7 @@ bool vtkPVArcInfo::GetPointLocation(vtkIdType index, double pos[3])
 bool vtkPVArcInfo::GetPointLocationById(vtkIdType ptID, double pos[3])
 {
   //TODO make this faster as a look up table
-  for(size_t i = 0; i < this->PointLocations->GetNumberOfTuples();++i)
+  for(vtkIdType i = 0; i < this->PointLocations->GetNumberOfTuples();++i)
   {
     if(this->PointIds->GetTuple1(i) == ptID)
     {
