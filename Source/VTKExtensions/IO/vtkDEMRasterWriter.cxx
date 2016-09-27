@@ -83,7 +83,7 @@ void vtkDEMRasterWriter::WriteData()
         continue;
         }
       //create a file name if more than 1
-      size_t lastindex = std::string(FileName).find_last_of(".");
+      size_t lastindex = std::string(FileName).find_last_of('.');
       std::string rawname = std::string(FileName).substr(0, lastindex);
       std::stringstream ss;
       ss << idx;
