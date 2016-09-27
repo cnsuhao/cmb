@@ -1073,7 +1073,7 @@ void pqCMBFileDialog::setMetadata(QStringList const& metadata)
   int size = 4 * this->Implementation->Ui.MetaData->fontMetrics().width(' ');
   this->Implementation->Ui.MetaData->setTabStopWidth(size);
   QString result;
-  for(unsigned int i = 0; i < metadata.size() && i < this->Implementation->FileNames.size(); ++i)
+  for(int i = 0; i < metadata.size() && i < this->Implementation->FileNames.size(); ++i)
   {
     QString fname = this->Implementation->FileNames[i];
     QString meta = metadata[i];

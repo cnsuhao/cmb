@@ -317,7 +317,7 @@ bool cmbManualProfileFunction::writeData(std::ofstream & out) const
       << this->getDistanceRange(pqCMBModifierArc::MAX) << "\n"
       << Symmetric << " " << Relative << " " << DispUseSpline << " " << WeightUseSpline << "\n"
       << WeightingFunction->GetSize() << "\n";
-  for(unsigned int i = 0; i < WeightingFunction->GetSize(); ++i)
+  for(int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
     double d[4];
     WeightingFunction->GetNodeValue(i, d);
