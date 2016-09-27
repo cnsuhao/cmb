@@ -107,7 +107,7 @@ int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation * /*request*/,
   double* bnds = input->GetBounds();
   double totalPolyDataArea = (bnds[1]-bnds[0]) * (bnds[3]-bnds[2]);
 
-  output->SetNumberOfBlocks(pid2Face.size());
+  output->SetNumberOfBlocks(static_cast<unsigned>(pid2Face.size()));
   unsigned blocknum = 0;
   // Mesh each polygon individually then append all their polydata together
   typedef vtkCMBMeshServerLauncher vtkMeshServerLauncher;

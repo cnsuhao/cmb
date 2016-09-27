@@ -39,10 +39,9 @@ void pqCMBSceneNodeIterator::reset()
 
 void pqCMBSceneNodeIterator::addChildren(pqCMBSceneNode *node)
 {
-  int n = node->getChildren().size();
-  int i;
+  size_t n = node->getChildren().size();
   pqCMBSceneNode *child;
-  for (i = n-1; i >= 0; i--)
+  for (size_t i = n-1; i >= 0; i--)
     {
     child = node->getChildren()[i];
     if (!child->isMarkedForDeletion())
