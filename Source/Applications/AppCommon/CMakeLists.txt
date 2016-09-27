@@ -140,6 +140,8 @@ add_library(cmbAppCommon
   pqCMBProcessWidget.h
   pqCMBRubberBandHelper.cxx
   pqCMBRubberBandHelper.h
+  pqCMBRulerDialog.cxx
+  pqCMBRulerDialog.h
   qtCMBProgressWidget.cxx
   qtCMBProgressWidget.h
   qtCMBTableWidget.cxx
