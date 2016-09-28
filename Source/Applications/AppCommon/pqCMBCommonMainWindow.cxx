@@ -25,6 +25,7 @@
 
 #include "pqApplicationCore.h"
 #include "pqColorMapEditor.h"
+#include "pqCameraReaction.h"
 #include "pqDisplayColorWidget.h"
 #include "vtkMapper.h"
 #include "pqObjectBuilder.h"
@@ -533,6 +534,9 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   QObject::connect(
     this->Internal->UI.actionView_Negative_Z, SIGNAL(triggered()),
     this->MainWindowCore, SLOT(resetViewDirectionNegZ()));
+  // we want to rotate the object, but the trick here is about camera
+  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_cw, pqCameraReaction::ROTATE_CAMERA_CCW);
+  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_ccw, pqCameraReaction::ROTATE_CAMERA_CW);
   // Set up Center Axes toolbar.
   QObject::connect(
     this->Internal->UI.actionShowCenterAxes, SIGNAL(toggled(bool)),

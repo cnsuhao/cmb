@@ -385,6 +385,7 @@ endif()
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
+    RotationButtons
     ViewportPan
     HideShowAllFaces
     OperationGrow

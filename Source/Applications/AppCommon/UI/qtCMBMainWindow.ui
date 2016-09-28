@@ -58,6 +58,8 @@
    <addaction name="actionView_Negative_Y"/>
    <addaction name="actionView_Positive_Z"/>
    <addaction name="actionView_Negative_Z"/>
+   <addaction name="actionView_Rotate_90_cw"/>
+   <addaction name="actionView_Rotate_90_ccw"/>
    <addaction name="actionZoomToBox"/>
    <addaction name="separator"/>
    <addaction name="actionShowCenterAxes"/>
@@ -103,7 +105,7 @@
      <x>0</x>
      <y>0</y>
      <width>1304</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1284,6 +1286,30 @@
    </property>
    <property name="toolTip">
     <string>Lock the view size for testing</string>
+   </property>
+  </action>
+  <action name="actionView_Rotate_90_cw">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqRotateCameraCW24.png</normaloff>:/cmb/pqRotateCameraCW24.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Rotate 90° clockwise</string>
+   </property>
+   <property name="toolTip">
+    <string>Rotate 90° clockwise</string>
+   </property>
+  </action>
+  <action name="actionView_Rotate_90_ccw">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqRotateCameraCCW24.png</normaloff>:/cmb/pqRotateCameraCCW24.png</iconset>
+   </property>
+   <property name="text">
+    <string>View Rotate 90° counterclockwise</string>
+   </property>
+   <property name="toolTip">
+    <string>Rotate 90° counterclockwise</string>
    </property>
   </action>
  </widget>
