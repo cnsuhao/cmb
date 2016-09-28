@@ -39,15 +39,15 @@ void pqCMBSceneNodeIterator::reset()
 
 void pqCMBSceneNodeIterator::addChildren(pqCMBSceneNode *node)
 {
-  size_t n = node->getChildren().size();
-  pqCMBSceneNode *child;
-  for (size_t i = n-1; i >= 0; i--)
+  const std::vector<pqCMBSceneNode *> &children = node->getChildren();
+  for (std::vector<pqCMBSceneNode *>::const_reverse_iterator i = children.rbegin();
+       i != children.rend(); ++i)
     {
-    child = node->getChildren()[i];
+    pqCMBSceneNode *child = *i;
     if (!child->isMarkedForDeletion())
-        {
-        this->Stack.push(child);
-        }
+      {
+      this->Stack.push(child);
+      }
     }
 }
 
