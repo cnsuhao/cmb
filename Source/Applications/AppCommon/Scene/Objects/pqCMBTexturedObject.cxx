@@ -257,7 +257,9 @@ void pqCMBTexturedObject::showElevation(bool flag)
                         "CreateElevation").Set(0);
     }
 
-  vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "MapScalars").Set(0);
+  // We only turn off MapScalars when ShowElevation is false 
+  vtkSMPropertyHelper(this->getRepresentation()->getProxy(),
+                      "MapScalars").Set(this->ShowElevation);
   RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
       this->getRepresentation()->getProxy(),
       this->ShowElevation ? "Elevation" : "Color", vtkDataObject::POINT);

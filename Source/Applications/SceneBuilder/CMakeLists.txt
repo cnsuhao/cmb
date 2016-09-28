@@ -147,7 +147,7 @@ if(BUILD_TESTING)
     )
 
 set (XML_TESTS_WITH_BASELINES
-  ApplyBathymetry
+  # XXX Need polygon generation from arcs: ApplyBathymetry
   ArcAutoConnect1
   ArcCreate1
   ArcGrow
@@ -171,7 +171,7 @@ set (XML_TESTS_WITH_BASELINES
   # XXX: nodata(stone3.2dm): ImportingAsGlyphs_Playback
   # XXX: nodata(TINHigh.vtk): ImportObjectTest
   # XXX: nodata(SceneGen.osd.txt): LightingTest
-  LoadSaveBathymetry
+  # XXX Need polygon generation from arcs: LoadSaveBathymetry
   MercedRiverElevationTest
   # XXX: nodata(cyl_frame.2dm): NewTest
   # XXX: nodata(SceneGen.osd.txt): ObjectPropertiesTest
