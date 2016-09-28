@@ -963,7 +963,8 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
       for (it=result.begin(); it!=result.end(); ++it)
         {
         const double* rgba = (*it)->color();
-        QColor attColor = QColor::fromRgbF(rgba[0], rgba[1], rgba[2], rgba[3]);
+        double alpha = std::max(0., std::min(rgba[3], 1.0));
+        QColor attColor = QColor::fromRgbF(rgba[0], rgba[1], rgba[2], alpha);
         indexColors.append(attColor);
         const char* attname = (*it)->name().c_str();
         annotationList.append(attname);
@@ -1044,7 +1045,8 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       if ((rgba.size() == 3 || rgba.size() ==4) &&
          (rgba[0]+rgba[1]+rgba[2]) != 0)
         {
-        color.setRgbF(rgba[0], rgba[1], rgba[2]);
+        float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+        color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
         }
       if(color.isValid())
         {
@@ -1163,7 +1165,8 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
       if ((rgba.size() == 3 || rgba.size() ==4) &&
          (rgba[0]+rgba[1]+rgba[2]) != 0)
         {
-        color.setRgbF(rgba[0], rgba[1], rgba[2]);
+        float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+        color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
         }
       if(color.isValid())
         {
