@@ -37,11 +37,7 @@ public:
       cv::flip(src_c, src_c, 0);
     }
     vtkSmartPointer<vtkImageImport> importer = vtkSmartPointer<vtkImageImport>::New();
-    if ( dest )
-    {
-      importer->SetOutput( dest );
-    }
-    else
+    if ( !dest )
     {
       return false;
     }
@@ -53,6 +49,7 @@ public:
     importer->SetNumberOfScalarComponents( src.channels() );
     importer->SetImportVoidPointer( src.data );
     importer->Update();
+    dest->DeepCopy(importer->GetOutput());
     return true;
   }
 

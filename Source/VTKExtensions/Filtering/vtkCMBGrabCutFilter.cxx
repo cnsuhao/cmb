@@ -39,6 +39,7 @@ public:
   vtkSmartPointer<vtkPolyData> poly;
   vtkSmartPointer<vtkImageData> mask;
   cv::Mat maskCV;
+  cv::Mat outputLabledImageCV;
 };
 
 vtkCMBGrabCutFilter::vtkCMBGrabCutFilter()
@@ -139,7 +140,7 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
               bgdModel, fgdModel, NumberOfIterations, cv::GC_INIT_WITH_MASK);
   RunGrabCuts = false;
 
-  cv::Mat outputLabledImageCV = this->internal->maskCV.clone();
+  this->internal->outputLabledImageCV = this->internal->maskCV.clone();
 
   {
     cv::Mat pBG = this->internal->maskCV == cv::GC_PR_BGD;
@@ -152,24 +153,24 @@ int vtkCMBGrabCutFilter::RequestData(vtkInformation *vtkNotUsed(request),
     this->internal->maskCV.setTo(PotentialForegroundValue, pFG);
     this->internal->maskCV.setTo(BackgroundValue, BG);
 
-    outputLabledImageCV.setTo(BackgroundValue, pBG);
-    outputLabledImageCV.setTo(ForegroundValue, FG);
-    outputLabledImageCV.setTo(ForegroundValue, pFG);
-    outputLabledImageCV.setTo(BackgroundValue, BG);
+    this->internal->outputLabledImageCV.setTo(BackgroundValue, pBG);
+    this->internal->outputLabledImageCV.setTo(ForegroundValue, FG);
+    this->internal->outputLabledImageCV.setTo(ForegroundValue, pFG);
+    this->internal->outputLabledImageCV.setTo(BackgroundValue, BG);
   }
 
   this->internal->poly = vtkSmartPointer<vtkPolyData>::New();
-  vtkCMBOpenCVHelper::ExtractContours(outputLabledImageCV, image->GetOrigin(),
+  vtkCMBOpenCVHelper::ExtractContours(this->internal->outputLabledImageCV, image->GetOrigin(),
                                       image->GetSpacing(), ForegroundValue, this->internal->poly);
 
-  vtkCMBOpenCVHelper::OpenCVToVTK(outputLabledImageCV, maskVTK->GetOrigin(), maskVTK->GetSpacing(),
-                                  this->internal->mask);
+  vtkCMBOpenCVHelper::OpenCVToVTK(this->internal->outputLabledImageCV, maskVTK->GetOrigin(),
+                                  maskVTK->GetSpacing(), this->internal->mask);
   vtkCMBOpenCVHelper::OpenCVToVTK(this->internal->maskCV, maskVTK->GetOrigin(),
                                   maskVTK->GetSpacing(), outputNext);
 
   outputPoly->DeepCopy(this->internal->poly);
   outputLable->DeepCopy(this->internal->mask);
-  
+
   return 1;
 }
 
