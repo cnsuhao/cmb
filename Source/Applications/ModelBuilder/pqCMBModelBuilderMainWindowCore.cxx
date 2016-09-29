@@ -70,7 +70,7 @@
 #include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKModelInfo.h"
 #include "pqSMTKMeshInfo.h"
-
+#include "pqCMBContextMenuHelper.h"
 #include "qtCMBProgressWidget.h"
 #include "qtCMBSceneObjectFilterDialog.h"
 #include "qtCMBApplicationOptionsDialog.h"
@@ -963,7 +963,8 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
       for (it=result.begin(); it!=result.end(); ++it)
         {
         const double* rgba = (*it)->color();
-        QColor attColor = QColor::fromRgbF(rgba[0], rgba[1], rgba[2], rgba[3]);
+        double alpha = std::max(0., std::min(rgba[3], 1.0));
+        QColor attColor = QColor::fromRgbF(rgba[0], rgba[1], rgba[2], alpha);
         indexColors.append(attColor);
         const char* attname = (*it)->name().c_str();
         annotationList.append(attname);
@@ -1039,17 +1040,10 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
        curRef.hasIntegerProperty("block_index")) // a geometric entity
        && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
       {
-      // this could also be removing colors already being set
-      smtk::model::FloatList rgba = curRef.color();
-      if ((rgba.size() == 3 || rgba.size() ==4) &&
-         (rgba[0]+rgba[1]+rgba[2]) != 0)
-        {
-        color.setRgbF(rgba[0], rgba[1], rgba[2]);
-        }
-      if(color.isValid())
-        {
-        colorEntities[minfo].insert(curRef, color);
-        }
+      pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
+      // this could also be removing colors already being set,
+      // so if even the color is invalid, we still record it
+      colorEntities[minfo].insert(curRef, color);        
       }
 
     // For potential visibility changes
@@ -1158,17 +1152,10 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
     if(c->hasFloatProperty(*it, "color"))
       {
       QColor color;
-      // this could also be removing colors already being set
-      const smtk::model::FloatList& rgba(c->floatProperty(*it, "color"));
-      if ((rgba.size() == 3 || rgba.size() ==4) &&
-         (rgba[0]+rgba[1]+rgba[2]) != 0)
-        {
-        color.setRgbF(rgba[0], rgba[1], rgba[2]);
-        }
-      if(color.isValid())
-        {
-        colorEntities[ meshInfo ].insert(*it, color);
-        }
+      pqCMBContextMenuHelper::getValidMeshColor(color, *it);
+      // this could also be removing colors already being set,
+      // so if even the color is invalid, we still record it
+      colorEntities[ meshInfo ].insert(*it, color);        
       }
 
     // For potential visibility changes

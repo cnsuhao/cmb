@@ -448,9 +448,15 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
     panel->onRepresentationChanged(rep);
     panel->onPortChanged(rep->getOutputPortFromInput());
     if(color.isValid())
+      {
       panel->setBlockColor(colorBlocks, color);
+      panel->setBlockOpacity(colorBlocks, color.alphaF());
+      }
     else
+      {
       panel->clearBlockColor(colorBlocks);
+      panel->clearBlockOpacity(colorBlocks);
+      }
 
     panel->onRepresentationChanged(prevRep);
     panel->onPortChanged(prevOutport);
@@ -903,9 +909,44 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
     {
     return;
     }
-  QColor color = QColorDialog::getColor(QColor(),
+  // Trying to figure out the current color of the first selected entity or mesh
+  QColor currentColor = Qt::white;
+  pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
+  QColor tmpcolor;
+  if(m_selModelBlocks.size())
+    {
+    QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator it =
+      this->m_selModelBlocks.begin();
+    if(it.value().count())
+      {
+      smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0] - 1);
+      smtk::model::EntityRef selEnt(modMgr->managerProxy()->modelManager(), selID);
+      if(selEnt.isValid() && selEnt.hasColor()
+        && pqCMBContextMenuHelper::getValidEntityColor(tmpcolor, selEnt))
+        {
+        currentColor = tmpcolor;
+        }
+      }
+    }
+  else if(m_selMeshBlocks.size())
+    {
+    QMap<pqSMTKMeshInfo*, QList<unsigned int> >::const_iterator it =
+      this->m_selMeshBlocks.begin();
+    if(it.key() && it.key()->Info->GetMesh2BlockIdMap().size()
+       && it.value().count())
+      {
+      std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator mit =
+        it.key()->Info->GetMesh2BlockIdMap().begin();
+      if(pqCMBContextMenuHelper::getValidMeshColor(tmpcolor, mit->first))
+        {
+        currentColor = tmpcolor;
+        }
+      }
+    }
+
+  QColor color = QColorDialog::getColor(currentColor,
     this->m_dataInspector, "Choose Block Color",
-    QColorDialog::DontUseNativeDialog);
+    QColorDialog::DontUseNativeDialog | QColorDialog::ShowAlphaChannel);
   if(color.isValid())
     {
     this->setSelectedBlocksColor(color);

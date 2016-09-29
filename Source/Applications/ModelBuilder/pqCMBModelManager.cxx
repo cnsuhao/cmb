@@ -1257,10 +1257,10 @@ void pqCMBModelManager::updateEntityColorTable(
     if(idx >= 0 && (idx%2) == 0 && (idx/2) < numColors)
       {
       idx = 3*idx/2;
-
-      rgbColors[idx]   = colorEntities[entref].redF();
-      rgbColors[idx+1] = colorEntities[entref].greenF();
-      rgbColors[idx+2] = colorEntities[entref].blueF();
+      QColor newcolor = colorEntities[entref].isValid() ? colorEntities[entref] : Qt::white;
+      rgbColors[idx]   = newcolor.redF();
+      rgbColors[idx+1] = newcolor.greenF();
+      rgbColors[idx+2] = newcolor.blueF();
       changed = true;
       }
     }
