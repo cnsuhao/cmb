@@ -1,6 +1,0 @@
-<?xml version="1.0" ?>
-<pqevents>
-  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BoreholeGeology/Ex4-ComplexStratigraphy.bor" />
-  <pqevent object="qtCMBMainWindow/actionView_Negative_Y" command="activate" arguments="" />
-</pqevents>
