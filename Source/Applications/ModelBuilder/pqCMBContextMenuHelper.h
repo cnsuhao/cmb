@@ -110,9 +110,13 @@ static bool getValidEntityColor(QColor& color,
   {
   smtk::model::FloatList rgba = entref.color();
   if ((rgba.size() == 3 || rgba.size() ==4) &&
-     !(rgba[0]+rgba[1]+rgba[2] == 0))
+     (rgba[0]>=0. && rgba[0]<=1.0 &&
+      rgba[1]>=0. && rgba[1]<=1.0 &&
+      rgba[2]>=0. && rgba[2]<=1.0 &&
+      rgba[0]+rgba[1]+rgba[2] != 0))
     {
-    color.setRgbF(rgba[0], rgba[1], rgba[2]);
+    float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+    color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
     return true;
     }
   return false;
@@ -128,9 +132,13 @@ static bool getValidMeshColor(QColor& color,
     {
     smtk::model::FloatList rgba = c->floatProperty(mesh, "color");
     if ((rgba.size() == 3 || rgba.size() ==4) &&
-       !(rgba[0]+rgba[1]+rgba[2] == 0))
+       (rgba[0]>=0. && rgba[0]<=1.0 &&
+        rgba[1]>=0. && rgba[1]<=1.0 &&
+        rgba[2]>=0. && rgba[2]<=1.0 &&
+        rgba[0]+rgba[1]+rgba[2] != 0))
       {
-      color.setRgbF(rgba[0], rgba[1], rgba[2]);
+      float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+      color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
       return true;
       }
     }

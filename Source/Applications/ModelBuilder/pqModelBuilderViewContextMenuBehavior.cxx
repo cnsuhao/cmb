@@ -919,7 +919,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
       this->m_selModelBlocks.begin();
     if(it.value().count())
       {
-      smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0]);
+      smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0] - 1);
       smtk::model::EntityRef selEnt(modMgr->managerProxy()->modelManager(), selID);
       if(selEnt.isValid() && selEnt.hasColor()
         && pqCMBContextMenuHelper::getValidEntityColor(tmpcolor, selEnt))
