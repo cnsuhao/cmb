@@ -98,8 +98,9 @@ static void accumulateChildGeometricEntities(
       // Do this recursively since a group may contain other groups
       accumulateChildGeometricEntities(blockIds, *it);
     }
-  else if(toplevel.hasIntegerProperty("block_index") &&
-         getBlockIndex(toplevel, bidx))
+
+  // make sure the volume or group is checked if they have geometry themselves
+  if(toplevel.hasIntegerProperty("block_index") && getBlockIndex(toplevel, bidx))
     blockIds.insert(bidx);
   }
 
