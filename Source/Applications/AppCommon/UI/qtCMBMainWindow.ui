@@ -125,6 +125,8 @@
      <addaction name="actionView_Negative_Y"/>
      <addaction name="actionView_Positive_Z"/>
      <addaction name="actionView_Negative_Z"/>
+     <addaction name="actionView_Rotate_90_cw"/>
+     <addaction name="actionView_Rotate_90_ccw"/>
      <addaction name="actionZoomToBox"/>
      <addaction name="separator"/>
      <addaction name="actionShowCenterAxes"/>
