@@ -327,9 +327,9 @@ void pqCMBLIDARReaderManager::getDataBounds(double bounds[6])
       readerProxy->UpdatePropertyInformation();
       vtkPVDataInformation* dataInfo = this->ReaderSourceMap[filename]->
         getOutputPort(0)->getDataInformation();
-      double bounds[6];
-      dataInfo->GetBounds(bounds);
-      bb.AddBounds(bounds);
+      double dbounds[6];
+      dataInfo->GetBounds(dbounds);
+      bb.AddBounds(dbounds);
       }
     }
   if(bb.IsValid())
@@ -1155,7 +1155,6 @@ void pqCMBLIDARReaderManager::readPieces(pqPipelineSource* reader,
     int numBlocks = compositeInformation->GetNumberOfChildren();
 
     QString classifcationName;
-    vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
     for(int i = 0; i < numBlocks; i++)
       {
       pqPipelineSource* extract = this->Builder->createFilter("filters",

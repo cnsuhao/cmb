@@ -718,7 +718,7 @@ void pqCMBMeshViewerMainWindow::updateEnableState()
     this->Internal->MeshViewerPanel->getGUIPanel()->spreadsheet->setEnabled(0);
     }
 
-  this->Superclass::updateEnableState(data_loaded);
+  this->updateEnableState(data_loaded);
 
 }
 
@@ -972,9 +972,6 @@ void pqCMBMeshViewerMainWindow::addInputItem(QTreeWidgetItem* parentLocal,
     }
   QTreeWidget* inputList = this->Internal->MeshViewerPanel->
     getGUIPanel()->treeInputs;
-
-  Qt::ItemFlags itemFlags(
-    Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 
   QTreeWidgetItem* item = new QTreeWidgetItem(parentLocal);
   if(extractRep)

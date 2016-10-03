@@ -232,7 +232,6 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
     qobject_cast<pqCMBSceneBuilderMainWindowCore*>(this->MainWindowCore);
   mainWinCore->setpqCMBSceneTree(this->Tree);
 
-  pqApplicationCore* core = pqApplicationCore::instance();
   QObject::connect(this->Internal->ScenePanel->getGUIPanel()->ClearSelectionButton,
     SIGNAL(clicked()), this->Tree, SLOT(clearSelection()));
 
@@ -384,11 +383,9 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
   QMenu *propertiesMenu = new QMenu("Properties", menubar);
   propertiesMenu->setObjectName("menu_Properties");
 
-  QAction *createAction =
-    menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
+  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
                         createMenu);
-  QAction *propertiesAction =
-    menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
+  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
                         propertiesMenu);
 
   // Create Actions
@@ -568,7 +565,7 @@ void pqCMBSceneBuilderMainWindow::onSceneSaved()
 void pqCMBSceneBuilderMainWindow::updateEnableState()
 {
   bool data_loaded = !this->Tree->isEmpty();
-  this->Superclass::updateEnableState(data_loaded);
+  this->updateEnableState(data_loaded);
 
   if (data_loaded &&
       (static_cast<pqCMBSceneBuilderMainWindowCore*>(this->MainWindowCore)->getOutputFileName() != ""))

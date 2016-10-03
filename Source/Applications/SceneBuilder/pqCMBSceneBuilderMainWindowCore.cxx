@@ -2647,7 +2647,7 @@ void pqCMBSceneBuilderMainWindowCore::previewMesherOutput()
 
 //----------------------------------------------------------------------------
 bool pqCMBSceneBuilderMainWindowCore::exportSolidsCMBModel(
-  QList<pqOutputPort*>& inputs, const QString& cmbFileName, bool is2D)
+  QList<pqOutputPort*>& /*inputs*/, const QString& /*cmbFileName*/, bool /*is2D*/)
 {
   // TODO: implement.
   return false;
@@ -2737,7 +2737,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
     return;
     }
 #endif
-  bool success = this->exportSolidsCMBModel(inputs, cmbFileName, false);
+  /*bool success = */this->exportSolidsCMBModel(inputs, cmbFileName, false);
 
 #if 0 || defined(for_yumin)
   if (success && lineObjectsPresent)
@@ -3234,55 +3234,6 @@ void pqCMBSceneBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData
 */
 }
 
-//-----------------------------------------------------------------------------
-// update the state of the \c node if node is not an ancestor of any of the
-// non-blockable widgets. If so, then it recurses over all its children.
-static void selectiveEnabledInternal(QWidget* node,
-  QList<QPointer<QObject> >& nonblockable, bool enable)
-{
-  if (!node)
-    {
-    return;
-    }
-  if (nonblockable.size() == 0)
-    {
-    node->setEnabled(enable);
-    return;
-    }
-
-  foreach (QObject* objElem, nonblockable)
-    {
-    QWidget* elem = qobject_cast<QWidget*>(objElem);
-    if (elem)
-      {
-      if (node == elem)
-        {
-        // this is a non-blockable wiget. Don't change it's enable state.
-        nonblockable.removeAll(elem);
-        return;
-        }
-
-      if (node->isAncestorOf(elem))
-        {
-        // iterate over all children and selectively disable each.
-        QList<QObject*> children = node->children();
-        for (int cc=0; cc < children.size(); cc++)
-          {
-          QWidget* child = qobject_cast<QWidget*>(children[cc]);
-          if (child)
-            {
-            ::selectiveEnabledInternal(child, nonblockable, enable);
-            }
-          }
-        return;
-        }
-      }
-    }
-
-  // implies node is not an ancestor of any of the nonblockable widgets,
-  // we can simply update its enable state.
-  node->setEnabled(enable);
-}
 //-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
 {

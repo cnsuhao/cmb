@@ -329,7 +329,7 @@ void SimBuilderExportDialog::updatePanel()
     return;
     }
 
-  this->ExportUIManager->setSMTKView(topView, this->ContentWidget, NULL);
+  this->ExportUIManager->setSMTKView(topView, this->ContentWidget);
 
   // Initialize script path
   if (!scriptPath.empty())

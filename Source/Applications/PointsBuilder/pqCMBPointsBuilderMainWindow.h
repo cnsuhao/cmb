@@ -60,6 +60,7 @@ protected slots:
 
 
 protected:
+  using pqCMBCommonMainWindow::updateEnableState;
 
   void setupMenuActions();
 

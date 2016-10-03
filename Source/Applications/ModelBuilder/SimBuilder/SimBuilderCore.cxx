@@ -260,7 +260,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     }
   
   //parse element, create GUI components
-  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget(), this);
+  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget());
   if(!this->uiManager()->topView())
     {
     return 0;
@@ -507,7 +507,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     }
   
   // Create GUI components
-  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget(), this);
+  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget());
   if(!this->uiManager()->topView())
     {
     return 0;

@@ -583,8 +583,7 @@ pqXYBarChartView* pqCMBMeshViewerMainWindowCore::createHistogramView(
     this->setInputArray(source, "SelectInputArray", arrayName);
     this->updateSource(source);
 
-    pqDataRepresentation* repr =
-      builder->createDataRepresentation(source->getOutputPort(0), view);
+    builder->createDataRepresentation(source->getOutputPort(0), view);
     }
   return view;
 }
@@ -1276,8 +1275,6 @@ void pqCMBMeshViewerMainWindowCore::onFrustumSelect(bool checked)
 {
   if (checked)
     {
-    int isShiftKeyDown = this->activeRenderView()->
-      getRenderViewProxy()->GetInteractor()->GetShiftKey();
     this->renderViewSelectionHelper()->beginFrustumSelection();
     }
   else
@@ -1290,8 +1287,6 @@ void pqCMBMeshViewerMainWindowCore::onRubberBandSelectCell(bool checked)
 {
   if (checked)
     {
-    int isShiftKeyDown = this->activeRenderView()->
-      getRenderViewProxy()->GetInteractor()->GetShiftKey();
     this->renderViewSelectionHelper()->beginSurfaceSelection();
     }
   else
@@ -1304,8 +1299,6 @@ void pqCMBMeshViewerMainWindowCore::onRubberBandSelectPoints(bool checked)
 {
   if (checked)
     {
-    int isShiftKeyDown = this->activeRenderView()->
-      getRenderViewProxy()->GetInteractor()->GetShiftKey();
     this->renderViewSelectionHelper()->beginSurfacePointsSelection();
     }
   else
@@ -1657,62 +1650,6 @@ void pqCMBMeshViewerMainWindowCore::onReaderCreated(pqPipelineSource* reader,
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBMeshViewerMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
-{
-  this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
-}
-
-//-----------------------------------------------------------------------------
-// update the state of the \c node if node is not an ancestor of any of the
-// non-blockable widgets. If so, then it recurses over all its children.
-static void selectiveEnabledInternal(QWidget* node,
-  QList<QPointer<QObject> >& nonblockable, bool enable)
-{
-  if (!node)
-    {
-    return;
-    }
-  if (nonblockable.size() == 0)
-    {
-    node->setEnabled(enable);
-    return;
-    }
-
-  foreach (QObject* objElem, nonblockable)
-    {
-    QWidget* elem = qobject_cast<QWidget*>(objElem);
-    if (elem)
-      {
-      if (node == elem)
-        {
-        // this is a non-blockable wiget. Don't change it's enable state.
-        nonblockable.removeAll(elem);
-        return;
-        }
-
-      if (node->isAncestorOf(elem))
-        {
-        // iterate over all children and selectively disable each.
-        QList<QObject*> children = node->children();
-        for (int cc=0; cc < children.size(); cc++)
-          {
-          QWidget* child = qobject_cast<QWidget*>(children[cc]);
-          if (child)
-            {
-            ::selectiveEnabledInternal(child, nonblockable, enable);
-            }
-          }
-        return;
-        }
-      }
-    }
-
-  // implies node is not an ancestor of any of the nonblockable widgets,
-  // we can simply update its enable state.
-  node->setEnabled(enable);
-}
-
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::changeSelectionMaterialId(int newId)
 {
   this->changeMeshMaterialId(newId);
@@ -1766,6 +1703,12 @@ void pqCMBMeshViewerMainWindowCore::changeSelectionMaterialId(int newId)
   this->clearSelection();
   this->activeRenderView()->render();
   emit this->meshModified();
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBMeshViewerMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
+{
+  this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
 }
 
 //-----------------------------------------------------------------------------
@@ -1935,8 +1878,6 @@ pqDataRepresentation* pqCMBMeshViewerMainWindowCore::extractSelectionAsInput()
 //-----------------------------------------------------------------------------
 bool pqCMBMeshViewerMainWindowCore::invertCurrentSelection()
 {
-  vtkSMSourceProxy* currentSource = vtkSMSourceProxy::SafeDownCast(
-    this->activeSource()->getProxy());
   vtkSMSourceProxy* selSource = vtkSMSourceProxy::SafeDownCast(
     this->getActiveSelection());
   // for 2D mesh also check point selection
@@ -2172,9 +2113,6 @@ void pqCMBMeshViewerMainWindowCore::contourSelectSurface(
         vtkSmartPointer<vtkSMSourceProxy> selectionSource = vtkSMSourceProxy::SafeDownCast(
           selectionSources->GetItemAsObject(0));
 
-        pqServerManagerModel* smmodel =
-          pqApplicationCore::instance()->getServerManagerModel();
-        pqDataRepresentation* pqRepr = smmodel->findItem<pqDataRepresentation*>(repr);
         if (!repr)
           {
           // No data display was selected (or none that is registered).
@@ -2298,7 +2236,6 @@ void pqCMBMeshViewerMainWindowCore::linkContourPlaneWidget(
   vtkSMNewWidgetRepresentationProxy* planeWidget)
 {
   pqWaitCursor cursor;
-  vtkSMProxy *srcProxy = this->Internal->MeshScultpingRep->getProxy();
 
   double bounds[6];
   this->meshSculptingRepresentation()->getOutputPortFromInput()->
@@ -2394,7 +2331,6 @@ void pqCMBMeshViewerMainWindowCore::createSelectedNodesRepresentation()
     }
   vtkSMSourceProxy* pdSource = vtkSMSourceProxy::SafeDownCast(
   this->Internal->MeshSculptingSource->getProxy());
-  vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
   vtkClientServerStream stream;
   stream  << vtkClientServerStream::Invoke
     << VTKOBJECT(contourSelSource) << "GetSelectionPolyData"

@@ -2048,7 +2048,6 @@ int pqCMBSceneTree::createBorFileObjects(
 {
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
-  vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
 
   // force read
   vtkSMSourceProxy::SafeDownCast( source->getProxy() )->UpdatePipeline();

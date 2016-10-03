@@ -575,8 +575,6 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
     return;
 
   // expecting a ModelEntity is set for grow selection
-  const smtk::attribute::MeshSelectionItemDefinition *itemDef =
-    dynamic_cast<const smtk::attribute::MeshSelectionItemDefinition*>(MeshSelectionItem->definition().get());
   smtk::attribute::ModelEntityItem::Ptr inputEntities =
     currSelItem->refModelEntityItem();
   if(!inputEntities)

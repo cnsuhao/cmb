@@ -458,12 +458,9 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateEnableState()
 {
-  bool data_loaded = false; /*(this->getThisCore()->getCMBModel()->
-    GetCurrentModelEntityMap().keys().count() > 0) ? true : false;*/
-
   bool model_loaded = this->getThisCore()->modelManager()
     ->numberOfModels() > 0;
-  this->Superclass::updateEnableState(model_loaded);
+  this->updateEnableState(model_loaded);
 
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
@@ -854,12 +851,7 @@ const QStringList &pqCMBModelBuilderMainWindow::getTextureFileNames()
 {
   return this->Internal->TextureFiles;
 }
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::setTextureMap(const QString& filename, int numberOfRegistrationPoints,
-                                       double *points)
-{
-  this->addTextureFileName(filename.toAscii().data());
-}
+
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::addTextureFileName(const char *filename)
 {

@@ -223,7 +223,7 @@ void pqCMBPointsBuilderMainWindow::updateEnableState()
   bool dataLoaded = this->getThisCore()->IsDataLoaded();
   this->getMainDialog()->action_Select->setEnabled(dataLoaded);
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(dataLoaded);
-  this->Superclass::updateEnableState(dataLoaded);
+  this->updateEnableState(dataLoaded);
 }
 
 //-----------------------------------------------------------------------------

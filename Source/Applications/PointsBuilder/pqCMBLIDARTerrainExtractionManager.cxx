@@ -379,8 +379,6 @@ double pqCMBLIDARTerrainExtractionManager::ComputeResolution(pqPipelineSource *e
 {
   this->LIDARCore->updateProgress(QString("Computing Resolution"), 0);
 
-  pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
-
   pqSMAdaptor::setElementProperty(
     extractionFilter->getProxy()->GetProperty("ExecuteMode"), 0); // setup refine
 
@@ -808,7 +806,6 @@ void pqCMBLIDARTerrainExtractionManager::addExtractionOutputToTree(int minLevel,
   vtksys::Glob glob;
   QString extension(autoSaveInfo.completeSuffix());
 
-  pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
   double scale = initialScale;
   QTreeWidgetItem *initialVisibleItem = 0;
   for (int i = minLevel; i < maxLevel; i++)
@@ -971,8 +968,6 @@ pqCMBLIDARTerrainExtractionManager::createPreviewRepresentation(QString &filenam
 void pqCMBLIDARTerrainExtractionManager::onItemClicked(QTreeWidgetItem* item, int col)
 {
   // Change visibility
-  QTreeWidget *treeWidget = this->LIDARPanel->getGUIPanel()->extractionTreeWidget;
-
   bool representationLoaded = false;
   int visible = item->data(1, Qt::UserRole).toInt();
   if(col == 1)

@@ -286,7 +286,7 @@ pqCMBPointsBuilderMainWindowCore::pqCMBPointsBuilderMainWindowCore(QWidget* pare
 
   this->connect(pqApplicationCore::instance()->getObjectBuilder(),
     SIGNAL(readerCreated(pqPipelineSource*,const QStringList& )),
-    this, SLOT(onReaderCreated(pqPipelineSource*, const QStringList& )));
+    this, SLOT(onReaderForFilesCreated(pqPipelineSource*, const QStringList& )));
 }
 
 //-----------------------------------------------------------------------------
@@ -588,7 +588,7 @@ void pqCMBPointsBuilderMainWindowCore::abort()
   //this->enableAbort(false);
 }
 //-----------------------------------------------------------------------------
-void pqCMBPointsBuilderMainWindowCore::onReaderCreated(pqPipelineSource* reader,
+void pqCMBPointsBuilderMainWindowCore::onReaderForFilesCreated(pqPipelineSource* reader,
   const QStringList& files)
 {
   if (!reader || files.empty())
@@ -893,8 +893,6 @@ void pqCMBPointsBuilderMainWindowCore::clearCurrentLIDARData()
     this->clearThresholdFilters();
     }
 
-  pqApplicationCore* core = pqApplicationCore::instance();
-  pqObjectBuilder* builder = core->getObjectBuilder();
   pqCMBLIDARPieceObject* dataObj = NULL;
   foreach(QString filename, this->Internal->FilePieceIdObjectMap.keys())
     {
@@ -1047,8 +1045,6 @@ bool pqCMBPointsBuilderMainWindowCore::savePieces(
   QCoreApplication::processEvents();
 
   this->Internal->ProgressBar->setProgress(QString("Writing pieces ..."), 0);
-  pqProgressManager* progress_manager =
-    pqApplicationCore::instance()->getProgressManager();
   bool writeResult = false;
   if(writerName.compare("DEMWriter") == 0)
     {
@@ -1134,7 +1130,6 @@ bool pqCMBPointsBuilderMainWindowCore
   {
     return false;
   }
-  double radius = std::max(rSpacing[0], rSpacing[1]); //TODO Reconsider this
 
   this->Internal->CurrentWriter = builder->createFilter("writers",
                                                         writerName.toStdString().c_str(),
@@ -1462,7 +1457,6 @@ void pqCMBPointsBuilderMainWindowCore::onDefaultMaxNumberOfTargetPointsChanged()
   this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->
     setText( QString::number(
     this->cmbAppOptions()->maxNumberOfCloudPoints()) );
-  int num = this->cmbAppOptions()->maxNumberOfCloudPoints();
 
   this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->update();
 }
@@ -2441,8 +2435,6 @@ qtCMBArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, d
 
   qtCMBArcWidget *widget= new qtCMBArcWidget( pointplacer, pointplacer,NULL) ;
 
-  vtkSMProxy* repProxy =
-  widget->getWidgetProxy()->GetRepresentationProxy();
   widget->setObjectName("CmbSceneContourWidget");
 
   vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(normal);
@@ -3207,7 +3199,6 @@ void pqCMBPointsBuilderMainWindowCore::onLoadContour()
 void pqCMBPointsBuilderMainWindowCore::saveContour(const char* filename)
 {
   pqObjectBuilder* const builder = pqApplicationCore::instance()->getObjectBuilder();
-  vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
   vtkClientServerStream stream;
   pqPipelineSource* contourSource =
     builder->createSource("sources","ContourGroup", this->getActiveServer());
@@ -3312,7 +3303,6 @@ void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
   this->Internal->ContourTree->TreeWidget->blockSignals(true);
   QList<pqCMBLIDARPieceObject*> allPieces =
     this->Internal->PieceMainTable->getAllPieceObjects();
-  vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
   for(int i = 0; i < numBlocks; i++)
     {
     pqPipelineSource* extractBlock = builder->createFilter("filters",

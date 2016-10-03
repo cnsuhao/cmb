@@ -1342,7 +1342,6 @@ pqCMBSceneObjectBase *pqCMBSceneV2Reader::processSolidMesh(vtkXMLDataElement * e
     this->Sources[index] = obj;
     }
 
-  pqCMBSolidMesh *fobj = dynamic_cast<pqCMBSolidMesh*>(obj);
   // We need the position
   e = elem->FindNestedElementWithName("Position");
   if(e)

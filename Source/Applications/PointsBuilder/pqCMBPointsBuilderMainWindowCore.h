@@ -91,8 +91,8 @@ public slots:
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
-  void onReaderCreated(pqPipelineSource*, const QStringList&);
-
+  void onReaderForFilesCreated(pqPipelineSource*, const QStringList&);
+ 
   // Resets the center of rotation to the center of the active
   // source in the active view.
   void resetCenterOfRotationToCenterOfCurrentData() override;

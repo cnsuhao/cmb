@@ -67,8 +67,8 @@ public:
   pqPipelineSource * getGlyphSource() const;
   virtual void clearSelectedPointsColor();
   void insertNextPoint(double *p);
-  vtkIdType getNumberOfPoints() const;
-  void getAveragePoint(double *pa) const;
+  vtkIdType getNumberOfPoints() override;
+  void getAveragePoint(double *pa);
   void getPoint(vtkIdType i, double *p) const;
   void setPoint(vtkIdType i, double *p);
 
