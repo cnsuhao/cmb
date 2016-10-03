@@ -97,7 +97,9 @@ public slots:
         const QString& itemname);
 
   void onFileOpen(const QStringList& Files) override;
-  void onCloseData(bool modelOnly=false);
+  void onCloseData() override
+    { this->onCloseData(false); }
+  void onCloseData(bool modelOnly);
   void clearSimBuilder();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);
   int onLoadScenario();

@@ -1206,7 +1206,7 @@ void internal_collectAllMeshes(smtk::mesh::MeshSets& meshes,
 {
   smtk::mesh::MeshSet dimMesh = c->meshes(dim);
   meshes.insert(dimMesh);
-  for(int i=0; i<dimMesh.size(); ++i)
+  for(std::size_t i=0; i<dimMesh.size(); ++i)
     meshes.insert(dimMesh.subset(i));
 }
 

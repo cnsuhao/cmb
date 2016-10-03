@@ -51,7 +51,7 @@
 
 namespace pqCMBContextMenuHelper
 {
-static bool getBlockIndex(const smtk::model::EntityRef& eref,
+inline bool getBlockIndex(const smtk::model::EntityRef& eref,
                              unsigned int& flatIndex)
   {
   const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
@@ -64,7 +64,7 @@ static bool getBlockIndex(const smtk::model::EntityRef& eref,
   }
 
 /// Fetch children for volum and group entities.
-static void accumulateChildGeometricEntities(
+inline void accumulateChildGeometricEntities(
   QSet<unsigned int>& blockIds,
   const smtk::model::EntityRef& toplevel)
   {
@@ -106,7 +106,7 @@ static void accumulateChildGeometricEntities(
 
 // only use valid color, the rest will be colored
 // randomly with CTF
-static bool getValidEntityColor(QColor& color,
+inline bool getValidEntityColor(QColor& color,
   const smtk::model::EntityRef& entref)
   {
   smtk::model::FloatList rgba = entref.color();
@@ -125,7 +125,7 @@ static bool getValidEntityColor(QColor& color,
 
 // only use valid color, the rest will be colored
 // randomly with CTF
-static bool getValidMeshColor(QColor& color,
+inline bool getValidMeshColor(QColor& color,
   const smtk::mesh::MeshSet& mesh)
 {
   smtk::mesh::CollectionPtr c = mesh.collection();
@@ -148,7 +148,7 @@ static bool getValidMeshColor(QColor& color,
 
 // only use valid color, the rest will be colored
 // randomly with CTF
-static bool validMeshColorMode(const QString& colorMode,
+inline bool validMeshColorMode(const QString& colorMode,
   const smtk::mesh::MeshSet& mesh)
 {
   smtk::model::EntityRefArray meshEntRefs = mesh.modelEntities();
@@ -163,7 +163,7 @@ static bool validMeshColorMode(const QString& colorMode,
 
 // return total number of blocks selected
 //-----------------------------------------------------------------------------
-static int getSelectedRepBlocks(
+inline int getSelectedRepBlocks(
   const QList<pqSMTKModelInfo*> &selModels,
   const QList<pqSMTKMeshInfo*> &selMeshes,
   QMap<pqSMTKModelInfo*, QList<unsigned int> >& modelresult,
@@ -225,7 +225,7 @@ static int getSelectedRepBlocks(
   return totalBlocks;
   }
 
-static bool hasSessionOp(const smtk::model::SessionPtr& brSession,
+inline bool hasSessionOp(const smtk::model::SessionPtr& brSession,
   const std::string& opname)
   {
   if(brSession)
@@ -238,7 +238,7 @@ static bool hasSessionOp(const smtk::model::SessionPtr& brSession,
 
 static const std::string s_internal_groupOpName("entity group");
 
-static bool startGroupOp(
+inline bool startGroupOp(
  pqCMBModelManager* modMgr,
  pqSMTKModelInfo* minfo,
  const std::string& optype,
@@ -368,7 +368,7 @@ static bool startGroupOp(
   return false;
   }
 
-static void setRepresentationType(pqDataRepresentation* repr,
+inline void setRepresentationType(pqDataRepresentation* repr,
                                             const QString& repType)
   {
   if(!repr)
@@ -381,7 +381,7 @@ static void setRepresentationType(pqDataRepresentation* repr,
 
   }
 
-static void getAllEntityIds(pqSMTKModelInfo* minfo,
+inline void getAllEntityIds(pqSMTKModelInfo* minfo,
                            smtk::model::ManagerPtr modelMan,
                            smtk::common::UUIDs& entids)
   {
@@ -405,7 +405,7 @@ static void getAllEntityIds(pqSMTKModelInfo* minfo,
 
   }
 
-static void getAllMeshSets(pqSMTKMeshInfo* minfo,
+inline void getAllMeshSets(pqSMTKMeshInfo* minfo,
                          smtk::mesh::ManagerPtr meshMgr,
                          smtk::mesh::MeshSets& meshes)
  {

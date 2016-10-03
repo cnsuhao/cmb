@@ -39,7 +39,7 @@
 namespace pqSMTKUIHelper
 {
   //----------------------------------------------------------------------------
-  static void process_smtkFileItemRequest(
+  inline void process_smtkFileItemRequest(
     smtk::extension::qtFileItem* fileItem,
     pqServer* server, QWidget* parent_Widget = NULL)
   {
@@ -99,7 +99,7 @@ namespace pqSMTKUIHelper
   }
 
   //----------------------------------------------------------------------------
-  static void process_smtkModelEntityItemSelectionRequest(
+  inline void process_smtkModelEntityItemSelectionRequest(
     smtk::extension::qtModelEntityItem* entityItem,
     smtk::extension::qtModelView* modelView)
   {
@@ -144,7 +144,7 @@ namespace pqSMTKUIHelper
 namespace pqCMBSelectionHelperUtil
 {
 
-static vtkSelectionNode* gatherSelectionNode(
+inline vtkSelectionNode* gatherSelectionNode(
     pqPipelineSource* source,
     vtkPVSelectionInformation* selInfo)
   {
@@ -161,7 +161,7 @@ static vtkSelectionNode* gatherSelectionNode(
     return NULL;
   }
 
-static int fillSelectionIdList(
+inline int fillSelectionIdList(
   QList<unsigned int> & result,
   vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
 {
