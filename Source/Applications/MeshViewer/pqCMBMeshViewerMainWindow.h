@@ -126,6 +126,7 @@ protected slots:
   void onStartConeSelection(bool showDialog=false);
 
 protected:
+  using pqCMBCommonMainWindow::updateEnableState;
 
   // Description
   void setupMenuActions();

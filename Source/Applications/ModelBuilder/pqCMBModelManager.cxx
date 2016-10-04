@@ -480,8 +480,7 @@ public:
     }
   }
 
-  void createImageRepresentation(smtk::model::ManagerPtr manager,
-                                const smtk::model::EntityRef& model,
+  void createImageRepresentation(const smtk::model::EntityRef& model,
                                 pqRenderView* view,
                                 const std::string& imageurl)
   {
@@ -1846,38 +1845,38 @@ bool pqCMBModelManager::handleOperationResult(
     smtk::model::MODEL_ENTITY);
   bool success = true;
   smtk::model::SessionRef sref(pxy->modelManager(), sessionId);
-  for (smtk::model::Models::iterator it = modelEnts.begin();
-      it != modelEnts.end(); ++it)
+  for (smtk::model::Models::iterator modit = modelEnts.begin();
+      modit != modelEnts.end(); ++modit)
     {
-    if(it->isValid() && !it->parent().isModel()) // ingore submodels
+    if(modit->isValid() && !modit->parent().isModel()) // ingore submodels
       {
       smtk::model::Model newModel;
-      if(internal_getModelInfo(*it, this->Internal->ModelInfos) == NULL)
+      if(internal_getModelInfo(*modit, this->Internal->ModelInfos) == NULL)
         {
         hasNewModels = true;
         // if this is a submodel, use its parent
-        newModel =  it->parent().isModel() ? it->parent() : *it;
+        newModel =  modit->parent().isModel() ? modit->parent() : *modit;
         success = this->Internal->addModelRepresentation(
           newModel, view, this->Internal->ManagerProxy, "", sref);
         }
       // update representation
-      else if(geometryChangedModels.find(it->entity()) != geometryChangedModels.end())
+      else if(geometryChangedModels.find(modit->entity()) != geometryChangedModels.end())
         {
-        this->updateModelRepresentation(*it);
-        this->updateModelMeshRepresentations(*it);
+        this->updateModelRepresentation(*modit);
+        this->updateModelMeshRepresentations(*modit);
         }
       // update group LUT
-      else if(groupChangedModels.find(it->entity()) != groupChangedModels.end())
+      else if(groupChangedModels.find(modit->entity()) != groupChangedModels.end())
         {
-        this->Internal->updateEntityGroupFieldArrayAndAnnotations(*it);
-        pqSMTKModelInfo* modelInfo = this->modelInfo(*it);
+        this->Internal->updateEntityGroupFieldArrayAndAnnotations(*modit);
+        pqSMTKModelInfo* modelInfo = this->modelInfo(*modit);
         this->Internal->resetColorTable(modelInfo, modelInfo->GroupLUT, modelInfo->grp_annotations);
         }
       // for grow "selection" operations, the model is writen to "modified" result
       else if(meshSelections/* && meshSelections->numberOfValues() > 0 */&&
-        generalModifiedModels.find(it->entity()) != generalModifiedModels.end())
+        generalModifiedModels.find(modit->entity()) != generalModifiedModels.end())
         {
-        if((minfo = this->modelInfo(*it)))
+        if((minfo = this->modelInfo(*modit)))
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
 
@@ -1887,25 +1886,24 @@ bool pqCMBModelManager::handleOperationResult(
       // will not have to read the image_url here if an "image" is already there in the model
       //
       if((newModel.isValid() && newModel.hasStringProperty("image_url")) ||
-         (generalModifiedModels.find(it->entity()) != generalModifiedModels.end() &&
-         it->hasStringProperty("image_url")))
+         (generalModifiedModels.find(modit->entity()) != generalModifiedModels.end() &&
+         modit->hasStringProperty("image_url")))
         {
-        smtk::model::StringList const& urlprop(it->stringProperty("image_url"));
+        smtk::model::StringList const& urlprop(modit->stringProperty("image_url"));
         if (!urlprop.empty())
           {
           std::string imageurl = urlprop[0];
-          this->Internal->createImageRepresentation(this->managerProxy()->modelManager(),
-                                                 *it, view, imageurl);
+          this->Internal->createImageRepresentation(*modit, view, imageurl);
           }
         }
 
       // Handle new meshes for a model
-      if(newMeshesModels.find(it->entity()) != newMeshesModels.end())
+      if(newMeshesModels.find(modit->entity()) != newMeshesModels.end())
         {
         // If models are also created from the same operation, we only show models,
         // and set mesh representation invisible.
         this->Internal->createMeshRepresentation(this->managerProxy()->modelManager(),
-                                                 *it, view, !hasNewModels);
+                                                 *modit, view, !hasNewModels);
         // make the new model source the active source
         if(hasNewModels && newModel.isValid())
           {

@@ -66,9 +66,6 @@ public slots:
   virtual void onLockViewSize(bool);
 
 protected slots:
-  // Description:
-  // Updates the enable state of various menus.
-  virtual void updateEnableState(bool data_loaded);
 
   // Description:
   // open About dialog
@@ -100,6 +97,9 @@ protected slots:
   virtual void loadMultiFilesStop(){}
 
 protected:
+  // Description:
+  // Updates the enable state of various menus.
+  virtual void updateEnableState(bool data_loaded);
 
   virtual void clearGUI();
   virtual void setupZoomToBox();

@@ -1067,7 +1067,6 @@ void pqCMBCommonMainWindowCore::updateCameraManipulationMode(int mode)
     this->Internal->CameraManipulationModeBox->setCurrentIndex(mode);
     }
 
-  vtkSMProxyManager* pxm = vtkSMProxyManager::GetProxyManager();
   std::string propertyName = "Camera3DManipulators";
   int interactorMode = vtkPVRenderView::INTERACTION_MODE_3D;
 

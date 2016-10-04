@@ -75,8 +75,9 @@ protected slots:
   void onEnableMenuItems(bool state) override;
 
 protected:
-  // Description
+  using pqCMBCommonMainWindow::updateEnableState;
 
+  // Description
   void clearGUI() override;
   void updateSelection() override;
   void setupMenuActions();

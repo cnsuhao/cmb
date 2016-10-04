@@ -53,8 +53,6 @@ public slots:
 
   // Description:
   // Texture related slots
-  void setTextureMap(const QString& filename,
-    int numberOfRegistrationPoints, double *points);
   void addTextureFileName(const char *filename);
   const QStringList &getTextureFileNames();
 
@@ -113,6 +111,7 @@ protected slots:
   void onSimFileLoaded(const char* filename);
 
 protected:
+  using pqCMBCommonMainWindow::updateEnableState;
   // Description
   // Initializes the application.
   void initializeApplication();

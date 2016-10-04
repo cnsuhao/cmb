@@ -245,8 +245,6 @@ void qtCMBGenerateContoursDialog::generateContours()
 
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
 
-  pqServer *server = this->ParentNode->getTree()->getCurrentServer();
-
   // save values used for this computation, so can know whether reecute is necessary
   this->ContourValue = this->InternalWidget->contourValue->text().toDouble();
   this->MinimumLineLength = this->InternalWidget->minimumLineLength->text().toDouble();
@@ -334,8 +332,6 @@ void qtCMBGenerateContoursDialog::onCreateContourNodes()
   this->disableWhileProcessing();
 
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
-  pqServer *server = this->ParentNode->getTree()->getCurrentServer();
-
   pqPipelineSource *polyDataStatsFilter = builder->createFilter("filters",
     "PolyDataStatsFilter", this->CleanPolyLines);
   vtkSMSourceProxy::SafeDownCast( polyDataStatsFilter->getProxy() )->

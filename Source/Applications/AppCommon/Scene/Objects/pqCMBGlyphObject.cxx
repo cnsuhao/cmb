@@ -257,14 +257,14 @@ void pqCMBGlyphObject::insertNextPoint(double *p)
 }
 
 //-----------------------------------------------------------------------------
-vtkIdType pqCMBGlyphObject::getNumberOfPoints() const
+vtkIdType pqCMBGlyphObject::getNumberOfPoints()
 {
   return const_cast<vtkSMCMBGlyphPointSourceProxy*>
     (this->SourceProxy)->GetNumberOfPoints();
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBGlyphObject::getAveragePoint(double *pa) const
+void pqCMBGlyphObject::getAveragePoint(double *pa)
 {
   int i, n = this->getNumberOfPoints();
   pa[0] = pa[1] = pa[2] = 0.0;

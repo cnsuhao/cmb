@@ -56,8 +56,7 @@ public:
   { return this->RenderView; }
 
   smtk::extension::qtBaseView* topView();
-  void setSMTKView( smtk::common::ViewPtr topView, QWidget* parentWidget,
-                    SimBuilderCore* sbCore);
+  void setSMTKView( smtk::common::ViewPtr topView, QWidget* parentWidget);
   smtk::model::ManagerPtr attModelManager() const;
   void setModelManager(smtk::model::ManagerPtr);
   void setModelPanel(pqSMTKModelPanel*);

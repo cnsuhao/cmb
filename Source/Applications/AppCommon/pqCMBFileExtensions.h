@@ -28,7 +28,7 @@ namespace pqCMBFileExtensions
 
   typedef QMap<QString, QPair<QString, QString> > cmb_FileExtMap;
   // ModelBuilder file types
-  static QString ModelBuilder_FileTypes()
+  inline QString ModelBuilder_FileTypes()
   {
     QString filters;
     vtkSMProxyManager* proxyManager = vtkSMProxyManager::GetProxyManager();
@@ -54,7 +54,6 @@ namespace pqCMBFileExtensions
   */
       if(haveMoab)
         {
-        vtkSMProxy* moabProxy = pxm->GetProxy("sources", "CmbMoabSolidReader");
         filters += "Moab files (*.h5m *.sat *.brep *.stp *.cub *.exo);;";
         }
       filters += "All files (*)";
@@ -63,25 +62,25 @@ namespace pqCMBFileExtensions
   }
 
   // SceneBuilder file types
-  static QString SceneBuilder_FileTypes()
+  inline QString SceneBuilder_FileTypes()
   {
     return "SceneGen (*.sg);;OSDLSceneGen (*.osd.txt);;Map (*.map)";
   }
 
   // PointsBuilder file types
-  static QString PointsBuilder_FileTypes()
+  inline QString PointsBuilder_FileTypes()
   {
     return "Supported LIDAR files (*.pts *.bin *.bin.pts *.las *.dem *.hdr *.FLT *.ftw *.vtp);;PTS (*.pts *.bin *.bin.pts);;LAS (*.las);;DEM (*.dem *.hdr *.FLT *.ftw);;VTK (*.vtp);;All files (*)";
   }
 
   // MeshViewer file types
-  static QString MeshViewer_FileTypes()
+  inline QString MeshViewer_FileTypes()
   {
     return "CMB 2D Mesh Files (*.2dm);;CMB 3D Mesh Files (*.3dm);;GAMBIT Mesh Files (*.neu);;VTK legacy data (*.vtk)";
   }
 
   // GeologyBuilder file types
-  static QString GeologyBuilder_FileTypes()
+  inline QString GeologyBuilder_FileTypes()
   {
     return "Boreholes (*.bor);;SceneGen (*.sg);;OSDLSceneGen (*.osd.txt);;Map (*.map)";
   }
@@ -92,7 +91,7 @@ namespace pqCMBFileExtensions
   // the select readers dialog since it detects all available readers, which we are trying to avoid
   // This map only need to contain those that are repeated in the SM xml configure file
   // <file_extension, <reader_group, reader_name> >
-  static cmb_FileExtMap ModelBuilder_ReadersMap()
+  inline cmb_FileExtMap ModelBuilder_ReadersMap()
   {
     cmb_FileExtMap readerMap;
     readerMap.insert("crf", QPair<QString, QString>("sources", "StringReader"));
@@ -121,7 +120,7 @@ namespace pqCMBFileExtensions
     return readerMap;
   }
 
-  static cmb_FileExtMap SceneBuilder_ReadersMap()
+  inline cmb_FileExtMap SceneBuilder_ReadersMap()
   {
     cmb_FileExtMap readerMap = ModelBuilder_ReadersMap();
     readerMap.insert("osd.txt", QPair<QString, QString>("sources", "OSDLReader"));
@@ -133,7 +132,7 @@ namespace pqCMBFileExtensions
     return readerMap;
   }
 
-  static cmb_FileExtMap PointsBuilder_ReadersMap()
+  inline cmb_FileExtMap PointsBuilder_ReadersMap()
   {
     cmb_FileExtMap readerMap;
     readerMap.insert("bin.pts", QPair<QString, QString>("sources", "LIDARReader"));
@@ -143,7 +142,7 @@ namespace pqCMBFileExtensions
     return readerMap;
   }
 
-  static cmb_FileExtMap MeshViewer_ReadersMap()
+  inline cmb_FileExtMap MeshViewer_ReadersMap()
   {
     cmb_FileExtMap readerMap;
     readerMap.insert("2dm", QPair<QString, QString>("sources", "CMBMeshReader"));

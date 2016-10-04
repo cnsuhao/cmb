@@ -123,7 +123,7 @@ static pqRenderViewBase::ManipulatorType ThreeDManipulatorTypes[9] =
     </SettingsProxy>
 */
 
-static void GetRepresentationTransform(vtkSMProxy* contourRepProxy, vtkTransform *t)
+inline void GetRepresentationTransform(vtkSMProxy* contourRepProxy, vtkTransform *t)
 {
   double position[3], scale[3], orientation[3], origin[3];
   vtkSMPropertyHelper(contourRepProxy, "Position").Get(position, 3);
@@ -143,7 +143,7 @@ static void GetRepresentationTransform(vtkSMProxy* contourRepProxy, vtkTransform
 }
 
 //-----------------------------------------------------------------------------
-static void GetRepresentationTransformedBounds(vtkTransform *t,
+inline void GetRepresentationTransformedBounds(vtkTransform *t,
   pqDataRepresentation* rep, vtkBoundingBox *inBB)
 {
   double transformedBounds[6];
@@ -170,7 +170,7 @@ static void GetRepresentationTransformedBounds(vtkTransform *t,
 }
 
 //-----------------------------------------------------------------------------
-static void GetRepresentationTransformedBounds(
+inline void GetRepresentationTransformedBounds(
   pqDataRepresentation* rep, double bounds[6])
 {
   vtkBoundingBox bb;
@@ -180,7 +180,7 @@ static void GetRepresentationTransformedBounds(
 }
 
 //-----------------------------------------------------------------------------
-static pqPipelineSource* ReadTextureImage(
+inline pqPipelineSource* ReadTextureImage(
   pqObjectBuilder* builder, pqServer *server, const char *filename,
   const char* xmlgroup="sources", const char* xmlname="CMBNetworkImageSource")
 {
@@ -194,7 +194,7 @@ static pqPipelineSource* ReadTextureImage(
   return textureImageSource;
 }
 
-static bool CMB_COLOR_REP_BY_ARRAY(
+inline bool CMB_COLOR_REP_BY_ARRAY(
     vtkSMProxy* reproxy, const char* arrayname, int attribute_type,
     bool rescale = true )
 {
@@ -230,7 +230,7 @@ static bool CMB_COLOR_REP_BY_ARRAY(
   return res;
 }
 
-static bool CMB_COLOR_REP_BY_INDEXED_LUT(
+inline bool CMB_COLOR_REP_BY_INDEXED_LUT(
     vtkSMProxy* reproxy, const char* arrayname, vtkSMProxy* lutProxy, int attribute_type
     /*, vtkSMProxy* view */ )
 {
@@ -284,12 +284,12 @@ static bool CMB_COLOR_REP_BY_INDEXED_LUT(
   return true;
 }
 
-static const char *helper_internal_convert(const std::string & s)
+inline const char *helper_internal_convert(const std::string & s)
 {
    return s.c_str();
 }
 
-static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
+inline void MODELBUILDER_SETUP_CATEGORICAL_CTF(
     vtkSMProxy* reproxy, vtkSMProxy* lutProxy,
     std::vector<vtkTuple<double, 3> > &rgbColors,
     const std::vector<std::string> & in_annotations)
@@ -351,7 +351,7 @@ static void MODELBUILDER_SETUP_CATEGORICAL_CTF(
 
 }
 
-static void MODELBUILDER_SYNCUP_DISPLAY_LUT(
+inline void MODELBUILDER_SYNCUP_DISPLAY_LUT(
     const char* arrayname, vtkSMProxy* lutProxy)
 {
     // we also want to update the IndexedColor of LUT registered with transferfunction manager.

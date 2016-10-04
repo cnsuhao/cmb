@@ -101,7 +101,6 @@ qtCMBSceneObjectImporter::qtCMBSceneObjectImporter(pqCMBSceneNode *n) : Node(NUL
   this->ObjectType = pqCMBSceneObjectBase::Unknown;
   // Set up the ObjectTypes
   this->setupObjectTypes();
-  pqCMBSceneTree *tree = n->getTree();
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
   QObject::connect(this->ImportDialog->FileBrowserButton, SIGNAL(clicked()),
@@ -803,7 +802,6 @@ void qtCMBSceneObjectImporter::importLASFile(const QString &fileName)
     outputPort->GetDataInformation()->GetCompositeDataInformation();
   int numBlocks = compositeInformation->GetNumberOfChildren();
   QString classifcationName;
-  vtkProcessModule* pm = vtkProcessModule::GetProcessModule();
 
   std::vector<unsigned char> classifications;
   vtkIdType totalNumberOfPoints = 0;

@@ -103,7 +103,7 @@ void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 
 //----------------------------------------------------------------------------
 void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
-                                        QWidget* parentWidget, SimBuilderCore* sbCore)
+                                        QWidget* parentWidget)
 {
   if (!view)
     {
