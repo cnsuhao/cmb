@@ -2,13 +2,36 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
   <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionToolsRuler" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.47807,0.54188,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.368421,0.497436,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.368421,0.497436,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.517544,0.473504,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.553509,0.333333,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.553509,0.333333,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.562281,0.317949,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.598246,0.733333,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.598246,0.733333,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.377083,0.511468,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.282292,0.385321,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.282292,0.385321,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.6375,0.509174,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.68125,0.559633,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.68125,0.559633,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1X" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1X" command="set_string" arguments="-0.874258568657308" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1X" command="set_string" arguments="-" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1X" command="set_string" arguments="-10" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1X" command="set_string" arguments="-10" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2X" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2X" command="set_string" arguments="0.672734723995679" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2X" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2X" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2X" command="key" arguments="16777220" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point1Z" command="set_string" arguments="1" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.68125,0.347477,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.68125,0.347477,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.68125,0.347477,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2Y" command="key" arguments="16777249" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2Y" command="set_string" arguments="0.135720140282321" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2Y" command="set_string" arguments="5" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2Y" command="key" arguments="16777219" />
+  <pqevent object="qtCMBMainWindow/pqCMBRulerDialog/1pqProxyWidget0/InteractiveLine/point2Y" command="set_string" arguments="3" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.880208,0.293578,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.880208,0.293578,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.880208,0.293578,1,0,0)" />
 </pqevents>
