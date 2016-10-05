@@ -7343,30 +7343,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
   </ProxyGroup>
    <!-- ==================================================================== -->
 
-  <ProxyGroup name="representations">
-    <RepresentationProxy name="CmbPolylineRepresentation"
-                          class="vtkCMBPolylineRepresentation"
-                          processes="client|renderserver|dataserver"
-                          base_proxygroup="internal_representations"
-                          base_proxyname="SurfaceRepresentationBase" >
-      <Documentation>
-        Representation to show the polyline Representation in a vtkPVRenderView.
-      </Documentation>
-
-      <InputProperty name="Input" command="SetInputConnection">
-        <DataTypeDomain name="input_type">
-          <DataType value="vtkDataSet"/>
-        </DataTypeDomain>
-        <Documentation>
-          Set the input to the representation.
-        </Documentation>
-      </InputProperty>
-
-      <!-- End of CmbPolylineRepresentation -->
-    </RepresentationProxy>
-
-  </ProxyGroup>
-
   <ProxyGroup name="writers">
     <WriterProxy name="CMBWriter"
       class="vtkCMBWriter"

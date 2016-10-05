@@ -165,8 +165,6 @@ protected:
   vtkCMBPointsReader();
   ~vtkCMBPointsReader() override;
 
-  friend class vtkLIDARMultiFilesReader;
-
   int RequestInformation(vtkInformation *,
                          vtkInformationVector **,
                          vtkInformationVector *) override;
