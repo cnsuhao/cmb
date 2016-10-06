@@ -395,12 +395,12 @@ void pqCMBModifierArc::writeFunction(std::ofstream & f)
       break;
     case PointAssignment:
     {
-      std::vector<pqCMBModifierArc::pointFunctionWrapper const*> functions;
-      this->getPointFunctions(functions);
-      f << functions.size() << std::endl;
-      for(unsigned int i = 0; i < functions.size(); ++i)
+      std::vector<pqCMBModifierArc::pointFunctionWrapper const*> functionsLocal;
+      this->getPointFunctions(functionsLocal);
+      f << functionsLocal.size() << std::endl;
+      for(unsigned int i = 0; i < functionsLocal.size(); ++i)
       {
-        f << functions[i]->getPointId() << " " << functions[i]->getName() << '\n';
+        f << functionsLocal[i]->getPointId() << " " << functionsLocal[i]->getName() << '\n';
       }
     }
   }
@@ -428,41 +428,39 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
       iter != tmp_fun.end(); ++iter)
   {
     std::string str = iter->first;
-    int i = 0;
+    int index = 0;
     while(functions.find(str) != functions.end())
     {
       std::stringstream ss;
-      ss << iter->first << i++;
+      ss << iter->first << index++;
       ss >> str;
     }
-    iter->second->setName(str);
+    profileFunctionWrapper * fun = iter->second;
+    fun->setName(str);
+    fun->setRelative(IsRelative);
+    std::string name = str;
+    std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
+    if(i == functions.end())
     {
-      profileFunctionWrapper * fun = iter->second;
-      std::string name = str;
-      std::map<std::string, profileFunctionWrapper * >::iterator i = functions.find(name);
-      fun->setRelative(IsRelative);
-      if(i == functions.end())
+      functions[name] = fun;
+    }
+    else
+    {
+      if(startFunction->getFunction() == i->second->getFunction()) startFunction->setFunction(fun);
+      fun->setName(name);
+      for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
+          it != pointsFunctions.end(); ++it)
       {
-        functions[name] = fun;
-      }
-      else
-      {
-        if(startFunction->getFunction() == i->second->getFunction()) startFunction->setFunction(fun);
-        fun->setName(name);
-        for( std::map<vtkIdType, pointFunctionWrapper*>::iterator it = pointsFunctions.begin();
-            it != pointsFunctions.end(); ++it)
+        if(it->second != NULL && it->second->getName() == name)
         {
-          if(it->second != NULL && it->second->getName() == name)
-          {
-            it->second->setFunction(fun);
-          }
+          it->second->setFunction(fun);
         }
-        if(i->second->getFunction() == startFunction->getFunction())
-          startFunction->setFunction(fun);
-        if(i->second->getFunction() == endFunction->getFunction())  endFunction->setFunction( fun );
-        delete i->second;
-        i->second = fun;
       }
+      if(i->second->getFunction() == startFunction->getFunction())
+        startFunction->setFunction(fun);
+      if(i->second->getFunction() == endFunction->getFunction())  endFunction->setFunction( fun );
+      delete i->second;
+      i->second = fun;
     }
   }
 
@@ -474,19 +472,19 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
       f >> name[0];
       if(!import_functions)
       {
-        profileFunctionWrapper * f = tmp_fun[name[0]];
-        setStartFun(f->getFunction()->getName());
-        setEndFun(f->getFunction()->getName());
+        profileFunctionWrapper * fLocal = tmp_fun[name[0]];
+        setStartFun(fLocal->getFunction()->getName());
+        setEndFun(fLocal->getFunction()->getName());
       }
       break;
     case EndPoints:
       f >> name[0] >> name[1];
       if(!import_functions)
       {
-        profileFunctionWrapper * f = tmp_fun[name[0]];
-        setStartFun(f->getFunction()->getName());
-        f = tmp_fun[name[1]];
-        setEndFun(f->getFunction()->getName());
+        profileFunctionWrapper * fLocal = tmp_fun[name[0]];
+        setStartFun(fLocal->getFunction()->getName());
+        fLocal = tmp_fun[name[1]];
+        setEndFun(fLocal->getFunction()->getName());
       }
       break;
     case PointAssignment:
@@ -498,8 +496,8 @@ void pqCMBModifierArc::readFunction(std::ifstream & f, bool import_functions)
         f >> id >> name[0];
         if(!import_functions)
         {
-          profileFunctionWrapper * f = tmp_fun[name[0]];
-          this->addFunctionAtPoint(id, f);
+          profileFunctionWrapper * fLocal = tmp_fun[name[0]];
+          this->addFunctionAtPoint(id, fLocal);
         }
       }
     }

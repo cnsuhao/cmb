@@ -147,12 +147,12 @@ void qtRemusMesherSelector::modelChanged(int index)
     if(static_cast<int>(possibleWorkers.size()) == this->Internal->cb_meshers->count())
       {
       rebuild = false;
-      int index = 0;
+      int indexLocal = 0;
       remus::proto::JobRequirementsSet::const_iterator i;
-      for(i = possibleWorkers.begin(); i != possibleWorkers.end() && rebuild == false; ++i, ++index)
+      for(i = possibleWorkers.begin(); i != possibleWorkers.end() && rebuild == false; ++i, ++indexLocal)
         {
         remus::proto::JobRequirements current_reqs =
-              fromItemData<remus::proto::JobRequirements>( this->Internal->cb_meshers, index);
+              fromItemData<remus::proto::JobRequirements>( this->Internal->cb_meshers, indexLocal);
         rebuild = !(*i == current_reqs);
         }
       }

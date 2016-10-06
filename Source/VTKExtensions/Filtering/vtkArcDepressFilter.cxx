@@ -783,16 +783,16 @@ private:
       return pointFunction->inside(d);
     }
 
-    double apply(double d, double pt, double & dir) const
+    double apply(double d, double ptNew, double & dir) const
     {
       assert(pointFunction.get() != NULL);
-      return pointFunction->apply(d, pt, dir);
+      return pointFunction->apply(d, ptNew, dir);
     }
 
-    double apply(double d, double *pt, double *n) const
+    double apply(double d, double *ptNew, double *n) const
     {
       assert(pointFunction.get() !=NULL);
-      return pointFunction->apply(d, pt, n);
+      return pointFunction->apply(d, ptNew, n);
     }
   private:
     boost::shared_ptr<DepArcProfileFunction> pointFunction;
@@ -1467,11 +1467,11 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
 
           static const int sign[] = {0, -1, 1};
           int t1 = 0;
-          for(int i = 0; i < 3; ++i)
+          for(int j = 0; j < 3; ++j)
           {
-            if(sign[digRaiseCheck[0]]*pointChanged[ptIds[i]] > 0)
+            if(sign[digRaiseCheck[0]]*pointChanged[ptIds[j]] > 0)
             {
-              t1 = i;
+              t1 = j;
             }
           }
 
@@ -1505,8 +1505,8 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
           {
             //move point a small amount on z of the shared point to handel the numeric instablity
             double tmpInter[4][3];
-            double surfaceid[2];
-            double tolerance = 0.;
+            double surfaceid2[2];
+            double tolerance2 = 0.;
             double z = pts[notChanged][2];
             pts[notChanged][2] = z + 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
@@ -1514,8 +1514,8 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
                                                                             coplanar,
                                                                             tmpInter[0],
                                                                             tmpInter[1],
-                                                                            surfaceid,
-                                                                            tolerance);
+                                                                            surfaceid2,
+                                                                            tolerance2);
             assert(r);
             pts[notChanged][2] = z - 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
@@ -1523,14 +1523,14 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
                                                                             coplanar,
                                                                             tmpInter[2],
                                                                             tmpInter[3],
-                                                                            surfaceid,
-                                                                            tolerance);
+                                                                            surfaceid2,
+                                                                            tolerance2);
             assert(r);
             pts[notChanged][2] = z;
-            for(unsigned int i = 0; i < 3; ++i)
+            for(unsigned int j = 0; j < 3; ++j)
             {
-              intersection[0][i] = (tmpInter[0][i] + tmpInter[2][i])*0.5;
-              intersection[1][i] = (tmpInter[1][i] + tmpInter[3][i])*0.5;
+              intersection[0][j] = (tmpInter[0][j] + tmpInter[2][j])*0.5;
+              intersection[1][j] = (tmpInter[1][j] + tmpInter[3][j])*0.5;
             }
           }
           double d1 = dist(pts[notChanged],intersection[0]);
