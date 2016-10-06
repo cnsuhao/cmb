@@ -313,7 +313,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
   *
   * The return value is a JSON serialization of the OperatorOutcome.
   */
-std::string vtkModelManagerWrapper::CanOperatorExecute(const std::string& jsonOperator)
+std::string vtkModelManagerWrapper::CanOperatorExecute(const std::string& vtkNotUsed(jsonOperator))
 {
   return "{\"outcome\": \"0\"}";
 }
@@ -322,7 +322,7 @@ std::string vtkModelManagerWrapper::CanOperatorExecute(const std::string& jsonOp
   *
   * The return value is a JSON serialization of the OperatorOutcome.
   */
-std::string vtkModelManagerWrapper::ApplyOperator(const std::string& jsonOperator)
+std::string vtkModelManagerWrapper::ApplyOperator(const std::string& vtkNotUsed(jsonOperator))
 {
   return "{\"outcome\": \"0\"}";
 }

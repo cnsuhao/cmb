@@ -107,7 +107,7 @@ int vtkCMBDEMExportDataExtractor::RequestData(vtkInformation* /*request*/,
   return 1;
 }
 
-int vtkCMBDEMExportDataExtractor::FillInputPortInformation(int port, vtkInformation *info)
+int vtkCMBDEMExportDataExtractor::FillInputPortInformation(int vtkNotUsed(port), vtkInformation *info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
   return 1;
