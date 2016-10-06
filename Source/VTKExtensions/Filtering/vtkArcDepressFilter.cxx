@@ -660,18 +660,6 @@ protected:
 namespace
 {
 
-  void cross(double const i1[2], double const i2[2], double r[3])
-  {
-    r[0] = i1[1] - i2[1];
-    r[1] = i2[0] - i1[0];
-    r[2] = i1[0]*i2[1] - i1[1]*i2[0];
-  }
-
-  double dot(double const i1[2], double const i2[2])
-  {
-    return i1[0]*i2[0]+i1[1]*i2[1];
-  }
-
   boost::shared_ptr<DepArcProfileFunction>
   interpolate_functions( boost::shared_ptr<DepArcProfileFunction> fun0,
                         boost::shared_ptr<DepArcProfileFunction> fun1, double weight)
