@@ -116,6 +116,7 @@ int vtkDEMRasterWriter::FillInputPortInformation(int,
 //-----------------------------------------------------------------------------
 void vtkDEMRasterWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
