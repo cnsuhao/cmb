@@ -230,7 +230,6 @@ pqPipelineSource* pqCMBLoadDataReaction::openFiles(const QStringList& files,
 //      NULL, files[0]);
     return NULL;
     }
-  bool cmbReaders = false;
   foreach(QString file, files)
     {
     QFileInfo finfo(file);

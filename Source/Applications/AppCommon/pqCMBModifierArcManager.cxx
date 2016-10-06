@@ -716,7 +716,6 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
     this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
     selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
-      vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
       pointDisplaySource->InvokeCommand("clearVisible");
       double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;
       if(this->CurrentModifierArc->getFunctionMode() != pqCMBModifierArc::Single)
@@ -892,10 +891,6 @@ void pqCMBModifierArcManager::update()
     {
     return;
     }
-  {//Update point functions
-    pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
-    vtkPVArcInfo* ai = arc->getArcInfo();
-  }
   foreach(QString filename, ServerProxies.keys())
     {
     foreach(int pieceIdx, ServerProxies[filename].keys())
@@ -1302,8 +1297,6 @@ void pqCMBModifierArcManager::setUpPointsTable()
   }
   tmp->setSelectionMode(QAbstractItemView::SingleSelection);
 
-  pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
-  vtkPVArcInfo* ai = arc->getArcInfo();
   std::vector<pqCMBModifierArc::pointFunctionWrapper const*> points;
   CurrentModifierArc->getPointFunctions(points);
   for(size_t i = 0; i < points.size(); ++i)

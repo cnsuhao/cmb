@@ -70,8 +70,6 @@ bool vtkCMBSubArcModifyOperator::Operate(
     {
     if(opWholeArc)
       {
-      double newEndNode[3];
-      vtkIdType ptId;
       vtkCMBArc::Point point;
       if(updatedArc->IsClosedArc())
         {
@@ -134,8 +132,6 @@ bool vtkCMBSubArcModifyOperator::CollapseSubArc(
   std::list<vtkIdType> ptIds;
   // based on where startPoint and EndPoint is, we may need to update
   // the end node. We always merge endPoint to startPoint
-  double pos[3];
-  vtkIdType ptId;
   int nodeIndex = -1;
   vtkCMBArcEndNode *endNode = NULL;
   vtkCMBArc::Point pt;

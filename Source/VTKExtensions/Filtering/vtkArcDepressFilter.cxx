@@ -580,7 +580,6 @@ public:
     dir = 0;
     if(!evalFun(d, w, tmp)) return pt;
     double wTmp = w*tmp;
-    double w1 = (1-w);
     int absolute = (IsRelative)?0:1;
     dir = wTmp - (1-w)*pt*absolute;
     return (1 - w*absolute)*pt + wTmp;
@@ -1260,7 +1259,6 @@ void vtkArcDepressFilter::computeDisplacement( vtkPolyData *input, vtkPolyData *
   vtkIdType estimatedSize, numCells=input->GetNumberOfCells();
   vtkIdType numPts=input->GetNumberOfPoints();
   vtkPoints *inPts=input->GetPoints();
-  vtkDataArray* normalsGeneric = input->GetPointData()->GetNormals();
 
   pointChanged.clear();
   pointChanged.resize(numPts, 0);
@@ -1375,7 +1373,9 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
   double * mod[3] = {NULL,&amountAdded,&amountRemoved};
   amountRemoved = 0;
   amountAdded = 0;
+#ifndef NDEBUG
   bool useNorm = UseNormalDirection && NULL != input->GetPointData()->GetNormals();
+#endif
   for(unsigned int i = 0; i < input->GetNumberOfCells(); ++i)
   {
     vtkCell * cell = input->GetCell(i);
@@ -1548,7 +1548,6 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
           double d1 = dist(pts[notChanged],intersection[0]);
           double d2 = dist(pts[notChanged],intersection[1]);
           int otherPt = (d2 < d1)?0:1;
-          int npt = (notChanged+1)%3;
           int addA[] = {0,3};
           double * mN = &amountAdded;
           double * mO = &amountRemoved;

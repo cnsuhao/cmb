@@ -37,8 +37,6 @@ int qtCMBStackedTINDialog::processTIN(pqCMBSceneNode *node)
 qtCMBStackedTINDialog::qtCMBStackedTINDialog(pqCMBSceneNode *n) :
   Status(-1), Node(n)
 {
-  pqCMBSceneObjectBase *object = n->getDataObject();
-
   this->MainDialog = new QDialog();
   QDoubleValidator *validator = new QDoubleValidator(this->MainDialog);
   this->StackDialog = new Ui::qtSceneGenqtCMBStackedTINDialog;
