@@ -1728,7 +1728,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
     return;
   assert(funId >= 0);
   DepArcData * td = Arcs[arc_ind];
-  if(funId >= td->functions.size())
+  if(funId >= static_cast<int>( td->functions.size() ))
   {
     td->functions.resize(funId + 1);
   }
@@ -1759,7 +1759,7 @@ void vtkArcDepressFilter
 
   assert(funId >= 0);
   DepArcData * td = Arcs[arc_ind];
-  if(funId >= td->functions.size())
+  if(funId >= static_cast<int> (td->functions.size() ))
   {
     td->functions.resize(funId + 1);
   }
