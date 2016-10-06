@@ -43,7 +43,7 @@ const int TwoDManipulatorTypes[9] = {3, 1, 2, 1, 2, 2, 2, 3, 1};
 const int ThreeDManipulatorTypes[9] = {4, 1, 2, 3, 4, 1, 2, 3, 2};
 
 /*
-static pqRenderViewBase::ManipulatorType TwoDManipulatorTypes[9] =
+inline pqRenderViewBase::ManipulatorType TwoDManipulatorTypes[9] =
   {
     { 1, 0, 0, "TrackballRoll", QByteArray()},
     { 2, 0, 0, "TrackballPan1", QByteArray()},
@@ -56,7 +56,7 @@ static pqRenderViewBase::ManipulatorType TwoDManipulatorTypes[9] =
     { 3, 0, 1, "TrackballPan1", QByteArray()},
   };
 
-static pqRenderViewBase::ManipulatorType ThreeDManipulatorTypes[9] =
+inline pqRenderViewBase::ManipulatorType ThreeDManipulatorTypes[9] =
   {
     { 1, 0, 0, "TrackballRotate", QByteArray()},
     { 2, 0, 0, "TrackballPan1", QByteArray()},
