@@ -185,8 +185,7 @@ vtkIdType pqCMBModifierArc::pointFunctionWrapper::getPointIndex() const
 ////////////////////////////////////////
 
 pqCMBModifierArc::pqCMBModifierArc()
-:CmbArc(new pqCMBArc()), IsExternalArc(false), IsVisible(true), IsRelative(true),
- functionMode(Single)
+:CmbArc(new pqCMBArc()), IsExternalArc(false), functionMode(Single), IsVisible(true), IsRelative(true)
 {
   profileFunctionWrapper * fun = new profileFunctionWrapper();
   startFunction = new pointFunctionWrapper(fun);

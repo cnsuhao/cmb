@@ -16,8 +16,7 @@
 /// constructor
 pqCMBDisplayProxyEditor::pqCMBDisplayProxyEditor(
   pqDataRepresentation* repr, QWidget* p)
-  : m_rep(repr),
-    pqProxyWidget(repr ? repr->getProxy() : NULL, p)
+  :pqProxyWidget(repr ? repr->getProxy() : NULL, p), m_rep(repr)
 {
 }
 
