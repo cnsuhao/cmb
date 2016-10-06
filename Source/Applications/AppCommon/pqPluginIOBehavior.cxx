@@ -183,7 +183,7 @@ const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 
 //----------------------------------------------------------------------------
 pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
-  vtkSMSession* session)
+  vtkSMSession* vtkNotUsed(session))
 {
   pqPluginIOBehavior::FileExtMap readerMap;
   cmbInternals::ReaderType::iterator iter;

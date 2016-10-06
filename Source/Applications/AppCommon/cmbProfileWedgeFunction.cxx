@@ -56,7 +56,7 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
 }
 
 void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
-                                              vtkBoundingBox bbox,
+                                              vtkBoundingBox vtkNotUsed(bbox),
                                               vtkSMSourceProxy* source) const
 {
   double slopeLeft = getSlopeLeft();
@@ -195,7 +195,7 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
   }
 }
 
-bool cmbProfileWedgeFunction::readData(std::ifstream & in, int version)
+bool cmbProfileWedgeFunction::readData(std::ifstream & in, int vtkNotUsed(version))
 {
   int subv, tmpMode;
   in >> subv

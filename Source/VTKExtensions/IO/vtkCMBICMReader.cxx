@@ -79,7 +79,7 @@ vtkCMBICMReader::~vtkCMBICMReader()
     }
 }
 //-----------------------------------------------------------------------------
-int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* outputVector)
+int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* vtkNotUsed(outputVector))
 {
   //Help the user get the full path to the temporal data
   if (!this->DataFileName || strcmp(this->DataFileName,"") == 0)
@@ -166,7 +166,7 @@ int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* outputVector)
   return 1;
 }
 //-----------------------------------------------------------------------------
-int vtkCMBICMReader::ReadGeometryData(vtkInformationVector *outputVector)
+int vtkCMBICMReader::ReadGeometryData(vtkInformationVector *vtkNotUsed(outputVector))
 {
   std::string fileNameStr = this->FileName;
   struct stat fs;

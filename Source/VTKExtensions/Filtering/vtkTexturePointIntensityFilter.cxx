@@ -73,7 +73,7 @@ void vtkTexturePointIntensityFilter::SetTextureDataConnection(vtkAlgorithmOutput
 //-----------------------------------------------------------------------------
 int vtkTexturePointIntensityFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
+  vtkInformationVector **vtkNotUsed(inputVector),
   vtkInformationVector *vtkNotUsed(outputVector))
 {
   // get the info and input data

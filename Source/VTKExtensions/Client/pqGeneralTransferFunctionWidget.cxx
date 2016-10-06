@@ -447,7 +447,7 @@ bool pqGeneralTransferFunctionWidget::changeEditablity(std::size_t at, bool edit
 }
 
 /// Change visablity
-bool pqGeneralTransferFunctionWidget::changeVisablity(std::size_t at, bool visable)
+bool pqGeneralTransferFunctionWidget::changeVisablity(std::size_t vtkNotUsed(at), bool vtkNotUsed(visable))
 {
   //TODO implement me
   return false;

@@ -77,8 +77,8 @@ public:
   }
 
 protected:
-  int RequestInformation (vtkInformation *request,
-                                  vtkInformationVector** inputVector,
+  int RequestInformation (vtkInformation *vtkNotUsed(request),
+                                  vtkInformationVector** vtkNotUsed(inputVector),
                                   vtkInformationVector *outputVector) override
   {
     vtkInformation* outInfo = outputVector->GetInformationObject(0);

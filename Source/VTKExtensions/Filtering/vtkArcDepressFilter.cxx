@@ -88,7 +88,7 @@ public:
     return (1-mix)*fun0->evaluate(d) + (mix)*fun1->evaluate(d);
   }
 
-  void addPoint(double w, double v, double s, double m) override
+  void addPoint(double vtkNotUsed(w), double vtkNotUsed(v), double vtkNotUsed(s), double vtkNotUsed(m)) override
   {assert(false && "Do not add point on mixing function");}
 
   void clearPoints() override
@@ -277,7 +277,7 @@ public:
     fun[1]->setFunctionRange(minZ, maxZ);
   }
 
-  void addWeightPoint(double w, double v, double s, double m) override
+  void addWeightPoint(double vtkNotUsed(w), double vtkNotUsed(v), double vtkNotUsed(s), double vtkNotUsed(m)) override
   {
     assert(false && " do not use for the mixing function");
   }
