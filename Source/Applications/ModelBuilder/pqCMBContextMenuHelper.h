@@ -64,7 +64,7 @@ inline bool getBlockIndex(const smtk::model::EntityRef& eref,
   }
 
 /// Fetch children for volum and group entities.
-inline void accumulateChildGeometricEntities(
+static inline void accumulateChildGeometricEntities(
   QSet<unsigned int>& blockIds,
   const smtk::model::EntityRef& toplevel)
   {
