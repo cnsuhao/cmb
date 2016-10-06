@@ -121,7 +121,7 @@ void pqCMBSceneNode::init()
   if (this->InfoWidget)
     {
     this->InfoWidget->setData(this->getNameColumn(), Qt::UserRole, vdata);
-    Qt::ItemFlags flags = this->InfoWidget->flags();
+    flags = this->InfoWidget->flags();
     }
   if (!this->Object)
     {
