@@ -205,76 +205,75 @@ public:
           model.setSession(sref);
           }
         }
-      // for any model that has cells, we will create a representation for it.
-      if(model.cells().size() > 0 || model.groups().size() > 0)
-        {
-        pqDataRepresentation* rep = NULL;
-        pqApplicationCore* core = pqApplicationCore::instance();
-        pqObjectBuilder* builder = core->getObjectBuilder();
-        pqPipelineSource* modelSrc = builder->createSource(
-            "ModelBridge", "SMTKModelSource", this->Server);
-        if(modelSrc)
-          {
-          // ModelManagerWrapper Proxy
-          vtkSMProxyProperty* smwrapper =
-            vtkSMProxyProperty::SafeDownCast(
-            modelSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-          smwrapper->RemoveAllProxies();
-          smwrapper->AddProxy(smProxy);
-          vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
-            model.entity().toString().c_str());
-
-          modelSrc->getProxy()->UpdateVTKObjects();
-          modelSrc->updatePipeline();
-
-          pqPipelineSource* repSrc = builder->createFilter(
-            "ModelBridge", "SMTKModelFieldArrayFilter", modelSrc);
-          smwrapper =
-            vtkSMProxyProperty::SafeDownCast(
-            repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
-          smwrapper->RemoveAllProxies();
-          smwrapper->AddProxy(smProxy);
-          repSrc->getProxy()->UpdateVTKObjects();
-          repSrc->updatePipeline();
-
-          rep = builder->createDataRepresentation(
-            repSrc->getOutputPort(0), view);
-          if(rep)
-            {
-            smtk::model::ManagerPtr mgr = smProxy->modelManager();
-            this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
-
-            vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
-            this->updateGeometryEntityAnnotations(model);
-            this->updateEntityGroupFieldArrayAndAnnotations(model);
-            this->resetColorTable(model);
-            RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-              rep->getProxy(), NULL, vtkDataObject::FIELD);
-            }
-          }
-        loadOK = (rep != NULL);
-        if(!loadOK)
-          {
-          qCritical() << "Failed to create a pqPipelineSource or pqRepresentation for the model: "
-            << model.entity().toString().c_str();
-          }
-        }
-
-      // we will also try to create a representation for each submodel of the model
-      smtk::model::Models msubmodels = model.submodels();
-      smtk::model::Models::iterator it;
-      for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
-        {
-        loadOK &= this->addModelRepresentation(*it, view, smProxy, filename, sref);
-        }
-      return loadOK;
+      // make sure we have an entry for this model, even if it is empty.
+      this->ModelInfos[model.entity()].FileName = filename;
       }
-    else
+
+    // Create model representation if it is not created yet.
+    // For any model that has cells, we will create a representation for it.
+    if(this->ModelInfos[model.entity()].ModelSource == NULL &&
+       (model.cells().size() > 0 || model.groups().size() > 0))
       {
-//      qCritical() << "There is already a pqPipelineSource for the model: "
-//        << model.entity().toString().c_str();
-      return loadOK;
+      pqDataRepresentation* rep = NULL;
+      pqApplicationCore* core = pqApplicationCore::instance();
+      pqObjectBuilder* builder = core->getObjectBuilder();
+      pqPipelineSource* modelSrc = builder->createSource(
+          "ModelBridge", "SMTKModelSource", this->Server);
+      if(modelSrc)
+        {
+        // ModelManagerWrapper Proxy
+        vtkSMProxyProperty* smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          modelSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
+        vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set(
+          model.entity().toString().c_str());
+
+        modelSrc->getProxy()->UpdateVTKObjects();
+        modelSrc->updatePipeline();
+
+        pqPipelineSource* repSrc = builder->createFilter(
+          "ModelBridge", "SMTKModelFieldArrayFilter", modelSrc);
+        smwrapper =
+          vtkSMProxyProperty::SafeDownCast(
+          repSrc->getProxy()->GetProperty("ModelManagerWrapper"));
+        smwrapper->RemoveAllProxies();
+        smwrapper->AddProxy(smProxy);
+        repSrc->getProxy()->UpdateVTKObjects();
+        repSrc->updatePipeline();
+
+        rep = builder->createDataRepresentation(
+          repSrc->getOutputPort(0), view);
+        if(rep)
+          {
+          smtk::model::ManagerPtr mgr = smProxy->modelManager();
+          this->ModelInfos[model.entity()].init(modelSrc, repSrc, rep, filename, mgr);
+          vtkSMPropertyHelper(rep->getProxy(), "PointSize").Set(8.0);
+          this->updateGeometryEntityAnnotations(model);
+          this->updateEntityGroupFieldArrayAndAnnotations(model);
+          this->resetColorTable(model);
+          RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
+            rep->getProxy(), NULL, vtkDataObject::FIELD);
+          }
+        }
+      loadOK = (rep != NULL);
+      if(!loadOK)
+        {
+        qCritical() << "Failed to create a pqPipelineSource or pqRepresentation for the model: "
+          << model.entity().toString().c_str();
+        }
       }
+
+    // we will also try to create a representation for each submodel of the model
+    smtk::model::Models msubmodels = model.submodels();
+    smtk::model::Models::iterator it;
+    for (it = msubmodels.begin(); it != msubmodels.end(); ++it)
+      {
+      loadOK &= this->addModelRepresentation(*it, view, smProxy, filename, sref);
+      }
+
+    return loadOK;
   }
 
   void removeModelRepresentations(const smtk::common::UUIDs& modeluids,
@@ -289,12 +288,15 @@ public:
         continue;
         }
 
-      pqApplicationCore::instance()->getObjectBuilder()->destroy(
-        this->ModelInfos[*mit].RepSource);
-      pqApplicationCore::instance()->getObjectBuilder()->destroy(
-        this->ModelInfos[*mit].ModelSource);
-      std::map<smtk::common::UUID, unsigned int>::const_iterator it;
+      if(this->ModelInfos[*mit].ModelSource)
+        {
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          this->ModelInfos[*mit].RepSource);
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          this->ModelInfos[*mit].ModelSource);
+        }
 
+      std::map<smtk::common::UUID, unsigned int>::const_iterator it;
       for(it = this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().begin();
         it != this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().end(); ++it)
         {
@@ -334,8 +336,12 @@ public:
 
   void updateModelRepresentation(const smtk::model::EntityRef& model)
   {
-    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end() ||
+       this->ModelInfos[model.entity()].ModelSource == NULL)
+      {
       return;
+      }
+
     pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     pqPipelineSource* modelSrc = modelInfo->ModelSource;
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set("");
@@ -357,6 +363,7 @@ public:
     this->updateEntityGroupFieldArrayAndAnnotations(model);
     this->resetColorTable(model);
     modelInfo->Representation->renderViewEventually();
+
   }
 
   void createMeshRepresentation(smtk::model::ManagerPtr manager,
@@ -1851,7 +1858,8 @@ bool pqCMBModelManager::handleOperationResult(
     if(modit->isValid() && !modit->parent().isModel()) // ingore submodels
       {
       smtk::model::Model newModel;
-      if(internal_getModelInfo(*modit, this->Internal->ModelInfos) == NULL)
+      pqSMTKModelInfo* res = internal_getModelInfo(*modit, this->Internal->ModelInfos);
+      if(res == NULL || res->ModelSource == NULL)
         {
         hasNewModels = true;
         // if this is a submodel, use its parent
