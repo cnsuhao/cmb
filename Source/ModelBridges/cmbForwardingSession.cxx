@@ -47,7 +47,7 @@ void cmbForwardingSession::setProxy(vtkSMModelManagerProxy* proxy)
 }
 
 smtk::model::SessionInfoBits cmbForwardingSession::transcribeInternal(
-  const smtk::model::EntityRef& entity, smtk::model::SessionInfoBits flags)
+  const smtk::model::EntityRef& entity, smtk::model::SessionInfoBits flags, int vtkNotUsed(depth))
 {
   (void)entity;
   (void)flags;

@@ -116,6 +116,7 @@ int vtkDEMRasterWriter::FillInputPortInformation(int,
 //-----------------------------------------------------------------------------
 void vtkDEMRasterWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os,indent);
 }
 
 //----------------------------------------------------------------------------
@@ -218,8 +219,8 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
       double sum = 0;
       double weight = 0;
       std::map<vtkIdType,double>::const_iterator it;
-      vtkIdType size = ids->GetNumberOfIds();
-      for ( vtkIdType i=0; i < size; ++i)
+      vtkIdType size2 = ids->GetNumberOfIds();
+      for ( vtkIdType i=0; i < size2; ++i)
         {
         it = IdToElevation.find(ids->GetId(i));
         if ( it != IdToElevation.end() )
@@ -240,8 +241,8 @@ void vtkDEMRasterWriter::createOutputFile(std::string fname,
       assert(at < nobX*nobY);
       if(weight != 0)
         {
-        double r = v/this->Scale;
-        matix[at] = r;
+        double r2 = v/this->Scale;
+        matix[at] = r2;
         }
       else
         {

@@ -114,14 +114,14 @@ int vtkHydroModelCreator::RequestData(
     int cellid = it->second->GetId(0);
     if(shellMap.find(intshelldata->GetValue(cellid)) == shellMap.end())
       {
-      unsigned int sNum = shellMap.size();
+      unsigned int sNum = static_cast<unsigned int>( shellMap.size() );
       shellMap[intshelldata->GetValue(cellid)] = static_cast<int>(sNum);
       shellMaterialIds.push_back(intmaterialdata->GetValue(cellid));
       }
     if(materialMap.find(intmaterialdata->GetValue(cellid))
        == materialMap.end())
       {
-      unsigned int mNum = materialMap.size();
+      unsigned int mNum = static_cast<unsigned int>( materialMap.size() );
       materialMap[intmaterialdata->GetValue(cellid)] = static_cast<int>(mNum);
       }
     }

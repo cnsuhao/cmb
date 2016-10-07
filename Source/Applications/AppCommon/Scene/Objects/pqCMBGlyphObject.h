@@ -23,7 +23,6 @@ class  CMBAPPCOMMON_EXPORT pqCMBGlyphObject : public pqCMBSceneObjectBase
 {
   typedef pqCMBSceneObjectBase Superclass;
 public:
-
   pqCMBGlyphObject();
   pqCMBGlyphObject(pqPipelineSource *glyphSource,
                       pqRenderView *view,

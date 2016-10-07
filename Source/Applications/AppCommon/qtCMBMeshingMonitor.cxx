@@ -25,13 +25,6 @@
 namespace{
 
 
-remus::proto::Job make_invalidJob()
-{
-  remus::meshtypes::MeshTypeBase baseType;
-  return remus::proto::Job(boost::uuids::uuid(),
-                           remus::common::MeshIOType(baseType,baseType));
-}
-
 bool createRemusClient(remus::client::Client** client,
                        const remus::client::ServerConnection& connection)
 {
@@ -46,11 +39,6 @@ bool createRemusClient(remus::client::Client** client,
     }
 }
 
-remus::common::MeshIOType make_invalid_mesh_type()
-{
-  return remus::common::make_MeshIOType( remus::meshtypes::MeshTypeBase(),
-                                         remus::meshtypes::MeshTypeBase() );
-}
 template<typename T>
 bool sorted_insert(std::vector<T>& v, const T& elem)
 {

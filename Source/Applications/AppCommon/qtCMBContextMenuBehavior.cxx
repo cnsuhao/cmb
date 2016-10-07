@@ -104,9 +104,6 @@ bool qtCMBContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 //-----------------------------------------------------------------------------
 void qtCMBContextMenuBehavior::buildMenu(pqDataRepresentation* repr)
 {
-  pqPipelineRepresentation* pipelineRepr =
-    qobject_cast<pqPipelineRepresentation*>(repr);
-
   /*
   QAction* action;
   action = this->Menu->addAction("Hide");

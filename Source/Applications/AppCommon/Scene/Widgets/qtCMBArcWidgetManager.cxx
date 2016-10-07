@@ -130,8 +130,6 @@ pqCMBArc* qtCMBArcWidgetManager::createpqCMBArc()
 {
   //update the node to have everything but the actual contour data
   //we now create a contour data object
-  pqApplicationCore* core = pqApplicationCore::instance();
-  pqObjectBuilder* builder = core->getObjectBuilder();
 
   pqCMBArc* obj = new pqCMBArc();
 
@@ -389,8 +387,6 @@ qtCMBArcWidget* qtCMBArcWidgetManager::createContourWidget(
   qtCMBArcWidget *widget= new qtCMBArcWidget(
     pointplacer, pointplacer, NULL);
 
-  vtkSMProxy* repProxy =
-    widget->getWidgetProxy()->GetRepresentationProxy();
   widget->setObjectName("CmbSceneContourWidget");
 
   vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(normal);

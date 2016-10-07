@@ -144,7 +144,7 @@ void pqSMTKMeshPanel::updateModel(QPointer<pqCMBModelManager> mmgr,
 
 //-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDisplay,
-                                          const QString & workerName,
+                                          const QString & vtkNotUsed(workerName),
                                           const remus::proto::JobRequirements& reqs)
 {
 
@@ -304,7 +304,7 @@ const std::string& pqSMTKMeshPanel::fetchCachedAtts() const
 }
 
 //-----------------------------------------------------------------------------
-bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& reqs) const
+bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& vtkNotUsed(reqs)) const
 {
   typedef std::map< AttCacheKey, std::string >::const_iterator c_it;
 

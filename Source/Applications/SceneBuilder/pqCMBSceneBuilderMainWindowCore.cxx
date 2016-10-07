@@ -2740,6 +2740,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
   /*bool success = */this->exportSolidsCMBModel(inputs, cmbFileName, false);
 
 #if 0 || defined(for_yumin)
+  bool success = this->exportSolidsCMBModel(inputs, cmbFileName, false);
   if (success && lineObjectsPresent)
     {
     // temporary hack because don't have method to push LineSegment to server (yet)

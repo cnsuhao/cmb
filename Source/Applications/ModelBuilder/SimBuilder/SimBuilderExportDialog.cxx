@@ -468,7 +468,7 @@ SimBuilderExportDialog::getPythonScriptDef(
   // Traverse item definitions looking for "PythonScript" item def
   for (std::size_t i=0; i < exportDef->numberOfItemDefinitions(); ++i)
     {
-    smtk::attribute::ItemDefinitionPtr itemDef = exportDef->itemDefinition(i);
+    smtk::attribute::ItemDefinitionPtr itemDef = exportDef->itemDefinition(static_cast<int>(i));
     if (itemDef->name() == "PythonScript")
       {
       smtk::attribute::FileItemDefinitionPtr fileDef =

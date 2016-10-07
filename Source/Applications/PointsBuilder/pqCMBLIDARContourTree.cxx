@@ -406,7 +406,6 @@ void pqCMBLIDARContourTree::onItemChanged(QTreeWidgetItem* item, int col)
   QList<QTreeWidgetItem*> changedItems;
   if(item->type() == ContourGroupType)
     {
-    int val = (item->checkState(col) == Qt::Checked) ? 1 : 0;
     if (col != pqCMBLIDARContourTree::InvertCol)
       {
       for(int r=0; r<item->childCount(); r++)

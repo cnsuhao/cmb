@@ -92,7 +92,7 @@ void qtCMBArcModifierInputDialog::selectedSourceChanged()
   this->getSelectedSourceNames(surfaceNames);
 }
 
-void qtCMBArcModifierInputDialog::insertArcName(int i, const char *vname)
+void qtCMBArcModifierInputDialog::insertArcName(int vtkNotUsed(i), const char *vtkNotUsed(vname))
 {
 
 }
@@ -102,12 +102,12 @@ void qtCMBArcModifierInputDialog::removeAllArcNames()
 
 }
 
-void qtCMBArcModifierInputDialog::setSelectedArcNames(QList<int> &currentIndices)
+void qtCMBArcModifierInputDialog::setSelectedArcNames(QList<int> &vtkNotUsed(currentIndices))
 {
 
 }
 
-void qtCMBArcModifierInputDialog::getSelectedArcNames(QStringList &selectedNames) const
+void qtCMBArcModifierInputDialog::getSelectedArcNames(QStringList &vtkNotUsed(selectedNames)) const
 {
 
 }

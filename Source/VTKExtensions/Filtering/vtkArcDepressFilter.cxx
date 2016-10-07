@@ -88,7 +88,7 @@ public:
     return (1-mix)*fun0->evaluate(d) + (mix)*fun1->evaluate(d);
   }
 
-  void addPoint(double w, double v, double s, double m) override
+  void addPoint(double vtkNotUsed(w), double vtkNotUsed(v), double vtkNotUsed(s), double vtkNotUsed(m)) override
   {assert(false && "Do not add point on mixing function");}
 
   void clearPoints() override
@@ -277,7 +277,7 @@ public:
     fun[1]->setFunctionRange(minZ, maxZ);
   }
 
-  void addWeightPoint(double w, double v, double s, double m) override
+  void addWeightPoint(double vtkNotUsed(w), double vtkNotUsed(v), double vtkNotUsed(s), double vtkNotUsed(m)) override
   {
     assert(false && " do not use for the mixing function");
   }
@@ -580,7 +580,6 @@ public:
     dir = 0;
     if(!evalFun(d, w, tmp)) return pt;
     double wTmp = w*tmp;
-    double w1 = (1-w);
     int absolute = (IsRelative)?0:1;
     dir = wTmp - (1-w)*pt*absolute;
     return (1 - w*absolute)*pt + wTmp;
@@ -660,18 +659,6 @@ protected:
 
 namespace
 {
-
-  void cross(double const i1[2], double const i2[2], double r[3])
-  {
-    r[0] = i1[1] - i2[1];
-    r[1] = i2[0] - i1[0];
-    r[2] = i1[0]*i2[1] - i1[1]*i2[0];
-  }
-
-  double dot(double const i1[2], double const i2[2])
-  {
-    return i1[0]*i2[0]+i1[1]*i2[1];
-  }
 
   boost::shared_ptr<DepArcProfileFunction>
   interpolate_functions( boost::shared_ptr<DepArcProfileFunction> fun0,
@@ -796,16 +783,16 @@ private:
       return pointFunction->inside(d);
     }
 
-    double apply(double d, double pt, double & dir) const
+    double apply(double d, double ptNew, double & dir) const
     {
       assert(pointFunction.get() != NULL);
-      return pointFunction->apply(d, pt, dir);
+      return pointFunction->apply(d, ptNew, dir);
     }
 
-    double apply(double d, double *pt, double *n) const
+    double apply(double d, double *ptNew, double *n) const
     {
       assert(pointFunction.get() !=NULL);
-      return pointFunction->apply(d, pt, n);
+      return pointFunction->apply(d, ptNew, n);
     }
   private:
     boost::shared_ptr<DepArcProfileFunction> pointFunction;
@@ -1260,7 +1247,6 @@ void vtkArcDepressFilter::computeDisplacement( vtkPolyData *input, vtkPolyData *
   vtkIdType estimatedSize, numCells=input->GetNumberOfCells();
   vtkIdType numPts=input->GetNumberOfPoints();
   vtkPoints *inPts=input->GetPoints();
-  vtkDataArray* normalsGeneric = input->GetPointData()->GetNormals();
 
   pointChanged.clear();
   pointChanged.resize(numPts, 0);
@@ -1375,7 +1361,9 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
   double * mod[3] = {NULL,&amountAdded,&amountRemoved};
   amountRemoved = 0;
   amountAdded = 0;
+#ifndef NDEBUG
   bool useNorm = UseNormalDirection && NULL != input->GetPointData()->GetNormals();
+#endif
   for(unsigned int i = 0; i < input->GetNumberOfCells(); ++i)
   {
     vtkCell * cell = input->GetCell(i);
@@ -1479,11 +1467,11 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
 
           static const int sign[] = {0, -1, 1};
           int t1 = 0;
-          for(int i = 0; i < 3; ++i)
+          for(int j = 0; j < 3; ++j)
           {
-            if(sign[digRaiseCheck[0]]*pointChanged[ptIds[i]] > 0)
+            if(sign[digRaiseCheck[0]]*pointChanged[ptIds[j]] > 0)
             {
-              t1 = i;
+              t1 = j;
             }
           }
 
@@ -1517,8 +1505,8 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
           {
             //move point a small amount on z of the shared point to handel the numeric instablity
             double tmpInter[4][3];
-            double surfaceid[2];
-            double tolerance = 0.;
+            double surfaceid2[2];
+            double tolerance2 = 0.;
             double z = pts[notChanged][2];
             pts[notChanged][2] = z + 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
@@ -1526,8 +1514,8 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
                                                                             coplanar,
                                                                             tmpInter[0],
                                                                             tmpInter[1],
-                                                                            surfaceid,
-                                                                            tolerance);
+                                                                            surfaceid2,
+                                                                            tolerance2);
             assert(r);
             pts[notChanged][2] = z - 1e-8;
             r = vtkIntersectionPolyDataFilter::TriangleTriangleIntersection( pts[3], pts[4], pts[5],
@@ -1535,20 +1523,19 @@ void vtkArcDepressFilter::computeChange( vtkPolyData *input, vtkPoints *original
                                                                             coplanar,
                                                                             tmpInter[2],
                                                                             tmpInter[3],
-                                                                            surfaceid,
-                                                                            tolerance);
+                                                                            surfaceid2,
+                                                                            tolerance2);
             assert(r);
             pts[notChanged][2] = z;
-            for(unsigned int i = 0; i < 3; ++i)
+            for(unsigned int j = 0; j < 3; ++j)
             {
-              intersection[0][i] = (tmpInter[0][i] + tmpInter[2][i])*0.5;
-              intersection[1][i] = (tmpInter[1][i] + tmpInter[3][i])*0.5;
+              intersection[0][j] = (tmpInter[0][j] + tmpInter[2][j])*0.5;
+              intersection[1][j] = (tmpInter[1][j] + tmpInter[3][j])*0.5;
             }
           }
           double d1 = dist(pts[notChanged],intersection[0]);
           double d2 = dist(pts[notChanged],intersection[1]);
           int otherPt = (d2 < d1)?0:1;
-          int npt = (notChanged+1)%3;
           int addA[] = {0,3};
           double * mN = &amountAdded;
           double * mO = &amountRemoved;
@@ -1741,7 +1728,7 @@ void vtkArcDepressFilter::CreateManualFunction(int arc_ind, int funId,
     return;
   assert(funId >= 0);
   DepArcData * td = Arcs[arc_ind];
-  if(funId >= td->functions.size())
+  if(funId >= static_cast<int>( td->functions.size() ))
   {
     td->functions.resize(funId + 1);
   }
@@ -1772,7 +1759,7 @@ void vtkArcDepressFilter
 
   assert(funId >= 0);
   DepArcData * td = Arcs[arc_ind];
-  if(funId >= td->functions.size())
+  if(funId >= static_cast<int> (td->functions.size() ))
   {
     td->functions.resize(funId + 1);
   }

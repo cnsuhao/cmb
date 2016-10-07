@@ -125,21 +125,21 @@ public:
 
 //-----------------------------------------------------------------------------
 pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
-                                                 pqServer *server,
+                                                 pqServer *serverInput,
                                                  pqRenderView *renderer)
 {
   useNormal = false;
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
   this->view = renderer;
-  this->server = server;
+  this->server = serverInput;
   this->Internal = new pqCMBModifierArcManagerInternal;
   //this->Internal->PointSelectionWidget = NULL;
   this->Internal->editableWidget = NULL;
 
-  this->Internal->SphereSource = builder->createSource("sources", "SphereSource", server);
+  this->Internal->SphereSource = builder->createSource("sources", "SphereSource", serverInput);
   this->Internal->LineGlyphFilter = builder->createSource("filters",
-                                                          "ArcPointGlyphingFilter", server);
+                                                          "ArcPointGlyphingFilter", serverInput);
   this->Internal->Representation =
       builder->createDataRepresentation( this->Internal->LineGlyphFilter->getOutputPort(0),
                                          this->view,
@@ -228,7 +228,7 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
                    this, SLOT(nameChanged(QString)), Qt::UniqueConnection);
 
-  this->ArcWidgetManager = new qtCMBArcWidgetManager(server, renderer);
+  this->ArcWidgetManager = new qtCMBArcWidgetManager(serverInput, renderer);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)),
                    this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
   QObject::connect(this->ArcWidgetManager, SIGNAL(ArcModified2(pqCMBArc*)),
@@ -635,7 +635,7 @@ void pqCMBModifierArcManager::onSelectionChange()
       pqCMBModifierArc * ma = ArcLines[id];
       tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
       tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
-    
+
       QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
       Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
       this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
@@ -716,7 +716,6 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
     this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
     selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
-      vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
       pointDisplaySource->InvokeCommand("clearVisible");
       double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;
       if(this->CurrentModifierArc->getFunctionMode() != pqCMBModifierArc::Single)
@@ -892,10 +891,6 @@ void pqCMBModifierArcManager::update()
     {
     return;
     }
-  {//Update point functions
-    pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
-    vtkPVArcInfo* ai = arc->getArcInfo();
-  }
   foreach(QString filename, ServerProxies.keys())
     {
     foreach(int pieceIdx, ServerProxies[filename].keys())
@@ -1302,8 +1297,6 @@ void pqCMBModifierArcManager::setUpPointsTable()
   }
   tmp->setSelectionMode(QAbstractItemView::SingleSelection);
 
-  pqCMBArc * arc = CurrentModifierArc->GetCmbArc();
-  vtkPVArcInfo* ai = arc->getArcInfo();
   std::vector<pqCMBModifierArc::pointFunctionWrapper const*> points;
   CurrentModifierArc->getPointFunctions(points);
   for(size_t i = 0; i < points.size(); ++i)
@@ -1440,10 +1433,10 @@ void pqCMBModifierArcManager::onLoadArc()
         pqSMAdaptor::setElementProperty(proxy->GetProperty("ContourIndex"),i);
         proxy->UpdateProperty("ContourIndex");
         proxy->UpdatePipeline();
-        pqCMBModifierArc * dig = new pqCMBModifierArc(proxy);
-        QObject::connect( dig, SIGNAL(requestRender()),
+        pqCMBModifierArc * dig2 = new pqCMBModifierArc(proxy);
+        QObject::connect( dig2, SIGNAL(requestRender()),
                           this, SIGNAL(requestRender()) );
-        addNewArc(dig);
+        addNewArc(dig2);
       }
     }
   }

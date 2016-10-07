@@ -29,7 +29,7 @@ public:
   QPointer<pqDataRepresentation> ActiveRepresentation;
   unsigned long ObserverId;
 
-  pqInternals(pqCMBColorMapWidget* self) : ObserverId(0)
+  pqInternals(pqCMBColorMapWidget* vtkNotUsed(self)) : ObserverId(0)
     {
     }
 

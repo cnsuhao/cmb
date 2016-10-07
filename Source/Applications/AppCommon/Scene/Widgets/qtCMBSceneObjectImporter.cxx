@@ -801,7 +801,6 @@ void qtCMBSceneObjectImporter::importLASFile(const QString &fileName)
   vtkPVCompositeDataInformation* compositeInformation =
     outputPort->GetDataInformation()->GetCompositeDataInformation();
   int numBlocks = compositeInformation->GetNumberOfChildren();
-  QString classifcationName;
 
   std::vector<unsigned char> classifications;
   vtkIdType totalNumberOfPoints = 0;

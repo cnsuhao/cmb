@@ -56,28 +56,27 @@ cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) con
 }
 
 void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
-                                              vtkBoundingBox bbox,
+                                              vtkBoundingBox vtkNotUsed(bbox),
                                               vtkSMSourceProxy* source) const
 {
-  double slopeLeft = getSlopeLeft();
-  double slopeRight = getSlopeRight();
-  double baseWidth = getBaseWidth();
-  double depth = getDepth();
+  double slopeLeftLocal = getSlopeLeft();
+  double slopeRightLocal = getSlopeRight();
+  double baseWidthLocal = getBaseWidth();
 
   QList< QVariant > v;
-  double widthLeft = widthLeft = baseWidth * 0.5;
-  if(slopeLeft  != 0)
+  double widthLeft = widthLeft = baseWidthLocal * 0.5;
+  if(slopeLeftLocal  != 0)
   {
-    slopeLeft = 1.0/slopeLeft;
+    slopeLeftLocal = 1.0/slopeLeftLocal;
   }
-  if(slopeRight != 0)
+  if(slopeRightLocal != 0)
   {
-    slopeRight = 1.0/slopeRight;
+    slopeRightLocal = 1.0/slopeRight;
   }
   v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
     << Relative << this->getMode()
     << this->clamp
-    << getBaseWidth() << getDepth() << slopeLeft << slopeRight;
+    << getBaseWidth() << getDepth() << slopeLeftLocal << slopeRightLocal;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
   source->UpdateVTKObjects();
   v.clear();
@@ -195,7 +194,7 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
   }
 }
 
-bool cmbProfileWedgeFunction::readData(std::ifstream & in, int version)
+bool cmbProfileWedgeFunction::readData(std::ifstream & in, int vtkNotUsed(version))
 {
   int subv, tmpMode;
   in >> subv

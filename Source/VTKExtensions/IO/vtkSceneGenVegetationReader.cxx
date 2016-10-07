@@ -316,7 +316,7 @@ int vtkSceneGenVegetationReader::RequestData(
         maxSize = this->EnsightStomatal[i].size();
         }
       }
-    ensightStomatalFD->SetNumberOfComponents( maxSize + 1 );
+    ensightStomatalFD->SetNumberOfComponents(static_cast<int>( maxSize + 1 ));
     ensightStomatalFD->SetNumberOfTuples( this->EnsightStomatal.size() );
     for (int i = 0; i < static_cast<int>(this->EnsightStomatal.size()); i++)
       {

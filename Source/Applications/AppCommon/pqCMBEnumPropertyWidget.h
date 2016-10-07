@@ -42,7 +42,6 @@ public:
   // Description:
   // Set Enable/Visible property
   void setEnabled(int);
-  void setVisible(bool);
 
 signals:
   // Description:

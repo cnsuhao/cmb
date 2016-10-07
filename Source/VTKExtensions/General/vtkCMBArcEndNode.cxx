@@ -18,7 +18,7 @@ vtkIdType vtkCMBArcEndNode::NextId = 0;
 
 //----------------------------------------------------------------------------
 vtkCMBArcEndNode::vtkCMBArcEndNode(double position[3], unsigned int pid)
-: Id(NextId++), PointId(pid)
+: PointId(pid), Id(NextId++)
 {
   this->Position[0] = position[0];
   this->Position[1] = position[1];

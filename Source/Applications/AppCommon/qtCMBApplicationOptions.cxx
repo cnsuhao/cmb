@@ -297,8 +297,6 @@ void qtCMBApplicationOptions::loadBuiltinColorPresets()
 //-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::resetChanges()
 {
-  pqSettings* cmbSettings = this->cmbAppSettings();
-
   int maxNumOfPtsCloud = this->maxNumberOfCloudPoints();
   this->Internal->maxNumberCloudPoints->setText(
     QString::number(maxNumOfPtsCloud));

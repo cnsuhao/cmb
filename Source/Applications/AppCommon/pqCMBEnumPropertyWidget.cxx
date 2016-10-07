@@ -196,8 +196,3 @@ void pqCMBEnumPropertyWidget::setEnabled(int enable)
   this->Internal->comboBox->setEnabled(enable);
 }
 //-----------------------------------------------------------------------------
-void pqCMBEnumPropertyWidget::setVisible(bool visible)
-{
-  this->Internal->comboBox->setVisible(visible);
-
-}

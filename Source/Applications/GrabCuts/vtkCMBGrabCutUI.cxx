@@ -77,8 +77,8 @@ public:
   }
 
 protected:
-  int RequestInformation (vtkInformation *request,
-                                  vtkInformationVector** inputVector,
+  int RequestInformation (vtkInformation *vtkNotUsed(request),
+                                  vtkInformationVector** vtkNotUsed(inputVector),
                                   vtkInformationVector *outputVector) override
   {
     vtkInformation* outInfo = outputVector->GetInformationObject(0);
@@ -269,7 +269,6 @@ public:
   {
     vtkRenderWindowInteractor *interactor = internal->imageViewer->GetRenderWindow()->GetInteractor();
     vtkRenderer* renderer = internal->imageViewer->GetRenderer();
-    vtkImageActor* actor = internal->imageViewer->GetImageActor();
     vtkImageData* image = internal->imageViewer->GetInput();
     vtkInteractorStyle *style = vtkInteractorStyle::SafeDownCast(interactor->GetInteractorStyle());
 
