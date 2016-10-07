@@ -34,6 +34,10 @@ using namespace smtk::common;
 using namespace smtk::model;
 using namespace smtk::io;
 
+#if defined(_MSC_VER)
+#pragma warning(disable:4503)
+#endif
+
 vtkStandardNewMacro(vtkSMModelManagerProxy);
 
 vtkSMModelManagerProxy::vtkSMModelManagerProxy()
