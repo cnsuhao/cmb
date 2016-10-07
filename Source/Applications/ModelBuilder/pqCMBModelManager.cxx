@@ -41,10 +41,12 @@
 #include "smtk/common/UUID.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
+#include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/Events.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
+#include "smtk/model/Instance.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/Operator.h"
@@ -1677,19 +1679,25 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
   return sucess;
 }
 
-void internal_updateEntityList(const smtk::model::EntityRef& ent,
-                          smtk::common::UUIDs& modellist)
+void internal_updateEntityList(
+  const smtk::model::EntityRef& ent,
+  smtk::common::UUIDs& modellist)
 {
-  if(ent.isModel())
+  if (ent.isModel())
     {
     modellist.insert(ent.entity());
     }
-  else if (ent.isCellEntity() && !ent.isVolume() )
+  else if (ent.isCellEntity() && !ent.isVolume())
     {
     modellist.insert(
       ent.as<smtk::model::CellEntity>().model().entity());
     }
+  else if (ent.isAuxiliaryGeometry() || ent.isInstance())
+    {
+    modellist.insert(ent.owningModel().entity());
+    }
 }
+
 bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
 {
   return (ent.isCellEntity() && !ent.isVolume() &&
