@@ -61,6 +61,7 @@
    <addaction name="actionView_Rotate_90_cw"/>
    <addaction name="actionView_Rotate_90_ccw"/>
    <addaction name="actionZoomToBox"/>
+   <addaction name="actionAxesGrid"/>
    <addaction name="separator"/>
    <addaction name="actionShowCenterAxes"/>
    <addaction name="actionResetCenter"/>
@@ -139,9 +140,16 @@
       <string>Show</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuAxes_Grid">
+     <property name="title">
+      <string>Axes Grid</string>
+     </property>
+     <addaction name="actionAxesGrid"/>
+    </widget>
     <addaction name="menu_Camera"/>
     <addaction name="separator"/>
     <addaction name="menuShow"/>
+    <addaction name="menuAxes_Grid"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -1312,6 +1320,21 @@
    </property>
    <property name="toolTip">
     <string>Rotate 90° counterclockwise</string>
+   </property>
+  </action>
+  <action name="actionAxesGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/AxesGrid.png</normaloff>:/cmb/AxesGrid.png</iconset>
+   </property>
+   <property name="text">
+    <string>Axes Grid</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Axes Grid</string>
    </property>
   </action>
  </widget>

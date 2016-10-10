@@ -77,9 +77,17 @@ protected slots:
   void disableAxisChange();
   void enableAxisChange();
 
-  // Descripion:
+  // Description:
   // Create a Ruler Dialog
   void createRulerDialog();
+
+  //Description:
+  // Update the render view when axes grid visibilty is on
+  void checkVisibilityAndUpdateRenderView();
+
+  // Description
+  // Create a AxesGrid Configuration Dialog
+  void createAxesGridConfigurationDialog();
 
   // Description:
   // Called when starting and external process (to disable starting another)
