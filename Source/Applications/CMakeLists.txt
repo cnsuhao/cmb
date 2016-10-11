@@ -25,6 +25,9 @@ include_directories(
   ${vtkCMBIO_INCLUDE_DIRS}
   )
 
+option(ENABLE_Cumulus "Build Cumulus/Jobs panel" OFF)
+mark_as_advanced(ENABLE_Cumulus)
+
 add_subdirectory(AppCommon)
 
 #help needs to before any of the applications, as they depend on help

@@ -110,6 +110,8 @@ std::string qtCMBPanelsManager::type2String(qtCMBPanelsManager::PanelType t)
       return "Display";
     case COLORMAP:
       return "Color Map";
+    case JOBS:
+      return "Jobs";
     default:
       return "";
     }
@@ -153,6 +155,10 @@ qtCMBPanelsManager::PanelType qtCMBPanelsManager::string2Type(const std::string 
   if (s == "Color Map")
     {
     return COLORMAP;
+    }
+  if (s == "Jobs")
+    {
+    return JOBS;
     }
   return NUMBER_OF_KNOWN_TYPES;
 }
