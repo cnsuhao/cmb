@@ -54,6 +54,7 @@
 #include <pqTimer.h>
 #include "pqCMBModelManager.h"
 #include "pqSMTKModelInfo.h"
+#include "pqCMBContextMenuHelper.h"
 
 #include "vtkEventQtSlotConnect.h"
 #include "vtkNew.h"
@@ -92,7 +93,6 @@ class pqSMTKModelPanel::qInternal
 {
 public:
   QPointer<qtModelPanel> ModelPanel;
-//  vtkSmartPointer<vtkEventQtSlotConnect> VTKConnect;
   bool ModelLoaded;
   QPointer<pqCMBModelManager> smtkManager;
   bool ignorePropertyChange;
@@ -104,12 +104,11 @@ public:
 
   qInternal()
     {
-//    this->VTKConnect = vtkSmartPointer<vtkEventQtSlotConnect>::New();
     this->ModelLoaded = false;
     }
 
   pqOutputPort* setSelectionInput(vtkSMProxy* selectionSource,
-                         const std::vector<vtkIdType>& ids,
+                         const std::set<vtkIdType>& ids,
                          pqPipelineSource* source)
   {
     vtkSMPropertyHelper prop(selectionSource, "Blocks");
@@ -118,7 +117,8 @@ public:
     // set selected blocks
     if (ids.size() > 0)
       {
-      prop.Set(&ids[0], static_cast<unsigned int>(ids.size()));
+      std::vector<vtkIdType> vecIds(ids.begin(), ids.end());
+      prop.Set(&vecIds[0], static_cast<unsigned int>(vecIds.size()));
       selectionSource->UpdateVTKObjects();
       }
 
@@ -148,13 +148,8 @@ pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
   this->Internal = new pqSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
-//  this->connect(&this->Internal->UpdateUITimer, SIGNAL(timeout()),
-//                this, SLOT(updateModelTreeView()));
 
   this->resetUI();
-  //QSizePolicy expandPolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  //this->setSizePolicy(expandPolicy);
-
 }
 
 //-----------------------------------------------------------------------------
@@ -213,28 +208,12 @@ void pqSMTKModelPanel::setBlockColor(
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::resetUI()
 {
-  if(/*this->Internal->ModelLoaded || */!this->Internal->smtkManager)
+  if(!this->Internal->smtkManager)
     {
     return;
     }
-/*
-  this->Internal->smtkManager->managerProxy()->UpdatePropertyInformation();
-  std::string json = pqSMAdaptor::getElementProperty(
-    this->Internal->smtkManager->managerProxy()->GetProperty(
-    "JSONModel")).toString().toStdString();
-
-  std::string filename = pqSMAdaptor::getElementProperty(
-    this->Internal->smtkManager->managerProxy()->GetProperty(
-    "FileName")).toString().toStdString();
-  filename = vtksys::SystemTools::GetFilenameName(filename);
-*/
 
   smtk::model::ManagerPtr modelMgr = this->Internal->smtkManager->managerProxy()->modelManager();
-//  smtk::io::ImportJSON::intoModelManager(json.c_str(), model);
-//  model->assignDefaultNames();
-
-//  QFileInfo fInfo(this->Internal->smtkManager->currentFile().c_str());
-//  this->setWindowTitle(fInfo.fileName().toAscii().constData());
   if(!this->Internal->ModelPanel)
     {
     this->Internal->ModelPanel = new qtModelPanel(this);
@@ -330,23 +309,13 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
     this->Internal->smtkManager->managerProxy()->modelManager();
 
   // create vector of selected block ids
-  QMap<pqSMTKModelInfo*, std::vector<vtkIdType> > selmodelblocks;
+  QMap<pqSMTKModelInfo*, std::set<vtkIdType> > selmodelblocks;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
-    unsigned int flatIndex;
-    //std::cout << "UUID: " << (*it).toString().c_str() << std::endl;
-    if(modelMan->hasIntegerProperty((*it).entity(), "block_index"))
-      {
-      pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(
-        *it);
-      const IntegerList& prop((*it).integerProperty("block_index"));
-      //the flatIndex is 1 more than blockId, because the root is index 0
-      if(minfo && minfo->Representation && !prop.empty())
-        {
-        flatIndex = prop[0];
-        selmodelblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));
-        }
-      }
+    QSet<unsigned int> blockIds;
+    pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
+    pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(*it);
+    selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
     }
 
   foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
@@ -409,7 +378,7 @@ void pqSMTKModelPanel::selectMeshRepresentations(
   this->Internal->smtkManager->clearMeshSelections();
 
   // create vector of selected block ids
-  QMap<pqSMTKMeshInfo*, std::vector<vtkIdType> > selmeshblocks;
+  QMap<pqSMTKMeshInfo*, std::set<vtkIdType> > selmeshblocks;
   for(smtk::mesh::MeshSets::const_iterator it = selmeshes.begin();
       it != selmeshes.end(); ++it)
     {
@@ -423,7 +392,7 @@ void pqSMTKModelPanel::selectMeshRepresentations(
       if(minfo && minfo->Representation && !prop.empty())
         {
         flatIndex = prop[0];
-        selmeshblocks[minfo].push_back(static_cast<vtkIdType>(flatIndex+1));
+        selmeshblocks[minfo].insert(static_cast<vtkIdType>(flatIndex+1));
         }
       }
     }
@@ -687,22 +656,6 @@ void pqSMTKModelPanel::updateMeshSelection(
     vtkSMSourceProxy::SafeDownCast(selectionSource), 0);
   smModelSource->UpdatePipeline();
 
-/*
-  pqSelectionManager *selectionManager =
-    qobject_cast<pqSelectionManager*>(
-      pqApplicationCore::instance()->manager("SelectionManager"));
-
-  if(outport && selectionManager)
-    {
-    outport->setSelectionInput(selectionSourceProxy, 0);
-//    this->requestRender();
-    this->updateSMTKSelection();
-    selectionManager->blockSignals(true);
-    pqPVApplicationCore::instance()->selectionManager()->select(outport);
-    selectionManager->blockSignals(false);
-//    pqActiveObjects::instance().setActivePort(outport);
-    }
-*/
   pqRenderView* renView = qobject_cast<pqRenderView*>(
      pqActiveObjects::instance().activeView());
   renView->render();
