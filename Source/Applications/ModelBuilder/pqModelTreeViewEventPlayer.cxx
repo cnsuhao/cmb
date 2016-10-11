@@ -47,7 +47,7 @@ pqModelTreeViewEventPlayer::pqModelTreeViewEventPlayer(QObject* p)
 }
 
 bool pqModelTreeViewEventPlayer::playEvent(QObject* Object, const QString& command,
- const QString& arguments, bool& Error)
+ const QString& arguments, bool& /*Error*/)
 {
   smtk::extension::qtModelView* const object = qobject_cast<smtk::extension::qtModelView*>(Object);
   if(!object)

@@ -582,9 +582,9 @@ void vtkCMBArcWidgetRepresentation::Initialize( vtkPolyData * pd )
       {
       this->LineInterpolator->GetSpan( i, arr.GetPointer(), this );
       int nNodes = arr->GetNumberOfTuples();
-      for (int i = 0; i < nNodes; i++)
+      for (int j = 0; j < nNodes; j++)
         {
-        arr->GetTypedTuple( i, indices );
+        arr->GetTypedTuple( j, indices );
         this->UpdateLine( indices[0], indices[1] );
         }
       }

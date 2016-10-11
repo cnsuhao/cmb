@@ -128,7 +128,7 @@ static void internal_AddBlockGroupInfo(
 }
 
 void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
-                           const smtk::model::ManagerPtr& modelMan,
+                           const smtk::model::ManagerPtr& vtkNotUsed(modelMan),
                            const smtk::attribute::SystemPtr& attsys,
                            const char*  attDefType,
                            const char*  attItemName)
@@ -215,7 +215,7 @@ void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
 }
 
 int vtkSMTKModelFieldArrayFilter::RequestData(
-  vtkInformation* request,
+  vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inInfo,
   vtkInformationVector* outInfo)
 {
