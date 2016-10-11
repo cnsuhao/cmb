@@ -14,9 +14,10 @@
 #ifndef __pqRepresentationHelperFunctions_h
 #define __pqRepresentationHelperFunctions_h
 
+#include "cmbSystemConfig.h"
 #include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"
-#include "cmbSystemConfig.h"
+#include "pqPipelineSource.h"
 
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMPVRepresentationProxy.h"

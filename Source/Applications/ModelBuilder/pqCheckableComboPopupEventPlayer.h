@@ -37,4 +37,3 @@ private:
 };
 
 #endif // !_pqCheckableComboPopupEventPlayer_h
-

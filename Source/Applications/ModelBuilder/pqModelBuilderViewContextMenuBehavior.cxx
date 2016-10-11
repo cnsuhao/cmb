@@ -25,6 +25,10 @@
 #include "pqCMBModelManager.h"
 #include "pqSMTKModelPanel.h"
 #include "pqCMBContextMenuHelper.h"
+#include "pqSMTKModelInfo.h"
+#include "pqSMTKMeshInfo.h"
+#include "pqSMAdaptor.h"
+#include "pqRepresentationHelperFunctions.h"
 #include "SimBuilder/pqSMTKUIHelper.h"
 
 #include "vtkNew.h"
@@ -33,6 +37,14 @@
 #include "vtkPVGeneralSettings.h"
 #include "vtkSMRenderViewProxy.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkSMIntVectorProperty.h"
+#include "vtkSMTransferFunctionProxy.h"
+#include "vtkPVSMTKModelInformation.h"
+#include "vtkSMModelManagerProxy.h"
+#include "vtkPVSMTKMeshInformation.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
+#include "smtk/model/Group.h"
+#include "smtk/mesh/Collection.h"
 
 #include <QAction>
 #include <QApplication>
