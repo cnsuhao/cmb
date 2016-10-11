@@ -95,7 +95,6 @@ configure_file(
   @ONLY
 )
 
-
 #------------------------------------------------------------------------------
 if(NOT APPLE)
   #windows or unix
@@ -226,6 +225,11 @@ build_paraview_client(ModelBuilder
   INSTALL_BIN_DIR "${VTK_INSTALL_RUNTIME_DIR}"
   INSTALL_LIB_DIR "${VTK_INSTALL_LIBRARY_DIR}"
 )
+
+#------------------------------------------------------------------------------
+# Add #define for cumulus
+target_compile_definitions(
+  ModelBuilder PRIVATE "$<$<BOOL:${ENABLE_Cumulus}>:ENABLE_JOBS_PANEL>")
 
 #let cmake do what qt4_wrap_cpp used to do automatically
 set_target_properties(ModelBuilder PROPERTIES AUTOMOC TRUE)

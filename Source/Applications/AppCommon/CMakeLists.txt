@@ -76,6 +76,14 @@ source_group("Generated" FILES
   ${UI_BUILT_SOURCES}
   )
 
+# Add cumulus source files
+set(CUMULUS_SOURCES)
+set(CUMULUS_LIBRARY)
+if (ENABLE_Cumulus)
+  set(CUMULUS_SOURCES qtJobsPanel.cxx qtJobsPanel.h)
+  set(CUMULUS_LIBRARY smtkCumulusExt)
+endif ()
+
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/pqCMBAppCommonConfig.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/pqCMBAppCommonConfig.h
@@ -234,6 +242,7 @@ add_library(cmbAppCommon
   Scene/Widgets/qtCMBUserTypeDialog.cxx
   Scene/Widgets/qtCMBVOIDialog.cxx
 
+  ${CUMULUS_SOURCES}
   ${RCS_SOURCES}
   ${UI_BUILT_SOURCES}
   )
@@ -250,6 +259,7 @@ target_link_libraries(cmbAppCommon
     QtTesting
     RemusClient
     smtkDiscreteSession
+    ${CUMULUS_LIBRARY}
     vtkSMTKDiscreteModel
     vtksys
     vtkSMTKReaderExt

@@ -40,6 +40,10 @@
 #include "pqModelTreeViewEventPlayer.h"
 #include "pqModelTreeViewEventTranslator.h"
 
+#ifdef ENABLE_JOBS_PANEL
+#include "qtJobsPanel.h"
+#endif
+
 #include "vtkProcessModule.h"
 #include "vtkPVGeneralSettings.h"
 #include "vtkSMPropertyHelper.h"
@@ -152,6 +156,13 @@ Internal(new vtkInternal(this))
 {
   this->initializeApplication();
   this->resetUIPanels();
+
+  // Jobs panel is optional
+  // If enabled (via cmake), jobs panel instantiated once
+#ifdef ENABLE_JOBS_PANEL
+  QDockWidget *dw = this->initUIPanel(qtCMBPanelsManager::JOBS);
+  dw->setVisible(false);
+#endif
 
   this->setupToolbars();
   this->setupZoomToBox();
@@ -621,11 +632,18 @@ void pqCMBModelBuilderMainWindow::onHelpHelp()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::clearGUI()
 {
-  // clear the new panels
+  // clear the new panels (except for JOBS)
+  QDockWidget *jobsPanel = NULL;
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*>::iterator it;
   for(it = this->Internal->CurrentDockWidgets.begin();
     it != this->Internal->CurrentDockWidgets.end(); ++it)
     {
+    if (it.key() == qtCMBPanelsManager::JOBS)
+      {
+      jobsPanel = it.value();
+      continue;
+      }
+
     if(it.value())
       {
 //      it.value()->setWidget(NULL);
@@ -637,8 +655,15 @@ void pqCMBModelBuilderMainWindow::clearGUI()
   pqApplicationCore::instance()->unRegisterManager(
     "COLOR_EDITOR_PANEL");
   this->Internal->CurrentDockWidgets.clear();
+  if (jobsPanel)
+    {
+    this->Internal->CurrentDockWidgets[qtCMBPanelsManager::JOBS] = jobsPanel;
+    }
   this->updateEnableState();
   this->appendDatasetNameToTitle("");
+
+  // Need to explicitly clear the render view
+  this->getThisCore()->activeRenderView()->resetCamera();
 }
 
 //----------------------------------------------------------------------------
@@ -902,7 +927,8 @@ void pqCMBModelBuilderMainWindow::resetUIPanels()
              << qtCMBPanelsManager::SCENE
              << qtCMBPanelsManager::INFO
              << qtCMBPanelsManager::DISPLAY
-             << qtCMBPanelsManager::COLORMAP;
+             << qtCMBPanelsManager::COLORMAP
+             << qtCMBPanelsManager::JOBS;
   //           << qtCMBPanelsManager::PROPERTIES
   //           << qtCMBPanelsManager::RENDER
   //           << qtCMBPanelsManager::USER_DEFINED;
@@ -1097,6 +1123,18 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
         }
 */
       break;
+#ifdef ENABLE_JOBS_PANEL
+    case qtCMBPanelsManager::JOBS:
+      dw = new qtJobsPanel(this);
+      dw->setWindowTitle(qtCMBPanelsManager::type2String(enType).c_str());
+      this->addDockWidget(Qt::RightDockWidgetArea,dw);
+      if(lastdw)
+        {
+        this->tabifyDockWidget(lastdw, dw);
+        }
+      this->Internal->CurrentDockWidgets[enType] = dw;
+      break;
+#endif
     default:
       break;
     }

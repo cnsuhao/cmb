@@ -37,6 +37,7 @@ public:
         DISPLAY,
         RENDER,
         COLORMAP,
+        JOBS,
         NUMBER_OF_KNOWN_TYPES,
         // User defined types
         USER_DEFINED=100,
