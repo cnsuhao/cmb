@@ -499,6 +499,19 @@ void pqCMBCommonMainWindowCore::setupAppearanceEditor (QWidget *parent)
 
   (new QVBoxLayout(container))->setMargin(0);
   this->Internal->AppearanceEditorContainer = container;
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::setShowAxisGrid(bool show)
+{
+  pqRenderView* view = this->activeRenderView();
+  if (view)
+  {
+    vtkSMProxy* axesGrid = vtkSMPropertyHelper(view->getProxy(),"AxesGrid").GetAsProxy();
+    vtkSMPropertyHelper(axesGrid,"Visibility").Set(show);
+    axesGrid->UpdateVTKObjects();
+    view->render();
+  }
 
 }
 

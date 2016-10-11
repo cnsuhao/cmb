@@ -91,6 +91,7 @@
 #include "qtCMBPanelsManager.h"
 #include "pqActiveObjects.h"
 #include "vtkCommand.h"
+#include "pqProxyWidgetDialog.h"
 #include "pqCMBColorMapWidget.h"
 #include "pqCMBRulerDialog.h"
 
@@ -488,8 +489,14 @@ void pqCMBCommonMainWindow::initMainWindowCore()
     << pqSetName("actionToolsRuler");
   QObject::connect(actionRuler, SIGNAL(triggered()),
     this, SLOT(createRulerDialog()));
-  
+
   this->Internal->UI.menu_Tools->addSeparator();
+
+// Add configuration dialog for the Axes Grid
+  QAction* actionAxesGridConfigurations = this->Internal->UI.menuAxes_Grid->
+      addAction("Configurations") << pqSetName("actionAxesGridConfigurations");
+  QObject::connect(actionAxesGridConfigurations, SIGNAL(triggered()),
+    this, SLOT(createAxesGridConfigurationDialog()));
 
 #ifdef BUILD_SHARED_LIBS
   // Add support for importing plugins only if ParaView was built shared.
@@ -535,8 +542,14 @@ void pqCMBCommonMainWindow::initMainWindowCore()
     this->Internal->UI.actionView_Negative_Z, SIGNAL(triggered()),
     this->MainWindowCore, SLOT(resetViewDirectionNegZ()));
   // we want to rotate the object, but the trick here is about camera
-  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_cw, pqCameraReaction::ROTATE_CAMERA_CCW);
-  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_ccw, pqCameraReaction::ROTATE_CAMERA_CW);
+  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_cw,
+                       pqCameraReaction::ROTATE_CAMERA_CCW);
+  new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_ccw,
+                       pqCameraReaction::ROTATE_CAMERA_CW);
+  //Set up Axes Grid bar
+  QObject::connect(
+        this->Internal->UI.actionAxesGrid, SIGNAL(toggled(bool)),
+        this->MainWindowCore, SLOT(setShowAxisGrid(bool)));
   // Set up Center Axes toolbar.
   QObject::connect(
     this->Internal->UI.actionShowCenterAxes, SIGNAL(toggled(bool)),
@@ -785,6 +798,37 @@ void pqCMBCommonMainWindow::createRulerDialog()
   rulerDialog->setAttribute(Qt::WA_DeleteOnClose);
   rulerDialog->show();
 }
+
+void pqCMBCommonMainWindow::checkVisibilityAndUpdateRenderView()
+{
+  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
+
+  vtkSMProxy* AxesGridProxy = vtkSMPropertyHelper(view->getProxy(), "AxesGrid").GetAsProxy();
+
+  int showing = vtkSMPropertyHelper(AxesGridProxy,"Visibility").GetAsInt();
+  if (showing)
+  {
+    view->forceRender();
+  }
+}
+
+void pqCMBCommonMainWindow::createAxesGridConfigurationDialog()
+{
+  pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
+
+  vtkSMProxy* AxesGridProxy = vtkSMPropertyHelper(view->getProxy(),"AxesGrid").GetAsProxy();
+
+  // let the renderview update automatically when we change value in the panel
+  pqCoreUtilities::connect(AxesGridProxy, vtkCommand::UpdateEvent, this,
+ SLOT(checkVisibilityAndUpdateRenderView()));
+
+  pqProxyWidgetDialog* AxesGridDialog =  new pqProxyWidgetDialog(AxesGridProxy);
+  AxesGridDialog->setObjectName("pqCMBAxesGridConfigurationDialog");
+  AxesGridDialog->setWindowTitle("Axes Grid Configuration");
+  AxesGridDialog->setAttribute(Qt::WA_DeleteOnClose);
+  AxesGridDialog->show();
+}
+
 
 //----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::showHelpPage(const QString& url)

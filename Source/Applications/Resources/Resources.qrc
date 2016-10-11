@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/cmb" >
         <file alias="Arrow.png" >Icons/Arrow.png</file>
+        <file alias="AxesGrid.png" >Icons/AxesGrid.png</file>
         <file alias="GrowAccept.png" >Icons/GrowAccept.png</file>
         <file alias="GrowClear.png" >Icons/GrowClear.png</file>
         <file alias="Icon.png" >Icons/Icon.png</file>
