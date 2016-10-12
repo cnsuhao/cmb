@@ -305,17 +305,18 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 {
   //clear current selections
   this->Internal->smtkManager->clearModelSelections();
-  smtk::model::ManagerPtr modelMan =
-    this->Internal->smtkManager->managerProxy()->modelManager();
 
   // create vector of selected block ids
   QMap<pqSMTKModelInfo*, std::set<vtkIdType> > selmodelblocks;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
-    QSet<unsigned int> blockIds;
-    pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
     pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(*it);
-    selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
+    if(minfo && minfo->Representation)
+      {
+      QSet<unsigned int> blockIds;
+      pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
+      selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
+      }
     }
 
   foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
