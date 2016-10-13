@@ -189,7 +189,7 @@ int vtkCMBConeCellClassifier::RequestData(vtkInformation* vtkNotUsed(request),
         }
       }
     }
-  delete pids;
+  delete[] pids;
   return 1;
 }
 //----------------------------------------------------------------------------
