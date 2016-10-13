@@ -794,7 +794,7 @@ void rtvl_refine_internal<N>::select_scale()
 {
   // setup octree for computing the scale
   double bds[N][2];
-  for (int i = 0; i < N; i++)
+  for (unsigned int i = 0; i < N; i++)
     {
     bds[i][0] = this->data_bounds[i*2];
     bds[i][1] = this->data_bounds[i*2 + 1];
@@ -1081,7 +1081,7 @@ void rtvl_refine_internal<N>::refine_block(rgtl_object_array_points<N> &blockPoi
     vnl_vector_fixed<double, N> voter_location;
     for(int vi=0; vi < num_voters; vi++)
       {
-      int j = voter_ids[vi];
+      unsigned int j = voter_ids[vi];
       if (j == i) 
         {
         continue;
