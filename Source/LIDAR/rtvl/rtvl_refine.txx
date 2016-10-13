@@ -700,19 +700,12 @@ void rtvl_refine_internal<N>::build_tree()
     treePoints[xIndex][yIndex].push_back( i );
     }
 
-  // count up all the indices we added, and keep track of min and max
-  unsigned int sum = 0, max = 0;
   for (int i = 0; i < numberOfDivisions; i++)
     {
     for (int j = 0; j < numberOfDivisions; j++)
       {
       // setup the appropriate quad in the tree
       tree->initialize_points(tree_depth, i, j, this->current_scale, treePoints[i][j], this->points);
-      //sum += treePoints[i][j].size();
-      //if (max < treePoints[i][j].size())
-      //  {
-      //  max = treePoints[i][j].size();
-      //  }
       }
     delete [] treePoints[i];
     }
@@ -839,7 +832,7 @@ void rtvl_refine_internal<N>::select_scale()
 //----------------------------------------------------------------------------
 // min_number_of_chunks 1, 4, 16, 64, 128...
 template <unsigned int N>
-int rtvl_refine_internal<N>::initialize_refine_level(unsigned int memory_limit,
+int rtvl_refine_internal<N>::initialize_refine_level(unsigned int /*memory_limit*/,
                                                      int requested_min_depth)
 {
   this->refine_quad_next = this->refine_quad_base = 0;
