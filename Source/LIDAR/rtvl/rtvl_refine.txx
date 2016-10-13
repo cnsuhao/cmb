@@ -232,10 +232,10 @@ void rtvl_refine_quadtree<N>::initialize_points(int depth,
   level->quad = this;
   level->scale = scale;
   double p[N];
-  for(int i = 0; i < number_of_points; i++)
+  for(int n = 0; n < number_of_points; n++)
     {
-    points.get_point(indices[i], p);
-    level->tokens->points.set_point(i, p);
+    points.get_point(indices[n], p);
+    level->tokens->points.set_point(n, p);
     }
   level->tokens->scale = scale;
   level->index = 0;
@@ -642,7 +642,7 @@ rtvl_refine_internal<N>::rtvl_refine_internal(rtvl_refine<N>* e): external(e)
 
 //----------------------------------------------------------------------------
 template <unsigned int N>
-void rtvl_refine_internal<N>::init(unsigned int num_points, double* points,
+void rtvl_refine_internal<N>::init(unsigned int num_points, double* points_in,
                                    double* bounds)
 {
   vcl_memcpy(data_bounds, bounds, sizeof(double) * N * 2);
@@ -651,8 +651,8 @@ void rtvl_refine_internal<N>::init(unsigned int num_points, double* points,
   this->points.set_number_of_points(num_points);
   for(unsigned int i=0; i < num_points; i++)
     {
-    this->points.set_point(i, points);
-    points += N;
+    this->points.set_point(i, points_in);
+    points_in += N;
     }
 }
 
@@ -700,19 +700,12 @@ void rtvl_refine_internal<N>::build_tree()
     treePoints[xIndex][yIndex].push_back( i );
     }
 
-  // count up all the indices we added, and keep track of min and max
-  unsigned int sum = 0, max = 0;
   for (int i = 0; i < numberOfDivisions; i++)
     {
     for (int j = 0; j < numberOfDivisions; j++)
       {
       // setup the appropriate quad in the tree
       tree->initialize_points(tree_depth, i, j, this->current_scale, treePoints[i][j], this->points);
-      //sum += treePoints[i][j].size();
-      //if (max < treePoints[i][j].size())
-      //  {
-      //  max = treePoints[i][j].size();
-      //  }
       }
     delete [] treePoints[i];
     }
@@ -801,7 +794,7 @@ void rtvl_refine_internal<N>::select_scale()
 {
   // setup octree for computing the scale
   double bds[N][2];
-  for (int i = 0; i < N; i++)
+  for (unsigned int i = 0; i < N; i++)
     {
     bds[i][0] = this->data_bounds[i*2];
     bds[i][1] = this->data_bounds[i*2 + 1];
@@ -839,7 +832,7 @@ void rtvl_refine_internal<N>::select_scale()
 //----------------------------------------------------------------------------
 // min_number_of_chunks 1, 4, 16, 64, 128...
 template <unsigned int N>
-int rtvl_refine_internal<N>::initialize_refine_level(unsigned int memory_limit,
+int rtvl_refine_internal<N>::initialize_refine_level(unsigned int /*memory_limit*/,
                                                      int requested_min_depth)
 {
   this->refine_quad_next = this->refine_quad_base = 0;
@@ -1088,7 +1081,7 @@ void rtvl_refine_internal<N>::refine_block(rgtl_object_array_points<N> &blockPoi
     vnl_vector_fixed<double, N> voter_location;
     for(int vi=0; vi < num_voters; vi++)
       {
-      int j = voter_ids[vi];
+      unsigned int j = voter_ids[vi];
       if (j == i) 
         {
         continue;
@@ -1265,18 +1258,18 @@ bool rtvl_refine_internal<N>::last_level()
 
 //----------------------------------------------------------------------------
 template <unsigned int N>
-void rtvl_refine_internal<N>::extract_tokens(int level, double *bounds, 
+void rtvl_refine_internal<N>::extract_tokens(int level, double *bounds_in,
                                              rtvl_tokens<N> &out) const
 {
   vcl_vector< rtvl_refine_level<N>* > levels_vector;
-  if (!bounds)
+  if (!bounds_in)
     {
     // get entire level
     this->tree->gather_levels(level, levels_vector);
     }
   else
     {
-    this->tree->gather_levels_within_bounds(level, levels_vector, bounds);
+    this->tree->gather_levels_within_bounds(level, levels_vector, bounds_in);
     }
 
   // Count the salient tokens.
@@ -1295,11 +1288,11 @@ void rtvl_refine_internal<N>::extract_tokens(int level, double *bounds,
         loader >> *(*level_iter)->tokens;      
         }
       vcl_vector< rtvl_tensor<N> > &tokens = (*level_iter)->tokens->tokens;
-      if (!bounds || 
-        ((*level_iter)->quad->bounds[0] >= bounds[0] &&
-         (*level_iter)->quad->bounds[1] <= bounds[1] &&
-         (*level_iter)->quad->bounds[2] >= bounds[2] &&
-         (*level_iter)->quad->bounds[3] <= bounds[3]) )
+      if (!bounds_in ||
+        ((*level_iter)->quad->bounds[0] >= bounds_in[0] &&
+         (*level_iter)->quad->bounds[1] <= bounds_in[1] &&
+         (*level_iter)->quad->bounds[2] >= bounds_in[2] &&
+         (*level_iter)->quad->bounds[3] <= bounds_in[3]) )
         {
         for (size_t i = 0; i < tokens.size(); i++)
           {
@@ -1311,15 +1304,15 @@ void rtvl_refine_internal<N>::extract_tokens(int level, double *bounds,
         }
       else // only partially within bounds, so only count tokens within bounds
         {
-        rgtl_object_array_points<N> &points = (*level_iter)->tokens->points;
+        rgtl_object_array_points<N> &token_points = (*level_iter)->tokens->points;
         for (int i = 0; i < static_cast<int>(tokens.size()); i++)
           {
           if (tokens[i].lambda(0) > 1.0)
             {
             double p[N];
-            points.get_point(i, p);
-            if (p[0] >= bounds[0] && p[0] <= bounds[1] &&
-                p[1] >= bounds[2] && p[1] <= bounds[3])
+            token_points.get_point(i, p);
+            if (p[0] >= bounds_in[0] && p[0] <= bounds_in[1] &&
+                p[1] >= bounds_in[2] && p[1] <= bounds_in[3])
               {
               number_of_salient_points++;
               }
@@ -1345,16 +1338,16 @@ void rtvl_refine_internal<N>::extract_tokens(int level, double *bounds,
           out.scale = (*level_iter)->tokens->scale;
           }
         vcl_vector< rtvl_tensor<N> > &tokens = (*level_iter)->tokens->tokens;
-        rgtl_object_array_points<N> &points = (*level_iter)->tokens->points;
+        rgtl_object_array_points<N> &token_points = (*level_iter)->tokens->points;
         for (int i = 0; i < static_cast<int>(tokens.size()); i++)
           {
           if (tokens[i].lambda(0) > 1.0)
             {
             double p[N];
-            points.get_point(i, p);
-            if (!bounds || 
-              (p[0] >= bounds[0] && p[0] <= bounds[1] &&
-               p[1] >= bounds[2] && p[1] <= bounds[3]) )
+            token_points.get_point(i, p);
+            if (!bounds_in ||
+              (p[0] >= bounds_in[0] && p[0] <= bounds_in[1] &&
+               p[1] >= bounds_in[2] && p[1] <= bounds_in[3]) )
               {
               out.points.set_point(count_index, p);
               out.tokens[count_index++] = tokens[i];	    
