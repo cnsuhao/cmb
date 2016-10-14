@@ -114,6 +114,9 @@ public:
     Background  =   0;
     PotentialBG =  55;
     PotentialFG = 200;
+    shiftButtonPressed = false;
+    leftMousePressed = false;
+
     maskActor   = vtkSmartPointer<vtkImageActor>::New();
     imageViewer = vtkSmartPointer<vtkImageViewer2>::New();
     drawing     = vtkSmartPointer<vtkDEMImageCanvasSource2D>::New();
