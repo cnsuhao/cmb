@@ -579,7 +579,7 @@ class rtvl_refine_internal
 {
 public:
   rtvl_refine_internal(rtvl_refine<N>* e);
-  void init(unsigned int num_points, double* points, double* bounds);
+  void init(unsigned int num_points, double* points, double* bounds_in);
   void set_mask_size(double f);
   void extract_tokens(int level, double *bounds, rtvl_tokens<N> &out) const;
   double get_level_scale(int level);
@@ -643,9 +643,9 @@ rtvl_refine_internal<N>::rtvl_refine_internal(rtvl_refine<N>* e): external(e)
 //----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::init(unsigned int num_points, double* points_in,
-                                   double* bounds)
+                                   double* bounds_in)
 {
-  vcl_memcpy(data_bounds, bounds, sizeof(double) * N * 2);
+  vcl_memcpy(data_bounds, bounds_in, sizeof(double) * N * 2);
 
   // Store points... released after building the tree
   this->points.set_number_of_points(num_points);
