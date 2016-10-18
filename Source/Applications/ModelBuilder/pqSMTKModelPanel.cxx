@@ -713,14 +713,14 @@ void pqSMTKModelPanel::gatherSelectionInfo(pqPipelineSource* source,
       for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
         {
         flat_idx = blockIds->GetValue(ui);
-        // blockId is child index, which is one less of flat_index
-        flat_idx--;
         if(modinfo)
           {
           uuids.insert(modinfo->GetModelEntityId(flat_idx));
           }
         else if(meshinfo)
           {
+          // blockId is child index, which is one less of flat_index
+          flat_idx--;
           meshes.insert(meshinfo->GetMeshSet(flat_idx));
           }
         }
@@ -736,14 +736,14 @@ void pqSMTKModelPanel::gatherSelectionInfo(pqPipelineSource* source,
       for (unsigned int cc=0; cc < (count/3); cc++)
         {
         flat_idx = selIDs.GetAsInt(3*cc);
-        // blockId is child index, which is one less of flat_index
-        flat_idx--;
         if(modinfo)
           {
           uuids.insert(modinfo->GetModelEntityId(flat_idx));
           }
         else if(meshinfo)
           {
+          // blockId is child index, which is one less of flat_index
+          flat_idx--;
           meshes.insert(meshinfo->GetMeshSet(flat_idx));
           }
         }

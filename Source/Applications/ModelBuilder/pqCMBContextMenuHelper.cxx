@@ -57,7 +57,7 @@ bool pqCMBContextMenuHelper::getBlockIndex(const smtk::model::EntityRef& eref,
   const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
   if(!prop.empty() && prop[0] >=0)
     {
-    flatIndex = prop[0]+1;
+    flatIndex = prop[0];
     return true;
     }
   return false;

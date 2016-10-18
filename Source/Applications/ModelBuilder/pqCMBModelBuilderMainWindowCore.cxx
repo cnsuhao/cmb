@@ -1056,7 +1056,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
           const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
           if(!vprop.empty())
             visible = (vprop[0] != 0);
-          visBlocks[minfo][visible] << flatIndex+1;
+          visBlocks[minfo][visible] << flatIndex;
           }
         }
       }
