@@ -1551,8 +1551,13 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
         {
         if (tpit->find(lastExt) == 0)
           {
-          std::string sesstype = *it;
-          retBrEns[sesstype].push_back(typeIt->first);
+          // Match length of strings
+          if (lastExt.size() == tpit->find(' '))
+            {
+            std::string sesstype = *it;
+            retBrEns[sesstype].push_back(typeIt->first);
+            break;
+            }
           }
         }
       }
