@@ -117,6 +117,8 @@ if ((rgba.size() == 3 || rgba.size() ==4) &&
     rgba[0]+rgba[1]+rgba[2] != 0))
   {
   float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+  // alpha can't be zero
+  alpha = alpha == 0. ? 1.0 : alpha;
   color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
   return true;
   }
