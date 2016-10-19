@@ -39,6 +39,8 @@ int vtkCMBSpacingFlip
                                outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   double * spacing = input->GetSpacing();
+  double origin[3];
+  input->GetOrigin(origin);
 
   if(spacing[0] >= 0 && spacing[1] >= 0 && spacing[2] >= 0)
   {
@@ -50,14 +52,17 @@ int vtkCMBSpacingFlip
     if(spacing[0] < 0 && spacing[1] >= 0 && spacing[2] >= 0)
     {
       flipper->SetFilteredAxis(0);
+      origin[0] = origin[0] + spacing[0]*input->GetDimensions()[0];
     }
     else if(spacing[1] < 0 && spacing[0] >= 0 && spacing[2] >= 0)
     {
       flipper->SetFilteredAxis(1);
+      origin[1] = origin[1] + spacing[1]*input->GetDimensions()[1];
     }
     else if(spacing[2] < 0 && spacing[0] >= 0 && spacing[1] >= 0)
     {
       flipper->SetFilteredAxis(2);
+      origin[2] = origin[2] + spacing[2]*input->GetDimensions()[2];
     }
     else
     {
@@ -66,10 +71,12 @@ int vtkCMBSpacingFlip
       output->DeepCopy(input);
       return 1;
     }
+    flipper->FlipAboutOriginOff();
     flipper->SetInputData(input);
     flipper->Update();
     output->DeepCopy(flipper->GetOutput());
     output->SetSpacing(fabs(spacing[0]),fabs(spacing[1]),fabs(spacing[2]));
+    output->SetOrigin(origin);
   }
 
   return 1;
