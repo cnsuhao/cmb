@@ -378,7 +378,6 @@ void pqCMBCommonMainWindow::onViewChanged()
       this->Internal->UI.actionAdjustCamera,
       this->MainWindowCore->activeRenderView());
 
-    vtkPVRenderViewSettings::GetInstance()->SetOutlineThreshold(50);
      vtkPVRenderViewSettings::GetInstance()->SetResolveCoincidentTopology(
          vtkPVRenderViewSettings::OFFSET_FACES);
      vtkPVRenderViewSettings::GetInstance()->SetPolygonOffsetParameters(1.0, 0.5);
