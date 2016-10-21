@@ -514,7 +514,7 @@ public:
         finfo.completeSuffix().toLower() == "dem")
       {
       source =  builder->createReader("sources", "GDALRasterReader", files, server);
-      source =  builder->createFilter("filters", "CMBSpacingFlip", source);
+      source =  builder->createFilter("filters", "ImageSpacingFlip", source);
       }
     else
       {

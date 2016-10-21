@@ -29,7 +29,6 @@ set(CMB_Filtering_SRC
     vtkCMBMeshContourSelector.cxx
     vtkCMBMeshSelectionConverter.cxx
     vtkCMBSmoothMeshFilter.cxx
-    vtkCMBSpacingFlip.cxx
     vtkCMBSubArcModifyOperator.cxx
     vtkExtractModelFaceBlock.cxx
     vtkFacesConnectivityFilter.cxx
