@@ -69,6 +69,7 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
   this->m_AttSystem = smtk::attribute::SystemPtr();
   if (this->m_attUIManager != NULL)
     {
+    this->m_attUIManager->disconnect();
     delete this->m_attUIManager;
     }
 }
