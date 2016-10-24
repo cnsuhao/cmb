@@ -89,6 +89,7 @@ void SimBuilderCore::Initialize()
   this->CurrentSimFile = "";
   if(this->m_attUIManager)
     {
+    this->m_attUIManager->disconnect();
     delete this->m_attUIManager;
     this->m_attUIManager = NULL;
     }
@@ -652,8 +653,12 @@ void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()
 {
-  delete this->m_attUIManager;
-  this->m_attUIManager = NULL;
+  if(this->m_attUIManager)
+    {
+    this->m_attUIManager->disconnect();
+    delete this->m_attUIManager;
+    this->m_attUIManager = NULL;
+    }
   if(this->UIPanel)
     {
     this->UIPanel->initialize();

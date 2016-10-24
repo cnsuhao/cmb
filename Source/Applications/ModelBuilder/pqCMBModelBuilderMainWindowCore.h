@@ -101,6 +101,7 @@ public slots:
     { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
   void clearSimBuilder();
+  void resetSimulationModel();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);
   int onLoadScenario();
   void onSaveScenario();

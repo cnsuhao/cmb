@@ -157,8 +157,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     QPointer<pqCMBEnumPropertyWidget> RepresentationWidget;
     QPointer<QComboBox> SelectByBox;
-    QPointer<QAction> ColorFaceWidget;
-    QPointer<QComboBox> ColorFaceCombo;
+    QPointer<QToolBar> ColorByAttToolbar;
 
     int SelectByMode;
 
@@ -213,18 +212,7 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* toolbar)
 {
-  SimBuilderCore* sbCore = this->getSimBuilder();
-  this->Internal->AttributeVisWidget =
-    new smtk::extension::qtAttributeDisplay(toolbar,
-      sbCore->uiManager()->attributeUIManager())
-    << pqSetName("colorByAttributeWidget");;
-  this->Internal->AttVisAction = toolbar->addWidget(this->Internal->AttributeVisWidget);
-  this->Internal->AttVisAction->setVisible(false);
-
-  QObject::connect(
-      this->Internal->AttributeVisWidget,
-      SIGNAL(attributeFieldSelected(const QString&, const QString&)),
-      this, SLOT(colorByAttributeFieldSelected(const QString&, const QString&)));
+  this->Internal->ColorByAttToolbar = toolbar;
 }
 
 //-----------------------------------------------------------------------------
@@ -596,12 +584,6 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
   if(!modelOnly)
     {
     this->clearSimBuilder();
-    this->Internal->SimBuilder->Initialize();
-    }
-  if(this->Internal->SimBuilder)
-    {
-//    this->Internal->SimBuilder->getMeshManager()->clearMesh();
-//    this->Internal->SimBuilder->getMeshManager()->setCMBModel(0);
     }
 
   // destroy the new smtk model
@@ -624,14 +606,30 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
     }
 
 }
+
 void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
 {
   if(this->Internal->SimBuilder)
     {
-    this->getSimBuilder()->clearCMBModel();
-//    this->getSimBuilder()->setCMBModel(0);
-    this->getSimBuilder()->clearSimulationModel();
+    this->Internal->SimBuilder->clearCMBModel();
+    this->resetSimulationModel();
     }
+}
+
+void pqCMBModelBuilderMainWindowCore::resetSimulationModel()
+{
+  this->getSimBuilder()->clearSimulationModel();
+  this->getSimBuilder()->Initialize();
+  if(this->Internal->AttVisAction &&
+     this->Internal->AttVisAction->isVisible())
+  {
+    this->onColorByModeChanged("None");
+    if(this->Internal->AttributeVisWidget)
+    {
+      delete this->Internal->AttributeVisWidget;
+      this->Internal->AttributeVisWidget = NULL;
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -793,8 +791,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     else
       {
       QApplication::processEvents();
-      this->getSimBuilder()->clearSimulationModel();
-      this->getSimBuilder()->Initialize();
+      this->resetSimulationModel();
       }
     }
 
@@ -868,9 +865,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     }
   if(this->Internal->SimBuilder)
     {
-    this->Internal->SimBuilder->clearCMBModel();
-    this->Internal->SimBuilder->clearSimulationModel();
-    this->Internal->SimBuilder->Initialize();
+    this->clearSimBuilder();
     this->Internal->SimBuilder->setServer(this->getActiveServer());
     this->Internal->SimBuilder->setRenderView(this->activeRenderView());
     }
@@ -1299,18 +1294,46 @@ void pqCMBModelBuilderMainWindowCore::onColorByModeChanged(
 {
   bool byAttribute = colorMode ==
     vtkModelMultiBlockSource::GetAttributeTagName();
-  this->Internal->AttVisAction->setVisible(byAttribute);
+  if(byAttribute && !this->Internal->AttributeVisWidget)
+  {
+    QToolBar* toolbar = this->Internal->ColorByAttToolbar;
+    SimBuilderCore* sbCore = this->getSimBuilder();
+    this->Internal->AttributeVisWidget =
+      new smtk::extension::qtAttributeDisplay(toolbar,
+        sbCore->uiManager()->attributeUIManager())
+      << pqSetName("colorByAttributeWidget");;
+    this->Internal->AttVisAction = toolbar->addWidget(
+        this->Internal->AttributeVisWidget);
+
+    QObject::connect(
+        this->Internal->AttributeVisWidget,
+        SIGNAL(attributeFieldSelected(const QString&, const QString&)),
+        this, SLOT(colorByAttributeFieldSelected(const QString&, const QString&)));
+  }
+
+  if(this->Internal->AttVisAction)
+  {
+    this->Internal->AttVisAction->setVisible(byAttribute);
+  }
+
   if(byAttribute)
+  {
     this->onColorByAttribute();
+  }
   else
+  {
     this->Internal->ViewContextBehavior->colorByEntity(colorMode);
+  }
 }
 
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onColorByAttribute()
 {
-  this->Internal->AttVisAction->setVisible(true);
-  this->Internal->AttributeVisWidget->onShowCategory();
+  if(this->Internal->AttributeVisWidget &&
+     this->Internal->AttVisAction->isVisible())
+  {
+    this->Internal->AttributeVisWidget->onShowCategory();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1459,5 +1482,8 @@ void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
 
   QObject::connect(this->getSimBuilder()->uiManager(),
     SIGNAL(attColorChanged()), this,
+    SLOT(onColorByAttribute()));
+  QObject::connect(this->getSimBuilder()->uiManager(),
+    SIGNAL(attAssociationChanged()), this,
     SLOT(onColorByAttribute()));
 }
