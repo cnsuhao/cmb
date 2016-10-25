@@ -46,9 +46,13 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
 
+#include <vtkXMLImageDataWriter.h>
+#include <vtkXMLImageDataReader.h>
+
 #include "vtkCMBImageClassFilter.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 class vtkDEMImageCanvasSource2D : public vtkImageCanvasSource2D
 {
@@ -558,6 +562,14 @@ vtkCMBGrabCutUI::vtkCMBGrabCutUI()
   connect(this->ui->LabelTrans, SIGNAL(valueChanged(int)), this, SLOT(setTransparency(int)));
   connect(this->ui->DrawPossible, SIGNAL(clicked(bool)), this, SLOT(showPossibleLabel(bool)));
 
+  connect(this->ui->SaveLines, SIGNAL(clicked()), this, SLOT(saveLines()));
+  connect(this->ui->LoadLines, SIGNAL(clicked()), this, SLOT(loadLines()));
+
+  this->ui->SaveLines->setEnabled(false);
+  this->ui->LoadLines->setEnabled(false);
+  this->ui->SaveVTP->setEnabled(false);
+  this->ui->SaveMask->setEnabled(false);
+
   this->ui->qvtkWidget->SetRenderWindow(this->internal->imageViewer->GetRenderWindow());
   this->internal->imageViewer->SetupInteractor(
                                           this->ui->qvtkWidget->GetRenderWindow()->GetInteractor());
@@ -593,11 +605,17 @@ void vtkCMBGrabCutUI::open()
 {
   QString fileName = QFileDialog::getOpenFileName(NULL, tr("Open Tiff File"),
                                                   "",
-                                                  tr("Tiff file (*.tif)"));
+                                                  tr("Tiff file (*.tif;*.tiff)"));
   if(fileName.isEmpty())
   {
     return;
   }
+
+  this->ui->SaveLines->setEnabled(true);
+  this->ui->LoadLines->setEnabled(true);
+  this->ui->SaveVTP->setEnabled(true);
+  this->ui->SaveMask->setEnabled(true);
+
   vtkSmartPointer<vtkGDALRasterReader> gdal_reader;
   gdal_reader = vtkSmartPointer<vtkGDALRasterReader>::New();
   gdal_reader->SetFileName(fileName.toStdString().c_str());
@@ -645,17 +663,17 @@ void vtkCMBGrabCutUI::saveMask()
 {
   QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save Current binary mask"),
                                                   "",
-                                                  tr("png file (*.png)"));
+                                                  tr("vti file (*.vti)"));
   if(fileName.isEmpty())
   {
     return;
   }
 
-  vtkSmartPointer<vtkPNGWriter> writer_label = vtkSmartPointer<vtkPNGWriter>::New();
-  writer_label->SetFileName(fileName.toStdString().c_str());
+  vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+  writer->SetFileName(fileName.toStdString().c_str());
   vtkImageData * tmp = internal->imageClassFilter->GetOutput();
-  writer_label->SetInputData(tmp);
-  writer_label->Write();
+  writer->SetInputData(tmp);
+  writer->Write();
 }
 
 void vtkCMBGrabCutUI::run()
@@ -826,4 +844,65 @@ void vtkCMBGrabCutUI::setAlgorithm(int a)
       this->ui->NumberOfIter->setEnabled(false);
       break;
   }
+}
+
+void vtkCMBGrabCutUI::saveLines()
+{
+  QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save Current Lines"),
+                                                  "",
+                                                  tr("VTI File (*.vti)"));
+  if(fileName.isEmpty())
+  {
+    return;
+  }
+  vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+  writer->SetFileName(fileName.toStdString().c_str());
+
+  writer->SetInputData(internal->drawing->GetOutput());
+  writer->Write();
+}
+
+void vtkCMBGrabCutUI::loadLines()
+{
+  QString fileName = QFileDialog::getOpenFileName(NULL, tr("Open VTI File"),
+                                                  "",
+                                                  tr("vti file (*.vti)"));
+  if(fileName.isEmpty())
+  {
+    return;
+  }
+
+  vtkSmartPointer<vtkXMLImageDataReader> reader = vtkSmartPointer<vtkXMLImageDataReader>::New();
+  reader->SetFileName(fileName.toStdString().c_str());
+  reader->Update();
+  vtkImageData* updateMask = reader->GetOutput();
+  vtkImageData* current = internal->drawing->GetOutput();
+
+  int* dims = updateMask->GetDimensions();
+  int* cdims = current->GetDimensions();
+  if( dims[2] !=  cdims[2]|| dims[1] !=  cdims[1] || dims[0] != cdims[0])
+  {
+    QMessageBox::critical(this->parentWidget(), "Line file error",
+                          "Not the same size of the loaded image");
+    return;
+  }
+  double color[4];
+  internal->drawing->GetDrawColor(color);
+  for (int z = 0; z < dims[2]; z++)
+  {
+    for (int y = 0; y < dims[1]; y++)
+    {
+      for (int x = 0; x < dims[0]; x++)
+      {
+        double tmpC[] = {updateMask->GetScalarComponentAsFloat( x, y, z, 0),
+                         updateMask->GetScalarComponentAsFloat( x, y, z, 0),
+                         updateMask->GetScalarComponentAsFloat( x, y, z, 0),
+                         0 };
+        internal->drawing->SetDrawColor(tmpC);
+        internal->drawing->DrawPoint(x,y);
+      }
+    }
+  }
+  internal->drawing->SetDrawColor(color);
+  internal->updateAlphas();
 }

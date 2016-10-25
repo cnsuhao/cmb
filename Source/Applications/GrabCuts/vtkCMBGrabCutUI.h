@@ -35,6 +35,8 @@ public slots:
   void open();
   void saveVTP();
   void saveMask();
+  void saveLines();
+  void loadLines();
   void run();
   void clear();
   void pointSize(int i);
