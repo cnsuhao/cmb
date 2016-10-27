@@ -294,13 +294,12 @@ public:
           this->ModelInfos[*mit].RepSource);
         pqApplicationCore::instance()->getObjectBuilder()->destroy(
           this->ModelInfos[*mit].ModelSource);
-        }
-
-      std::map<smtk::common::UUID, unsigned int>::const_iterator it;
-      for(it = this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().begin();
-        it != this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().end(); ++it)
-        {
-        this->Entity2Models.erase(it->first);
+        std::map<smtk::common::UUID, unsigned int>::const_iterator it;
+        for(it = this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().begin();
+          it != this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().end(); ++it)
+          {
+          this->Entity2Models.erase(it->first);
+          }
         }
 
       for(std::set<std::string>::const_iterator imgit = this->ModelImages[*mit].begin();
@@ -321,13 +320,17 @@ public:
           }
         if(!used)
           {
-          pqApplicationCore::instance()->getObjectBuilder()->destroy(
-            this->ImageInfos[*imgit].ImageSource);
+          if(this->ImageInfos[*imgit].ImageSource)
+          {
+            pqApplicationCore::instance()->getObjectBuilder()->destroy(
+              this->ImageInfos[*imgit].ImageSource);
+          }
           this->ImageInfos.erase(*imgit);
           }
         }
 
       this->ModelInfos.erase(*mit);
+      this->ModelImages.erase(*mit);
       modelRemoved = true;
       }
   if(modelRemoved)
@@ -694,6 +697,10 @@ public:
   {
     for(itModelInfo mit = this->ModelInfos.begin(); mit != this->ModelInfos.end(); ++mit)
       {
+      if(!mit->second.ModelSource)
+      {
+        continue;
+      }
       pqApplicationCore::instance()->getObjectBuilder()->destroy(
         mit->second.RepSource);
       pqApplicationCore::instance()->getObjectBuilder()->destroy(
