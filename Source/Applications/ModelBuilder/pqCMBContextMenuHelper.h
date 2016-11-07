@@ -76,6 +76,10 @@ public:
   static void getAllMeshSets(pqSMTKMeshInfo* minfo,
                            smtk::mesh::ManagerPtr meshMgr,
                            smtk::mesh::MeshSets& meshes);
+
+  static void updateColorForAuxiliary(pqDataRepresentation* rep, const QColor& color);
+  static void updateVisibilityForAuxiliary(pqDataRepresentation* rep, bool visible);
+
 private:
   static const std::string s_internal_groupOpName;
 };

@@ -277,23 +277,8 @@ void pqSMTKModelPanel::onEntitiesExpunged(
 //-----------------------------------------------------------------------------
 void pqSMTKModelPanel::onSelectionChanged(const smtk::model::EntityRefs& selentities,
        const smtk::mesh::MeshSets& selmeshes,
-       const smtk::model::DescriptivePhrases& selproperties)
+       const smtk::model::DescriptivePhrases& /* selproperties */)
 {
-  // Only process the selected properties when no model or mesh is selected.
-  // Currently this is used to set the selected image representation active, which
-  // is referred from model's string property "image_url"
-  if(selentities.size() == 0 && selmeshes.size() == 0 && selproperties.size() > 0)
-    {
-    if(selproperties.size() > 0)
-      {
-      this->selectPropertyRepresentations(selproperties);
-      }
-    else
-      {
-      pqActiveObjects::instance().setActiveSource(NULL);
-      }
-    }
-  
   // handle meshes first, so that if both model and mesh are selected,
   // a selected model will be active representation in the application.
   this->selectMeshRepresentations(selmeshes);
@@ -305,7 +290,10 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 {
   //clear current selections
   this->Internal->smtkManager->clearModelSelections();
+  this->Internal->smtkManager->clearAuxGeoSelections();
 
+  QList<smtkAuxGeoInfo*> selAuxGeos;
+  smtkAuxGeoInfo* lastAuxInfo = NULL;
   // create vector of selected block ids
   QMap<pqSMTKModelInfo*, std::set<vtkIdType> > selmodelblocks;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
@@ -316,6 +304,16 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       QSet<unsigned int> blockIds;
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
       selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
+      }
+    else if(!minfo && pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+      {
+      smtk::model::AuxiliaryGeometry aux(*it);
+      lastAuxInfo = this->Internal->smtkManager->auxGeoInfo(aux.url());
+      if(lastAuxInfo && lastAuxInfo->Representation)
+        {
+        pqCMBSelectionHelperUtil::selectAuxSource(
+          lastAuxInfo->Representation);
+        }
       }
     }
 
@@ -333,39 +331,10 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
     pqSMTKModelInfo* minfo = selmodelblocks.keys()[selmodelblocks.keys().count() - 1];
     pqActiveObjects::instance().setActiveSource(minfo->RepSource);
     }
-
-  this->Internal->updateSelectionView();
-}
-// For now, only a model's "image_url" string property has an image representation,
-// and if selected, we need to make that image representation active.
-//-----------------------------------------------------------------------------
-void pqSMTKModelPanel::selectPropertyRepresentations(
-  const smtk::model::DescriptivePhrases& selproperties)
-{ 
-  // if the DescriptivePhrase is for a model's image_url string property, and
-  // an image representation is created for that image_url, we set it active.
-  for (smtk::model::DescriptivePhrases::const_iterator it = selproperties.begin();
-       it != selproperties.end(); ++it)
+  else if(lastAuxInfo && lastAuxInfo->Representation)
     {
-    smtk::model::EntityRef curRef = (*it)->relatedEntity();
-    if ((*it)->phraseType() == STRING_PROPERTY_VALUE &&
-        curRef.isModel() && curRef.hasStringProperty("image_url"))
-      {
-      const smtk::model::StringList& sprop(curRef.stringProperty("image_url"));
-      if(!sprop.empty())
-        {
-        std::string imgurl = sprop[0];
-        if(smtkImageInfo* imginfo = this->Internal->smtkManager->imageInfo(imgurl))
-          {
-          //clear current selections
-          if(imginfo && imginfo->Representation && imginfo->Representation->isVisible())
-            {
-            pqActiveObjects::instance().setActiveSource(imginfo->ImageSource);
-            break;
-            }
-          }
-        }
-      }
+    pqActiveObjects::instance().setActiveSource(
+      lastAuxInfo->ImageSource ? lastAuxInfo->ImageSource : lastAuxInfo->AuxGeoSource);
     }
 
   this->Internal->updateSelectionView();
@@ -433,20 +402,16 @@ void pqSMTKModelPanel::updateTreeSelection()
     this->gatherSelectionInfo(meshinfo->RepSource, meshinfo->Info, uuids, meshes);
     }
 
-  QList<smtkImageInfo*> selImages = this->Internal->smtkManager->selectedImages();
-  std::map<std::string, smtk::common::UUIDs> image2Models;
-  foreach(smtkImageInfo* imginfo, selImages)
+  QList<smtkAuxGeoInfo*> selAuxGeos = this->Internal->smtkManager->selectedAuxGeos();
+  foreach(smtkAuxGeoInfo* auxinfo, selAuxGeos)
     {
-    smtk::common::UUIDs models = this->Internal->smtkManager->imageRelatedModels(
-                        imginfo->URL);
-    if(models.size() > 0)
-      {
-      image2Models["image_url"].insert(models.begin(), models.end());
-      }
+    smtk::common::UUIDs entities =
+      this->Internal->smtkManager->auxGeoRelatedEntities(auxinfo->URL);
+    uuids.insert(entities.begin(), entities.end());
     }
 
   // select model entities, meshes and entity properties
-  this->modelView()->selectItems(uuids, meshes, image2Models, true); // block selection signal
+  this->modelView()->selectItems(uuids, meshes, true); // block selection signal
 }
 
 //----------------------------------------------------------------------------

@@ -429,3 +429,34 @@ void pqCMBContextMenuHelper::getAllMeshSets(pqSMTKMeshInfo* minfo,
     meshes.insert(it->first);
     }
 }
+
+void pqCMBContextMenuHelper::updateColorForAuxiliary(
+  pqDataRepresentation* rep, const QColor& color)
+{
+  if (!rep)
+    {
+    return;
+    }
+  if(color.isValid())
+    {
+    double rgba[4];
+    rgba[0] = color.redF();
+    rgba[1] = color.greenF();
+    rgba[2] = color.blueF();
+    rgba[3] = color.alphaF() > 0. ? color.alphaF() : 1.;
+
+    vtkSMPropertyHelper(rep->getProxy(), "DiffuseColor").Set(rgba, 3);
+    vtkSMPropertyHelper(rep->getProxy(), "AmbientColor").Set(rgba, 3);
+    vtkSMPropertyHelper(rep->getProxy(), "Opacity").Set(rgba[3]);
+    rep->getProxy()->UpdateVTKObjects();
+    }
+}
+
+void pqCMBContextMenuHelper::updateVisibilityForAuxiliary(
+  pqDataRepresentation* rep, bool visible)
+{
+  if(rep)
+  {
+    rep->setVisible(visible);
+  }
+}

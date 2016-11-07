@@ -92,8 +92,6 @@ protected slots:
                            vtkPVInformation* pvInfo,
                            smtk::common::UUIDs& uuids,
                            smtk::mesh::MeshSets& meshes);
-  void selectPropertyRepresentations(
-    const smtk::model::DescriptivePhrases& selproperties);
 
 private:
   class qInternal;

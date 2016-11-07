@@ -51,6 +51,7 @@
 ///////////////////////////////////////////////////////////////////////////
 #include "SimBuilder/SimBuilderCore.h"
 #include "SimBuilder/pqSimBuilderUIManager.h"
+#include "SimBuilder/pqSMTKUIHelper.h"
 
 #include "pqCMBProcessWidget.h"
 #include "pqCMBPreviewDialog.h"
@@ -81,6 +82,7 @@
 #include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/IntItem.h"
+#include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Volume.h"
@@ -1022,8 +1024,9 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   // all models under it should change
   QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > >visBlocks;
   QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> >colorEntities;
-  // Map for image_url visibility
-  QMap<std::string, bool> imageUrls;
+  // Map for aux-geo-url visibility
+  QMap<std::string, bool> auxGeoVisibles;
+  QMap<std::string, QColor> auxGeoColors;
   smtk::model::EntityRefArray::const_iterator it;
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
     {
@@ -1039,6 +1042,13 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
       colorEntities[minfo].insert(curRef, color);        
+      }
+    else if(pqSMTKUIHelper::isAuxiliaryShownSeparate(curRef)
+            && curRef.hasColor())
+      {
+      pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
+      smtk::model::AuxiliaryGeometry aux(curRef);
+      auxGeoColors[aux.url()] = color;
       }
 
     // For potential visibility changes
@@ -1060,24 +1070,14 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
           }
         }
       }
-
-    // HACK: For potential visibility changes of "image_url" of the model.
-    // Once we have auxiliary geometry to repersent images, we will change how
-    // to handle this.
-    if(curRef.isModel() && curRef.hasStringProperty("image_url"))
+    else if(pqSMTKUIHelper::isAuxiliaryShownSeparate(curRef)
+            && curRef.hasVisibility())
       {
-      const smtk::model::StringList& sprop(curRef.stringProperty("image_url"));
-      if(!sprop.empty())
-        {
-        std::string imgurl = sprop[0];
-        if(curRef.hasVisibility())
-          {
-          const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
-          if(!vprop.empty())
-            visible = (vprop[0] != 0);
-          imageUrls[imgurl] = visible;
-          }
-        }
+      smtk::model::AuxiliaryGeometry aux(curRef);
+      const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
+      if(!vprop.empty())
+        visible = (vprop[0] != 0);
+      auxGeoVisibles[aux.url()] = visible;
       }
     }
 
@@ -1091,7 +1091,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
           minfo->Info->GetUUID2BlockIdMap().size());
     }
 
-  // update color
+  // update entities color
   foreach(pqSMTKModelInfo* minfo, colorEntities.keys())
     {
     if(minfo->Representation && colorEntities[minfo].count())
@@ -1104,10 +1104,26 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       }
     }
 
-  // update image visibility
-  foreach(std::string image_url, imageUrls.keys())
+  // update auxiliary visibility
+  foreach(std::string aux_url, auxGeoVisibles.keys())
     {
-    this->Internal->smtkModelManager->updateImageRepresentation(image_url, imageUrls[image_url]);
+    smtkAuxGeoInfo* auxInfo = this->Internal->smtkModelManager->auxGeoInfo(aux_url);
+    if(auxInfo)
+      {
+      pqCMBContextMenuHelper::updateVisibilityForAuxiliary(
+        auxInfo->Representation, auxGeoVisibles[aux_url]);
+      }
+    }
+
+  // update auxiliary colors
+  foreach(std::string aux_url, auxGeoColors.keys())
+    {
+    smtkAuxGeoInfo* auxInfo = this->Internal->smtkModelManager->auxGeoInfo(aux_url);
+    if(auxInfo)
+      {
+      pqCMBContextMenuHelper::updateColorForAuxiliary(
+        auxInfo->Representation, auxGeoColors[aux_url]);
+      }
     }
 
 }
