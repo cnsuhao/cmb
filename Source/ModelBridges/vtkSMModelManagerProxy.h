@@ -52,6 +52,8 @@ public:
   void endSessions();
   bool validSession(const smtk::common::UUID& sessionId);
 
+  void connectProxyToManager(vtkSMProxy* sourceProxy);
+
 protected:
   friend class cmbForwardingSession;
 

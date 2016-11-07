@@ -17,6 +17,9 @@
 
 #include "smtk/model/Operator.h"
 #include "smtk/extension/vtk/operators/vtkSMTKOperator.h"
+#include "smtk/extension/vtk/source/vtkModelAuxiliaryGeometry.h"
+#include "smtk/extension/vtk/source/vtkMeshMultiBlockSource.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 
 #include "vtkObjectFactory.h"
 
@@ -331,4 +334,31 @@ void vtkModelManagerWrapper::GenerateError(cJSON* err, const std::string& errMsg
 {
   cJSON_AddItemToObject(err, "error", cJSON_CreateString(errMsg.c_str()));
   cJSON_AddItemToObject(err, "id", cJSON_CreateString(reqId.c_str()));
+}
+
+template<typename T>
+bool SetManager(vtkObject* source, smtk::model::ManagerPtr mgr)
+{
+  T* tSource = T::SafeDownCast(source);
+  if(tSource)
+  {
+    tSource->SetModelManager(mgr);
+    return true;
+  }
+  return false;
+}
+
+bool vtkModelManagerWrapper::SetModelManagerToSource(vtkObject* source)
+{
+  if(!source)
+  {
+    return false;
+  }
+  if(SetManager<vtkModelAuxiliaryGeometry>(source, this->GetModelManager()) ||
+     SetManager<vtkMeshMultiBlockSource>(source, this->GetModelManager())   ||
+     SetManager<vtkModelMultiBlockSource>(source, this->GetModelManager()))
+  {
+    return true;
+  }
+  return false;
 }

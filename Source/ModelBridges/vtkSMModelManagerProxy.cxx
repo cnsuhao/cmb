@@ -613,3 +613,17 @@ void vtkSMModelManagerProxy::endSessions()
     this->endSession(
       this->m_remoteSessionIds.begin()->first);
 }
+
+void vtkSMModelManagerProxy::connectProxyToManager(vtkSMProxy* sourceProxy)
+{
+  if(!sourceProxy)
+    return;
+
+  vtkClientServerStream stream;
+  stream  << vtkClientServerStream::Invoke
+          << VTKOBJECT(this)
+          << "SetModelManagerToSource"
+          << VTKOBJECT(sourceProxy)
+          << vtkClientServerStream::End;
+  this->ExecuteStream(stream);
+}

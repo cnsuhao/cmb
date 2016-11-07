@@ -79,6 +79,16 @@
 
     </SourceProxy>
 
+    <SourceProxy name="ModelAuxiliaryGeometry" class="vtkModelAuxiliaryGeometry">
+
+      <StringVectorProperty
+        name="AuxiliaryEntityID"
+        command="SetAuxiliaryEntityID"
+        number_of_elements="1">
+      </StringVectorProperty>
+
+    </SourceProxy>
+
     <SourceProxy name="SMTKModelFieldArrayFilter" class="vtkSMTKModelFieldArrayFilter">
 
       <InputProperty
