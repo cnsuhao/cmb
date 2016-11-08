@@ -150,22 +150,30 @@
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Min Water Size</string>
+          <string>Min Water Area</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="MinWaterSize"/>
+        <widget class="QLineEdit" name="MinWaterSize">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="label_5">
          <property name="text">
-          <string>Min Land Size</string>
+          <string>Min Land Area</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="MinLandSize"/>
+        <widget class="QLineEdit" name="MinLandSize">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="clear">

@@ -56,6 +56,9 @@ int vtkCMBImageClassFilter::RequestData(vtkInformation *vtkNotUsed(request),
   cv::Mat imageCV;
   vtkCMBOpenCVHelper::VTKToOpenCV(image, imageCV);
 
+  double spacing[2] = {std::abs(image->GetSpacing()[0]),
+                       std::abs(image->GetSpacing()[1])};
+
   cv::Mat BG  = imageCV == BackgroundValue;
   cv::Mat FG  = imageCV == ForegroundValue;
 
@@ -66,7 +69,7 @@ int vtkCMBImageClassFilter::RequestData(vtkInformation *vtkNotUsed(request),
 
     for (int i = 0; i < num; ++i)
     {
-      int area = stats.at<int>(i,cv::CC_STAT_AREA);
+      double area = stats.at<int>(i,cv::CC_STAT_AREA) * spacing[0] * spacing[1];
       if(area >= MinFGSize)
       {
         continue;
@@ -87,7 +90,7 @@ int vtkCMBImageClassFilter::RequestData(vtkInformation *vtkNotUsed(request),
 
     for (int i = 0; i < num; ++i)
     {
-      int area = stats.at<int>(i,cv::CC_STAT_AREA);
+      double area = stats.at<int>(i,cv::CC_STAT_AREA) * spacing[0] * spacing[1];
       if(area >= MinBGSize)
       {
         continue;

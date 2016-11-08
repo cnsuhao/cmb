@@ -553,8 +553,12 @@ vtkCMBGrabCutUI::vtkCMBGrabCutUI()
   connect(this->ui->NumberOfIter, SIGNAL(valueChanged(int)), this, SLOT(numberOfIterations(int)));
   connect(this->ui->DrawSize, SIGNAL(valueChanged(int)), this, SLOT(pointSize(int)));
 
-  connect(this->ui->MinLandSize, SIGNAL(valueChanged(int)), this, SLOT(setBGFilterSize(int)));
-  connect(this->ui->MinWaterSize, SIGNAL(valueChanged(int)), this, SLOT(setFGFilterSize(int)));
+  connect(this->ui->MinLandSize, SIGNAL(textChanged(const QString &)),
+          this,                  SLOT(setBGFilterSize(const QString &)));
+  connect(this->ui->MinWaterSize, SIGNAL(textChanged(const QString &)),
+          this,                   SLOT(setFGFilterSize(const QString &)));
+  this->ui->MinLandSize->setValidator(new QDoubleValidator(0, 1e50, 7, this->ui->MinLandSize));
+  this->ui->MinWaterSize->setValidator(new QDoubleValidator(0, 1e50, 7, this->ui->MinWaterSize));
 
   connect(this->ui->DrawMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setDrawMode(int)));
   connect(this->ui->Algorithm, SIGNAL(currentIndexChanged(int)), this, SLOT(setAlgorithm(int)));
@@ -789,10 +793,10 @@ void vtkCMBGrabCutUI::setTransparency(int t)
   }
 }
 
-void vtkCMBGrabCutUI::setFGFilterSize(int f)
+void vtkCMBGrabCutUI::setFGFilterSize(const QString & f)
 {
 
-  internal->imageClassFilter->SetMinFGSize(f);
+  internal->imageClassFilter->SetMinFGSize(f.toDouble());
   internal->imageClassFilter->Update();
   internal->contFilter->Update();
   internal->transformFilter->Update();
@@ -801,9 +805,9 @@ void vtkCMBGrabCutUI::setFGFilterSize(int f)
   interactor->Render();
 }
 
-void vtkCMBGrabCutUI::setBGFilterSize(int b)
+void vtkCMBGrabCutUI::setBGFilterSize(const QString & b)
 {
-  internal->imageClassFilter->SetMinBGSize(b);
+  internal->imageClassFilter->SetMinBGSize(b.toDouble());
   internal->imageClassFilter->Update();
   internal->contFilter->Update();
   internal->transformFilter->Update();
