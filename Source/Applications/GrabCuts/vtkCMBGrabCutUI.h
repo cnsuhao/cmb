@@ -45,8 +45,8 @@ public slots:
   void setTransparency(int t);
   void setDrawMode(int m);
   void setAlgorithm(int a);
-  void setFGFilterSize(int f);
-  void setBGFilterSize(int b);
+  void setFGFilterSize(const QString & f);
+  void setBGFilterSize(const QString & b);
 
 private:
 
