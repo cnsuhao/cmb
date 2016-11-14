@@ -544,7 +544,7 @@ void pqSMTKModelPanel::startMeshSelectionOperation(
       for (unsigned int cc=0; cc < (count/3); cc++)
         {
         flat_idx = selIDs.GetAsInt(3*cc);
-        entid = modInfo->Info->GetModelEntityId(flat_idx - 1);
+        entid = modInfo->Info->GetModelEntityId(flat_idx);
         selid = selIDs.GetAsInt(3*cc+2);
         selectionValues[entid].insert(selid);
         }
@@ -601,7 +601,7 @@ void pqSMTKModelPanel::updateMeshSelection(
       if(!prop.empty())
         {
         flatIndex = prop[0];
-        selCompIdx = static_cast<vtkIdType>(flatIndex+1);
+        selCompIdx = static_cast<vtkIdType>(flatIndex);
         std::set<int>::const_iterator it;
         for(it = mapIt->second.begin(); it != mapIt->second.end(); ++it)
           {
