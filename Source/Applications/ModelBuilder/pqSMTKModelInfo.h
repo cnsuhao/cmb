@@ -31,13 +31,15 @@ class vtkSMProxy;
 class pqDataRepresentation;
 class pqPipelineSource;
 
-class smtkImageInfo
+class smtkAuxGeoInfo
 {
   public:
-    smtkImageInfo(){}
+    smtkAuxGeoInfo(){}
+    QPointer<pqPipelineSource> AuxGeoSource;
     QPointer<pqPipelineSource> ImageSource;
     QPointer<pqDataRepresentation> Representation;
     std::string URL;
+    smtk::common::UUIDs RelatedAuxes;
 };
 
 //The object to keep smtk model related info:

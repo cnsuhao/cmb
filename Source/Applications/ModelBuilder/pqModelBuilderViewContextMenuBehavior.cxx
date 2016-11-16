@@ -776,7 +776,7 @@ void pqModelBuilderViewContextMenuBehavior::getSelectedEntitiesAndMeshes(
   foreach(pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
     {
     foreach(unsigned int idx, this->m_selModelBlocks[minfo])
-      sessionBlocks[minfo->SessionId].first.insert(minfo->Info->GetModelEntityId(idx-1));
+      sessionBlocks[minfo->SessionId].first.insert(minfo->Info->GetModelEntityId(idx));
     }
 
   foreach(pqSMTKMeshInfo* minfo, this->m_selMeshBlocks.keys())
@@ -827,7 +827,7 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
       minfo->Info->GetUUID2BlockIdMap().begin();
     for(; it != minfo->Info->GetUUID2BlockIdMap().end(); ++it)
       {
-      if(!tmpList.count() || !tmpList.contains(it->second+1))
+      if(!tmpList.count() || !tmpList.contains(it->second))
         blocksVis[minfo->SessionId].first.insert(it->first);
       }
     }
@@ -931,7 +931,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
       this->m_selModelBlocks.begin();
     if(it.value().count())
       {
-      smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0] - 1);
+      smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0]);
       smtk::model::EntityRef selEnt(modMgr->managerProxy()->modelManager(), selID);
       if(selEnt.isValid() && selEnt.hasColor()
         && pqCMBContextMenuHelper::getValidEntityColor(tmpcolor, selEnt))

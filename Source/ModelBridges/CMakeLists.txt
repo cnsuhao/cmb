@@ -35,12 +35,15 @@ add_paraview_plugin(ModelBridge_Plugin "1.0"
     ${CmbBridgelFiles}
   GUI_SOURCES
     cmbForwardingSession.cxx
+  CS_KITS
+    vtkSMTKSourceExt
 )
 
 target_link_libraries(ModelBridge_Plugin
   LINK_PRIVATE
     smtkCore
     vtkSMTKSourceExt
+    vtkSMTKSourceExtCS
     vtkSMTKOperatorsExt
   )
 

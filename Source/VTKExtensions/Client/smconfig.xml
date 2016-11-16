@@ -5014,6 +5014,51 @@ associates the containing cell ID to the point.
       <!-- End ExtractMultiBlock -->
     </SourceProxy>
 
+    <SourceProxy name="ExtractImageBlock" class="vtkExtractImageBlock"
+      label="Extract Image Block">
+      <Documentation
+        long_help="This filter extracts a block (as vtkImageData) from a multiblock dataset."
+        short_help="Extract an image block.">
+        This filter extracts a block (as vtkImageData) from a multiblock dataset.
+      </Documentation>
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type" composite_data_supported="1">
+          <DataType value="vtkMultiBlockDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input to the Extract Image Block filter.
+        </Documentation>
+      </InputProperty>
+      <IntVectorProperty
+        name="Extent"
+        label="Image Extent"
+        command="SetExtent"
+        argument_is_array="1"
+        default_values='0 -1 0 -1 0 -1'
+        number_of_elements="6">
+        <Documentation>
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="BlockIndex"
+        command="SetBlockIndex"
+        number_of_elements="1"
+        label="Block Index"
+        default_values="0">
+        <Documentation>
+          The index of the image block to extract from a multiblock dataset
+        </Documentation>
+      </IntVectorProperty>
+      <!-- End ExtractImageBlock -->
+    </SourceProxy>
+
   <SourceProxy name="ExtractCellFromDataSet" class="vtkCMBExtractCellFromDataSet"
       label="Extract Cell from DataSet">
       <Documentation

@@ -57,7 +57,7 @@ bool pqCMBContextMenuHelper::getBlockIndex(const smtk::model::EntityRef& eref,
   const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
   if(!prop.empty() && prop[0] >=0)
     {
-    flatIndex = prop[0]+1;
+    flatIndex = prop[0];
     return true;
     }
   return false;
@@ -117,6 +117,8 @@ if ((rgba.size() == 3 || rgba.size() ==4) &&
     rgba[0]+rgba[1]+rgba[2] != 0))
   {
   float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+  // alpha can't be zero
+  alpha = alpha == 0. ? 1.0 : alpha;
   color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
   return true;
   }
@@ -426,4 +428,35 @@ void pqCMBContextMenuHelper::getAllMeshSets(pqSMTKMeshInfo* minfo,
     {
     meshes.insert(it->first);
     }
+}
+
+void pqCMBContextMenuHelper::updateColorForAuxiliary(
+  pqDataRepresentation* rep, const QColor& color)
+{
+  if (!rep)
+    {
+    return;
+    }
+  if(color.isValid())
+    {
+    double rgba[4];
+    rgba[0] = color.redF();
+    rgba[1] = color.greenF();
+    rgba[2] = color.blueF();
+    rgba[3] = color.alphaF() > 0. ? color.alphaF() : 1.;
+
+    vtkSMPropertyHelper(rep->getProxy(), "DiffuseColor").Set(rgba, 3);
+    vtkSMPropertyHelper(rep->getProxy(), "AmbientColor").Set(rgba, 3);
+    vtkSMPropertyHelper(rep->getProxy(), "Opacity").Set(rgba[3]);
+    rep->getProxy()->UpdateVTKObjects();
+    }
+}
+
+void pqCMBContextMenuHelper::updateVisibilityForAuxiliary(
+  pqDataRepresentation* rep, bool visible)
+{
+  if(rep)
+  {
+    rep->setVisible(visible);
+  }
 }

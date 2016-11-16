@@ -23,6 +23,8 @@
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSmartPointer.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkPVDataInformation.h"
+#include "vtkSMOutputPort.h"
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -37,14 +39,17 @@
 #include "pqServer.h"
 #include "pqSMAdaptor.h"
 #include "pqSMTKModelInfo.h"
+#include "SimBuilder/pqSMTKUIHelper.h"
 
 #include "smtk/common/UUID.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
+#include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/Events.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
+#include "smtk/model/Instance.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/Operator.h"
@@ -68,39 +73,13 @@
 
 #include <fstream>
 #include <iostream>
+#include <algorithm>    // std::set_difference
 
 #include "vtksys/SystemTools.hxx"
 
 #include <map>
 #include <set>
 #include <QDebug>
-
-namespace
-{
-
-/// Fetch children for volum and group entities.
-bool _internal_ContainsGroup(
-  const smtk::common::UUID& grpId, const smtk::model::EntityRef& toplevel)
-  {
-  if(toplevel.isGroup())
-    {
-    if(grpId == toplevel.entity())
-      return true;
-    smtk::model::EntityRefs members =
-      toplevel.as<smtk::model::Group>().members<smtk::model::EntityRefs>();
-    for (smtk::model::EntityRefs::const_iterator it = members.begin();
-       it != members.end(); ++it)
-      {
-      if(it->entity() == grpId)
-        return true;
-      // Do this recursively since a group may contain other groups
-      if(_internal_ContainsGroup(grpId, *it))
-        return true;
-      }
-    }
-  return false;
-  }
-}
 
 //-----------------------------------------------------------------------------
 class pqCMBModelManager::qInternal
@@ -113,10 +92,8 @@ public:
   typedef std::map<smtk::common::UUID, pqSMTKMeshInfo >::iterator itMeshInfo;
   std::map<smtk::common::UUID, smtk::common::UUID> Entity2Models;
 
-  // Information for related images <image_url, smtkImageInfo>
-  std::map<std::string, smtkImageInfo> ImageInfos;
-  std::map<smtk::common::UUID, std::set<std::string> > ModelImages;
-  typedef std::map<smtk::common::UUID, std::set<std::string> >::iterator itModelImage;
+  // Information for related auxiliary geometry <aux_url, smtkAuxGeoInfo>
+  std::map<std::string, smtkAuxGeoInfo> AuxGeoInfos;
 
   pqServer* Server;
   vtkSmartPointer<vtkSMModelManagerProxy> ManagerProxy;
@@ -210,9 +187,21 @@ public:
       }
 
     // Create model representation if it is not created yet.
-    // For any model that has cells, we will create a representation for it.
+    // For any model that has cells/auxiliary/groups, we will create a representation for it.
+    bool hasAuxGeoAsBlockInModel = false;
+    smtk::model::AuxiliaryGeometries maux = model.auxiliaryGeometry();
+    smtk::model::AuxiliaryGeometries::const_iterator auit;
+    for(auit = maux.begin(); auit != maux.end(); ++auit)
+      {
+      if(!pqSMTKUIHelper::isAuxiliaryShownSeparate(*auit))
+        {
+        hasAuxGeoAsBlockInModel = true;
+        break;
+        }
+      }
+
     if(this->ModelInfos[model.entity()].ModelSource == NULL &&
-       (model.cells().size() > 0 || model.groups().size() > 0))
+       (model.cells().size() > 0 || hasAuxGeoAsBlockInModel || model.groups().size() > 0))
       {
       pqDataRepresentation* rep = NULL;
       pqApplicationCore* core = pqApplicationCore::instance();
@@ -276,6 +265,76 @@ public:
     return loadOK;
   }
 
+  bool tryRemoveAuxEntry(const smtk::common::UUID& auxid)
+  {
+    std::map<std::string, smtkAuxGeoInfo>::iterator it;
+    for(it = this->AuxGeoInfos.begin(); it != this->AuxGeoInfos.end(); ++it)
+      {
+      if(it->second.RelatedAuxes.erase(auxid) > 0)
+        {
+        // try remove the url if possible
+        return this->tryRemoveAuxEntry(it->first);
+        }
+      }
+    return false;
+  }
+
+  bool tryRemoveAuxEntry(const std::string& url)
+  {
+    if(this->AuxGeoInfos[url].RelatedAuxes.size() == 0)
+      {
+      if(this->AuxGeoInfos[url].ImageSource)
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          this->AuxGeoInfos[url].ImageSource);
+      if(this->AuxGeoInfos[url].AuxGeoSource)
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          this->AuxGeoInfos[url].AuxGeoSource);
+      this->AuxGeoInfos.erase(url);
+      return true;
+      }
+    return false;
+  }
+
+  void tryRemoveAuxEntries()
+  {
+    smtk::model::ManagerPtr mgr = this->ManagerProxy->modelManager();
+    std::set<std::string> remUrls;
+    std::map<std::string, smtkAuxGeoInfo>::iterator it;
+    for(it = this->AuxGeoInfos.begin(); it != this->AuxGeoInfos.end(); ++it)
+      {
+      smtk::common::UUIDs removedAuxes;
+      smtk::common::UUIDs::const_iterator uit;
+      for(uit = it->second.RelatedAuxes.begin(); uit != it->second.RelatedAuxes.end(); ++uit)
+        {
+        // this auxiliary entity still there
+        if(!mgr->findEntity(*uit, false))
+          {
+          removedAuxes.insert(*uit);
+          }
+        }
+      // if everything is removed
+      if(removedAuxes.size() == it->second.RelatedAuxes.size())
+        {
+        remUrls.insert(it->first);
+        }  
+      else
+        {
+        smtk::common::UUIDs diffSet;
+        std::set_difference(it->second.RelatedAuxes.begin(),
+                            it->second.RelatedAuxes.end(),
+                            removedAuxes.begin(), removedAuxes.end(),
+                            std::inserter(diffSet, diffSet.end()));
+        it->second.RelatedAuxes = diffSet;
+        }
+      }
+
+    std::set<std::string>::const_iterator urlit;
+    for(urlit = remUrls.begin(); urlit != remUrls.end(); ++urlit)
+      {
+      this->tryRemoveAuxEntry(*urlit);
+      }
+  }
+
   void removeModelRepresentations(const smtk::common::UUIDs& modeluids,
                                  pqRenderView* view)
   {
@@ -302,35 +361,9 @@ public:
           }
         }
 
-      for(std::set<std::string>::const_iterator imgit = this->ModelImages[*mit].begin();
-          imgit != this->ModelImages[*mit].end(); ++imgit)
-        {
-        bool used = false;
-        // check whether this image is also used by other models, if yes, don't remove
-        for(qInternal::itModelImage miit = this->ModelImages.begin();
-            miit != this->ModelImages.end(); ++miit)
-          {
-          if(miit->first == *mit)
-            continue;
-          if(miit->second.find(*imgit) != miit->second.end())
-            {
-            used = true;
-            break;
-            }
-          }
-        if(!used)
-          {
-          if(this->ImageInfos[*imgit].ImageSource)
-          {
-            pqApplicationCore::instance()->getObjectBuilder()->destroy(
-              this->ImageInfos[*imgit].ImageSource);
-          }
-          this->ImageInfos.erase(*imgit);
-          }
-        }
+      this->tryRemoveAuxEntries();
 
       this->ModelInfos.erase(*mit);
-      this->ModelImages.erase(*mit);
       modelRemoved = true;
       }
   if(modelRemoved)
@@ -490,89 +523,131 @@ public:
     }
   }
 
-  void createImageRepresentation(const smtk::model::EntityRef& model,
-                                pqRenderView* view,
-                                const std::string& imageurl)
+  void createAuxiliaryRepresentation(const smtk::model::AuxiliaryGeometry& aux,
+                                pqRenderView* view)
   {
-     // if the image is already loaded, just return
-    if(this->ImageInfos.find(imageurl) != this->ImageInfos.end())
+    if(!pqSMTKUIHelper::isAuxiliaryShownSeparate(aux))
+      return;
+
+    std::string aux_url = aux.url();
+     // if the auxilary is already loaded, just return
+    if(this->AuxGeoInfos.find(aux_url) != this->AuxGeoInfos.end())
       {
-      this->ModelImages[model.entity()].insert(imageurl);
+      this->AuxGeoInfos[aux_url].RelatedAuxes.insert(aux.entity());
       return;
       }
+
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
     builder->blockSignals(true);
 
-    pqServer* server = this->Server;
-    QStringList files;
-    files << imageurl.c_str();
+    smtkAuxGeoInfo auxgeoinfo;
+    auxgeoinfo.URL = aux_url;
 
-    smtkImageInfo imageinfo;
-    imageinfo.URL = imageurl;
-    pqPipelineSource* source;
-    QFileInfo finfo(imageurl.c_str());
-    if (finfo.completeSuffix().toLower() == "tiff" ||
-        finfo.completeSuffix().toLower() == "tif" ||
-        finfo.completeSuffix().toLower() == "dem")
-      {
-      source =  builder->createReader("sources", "GDALRasterReader", files, server);
-      source =  builder->createFilter("filters", "ImageSpacingFlip", source);
-      }
-    else
-      {
-      source =  builder->createReader("sources", "XMLImageDataReader", files, server);
-      }
-    builder->blockSignals(false);
-
+    pqPipelineSource* source = builder->createSource(
+        "ModelBridge", "ModelAuxiliaryGeometry", this->Server);
     if(source)
       {
-      imageinfo.ImageSource = source;
-      imageinfo.Representation = builder->createDataRepresentation(
-            imageinfo.ImageSource->getOutputPort(0), view);
+      vtkSMPropertyHelper(source->getProxy(), "AuxiliaryEntityID").Set(
+        aux.entity().toString().c_str());
+      this->ManagerProxy->connectProxyToManager(source->getProxy());
+      source->getProxy()->UpdateVTKObjects();
+      source->updatePipeline();
+      auxgeoinfo.AuxGeoSource = source;
 
-      if(imageinfo.Representation)
+      QFileInfo fInfo(aux_url.c_str());
+      QString lastExt = fInfo.suffix().toLower();
+      bool hasImage = (lastExt == "vti" || lastExt== "dem" || lastExt== "tif" || lastExt== "tiff");
+      // extract the image out from multiblock so that it can be displayed with Slice representation
+      if(hasImage)
         {
-        bool scalarColoring = false;
-        if(model.hasIntegerProperty("UseScalarColoring"))
+        vtkSMSourceProxy* sourceProxy = vtkSMSourceProxy::SafeDownCast(source->getProxy());
+        vtkSMOutputPort *outputPort = sourceProxy->GetOutputPort(static_cast<unsigned int>(0));
+        vtkPVDataInformation* imageInformation =
+          outputPort->GetDataInformation()->GetDataInformationForCompositeIndex(1);
+        int ext[6];
+        imageInformation->GetExtent(ext);
+
+        pqPipelineSource* extractImg = builder->createFilter("filters",
+          "ExtractImageBlock", source);
+        // if this filter failed to be created, it's ok to use the original multiblock source
+        if(extractImg)
           {
-          const smtk::model::IntegerList& uprop(model.integerProperty("UseScalarColoring"));
-          scalarColoring = !uprop.empty() ? (uprop[0] != 0) : scalarColoring;
+          vtkSMPropertyHelper(extractImg->getProxy(), "Extent").Set(ext, 6);
+          vtkSMPropertyHelper(extractImg->getProxy(), "BlockIndex").Set(0);
+          extractImg->getProxy()->UpdateVTKObjects();
+          source = extractImg;
+          source->updatePipeline();
+          auxgeoinfo.ImageSource = extractImg;
           }
+        }
+      
+      auxgeoinfo.Representation = builder->createDataRepresentation(
+            source->getOutputPort(0), view);
+
+      if(auxgeoinfo.Representation)
+        {
+        bool scalarColoring = (lastExt == "vti" || lastExt== "dem");// || lastExt== "tif" || lastExt== "tiff")
         if(scalarColoring)
           {
+          vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "MapScalars").Set(1);
           // If there is an elevation field on the points then use it.
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-            imageinfo.Representation->getProxy(),
+            auxgeoinfo.Representation->getProxy(),
             "Elevation", vtkDataObject::POINT);
 
           vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
-                                               server, "transfer_functions");
+                                               this->Server, "transfer_functions");
           vtkSMTransferFunctionProxy::ApplyPreset(lut, "CMB Elevation Map 2", false);
           vtkSMPropertyHelper(lut, "ColorSpace").Set(0);
           vtkSMPropertyHelper(lut, "Discretize").Set(0);
           lut->UpdateVTKObjects();
-          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "LookupTable").Set(lut);
-          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
+          vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "LookupTable").Set(lut);
+          //vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
           }
         else
           {
-          vtkSMPropertyHelper(imageinfo.Representation->getProxy(), "MapScalars").Set(0);
+          vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "MapScalars").Set(0);
           }
 
-        imageinfo.ImageSource->getProxy()->UpdateVTKObjects();
-        imageinfo.Representation->getProxy()->UpdateVTKObjects();
-        imageinfo.Representation->renderViewEventually();
-        this->ImageInfos[imageurl] = imageinfo;
-        this->ModelImages[model.entity()].insert(imageurl);
+        auxgeoinfo.Representation->getProxy()->UpdateVTKObjects();
+        auxgeoinfo.Representation->renderViewEventually();
+        auxgeoinfo.RelatedAuxes.insert(aux.entity());
+        this->AuxGeoInfos[aux_url] = auxgeoinfo;
         }
       }
 
-    if(!imageinfo.ImageSource || !imageinfo.Representation)
+    builder->blockSignals(false);
+
+    if(!auxgeoinfo.AuxGeoSource || !auxgeoinfo.Representation)
       {
-      qCritical() << "Failed to create an image pqRepresentation for the file: "
-        << imageurl.c_str();
+      qCritical() << "Failed to create an pqRepresentation for the file: "
+        << aux_url.c_str();
       }
+
+  }
+
+  void createModelAuxiliaryRepresentations(const smtk::model::Model& model,
+                                pqRenderView* view)
+  {
+    if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
+      return;
+
+    smtk::model::AuxiliaryGeometries maux = model.auxiliaryGeometry();
+    smtk::model::AuxiliaryGeometries::const_iterator it;
+    for(it = maux.begin(); it != maux.end(); ++it)
+      {
+      this->createAuxiliaryRepresentation(*it, view);
+      }
+  }
+
+  void removeAuxiliaryRepresentation(const smtk::common::UUID& auxid,
+                                     pqRenderView* view)
+  {
+    if(this->tryRemoveAuxEntry(auxid))
+    {
+      view->render();
+    }
   }
 
   void updateModelMeshRepresentations(const smtk::model::Model& model)
@@ -715,21 +790,25 @@ public:
         }
       }
 
-    std::map<std::string, smtkImageInfo>::iterator it;
-    for(it = this->ImageInfos.begin(); it != this->ImageInfos.end(); ++it)
+    std::map<std::string, smtkAuxGeoInfo>::iterator it;
+    for(it = this->AuxGeoInfos.begin(); it != this->AuxGeoInfos.end(); ++it)
       {
-      if(!it->second.ImageSource)
+      if(!it->second.AuxGeoSource)
         {
         continue;
         }
+      if(it->second.ImageSource)
+        {
+        pqApplicationCore::instance()->getObjectBuilder()->destroy(
+          it->second.ImageSource);
+        }
       pqApplicationCore::instance()->getObjectBuilder()->destroy(
-        it->second.ImageSource);
+        it->second.AuxGeoSource);
       }
 
     this->Entity2Models.clear();
     this->ModelInfos.clear();
-    this->ImageInfos.clear();
-    this->ModelImages.clear();
+    this->AuxGeoInfos.clear();
   }
 
   qInternal(pqServer* server): Server(server)
@@ -890,7 +969,7 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& sele
         for(smtk::model::Groups::iterator grit = modGroups.begin();
            grit != modGroups.end(); ++grit)
           {
-          if(_internal_ContainsGroup(selentity.entity(), *grit))
+          if(pqSMTKUIHelper::containsGroup(selentity.entity(), *grit))
             {
             modelId = it->entity();
             break;
@@ -935,11 +1014,11 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 }
 
 //----------------------------------------------------------------------------
-smtkImageInfo* pqCMBModelManager::imageInfo(const std::string& imageurl)
+smtkAuxGeoInfo* pqCMBModelManager::auxGeoInfo(const std::string& aux_url)
 {
-  if(this->Internal->ImageInfos.find(imageurl) != this->Internal->ImageInfos.end())
+  if(this->Internal->AuxGeoInfos.find(aux_url) != this->Internal->AuxGeoInfos.end())
     {
-    return &this->Internal->ImageInfos[imageurl];
+    return &this->Internal->AuxGeoInfos[aux_url];
     }
   return NULL;
 }
@@ -1050,12 +1129,7 @@ void pqCMBModelManager::clearModelSelections()
       {
       continue;
       }
-    pqPipelineSource* source = mit->second.RepSource;
-    pqOutputPort* outport = source->getOutputPort(0);
-    if(outport)
-      {
-      outport->setSelectionInput(0, 0);
-      }
+    pqCMBSelectionHelperUtil::setSelectionInput(mit->second.RepSource, NULL);
     }
 }
 
@@ -1072,13 +1146,24 @@ void pqCMBModelManager::clearMeshSelections()
         {
         continue;
         }
-      pqPipelineSource* source = meshiter->second.RepSource;
-      pqOutputPort* outport = source->getOutputPort(0);
-      if(outport)
-        {
-        outport->setSelectionInput(0, 0);
-        }
+      pqCMBSelectionHelperUtil::setSelectionInput(meshiter->second.RepSource, NULL);
       }
+    }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelManager::clearAuxGeoSelections()
+{
+  std::map<std::string, smtkAuxGeoInfo>::iterator it;
+  for(it = this->Internal->AuxGeoInfos.begin();
+      it != this->Internal->AuxGeoInfos.end(); ++it)
+    {
+    if(!it->second.AuxGeoSource)
+      {
+      continue;
+      }
+    pqCMBSelectionHelperUtil::setSelectionInput(
+      it->second.ImageSource ? it->second.ImageSource : it->second.AuxGeoSource, NULL);
     }
 }
 
@@ -1520,20 +1605,7 @@ void pqCMBModelManager::updateModelMeshRepresentations(const smtk::model::Model&
 {
   this->Internal->updateModelMeshRepresentations(model);
 }
-//----------------------------------------------------------------------------
-void pqCMBModelManager::updateImageRepresentation(
-  const std::string& image_url, bool visible)
-{
-  if(this->Internal->ImageInfos.find(image_url) != this->Internal->ImageInfos.end())
-    {
-    pqDataRepresentation* rep = this->Internal->ImageInfos[image_url].Representation;
-    if(rep)
-      {
-      rep->setVisible(visible);
-      rep->renderViewEventually();
-      }
-    }
-}
+
 //----------------------------------------------------------------------------
 smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
@@ -1677,23 +1749,31 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
   return sucess;
 }
 
-void internal_updateEntityList(const smtk::model::EntityRef& ent,
-                          smtk::common::UUIDs& modellist)
+void internal_updateEntityList(
+  const smtk::model::EntityRef& ent,
+  smtk::common::UUIDs& modellist)
 {
-  if(ent.isModel())
+  if (ent.isModel())
     {
     modellist.insert(ent.entity());
     }
-  else if (ent.isCellEntity() && !ent.isVolume() )
+  else if (ent.isCellEntity() && !ent.isVolume())
     {
     modellist.insert(
       ent.as<smtk::model::CellEntity>().model().entity());
     }
+  else if ((ent.isAuxiliaryGeometry() && !pqSMTKUIHelper::isAuxiliaryShownSeparate(ent))
+    || ent.isInstance())
+    {
+    modellist.insert(ent.owningModel().entity());
+    }
 }
+
 bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
 {
-  return (ent.isCellEntity() && !ent.isVolume() &&
-        !ent.hasIntegerProperty("block_index"));
+  return ( ((ent.isCellEntity() && !ent.isVolume()) ||
+           (ent.isAuxiliaryGeometry() && !pqSMTKUIHelper::isAuxiliaryShownSeparate(ent))) &&
+         !ent.hasIntegerProperty("block_index"));
 }
 
 //----------------------------------------------------------------------------
@@ -1733,6 +1813,8 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs newMeshesModels;
   smtk::common::UUIDs groupChangedModels;
   smtk::common::UUIDs generalModifiedModels;
+  smtk::model::AuxiliaryGeometries newSeparateAuxGeos;
+  smtk::common::UUIDs remSeparateAuxGeos;
 
   pqSMTKModelInfo* minfo = NULL;
   smtk::attribute::ModelEntityItem::Ptr remEntities =
@@ -1746,6 +1828,16 @@ bool pqCMBModelManager::handleOperationResult(
       {
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
       this->Internal->Entity2Models.erase(it->entity());
+      }
+    else if(it->hasIntegerProperty("display as separate representation"))
+      {
+      const smtk::model::IntegerList& prop(it->integerProperty(
+                                          "display as separate representation"));
+      // the auxiliary is shown separately if the property is specified and set to one
+      if(!prop.empty() && prop[0] == 1)
+        {
+        remSeparateAuxGeos.insert(it->entity());
+        }
       }
     else
       {
@@ -1790,8 +1882,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
       else if (internal_isNewGeometricBlock(*it)) // a new block
         {
-        geometryChangedModels.insert(
-          it->as<smtk::model::CellEntity>().model().entity());
+        geometryChangedModels.insert(it->owningModel().entity());
         }
       else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
@@ -1816,12 +1907,15 @@ bool pqCMBModelManager::handleOperationResult(
 
       if (internal_isNewGeometricBlock(*it)) // a new entity?
         {
-        geometryChangedModels.insert(
-          it->as<smtk::model::CellEntity>().model().entity());
+        geometryChangedModels.insert(it->owningModel().entity());
         }
       else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
         groupChangedModels.insert(minfo->Info->GetModelUUID());
+        }
+      else if(it->isAuxiliaryGeometry() && pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+        {
+        newSeparateAuxGeos.push_back(it->as<smtk::model::AuxiliaryGeometry>());
         }
       }
   bModelGeometryChanged = geometryChangedModels.size() > 0;
@@ -1878,6 +1972,7 @@ bool pqCMBModelManager::handleOperationResult(
         newModel =  modit->parent().isModel() ? modit->parent() : *modit;
         success = this->Internal->addModelRepresentation(
           newModel, view, this->Internal->ManagerProxy, "", sref);
+        this->Internal->createModelAuxiliaryRepresentations(newModel, view);
         }
       // update representation
       else if(geometryChangedModels.find(modit->entity()) != geometryChangedModels.end())
@@ -1900,23 +1995,6 @@ bool pqCMBModelManager::handleOperationResult(
           emit this->requestMeshSelectionUpdate(meshSelections, minfo);
         }
 
-      // check if the modified model or newModel has an "image_url" property, if yes,
-      // we will generate an image representation from that url.
-      // NOTE: once we have the "image" auxiliary geometry type entity in smtk, we
-      // will not have to read the image_url here if an "image" is already there in the model
-      //
-      if((newModel.isValid() && newModel.hasStringProperty("image_url")) ||
-         (generalModifiedModels.find(modit->entity()) != generalModifiedModels.end() &&
-         modit->hasStringProperty("image_url")))
-        {
-        smtk::model::StringList const& urlprop(modit->stringProperty("image_url"));
-        if (!urlprop.empty())
-          {
-          std::string imageurl = urlprop[0];
-          this->Internal->createImageRepresentation(*modit, view, imageurl);
-          }
-        }
-
       // Handle new meshes for a model
       if(newMeshesModels.find(modit->entity()) != newMeshesModels.end())
         {
@@ -1935,6 +2013,19 @@ bool pqCMBModelManager::handleOperationResult(
 
       }
     }
+
+    // create representations for independent auxiliary geometries
+    smtk::model::AuxiliaryGeometries::const_iterator auxit;
+    for(auxit = newSeparateAuxGeos.begin(); auxit != newSeparateAuxGeos.end(); ++auxit)
+      {
+      this->Internal->createAuxiliaryRepresentation(*auxit, view);
+      }
+    // remove representations for independent auxiliary geometries
+    smtk::common::UUIDs::const_iterator rmit;
+    for(rmit = remSeparateAuxGeos.begin(); rmit != remSeparateAuxGeos.end(); ++rmit)
+      {
+      this->Internal->removeAuxiliaryRepresentation(*rmit, view);
+      }
 
   return success;
 }
@@ -2067,42 +2158,37 @@ QList<pqSMTKMeshInfo*>  pqCMBModelManager::selectedMeshes() const
 }
 
 //----------------------------------------------------------------------------
-QList<smtkImageInfo*>  pqCMBModelManager::selectedImages() const
+QList<smtkAuxGeoInfo*>  pqCMBModelManager::selectedAuxGeos() const
 {
-  QList<smtkImageInfo*> selImageInfos;
-  std::map<std::string, smtkImageInfo>::iterator it;
-  for(it = this->Internal->ImageInfos.begin();
-      it != this->Internal->ImageInfos.end(); ++it)
+  QList<smtkAuxGeoInfo*> selAuxInfos;
+  std::map<std::string, smtkAuxGeoInfo>::iterator it;
+  for(it = this->Internal->AuxGeoInfos.begin();
+      it != this->Internal->AuxGeoInfos.end(); ++it)
     {
-    if(!it->second.ImageSource)
+    if(!it->second.AuxGeoSource)
       {
       continue;
       }
 
     vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
-      it->second.ImageSource->getProxy());
+      it->second.AuxGeoSource->getProxy());
     if(smSource && smSource->GetSelectionInput(0))
       {
-      selImageInfos.append(&it->second);
+      selAuxInfos.append(&it->second);
       }
     }
-  return selImageInfos;
+  return selAuxInfos;
 }
 
 //----------------------------------------------------------------------------
-smtk::common::UUIDs pqCMBModelManager::imageRelatedModels(
-  const std::string& imgurl) const
+smtk::common::UUIDs pqCMBModelManager::auxGeoRelatedEntities(
+  const std::string& auxurl) const
 {
   smtk::common::UUIDs relatedmodels;
-  // check whether this image is also used by other models, if yes, don't remove
-  for(qInternal::itModelImage mit = this->Internal->ModelImages.begin();
-      mit != this->Internal->ModelImages.end(); ++mit)
-    {
-    if(mit->second.find(imgurl) != mit->second.end())
-      {
-      relatedmodels.insert(mit->first);
-      }
-    }
+  if(this->Internal->AuxGeoInfos.find(auxurl) != this->Internal->AuxGeoInfos.end())
+  {
+    return this->Internal->AuxGeoInfos[auxurl].RelatedAuxes;
+  }
   return relatedmodels;
 }
 

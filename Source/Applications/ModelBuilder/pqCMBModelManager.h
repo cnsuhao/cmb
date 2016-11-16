@@ -46,7 +46,7 @@ class pqRenderView;
 class pqServer;
 class pqSMTKModelInfo;
 class pqSMTKMeshInfo;
-class smtkImageInfo;
+class smtkAuxGeoInfo;
 
 class pqCMBModelManager : public QObject
 {
@@ -75,7 +75,7 @@ public:
 
   pqSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   pqSMTKModelInfo* modelInfo(pqDataRepresentation* rep);
-  smtkImageInfo* imageInfo(const std::string& imageurl);
+  smtkAuxGeoInfo* auxGeoInfo(const std::string& auxurl);
   QList<pqSMTKModelInfo*> selectedModels() const;
   QList<pqSMTKModelInfo*> allModels() const;
 
@@ -95,7 +95,6 @@ public:
   void updateModelRepresentation(const smtk::model::EntityRef& model);
   void updateModelRepresentation(pqSMTKModelInfo* minfo);
   void updateModelMeshRepresentations(const smtk::model::Model& model);
-  void updateImageRepresentation(const std::string& image_url, bool visible);
 
   pqSMTKMeshInfo* meshInfo(const smtk::mesh::MeshSet& mesh);
   pqSMTKMeshInfo* meshInfo(pqDataRepresentation* rep);
@@ -103,8 +102,8 @@ public:
   QList<pqDataRepresentation*> meshRepresentations() const;
   QList<pqSMTKMeshInfo*> allMeshes() const;
 
-  QList<smtkImageInfo*> selectedImages() const;
-  smtk::common::UUIDs imageRelatedModels(const std::string& imageurl) const;
+  QList<smtkAuxGeoInfo*> selectedAuxGeos() const;
+  smtk::common::UUIDs auxGeoRelatedEntities(const std::string& auxurl) const;
 
 signals:
   void newModelManagerProxy(vtkSMModelManagerProxy*); // Emitted each time a new model manager is created on the server.
@@ -123,6 +122,7 @@ public slots:
   bool startNewSession(const std::string& bridgeName);
   void clearModelSelections();
   void clearMeshSelections();
+  void clearAuxGeoSelections();
   smtk::model::OperatorPtr createFileOperator(const std::string& filename);
   bool startOperation(const smtk::model::OperatorPtr&);
   bool handleOperationResult(

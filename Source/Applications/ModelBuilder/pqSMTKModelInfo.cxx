@@ -150,7 +150,7 @@ void pqSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
         pit->second[0] == 0)
         visible = 0;
       }
-    invis_ids.push_back(it->second + 1); // block id
+    invis_ids.push_back(it->second); // block id
     invis_ids.push_back(visible); // visibility
 
     mgr->setIntegerProperty(it->first, "block_index", it->second);

@@ -50,20 +50,16 @@ public:
   vtkGetStringMacro(JSONRequest);
   vtkSetStringMacro(JSONRequest);
 
-//  vtkGetStringMacro(ModelEntityID);
-//  vtkSetStringMacro(ModelEntityID);
-
   void ProcessJSONRequest(vtkSMTKOperator* vsOp);
   void ProcessJSONRequest()
   { ProcessJSONRequest(NULL); }
 
   vtkGetStringMacro(JSONResponse);
 
-  // Eventually allow partial model fetches like so:
-  //std::string GetModelEntity(const std::string& uuid);
-
   std::string CanOperatorExecute(const std::string& jsonOperator);
   std::string ApplyOperator(const std::string& jsonOperator);
+
+  bool SetModelManagerToSource(vtkObject*);
 
 protected:
   vtkModelManagerWrapper();

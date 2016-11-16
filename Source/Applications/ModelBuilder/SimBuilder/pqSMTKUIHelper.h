@@ -26,9 +26,15 @@
 #include "smtk/attribute/FileItemDefinition.h"
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/attribute/ModelEntityItemDefinition.h"
+#include "smtk/model/Group.h"
+#include "smtk/model/AuxiliaryGeometry.h"
 
 #include "pqServer.h"
 #include "pqFileDialog.h"
+#include "pqOutputPort.h"
+#include "pqDataRepresentation.h"
+#include "pqPipelineSource.h"
+#include "vtkSMProxyManager.h"
 
 #include <QString>
 #include <QWidget>
@@ -127,6 +133,53 @@ namespace pqSMTKUIHelper
     if(selentityrefs.size() > 0)
       entityItem->associateEntities(selentityrefs);
   }
+  /// Fetch children for volum and group entities.
+  inline bool containsGroup(
+    const smtk::common::UUID& grpId, const smtk::model::EntityRef& toplevel)
+  {
+    if(toplevel.isGroup())
+      {
+      if(grpId == toplevel.entity())
+        return true;
+      smtk::model::EntityRefs members =
+        toplevel.as<smtk::model::Group>().members<smtk::model::EntityRefs>();
+      for (smtk::model::EntityRefs::const_iterator it = members.begin();
+         it != members.end(); ++it)
+        {
+        if(it->entity() == grpId)
+          return true;
+        // Do this recursively since a group may contain other groups
+        if(containsGroup(grpId, *it))
+          return true;
+        }
+      }
+    return false;
+  }
+
+  inline bool isAuxiliaryShownSeparate(const smtk::model::EntityRef& entity)
+  {
+    if(!entity.isAuxiliaryGeometry())
+      return false;
+
+    smtk::model::AuxiliaryGeometry aux(entity);
+    std::string url;
+    bool bShow = false;
+    if (aux.isValid() && !(url = aux.url()).empty())
+      {
+      if ( entity.hasIntegerProperty("display as separate representation"))
+        {
+        const smtk::model::IntegerList& prop(entity.integerProperty(
+            "display as separate representation"));
+        // show auxiliary separately if the property is specified and set to one
+        bShow = (!prop.empty() && prop[0] == 1);
+        }
+      else
+        {
+        bShow = false;
+        }
+      }
+    return bShow;
+  }
 
 }
 
@@ -144,52 +197,85 @@ namespace pqSMTKUIHelper
 namespace pqCMBSelectionHelperUtil
 {
 
-inline vtkSelectionNode* gatherSelectionNode(
-    pqPipelineSource* source,
-    vtkPVSelectionInformation* selInfo)
-  {
-    vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
-    vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
-    selSource->UpdatePipeline();
+  inline vtkSelectionNode* gatherSelectionNode(
+      pqPipelineSource* source,
+      vtkPVSelectionInformation* selInfo)
+    {
+      vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(source->getProxy());
+      vtkSMSourceProxy* selSource = smSource->GetSelectionInput(0);
+      selSource->UpdatePipeline();
 
-    selSource->GatherInformation(selInfo);
-    if(selInfo->GetSelection() &&
-      selInfo->GetSelection()->GetNumberOfNodes())
+      selSource->GatherInformation(selInfo);
+      if(selInfo->GetSelection() &&
+        selInfo->GetSelection()->GetNumberOfNodes())
+        {
+        return selInfo->GetSelection()->GetNode(0);
+        }
+      return NULL;
+    }
+
+  inline int fillSelectionIdList(
+    QList<unsigned int> & result,
+    vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
+  {
+    int total = 0;
+    if(blockIds)
       {
-      return selInfo->GetSelection()->GetNode(0);
+      for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
+        {
+        unsigned int block_id = blockIds->GetValue(ui);
+        result.push_back(block_id);
+        }
+      total += blockIds->GetNumberOfTuples();
       }
-    return NULL;
+
+    if(selIDs)
+      {
+      unsigned int count = selIDs->GetNumberOfElements();
+      // [composite_index, process_id, index]
+      for (unsigned int cc=0; cc < (count/3); cc++)
+        {
+        unsigned int block_id = selIDs->GetAsInt(3*cc);
+        result.push_back(block_id);
+        }
+      total += count/3;
+      }
+    return total;
   }
 
-inline int fillSelectionIdList(
-  QList<unsigned int> & result,
-  vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
-{
-  int total = 0;
-  if(blockIds)
-    {
-    for(vtkIdType ui=0;ui<blockIds->GetNumberOfTuples();ui++)
+  inline void setSelectionInput(pqPipelineSource* source, vtkSMSourceProxy* selsource)
+  {
+    pqOutputPort* outport = source->getOutputPort(0);
+    if(outport)
       {
-      unsigned int block_id = blockIds->GetValue(ui);
-      result.push_back(block_id);
+      outport->setSelectionInput(selsource, 0);
       }
-    total += blockIds->GetNumberOfTuples();
-    }
+  }
 
-  if(selIDs)
-    {
-    unsigned int count = selIDs->GetNumberOfElements();
-    // [composite_index, process_id, index]
-    for (unsigned int cc=0; cc < (count/3); cc++)
+  inline void selectAuxSource(pqDataRepresentation* selRep)
+  {
+    if(!selRep)
+      return;
+    pqPipelineSource* source = selRep->getInput();
+    if(source)
       {
-      unsigned int block_id = selIDs->GetAsInt(3*cc);
-      result.push_back(block_id);
-      }
-    total += count/3;
-    }
-  return total;
-}
+      vtkSMProxyManager* pxm = vtkSMProxyManager::GetProxyManager();
+      vtkSMSourceProxy* selSource;
+      selSource = vtkSMSourceProxy::SafeDownCast(
+        pxm->NewProxy("sources", "cmbIDSelectionSource"));
+      selSource->UpdateProperty("RemoveAllIDs", 1);
+      vtkSMPropertyHelper(selSource,"InsideOut").Set(1);
+      selSource->UpdateVTKObjects();
 
+      setSelectionInput(source, selSource);
+      selSource->Delete();
+      }
+    if(selRep)
+      {
+      vtkSMPropertyHelper(selRep->getProxy(),"SelectionUseOutline").Set(1);
+      selRep->getProxy()->UpdateVTKObjects();
+      }
+  }
 
 }
 
