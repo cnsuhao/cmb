@@ -187,9 +187,21 @@ public:
       }
 
     // Create model representation if it is not created yet.
-    // For any model that has cells, we will create a representation for it.
+    // For any model that has cells/auxiliary/groups, we will create a representation for it.
+    bool hasAuxGeoAsBlockInModel = false;
+    smtk::model::AuxiliaryGeometries maux = model.auxiliaryGeometry();
+    smtk::model::AuxiliaryGeometries::const_iterator auit;
+    for(auit = maux.begin(); auit != maux.end(); ++auit)
+      {
+      if(!pqSMTKUIHelper::isAuxiliaryShownSeparate(*auit))
+        {
+        hasAuxGeoAsBlockInModel = true;
+        break;
+        }
+      }
+
     if(this->ModelInfos[model.entity()].ModelSource == NULL &&
-       (model.cells().size() > 0 || model.groups().size() > 0))
+       (model.cells().size() > 0 || hasAuxGeoAsBlockInModel || model.groups().size() > 0))
       {
       pqDataRepresentation* rep = NULL;
       pqApplicationCore* core = pqApplicationCore::instance();
@@ -600,7 +612,7 @@ public:
 
         auxgeoinfo.Representation->getProxy()->UpdateVTKObjects();
         auxgeoinfo.Representation->renderViewEventually();
-        auxgeoinfo.RelatedAuxes.insert(aux_url);
+        auxgeoinfo.RelatedAuxes.insert(aux.entity());
         this->AuxGeoInfos[aux_url] = auxgeoinfo;
         }
       }
@@ -1817,9 +1829,15 @@ bool pqCMBModelManager::handleOperationResult(
       geometryChangedModels.insert(this->Internal->Entity2Models[it->entity()]);
       this->Internal->Entity2Models.erase(it->entity());
       }
-    else if(pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+    else if(it->hasIntegerProperty("display as separate representation"))
       {
-      remSeparateAuxGeos.insert(it->entity());
+      const smtk::model::IntegerList& prop(it->integerProperty(
+                                          "display as separate representation"));
+      // the auxiliary is shown separately if the property is specified and set to one
+      if(!prop.empty() && prop[0] == 1)
+        {
+        remSeparateAuxGeos.insert(it->entity());
+        }
       }
     else
       {
@@ -1864,8 +1882,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
       else if (internal_isNewGeometricBlock(*it)) // a new block
         {
-        geometryChangedModels.insert(
-          it->as<smtk::model::CellEntity>().model().entity());
+        geometryChangedModels.insert(it->owningModel().entity());
         }
       else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
@@ -1890,8 +1907,7 @@ bool pqCMBModelManager::handleOperationResult(
 
       if (internal_isNewGeometricBlock(*it)) // a new entity?
         {
-        geometryChangedModels.insert(
-          it->as<smtk::model::CellEntity>().model().entity());
+        geometryChangedModels.insert(it->owningModel().entity());
         }
       else if(it->isGroup() && (minfo = this->modelInfo(*it)))
         {
