@@ -25,6 +25,7 @@ set(CMB_Filtering_SRC
     vtkCMBExtractContours.cxx
     vtkCMBGlyphPointSource.cxx
     vtkCMBImageClassFilter.cxx
+    vtkCMBMedialAxisFilter.cxx
     vtkCMBMeshConeSelector.cxx
     vtkCMBMeshContourSelector.cxx
     vtkCMBMeshSelectionConverter.cxx

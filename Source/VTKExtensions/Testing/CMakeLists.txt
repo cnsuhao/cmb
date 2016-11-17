@@ -35,9 +35,13 @@ include_directories(${vtkCMBGeneral_INCLUDE_DIRS}
 add_executable(testDiscreteColorLookupTable testDiscreteColorLookupTable.cxx)
 add_executable(testVTKObjectMethods testVTKObjectMethods.cxx)
 
+add_executable( testMedialAxisFilter testMedialAxisFilter.cxx)
+
 target_link_libraries(testDiscreteColorLookupTable ${testing_libraries})
 
 target_link_libraries(testVTKObjectMethods ${testing_libraries})
+
+target_link_libraries(testMedialAxisFilter ${testing_libraries})
 
 # utility to convert LIDAR data (also used in testing)
 add_executable(LIDARConverter LIDARConverter.cxx)
