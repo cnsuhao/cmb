@@ -9,6 +9,7 @@
 //=========================================================================
 #include "vtkSMTKModelFieldArrayFilter.h"
 
+#include "vtkCompositeDataIterator.h"
 #include "vtkDoubleArray.h"
 #include "vtkFieldData.h"
 #include "vtkInformation.h"
@@ -133,6 +134,8 @@ void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
                            const char*  attDefType,
                            const char*  attItemName)
 {
+  if(!objBlock)
+    return;
   std::string arrayname = attDefType;
   if(attItemName && attItemName[0] != '\0')
     arrayname.append(" (").append(attItemName).append(")");
@@ -239,11 +242,12 @@ int vtkSMTKModelFieldArrayFilter::RequestData(
   smtk::model::ManagerPtr modelMan = this->ModelManagerWrapper->GetModelManager();
   if(this->GetAddGroupArray())
     {
-    for (unsigned int blockID = 0;
-      blockID < output->GetNumberOfBlocks(); blockID++)
+    vtkCompositeDataIterator* iter = output->NewIterator();
+    for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
       {
-      internal_AddBlockGroupInfo(output->GetBlock(blockID), modelMan);
+      internal_AddBlockGroupInfo(iter->GetCurrentDataObject(), modelMan);
       }
+    iter->Delete();
     }
 
   if(this->AttributeDefinitionType == NULL ||
@@ -265,18 +269,17 @@ int vtkSMTKModelFieldArrayFilter::RequestData(
     return 0;
     }
 
-  for (unsigned int blockId = 0;
-    blockId < output->GetNumberOfBlocks(); blockId++)
+  vtkCompositeDataIterator* aiter = output->NewIterator();
+  for (aiter->InitTraversal(); !aiter->IsDoneWithTraversal(); aiter->GoToNextItem())
     {
     internal_addBlockAttributeFieldData(
-      output->GetBlock(blockId),
+      aiter->GetCurrentDataObject(),
       modelMan,
       attsys,
       this->AttributeDefinitionType,
       this->AttributeItemName);
     }
+  aiter->Delete();
 
-/*
-*/
   return 1;
 }

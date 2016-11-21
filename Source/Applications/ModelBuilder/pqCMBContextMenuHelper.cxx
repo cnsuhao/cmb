@@ -310,7 +310,7 @@ if (sessPtr && hasSessionOp(sessPtr, s_internal_groupOpName))
   smtk::common::UUID uid;
   foreach(unsigned int bid, addblocks)
     {
-    uid = minfo->Info->GetModelEntityId(bid-1);
+    uid = minfo->Info->GetModelEntityId(bid);
     smtk::model::EntityRef entref(mgr, uid);
     if(addItemDef->isValueValid(entref))
       {
