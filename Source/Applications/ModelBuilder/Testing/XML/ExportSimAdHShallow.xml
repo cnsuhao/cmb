@@ -53,8 +53,8 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/1QComboBox0" command="activated" arguments="Advanced" />
   <pqevent object="SimulationExportDialog/1QFrame0/AnalysisTypesWidget/1QRadioButton2" command="set_boolean" arguments="true" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0" command="showPopup" arguments="" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/1QComboBoxPrivateContainer0/1QComboBoxListView0" command="mousePress" arguments="1,1,0,137,11,/1:0" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/1QComboBoxPrivateContainer0/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,137,11,/1:0" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mousePress" arguments="1,1,0,137,11,/1:0" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,137,11,/1:0" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0" command="hidePopup" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT" />
