@@ -412,6 +412,7 @@ endif()
     AuxGeoVtpPts
     AuxGeoTif
     AuxGeoDEM
+    DeleteAuxGeom
     )
 
   set (TESTS_WITHOUT_BASELINES
