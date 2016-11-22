@@ -408,6 +408,11 @@ endif()
     ImportExport2dm
     ModelAndMeshTransformLink
     ColorByAttribute
+    ExtractImageContours
+    AuxGeoVtpPts
+    AuxGeoTif
+    AuxGeoDEM
+    DeleteAuxGeom
     )
 
   set (TESTS_WITHOUT_BASELINES
