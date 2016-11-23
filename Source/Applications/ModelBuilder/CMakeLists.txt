@@ -191,6 +191,7 @@ set(CMB_ALL_PLUGINS
     smtkPolygonSessionPlugin
     smtkRemoteSessionPlugin
     smtkRemusMeshOperatorPlugin
+    smtkVTKOperatorsPlugin
 )
 
 set(CMB_AUTOLOAD_PLUGINLIST)
@@ -360,6 +361,7 @@ endif()
   set (XML_TESTS_WITH_BASELINES
     AxesGrid
     EdgeModification
+    ChesapeakeBayBathymetry
     OpenCMBFile
     OpenExodusFile
     OpenExodusFile2
@@ -374,6 +376,7 @@ endif()
     FlipViewY
     FlipViewZ
     ShowCenter
+    Simple2dmBathymetryTest
     SelectObjectByBox
     Rotate2D
     Rotate3D
@@ -388,6 +391,7 @@ endif()
     ManipulateCameraRoll
     ManipulateCameraElevation
     ManipulateCameraAzimuth
+    Model1meshedBathymetryTest
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
@@ -395,7 +399,6 @@ endif()
     ViewportPan
     HideShowAllFaces
     OperationGrow
-    OperationEditBathymetry
     OperationCreateEdges
     OperationSplitFace
     OperationMergeFace

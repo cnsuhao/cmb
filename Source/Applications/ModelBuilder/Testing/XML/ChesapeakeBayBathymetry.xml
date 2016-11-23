@@ -1,54 +1,27 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/ChesapeakeBayExtractContour.cmb" />
-
-  <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Polygons" />
-  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.613018,0.349917,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.674556,0.485904,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.674556,0.485904,1,0,0)" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshMinAngle" command="set_string" arguments="30" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshGlobalLen" command="key" arguments="46" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshGlobalLen" command="set_string" arguments="0.1" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/pushButton_MeshApply" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menuEdit" />
-  <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionApplyBathymetry" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/FileBrowserButton" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBSceneObjectImport/frame/FileBrowserButton" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBSceneObjectImport/FileImportDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/dem/ChesapeakeBay100x100.vti" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBSceneObjectImport/buttonBox/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/ParametersGroup/ElevationRadius" command="set_string" arguments="0" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/ParametersGroup/ElevationRadius" command="key" arguments="46" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/ParametersGroup/ElevationRadius" command="set_string" arguments="0.0" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/ParametersGroup/ElevationRadius" command="set_string" arguments="0.005" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph/qtCMBBathymetryDialog/buttonBox/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph" command="mousePress" arguments="1,1,0,12,11,/0:1" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Scene/SceneGraph" command="mouseRelease" arguments="1,0,0,12,11,/0:1" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/ChesapeakeBayContour.cmb" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_viewport" command="contextMenu" arguments="" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="showContextMenu" arguments="/0:0/0:0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/1QMenu0" command="activate" arguments="apply bathymetry" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame0/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame0/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/dem/ChesapeakeBay100x100.vti" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame0/1QFrame0/1QComboBox0" command="editTextChanged" arguments="/home/haochengliu/Kitware/CMB/cmb-testing-data/dem/ChesapeakeBay100x100.vti" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame1/1QLineEdit0" command="set_string" arguments="0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame1/1QLineEdit0" command="set_string" arguments="0." />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/ChildItemsFrame/1QFrame1/1QLineEdit0" command="set_string" arguments="0.2" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,6,233" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,43,484" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,43,484" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Scale/LineEdit0" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Scale/LineEdit0" command="set_string" arguments="100" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Scale/LineEdit1" command="set_string" arguments="10" />
+  <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1pqProxyWidget0/Scale/LineEdit1" command="set_string" arguments="100" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.617934,0.243276,1,1,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.617934,0.243276,1,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.617934,0.243276,1,0,0)" />
   <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit2" command="key" arguments="46" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit2" command="set_string" arguments=".01" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Scale/LineEdit2" command="set_string" arguments=".001" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Origin/LineEdit2" command="key" arguments="46" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Origin/LineEdit2" command="set_string" arguments="0.01" />
-
-  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Representation/displayRepresentationWidget/comboBox" command="set_string" arguments="Points" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_2/appearanceFrame/scrollArea/qt_scrollarea_viewport/scrollWidget/DisplayPropertyEditor/Representation/displayRepresentationWidget/comboBox" command="set_string" arguments="Surface" />
-  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
-
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="0" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/frameMeshTree/frameHideEntity/checkBoxHideModelFaces" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/frameMeshTree/frameHideEntity/checkBoxHideOuterBoundary" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/checkBoxShowEdgeMesh" command="set_boolean" arguments="false" />
-  <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
-  </pqevents>
+</pqevents>
