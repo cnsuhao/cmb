@@ -12,7 +12,6 @@
 
 #include "pqApplicationCore.h"
 #include "pqCollapsedGroup.h"
-#include "pqNamedWidgets.h"
 #include "pqOutputPort.h"
 #include "pqPipelineFilter.h"
 #include "pqPropertyManager.h"
@@ -47,7 +46,7 @@ public:
   QPointer<pqPipelineSource> PreviousInput;
 };
 
-pqBandedPolyDataContourPanel::pqBandedPolyDataContourPanel(pqProxy* object_proxy, QWidget* p) :
+pqBandedPolyDataContourPanel::pqBandedPolyDataContourPanel(vtkSMProxy* object_proxy, vtkSMPropertyGroup* , QWidget* p) :
   base(object_proxy, p),
   Implementation(new pqImplementation())
 {
@@ -71,9 +70,6 @@ pqBandedPolyDataContourPanel::pqBandedPolyDataContourPanel(pqProxy* object_proxy
   panel_layout->addWidget(group2);
   panel_layout->addStretch();
 
-  connect(this->propertyManager(), SIGNAL(accepted()), this, SLOT(onAccepted()));
-  connect(this->propertyManager(), SIGNAL(rejected()), this, SLOT(onRejected()));
-
   // Setup the sample scalar widget ...
   this->Implementation->SampleScalarWidget.setDataSources(
     this->proxy(),
@@ -81,19 +77,18 @@ pqBandedPolyDataContourPanel::pqBandedPolyDataContourPanel(pqProxy* object_proxy
     this->proxy()->GetProperty("SelectInputScalars"));
 
   // Link SampleScalarWidget's qProperty to vtkSMProperty
-  this->propertyManager()->registerLink(
+  this->addPropertyLink(
     &this->Implementation->SampleScalarWidget, "samples",
-    SIGNAL(samplesChanged()), this->proxy(),
-    this->proxy()->GetProperty("ContourValues"));
+    SIGNAL(samplesChanged()), this->proxy()->GetProperty("ContourValues"));
 
-  pqNamedWidgets::link(
-    &this->Implementation->ControlsContainer, this->proxy(), this->propertyManager());
+//  pqNamedWidgets::link(
+//    &this->Implementation->ControlsContainer, this->proxy(), this->propertyManager());
 
   // Whenever input changes, we ensure that we update the enable state of the
   // "Compute Normals", "Compute Gradients" and "Compute Scalars" widgets. These
   // should be available only for structured datasets.
-  QObject::connect(object_proxy, SIGNAL(producerChanged(const QString&)),
-    this, SLOT(updateEnableState()), Qt::QueuedConnection);
+  //QObject::connect(object_proxy, SIGNAL(producerChanged(const QString&)),
+  //  this, SLOT(updateEnableState()), Qt::QueuedConnection);
   this->updateEnableState();
 }
 
@@ -102,18 +97,21 @@ pqBandedPolyDataContourPanel::~pqBandedPolyDataContourPanel()
   delete this->Implementation;
 }
 
-void pqBandedPolyDataContourPanel::onAccepted()
+void pqBandedPolyDataContourPanel::apply()
 {
+  this->base::apply();
   this->Implementation->SampleScalarWidget.accept();
 }
 
-void pqBandedPolyDataContourPanel::onRejected()
+void pqBandedPolyDataContourPanel::reset()
 {
+  this->base::reset();
   this->Implementation->SampleScalarWidget.reset();
 }
 
 void pqBandedPolyDataContourPanel::updateEnableState()
 {
+/*
   // Get the current input and ensure that we update the filter status when the
   // input pipeline updates (in-case the data-type changes).
   // Refer to BUG #11622.
@@ -147,4 +145,5 @@ void pqBandedPolyDataContourPanel::updateEnableState()
         this, SLOT(updateEnableState()), Qt::QueuedConnection);
       }
     }
+*/
 }

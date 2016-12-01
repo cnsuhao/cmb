@@ -44,7 +44,6 @@
 #include <QLabel>
 #include <QMap>
 
-#include "pq3DWidget.h"
 #include "pqActionGroupInterface.h"
 #include "pqActiveObjects.h"
 #include "pqPVApplicationCore.h"

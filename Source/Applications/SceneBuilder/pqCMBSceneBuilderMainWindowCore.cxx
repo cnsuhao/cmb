@@ -43,7 +43,7 @@
 #include <QTreeWidgetItem>
 #include <QProgressDialog>
 
-#include "pq3DWidget.h"
+#include "pq3DWidgetFactory.h"
 #include "pqActionGroupInterface.h"
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
@@ -61,7 +61,6 @@
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqObjectPanel.h"
 #include "pqOutputWindow.h"
 
 #include "pqOptions.h"
@@ -88,7 +87,6 @@
 #include "pqView.h"
 #include "pqSaveSnapshotDialog.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
-#include "pq3DWidgetFactory.h"
 #include <pqFileDialog.h>
 #include "pqCMBProcessWidget.h"
 #include <qtCMBProgressWidget.h>
@@ -157,6 +155,7 @@
 #include <smtk/bridge/discrete/operation/vtkCompleteShells.h>
 #include <smtk/bridge/discrete/operation/vtkEnclosingModelEntityOperator.h>
 #include <smtk/bridge/discrete/operation/vtkMasterPolyDataNormals.h>
+#include "smtk/extension/paraview/widgets/pq3DWidget.h"
 
 #include "vtkSGXMLBCSWriter.h"
 #include "vtkPVArcInfo.h"

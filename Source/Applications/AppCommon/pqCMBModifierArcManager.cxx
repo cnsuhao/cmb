@@ -43,7 +43,6 @@
 #include "ui_qtModifierArcDialog.h"
 #include "vtkPVArcInfo.h"
 #include "qtCMBArcWidget.h"
-#include "pq3DWidgetFactory.h"
 #include "vtkSMRenderViewProxy.h"
 
 #include "vtkSMPropertyHelper.h"

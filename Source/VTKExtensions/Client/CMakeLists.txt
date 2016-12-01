@@ -78,25 +78,21 @@ add_paraview_auto_start(IFACES1 IFACE_SRCS1 CLASS_NAME pqCMBPluginStarter
                         STARTUP onStartup
                         SHUTDOWN onShutdown)
 
-add_paraview_object_panel(IFACES2 IFACE_SRCS2
+add_paraview_property_group_widget(IFACES2 IFACE_SRCS2
+  TYPE "sources"
   CLASS_NAME pqCMBMeshReaderPanel
-  XML_NAME CMBMeshReader
-  XML_GROUP sources
 )
-add_paraview_object_panel(IFACES3 IFACE_SRCS3
+add_paraview_property_group_widget(IFACES3 IFACE_SRCS3
+  TYPE "filters"
   CLASS_NAME pqCMBStreamTracerPanel
-  XML_NAME CMBStreamTracer
-  XML_GROUP filters
 )
-add_paraview_object_panel(IFACES4 IFACE_SRCS4
+add_paraview_property_group_widget(IFACES4 IFACE_SRCS4
+  TYPE "filters"
   CLASS_NAME pqBandedPolyDataContourPanel
-  XML_NAME BandedPolyDataContourFilter
-  XML_GROUP filters
 )
-add_paraview_object_panel(IFACES5 IFACE_SRCS5
+add_paraview_property_group_widget(IFACES5 IFACE_SRCS5
+  TYPE "filters"
   CLASS_NAME pqPlanarTextureRegistrationPanel
-  XML_NAME RegisterPlanarTextureMapFilter
-  XML_GROUP filters
 )
 
 set(PANEL_SRC

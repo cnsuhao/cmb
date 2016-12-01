@@ -11,24 +11,25 @@
 #ifndef _pqPlanarTextureRegistrationPanel_h
 #define _pqPlanarTextureRegistrationPanel_h
 
-#include "pqObjectPanel.h"
+#include "pqPropertyWidget.h"
 #include "cmbSystemConfig.h"
 
 class vtkSMProperty;
 class pqDataRepresentation;
 
 /// Custom panel for the planar texture registration filter
-class pqPlanarTextureRegistrationPanel : public pqObjectPanel
+class pqPlanarTextureRegistrationPanel : public pqPropertyWidget
 {
-  typedef pqObjectPanel Superclass;
+  typedef pqPropertyWidget Superclass;
 
   Q_OBJECT
 
 public:
-  pqPlanarTextureRegistrationPanel(pqProxy* proxy, QWidget* p);
+  pqPlanarTextureRegistrationPanel(vtkSMProxy* pxy, vtkSMPropertyGroup*, QWidget* p=0);
   ~pqPlanarTextureRegistrationPanel() override;
 
-public slots:
+  void apply() override;
+  void reset() override;
 
 protected:
   vtkSMProperty* getTextureProperty();
@@ -37,17 +38,6 @@ protected:
   void fetchTextureFiles(QStringList & textureFiles);
 
 private slots:
-  /// Called if the user accepts pending modifications
-  virtual void onAccepted();
-  /// Called if the user rejects pending modifications
-  virtual void onRejected();
-
-  /// Called if the user accepts pending modifications
-  //void onAccepted();
-  /// Called if the user rejects pending modifications
-  //void onRejected();
-  /// Called to update the enable state for certain widgets.
-  void updateEnableState();
 
   void setTextureMap(const QString& filename,
     int numberOfRegistrationPoints, double *points);

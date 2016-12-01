@@ -11,7 +11,7 @@
 #define pqContourWidget_h
 
 #include "cmbAppCommonExport.h"
-#include "pq3DWidget.h"
+#include "smtk/extension/paraview/widgets/pq3DWidget.h"
 #include <QColor>
 
 class pqServer;

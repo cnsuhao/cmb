@@ -11,27 +11,25 @@
 #ifndef _pqBandedPolyDataContourPanel_h
 #define _pqBandedPolyDataContourPanel_h
 
-#include "pqObjectPanel.h"
+#include "pqPropertyWidget.h"
 #include "pqVariableType.h"
 #include "cmbSystemConfig.h"
 
 /// Custom panel for the Contour filter
-class pqBandedPolyDataContourPanel : public pqObjectPanel
+class pqBandedPolyDataContourPanel : public pqPropertyWidget
 {
-  typedef pqObjectPanel base;
+  typedef pqPropertyWidget base;
 
   Q_OBJECT
 
 public:
-  pqBandedPolyDataContourPanel(pqProxy* proxy, QWidget* p);
+  pqBandedPolyDataContourPanel(vtkSMProxy* pxy, vtkSMPropertyGroup*, QWidget* p=0);
   ~pqBandedPolyDataContourPanel() override;
 
-private slots:
-  /// Called if the user accepts pending modifications
-  void onAccepted();
-  /// Called if the user rejects pending modifications
-  void onRejected();
+  void apply() override;
+  void reset() override;
 
+private slots:
   /// Called to update the enable state for certain widgets.
   void updateEnableState();
 
