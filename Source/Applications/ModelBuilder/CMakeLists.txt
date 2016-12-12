@@ -403,6 +403,7 @@ endif()
     OperationSplitFace
     OperationMergeFace
     OperationGroupOps
+    OperationGroupOpCGM
     OperationBoundaryGroup2D
     OperationDomainGroup2D
     #OperationCombined
