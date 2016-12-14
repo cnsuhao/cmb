@@ -361,7 +361,7 @@ endif()
   set (XML_TESTS_WITH_BASELINES
     AxesGrid
     EdgeModification
-    ChesapeakeBayBathymetry
+    #ChesapeakeBayBathymetry
     OpenCMBFile
     OpenExodusFile
     OpenExodusFile2
@@ -376,7 +376,7 @@ endif()
     FlipViewY
     FlipViewZ
     ShowCenter
-    Simple2dmBathymetryTest
+    #Simple2dmBathymetryTest
     SelectObjectByBox
     Rotate2D
     Rotate3D
@@ -391,7 +391,7 @@ endif()
     ManipulateCameraRoll
     ManipulateCameraElevation
     ManipulateCameraAzimuth
-    Model1meshedBathymetryTest
+    #Model1meshedBathymetryTest
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
@@ -403,7 +403,7 @@ endif()
     OperationSplitFace
     OperationMergeFace
     OperationGroupOps
-    OperationGroupOpCGM
+    #OperationGroupOpCGM
     OperationBoundaryGroup2D
     OperationDomainGroup2D
     #OperationCombined
