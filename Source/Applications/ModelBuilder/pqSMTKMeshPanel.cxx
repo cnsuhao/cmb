@@ -26,6 +26,7 @@
 
 #include "smtk/common/View.h"
 #include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/extension/qt/qtCollapsibleGroupWidget.h"
 
 #include <QtGui/QDockWidget>
 
@@ -34,6 +35,7 @@
 #include <QBoxLayout>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QTextEdit>
 
 #include "vtkSMModelManagerProxy.h"
 #include "vtkPVSMTKModelInformation.h"
@@ -84,9 +86,21 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
   //by default the widget is not visible
   this->SubmitterWidget->setVisible(false);
 
+  //mesh operator result log
+  this->ResultLog = new QTextEdit(this);
+  this->ResultLog->setReadOnly(true);
+  this->ResultLog->setStyleSheet("font: \"Monaco\", \"Menlo\", \"Andale Mono\", \"fixed\";");
+  this->ResultLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+  smtk::extension::qtCollapsibleGroupWidget *gw = new smtk::extension::qtCollapsibleGroupWidget(this);
+  gw->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+  gw->setName("Show Meshing Operator Log");
+  gw->contentsLayout()->addWidget(this->ResultLog);
+  gw->collapse();
+
   layout->addWidget(this->MeshSelector.data());
   layout->addWidget(this->RequirementsWidget.data());
   layout->addWidget(this->SubmitterWidget.data());
+  layout->addWidget(gw);
 
   this->setWidget(meshWidget);
 
@@ -119,6 +133,13 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
     SIGNAL( pressed() ),
     this,
     SLOT( submitMeshJob() ) );
+
+  if(this->ModelManager)
+    {
+    QObject::connect(
+      this->ModelManager, SIGNAL(operationLog(const smtk::io::Logger&)),
+      this, SLOT(displayMeshOpLog(const smtk::io::Logger&)));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -311,5 +332,12 @@ bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& vtkNotU
   AttCacheKey key = { this->ActiveModel, this->ActiveRequirements.workerName() };
   c_it result = this->CachedAttributes.find(key);
   return result != this->CachedAttributes.end();
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKMeshPanel::displayMeshOpLog(const smtk::io::Logger& log)
+{
+  QString txt(log.convertToString(false).c_str());
+  this->ResultLog->setText(txt);
 }
 
