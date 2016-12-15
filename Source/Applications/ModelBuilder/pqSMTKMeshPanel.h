@@ -15,8 +15,10 @@
 class pqCMBModelManager;
 class qtCMBMeshingMonitor;
 class qtRemusMesherSelector;
+class QTextEdit;
 
 namespace smtk { namespace  extension { class qtUIManager; } }
+namespace smtk { namespace io { class Logger; } }
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/model/Model.h"
@@ -51,6 +53,9 @@ protected slots:
 
   bool submitMeshJob();
 
+  /// Display messages summarizing the result of an operation.
+  virtual void displayMeshOpLog(const smtk::io::Logger& html);
+
 signals:
   void meshingPossible( bool );
   void entitiesSelected(const smtk::common::UUIDs&);
@@ -66,6 +71,7 @@ private:
 
   QPointer<QWidget> RequirementsWidget;
   QPointer<QWidget> SubmitterWidget;
+  QPointer<QTextEdit> ResultLog;
 
   smtk::attribute::SystemPtr AttSystem;
   smtk::shared_ptr<smtk::extension::qtUIManager> AttUIManager;
