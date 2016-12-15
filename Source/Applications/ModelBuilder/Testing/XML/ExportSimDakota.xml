@@ -5,6 +5,8 @@
   <!--pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="0.0" /-->
   <!--pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="3.0" /-->
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
+
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <!--pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="10.0" /-->
