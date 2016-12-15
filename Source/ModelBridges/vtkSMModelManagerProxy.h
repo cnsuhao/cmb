@@ -41,7 +41,7 @@ public:
   std::vector<std::string> fileOperators(
     const std::string& sessionName);
   smtk::model::OperatorPtr smtkFileOperator(
-  const std::string& fileName);
+    const std::string& fileName);
 
   std::vector<std::string> operatorNames(const std::string& sessionName);
   std::vector<std::string> operatorNames(const smtk::common::UUID& sessionId);

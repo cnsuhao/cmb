@@ -88,6 +88,9 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget *widgetParent)
 
   QObject::connect(this->Internal->dirTemplateBrowserButton,
     SIGNAL(clicked()), this, SLOT(chooseSimBuilderTemplateDirectory()));
+  QObject::connect(this->Internal->defaultSessionModelBox,
+    SIGNAL(stateChanged(int)),
+    this, SIGNAL(changesAvailable()));
 }
 
 //-----------------------------------------------------------------------------
@@ -147,6 +150,10 @@ void pqCMBModelBuilderOptions::applyChanges()
     this->Internal->DefaultEdgeColor->chosenColor());
   settings->setValue("ModelBuilder/PolygonColor",
     this->Internal->DefaultPolygonColor->chosenColor());
+
+  // create default session model
+  settings->setValue("ModelBuilder/CreateDefaultSessionModel",
+    this->Internal->defaultSessionModelBox->isChecked());
 }
 
 //-----------------------------------------------------------------------------
@@ -172,6 +179,10 @@ void pqCMBModelBuilderOptions::resetChanges()
 
   this->Internal->dirSBTemplates->setText(
     this->defaultSimBuilderTemplateDirectory().c_str());
+
+  // create default session model
+  this->Internal->defaultSessionModelBox->setChecked(
+     this->createDefaultSessionModel());
 }
 
 //-----------------------------------------------------------------------------
@@ -222,6 +233,14 @@ QColor  pqCMBModelBuilderOptions::defaultEdgeColor()
   // default to white
   return settings->value("ModelBuilder/EdgeColor",
    QColor::fromRgbF(1.0, 1.0, 1.0)).value<QColor>();
+}
+
+//-----------------------------------------------------------------------------
+bool pqCMBModelBuilderOptions::createDefaultSessionModel()
+{
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  // default to true
+  return settings->value("ModelBuilder/CreateDefaultSessionModel", true).value<bool>();
 }
 
 //-----------------------------------------------------------------------------

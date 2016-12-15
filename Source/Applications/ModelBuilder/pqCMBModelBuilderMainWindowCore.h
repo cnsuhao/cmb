@@ -178,6 +178,11 @@ public slots:
   // See Also, onEditSettings()
   void applyAppSettings() override;
 
+  // Description:
+  // Call pqCMBModelManager::startNewSession with the app setting's entry
+  // whether to create a default model.
+  bool startNewSession(const std::string& sessionName);
+
 protected:
   void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
   virtual void setSimBuilderModelManager();

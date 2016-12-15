@@ -119,7 +119,8 @@ signals:
 
 public slots:
   void clear();
-  bool startNewSession(const std::string& bridgeName);
+  bool startNewSession(const std::string& bridgeName,
+                       const bool& createDefaultModel = true);
   void clearModelSelections();
   void clearMeshSelections();
   void clearAuxGeoSelections();

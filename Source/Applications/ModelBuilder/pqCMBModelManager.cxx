@@ -2083,7 +2083,8 @@ void pqCMBModelManager::clear()
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelManager::startNewSession(const std::string& sessionName)
+bool pqCMBModelManager::startNewSession(const std::string& sessionName,
+                                        const bool& createDefaultModel)
 {
   smtk::common::UUID sessionId =
     this->managerProxy()->beginSession(sessionName, 
@@ -2095,6 +2096,15 @@ bool pqCMBModelManager::startNewSession(const std::string& sessionName)
     {
     std::cerr << "Could not start new session of type \"" << sessionName << "\"\n";
     return false;
+    }
+  // If the "create model" fails, still return true since the session is valid
+  if(createDefaultModel)
+    {
+    smtk::model::OperatorPtr opPtr = sref.session()->op("create model");
+    if(opPtr && opPtr->ensureSpecification())
+      {
+      this->startOperation(opPtr);
+      }
     }
   return true;
 }

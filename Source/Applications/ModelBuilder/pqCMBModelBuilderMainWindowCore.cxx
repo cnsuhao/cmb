@@ -303,6 +303,13 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
 }
 
 //----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::startNewSession(const std::string& sessionName)
+{
+  return this->modelManager()->startNewSession(sessionName,
+    this->Internal->AppOptions->createDefaultSessionModel());
+}
+
+//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::processSceneInfo(const QString& filename,
     pqPipelineSource* source)
 {
