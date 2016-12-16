@@ -257,7 +257,7 @@ void pqSMTKModelPanel::resetUI()
 //  this->linkRepresentations();
 
   this->Internal->ModelPanel->resetView(
-    qtModelPanel::VIEW_BY_TOPOLOGY, modelMgr);
+    qtModelPanel::VIEW_BY_ENTITY_LIST, modelMgr);
 
   this->Internal->ModelLoaded = true;
   QObject::connect(

@@ -3,6 +3,8 @@
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/hybridModelOneCube.cmb" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
+
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.894166,0.34433,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.458616,0.391753,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.458616,0.391753,1,0,0)" />
