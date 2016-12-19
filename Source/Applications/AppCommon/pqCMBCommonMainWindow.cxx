@@ -309,7 +309,8 @@ pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
     this->Internal->displayPanel = new pqProxyWidget(repProxy, this);
     this->Internal->displayPanel->setView(this->MainWindowCore->activeRenderView());
     this->Internal->displayPanel->setApplyChangesImmediately(true);
-//    pqActiveObjects::instance().disconnect(this->Internal->displayPanel);
+    QObject::connect(this->Internal->displayPanel, SIGNAL(changeFinished()),
+      this->MainWindowCore, SLOT(requestRender()));
     }
 
   return this->Internal->displayPanel;
