@@ -21,6 +21,7 @@
 #include "smtk/extension/qt/qtFileItem.h"
 #include "smtk/extension/qt/qtAttributeView.h"
 #include "smtk/extension/qt/qtGroupView.h"
+#include "smtk/extension/qt/qtSelectionManager.h"// for QObject::connect
 #include "smtk/extension/qt/qtSimpleExpressionView.h"
 #include "smtk/model/Manager.h"
 
@@ -121,8 +122,12 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
   QObject::connect(this->m_attUIManager,
     SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)),
     this, SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
+  // send signal from UIManager to selection manager
   QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
-    this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
+    this->m_ModelPanel->SelectionManager(), SLOT(updateSelectedItems(const smtk::common::UUIDs&)));
+  // send signal from selection manager to sim builder
+//  QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
+//    this, SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
 
   this->m_attUIManager->setSMTKView(view, parentWidget);
   if (!this->topView())

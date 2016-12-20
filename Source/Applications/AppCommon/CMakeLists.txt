@@ -248,6 +248,7 @@ target_link_libraries(cmbAppCommon
     vtkCMBGeneral
     pqApplicationComponents
     smtkCore
+    smtkQtExt # required by qtSelectionManager
 #    vtkCMBMeshing # required by pqCMBSceneNode.cxx
 #    vtkIOXMLParser
     CMB_Plugin

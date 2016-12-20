@@ -17,6 +17,7 @@
 #include "smtk/mesh/MeshSet.h"
 #include "smtk/model/DescriptivePhrase.h" // for selectPropertyRepresentations
 
+#include <QPointer>
 class vtkObject;
 class pqCMBModelManager;
 class pqDataRepresentation;
@@ -33,6 +34,7 @@ namespace smtk {
     class qtMeshSelectionItem;
     class qtModelEntityItem;
     class qtModelView;
+    class qtSelectionManager;
   }
 }
 
@@ -40,7 +42,8 @@ class pqSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
+  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p,
+                   smtk::extension::qtSelectionManager* qtSelMgr);
   ~pqSMTKModelPanel() override;
 
   pqCMBModelManager* modelManager();
@@ -63,6 +66,11 @@ public:
   void startMeshSelectionOperation(
     const QList<pqOutputPort*> &);
   void resetMeshSelectionItems();
+  smtk::extension::qtSelectionManager* SelectionManager() const;
+
+signals:
+  void sendSelectedItemsToSelectionManager(
+   const smtk::common::UUIDs &selEntities, const smtk::mesh::MeshSets &selMeshes);
 
 public slots:
   /// Called if the user accepts pending modifications

@@ -20,7 +20,9 @@ Camera Controls
 
 |pqXMinus24| |pqXPlus24| |pqYMinus24| |pqYPlus24| |pqZMinus24| |pqZPlus24| Change the camera to the respective axis
 
-|pqZoomToSelection24| Zoom the camera view to a user-selected box
+|pqZoomToBox24| Zoom the camera view to a user-selected box
+
+|pqZoomToSelection24| Zoom the camera view to a user-selected box and select the elements within the box
 
 |pqShowCenterAxes24| Show a 3D orientation indicator of the camera's center
 
@@ -63,6 +65,7 @@ Color
 .. |pqYMinus24| image:: images/pqYMinus24.png
 .. |pqYPlus24| image:: images/pqYPlus24.png
 .. |pqZMinus24| image:: images/pqZMinus24.png
+.. |pqZoomToBox24| image:: images/pqZoomToBox24.png
 .. |pqZoomToSelection24| image:: images/pqZoomToSelection24.png
 .. |pqZPlus24| image:: images/pqZPlus24.png
 

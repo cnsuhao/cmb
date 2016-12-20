@@ -98,7 +98,6 @@ protected slots:
   // Signals when selection actions are invoked.
   void onSurfaceRubberBandSelect(bool);
 
-  void onZoomModeChanged(int mode);
   void onLoadScene();
   void onUnloadScene();
   void onSceneFileLoaded();
@@ -121,9 +120,6 @@ protected:
   void setupMenuActions();
   void setupToolbars();
   void updateSMTKSelection();
-
-  // Overwrite base class to use CMB's selection helper
-  void setupZoomToBox() override;
 
   // Description:
   // Called whenever a selection is made. converts the selection to a value

@@ -166,7 +166,6 @@ Internal(new vtkInternal(this))
 #endif
 
   this->setupToolbars();
-  this->setupZoomToBox();
   this->setupMenuActions();
   this->updateEnableState();
   this->initProjectManager();
@@ -537,28 +536,6 @@ void pqCMBModelBuilderMainWindow::clearSelectedPorts()
       }
     smSource->SetSelectionInput(0, NULL, 0);
     }
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::setupZoomToBox()
-{
-  QObject::connect(this->getThisCore()->cmbRenderViewSelectionHelper(),
-    SIGNAL(selectionModeChanged(int)),
-    this, SLOT(onZoomModeChanged(int)));
-  QObject::connect(
-    this->getThisCore()->cmbRenderViewSelectionHelper(),
-    SIGNAL(enableZoom(bool)),
-    this->getMainDialog()->actionZoomToBox, SLOT(setEnabled(bool)));
-  QObject::connect(
-    this->getMainDialog()->actionZoomToBox, SIGNAL(triggered()),
-    this->getThisCore()->cmbRenderViewSelectionHelper(), SLOT(beginZoom()));
-}
-
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindow::onZoomModeChanged(int mode)
-{
-  this->getMainDialog()->actionZoomToBox->setChecked(
-    mode==pqCMBRubberBandHelper::ZOOM);
 }
 
 //----------------------------------------------------------------------------

@@ -68,6 +68,7 @@
         <file alias="ContourWidget24.png" >Icons/ContourWidget24.png</file>
         <file alias="ExtractNodes24.png" >Icons/ExtractNodes24.png</file>
         <file alias="ExtractFacet24.png" >Icons/ExtractFacet24.png</file>
+        <file alias="pqZoomToBox24.png" >Icons/pqZoomToBox24.png</file>
         <file alias="pqZoomToSelection24.png" >Icons/pqZoomToSelection24.png</file>
         <file alias="SimBuilderSplash.png" >Icons/SimBuilderSplash.png</file>
         <file alias="SimBuilderSplashAbout.png" >Icons/SimBuilderSplashAbout.png</file>

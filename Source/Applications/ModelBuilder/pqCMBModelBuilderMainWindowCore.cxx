@@ -85,10 +85,13 @@
 #include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/Group.h"
+#include "smtk/model/Tessellation.h"
+#include "smtk/model/EntityRef.h"
 #include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/mesh/Manager.h"
@@ -307,6 +310,59 @@ bool pqCMBModelBuilderMainWindowCore::startNewSession(const std::string& session
 {
   return this->modelManager()->startNewSession(sessionName,
     this->Internal->AppOptions->createDefaultSessionModel());
+}
+
+//----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
+{
+  typedef std::vector<double> boundingBox;// follow vtk's bbox rule
+
+  boundingBox finalBBox;
+  for (int i = 0; i < 6;  i++)
+  {
+    double tmp = (i%2 == 1) ? -DBL_MAX : DBL_MAX;
+    finalBBox.push_back(tmp);
+  }
+
+  smtk::extension::qtSelectionManager* selManager = this->modelPanel()->SelectionManager();
+  smtk::model::ManagerPtr modelMgr = this->modelManager()->managerProxy()->modelManager();
+  smtk::common::UUIDs selEntities;
+  smtk::mesh::MeshSets selMeshSets;
+  selManager->getSelectedEntities(selEntities);
+  selManager->getSelectedMeshes(selMeshSets);
+
+
+  // loop through seleced entities get bounding Box
+  for (smtk::common::UUIDs::iterator selEnt = selEntities.begin(); selEnt != selEntities.end();++selEnt)
+  {
+    smtk::model::EntityRef entRef(modelMgr,*selEnt);
+    finalBBox = entRef.unionBoundingBox(entRef.boundingBox(), finalBBox);
+  }
+
+  // loop through seleced meshes get bounding Box
+  for (smtk::mesh::MeshSets::iterator selMesh = selMeshSets.begin();
+       selMesh !=  selMeshSets.end(); selMesh++)
+  {
+    smtk::common::UUIDArray UUIDArray = selMesh->modelEntityIds();
+    for (auto uuid = UUIDArray.begin(); uuid != UUIDArray.end(); ++uuid)
+    {
+      smtk::model::EntityRef entRef(modelMgr,*uuid);
+      finalBBox = entRef.unionBoundingBox(entRef.boundingBox(), finalBBox);
+    }
+  }
+
+  // check whether we have invalid bbox
+  for  (int i = 0; i < 6; i++)
+  {
+    if (finalBBox[i] == -DBL_MAX || finalBBox[i] == DBL_MAX)
+      {return false;}
+  }
+
+  vtkSMRenderViewProxy* rm = this->activeRenderView()->getRenderViewProxy();
+  rm->ResetCamera(finalBBox[0],finalBBox[1],finalBBox[2],finalBBox[3],
+      finalBBox[4],finalBBox[5]);
+  this->activeRenderView()->render();
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -1381,7 +1437,7 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     {
     this->Internal->ModelDock = new pqSMTKModelPanel(
       this->Internal->smtkModelManager,
-      this->parentWidget());
+      this->parentWidget(), this->qtSelectionManager());
     this->Internal->ViewContextBehavior->setModelPanel(
       this->Internal->ModelDock);
     if(this->Internal->SimBuilder)

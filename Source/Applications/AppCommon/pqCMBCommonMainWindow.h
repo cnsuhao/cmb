@@ -53,10 +53,6 @@ public:
 
 public slots:
   // Description:
-  // 3D Selection from the scene methods
-  virtual void onSelectionModeChanged(int);
-
-  // Description:
   // Method to handle what to do when the user
   // Presses the "S" key
   virtual void onSelectionShortcutActivated();
@@ -110,7 +106,6 @@ protected:
   virtual void updateEnableState(bool data_loaded);
 
   virtual void clearGUI();
-  virtual void setupZoomToBox();
   virtual void updateSelection(){}
 
   // Description

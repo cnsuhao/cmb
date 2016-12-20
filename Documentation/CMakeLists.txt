@@ -91,6 +91,7 @@ if (SPHINX_FOUND)
     ModelBuilder/pqYMinus24.png
     ModelBuilder/pqYPlus24.png
     ModelBuilder/pqZMinus24.png
+    ModelBuilder/pqZoomToBox24.png
     ModelBuilder/pqZoomToSelection24.png
     ModelBuilder/pqZPlus24.png
   )

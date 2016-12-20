@@ -52,6 +52,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionReset_Camera"/>
+   <addaction name="actionZoomToSelection"/>
    <addaction name="actionView_Positive_X"/>
    <addaction name="actionView_Negative_X"/>
    <addaction name="actionView_Positive_Y"/>
@@ -754,7 +755,7 @@
    </property>
    <property name="icon">
     <iconset resource="../../Resources/Resources.qrc">
-     <normaloff>:/cmb/pqZoomToSelection24.png</normaloff>:/cmb/pqZoomToSelection24.png</iconset>
+     <normaloff>:/cmb/pqZoomToBox24.png</normaloff>:/cmb/pqZoomToBox24.png</iconset>
    </property>
    <property name="text">
     <string>Zoom to Box</string>
@@ -1335,6 +1336,21 @@
    </property>
    <property name="toolTip">
     <string>Show Axes Grid</string>
+   </property>
+  </action>
+  <action name="actionZoomToSelection">
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/pqZoomToSelection24.png</normaloff>:/cmb/pqZoomToSelection24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom to Selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom to Selection</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom to Box</string>
    </property>
   </action>
  </widget>

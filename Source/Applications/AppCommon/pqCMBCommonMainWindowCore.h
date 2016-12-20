@@ -57,7 +57,6 @@ class pqContourWidget;
 class pqSettings;
 class qtCMBApplicationOptions;
 class qtCMBApplicationOptionsDialog;
-
 class qtCMBMeshingMonitor;
 
 class QAction;
@@ -70,6 +69,12 @@ class QSize;
 class QStatusBar;
 class QToolBar;
 class QWidget;
+
+namespace smtk{
+  namespace extension{
+    class qtSelectionManager;
+  }
+}
 
 class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindowCore :  public QObject
 {
@@ -85,6 +90,10 @@ public:
   //pqViewManager& multiViewManager();
   /// Returns the selection manager, which handles interactive selection
   pqSelectionManager* selectionManager();
+
+  /// Returns the qtSelectionManager which handles selection between smtk
+  // and CMB
+  smtk::extension::qtSelectionManager* qtSelectionManager() const;
 
   /// Returns the selection and pick helper used for 3D views.
   pqCMBRubberBandHelper* renderViewSelectionHelper() const;
@@ -266,6 +275,10 @@ public slots:
   // source in the active view.
   virtual void resetCenterOfRotationToCenterOfCurrentData();
 
+  // Zoom to the selection blocks.
+  // return true if selections are valid
+  virtual bool zoomToSelection();
+
   // Next mouse press in 3D window sets the center of rotation to
   // the corresponding world coordinates.
   void pickCenterOfRotation(bool begin);
@@ -406,6 +419,7 @@ protected:
   bool eventFilter(QObject* caller, QEvent* e) override;
 
   qtCMBProjectServerManager::PROGRAM ProgramKey;
+  smtk::extension::qtSelectionManager* qtSelectionMgr;
 
 private:
 
