@@ -28,6 +28,8 @@
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/extension/qt/qtCollapsibleGroupWidget.h"
 
+#include "smtk/AutoInit.h" // for smtkComponentInitMacro
+
 #include <QtGui/QDockWidget>
 
 #include <QPointer>
@@ -341,3 +343,5 @@ void pqSMTKMeshPanel::displayMeshOpLog(const smtk::io::Logger& log)
   this->ResultLog->setText(txt);
 }
 
+// Force the mesh operator to be available whenever the panel is present.
+smtkComponentInitMacro(smtk_remus_mesh_operator);
