@@ -244,6 +244,7 @@ LINK_PRIVATE
   cmbAppCommon
   smtkQtExt
   smtkPQComponentsExt
+  smtkRemusExt
   RemusClient
   smtkCore
   ModelBridge_Plugin
