@@ -39,6 +39,7 @@
 #include "pqContextMenuEventTranslator.h"
 #include "pqModelTreeViewEventPlayer.h"
 #include "pqModelTreeViewEventTranslator.h"
+#include "pqSearchBox.h"
 
 #ifdef ENABLE_JOBS_PANEL
 #include "qtJobsPanel.h"
@@ -1018,34 +1019,18 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
       if(internal_checkRep(rep, cmbModelMgr))
         {
-        /* // Don't hide this anymore. See what feedbacks we will get.
-        // hiding color related components
-        for (size_t index = 0; index < rep->getProxy()->GetNumberOfPropertyGroups(); index++)
-          {
-          int group_tag  = static_cast<int>(index);
-          vtkSMPropertyGroup *group = rep->getProxy()->GetPropertyGroup(index);
-          if(!group)
-            continue;
-          QString grplabel = group->GetXMLLabel();
-          if (grplabel == "Coloring" || grplabel == "Scalar Coloring")
-            {
-//            for (size_t j = 0; j < group->GetNumberOfProperties(); j++)
-//              {
-//              group->GetProperty(static_cast<unsigned int>(j))->SetPanelVisibility("never");
-//              }
-            // hide the group.
-            group->SetPanelVisibility("never");
-            }
-          }
-        */
-        //this->displayPanel()->setVisible(true);
         pqProxyWidget* pwidget = this->displayPanel(rep->getProxy());
+        pqSearchBox* searchBox = this->createSearchBox();
+        QWidget* panel = new QWidget(this);
+        panel->setLayout(new QVBoxLayout());
+        panel->layout()->addWidget(searchBox);
+        panel->layout()->addWidget(pwidget);
 
         dw = panelManager->createDockWidget(this,
-          pwidget, qtCMBPanelsManager::type2String(enType),
+          panel, qtCMBPanelsManager::type2String(enType),
           Qt::RightDockWidgetArea, lastdw);
-        pwidget->filterWidgets(true);
-        pwidget->setApplyChangesImmediately(true);
+
+        pwidget->filterWidgets(false);
         dw->show();
         //pwidget->show(dw);
         this->Internal->CurrentDockWidgets[enType] = dw;
@@ -1161,11 +1146,9 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
 
         if(acitveRep && existingDoc)
           {
-          //this->displayPanel()->setVisible(true);
           pqProxyWidget* pwidget = this->displayPanel(acitveRep->getProxy());
-          pwidget->filterWidgets(true);
-          pwidget->setApplyChangesImmediately(true);
-
+          pwidget->filterWidgets(false);
+          pqSearchBox* searchBox = this->createSearchBox();
           QWidget* container = new QWidget();
           container->setObjectName("dockscrollWidget");
           container->setSizePolicy(QSizePolicy::Preferred,
@@ -1179,6 +1162,7 @@ void pqCMBModelBuilderMainWindow::onActiveRepresentationChanged(
 
           QVBoxLayout* vboxlayout = new QVBoxLayout(container);
           vboxlayout->setMargin(0);
+          vboxlayout->addWidget(searchBox);
           vboxlayout->addWidget(pwidget);
 
           existingDoc->setWidget(s);
@@ -1341,5 +1325,37 @@ void pqCMBModelBuilderMainWindow::initInspectorDock()
     this->removeDockWidget(
       this->getMainDialog()->faceParametersDock);
     this->getMainDialog()->faceParametersDock->setParent(NULL);
+    }
+}
+
+//----------------------------------------------------------------------------
+pqSearchBox* pqCMBModelBuilderMainWindow::createSearchBox()
+{
+  pqSearchBox* searchBox = new pqSearchBox();
+  searchBox->setAdvancedSearchEnabled(true);
+  QObject::connect(searchBox, SIGNAL(advancedSearchActivated(bool)),
+    this, SLOT(filterDisplayPanel()));
+  QObject::connect(searchBox, SIGNAL(textChanged(QString)),
+    this, SLOT(filterDisplayPanel()));
+  return searchBox;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::filterDisplayPanel()
+{
+  pqSearchBox* const searchBox = qobject_cast<pqSearchBox*>(
+    QObject::sender());
+  if(!searchBox)
+    {
+    return;
+    }
+  QDockWidget* existingDoc = this->Internal->CurrentDockWidgets[qtCMBPanelsManager::DISPLAY];
+  if(existingDoc && existingDoc->widget())
+    {
+    QList< pqProxyWidget* > pxyWidgets = existingDoc->widget()->findChildren<pqProxyWidget*>();
+    if(pxyWidgets.count())
+      {
+      pxyWidgets[0]->filterWidgets(searchBox->isAdvancedSearchActive(), searchBox->text());
+      }
     }
 }

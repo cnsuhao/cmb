@@ -240,7 +240,7 @@ bool pqCMBModelBuilderOptions::createDefaultSessionModel()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
   // default to true
-  return settings->value("ModelBuilder/CreateDefaultSessionModel", true).value<bool>();
+  return settings->value("ModelBuilder/CreateDefaultSessionModel", true).toBool();
 }
 
 //-----------------------------------------------------------------------------

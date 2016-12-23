@@ -28,6 +28,7 @@ class pqCMBSceneTree;
 class pqProxyInformationWidget;
 class QDockWidget;
 class pqDataRepresentation;
+class pqSearchBox;
 
 class pqCMBModelBuilderMainWindow : public pqCMBCommonMainWindow
 {
@@ -60,6 +61,7 @@ protected slots:
 
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
+  void filterDisplayPanel();
 
   // Description:
   // Slots for smtk related signals.  
@@ -157,6 +159,7 @@ protected:
   QDockWidget* initPVColorEditorDock() override {return NULL;}
   // ModelBuilder is not using the InspectorPanel provided from base class
   void initInspectorDock() override;
+  pqSearchBox* createSearchBox();
 
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
