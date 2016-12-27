@@ -59,50 +59,25 @@ qt4_wrap_ui(UI_BUILT_SRCS
 #we can't use automoc since paraview plugin macro generated headers
 #will be mocced twice
 qt4_wrap_cpp(MOC_SRCS
-  pqBandedPolyDataContourPanel.h
   pqCMBTabWidgetTranslator.h
-  pqCMBMeshReaderPanel.h
   pqCMBPluginStarter.h
-  pqCMBStreamTracerPanel.h
   pqGeneralTransferFunctionWidget.h
   pqPlanarTextureRegistrationDialog.h
-  pqPlanarTextureRegistrationPanel.h
 )
 
 # We need this to call "vtkVTKExtensionsCS_Initialize(pm->GetInterpreter())"
 # so that the vtkProcessModule's interpreter is exposed to these classes
-# NOTE: This will not work in real cliet-server mode. According to Utkarsh,
+# NOTE: This will not work in real client-server mode. According to Utkarsh,
 # more magic needs to happen for client-server mode to work
 #
 add_paraview_auto_start(IFACES1 IFACE_SRCS1 CLASS_NAME pqCMBPluginStarter
                         STARTUP onStartup
                         SHUTDOWN onShutdown)
 
-add_paraview_property_group_widget(IFACES2 IFACE_SRCS2
-  TYPE "sources"
-  CLASS_NAME pqCMBMeshReaderPanel
-)
-add_paraview_property_group_widget(IFACES3 IFACE_SRCS3
-  TYPE "filters"
-  CLASS_NAME pqCMBStreamTracerPanel
-)
-add_paraview_property_group_widget(IFACES4 IFACE_SRCS4
-  TYPE "filters"
-  CLASS_NAME pqBandedPolyDataContourPanel
-)
-add_paraview_property_group_widget(IFACES5 IFACE_SRCS5
-  TYPE "filters"
-  CLASS_NAME pqPlanarTextureRegistrationPanel
-)
-
 set(PANEL_SRC
-  pqBandedPolyDataContourPanel.cxx
   pqCMBTabWidgetTranslator.cxx
-  pqCMBMeshReaderPanel.cxx
-  pqCMBStreamTracerPanel.cxx
   pqGeneralTransferFunctionWidget.cxx
   pqPlanarTextureRegistrationDialog.cxx
-  pqPlanarTextureRegistrationPanel.cxx
 )
 
 add_paraview_plugin(CMB_Plugin "1.0"
@@ -121,10 +96,6 @@ add_paraview_plugin(CMB_Plugin "1.0"
     ${UI_BUILT_SRCS}
     ${MOC_SRCS}
     ${IFACE_SRCS1}
-    ${IFACE_SRCS2}
-    ${IFACE_SRCS3}
-    ${IFACE_SRCS4}
-    ${IFACE_SRCS5}
     ${PANEL_SRC}
   CS_KITS
     vtkSMTKFilterExt
