@@ -5491,7 +5491,7 @@ associates the containing cell ID to the point.
       <!-- End RuledSurfaceFilter -->
     </SourceProxy>
 
-    <SourceProxy name="RegisterPlanarTextureMapFilter" class="vtkRegisterPlanarTextureMap" label="RegisterPlanarTextureMap">
+    <SourceProxy name="RegisterPlanarTextureMapFilter" class="vtkRegisterPlanarTextureMap" label="Register Planar Texture Map">
       <Documentation
         long_help="Assign Texture Coordinates based on points registered in both the image and on the surface.  This filter ignores the z direction and assumes the surface is on the XY Plane."
         short_help="Assign Texture Coordinates based on registered points.">
@@ -5507,6 +5507,11 @@ associates the containing cell ID to the point.
           <DataType value="vtkPolyData"/>
         </DataTypeDomain>
       </InputProperty>
+
+      <Property name="PlanarTextureRegistrationProperty"
+		panel_widget="PlanarTextureRegistration"
+		panel_visibility="always">
+      </Property>
 
       <DoubleVectorProperty
         name="TwoPointRegistration"

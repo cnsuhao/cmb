@@ -183,39 +183,51 @@ void pqPlanarTextureRegistrationDialog::initializeTexture(
   this->Links->addPropertyLink(this->TextureDialog->S1, "text",
                                SIGNAL(editingFinished()), this->widgetI1,
                                this->widgetI1->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->S1, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->T1, "text",
                                SIGNAL(editingFinished()), this->widgetI1,
                                this->widgetI1->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->T1, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->S2, "text",
                                SIGNAL(editingFinished()), this->widgetI2,
                                this->widgetI2->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->S2, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->T2, "text",
                                SIGNAL(editingFinished()), this->widgetI2,
                                this->widgetI2->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->T2, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->S3, "text",
                                SIGNAL(editingFinished()), this->widgetI3,
                                this->widgetI3->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->S3, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->T3, "text",
                                SIGNAL(editingFinished()), this->widgetI3,
                                this->widgetI3->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->T3, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->X1, "text",
                                SIGNAL(editingFinished()), this->widgetS1,
                                this->widgetS1->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->X1, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->Y1, "text",
                                SIGNAL(editingFinished()), this->widgetS1,
                                this->widgetS1->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->Y1, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->X2, "text",
                                SIGNAL(editingFinished()), this->widgetS2,
                                this->widgetS2->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->X2, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->Y2, "text",
                                SIGNAL(editingFinished()), this->widgetS2,
                                this->widgetS2->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->Y2, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->X3, "text",
                                SIGNAL(editingFinished()), this->widgetS3,
                                this->widgetS3->GetProperty("WorldPosition"), 0);
+  QObject::connect(this->TextureDialog->X3, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
   this->Links->addPropertyLink(this->TextureDialog->Y3, "text",
                                SIGNAL(editingFinished()), this->widgetS3,
                                this->widgetS3->GetProperty("WorldPosition"), 1);
+  QObject::connect(this->TextureDialog->Y3, SIGNAL(textChanged(const QString &)), this, SIGNAL(dialogModified()));
 
   QObject::connect(this->Links, SIGNAL(qtWidgetChanged()), this, SLOT(updateAllViews()));
   this->currentImageFileName = "";

@@ -62,6 +62,7 @@ qt4_wrap_cpp(MOC_SRCS
   pqCMBTabWidgetTranslator.h
   pqCMBPluginStarter.h
   pqGeneralTransferFunctionWidget.h
+  pqPlanarTextureRegistrationWidget.h
   pqPlanarTextureRegistrationDialog.h
 )
 
@@ -74,9 +75,14 @@ add_paraview_auto_start(IFACES1 IFACE_SRCS1 CLASS_NAME pqCMBPluginStarter
                         STARTUP onStartup
                         SHUTDOWN onShutdown)
 
+add_paraview_property_widget(IFACES2 IFACE_SRCS2
+                             TYPE "PlanarTextureRegistration"
+                             CLASS_NAME "pqPlanarTextureRegistrationWidget")
+
 set(PANEL_SRC
   pqCMBTabWidgetTranslator.cxx
   pqGeneralTransferFunctionWidget.cxx
+  pqPlanarTextureRegistrationWidget.cxx
   pqPlanarTextureRegistrationDialog.cxx
 )
 
@@ -88,14 +94,12 @@ add_paraview_plugin(CMB_Plugin "1.0"
   GUI_INTERFACES
     ${IFACES1}
     ${IFACES2}
-    ${IFACES3}
-    ${IFACES4}
-    ${IFACES5}
   GUI_SOURCES
     pqCMBPluginStarter.cxx
     ${UI_BUILT_SRCS}
     ${MOC_SRCS}
     ${IFACE_SRCS1}
+    ${IFACE_SRCS2}
     ${PANEL_SRC}
   CS_KITS
     vtkSMTKFilterExt
