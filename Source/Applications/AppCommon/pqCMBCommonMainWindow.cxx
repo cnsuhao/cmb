@@ -57,6 +57,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkProcessModule.h"
 #include "vtkSmartPointer.h"
+#include "vtkSMPropertyGroup.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMRenderViewProxy.h"
@@ -295,6 +296,19 @@ qtCMBPanelsManager* pqCMBCommonMainWindow::panelsManager()
 }
 
 //----------------------------------------------------------------------------
+inline void customizePanelVisibility(
+  vtkSMProxy* smProxy, const char* propName,
+  const char* panelvis, bool removePanelVisForRepresentation = false)
+{
+  vtkSMProperty* smProp = smProxy->GetProperty(propName);
+  if(smProp)
+  {
+    smProp->SetPanelVisibility(panelvis);
+    if(removePanelVisForRepresentation)
+      smProp->SetPanelVisibilityDefaultForRepresentation(NULL);
+  }
+}
+
 pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
 {
   if(this->Internal->displayPanel &&
@@ -306,10 +320,44 @@ pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
 
   if(!this->Internal->displayPanel && repProxy)
     {
+    // customize Display properties
+    customizePanelVisibility(repProxy, "PolarAxes", "advanced");
+    customizePanelVisibility(repProxy, "UseDataPartitions", "advanced", true);
+
+    for (size_t index = 0; index < repProxy->GetNumberOfPropertyGroups(); index++)
+      {
+      int group_tag  = static_cast<int>(index);
+      vtkSMPropertyGroup *group = repProxy->GetPropertyGroup(index);
+      if(!group)
+        continue;
+      QString grplabel = group->GetXMLLabel();
+      // make Transforming related components default
+      if (grplabel == "Transforming")
+        {
+        for (size_t j = 0; j < group->GetNumberOfProperties(); j++)
+          {
+          group->GetProperty(static_cast<unsigned int>(j))->SetPanelVisibility("default");
+          }
+
+        group->SetPanelVisibility("default");
+        }
+      // make point Gaussian related components advanced
+      else if(grplabel == "Point Gaussian")
+        {
+        for (size_t j = 0; j < group->GetNumberOfProperties(); j++)
+          {
+          group->GetProperty(static_cast<unsigned int>(j))->SetPanelVisibility("advanced");
+          }
+        group->SetPanelVisibility("advanced");
+        }
+      }
+
     this->Internal->displayPanel = new pqProxyWidget(repProxy, this);
     this->Internal->displayPanel->setView(this->MainWindowCore->activeRenderView());
     this->Internal->displayPanel->setApplyChangesImmediately(true);
-//    pqActiveObjects::instance().disconnect(this->Internal->displayPanel);
+
+    QObject::connect(this->Internal->displayPanel, SIGNAL(changeFinished()),
+      this->MainWindowCore, SLOT(requestRender()));
     }
 
   return this->Internal->displayPanel;
