@@ -52,7 +52,6 @@
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqObjectPanel.h"
 #include "pqOptions.h"
 #include "pqOutputWindow.h"
 #include "pqOutputPort.h"

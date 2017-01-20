@@ -1,50 +1,62 @@
-//=========================================================================
-//  Copyright (c) Kitware, Inc.
-//  All rights reserved.
-//  See LICENSE.txt for details.
-//
-//  This software is distributed WITHOUT ANY WARRANTY; without even
-//  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-//  PURPOSE.  See the above copyright notice for more information.
-//=========================================================================
-#include "pqPlanarTextureRegistrationPanel.h"
+/*=========================================================================
+
+   Program: ParaView
+   Module:  pqPlanarTextureRegistrationWidget.cxx
+
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
+   All rights reserved.
+
+   ParaView is a free software; you can redistribute it and/or modify it
+   under the terms of the ParaView license version 1.2.
+
+   See License_v1.2.txt for the full ParaView license.
+   A copy of this license can be obtained by contacting
+   Kitware Inc.
+   28 Corporate Drive
+   Clifton Park, NY 12065
+   USA
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+========================================================================*/
+#include "pqPlanarTextureRegistrationWidget.h"
 #include "pqPlanarTextureRegistrationDialog.h"
 
-#include "pqApplicationCore.h"
-#include "pqCollapsedGroup.h"
-#include "pqNamedWidgets.h"
-#include "pqOutputPort.h"
-#include "pqPipelineFilter.h"
-#include "pqPropertyManager.h"
 #include "pqActiveObjects.h"
-#include "pqRenderView.h"
-#include "pqSMAdaptor.h"
-#include "pqServerManagerObserver.h"
+#include "pqApplicationCore.h"
+#include "pqPipelineFilter.h"
+#include "pqPropertiesPanel.h"
 #include "pqPropertyLinks.h"
-
-#include "vtkSMDoubleVectorProperty.h"
-#include "vtkSMSourceProxy.h"
-#include "vtkPVDataInformation.h"
-#include "vtkSMStringVectorProperty.h"
-#include "vtkSMProxyIterator.h"
-#include "vtkNew.h"
+#include "pqProxyWidgetDialog.h"
+#include "pqRenderView.h"
+#include "pqServerManagerModel.h"
+#include "pqSMAdaptor.h"
 #include "vtkAlgorithm.h"
 #include "vtkImageData.h"
+#include "vtkPVXMLElement.h"
+#include "vtkSMProperty.h"
+#include "vtkSMProxy.h"
+#include "vtkSMProxyIterator.h"
 #include "vtkSMProxyManager.h"
-#include <vtksys/SystemTools.hxx>
 
 #include <QCheckBox>
-#include <QVBoxLayout>
-#include <QDialog>
-#include <QFileInfo>
+#include <QHBoxLayout>
+#include <QtDebug>
 
 #include "pqRepresentationHelperFunctions.h"
 using namespace RepresentationHelperFunctions;
 
-//////////////////////////////////////////////////////////////////////////////
-// pqPlanarTextureRegistrationPanel::pqImplementation
-
-class pqPlanarTextureRegistrationPanel::pqImplementation
+class pqPlanarTextureRegistrationWidget::pqImplementation
 {
 public:
   pqImplementation() : TextureControls(0)
@@ -80,7 +92,7 @@ public:
     return this->ImageTexture && !this->TextureFileName.isEmpty();
     }
 
-  /// Provides the Qt controls for the panel
+  /// Provides the Qt controls for the widget
   pqPlanarTextureRegistrationDialog* TextureControls;
   vtkSmartPointer<vtkSMProxy> ImageTexture;
   QString TextureFileName;
@@ -89,12 +101,20 @@ public:
   bool isSettingTexture;
 };
 
-pqPlanarTextureRegistrationPanel::pqPlanarTextureRegistrationPanel(pqProxy* object_proxy, QWidget* p) :
-  Superclass(object_proxy, p),
-  Implementation(new pqImplementation())
+//-----------------------------------------------------------------------------
+pqPlanarTextureRegistrationWidget::pqPlanarTextureRegistrationWidget(
+  vtkSMProxy* smproxy, vtkSMProperty*, QWidget* parentObject)
+  : Superclass(smproxy, parentObject),
+    Implementation(new pqImplementation())
 {
+  this->setShowLabel(false);
+
   pqRenderView* view = qobject_cast<pqRenderView*>(
     pqActiveObjects::instance().activeView());
+
+  pqProxy* object_proxy =
+    pqApplicationCore::instance()->getServerManagerModel()->
+    findItem<pqProxy*>(smproxy);
 
   pqPipelineFilter* filter = qobject_cast<pqPipelineFilter*>(object_proxy);
   pqDataRepresentation* inPlaneRep = filter->getInput(0)->getRepresentation(view);
@@ -104,17 +124,16 @@ pqPlanarTextureRegistrationPanel::pqPlanarTextureRegistrationPanel(pqProxy* obje
     }
 
   double bounds[6];
+
   GetRepresentationTransformedBounds(inPlaneRep, bounds);
 
   this->Implementation->TextureControls = new pqPlanarTextureRegistrationDialog(
-    object_proxy->getServer(), view, "Texture Registration", p);
+    pqActiveObjects::instance().activeServer(), view, "Texture Registration", parentObject);
   QObject::connect(this->Implementation->TextureControls, SIGNAL(removeCurrentTexture()),
     this, SLOT(unsetTextureMap()), Qt::QueuedConnection);
   QObject::connect(this->Implementation->TextureControls,
     SIGNAL(registerCurrentTexture(const QString&, int, double *)),
     this, SLOT(setTextureMap(const QString&, int, double*)), Qt::QueuedConnection);
-
-  //updateTextureList()
 
   QStringList textureslist;
   this->fetchTextureFiles(textureslist);
@@ -123,65 +142,47 @@ pqPlanarTextureRegistrationPanel::pqPlanarTextureRegistrationPanel(pqProxy* obje
     this->Implementation->RegistrationPoints,
     this->Implementation->NumberOfRegistrationPoints, true);
 
-  //this->Implementation->ControlsContainer.layout()->setMargin(0);
-  QVBoxLayout* const panel_layout = new QVBoxLayout(this);
-  //panel_layout->addWidget(&this->Implementation->ControlsContainer);
-  panel_layout->addWidget(this->Implementation->TextureControls->getMainDialog());
-  panel_layout->addStretch();
+  QVBoxLayout* const layout = new QVBoxLayout(this);
+  layout->addWidget(this->Implementation->TextureControls->getMainDialog());
+  layout->addStretch();
 
-  QObject::connect(this->propertyManager(), SIGNAL(accepted()),
-    this, SLOT(onAccepted()), Qt::QueuedConnection);
-  QObject::connect(this->propertyManager(), SIGNAL(rejected()),
-    this, SLOT(onRejected()), Qt::QueuedConnection);
+  this->connect(object_proxy, SIGNAL(producerChanged(const QString&)),
+                SLOT(updateEnableState()), Qt::QueuedConnection);
 
-/*
-  pqServerManagerObserver* observer =
-    pqApplicationCore::instance()->getServerManagerObserver();
-  QObject::connect(observer,
-    SIGNAL(proxyRegistered(const QString&, const QString&, vtkSMProxy*)),
-    this,
-    SLOT(proxyRegistered(const QString&)), Qt::QueuedConnection);
-  QObject::connect(observer,
-    SIGNAL(proxyUnRegistered(const QString&, const QString&, vtkSMProxy*)),
-    this,
-    SLOT(proxyUnRegistered(const QString&, const QString&, vtkSMProxy*)),
-    Qt::QueuedConnection);
-*/
-  pqNamedWidgets::link(
-    this->Implementation->TextureControls->getMainDialog(), this->proxy(), this->propertyManager());
-  QObject::connect(this->Implementation->TextureControls->getLinks(),
-    SIGNAL(qtWidgetChanged()), this, SLOT(setModified()), Qt::QueuedConnection);
-  QObject::connect(this->Implementation->TextureControls->getLinks(),
-    SIGNAL(smPropertyChanged()), this, SLOT(setModified()), Qt::QueuedConnection);
+  QObject::connect(this->Implementation->TextureControls, SIGNAL(dialogModified()), this, SIGNAL(changeAvailable()));
 
-  QObject::connect(object_proxy, SIGNAL(producerChanged(const QString&)),
-    this, SLOT(updateEnableState()), Qt::QueuedConnection);
   this->updateEnableState();
 
+  PV_DEBUG_PANELS() << "pqPlanarTextureRegistrationWidget.";
 }
 
-pqPlanarTextureRegistrationPanel::~pqPlanarTextureRegistrationPanel()
+//-----------------------------------------------------------------------------
+pqPlanarTextureRegistrationWidget::~pqPlanarTextureRegistrationWidget()
 {
   delete this->Implementation;
 }
+
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::onAccepted()
+void pqPlanarTextureRegistrationWidget::apply()
 {
   this->Implementation->TextureControls->apply();
+  this->pqPropertyWidget::apply();
 }
 
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::onRejected()
+void pqPlanarTextureRegistrationWidget::reset()
 {
   this->Implementation->TextureControls->getLinks()->reset();
 }
 
-void pqPlanarTextureRegistrationPanel::updateEnableState()
+//-----------------------------------------------------------------------------
+void pqPlanarTextureRegistrationWidget::updateEnableState()
 {
 
 }
+
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::unsetTextureMap()
+void pqPlanarTextureRegistrationWidget::unsetTextureMap()
 {
   this->Implementation->ClearTexture();
   if (vtkSMProperty* textureProp = this->getTextureProperty())
@@ -190,9 +191,8 @@ void pqPlanarTextureRegistrationPanel::unsetTextureMap()
     this->getRepresentation()->getProxy()->UpdateVTKObjects();
     }
 
-  vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
-                      "GenerateCoordinates").Set(0);
-  this->referenceProxy()->getProxy()->UpdateVTKObjects();
+  vtkSMPropertyHelper(this->proxy(), "GenerateCoordinates").Set(0);
+  this->proxy()->UpdateVTKObjects();
   if(this->getRepresentation())
     {
     this->Implementation->TextureControls->currentView()->forceRender();
@@ -200,7 +200,7 @@ void pqPlanarTextureRegistrationPanel::unsetTextureMap()
 }
 
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::setTextureMap(
+void pqPlanarTextureRegistrationWidget::setTextureMap(
   const QString& tmpfilename, int numberOfRegistrationPoints, double *points)
 {
   if(this->Implementation->isSettingTexture)
@@ -230,12 +230,7 @@ void pqPlanarTextureRegistrationPanel::setTextureMap(
     pqSMAdaptor::setElementProperty(
       this->Implementation->ImageTexture->GetProperty("FileName"),
       this->Implementation->TextureFileName);
-//    pqSMAdaptor::setEnumerationProperty(
-//      this->Implementation->ImageTexture->GetProperty("SourceProcess"), "Client");
     this->Implementation->ImageTexture->UpdateVTKObjects();
-//    QFileInfo finfo(this->Implementation->TextureFileName);
-//    pxm->RegisterProxy("textures", finfo.fileName().toAscii().data(),
-//      this->Implementation->ImageTexture);
     }
 
   if (vtkSMProperty* textureProp = this->getTextureProperty())
@@ -254,32 +249,29 @@ void pqPlanarTextureRegistrationPanel::setTextureMap(
     image->GetExtent(extents);
     ev[0] = extents[0];
     ev[1] = extents[1];
-    vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
-      "SRange").Set(ev, 2);
+    vtkSMPropertyHelper(this->proxy(), "SRange").Set(ev, 2);
     ev[0] = extents[2];
     ev[1] = extents[3];
-    vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
-      "TRange").Set(ev, 2);
+    vtkSMPropertyHelper(this->proxy(), "TRange").Set(ev, 2);
     }
 
   if (numberOfRegistrationPoints == 2)
     {
-    vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
+    vtkSMPropertyHelper(this->proxy(),
                         "TwoPointRegistration").Set(
                         this->Implementation->RegistrationPoints, 8);
     }
   else
     {
-    vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
+    vtkSMPropertyHelper(this->proxy(),
                         "ThreePointRegistration").Set(
                         this->Implementation->RegistrationPoints, 12);
     }
 
-  vtkSMPropertyHelper(this->referenceProxy()->getProxy(),
-                      "GenerateCoordinates").Set(1);
-  this->referenceProxy()->getProxy()->UpdateVTKObjects();
+  vtkSMPropertyHelper(this->proxy(), "GenerateCoordinates").Set(1);
+  this->proxy()->UpdateVTKObjects();
   vtkSMSourceProxy::SafeDownCast(
-    this->referenceProxy()->getProxy())->UpdatePipeline();
+    this->proxy())->UpdatePipeline();
   if(this->getRepresentation())
     {
     this->getRepresentation()->getProxy()->UpdateVTKObjects();
@@ -290,7 +282,7 @@ void pqPlanarTextureRegistrationPanel::setTextureMap(
 }
 
 //-----------------------------------------------------------------------------
-vtkSMProperty* pqPlanarTextureRegistrationPanel::getTextureProperty()
+vtkSMProperty* pqPlanarTextureRegistrationWidget::getTextureProperty()
   {
   vtkSMProperty* textureProperty(0);
   pqDataRepresentation* thisRep = this->getRepresentation();
@@ -302,11 +294,17 @@ vtkSMProperty* pqPlanarTextureRegistrationPanel::getTextureProperty()
   return textureProperty;
 }
 //-----------------------------------------------------------------------------
-pqDataRepresentation* pqPlanarTextureRegistrationPanel::getRepresentation()
+pqDataRepresentation* pqPlanarTextureRegistrationWidget::getRepresentation()
 {
   pqRenderView* view = this->Implementation->TextureControls->currentView();
-  pqPipelineFilter* filter = qobject_cast<pqPipelineFilter*>(
-    this->referenceProxy());
+
+  pqProxy* object_proxy =
+    pqApplicationCore::instance()->getServerManagerModel()->
+    findItem<pqProxy*>(this->proxy());
+
+  pqPipelineFilter* filter = qobject_cast<pqPipelineFilter*>(object_proxy);
+
+
   pqDataRepresentation* selfRep = filter->getRepresentation(view);
   if(!selfRep)
     {
@@ -317,7 +315,7 @@ pqDataRepresentation* pqPlanarTextureRegistrationPanel::getRepresentation()
 }
 
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::fetchTextureFiles(
+void pqPlanarTextureRegistrationWidget::fetchTextureFiles(
   QStringList & textureslist)
 {
   textureslist.clear();
@@ -338,7 +336,7 @@ void pqPlanarTextureRegistrationPanel::fetchTextureFiles(
 }
 
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::updateTextureList()
+void pqPlanarTextureRegistrationWidget::updateTextureList()
 {
   QStringList textureslist;
   this->fetchTextureFiles(textureslist);
@@ -346,7 +344,7 @@ void pqPlanarTextureRegistrationPanel::updateTextureList()
     textureslist, this->Implementation->TextureFileName);
 }
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::proxyRegistered(const QString& group)
+void pqPlanarTextureRegistrationWidget::proxyRegistered(const QString& group)
 {
   if (group == "textures")
     {
@@ -355,7 +353,7 @@ void pqPlanarTextureRegistrationPanel::proxyRegistered(const QString& group)
 }
 
 //-----------------------------------------------------------------------------
-void pqPlanarTextureRegistrationPanel::proxyUnRegistered(
+void pqPlanarTextureRegistrationWidget::proxyUnRegistered(
   const QString& group, const QString&, vtkSMProxy* /*proxy*/)
 {
   if (group == "textures")

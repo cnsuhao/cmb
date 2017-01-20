@@ -10,7 +10,6 @@
 #include "pqCMBLine.h"
 
 #include "pqApplicationCore.h"
-#include "pq3DWidgetFactory.h"
 #include "pqCMBLineWidget.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"

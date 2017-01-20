@@ -7,28 +7,27 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+#ifndef pqPlanarTextureRegistrationWidget_h
+#define pqPlanarTextureRegistrationWidget_h
 
-#ifndef _pqPlanarTextureRegistrationPanel_h
-#define _pqPlanarTextureRegistrationPanel_h
+#include "pqComponentsModule.h"
+#include "pqPropertyWidget.h"
+#include "pqSMProxy.h"
 
-#include "pqObjectPanel.h"
-#include "cmbSystemConfig.h"
+#include "pqPlanarTextureRegistrationDialog.h"
 
 class vtkSMProperty;
 class pqDataRepresentation;
+class pqProxyWidgetDialog;
 
-/// Custom panel for the planar texture registration filter
-class pqPlanarTextureRegistrationPanel : public pqObjectPanel
+class PQCOMPONENTS_EXPORT pqPlanarTextureRegistrationWidget : public pqPropertyWidget
 {
-  typedef pqObjectPanel Superclass;
-
   Q_OBJECT
+  typedef pqPropertyWidget Superclass;
 
 public:
-  pqPlanarTextureRegistrationPanel(pqProxy* proxy, QWidget* p);
-  ~pqPlanarTextureRegistrationPanel() override;
-
-public slots:
+  pqPlanarTextureRegistrationWidget(vtkSMProxy* proxy, vtkSMProperty* smproperty, QWidget* parent = 0);
+  virtual ~pqPlanarTextureRegistrationWidget();
 
 protected:
   vtkSMProperty* getTextureProperty();
@@ -36,16 +35,12 @@ protected:
   void updateTextureList();
   void fetchTextureFiles(QStringList & textureFiles);
 
-private slots:
   /// Called if the user accepts pending modifications
-  virtual void onAccepted();
+  virtual void apply();
   /// Called if the user rejects pending modifications
-  virtual void onRejected();
+  virtual void reset();
 
-  /// Called if the user accepts pending modifications
-  //void onAccepted();
-  /// Called if the user rejects pending modifications
-  //void onRejected();
+ private slots:
   /// Called to update the enable state for certain widgets.
   void updateEnableState();
 
@@ -57,9 +52,14 @@ private slots:
   /// method explicitly.
   void proxyRegistered(const QString& group);
   void proxyUnRegistered( const QString& group, const QString&, vtkSMProxy* proxy);
+
 private:
+  Q_DISABLE_COPY(pqPlanarTextureRegistrationWidget)
+
   class pqImplementation;
   pqImplementation* const Implementation;
+
+  QString PropertyName;
 };
 
 #endif

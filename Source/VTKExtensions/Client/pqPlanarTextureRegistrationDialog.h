@@ -72,6 +72,7 @@ signals:
   void registerCurrentTexture(
     const QString& filename, int numberOfRegistrationPoints,
     double *points);
+  void dialogModified();
 
 public slots:
   int exec();

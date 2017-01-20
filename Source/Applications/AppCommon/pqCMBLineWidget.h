@@ -11,7 +11,7 @@
 #define __pqCMBLineWidget_h
 
 #include "cmbAppCommonExport.h"
-#include "pqLineWidget.h"
+#include "smtk/extension/paraview/widgets/pqLineWidget.h"
 #include "cmbSystemConfig.h"
 
 class CMBAPPCOMMON_EXPORT pqCMBLineWidget : public pqLineWidget

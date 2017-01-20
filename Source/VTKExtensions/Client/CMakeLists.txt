@@ -59,54 +59,31 @@ qt4_wrap_ui(UI_BUILT_SRCS
 #we can't use automoc since paraview plugin macro generated headers
 #will be mocced twice
 qt4_wrap_cpp(MOC_SRCS
-  pqBandedPolyDataContourPanel.h
   pqCMBTabWidgetTranslator.h
-  pqCMBMeshReaderPanel.h
   pqCMBPluginStarter.h
-  pqCMBStreamTracerPanel.h
   pqGeneralTransferFunctionWidget.h
+  pqPlanarTextureRegistrationWidget.h
   pqPlanarTextureRegistrationDialog.h
-  pqPlanarTextureRegistrationPanel.h
 )
 
 # We need this to call "vtkVTKExtensionsCS_Initialize(pm->GetInterpreter())"
 # so that the vtkProcessModule's interpreter is exposed to these classes
-# NOTE: This will not work in real cliet-server mode. According to Utkarsh,
+# NOTE: This will not work in real client-server mode. According to Utkarsh,
 # more magic needs to happen for client-server mode to work
 #
 add_paraview_auto_start(IFACES1 IFACE_SRCS1 CLASS_NAME pqCMBPluginStarter
                         STARTUP onStartup
                         SHUTDOWN onShutdown)
 
-add_paraview_object_panel(IFACES2 IFACE_SRCS2
-  CLASS_NAME pqCMBMeshReaderPanel
-  XML_NAME CMBMeshReader
-  XML_GROUP sources
-)
-add_paraview_object_panel(IFACES3 IFACE_SRCS3
-  CLASS_NAME pqCMBStreamTracerPanel
-  XML_NAME CMBStreamTracer
-  XML_GROUP filters
-)
-add_paraview_object_panel(IFACES4 IFACE_SRCS4
-  CLASS_NAME pqBandedPolyDataContourPanel
-  XML_NAME BandedPolyDataContourFilter
-  XML_GROUP filters
-)
-add_paraview_object_panel(IFACES5 IFACE_SRCS5
-  CLASS_NAME pqPlanarTextureRegistrationPanel
-  XML_NAME RegisterPlanarTextureMapFilter
-  XML_GROUP filters
-)
+add_paraview_property_widget(IFACES2 IFACE_SRCS2
+                             TYPE "PlanarTextureRegistration"
+                             CLASS_NAME "pqPlanarTextureRegistrationWidget")
 
 set(PANEL_SRC
-  pqBandedPolyDataContourPanel.cxx
   pqCMBTabWidgetTranslator.cxx
-  pqCMBMeshReaderPanel.cxx
-  pqCMBStreamTracerPanel.cxx
   pqGeneralTransferFunctionWidget.cxx
+  pqPlanarTextureRegistrationWidget.cxx
   pqPlanarTextureRegistrationDialog.cxx
-  pqPlanarTextureRegistrationPanel.cxx
 )
 
 add_paraview_plugin(CMB_Plugin "1.0"
@@ -117,18 +94,12 @@ add_paraview_plugin(CMB_Plugin "1.0"
   GUI_INTERFACES
     ${IFACES1}
     ${IFACES2}
-    ${IFACES3}
-    ${IFACES4}
-    ${IFACES5}
   GUI_SOURCES
     pqCMBPluginStarter.cxx
     ${UI_BUILT_SRCS}
     ${MOC_SRCS}
     ${IFACE_SRCS1}
     ${IFACE_SRCS2}
-    ${IFACE_SRCS3}
-    ${IFACE_SRCS4}
-    ${IFACE_SRCS5}
     ${PANEL_SRC}
   CS_KITS
     vtkSMTKFilterExt

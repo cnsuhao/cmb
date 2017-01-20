@@ -47,7 +47,6 @@ set(UI_FORMS
     UI/qtCMBSceneObjectFilterDialog.ui
     UI/qtCMBStackedTINDialog.ui
     UI/pqContourWidget.ui
-    UI/pqLineWidget.ui
     UI/qtArcEditWidget.ui
     UI/pqCMBFileDialog.ui
     )
@@ -98,10 +97,7 @@ set(dynamicHeaders
   "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h")
 
 add_library(cmbAppCommon
-  pq3DWidget.cxx
-  pq3DWidgetInterface.cxx
   pqContourWidget.cxx
-  pqLineWidget.cxx
   pqCMBLoadDataReaction.cxx
   pqCMBLoadDataReaction.h
   pqPluginIOBehavior.cxx
@@ -255,6 +251,7 @@ target_link_libraries(cmbAppCommon
 #    vtkCMBMeshing # required by pqCMBSceneNode.cxx
 #    vtkIOXMLParser
     CMB_Plugin
+    smtkPQWidgetsExt
   LINK_PRIVATE
     QtTesting
     RemusClient

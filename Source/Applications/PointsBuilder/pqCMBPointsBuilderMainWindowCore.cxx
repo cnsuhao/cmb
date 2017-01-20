@@ -69,7 +69,6 @@
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqObjectPanel.h"
 #include "pqOutputWindow.h"
 #include "pqRecentlyUsedResourcesList.h"
 #include "pqGeneralTransferFunctionWidget.h"
@@ -97,7 +96,6 @@
 #include "pqView.h"
 #include "pqSaveSnapshotDialog.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
-#include "pq3DWidgetFactory.h"
 #include <pqFileDialog.h>
 #include "pqCMBProcessWidget.h"
 #include <qtCMBProgressWidget.h>
