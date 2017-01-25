@@ -2225,7 +2225,7 @@ The Cone source can be used to add a polygonal cone to the 3D scene. The output 
     </SourceProxy>
 
     <SourceProxy name="CmbSmoothMeshFilter" class="vtkCMBSmoothMeshFilter"
-                 label="Smooth">
+                 label="Smooth Mesh">
       <Documentation
          long_help="This filter smooths the polygonal surface of a mesh by iteratively moving points toward their neighbors."
          short_help="Smooth a polygonal surface without adding more points.">
@@ -2244,7 +2244,7 @@ The Cone source can be used to add a polygonal cone to the 3D scene. The output 
           <DataType value="vtkDataSet"/>
         </DataTypeDomain>
         <Documentation>
-          This property specifies the input to the Smooth filter.
+          This property specifies the input to the Smooth Mesh filter.
         </Documentation>
       </InputProperty>
       <InputProperty name="Selection"
