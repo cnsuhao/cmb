@@ -606,7 +606,7 @@ void pqCMBMeshViewerMainWindowCore::createFilters(pqPipelineSource* source)
   this->setInputArray(this->Internal->MeshThresholdSource,
     "SelectInputScalars", vtkMultiBlockWrapper::GetShellTagName());
 
-  this->Internal->MeshQualitySource = this->createFilter("GMSMeshQuality",
+  this->Internal->MeshQualitySource = this->createFilter("MeshQuality",
     this->Internal->MeshThresholdSource);
 
   this->Internal->QualityThreshSource = this->createFilter("Threshold",
