@@ -8591,7 +8591,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
           <Property name="Origin" />
           <Property name="NormalInfo" />
           <Property name="Normal" />
-          <Property name="PlaceWidget" />
           <Property name="Visibility" />
           <Property name="PlaceFactor" />
         </ExposedProperties>
@@ -8682,7 +8681,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
         </Proxy>
         <ExposedProperties>
           <Property name="EnableLogging" />
-          <Property name="PlaceWidget" />
           <Property name="Visibility" />
           <Property name="PointPlacer" />
           <Property name="LineInterpolator" />
