@@ -10,6 +10,8 @@
 #ifndef pqPlanarTextureRegistrationWidget_h
 #define pqPlanarTextureRegistrationWidget_h
 
+#include "vtkCMBClientModule.h" // For export macro
+
 #include "pqComponentsModule.h"
 #include "pqPropertyWidget.h"
 #include "pqSMProxy.h"
@@ -20,7 +22,7 @@ class vtkSMProperty;
 class pqDataRepresentation;
 class pqProxyWidgetDialog;
 
-class PQCOMPONENTS_EXPORT pqPlanarTextureRegistrationWidget : public pqPropertyWidget
+class VTKCMBCLIENT_EXPORT pqPlanarTextureRegistrationWidget : public pqPropertyWidget
 {
   Q_OBJECT
   typedef pqPropertyWidget Superclass;
