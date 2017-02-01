@@ -35,6 +35,7 @@
 #include "pqPropertyLinks.h"
 #include "pqRecentFilesMenu.h"
 #include "pqRenderView.h"
+#include "pqRenderViewSelectionReaction.h"
 #include "pqDisplayRepresentationWidget.h"
 #include "pqCMBRubberBandHelper.h"
 #include "pqScalarBarRepresentation.h"
@@ -593,6 +594,12 @@ void pqCMBCommonMainWindow::initMainWindowCore()
                        pqCameraReaction::ROTATE_CAMERA_CCW);
   new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_ccw,
                        pqCameraReaction::ROTATE_CAMERA_CW);
+  // Set up Zoom to Box
+  new pqRenderViewSelectionReaction(this->Internal->UI.actionZoomToBox,
+                       NULL, pqRenderViewSelectionReaction::ZOOM_TO_BOX);
+  // Set up Zoom to Selection
+  QObject::connect(this->Internal->UI.actionZoomToSelection, SIGNAL(triggered()),
+                   this->MainWindowCore, SLOT(zoomToSelection()));
   //Set up Axes Grid bar
   QObject::connect(
         this->Internal->UI.actionAxesGrid, SIGNAL(toggled(bool)),
@@ -748,43 +755,6 @@ bool pqCMBCommonMainWindow::compareView(const QString& ReferenceImage,
 {
   return this->MainWindowCore->compareView(
     ReferenceImage, Threshold, Output, TempDirectory);
-}
-
-//----------------------------------------------------------------------------
-void pqCMBCommonMainWindow::setupZoomToBox()
-{
-  QObject::connect(this->MainWindowCore->renderViewSelectionHelper(),
-                   SIGNAL(selectionModeChanged(int)),
-                   this, SLOT(onSelectionModeChanged(int)));
-  QObject::connect(
-                   this->MainWindowCore->renderViewSelectionHelper(),
-                   SIGNAL(enableZoom(bool)),
-                   this->Internal->UI.actionZoomToBox, SLOT(setEnabled(bool)));
-  QObject::connect(
-                   this->Internal->UI.actionZoomToBox, SIGNAL(triggered()),
-                   this->MainWindowCore->renderViewSelectionHelper(), SLOT(beginZoom()));
-}
-
-//----------------------------------------------------------------------------
-// Update "Select" action with the status of the rubber band.
-void pqCMBCommonMainWindow::onSelectionModeChanged(int mode)
-{
-  if (mode == pqCMBRubberBandHelper::INTERACT)
-    {
-    if(this->Internal->UI.action_Select->isChecked())
-      {
-      this->updateSelection();
-      this->Internal->UI.action_Select->setChecked(false);
-      }
-    }
-  else if(mode != pqCMBRubberBandHelper::ZOOM)
-    {
-    this->Internal->UI.action_Select->setChecked(true);
-    }
-
-  this->Internal->UI.actionZoomToBox->setChecked(
-    mode == pqCMBRubberBandHelper::ZOOM);
-
 }
 
 //----------------------------------------------------------------------------

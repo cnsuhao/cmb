@@ -123,7 +123,6 @@ pqCMBSceneBuilderMainWindow::pqCMBSceneBuilderMainWindow():
   Internal(new vtkInternal(this))
 {
   this->initializeApplication();
-  this->setupZoomToBox();
   this->setupMenuActions();
   this->updateEnableState();
   this->initProjectManager();
@@ -778,40 +777,6 @@ void pqCMBSceneBuilderMainWindow::onRubberBandSelect(bool checked)
   //  }
 
   this->getThisCore()->onRubberBandSelect(checked);
-}
-
-//----------------------------------------------------------------------------
-// Update "Select" action with the status of the rubber band.
-void pqCMBSceneBuilderMainWindow::onSelectionModeChanged(int mode)
-{
-  if (mode == pqCMBRubberBandHelper::INTERACT)
-    {
-    if(this->getMainDialog()->action_SelectPoints->isChecked())
-      {
-      this->updateSelection();
-      this->getMainDialog()->action_SelectPoints->setChecked(false);
-      }
-    else if(this->getMainDialog()->action_Select->isChecked())
-      {
-      this->updateSelection();
-      this->getMainDialog()->action_Select->setChecked(false);
-      }
-    }
-  else if(mode != pqCMBRubberBandHelper::ZOOM)
-    {
-    if(mode == pqCMBRubberBandHelper::SELECT_POINTS)
-      {
-      this->getMainDialog()->action_SelectPoints->setChecked(true);
-      }
-    else
-      {
-      this->getMainDialog()->action_Select->setChecked(true);
-      }
-    }
-
-  this->getMainDialog()->actionZoomToBox->setChecked(
-    mode == pqCMBRubberBandHelper::ZOOM);
-
 }
 
 //-----------------------------------------------------------------------------

@@ -147,7 +147,6 @@ pqCMBMeshViewerMainWindow::pqCMBMeshViewerMainWindow():
   Internal(new vtkInternal())
 {
   this->initializeApplication();
-  this->setupZoomToBox();
   this->setupMenuActions();
   this->updateEnableState();
   this->MainWindowCore->applyAppSettings();
@@ -448,57 +447,6 @@ void pqCMBMeshViewerMainWindow::onFilterPropertiesModified(bool modifed)
     pushButton_Apply->setEnabled(modifed);
   this->Internal->MeshViewerPanel->getGUIPanel()->
     pushButton_Reset->setEnabled(modifed);
-}
-
-//----------------------------------------------------------------------------
-// Update "Select" action with the status of the rubber band.
-void pqCMBMeshViewerMainWindow::onSelectionModeChanged(int mode)
-{
-  if (mode == pqCMBRubberBandHelper::INTERACT)
-    {
-    if(this->getMainDialog()->action_SelectThrough->isVisible() &&
-      this->getMainDialog()->action_SelectThrough->isChecked())
-      {
-      //this->updateSelection();
-      this->getMainDialog()->action_SelectThrough->setChecked(false);
-      }
-    else if(this->getMainDialog()->action_Select->isVisible() &&
-      this->getMainDialog()->action_Select->isChecked())
-      {
-      //this->updateSelection();
-      this->getMainDialog()->action_Select->setChecked(false);
-      }
-    else if(this->getMainDialog()->action_SelectPoints->isVisible() &&
-      this->getMainDialog()->action_SelectPoints->isChecked())
-      {
-      //this->updateSelection();
-      this->getMainDialog()->action_SelectPoints->setChecked(false);
-      }
-    }
-  else if(mode == pqCMBRubberBandHelper::SELECT_POINTS)
-    {
-    if(this->getMainDialog()->action_SelectPoints->isVisible())
-      {
-      this->getMainDialog()->action_SelectPoints->setChecked(true);
-      }
-    }
-  else if(mode == pqCMBRubberBandHelper::SELECT)
-    {
-    if(this->getMainDialog()->action_Select->isVisible())
-      {
-      this->getMainDialog()->action_Select->setChecked(true);
-      }
-    }
-  else if(mode == pqCMBRubberBandHelper::FRUSTUM)
-    {
-    if(this->getMainDialog()->action_SelectThrough->isVisible())
-      {
-      this->getMainDialog()->action_SelectThrough->setChecked(true);
-      }
-    }
-  this->getMainDialog()->actionZoomToBox->setChecked(
-    mode == pqCMBRubberBandHelper::ZOOM);
-
 }
 
 //----------------------------------------------------------------------------

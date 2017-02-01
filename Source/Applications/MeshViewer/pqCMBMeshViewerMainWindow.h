@@ -48,7 +48,6 @@ public slots:
 
   void onMeshLoaded();
   void onMeshModified();
-  void onSelectionModeChanged(int) override;
   void onFilterPropertiesModified(bool);
   void updateChangeMaterialButton();
   void setSelectionMode();

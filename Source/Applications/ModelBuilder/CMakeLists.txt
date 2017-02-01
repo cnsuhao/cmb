@@ -418,6 +418,8 @@ endif()
     AuxGeoTif
     AuxGeoDEM
     DeleteAuxGeom
+    ZoomToSelectionCMB
+    ZoomToSelectionSTP
     )
 
   set (TESTS_WITHOUT_BASELINES

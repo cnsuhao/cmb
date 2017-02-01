@@ -114,7 +114,6 @@ pqCMBPointsBuilderMainWindow::pqCMBPointsBuilderMainWindow():
   Internal(new vtkInternal(this))
 {
   this->initializeApplication();
-  this->setupZoomToBox();
   this->setupMenuActions();
   this->updateEnableState();
   this->initProjectManager();

@@ -40,6 +40,7 @@
 #include "pqApplicationCore.h"
 #include "qtCMBApplicationOptionsDialog.h"
 #include "pqCameraDialog.h"
+#include "pqCameraReaction.h"
 #include "pqCoreUtilities.h"
 #include "pqCustomFilterDefinitionModel.h"
 #include "pqCustomFilterDefinitionWizard.h"
@@ -154,6 +155,8 @@
 #include "QVTKWidget.h"
 #include "qtCMBApplicationOptions.h"
 #include "pqImageUtil.h"
+
+#include "smtk/extension/qt/qtSelectionManager.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -345,6 +348,7 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
 
   core->testUtility()->eventPlayer()->addWidgetEventPlayer(
              new pqCMBFileDialogEventPlayer(core->testUtility() ));
+  this->qtSelectionMgr = new smtk::extension::qtSelectionManager();
 
 }
 
@@ -353,6 +357,7 @@ pqCMBCommonMainWindowCore::~pqCMBCommonMainWindowCore()
 {
   pqActiveObjects::instance().setActiveView(NULL);
   delete Internal;
+  delete this->qtSelectionMgr;
 }
 
 //-----------------------------------------------------------------------------
@@ -412,6 +417,12 @@ void pqCMBCommonMainWindowCore::buildRenderWindowContextMenuBehavior(QObject *pa
 pqSelectionManager* pqCMBCommonMainWindowCore::selectionManager()
 {
   return pqPVApplicationCore::instance()->selectionManager();
+}
+
+//-----------------------------------------------------------------------------
+smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::qtSelectionManager() const
+{
+  return this->qtSelectionMgr;
 }
 
 //-----------------------------------------------------------------------------
@@ -1581,6 +1592,14 @@ void pqCMBCommonMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->resetCamera();
 }
+
+  /******************   Zoom to Selection           ************************/
+bool pqCMBCommonMainWindowCore::zoomToSelection()
+{
+  pqCameraReaction::zoomToData();
+  return true;
+}
+  /******************   Zoom to Selection           ************************/
 
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setCenterAxesVisibility(bool visible)

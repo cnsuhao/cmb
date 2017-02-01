@@ -41,7 +41,6 @@ public slots:
   void onSceneLoaded();
   void onSceneSaved();
   void onSelectGlyph(bool checked);
-  void onSelectionModeChanged(int) override;
   void setToolbarsEnabled(bool enable);
 
 protected slots:

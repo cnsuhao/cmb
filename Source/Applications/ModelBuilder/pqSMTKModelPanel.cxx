@@ -16,6 +16,7 @@
 #include "smtk/extension/qt/qtModelOperationWidget.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelPanel.h"
+#include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
@@ -50,7 +51,6 @@
 #include <pqPipelineSource.h>
 #include <pqOutputPort.h>
 #include <pqApplicationCore.h>
-#include <pqSelectionManager.h>
 #include <pqTimer.h>
 #include "pqCMBModelManager.h"
 #include "pqSMTKModelInfo.h"
@@ -95,6 +95,7 @@ public:
   QPointer<qtModelPanel> ModelPanel;
   bool ModelLoaded;
   QPointer<pqCMBModelManager> smtkManager;
+  QPointer<qtSelectionManager> selectionManager;
   bool ignorePropertyChange;
 
   // [meshItem, <opName, sessionId>]
@@ -142,12 +143,14 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
+pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p,
+                                   smtk::extension::qtSelectionManager* qtSelMgr)
 : QDockWidget(p)
 {
   this->Internal = new pqSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
+  this->Internal->selectionManager= qtSelMgr;
 
   this->resetUI();
 }
@@ -218,13 +221,6 @@ void pqSMTKModelPanel::resetUI()
     {
     this->Internal->ModelPanel = new qtModelPanel(this);
     this->setWidget(this->Internal->ModelPanel);
-    QObject::connect(this->Internal->ModelPanel->getModelView(),
-      SIGNAL(selectionChanged(const smtk::model::EntityRefs&,
-       const smtk::mesh::MeshSets& ,
-       const smtk::model::DescriptivePhrases&)),
-      this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
-       const smtk::mesh::MeshSets& ,
-       const smtk::model::DescriptivePhrases& )));
 
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(fileItemCreated(smtk::extension::qtFileItem*)),
@@ -252,6 +248,33 @@ void pqSMTKModelPanel::resetUI()
       SLOT(updateMeshSelection(
            const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*)));
 
+    // Selection manager related
+    // select from rendering window
+    QObject::connect(this,
+       SIGNAL(sendSelectedItemsToSelectionManager(const smtk::common::UUIDs&,
+        const smtk::mesh::MeshSets&)),this->Internal->selectionManager,
+              SLOT(updateSelectedItems(const smtk::common::UUIDs&,
+                                                const smtk::mesh::MeshSets&)));
+    QObject::connect(this->Internal->selectionManager,
+              SIGNAL(broadcastToModelTree(const smtk::common::UUIDs&,
+      const smtk::mesh::MeshSets&, bool)), this->Internal->ModelPanel
+       ->getModelView(), SLOT(selectItems(const smtk::common::UUIDs&,
+      const smtk::mesh::MeshSets&, bool)));
+    // select from tree view
+    QObject::connect(this->Internal->ModelPanel->getModelView(),
+      SIGNAL(selectionChanged(const smtk::model::EntityRefs&,
+       const smtk::mesh::MeshSets& ,
+       const smtk::model::DescriptivePhrases&)),
+      this->Internal->selectionManager, SLOT(updateSelectedItems(
+       const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+               const smtk::model::DescriptivePhrases&)));
+    QObject::connect(this->Internal->selectionManager,
+      SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&,
+       const smtk::mesh::MeshSets&,
+       const smtk::model::DescriptivePhrases&)),
+      this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
+       const smtk::mesh::MeshSets& ,
+       const smtk::model::DescriptivePhrases& )));
     }
 
 //  this->linkRepresentations();
@@ -409,9 +432,12 @@ void pqSMTKModelPanel::updateTreeSelection()
       this->Internal->smtkManager->auxGeoRelatedEntities(auxinfo->URL);
     uuids.insert(entities.begin(), entities.end());
     }
-
+  /************************************************************************/
+  // fire a signal to SM to update uuid and meshes
   // select model entities, meshes and entity properties
-  this->modelView()->selectItems(uuids, meshes, true); // block selection signal
+  emit sendSelectedItemsToSelectionManager(uuids,meshes);
+  /************************************************************************/
+  //this->modelView()->selectItems(uuids, meshes, true); // block selection signal
 }
 
 //----------------------------------------------------------------------------
@@ -634,6 +660,13 @@ void pqSMTKModelPanel::resetMeshSelectionItems()
     this->Internal->SelectionOperations.keys())
     if(meshItem)
       meshItem->resetSelectionState();
+}
+
+//----------------------------------------------------------------------------
+smtk::extension::qtSelectionManager* pqSMTKModelPanel::SelectionManager() const
+{
+  return this->Internal->selectionManager;
+
 }
 
 //----------------------------------------------------------------------------
