@@ -1296,8 +1296,12 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
     return false;
     }
 
-  // update the icons and color swatches on model tree view.
-  this->modelPanel()->modelView()->updateWithOperatorResult(sref, result);
+  smtk::extension::qtModelView* modelTree = this->modelPanel()->modelView();
+  if (modelTree)
+    {
+    // update the icons and color swatches on model tree view.
+    modelTree->updateWithOperatorResult(sref, result);
+    }
   this->modelPanel()->update();
 
   // FIXME, we need more info regarding what changed in the result entities,
