@@ -1,15 +1,6 @@
-
-#make sure we use the same qt as paraview
-set(QT_QMAKE_EXECUTABLE ${PARAVIEW_QT_QMAKE_EXECUTABLE})
-set(QT_USE_IMPORTED_TARGETS TRUE)
-set(QT_USE_QTMAIN TRUE)
 find_package(Qt4 REQUIRED COMPONENTS QtXml QtNetwork QtCore QtGui QtMain)
-
-# This ensures that the Qt includes dir etc are set properly.
-# We don't need to find the Qt4 package or include the use file
-# in any of the SUBDIRS in this directory.
-include(${QT_USE_FILE})
-
+pv_find_package_qt(qt_targets REQUIRED
+  QT4_COMPONENTS QtXml QtNetwork QtCore QtGui QtMain)
 
 set(test_source_directories "${ParaView_SOURCE_DIR}/Qt/Testing")
 set(test_build_directories "${ParaView_DIR}/Qt/Testing")

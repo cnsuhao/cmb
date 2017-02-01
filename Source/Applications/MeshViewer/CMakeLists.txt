@@ -13,7 +13,7 @@ set(UI_FORMS
   qtMeshViewerPanel.ui
   )
 
-qt4_wrap_ui(UI_BUILT_SOURCES
+pv_qt_wrap_ui(UI_BUILT_SOURCES
   ${UI_FORMS}
   )
 
@@ -22,7 +22,7 @@ set(UI_RESOURCES
   ../Resources/Resources.qrc
   )
 
-qt4_add_resources(RCS_SOURCES
+pv_qt_add_resources(RCS_SOURCES
   ${UI_RESOURCES}
   )
 

@@ -29,8 +29,8 @@ include_directories(
   )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-QT4_WRAP_UI(UISrcs grabCuts.ui)
-QT4_WRAP_CPP(MOCSrcs vtkCMBGrabCutUI.h)
+pv_qt_wrap_ui(UISrcs grabCuts.ui)
+pv_qt_wrap_cpp(MOCSrcs vtkCMBGrabCutUI.h)
 
 #we include headers, so that MSVC on "Go To Header File" context menu  works properly
 set(GrabCuts_SRCS vtkCMBGrabCutUI.cxx)
