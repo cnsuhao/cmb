@@ -426,6 +426,7 @@ endif()
     AboutDialog
     HelpDialog
     AttributeOptionalItemUI
+    LoadCRFWithoutModel
     )
 
   set (TEST_WITH_POSTPROCESS
