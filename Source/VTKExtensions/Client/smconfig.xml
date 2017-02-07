@@ -500,7 +500,8 @@
         <BooleanDomain name="bool"/>
       </IntVectorProperty>
       <Hints>
-        <ReaderFactory extensions="2dm 3dm bin bin.pts fac obj poly smesh pts sol stl tin"
+        <ReaderFactory extensions="2dm 3dm bin bin.pts fac obj poly
+				   smesh pts sol stl tin xyz"
                        file_description="CMB Point, Edge and Surface Geometry Files" />
       </Hints>
     </SourceProxy>
@@ -899,7 +900,7 @@
       label="LIDAR reader">
       <Documentation
         short_help="Read LIDAR input file">
-        long_help="Read a file of format (pts bin.pts or bin) for LIDAR object"
+        long_help="Read a file of format (pts xyz bin.pts or bin) for LIDAR object"
       </Documentation>
 
       <DoubleVectorProperty
@@ -1069,7 +1070,7 @@
         command="ClearTransform">
       </Property>
       <Hints>
-        <ReaderFactory extensions="pts bin.pts bin"
+        <ReaderFactory extensions="pts bin.pts bin xyz"
                        file_description="LIDAR Files" />
       </Hints>
     </SourceProxy>
@@ -7435,7 +7436,7 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
       label="LIDAR Pts Writer">
       <Documentation
         short_help="Write LIDAR pts file">
-        long_help="Read a file of format (pts bin.pts or bin) for LIDAR object"
+        long_help="Write a file of format (pts bin.pts or bin) for LIDAR object"
       </Documentation>
       <InputProperty
         name="Input"
