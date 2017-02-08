@@ -42,6 +42,17 @@ qtCMBProfileWedgeFunctionWidget
   connect(this->UI->WeightingSplineControl, SIGNAL(toggled(bool)),
           this, SLOT(weightSplineBox(bool)));
 
+  this->UI->weightingChartFrame->setVisible(false);
+  this->UI->WeightRange->setVisible(false);
+  this->UI->WeightingSplineControl->setVisible(false);
+
+  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
+          this->UI->weightingChartFrame, SLOT(setVisible(bool)));
+  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
+          this->UI->WeightRange, SLOT(setVisible(bool)));
+  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
+          this->UI->WeightingSplineControl, SLOT(setVisible(bool)));
+
   {
     QGridLayout* gridlayout = new QGridLayout(this->UI->weightingChartFrame);
     gridlayout->setMargin(0);

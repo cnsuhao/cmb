@@ -30,6 +30,16 @@ qtCMBManualFunctionWidget
           this, SLOT(dispSplineBox(bool)));
   connect(this->Ui->WeightingSplineControl, SIGNAL(toggled(bool)),
           this, SLOT(weightSplineBox(bool)));
+  this->Ui->weightingChartFrame->setVisible(false);
+  this->Ui->WeightRange->setVisible(false);
+  this->Ui->WeightingSplineControl->setVisible(false);
+
+  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
+          this->Ui->weightingChartFrame, SLOT(setVisible(bool)));
+  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
+          this->Ui->WeightRange, SLOT(setVisible(bool)));
+  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
+          this->Ui->WeightingSplineControl, SLOT(setVisible(bool)));
   {
     QGridLayout* gridlayout = new QGridLayout(this->Ui->displacementChartFrame);
     gridlayout->setMargin(0);
