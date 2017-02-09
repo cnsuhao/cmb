@@ -80,6 +80,7 @@ public:
   QList<pqSMTKModelInfo*> allModels() const;
 
   int numberOfModels();
+  int numberOfRemoteSessions();
 
   QList<pqDataRepresentation*> modelRepresentations() const;
 
