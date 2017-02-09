@@ -917,6 +917,13 @@ vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
   return this->Internal->ManagerProxy;
 }
 
+//----------------------------------------------------------------------------
+int pqCMBModelManager::numberOfRemoteSessions()
+{
+  return this->Internal->ManagerProxy ?
+    this->Internal->ManagerProxy->numberOfRemoteSessions() : 0;
+}
+
 // This will recursively check the submodels of the input model
 //-----------------------------------------------------------------------------
 pqSMTKModelInfo* internal_getModelInfo(

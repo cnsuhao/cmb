@@ -469,9 +469,11 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::updateEnableState()
 {
+  bool sessions_open = this->getThisCore()->modelManager()
+    ->numberOfRemoteSessions() > 0;
   bool model_loaded = this->getThisCore()->modelManager()
     ->numberOfModels() > 0;
-  this->updateEnableState(model_loaded);
+  this->updateEnableState(sessions_open);
 
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
@@ -493,7 +495,6 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
     this->getMainDialog()->faceParametersDock->setEnabled(true);
     this->getMainDialog()->action_Close->setEnabled(true);
     }
-
 }
 
 //----------------------------------------------------------------------------

@@ -51,6 +51,8 @@ public:
   smtk::model::ManagerPtr modelManager();
   void endSessions();
   bool validSession(const smtk::common::UUID& sessionId);
+  int numberOfRemoteSessions() const
+    { return static_cast<int>(this->m_remoteSessionIds.size()); }
 
   void connectProxyToManager(vtkSMProxy* sourceProxy);
 
