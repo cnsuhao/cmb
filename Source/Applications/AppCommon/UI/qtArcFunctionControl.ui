@@ -525,7 +525,7 @@
             <widget class="QDoubleSpinBox" name="SearchRadius">
              <property name="toolTip">
               <string>Controls the search radius for the data points used in computing the z value of the grid point. 
-Larger the radius, the more points used to compute z value.  More points results in smoothing 
+Larger the radius, the more points used to compute z value.  More points result in smoothing 
 and slower runtimes.  Too few points result in gaps in the estimation of change.</string>
              </property>
             </widget>
@@ -534,7 +534,7 @@ and slower runtimes.  Too few points result in gaps in the estimation of change.
             <widget class="QDoubleSpinBox" name="SamplingSize">
              <property name="toolTip">
               <string>The distance between grid points.  Smaller spacing results in more points.  
-This results in more accurate eximation but slower run time.</string>
+This results in more accurate estimation but slower run time.</string>
              </property>
             </widget>
            </item>
