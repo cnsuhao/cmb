@@ -416,7 +416,7 @@
    <item row="5" column="0">
     <widget class="QGroupBox" name="DatasetControl">
      <property name="title">
-      <string>Dataset Control</string>
+      <string>Geometry to be Modified</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
