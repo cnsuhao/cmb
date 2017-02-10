@@ -197,6 +197,10 @@ int vtkLIDARPtsWriter::WritePoints(ofstream& ofp, vtkPolyData *inputPoly)
         {
         ofp << LIDAR_ASCII_SEPERATOR << intensityArray->GetValue(cc);
         }
+      else
+        {
+        ofp << LIDAR_ASCII_SEPERATOR << "1";
+        }
       if(rgbScalars && cc < numColorTuples)
         {
         rgbScalars->GetTuple(cc, rgb);
