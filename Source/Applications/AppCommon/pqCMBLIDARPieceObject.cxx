@@ -246,9 +246,10 @@ void pqCMBLIDARPieceObject::useElevationFilter(bool useElevation)
     }
 
   this->UseElevationFilter = useElevation;
+  int mapScalars = useElevation ? 1 : 0;
   if (!this->Highlight)
     {
-    vtkSMPropertyHelper(this->Representation->getProxy(), "MapScalars").Set(0);
+    vtkSMPropertyHelper(this->Representation->getProxy(), "MapScalars").Set(mapScalars);
     RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(this->Representation->getProxy(),
       useElevation ? "Elevation" : "Color", vtkDataObject::POINT, false);
     }
@@ -411,9 +412,10 @@ void pqCMBLIDARPieceObject::setHighlight(int highlight)
         this->OriginalColor, 3);
       vtkSMPropertyHelper(rep->getProxy(), "AmbientColor").Set(
         this->OriginalColor, 3);
-      vtkSMPropertyHelper(rep->getProxy(), "MapScalars").Set(0);
-      RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(rep->getProxy(),
-        this->UseElevationFilter ? "Elevation" : "Color", vtkDataObject::POINT, false);
+      int mapScalars = this->UseElevationFilter ? 1 : 0;
+      vtkSMPropertyHelper(this->Representation->getProxy(), "MapScalars").Set(mapScalars);
+      RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(this->Representation->getProxy(),
+      this->UseElevationFilter ? "Elevation" : "Color", vtkDataObject::POINT, false);
       }
     }
 }

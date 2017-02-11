@@ -635,7 +635,8 @@ int pqCMBPointsBuilderMainWindowCore::ImportLIDARFile(const char *filename)
   int res = this->ReaderManager->importData(filename,
                                             this->Internal->PieceMainTable,
                                             this->Internal->pqCMBModifierArcTable,
-                                            this->Internal->FilePieceIdObjectMap);
+                                            this->Internal->FilePieceIdObjectMap,
+                                            this->Internal->LIDARPanel->getGUIPanel()->elevationGroup->isChecked());
   if(res != 0 && this->ReaderManager->userRequestsOrigin())
   {
     if (this->ReaderManager->setOrigin())

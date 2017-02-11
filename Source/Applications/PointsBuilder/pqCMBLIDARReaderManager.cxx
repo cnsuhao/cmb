@@ -413,7 +413,8 @@ bool pqCMBLIDARReaderManager::userRequestsDoubleData()
 int pqCMBLIDARReaderManager::importData(
   const char* filename, pqCMBLIDARPieceTable *table,
   pqCMBModifierArcManager* arcManager,
-  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap,
+  bool showElevation)
 {
   if (!this->getReaderSourceProxy(filename))
     {
@@ -424,30 +425,30 @@ int pqCMBLIDARReaderManager::importData(
   int res=0;
   if(readerName.compare(SM_LIDAR_READER_NAME)==0)
     {
-    res = this->importLIDARData(filename, table, arcManager, FilePieceIdMap);
+    res = this->importLIDARData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
   else if(readerName.compare(SM_LAS_READER_NAME)==0)
     {
-    res = this->importLASData(filename, table, arcManager, FilePieceIdMap);
+    res = this->importLASData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
   else if(readerName.compare(SM_DEM_READER_NAME)==0)
     {
-    res = this->importDEMData(filename, table, arcManager, FilePieceIdMap);
+    res = this->importDEMData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
   else if(readerName.compare(SM_GDAL_READER_NAME)==0)
     {
-    res = importGDALData(filename, table, arcManager, FilePieceIdMap);
+    res = importGDALData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
   else if(readerName.compare(SM_VTP_READER_NAME)==0)
     {
-    res = importVTPData(filename, table, arcManager, FilePieceIdMap);
+    res = importVTPData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
   else if(pqPluginIOBehavior::isPluginReader(
           this->ReaderSourceMap[filename]->getProxy()->GetHints()))
     {
     // for now, we just use the lidar pts as an example.
     // Eventually, the plugin should have its own ui components.
-    res = this->importLIDARData(filename, table, arcManager, FilePieceIdMap);
+    res = this->importLIDARData(filename, table, arcManager, FilePieceIdMap, showElevation);
     }
 
   return res;
@@ -610,7 +611,7 @@ vtkIdType pqCMBLIDARReaderManager::scanLASPiecesInfo(
 int pqCMBLIDARReaderManager::importLIDARData(
   const char* filename, pqCMBLIDARPieceTable *table,
   pqCMBModifierArcManager* arcManager,
-  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap, bool showElevation)
 {
   vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
   if(!readerProxy)
@@ -701,6 +702,7 @@ int pqCMBLIDARReaderManager::importLIDARData(
       this->Core->activeRenderView()->resetCamera();
       this->Core->activeRenderView()->render();
       }
+    dataObj->useElevationFilter(showElevation);
     }
 
   bbox.GetBounds(this->CurrentReaderBounds);
@@ -711,7 +713,8 @@ int pqCMBLIDARReaderManager::importLIDARData(
 int pqCMBLIDARReaderManager::importLASData(
   const char* filename, pqCMBLIDARPieceTable *table,
   pqCMBModifierArcManager* arcManager,
-  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap,
+  bool showElevation)
 {
   vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
   if(!readerProxy)
@@ -809,7 +812,8 @@ int pqCMBLIDARReaderManager::importLASData(
       this->Core->activeRenderView()->resetCamera();
       this->Core->activeRenderView()->render();
       }
-    }
+   dataObj->useElevationFilter(showElevation);
+   }
 
   bbox.GetBounds(this->CurrentReaderBounds);
 
@@ -819,7 +823,8 @@ int pqCMBLIDARReaderManager::importLASData(
 int pqCMBLIDARReaderManager::importDEMData(
   const char* filename, pqCMBLIDARPieceTable *table,
   pqCMBModifierArcManager* arcManager,
-  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap,
+  bool showElevation)
 {
   vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
   if(!readerProxy)
@@ -910,6 +915,7 @@ int pqCMBLIDARReaderManager::importDEMData(
     this->Core->activeRenderView()->render();
     }
 
+  dataObj->useElevationFilter(showElevation);
   bbox.GetBounds(this->CurrentReaderBounds);
   return 1;
 }
@@ -918,7 +924,8 @@ int
 pqCMBLIDARReaderManager
 ::importGDALData(const char* filename, pqCMBLIDARPieceTable *table,
                  pqCMBModifierArcManager* arcManager,
-                 QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+                 QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap,
+                 bool showElevation)
 {
   vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
   if(!readerProxy)
@@ -993,7 +1000,8 @@ pqCMBLIDARReaderManager
     this->Core->activeRenderView()->render();
   }
   
-  bbox.GetBounds(this->CurrentReaderBounds);
+ dataObj->useElevationFilter(showElevation);
+ bbox.GetBounds(this->CurrentReaderBounds);
   return 1;
 }
 
@@ -1001,7 +1009,8 @@ int
 pqCMBLIDARReaderManager::importVTPData(
   const char* filename, pqCMBLIDARPieceTable *table,
   pqCMBModifierArcManager* arcManager,
-  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap)
+  QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > &FilePieceIdMap,
+  bool showElevation)
 {
   vtkSMSourceProxy* readerProxy = this->getReaderSourceProxy(filename);
   if(!readerProxy)
@@ -1077,6 +1086,7 @@ pqCMBLIDARReaderManager::importVTPData(
     }
 
   bbox.GetBounds(this->CurrentReaderBounds);
+  dataObj->useElevationFilter(showElevation);
   return 1;
 }
 
