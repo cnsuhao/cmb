@@ -49,7 +49,8 @@ public:
   void getDataBounds(double bounds[6]);
 
   int importData(const char* filename, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
-    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+    bool showElevation);
 
   vtkSMSourceProxy *getReaderSourceProxy(const char* filename);
 
@@ -92,19 +93,24 @@ protected:
   int computeApproximateRepresentingFloatDigits(double min, double max);
   int importLIDARData(const char* filenmame,pqCMBLIDARPieceTable*,
                       pqCMBModifierArcManager*,
-                      QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+                      QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+                      bool showElevation);
   int importLASData(const char* filenmame,pqCMBLIDARPieceTable*,
                     pqCMBModifierArcManager*,
-                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+                    bool showElevation);
   int importDEMData(const char* filenmame,pqCMBLIDARPieceTable*,
                     pqCMBModifierArcManager*,
-                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+                    bool showElevation);
   int importGDALData(const char* filenmame,pqCMBLIDARPieceTable*,
                      pqCMBModifierArcManager*,
-                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+                     bool showElevation);
   int importVTPData(const char* filenmame,pqCMBLIDARPieceTable*,
                      pqCMBModifierArcManager*,
-                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&);
+                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
+                     bool showElevation);
   vtkIdType getPieceNumPointsInfo(const char* filename, QList<vtkIdType> &pieceInfo);
 
   int readData(vtkSMSourceProxy* readerProxy,QList<QVariant> &pieces);

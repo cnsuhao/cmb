@@ -954,12 +954,16 @@ pqCMBLIDARTerrainExtractionManager::createPreviewRepresentation(QString &filenam
   pqDataRepresentation *representation =
     builder->createDataRepresentation(pdSource->getOutputPort(0),
     this->LIDARCore->activeRenderView(), "GeometryRepresentation");
-
-  vtkSMPropertyHelper(representation->getProxy(), "MapScalars").Set(0);
+  int mapScalars = 0;
+  std::string colorMode = "Color";
+  if (this->LIDARPanel->getGUIPanel()->extractionElevationFilter->isChecked())
+    {
+    mapScalars = 1;
+    colorMode = "Elevation";
+    }
+  vtkSMPropertyHelper(representation->getProxy(), "MapScalars").Set(mapScalars);
   RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-    representation->getProxy(),
-    this->LIDARPanel->getGUIPanel()->extractionElevationFilter->isChecked() ?
-    "Elevation" : "Color", vtkDataObject::POINT);
+    representation->getProxy(), colorMode.c_str(), vtkDataObject::POINT);
 
   return representation;
 }
@@ -1298,6 +1302,8 @@ updateRepresentationsElevationFilter(QTreeWidgetItem *treeNode,
       treeNode->data(0, Qt::UserRole).value<void *>());
     if (rep)
       {
+      int mapScalars = useElevation ? 1 : 0;
+      vtkSMPropertyHelper(rep->getProxy(), "MapScalars").Set(mapScalars);
       RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY( rep->getProxy(),
         useElevation ? "Elevation" : "Color", vtkDataObject::POINT);
       }
