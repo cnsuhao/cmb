@@ -20,7 +20,7 @@
 
 class pqRenderView;
 class pqServer;
-class pqCMBLineWidget;
+class qtLineWidget;
 class vtkSMSourceProxy;
 
 class CMBAPPCOMMON_EXPORT pqCMBLine : public pqCMBSceneObjectBase
@@ -65,10 +65,7 @@ public:
 
  void setVisibility(bool mode) override;
 
- void updateRepresentation() override;
-
- pqCMBLineWidget* getLineWidget()
-  { return this->LineWidget;}
+ qtLineWidget *getLineWidget() { return this->LineWidget; }
 
  pqCMBSceneObjectBase::enumObjectType getType() const override;
  bool isDefaultConstrained() const override{return true;}
@@ -80,7 +77,7 @@ protected:
                  pqRenderView *view,
                  bool updateRep);
 
-  pqCMBLineWidget* LineWidget;
+ qtLineWidget *LineWidget;
 };
 
 #endif /* __pqCMBLine_h */

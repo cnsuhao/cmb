@@ -52,7 +52,7 @@ class pqServer;
 class pqRenderView;
 class pqOutputPort;
 class pqPipelineSource;
-class pqCMBLineWidget;
+class qtLineWidget;
 class qtCMBArcWidgetManager;
 class pqDataRepresentation;
 
@@ -182,7 +182,7 @@ public:
   const QStringList &getUserDefinedObjectTypes()
     { return this->UserObjectTypes;}
 
-  pqCMBSceneNode* FindLineNode(pqCMBLineWidget*);
+  pqCMBSceneNode *FindLineNode(qtLineWidget *);
   void setLineWidgetCallbacks(pqCMBLine* obj);
 
   bool getRandomConstraintPoint(double p[3],

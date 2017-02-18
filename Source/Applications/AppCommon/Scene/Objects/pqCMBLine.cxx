@@ -9,20 +9,16 @@
 //=========================================================================
 #include "pqCMBLine.h"
 
-#include "pqApplicationCore.h"
-#include "pqCMBLineWidget.h"
-#include "pqObjectBuilder.h"
-#include "pqPipelineSource.h"
-#include "pqRenderView.h"
-#include "pqSMAdaptor.h"
-#include "pqServer.h"
+#include <pqRenderView.h>
+#include <pqServer.h>
+#include <vtkSMInputProperty.h>
+#include <vtkSMIntVectorProperty.h>
+#include <vtkSMNewWidgetRepresentationProxy.h>
 #include <vtkSMPropertyHelper.h>
+#include <vtkSMRepresentationProxy.h>
+#include <vtkSMSourceProxy.h>
 
-#include "vtkSMNewWidgetRepresentationProxy.h"
-#include "vtkSMInputProperty.h"
-#include "vtkSMIntVectorProperty.h"
-#include "vtkSMSourceProxy.h"
-#include "vtkSMRepresentationProxy.h"
+#include "smtk/extension/paraview/widgets/qtLineWidget.h"
 
 //-----------------------------------------------------------------------------
 pqCMBLine::pqCMBLine() : pqCMBSceneObjectBase()
@@ -31,13 +27,7 @@ pqCMBLine::pqCMBLine() : pqCMBSceneObjectBase()
 }
 
 //-----------------------------------------------------------------------------
-pqCMBLine::~pqCMBLine()
-{
-  if(this->LineWidget)
-    {
-    delete this->LineWidget;
-    }
-}
+pqCMBLine::~pqCMBLine() { delete this->LineWidget; }
 
 //-----------------------------------------------------------------------------
 void pqCMBLine::getDefaultBounds(
@@ -89,36 +79,18 @@ void pqCMBLine::initialize(double point1[3],
                               pqRenderView *view,
                               bool /*updateRep*/)
 {
-  pqApplicationCore* core = pqApplicationCore::instance();
-  pqObjectBuilder* builder = core->getObjectBuilder();
-
-  QPointer<pqPipelineSource> WidgetProxy =
-    builder->createSource("sources", "Ruler", server);
-  vtkSMProxy* sourceProxy = WidgetProxy->getProxy();
-  this->LineWidget = new pqCMBLineWidget(
-    sourceProxy, sourceProxy);
+  this->LineWidget = new qtLineWidget();
   this->LineWidget->setObjectName("pqCMBLineWidget");
   this->LineWidget->setView(view);
-  vtkSMProxy* repProxy = this->LineWidget->getWidgetProxy();
-  pqSMAdaptor::setElementProperty(repProxy->GetProperty("Visibility"), true);
-  QList<QVariant> values;
-  values << point1[0] << point1[1] << point1[2];
-  pqSMAdaptor::setMultipleElementProperty(
-    repProxy->GetProperty("Point1WorldPosition"), values);
-  values.clear();
-  values << point2[0] << point2[1] << point2[2];
-  pqSMAdaptor::setMultipleElementProperty(
-    repProxy->GetProperty("Point2WorldPosition"), values);
-  repProxy->UpdateVTKObjects();
+  this->LineWidget->setPoints(point1, point2);
   this->UserDefinedType = "Line";
 }
+
 //-----------------------------------------------------------------------------
 void pqCMBLine::setVisibility(bool mode)
 {
-  if (this->LineWidget && mode != this->LineWidget->widgetVisible())
-    {
-    this->LineWidget->setProcessEvents(mode);
-    this->LineWidget->setWidgetVisible(mode);
+  if (this->LineWidget) {
+    this->LineWidget->setEnableInteractivity(mode);
     }
 }
 
@@ -139,8 +111,7 @@ void pqCMBLine::setSelectionInput(
 //-----------------------------------------------------------------------------
 void pqCMBLine::select()
 {
-  //this->LineWidget->setProcessEvents(1);
-  this->LineWidget->select();
+  this->LineWidget->emphasize();
   this->LineWidget->setVisible(true);
 }
 
@@ -148,9 +119,8 @@ void pqCMBLine::select()
 
 void pqCMBLine::deselect()
 {
-  //this->LineWidget->setProcessEvents(0);
   this->LineWidget->setVisible(false);
-  this->LineWidget->deselect();
+  this->LineWidget->deemphasize();
 }
 
 //-----------------------------------------------------------------------------
@@ -165,31 +135,21 @@ int pqCMBLine::getPointPosition( int pointIdx,
     {
     return 0;
     }
-  vtkSMNewWidgetRepresentationProxy* repProxy = this->LineWidget->getWidgetProxy();
-  repProxy->UpdatePropertyInformation();
 
-  QList<QVariant> position;;
-  char strProp[100];
-  sprintf(strProp, "Point%dWorldPositionInfo", pointIdx);
-  position = pqSMAdaptor::getMultipleElementProperty(
-    repProxy->GetProperty(strProp));
+    double p1[3], p2[3];
+    this->LineWidget->points(p1, p2);
 
-  x = position[0].toDouble();
-  y = position[1].toDouble();
-  z = position[2].toDouble();
-  return 1;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBLine::updateRepresentation()
-{
-  vtkSMRepresentationProxy* repProxy = vtkSMRepresentationProxy::SafeDownCast(
-    this->LineWidget->getWidgetProxy()->GetRepresentationProxy());
-  if(repProxy)
-    {
-    repProxy->UpdateVTKObjects();
-    repProxy->UpdatePipeline();
+    /// looking at old code, seems like pointIdx is 1-based.
+    if (pointIdx == 1) {
+      x = p1[0];
+      y = p1[1];
+      z = p1[2];
+    } else {
+      x = p2[0];
+      y = p2[1];
+      z = p2[2];
     }
+    return 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -211,17 +171,20 @@ pqCMBSceneObjectBase *pqCMBLine::duplicate(pqServer *server,
 //-----------------------------------------------------------------------------
 void pqCMBLine::getColor(double color[4]) const
 {
-//  vtkSMPropertyHelper(this->LineWidget->getWidgetProxy(), "LineColor").Get(color, 3);
-  this->LineWidget->getColor(color);
+  QColor qcolor = this->LineWidget->color();
+  color[0] = qcolor.redF();
+  color[1] = qcolor.greenF();
+  color[2] = qcolor.blueF();
   color[3] = 1.0; // Assume we don't support transparent lines for now
 }
+
 //-----------------------------------------------------------------------------
 void pqCMBLine::setColor(double color[4], bool /*updateRep*/)
 {
 //  vtkSMPropertyHelper(this->LineWidget->getWidgetProxy(), "LineColor").Set(color, 3);
-  this->LineWidget->setColor(color);
-  this->updateRepresentation();
+this->LineWidget->setLineColor(color);
 }
+
 //-----------------------------------------------------------------------------
 void pqCMBLine::getBounds(double /*bounds*/[6]) const
 {

@@ -132,8 +132,6 @@ add_library(cmbAppCommon
   pqCMBLIDARPieceObject.h
   pqCMBLIDARPieceTable.cxx
   pqCMBLIDARPieceTable.h
-  pqCMBLineWidget.cxx
-  pqCMBLineWidget.h
   pqCMBCommonMainWindow.cxx
   pqCMBCommonMainWindow.h
   pqCMBCommonMainWindowCore.cxx

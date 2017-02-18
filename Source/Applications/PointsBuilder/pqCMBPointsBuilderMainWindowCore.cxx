@@ -63,7 +63,6 @@
 #include "pqCustomFilterManager.h"
 #include "pqCustomFilterManagerModel.h"
 #include "pqDataInformationWidget.h"
-#include "pqCMBLineWidget.h"
 #include "pqDisplayRepresentationWidget.h"
 #include "pqDockWindowInterface.h"
 #include "pqFileDialogModel.h"
