@@ -162,6 +162,8 @@ add_library(cmbAppCommon
   pqCMBModifierArcManager.cxx
   pqCMBModifierArc.h
   pqCMBModifierArc.cxx
+  pqCMBRecentlyUsedResourceLoaderImplementatation.cxx
+  pqCMBRecentlyUsedResourceLoaderImplementatation.h
   qtCMBApplicationOptions.cxx
   qtCMBApplicationOptions.h
   qtCMBApplicationOptionsDialog.cxx

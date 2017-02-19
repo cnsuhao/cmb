@@ -12,19 +12,20 @@
 #include "pqCMBAppCommonConfig.h" // for CMB_TEST_DATA_ROOT
 
 #include "pqCMBDisplayProxyEditor.h"
-#include "qtCMBLIDARPanelWidget.h"
 #include "pqCMBLIDARPieceObject.h"
 #include "pqCMBLIDARPieceTable.h"
-#include "pqCMBModifierArcManager.h"
 #include "pqCMBLIDARReaderManager.h"
+#include "pqCMBLIDARSaveDialog.h"
+#include "pqCMBModifierArcManager.h"
+#include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
+#include "pqDEMExporterDialog.h"
+#include "qtCMBApplicationOptions.h"
 #include "qtCMBLIDARFilterDialog.h"
-#include "ui_qtLIDARPanel.h"
+#include "qtCMBLIDARPanelWidget.h"
 #include "ui_qtCMBMainWindow.h"
 #include "ui_qtFilterDialog.h"
-#include "pqCMBLIDARSaveDialog.h"
+#include "ui_qtLIDARPanel.h"
 #include "vtkTransform.h"
-#include "qtCMBApplicationOptions.h"
-#include "pqDEMExporterDialog.h"
 
 #include <QAction>
 #include <QApplication>
@@ -69,7 +70,6 @@
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputWindow.h"
-#include "pqRecentlyUsedResourcesList.h"
 #include "pqGeneralTransferFunctionWidget.h"
 
 #include "pqOptions.h"
@@ -413,34 +413,14 @@ void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(const QStringList& files
 
   if(this->Internal->FilePieceIdObjectMap.count()>0)
     {
-    pqApplicationCore* core = pqApplicationCore::instance();
-
+    // FIXME: not sure I've translated this code correctly. Please validate.
     // Add this to the list of recent server resources ...
-    pqServerResource resource = this->getActiveServer()->getResource();
-    QString filename = files[0];
-    vtkSMProxy* readerProxy = this->ReaderManager->getReaderSourceProxy(
-      filename.toAscii().constData());
-    resource.addData("readergroup",readerProxy->GetXMLGroup());
-    resource.addData("reader",readerProxy->GetXMLName());
-    if(files.size()>1)
-      {
-      filename.append(QString(".(%1 files)").arg(files.size()));
-      }
-    resource.setPath(filename);
-    if(files.size()>1)
-      {
-      resource.addData("extrafilesCount", QString("%1").arg(files.size()-1));
-      for (int cc=1; cc < files.size(); cc++)
-        {
-        std::string escfile=vtksys::SystemTools::GetFilenameName(
-          files[cc].toAscii().constData());
-        resource.addData(QString("file.%1").arg(cc-1),escfile.c_str());
-        }
-      }
-
-    core->recentlyUsedResources().add(resource);
-    core->recentlyUsedResources().save(*core->settings());
-
+    vtkSMProxy *readerProxy = this->ReaderManager->getReaderSourceProxy(
+        files[0].toAscii().constData());
+    pqCMBRecentlyUsedResourceLoaderImplementatation::
+        addDataFilesToRecentResources(this->getActiveServer(), files,
+                                      readerProxy->GetXMLGroup(),
+                                      readerProxy->GetXMLName());
     if(!this->Internal->AddingMoreFiles || !hasDataLoaded)
       {
       emit this->newDataLoaded();
