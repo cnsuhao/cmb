@@ -38,12 +38,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <pqServer.h>
 #include <pqServerResource.h>
 #include <pqStandardRecentlyUsedResourceLoaderImplementation.h>
+#include "pqInterfaceTracker.h"
 
 //-----------------------------------------------------------------------------
 pqCMBRecentlyUsedResourceLoaderImplementatation::
     pqCMBRecentlyUsedResourceLoaderImplementatation(
         pqCMBCommonMainWindowCore *parentObject)
-    : Superclass(parentObject),
+    : Superclass(pqApplicationCore::instance()->interfaceTracker()),
       Impl(new pqStandardRecentlyUsedResourceLoaderImplementation()),
       Core(parentObject) {}
 
@@ -125,6 +126,7 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::
   pqApplicationCore *core = pqApplicationCore::instance();
   core->recentlyUsedResources().add(resource);
   core->recentlyUsedResources().save(*core->settings());
+  return true;
 }
 
 //-----------------------------------------------------------------------------
