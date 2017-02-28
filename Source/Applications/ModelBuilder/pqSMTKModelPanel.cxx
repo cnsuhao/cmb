@@ -275,6 +275,16 @@ void pqSMTKModelPanel::resetUI()
       this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
        const smtk::mesh::MeshSets& ,
        const smtk::model::DescriptivePhrases& )));
+    // select from attribute Panel
+    // signal passing into qtSelectionManager is connected in
+    // pqSimBuilderUIManager
+    QObject::connect(this->Internal->selectionManager,
+      SIGNAL(broadcastToRenderView(const smtk::common::UUIDs&,
+       const smtk::mesh::MeshSets&,
+       const smtk::model::DescriptivePhrases&)),
+      this, SLOT(onSelectionChanged(const smtk::common::UUIDs&,
+       const smtk::mesh::MeshSets& ,
+       const smtk::model::DescriptivePhrases& )));
     }
 
 //  this->linkRepresentations();
@@ -306,6 +316,25 @@ void pqSMTKModelPanel::onSelectionChanged(const smtk::model::EntityRefs& selenti
   // a selected model will be active representation in the application.
   this->selectMeshRepresentations(selmeshes);
   this->selectEntityRepresentations(selentities);
+}
+
+//-----------------------------------------------------------------------------
+void pqSMTKModelPanel::onSelectionChanged(const smtk::common::UUIDs& selentities,
+       const smtk::mesh::MeshSets& selmeshes,
+       const smtk::model::DescriptivePhrases& /* selproperties */)
+{
+  // handle meshes first, so that if both model and mesh are selected,
+  // a selected model will be active representation in the application.
+  smtk::model::ManagerPtr mgr =
+    this->Internal->smtkManager->managerProxy()->modelManager();
+  smtk::model::EntityRefs selentitiesInEntitrRefs;
+  for (const auto &uuid: selentities)
+  {
+    smtk::model::EntityRef temp(mgr,uuid);
+    selentitiesInEntitrRefs.insert(temp);
+  }
+  this->selectMeshRepresentations(selmeshes);
+  this->selectEntityRepresentations(selentitiesInEntitrRefs);
 }
 
 //-----------------------------------------------------------------------------
