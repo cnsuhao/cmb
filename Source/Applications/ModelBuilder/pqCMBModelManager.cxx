@@ -1965,16 +1965,17 @@ bool pqCMBModelManager::handleOperationResult(
     smtk::model::MODEL_ENTITY);
   bool success = true;
   smtk::model::SessionRef sref(pxy->modelManager(), sessionId);
+  bool newModelRep = hasNewModels;
   for (smtk::model::Models::iterator modit = modelEnts.begin();
       modit != modelEnts.end(); ++modit)
     {
-    if(modit->isValid() && !modit->parent().isModel()) // ingore submodels
+    if (modit->isValid() && !modit->parent().isModel()) // Ignore submodels
       {
       smtk::model::Model newModel;
       pqSMTKModelInfo* res = internal_getModelInfo(*modit, this->Internal->ModelInfos);
       if(res == NULL || res->ModelSource == NULL)
         {
-        hasNewModels = true;
+        newModelRep = true;
         // if this is a submodel, use its parent
         newModel =  modit->parent().isModel() ? modit->parent() : *modit;
         success = this->Internal->addModelRepresentation(
@@ -2008,9 +2009,9 @@ bool pqCMBModelManager::handleOperationResult(
         // If models are also created from the same operation, we only show models,
         // and set mesh representation invisible.
         this->Internal->createMeshRepresentation(this->managerProxy()->modelManager(),
-                                                 *modit, view, !hasNewModels);
+                                                 *modit, view, !newModelRep);
         // make the new model source the active source
-        if(hasNewModels && newModel.isValid())
+        if(newModelRep && newModel.isValid())
           {
           pqSMTKModelInfo* newModelInfo = this->modelInfo(newModel);
           if(newModelInfo)
