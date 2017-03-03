@@ -58,6 +58,8 @@ class pqSMTKModelInfo: public QObject
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
     bool hasAnalysisMesh() const;
 
+    std::size_t numberOfTessellatedEntities() const;
+
     vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
     vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
     vtkSmartPointer<vtkSMProxy> EntityLUT;
@@ -68,7 +70,7 @@ class pqSMTKModelInfo: public QObject
     bool ShowMesh;
 
     vtkSmartPointer<vtkPVSMTKModelInformation> Info;
-    QPointer<pqPipelineSource> ModelSource;    
+    QPointer<pqPipelineSource> ModelSource;
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;

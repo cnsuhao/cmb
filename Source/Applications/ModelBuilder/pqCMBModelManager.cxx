@@ -1898,14 +1898,17 @@ bool pqCMBModelManager::handleOperationResult(
       }
 
   hasNewModels = false;
+  int numNewModels = 0;
   // process "created" in result to figure out if there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr newEntities =
     result->findModelEntity("created");
-  if(newEntities)
-    for(it = newEntities->begin(); it != newEntities->end(); ++it)
+  if (newEntities)
+    {
+    for (it = newEntities->begin(); it != newEntities->end(); ++it)
       {
-      if(it->isModel())
+      if (it->isModel())
         {
+        ++numNewModels;
         // The new models will be handled later on by checking all the models
         // in the Manager against the internal ModelInfos map here
         hasNewModels = true;
@@ -1916,15 +1919,16 @@ bool pqCMBModelManager::handleOperationResult(
         {
         geometryChangedModels.insert(it->owningModel().entity());
         }
-      else if(it->isGroup() && (minfo = this->modelInfo(*it)))
+      else if (it->isGroup() && (minfo = this->modelInfo(*it)))
         {
         groupChangedModels.insert(minfo->Info->GetModelUUID());
         }
-      else if(it->isAuxiliaryGeometry() && pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+      else if (it->isAuxiliaryGeometry() && pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
         {
         newSeparateAuxGeos.push_back(it->as<smtk::model::AuxiliaryGeometry>());
         }
       }
+    }
   bModelGeometryChanged = geometryChangedModels.size() > 0;
 
   // check if there is "selection", such as from "grow" operator.
@@ -1935,13 +1939,18 @@ bool pqCMBModelManager::handleOperationResult(
   smtk::common::UUIDs modelids =
     pxy->modelManager()->entitiesMatchingFlags(
     smtk::model::MODEL_ENTITY);
+
   smtk::common::UUIDs remmodels;
+  int numTess = 0;
   // Clean out models that are not in the manager after operation
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
     mit != this->Internal->ModelInfos.end(); ++mit)
     {
+    numTess += mit->second.numberOfTessellatedEntities();
     if(modelids.find(mit->first) == modelids.end())
+      {
       remmodels.insert(mit->first);
+      }
     }
   this->Internal->removeModelRepresentations(remmodels, view);
 
@@ -2023,9 +2032,11 @@ bool pqCMBModelManager::handleOperationResult(
     }
 
     // create representations for independent auxiliary geometries
+    int numNewAux = 0;
     smtk::model::AuxiliaryGeometries::const_iterator auxit;
     for(auxit = newSeparateAuxGeos.begin(); auxit != newSeparateAuxGeos.end(); ++auxit)
       {
+      ++numNewAux;
       this->Internal->createAuxiliaryRepresentation(*auxit, view);
       }
     // remove representations for independent auxiliary geometries
@@ -2033,6 +2044,16 @@ bool pqCMBModelManager::handleOperationResult(
     for(rmit = remSeparateAuxGeos.begin(); rmit != remSeparateAuxGeos.end(); ++rmit)
       {
       this->Internal->removeAuxiliaryRepresentation(*rmit, view);
+      }
+
+    // If you have no tessellations (i.e., no entity geometry) and
+    // a single new auxiliary geometry, clap your hands. Then pretend
+    // we have a new model so that the view gets reset to the auxiliary
+    // geometry's extents.
+    if (numTess == 0 && numNewAux > 0 &&
+      (numNewAux == static_cast<int>(this->Internal->AuxGeoInfos.size())))
+      {
+      hasNewModels = true;
       }
 
   return success;
