@@ -168,6 +168,11 @@ void pqSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
     }
 }
 
+std::size_t pqSMTKModelInfo::numberOfTessellatedEntities() const
+{
+  return this->Info ? this->Info->GetUUID2BlockIdMap().size() : 0;
+}
+
 /// Copy constructor.
 pqSMTKModelInfo::pqSMTKModelInfo(const pqSMTKModelInfo& other)
 {
