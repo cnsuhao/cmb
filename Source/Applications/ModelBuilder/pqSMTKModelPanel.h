@@ -66,7 +66,7 @@ public:
   void startMeshSelectionOperation(
     const QList<pqOutputPort*> &);
   void resetMeshSelectionItems();
-  smtk::extension::qtSelectionManager* SelectionManager() const;
+  smtk::extension::qtSelectionManager* cmbSelectionManager() const;
 
 signals:
   void sendSelectedItemsToSelectionManager(

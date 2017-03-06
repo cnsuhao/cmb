@@ -95,7 +95,7 @@ public:
   QPointer<qtModelPanel> ModelPanel;
   bool ModelLoaded;
   QPointer<pqCMBModelManager> smtkManager;
-  QPointer<qtSelectionManager> selectionManager;
+  QPointer<smtk::extension::qtSelectionManager> selectionManager;
   bool ignorePropertyChange;
 
   // [meshItem, <opName, sessionId>]
@@ -106,6 +106,7 @@ public:
   qInternal()
     {
     this->ModelLoaded = false;
+    this->selectionManager = nullptr;
     }
 
   pqOutputPort* setSelectionInput(vtkSMProxy* selectionSource,
@@ -250,6 +251,7 @@ void pqSMTKModelPanel::resetUI()
 
     // Selection manager related
     // select from rendering window
+    // broading to attribute panel is set in pqSimBuilderUIManager
     QObject::connect(this,
        SIGNAL(sendSelectedItemsToSelectionManager(const smtk::common::UUIDs&,
         const smtk::mesh::MeshSets&)),this->Internal->selectionManager,
@@ -261,6 +263,7 @@ void pqSMTKModelPanel::resetUI()
        ->getModelView(), SLOT(selectItems(const smtk::common::UUIDs&,
       const smtk::mesh::MeshSets&, bool)));
     // select from tree view
+    // broading to attribute panel is set in pqSimBuilderUIManager
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(selectionChanged(const smtk::model::EntityRefs&,
        const smtk::mesh::MeshSets& ,
@@ -692,7 +695,7 @@ void pqSMTKModelPanel::resetMeshSelectionItems()
 }
 
 //----------------------------------------------------------------------------
-smtk::extension::qtSelectionManager* pqSMTKModelPanel::SelectionManager() const
+smtk::extension::qtSelectionManager* pqSMTKModelPanel::cmbSelectionManager() const
 {
   return this->Internal->selectionManager;
 

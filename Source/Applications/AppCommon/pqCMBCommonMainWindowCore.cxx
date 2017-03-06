@@ -420,7 +420,7 @@ pqSelectionManager* pqCMBCommonMainWindowCore::selectionManager()
 }
 
 //-----------------------------------------------------------------------------
-smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::qtSelectionManager() const
+smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::cmbSelectionManager() const
 {
   return this->qtSelectionMgr;
 }

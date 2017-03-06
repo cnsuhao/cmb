@@ -93,7 +93,7 @@ public:
 
   /// Returns the qtSelectionManager which handles selection between smtk
   // and CMB
-  smtk::extension::qtSelectionManager* qtSelectionManager() const;
+  smtk::extension::qtSelectionManager* cmbSelectionManager() const;
 
   /// Returns the selection and pick helper used for 3D views.
   pqCMBRubberBandHelper* renderViewSelectionHelper() const;
