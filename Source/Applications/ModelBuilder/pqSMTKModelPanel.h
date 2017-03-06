@@ -66,7 +66,7 @@ public:
   void startMeshSelectionOperation(
     const QList<pqOutputPort*> &);
   void resetMeshSelectionItems();
-  smtk::extension::qtSelectionManager* SelectionManager() const;
+  smtk::extension::qtSelectionManager* selectionManager() const;
 
 signals:
   void sendSelectedItemsToSelectionManager(
@@ -85,6 +85,9 @@ public slots:
 
 protected slots:
   void onSelectionChanged(const smtk::model::EntityRefs&,
+       const smtk::mesh::MeshSets& ,
+       const smtk::model::DescriptivePhrases& );
+  void onSelectionChanged(const smtk::common::UUIDs&,
        const smtk::mesh::MeshSets& ,
        const smtk::model::DescriptivePhrases& );
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);

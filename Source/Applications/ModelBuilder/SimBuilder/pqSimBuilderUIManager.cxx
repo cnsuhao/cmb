@@ -107,6 +107,11 @@ void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
                                         QWidget* parentWidget)
 {
+  // connect qtSelectionManager to qtUIManager
+  if (this->m_ModelPanel->selectionManager())
+  {
+    this->m_attUIManager->setSelectionManager(this->m_ModelPanel->selectionManager());
+  }
   if (!view)
     {
     QMessageBox::warning(parentWidget,
@@ -126,7 +131,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
   if (this->m_ModelPanel)
     {
     QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
-      this->m_ModelPanel->SelectionManager(), SLOT(updateSelectedItems(const smtk::common::UUIDs&)));
+      this->m_ModelPanel->selectionManager(), SLOT(updateSelectedItems(const smtk::common::UUIDs&)));
     }
 
   this->m_attUIManager->setSMTKView(view, parentWidget);
@@ -147,11 +152,20 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
   if (qTopAttView)
     {
       QObject::connect(qTopAttView, SIGNAL(attColorChanged()), this,
-		       SIGNAL(attColorChanged()));
+           SIGNAL(attColorChanged()));
       QObject::connect(qTopAttView, SIGNAL(attAssociationChanged()), this,
-		       SIGNAL(attAssociationChanged()));
+           SIGNAL(attAssociationChanged()));
       QObject::connect(qTopAttView, SIGNAL(numOfAttriubtesChanged()), this,
-		       SIGNAL(numOfAttriubtesChanged()));
+           SIGNAL(numOfAttriubtesChanged()));
+
+      if (this->m_ModelPanel)
+      {
+        // send message from UIManager to qtAttributeView
+        QObject::connect(this->m_ModelPanel->selectionManager(),
+             SIGNAL(broadcastToAttributeView(const smtk::common::UUIDs&)),
+                         qTopAttView, SIGNAL(selectionChanged(const
+                         smtk::common::UUIDs &)));
+      }
       return;
     }
 
@@ -161,10 +175,9 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
   if (qTopExpressView)
     {
       QObject::connect(qTopExpressView,
-		       SIGNAL(onCreateFunctionWithExpression(QString&, double,
-							     double, int)), this,
-		       SLOT(createFunctionWithExpression(QString&, double,
-							 double, int)));
+           SIGNAL(onCreateFunctionWithExpression(QString&, double,
+           double, int)), this, SLOT(createFunctionWithExpression(
+           QString&, double, double, int)));
       return;
     }
 
@@ -207,6 +220,13 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
         SIGNAL(attAssociationChanged()));
       QObject::connect(attSec, SIGNAL(numOfAttriubtesChanged()), this,
         SIGNAL(numOfAttriubtesChanged()));
+      }
+      if (this->m_ModelPanel)
+      {
+        QObject::connect(this->m_ModelPanel->selectionManager(),
+             SIGNAL(broadcastToAttributeView(const smtk::common::UUIDs&)),
+                         attSec, SIGNAL(selectionChanged(const
+                         smtk::common::UUIDs &)));
       }
     }
 

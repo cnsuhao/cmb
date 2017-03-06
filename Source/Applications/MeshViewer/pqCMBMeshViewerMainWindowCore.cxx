@@ -346,7 +346,7 @@ pqCMBMeshViewerMainWindowCore::pqCMBMeshViewerMainWindowCore(QWidget* parent_wid
 //-----------------------------------------------------------------------------
 pqCMBMeshViewerMainWindowCore::~pqCMBMeshViewerMainWindowCore()
 {
-  this->selectionManager()->blockSignals(true);
+  this->pvSelectionManager()->blockSignals(true);
   this->closeData();
   delete Internal;
 }
@@ -1982,7 +1982,7 @@ void pqCMBMeshViewerMainWindowCore::onServerCreationFinished(pqServer *server)
 
   // Set up connection with selection helpers for all views.
   this->renderViewSelectionHelper()->setView(this->activeRenderView());
-  this->selectionManager()->setActiveView(this->activeRenderView());
+  this->pvSelectionManager()->setActiveView(this->activeRenderView());
 
   QObject::connect(this->renderViewSelectionHelper(),
     SIGNAL(selectionFinished(int, int, int, int)),
@@ -3001,5 +3001,5 @@ void pqCMBMeshViewerMainWindowCore::onUpdateConeInteraction()
   meshSelSource->UpdateVTKObjects();
   meshSelSource->UpdatePipeline();
   this->setActiveSelection(meshSelSource);
-  this->selectionManager()->select(this->activeSource()->getOutputPort(0));
+  this->pvSelectionManager()->select(this->activeSource()->getOutputPort(0));
 }
