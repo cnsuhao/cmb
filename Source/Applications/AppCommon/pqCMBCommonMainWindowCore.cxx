@@ -414,13 +414,13 @@ void pqCMBCommonMainWindowCore::buildRenderWindowContextMenuBehavior(QObject *pa
 }
 
 //-----------------------------------------------------------------------------
-pqSelectionManager* pqCMBCommonMainWindowCore::selectionManager()
+pqSelectionManager* pqCMBCommonMainWindowCore::pvSelectionManager()
 {
   return pqPVApplicationCore::instance()->selectionManager();
 }
 
 //-----------------------------------------------------------------------------
-smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::cmbSelectionManager() const
+smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::smtkSelectionManager() const
 {
   return this->qtSelectionMgr;
 }
@@ -915,11 +915,11 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer *server)
   pqActiveObjects::instance().setActiveView(this->Internal->RenderView);
   pqActiveObjects::instance().blockSignals(false);
   this->Internal->RenderViewSelectionHelper.setView(this->Internal->RenderView);
-  this->selectionManager()->setActiveView(this->Internal->RenderView);
+  this->pvSelectionManager()->setActiveView(this->Internal->RenderView);
 
   QObject::disconnect(
     &pqActiveObjects::instance(), SIGNAL(viewChanged(pqView*)),
-    this->selectionManager(), SLOT(setActiveView(pqView*)));
+    this->pvSelectionManager(), SLOT(setActiveView(pqView*)));
 
 
   // FIXME SEB

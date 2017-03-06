@@ -206,7 +206,7 @@ void pqCMBMeshViewerMainWindow::initializeApplication()
 
 //  mainWinCore->selectionManager()->setActiveView(
 //    mainWinCore->activeRenderView());
-  QObject::connect(mainWinCore->selectionManager(),
+  QObject::connect(mainWinCore->pvSelectionManager(),
     SIGNAL(selectionChanged(pqOutputPort*)),
     this, SLOT(updateSelection()));
 

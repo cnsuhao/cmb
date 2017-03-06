@@ -89,11 +89,11 @@ public:
   /// Returns a multi-view widget which can be embedded in the UI
   //pqViewManager& multiViewManager();
   /// Returns the selection manager, which handles interactive selection
-  pqSelectionManager* selectionManager();
+  pqSelectionManager* pvSelectionManager();
 
   /// Returns the qtSelectionManager which handles selection between smtk
   // and CMB
-  smtk::extension::qtSelectionManager* cmbSelectionManager() const;
+  smtk::extension::qtSelectionManager* smtkSelectionManager() const;
 
   /// Returns the selection and pick helper used for 3D views.
   pqCMBRubberBandHelper* renderViewSelectionHelper() const;

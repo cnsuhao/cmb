@@ -324,7 +324,7 @@ bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
     finalBBox.push_back(tmp);
   }
 
-  smtk::extension::qtSelectionManager* selManager = this->modelPanel()->cmbSelectionManager();
+  smtk::extension::qtSelectionManager* selManager = this->modelPanel()->selectionManager();
   smtk::model::ManagerPtr modelMgr = this->modelManager()->managerProxy()->modelManager();
   smtk::common::UUIDs selEntities;
   smtk::mesh::MeshSets selMeshSets;
@@ -1441,7 +1441,7 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     {
     this->Internal->ModelDock = new pqSMTKModelPanel(
       this->Internal->smtkModelManager,
-      this->parentWidget(), this->cmbSelectionManager());
+      this->parentWidget(), this->smtkSelectionManager());
     this->Internal->ViewContextBehavior->setModelPanel(
       this->Internal->ModelDock);
     if(this->Internal->SimBuilder)
