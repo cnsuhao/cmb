@@ -2118,12 +2118,14 @@ void pqCMBModelManager::clear()
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelManager::startNewSession(const std::string& sessionName,
-                                        const bool& createDefaultModel)
+bool pqCMBModelManager::startNewSession(
+  const std::string& sessionName,
+  const bool& createDefaultModel,
+  const bool& useExistingSession)
 {
   smtk::common::UUID sessionId =
-    this->managerProxy()->beginSession(sessionName, 
-                                       smtk::common::UUID::null(), true);
+    this->managerProxy()->beginSession(
+      sessionName, smtk::common::UUID::null(), !useExistingSession);
   smtk::model::SessionRef sref(
     this->managerProxy()->modelManager(), sessionId);
 

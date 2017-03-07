@@ -87,6 +87,7 @@
 
 #include <vtksys/SystemTools.hxx>
 #include "smtk/model/StringData.h"
+#include "smtk/model/SessionRegistrar.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
@@ -109,6 +110,7 @@
 #include <QPixmap>
 #include <QSplitter>
 #include <QSettings>
+#include <QSignalMapper>
 
 class pqCMBModelBuilderMainWindow::vtkInternal
 {
@@ -278,6 +280,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
+#if 0
   // Add "New Session Action", which will show all available sessions
   this->Internal->NewModelSessionMenu = new QMenu(this->getMainDialog()->menu_File);
   this->Internal->NewModelSessionMenu->setObjectName(QString::fromUtf8("menu_newsession"));
@@ -292,6 +295,39 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     {
     this->addNewSession((*it).c_str());
     }
+#else
+  // Single-session, model-based UI:
+  /*
+  this->Internal->NewModelMenu = new QMenu(this->getMainDialog()->menu_File);
+  this->Internal->NewModelMenu->setObjectName(QString::fromUtf8("menu_newmodel"));
+  this->Internal->NewModelMenu->setTitle(QString::fromUtf8("New Model..."));
+  this->getMainDialog()->menu_File->insertMenu(
+    this->getMainDialog()->action_Open_File,
+    this->Internal->NewModelMenu);
+    */
+
+  // Find sessions with a "create model" operator
+  auto mapper = new QSignalMapper(this);
+  smtk::model::StringList newSessionNames =
+    this->getThisCore()->modelManager()->managerProxy()->sessionNames();
+  for (smtk::model::StringList::iterator it = newSessionNames.begin(); it != newSessionNames.end(); ++it)
+    {
+    std::set<std::string> operatorNames =
+      smtk::model::SessionRegistrar::sessionOperatorNames(*it);
+    if (operatorNames.find("create model") != operatorNames.end())
+      {
+      std::ostringstream os;
+      os << "New " << *it << " model";
+      QAction* act = new QAction(QString::fromUtf8(os.str().c_str()), this);
+      this->getMainDialog()->menu_File->addAction(act);
+      QObject::connect(act, SIGNAL(triggered()), mapper, SLOT(map()));
+      mapper->setMapping(act, QString::fromUtf8(it->c_str()));
+      }
+    }
+  QObject::connect(
+    mapper, SIGNAL(mapped(QString)),
+    this, SLOT(onCreateNewModel(const QString&)));
+#endif
 
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(operationLog(const smtk::io::Logger&)),
@@ -370,6 +406,14 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
     this->getThisCore()->modelPanel()->resetUI();
     this->onNewModelCreated();
     }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onCreateNewModel(const QString& sessionType)
+{
+  std::cout << "Create " << sessionType.toUtf8().constData() << " model\n";
+  this->getThisCore()->startNewSession(
+    sessionType.toUtf8().constData(), true, true);
 }
 
 //----------------------------------------------------------------------------

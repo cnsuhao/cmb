@@ -182,6 +182,10 @@ public slots:
   // Call pqCMBModelManager::startNewSession with the app setting's entry
   // whether to create a default model.
   bool startNewSession(const std::string& sessionName);
+  bool startNewSession(
+    const std::string& sessionName,
+    bool createDefaultModel,
+    bool useExistingSession);
 
   // Description:
   // Override the zoomToSelection function to do real task

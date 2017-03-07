@@ -300,10 +300,22 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelBuilderMainWindowCore::startNewSession(const std::string& sessionName)
+bool pqCMBModelBuilderMainWindowCore::startNewSession(
+  const std::string& sessionName)
 {
-  return this->modelManager()->startNewSession(sessionName,
-    this->Internal->AppOptions->createDefaultSessionModel());
+  return this->startNewSession(sessionName,
+    this->Internal->AppOptions->createDefaultSessionModel(),
+    false);
+}
+
+//----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::startNewSession(
+  const std::string& sessionName,
+  bool createDefaultModel,
+  bool useExistingSession)
+{
+  return this->modelManager()->startNewSession(
+    sessionName, createDefaultModel, useExistingSession);
 }
 
 //----------------------------------------------------------------------------

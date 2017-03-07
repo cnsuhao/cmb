@@ -69,6 +69,7 @@ protected slots:
   void addNewSessions(const QStringList&);
   void addNewSession(const QString&);
   void onCreateNewSession();
+  void onCreateNewModel(const QString& sessionType);
   void onRequestMeshSelection();
   void onRequestMeshCellSelection(
     const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
