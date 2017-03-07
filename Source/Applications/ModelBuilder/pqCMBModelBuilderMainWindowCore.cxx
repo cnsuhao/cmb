@@ -314,6 +314,12 @@ bool pqCMBModelBuilderMainWindowCore::startNewSession(
   bool createDefaultModel,
   bool useExistingSession)
 {
+  // Make sure the panel is created before we create the session.
+  // Otherwise, the tree view is created with the results of the
+  // first operation already present and this confuses the logic
+  // to add operator results into the tree view.
+  (void) this->modelPanel();
+
   return this->modelManager()->startNewSession(
     sessionName, createDefaultModel, useExistingSession);
 }
