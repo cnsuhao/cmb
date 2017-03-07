@@ -108,7 +108,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
                                         QWidget* parentWidget)
 {
   // connect qtSelectionManager to qtUIManager
-  if (this->m_ModelPanel->selectionManager())
+  if (this->m_ModelPanel && this->m_ModelPanel->selectionManager())
   {
     this->m_attUIManager->setSelectionManager(this->m_ModelPanel->selectionManager());
   }
