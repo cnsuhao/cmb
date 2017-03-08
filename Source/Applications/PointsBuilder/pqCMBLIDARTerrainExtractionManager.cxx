@@ -31,7 +31,7 @@
 #include "vtkSMOutputPort.h"
 
 #include "pqApplicationCore.h"
-#include "pqContourWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "pqPipelineRepresentation.h"
 #include "pqFileDialog.h"
 #include "pqObjectBuilder.h"

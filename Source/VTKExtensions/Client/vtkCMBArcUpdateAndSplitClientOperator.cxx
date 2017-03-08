@@ -22,7 +22,7 @@
 
 #include "vtkContourWidget.h"
 #include "vtkSMArcOperatorProxy.h"
-#include "vtkCMBArcWidgetRepresentation.h"
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 #include <vector>
 
 namespace
@@ -106,8 +106,8 @@ bool vtkCMBArcUpdateAndSplitClientOperator::Operate(vtkIdType arcId,
 
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
       widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-      vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMTKArcRepresentation *widgetRep =
+      vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
 
   bool valid = this->FindArcsInWidgetOutput(widgetRep);
   if ( valid )
@@ -125,7 +125,7 @@ bool vtkCMBArcUpdateAndSplitClientOperator::Operate(vtkIdType arcId,
 
 //----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::FindArcsInWidgetOutput(
-  vtkCMBArcWidgetRepresentation *widgetRep)
+  vtkSMTKArcRepresentation *widgetRep)
 {
   //go through the widget output looking for the two end nodes that came
   //from the input.
@@ -154,7 +154,7 @@ bool vtkCMBArcUpdateAndSplitClientOperator::FindArcsInWidgetOutput(
 //----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::UpdateOperation(
   const vtkIdType& arcId, vtkSMNewWidgetRepresentationProxy *widgetProxy,
-  vtkCMBArcWidgetRepresentation *widgetRep)
+  vtkSMTKArcRepresentation *widgetRep)
 {
   //Send the info from the widget down to the update operator
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
@@ -206,7 +206,7 @@ bool vtkCMBArcUpdateAndSplitClientOperator::UpdateOperation(
 
 //----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::SplitOperation(
-  const vtkIdType& arcId,vtkCMBArcWidgetRepresentation * /*widgetRep*/)
+  const vtkIdType& arcId,vtkSMTKArcRepresentation * /*widgetRep*/)
 {
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
 

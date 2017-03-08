@@ -25,7 +25,7 @@ class pqOutputPort;
 class pqRenderView;
 class pqRenderViewSelectionReaction;
 class pqCMBArc;
-class qtCMBArcWidget;
+class qtArcWidget;
 class qtCMBArcWidgetManager;
 class qtCMBArcEditWidget;
 
@@ -85,7 +85,6 @@ private:
 }
 
 class vtkPointSelectedCallback;
-class qtCMBArcWidgetManager;
 class pqCmbModifierArcManager;
 
 class qtCMBArcEditWidget : public QWidget
@@ -113,7 +112,7 @@ public:
   void selectPointMode();
 
 signals:
-  void arcModified(qtCMBArcWidget*, vtkIdType, vtkIdType);
+  void arcModified(qtArcWidget*, vtkIdType, vtkIdType);
   void arcModificationfinished();
   void startArcEditing();
   void selectedPointOnLine(vtkIdType);
@@ -182,7 +181,7 @@ private:
   Ui::ArcPointPicker Picker;
   pqRenderView *View;
   pqCMBArc *Arc;
-  qtCMBArcWidget* SubWidget;
+  qtArcWidget* SubWidget;
   qtCMBArcWidgetManager* ArcManager;
 
   Ui::PickInfo StartPoint;

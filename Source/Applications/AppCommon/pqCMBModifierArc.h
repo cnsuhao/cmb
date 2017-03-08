@@ -24,7 +24,6 @@
 #include "cmbSystemConfig.h"
 #include "cmbProfileFunction.h"
 
-class qtCMBArcWidget;
 class qtCMBArcEditWidget;
 class qtCMBArcWidgetManager;
 class pqCMBArc;

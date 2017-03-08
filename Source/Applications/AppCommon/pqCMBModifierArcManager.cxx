@@ -42,7 +42,7 @@
 #include "ui_qtArcFunctionControl.h"
 #include "ui_qtModifierArcDialog.h"
 #include "vtkPVArcInfo.h"
-#include "qtCMBArcWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "vtkSMRenderViewProxy.h"
 
 #include "vtkSMPropertyHelper.h"
@@ -51,6 +51,8 @@
 #include "vtkSMVectorProperty.h"
 #include "vtkSMRepresentationProxy.h"
 #include "vtkNew.h"
+#include "vtkContourWidget.h"
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 
 #include "qtCMBManualFunctionWidget.h"
 #include "qtCMBProfileWedgeFunctionWidget.h"
@@ -76,8 +78,6 @@
 #include <vtkRenderWindow.h>
 #include <vtkRendererCollection.h>
 #include <QVTKWidget.h>
-
-#include "qtCMBArcWidget.h"
 
 #include "vtkSMCMBGlyphPointSourceProxy.h"
 
@@ -109,7 +109,6 @@ class pqCMBModifierArcManagerInternal
 public:
   QPointer<pqPipelineSource> ArcPointSelectSource;
   vtkSMNewWidgetRepresentationProxy * editableWidget;
-  //qtCMBArcWidget* PointSelectionWidget;
   QPointer<pqPipelineSource> SphereSource;
   QPointer<pqDataRepresentation> Representation;
   QPointer<pqPipelineSource> LineGlyphFilter;
@@ -117,7 +116,7 @@ public:
   Ui_qtModifierArcDialog * UI_Dialog;
   Ui_ArcEditWidget * arcEditWidget;
   EditMode mode;
-  qtCMBArcWidget * CurrentArcWidget;
+  qtArcWidget * CurrentArcWidget;
   int selectedRow;
   vtkBoundingBox boundingBox;
 };
@@ -790,7 +789,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->ArcWidgetManager->create();
     QWidget * tmpWidget =this->ArcWidgetManager->getActiveWidget();
     tmpWidget->hide();
-    this->Internal->CurrentArcWidget = dynamic_cast<qtCMBArcWidget*>(tmpWidget);
+    this->Internal->CurrentArcWidget = dynamic_cast<qtArcWidget*>(tmpWidget);
 
     QObject::connect(this->Internal->arcEditWidget->Close, SIGNAL(toggled(bool)),
                      this->Internal->CurrentArcWidget, SLOT(closeLoop(bool)), Qt::UniqueConnection);
@@ -1640,10 +1639,10 @@ public:
                        void *vtkNotUsed(callData)) override
   {
     int index = static_cast<int>(pointID);
-    vtkSMNewWidgetRepresentationProxy * widgetProxy = this->arcWidget->getWidgetProxy();
+    vtkSMNewWidgetRepresentationProxy * widgetProxy = this->arcWidget->widgetProxy();
     vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-    vtkCMBArcWidgetRepresentation *widgetRep =
-    vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+    vtkSMTKArcRepresentation *widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
     int row = -1;
     if(index >= 0 && index < this->arcInfo->GetNumberOfPoints())
     {
@@ -1652,20 +1651,21 @@ public:
       row = manager->addPoint(id);
     }
 
+    //vtkCMBArcRepresentation is replaced by vtkSMTKArcRepresentation
     widgetRep->SetPointSelectMode(0);
     this->arcWidget->finishContour();
-    this->arcWidget->setWidgetVisible(false);
+    this->arcWidget->setEnableInteractivity(false);
     this->arcWidget->setVisible(false);
-    this->arcWidget->deselect();
-    this->arcWidget->hideWidget();
-    this->arcWidget->getWidgetProxy()->UpdatePropertyInformation();
+    this->arcWidget->deemphasize();
+    this->arcWidget->hide();
+    this->arcWidget->widgetProxy()->UpdatePropertyInformation();
     this->arcWidget->setView(NULL);
     this->arcWidget->hide();
     if(row >= 0) manager->Internal->UI->points->selectRow(row);
   }
 
 private:
-  qtCMBArcWidget * arcWidget;
+  qtArcWidget * arcWidget;
   vtkPVArcInfo* arcInfo;
   pqCMBModifierArcManager * manager;
 };
@@ -1676,10 +1676,10 @@ void pqCMBModifierArcManager::addPoint()
   this->Internal->mode = EditFunction;
 
   vtkSMNewWidgetRepresentationProxy * widgetProxy =
-                                                this->Internal->CurrentArcWidget->getWidgetProxy();
+                                                this->Internal->CurrentArcWidget->widgetProxy();
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-                          vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMTKArcRepresentation *widgetRep =
+                          vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
   widgetRep->PickableOn();
   widgetRep->SetPointSelectMode(1);
   vtkPointSelectedCallback * psc = vtkPointSelectedCallback::New();
@@ -1820,18 +1820,18 @@ void pqCMBModifierArcManager::editArc()
 
   this->Internal->CurrentArcWidget->setView(this->view);
 
-  vtkSMPropertyHelper(this->Internal->CurrentArcWidget->getWidgetProxy(), "Enabled").Set(1);
-  this->Internal->CurrentArcWidget->getWidgetProxy()->UpdateVTKObjects();
+  vtkSMPropertyHelper(this->Internal->CurrentArcWidget->widgetProxy(), "Enabled").Set(1);
+  this->Internal->CurrentArcWidget->widgetProxy()->UpdateVTKObjects();
 
-  this->Internal->CurrentArcWidget->setWidgetVisible(true);
+  this->Internal->CurrentArcWidget->setEnableInteractivity(true);
   this->Internal->CurrentArcWidget->setEnabled(true);
 
   vtkNew<vtkCMBArcEditClientOperator> editOp;
   editOp->SetArcIsClosed(CurrentModifierArc->GetCmbArc()->isClosedLoop());
   editOp->Operate(CurrentModifierArc->GetCmbArc()->getSource()->getProxy(),
-                  this->Internal->CurrentArcWidget->getWidgetProxy());
+                  this->Internal->CurrentArcWidget->widgetProxy());
   this->Internal->arcEditWidget->ModifyMode->setChecked(true);
-  this->Internal->CurrentArcWidget->setModified();
-  this->Internal->CurrentArcWidget->select();
+  this->Internal->CurrentArcWidget->emphasize();
+  this->Internal->CurrentArcWidget->setVisible(true);
   this->view->forceRender();
 }

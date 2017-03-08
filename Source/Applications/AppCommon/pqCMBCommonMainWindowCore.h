@@ -53,7 +53,7 @@ class pqUndoStack;
 class pqView;
 class pqViewContextMenuManager;
 
-class pqContourWidget;
+class qtArcWidget;
 class pqSettings;
 class qtCMBApplicationOptions;
 class qtCMBApplicationOptionsDialog;
@@ -175,10 +175,11 @@ public:
   qtCMBProjectServerManager::PROGRAM getProgramKey(){return ProgramKey;}
 
   // Description:
-  // Create a contour widget, and also return the orthoplane it is on.
-  pqContourWidget* createPqContourWidget(int& orthoplane);
-  void deleteContourWidget(pqContourWidget* contourWidget);
-  pqContourWidget* createContourWidgetFromSource(
+  // Create a arc widget, and also return the orthoplane it is on.
+  // Use qtArcWidget for ContourWidget related stuffs
+  qtArcWidget* createPqContourWidget(int& orthoplane);
+  void deleteContourWidget(qtArcWidget* arcWidget);
+  qtArcWidget* createContourWidgetFromSource(
     int orthoplane, double projPos, vtkSMSourceProxy* source);
 
   /// Get the common cmb application settings option.
@@ -398,15 +399,15 @@ protected slots:
 protected:
   virtual void updateViewPositions();
   void updateContourLoop(
-    vtkSMProxy* implicitLoop, pqContourWidget* contourWidgt);
+    vtkSMProxy* implicitLoop, qtArcWidget* arcWidget);
   bool getContourNormal(double normal[3],
-    pqContourWidget* contourWidget);
+    qtArcWidget* arcWidget);
   bool getContourProjectionNormal(int &projNormal,
-    pqContourWidget* contourWidget);
+    qtArcWidget* arcWidget);
   bool getContourProjectionPosition(double &position,
-    pqContourWidget* contourWidget);
-  pqContourWidget* createDefaultContourWidget();
-  void setContourPlane(pqContourWidget* contourWidget,
+    qtArcWidget* arcWidget);
+  qtArcWidget* createDefaultArcWidget();
+  void setArcPlane(qtArcWidget* arcWidget,
     int orthoPlane, double projpos);
 
   virtual void buildDefaultBehaviors(QObject *parent_widget);

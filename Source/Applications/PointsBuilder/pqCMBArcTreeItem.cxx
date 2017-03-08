@@ -7,10 +7,10 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "pqCMBContourTreeItem.h"
+#include "pqCMBArcTreeItem.h"
 
 //-----------------------------------------------------------------------------
-pqCMBContourTreeItem::pqCMBContourTreeItem(QTreeWidgetItem* pNode,
+pqCMBArcTreeItem::pqCMBArcTreeItem(QTreeWidgetItem* pNode,
   int itemId, int nodeType)
 : QTreeWidgetItem(pNode, nodeType)
 {
@@ -18,28 +18,28 @@ pqCMBContourTreeItem::pqCMBContourTreeItem(QTreeWidgetItem* pNode,
   this->init();
 }
 //-----------------------------------------------------------------------------
-pqCMBContourTreeItem::~pqCMBContourTreeItem()
+pqCMBArcTreeItem::~pqCMBArcTreeItem()
 {
 // the model face object is kept in the model,
 // and the model will take care of them.
 
-  if(this->ContourObject &&
-    static_cast<pqContourWidget*>(this->ContourObject)==NULL)
+  if(this->ArcObject &&
+    static_cast<qtArcWidget*>(this->ArcObject)==NULL)
     {
-    this->ContourObject = NULL;
+    this->ArcObject = NULL;
     }
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBContourTreeItem::init()
+void pqCMBArcTreeItem::init()
 {
-  this->ContourObject = NULL;
+  this->ArcObject = NULL;
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBContourTreeItem::setContourObject(pqContourWidget* entity)
+void pqCMBArcTreeItem::setArcObject(qtArcWidget* entity)
 {
-  this->ContourObject = entity;
+  this->ArcObject = entity;
 }
 /*
   int visible;

@@ -10,8 +10,6 @@
 #include "pqCMBModifierArc.h"
 #include "pqCMBArc.h"
 
-//#include "qtCMBArcWidget.h"
-
 #include <iomanip>
 #include <sstream>
 

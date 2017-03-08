@@ -43,12 +43,10 @@
 #include <QTreeWidgetItem>
 #include <QProgressDialog>
 
-#include "pq3DWidgetFactory.h"
 #include "pqActionGroupInterface.h"
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqCameraDialog.h"
-#include "qtCMBArcWidget.h"
 #include "qtCMBArcEditWidget.h"
 #include "pqCustomFilterDefinitionModel.h"
 #include "pqCustomFilterDefinitionWizard.h"
@@ -61,6 +59,7 @@
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputWindow.h"
+#include "pqServer.h"
 
 #include "pqOptions.h"
 #include "pqOutputPort.h"
@@ -130,6 +129,7 @@
 #include <vtkSMProxyManager.h>
 #include <vtkSMProxyProperty.h>
 #include <vtkSMRenderViewProxy.h>
+#include <vtkSMSessionProxyManager.h>
 #include <vtkSMSourceProxy.h>
 #include <vtkSMOutputPort.h>
 #include <vtkSMStringVectorProperty.h>
@@ -140,7 +140,6 @@
 #include "vtkWidgetEventTranslator.h"
 #include "pqOmicronModelWriter.h"
 
-#include "smtk/extension/paraview/widgets/pq3DWidget.h"
 #include "smtk/extension/paraview/widgets/qtLineWidget.h"
 #include <smtk/bridge/discrete/kernel/Model/vtkModelItemIterator.h>
 #include <smtk/bridge/discrete/kernel/vtkDiscreteModel.h>
@@ -385,9 +384,9 @@ void pqCMBSceneBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObje
 //-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::setupBoxWidget()
 {
-  this->Internal->BoxWidget =
-    pqApplicationCore::instance()->get3DWidgetFactory()->
-    get3DWidget("BoxWidgetRepresentation", this->getActiveServer());
+  this->Internal->BoxWidget = vtkSMNewWidgetRepresentationProxy::SafeDownCast(
+        this->getActiveServer()->proxyManager()->NewProxy("representations",
+                                         "BoxWidgetRepresentation"));
   pqSMAdaptor::setElementProperty(this->Internal->BoxWidget->GetProperty("Visibility"), false);
   vtkSMPropertyHelper(this->Internal->BoxWidget,
     "PlaceFactor").Set(1.05);
@@ -838,13 +837,11 @@ void pqCMBSceneBuilderMainWindowCore::updateWidgetPanel(
       return;
     }
 
-    QString widgetName = selUiWidget->objectName();
     this->setAppearanceEditor(NULL);
     QWidget *pWidget =
         this->getAppearanceEditorContainer()->layout()->parentWidget();
 
     // Hide all other qtInteractionWidget instances.
-    QList<QWidget *> userUiWidgets;
 
     foreach (qtInteractionWidget *iw,
              pWidget->findChildren<qtInteractionWidget *>()) {

@@ -18,7 +18,7 @@
 #include "vtkCMBArcProvider.h"
 #include "vtkCMBArcManager.h"
 #include "vtkCMBArc.h"
-#include "vtkCMBArcWidgetRepresentation.h"
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 
 vtkStandardNewMacro(vtkCMBArcEditClientOperator);
 
@@ -55,8 +55,8 @@ bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
 
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
     widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-    vtkCMBArcWidgetRepresentation::SafeDownCast(
+  vtkSMTKArcRepresentation *widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(
     widget->GetRepresentation());
 
   //reset the widget

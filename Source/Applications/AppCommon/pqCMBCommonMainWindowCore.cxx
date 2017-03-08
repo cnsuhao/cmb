@@ -89,7 +89,7 @@
 #include <pqCoreTestUtility.h>
 #include <pqUndoStack.h>
 #include <pqWaitCursor.h>
-#include "pqContourWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
 #include "vtkSMSceneContourSourceProxy.h"
 #include "pqCMBTabWidgetTranslator.h"
@@ -1913,7 +1913,7 @@ pqPipelineSource *pqCMBCommonMainWindowCore::getAppendedSource(QList<pqOutputPor
 }
 
 //-----------------------------------------------------------------------------
-pqContourWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
+qtArcWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
 {
   // We need to explicitly call this to make sure the mode is 2D
   this->setCameraManipulationMode(1);
@@ -1921,7 +1921,7 @@ pqContourWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlan
 
   this->Internal->RenderView->forceRender();
 
-  pqContourWidget* contourWidget = this->createDefaultContourWidget();
+  qtArcWidget* arcWidget = this->createDefaultArcWidget();
   vtkCamera *camera = this->activeRenderView()->getRenderViewProxy()->GetActiveCamera();
 
   // We need to find the best plane to put the widget.  The plane must be aligned with
@@ -1969,39 +1969,40 @@ pqContourWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlan
     projpos =  position[orthoPlane] + viewDirection[orthoPlane]*((clipRange[1] + clipRange[0])*0.5);
   }
 
-  this->setContourPlane(contourWidget, orthoPlane, projpos);
+  this->setArcPlane(arcWidget, orthoPlane, projpos);
 
-  vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-  vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "Enabled").Set(1);
-  contourWidget->setWidgetVisible(1);
-  contourWidget->getWidgetProxy()->UpdateVTKObjects();
-  contourWidget->showWidget();
+  vtkSMPropertyHelper(arcWidget->widgetProxy(), "AlwaysOnTop").Set(1);
+  vtkSMPropertyHelper(arcWidget->widgetProxy(), "Enabled").Set(1);
+  arcWidget->setEnableInteractivity(1);
+  arcWidget->widgetProxy()->UpdateVTKObjects();
+  arcWidget->setVisible(1);
 
-  return contourWidget;
+  return arcWidget;
 }
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::deleteContourWidget(
-  pqContourWidget* contourWidget)
+  qtArcWidget* arcWidget)
 {
-  if(contourWidget)
+  if(arcWidget)
     {
-    vtkSMNewWidgetRepresentationProxy* widget = contourWidget->getWidgetProxy();
+    vtkSMNewWidgetRepresentationProxy* widget = arcWidget->widgetProxy();
     if(widget)
       {
       vtkSMProxyManager* pxm=vtkSMProxyManager::GetProxyManager();
-      pxm->UnRegisterProxy("3d_widgets_prototypes",
-        pxm->GetProxyName("3d_widgets_prototypes", widget),widget);
+      // not pretty sure. 3d_widgets_prototypes is registered in pq3DWidgetFactory which is now deprecated, so I use the group name here.
+      pxm->UnRegisterProxy("representations",
+        pxm->GetProxyName("representations", widget),widget);
       }
-    delete contourWidget;
+    delete arcWidget;
     }
 }
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::updateContourLoop(
-  vtkSMProxy* implicitLoop, pqContourWidget* contourWidgt)
+  vtkSMProxy* implicitLoop, qtArcWidget* arcWidget)
 {
   // force read
   vtkSMRepresentationProxy* repProxy = vtkSMRepresentationProxy::SafeDownCast(
-    contourWidgt->getWidgetProxy()->GetRepresentationProxy());
+    arcWidget->widgetProxy()->GetRepresentationProxy());
   if(repProxy)
   {
     repProxy->UpdateVTKObjects();
@@ -2009,7 +2010,7 @@ void pqCMBCommonMainWindowCore::updateContourLoop(
   }
 
   vtkNew<vtkPVContourRepresentationInfo> contourInfo;
-  contourWidgt->getWidgetProxy()->GetRepresentationProxy()->GatherInformation(
+  arcWidget->widgetProxy()->GetRepresentationProxy()->GatherInformation(
               contourInfo.GetPointer());
 
   if(contourInfo->GetNumberOfAllNodes())
@@ -2035,7 +2036,7 @@ void pqCMBCommonMainWindowCore::updateContourLoop(
     selectionLoop->AddProxy(loopPoints);
 
     double normal[3];
-    if(this->getContourNormal(normal, contourWidgt))
+    if(this->getContourNormal(normal, arcWidget))
     {
       vtkSMPropertyHelper(implicitLoop, "Normal").Set(normal, 3);
     }
@@ -2048,10 +2049,10 @@ void pqCMBCommonMainWindowCore::updateContourLoop(
 
 //-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::getContourNormal(double normal[3],
-  pqContourWidget* contourWidget)
+  qtArcWidget* arcWidget)
 {
   int orthoPlane;
-  if(this->getContourProjectionNormal(orthoPlane, contourWidget))
+  if(this->getContourProjectionNormal(orthoPlane, arcWidget))
   {
     if (orthoPlane == 0)// x axis
     {
@@ -2075,9 +2076,9 @@ bool pqCMBCommonMainWindowCore::getContourNormal(double normal[3],
 }
 //-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::getContourProjectionNormal(int &projNormal,
-                                          pqContourWidget* contourWidget)
+                                          qtArcWidget* arcWidget)
 {
-  vtkSMNewWidgetRepresentationProxy* widget = contourWidget->getWidgetProxy();
+  vtkSMNewWidgetRepresentationProxy* widget = arcWidget->widgetProxy();
   if (widget)
     {
     vtkSMProxyProperty* proxyProp =
@@ -2094,9 +2095,9 @@ bool pqCMBCommonMainWindowCore::getContourProjectionNormal(int &projNormal,
 }
 //-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::getContourProjectionPosition(double &position,
-                                          pqContourWidget* contourWidget)
+                                          qtArcWidget* arcWidget)
 {
-  vtkSMNewWidgetRepresentationProxy* widget = contourWidget->getWidgetProxy();
+  vtkSMNewWidgetRepresentationProxy* widget = arcWidget->widgetProxy();
   if (widget)
     {
     vtkSMProxyProperty* proxyProp =
@@ -2113,11 +2114,11 @@ bool pqCMBCommonMainWindowCore::getContourProjectionPosition(double &position,
 }
 
 //-----------------------------------------------------------------------------
-pqContourWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
+qtArcWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
   int orthoplane, double projPos, vtkSMSourceProxy* source)
 {
-  pqContourWidget* contourWidget = this->createDefaultContourWidget();
-  this->setContourPlane(contourWidget, orthoplane, projPos);
+  qtArcWidget* arcWidget = this->createDefaultArcWidget();
+  this->setArcPlane(arcWidget, orthoplane, projPos);
 
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
@@ -2128,42 +2129,37 @@ pqContourWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
   dwProxy->ExtractContour( source );
   dwProxy->UpdatePipeline();
   bool closed=false;
-  dwProxy->EditData( contourWidget->getWidgetProxy(), closed );
+  dwProxy->EditData( arcWidget->widgetProxy(), closed );
   dwProxy->UpdatePipeline();
 
-  vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-  contourWidget->setWidgetVisible(1);
-  vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "Enabled").Set(1);
-  vtkSMPropertyHelper(contourWidget->getWidgetProxy(), "ShowSelectedNodes").Set(0);
-  contourWidget->getWidgetProxy()->UpdateVTKObjects();
-  contourWidget->showWidget();
+  vtkSMPropertyHelper(arcWidget->widgetProxy(), "AlwaysOnTop").Set(1);
+  arcWidget->setEnableInteractivity(1);
+  vtkSMPropertyHelper(arcWidget->widgetProxy(), "Enabled").Set(1);
+  vtkSMPropertyHelper(arcWidget->widgetProxy(), "ShowSelectedNodes").Set(0);
+  arcWidget->widgetProxy()->UpdateVTKObjects();
+  arcWidget->setVisible(1);
 
-  return contourWidget;
+  return arcWidget;
 }
 //-----------------------------------------------------------------------------
-pqContourWidget* pqCMBCommonMainWindowCore::createDefaultContourWidget()
+qtArcWidget* pqCMBCommonMainWindowCore::createDefaultArcWidget()
 {
-  vtkSMProxy* pointplacer = vtkSMProxyManager::GetProxyManager()->NewProxy(
-    "point_placers", "BoundedPlanePointPlacer");
-  pqContourWidget* contourWidget = new pqContourWidget(
-    pointplacer, pointplacer, NULL);
-  contourWidget->setObjectName("LIDARContourWidget");
-  contourWidget->setView(this->activeRenderView());
-  contourWidget->setPointPlacer(pointplacer);
+  qtArcWidget* arcWidget = new qtArcWidget(nullptr);
+  arcWidget->setObjectName("LIDARArcWidget");
+  arcWidget->setView(this->activeRenderView());
   this->activeRenderView()->getProxy()->UpdateVTKObjects();
-  contourWidget->setLineInterpolator(0);
-  pointplacer->Delete();
-  return contourWidget;
+  return arcWidget;
 }
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setContourPlane(pqContourWidget* contourWidget,
+void pqCMBCommonMainWindowCore::setArcPlane(qtArcWidget* arcWidget,
   int orthoPlane, double projpos)
 {
   vtkSMProxyProperty* proxyProp =
     vtkSMProxyProperty::SafeDownCast(
-    contourWidget->getWidgetProxy()->GetProperty("PointPlacer"));
+    arcWidget->widgetProxy()->GetProperty("PointPlacer"));
   if (proxyProp && proxyProp->GetNumberOfProxies())
     {
+    // if not work, use vtkSMProxy* pointplacer = arcwidget->pointPlacer();
     vtkSMProxy* pointplacer = proxyProp->GetProxy(0);
     vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(orthoPlane);
     vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(projpos);

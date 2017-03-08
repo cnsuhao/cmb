@@ -96,13 +96,13 @@ public:
   void destroyRepresentation(pqDataRepresentation* selRep);
 
   // Description:
-  // Select surface points with contour
-  void contourSelectSurface(pqContourWidget* contourWidget,
-    bool isCell, int selectContourType);
-  // Select through cells with contour
-  void contourSelectThrough(pqContourWidget* contourWidget,
-    int selectContourType);
-  void setShapeSelectionOption(pqContourWidget* contourWidget,
+  // Select surface points with arc
+  void contourSelectSurface(qtArcWidget* arcWidget,
+    bool isCell, int selectArcType);
+  // Select through cells with arc
+  void contourSelectThrough(qtArcWidget* arcWidget,
+    int selectArcType);
+  void setShapeSelectionOption(qtArcWidget* arcWidget,
     int selectCellThrough, int selectShapeType);
   bool hasContourSelection();
   bool hasConeSelection();
@@ -139,7 +139,7 @@ public slots:
   void onFrustumSelect(bool);
   void onRubberBandSelectCell(bool checked);
   void onRubberBandSelectPoints(bool checked);
-  void updateSelection(bool isContourSel = false);
+  void updateSelection(bool isArcSel = false);
   void clearSelection();
   void selectAll();
 
@@ -163,12 +163,12 @@ public slots:
   void resetFilterPanels();
 
   // Description:
-  // Create a contour widget, and put render view in define contour stage
-  pqContourWidget* defineContourWidget();
-  void clearContourSelection(pqContourWidget*);
+  // Create a Arc widget, and put render view in define arc stage
+  qtArcWidget* defineContourWidget();
+  void clearContourSelection(qtArcWidget*);
 
   // Description:
-  // Move mesh points according to current contour selection and box widget
+  // Move mesh points according to current arc selection and box widget
   // return true on success; false on failure
   bool moveMeshScultpingPoints();
   bool moveMeshPoints(pqPipelineSource* source,
@@ -196,8 +196,8 @@ protected:
   void resetFilterInputArrays();
   bool getMeshSaveAsFileName(QString& filename);
   void updateMeshContourSelection(
-    pqContourWidget* contourWidget, int selectCellThrough,
-    vtkSMProxy* selectionSource, int selectContourType,
+    qtArcWidget* arcWidget, int selectCellThrough,
+    vtkSMProxy* selectionSource, int selectArcType,
     int fieldType, int GenerateSelectedOutput=0);
   void createSmoothMeshPanel();
 
@@ -230,7 +230,7 @@ private:
   // The Leaf nodes that are currently selected
   bool PreviewMeshOutput;
   void getContourDisplayBounds(
-    vtkPVContourRepresentationInfo* contourInfo, double bounds[6]);
+    vtkPVContourRepresentationInfo* arcInfo, double bounds[6]);
 
 };
 

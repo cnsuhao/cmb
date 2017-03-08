@@ -58,7 +58,7 @@
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqCameraDialog.h"
-#include "pqContourWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "pqCustomFilterDefinitionModel.h"
 #include "pqCustomFilterDefinitionWizard.h"
 #include "pqCustomFilterManager.h"
@@ -105,8 +105,7 @@
 #include "pqActiveObjects.h"
 #include "qtCMBArcEditWidget.h"
 
-#include <qtCMBArcWidget.h>
-//#include <pqCMBArc.h>
+#include <smtk/extension/paraview/widgets/qtArcWidget.h>
 #include "pqCMBArc.h"
 
 #include <QVTKWidget.h>
@@ -168,7 +167,7 @@
 #include <vtksys/SystemTools.hxx>
 
 #include "pqCMBPreviewDialog.h"
-#include "pqCMBContourTreeItem.h"
+#include "pqCMBArcTreeItem.h"
 #include "pqCMBLIDARContourTree.h"
 #include "pqCMBLIDARTerrainExtractionManager.h"
 
@@ -250,8 +249,8 @@ public:
   QMap<QString, QMap<int, pqCMBLIDARPieceObject*> > FilePieceIdObjectMap;
   pqCMBLIDARPieceObject* LastSelectedObject;
   QPointer<pqCMBLIDARContourTree> ContourTree;
-  QMap< pqContourWidget*, vtkSMProxy* > ContourProxyMap;
-  QMap< pqCMBContourTreeItem*, QList<pqContourWidget*> > ContourGroupMap;
+  QMap< qtArcWidget*, vtkSMProxy* > ContourProxyMap;
+  QMap< pqCMBArcTreeItem*, QList<qtArcWidget*> > ContourGroupMap;
 
   bool RenderNeeded;
   QList<QTreeWidgetItem*> NeedUpdateItems;
@@ -698,8 +697,8 @@ void pqCMBPointsBuilderMainWindowCore::initPolygonsTree()
     this, SLOT(onPolygonTreeItemsDropped(QTreeWidgetItem*, int,
     QList<QTreeWidgetItem*> ))/*, Qt::QueuedConnection*/);
   QObject::connect(this->Internal->ContourTree,
-    SIGNAL(itemRemoved(QList<pqContourWidget*>)),
-    this, SLOT(onPolygonItemRemoved(QList<pqContourWidget*>)));
+    SIGNAL(itemRemoved(QList<qtArcWidget*>)),
+    this, SLOT(onPolygonItemRemoved(QList<qtArcWidget*>)));
 
 }
 
@@ -2358,7 +2357,7 @@ void pqCMBPointsBuilderMainWindowCore::onActiveFilterChanged()
 //-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onContourChanged()
 {
-  pqContourWidget* const contourWidget = qobject_cast<pqContourWidget*>(
+  qtArcWidget* const contourWidget = qobject_cast<qtArcWidget*>(
     QObject::sender());
   if(!contourWidget ||
      !this->Internal->ContourProxyMap.contains(contourWidget))
@@ -2387,7 +2386,7 @@ void pqCMBPointsBuilderMainWindowCore::onContourChanged()
 //-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onContourFinished()
 {
-  pqContourWidget* const contourWidget = qobject_cast<pqContourWidget*>(
+  qtArcWidget* const contourWidget = qobject_cast<qtArcWidget*>(
     QObject::sender());
   QTreeWidgetItem* contourItem =
     this->Internal->ContourTree->contourFinished(contourWidget);
@@ -2405,36 +2404,30 @@ void pqCMBPointsBuilderMainWindowCore::onContourFinished()
   this->setCameraManipulationEnabled(true);
 }
 
-qtCMBArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, double position )
+qtArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, double position )
 {
-  vtkSMProxy* pointplacer =
-     vtkSMProxyManager::GetProxyManager()->NewProxy("point_placers",
-                                                    "BoundedPlanePointPlacer");
-
-  qtCMBArcWidget *widget= new qtCMBArcWidget( pointplacer, pointplacer,NULL) ;
+  qtArcWidget *widget= new qtArcWidget(nullptr) ;
+  vtkSMProxy* pointplacer =  widget->pointPlacer();
 
   widget->setObjectName("CmbSceneContourWidget");
 
   vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(normal);
   vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(position);
-  widget->setLineInterpolator(0);
-  widget->setPointPlacer(pointplacer);
   pointplacer->UpdateVTKObjects();
-  pointplacer->Delete();
 
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
+  vtkSMPropertyHelper(widget->widgetProxy(), "AlwaysOnTop").Set(1);
 
   widget->setView( this->activeRenderView() );
 
   //this block is needed to create the widget in the right order
   //we need to set on the proxy enabled, not the widget
   //than we need to call Initialize
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-  widget->setWidgetVisible(1);
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "Enabled").Set(1);
-  widget->getWidgetProxy()->UpdateVTKObjects();
+  vtkSMPropertyHelper(widget->widgetProxy(), "AlwaysOnTop").Set(1);
+  widget->setEnableInteractivity(1);
+  vtkSMPropertyHelper(widget->widgetProxy(), "Enabled").Set(1);
+  widget->widgetProxy()->UpdateVTKObjects();
   //widget->getWidgetProxy()->GetWidget()->SetEnabled(true);
-  widget->getWidgetProxy()->InvokeCommand("Initialize");
+  widget->widgetProxy()->InvokeCommand("Initialize");
 
   return widget;
 }
@@ -2448,13 +2441,13 @@ void pqCMBPointsBuilderMainWindowCore::onRemoveContour()
 
 //-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onPolygonItemRemoved(
-  QList<pqContourWidget*> remContours)
+  QList<qtArcWidget*> remContours)
 {
   pqWaitCursor cursor;
   this->Internal->LIDARPanel->getGUIPanel()->tabContour->setEnabled(0);
   for(int i=0; i<remContours.size(); i++)
     {
-    pqContourWidget* contourWidget = remContours.value(i);
+    qtArcWidget* contourWidget = remContours.value(i);
     int gid = this->getContourGroupIdWithContour(contourWidget);
     if(gid<0)
     {
@@ -2481,9 +2474,9 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonItemRemoved(
 }
 
 //-----------------------------------------------------------------------------
-pqCMBContourTreeItem* pqCMBPointsBuilderMainWindowCore::onAddContourGroup()
+pqCMBArcTreeItem* pqCMBPointsBuilderMainWindowCore::onAddContourGroup()
 {
-  pqCMBContourTreeItem* groupItem = this->Internal->ContourTree->createContourGroupNode();
+  pqCMBArcTreeItem* groupItem = this->Internal->ContourTree->createContourGroupNode();
   return groupItem;
 }
 
@@ -2497,7 +2490,7 @@ void pqCMBPointsBuilderMainWindowCore::onAddContourWidget()
     this->onAddContourGroup();
     }
   int orthoPlane;
-  pqContourWidget* contourWidget = this->createPqContourWidget(orthoPlane);
+  qtArcWidget* contourWidget = this->createPqContourWidget(orthoPlane);
   this->Internal->ContourProxyMap[contourWidget] = NULL;
   QTreeWidgetItem* contourNode = this->addContourNode(contourWidget, orthoPlane);
   if (contourNode && contourNode->parent()->childCount() == 1)
@@ -2522,7 +2515,7 @@ void pqCMBPointsBuilderMainWindowCore::onAddContourWidget()
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBPointsBuilderMainWindowCore::addContourFilter(pqContourWidget* contourWidgt)
+void pqCMBPointsBuilderMainWindowCore::addContourFilter(qtArcWidget* contourWidgt)
 {
   if(!contourWidgt)
     {
@@ -2785,8 +2778,8 @@ void pqCMBPointsBuilderMainWindowCore::onThresholdItemChanged(QTableWidgetItem* 
 void pqCMBPointsBuilderMainWindowCore::onPolygonTreeItemsDropped(
   QTreeWidgetItem* toGroup, int fromGroup, QList<QTreeWidgetItem*> movedContours)
 {
-  pqCMBContourTreeItem* parentItem = static_cast<pqCMBContourTreeItem*> (toGroup);
-  pqCMBContourTreeItem* fromItem = this->getContourGroupNodeWithId(fromGroup);
+  pqCMBArcTreeItem* parentItem = static_cast<pqCMBArcTreeItem*> (toGroup);
+  pqCMBArcTreeItem* fromItem = this->getContourGroupNodeWithId(fromGroup);
   if(this->Internal->ContourGroupMap.contains(parentItem)
     && this->Internal->ContourGroupMap.contains(fromItem))
     {
@@ -2795,7 +2788,7 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonTreeItemsDropped(
       this->Internal->PieceMainTable->getAllPieceObjects();
     for(int i = 0; i < movedContours.size(); ++i)
       {
-      pqContourWidget* contourWidget =
+      qtArcWidget* contourWidget =
         this->Internal->ContourTree->getItemObject(movedContours[i]);
       if(!this->Internal->ContourGroupMap[parentItem].contains(contourWidget))
         {
@@ -2954,7 +2947,7 @@ void pqCMBPointsBuilderMainWindowCore::clearContourFilters()
 
   for (int i=0; i<this->Internal->ContourProxyMap.keys().count(); i++)
     {
-    pqContourWidget* widget = this->Internal->ContourProxyMap.keys().value(i);
+    qtArcWidget* widget = this->Internal->ContourProxyMap.keys().value(i);
     if(widget)
       {
       this->deleteContourWidget(widget);
@@ -2973,11 +2966,11 @@ void pqCMBPointsBuilderMainWindowCore::clearContourFilters()
 }
 
 //-----------------------------------------------------------------------------
-pqCMBContourTreeItem* pqCMBPointsBuilderMainWindowCore::getContourGroupNodeWithId(int id)
+pqCMBArcTreeItem* pqCMBPointsBuilderMainWindowCore::getContourGroupNodeWithId(int id)
 {
   for (int i=0; i<this->Internal->ContourGroupMap.keys().count(); i++)
     {
-    pqCMBContourTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
+    pqCMBArcTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
     if(item->itemId() == id)
       {
       return item;
@@ -2991,7 +2984,7 @@ int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithNode(QTreeWidgetItem*
 {
   for (int i=0; i<this->Internal->ContourGroupMap.keys().count(); i++)
     {
-    pqCMBContourTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
+    pqCMBArcTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
     if(item == inItem)
       {
       return item->itemId();
@@ -3032,7 +3025,7 @@ void pqCMBPointsBuilderMainWindowCore::onUpdateContours()
     QTreeWidgetItem* item = this->Internal->NeedUpdateItems.value(i);
     item->setBackgroundColor(
       pqCMBLIDARContourTree::NameCol, this->Internal->ContourTree->contourFinishedColor);
-    pqContourWidget* widget = this->Internal->ContourTree->getItemObject(item);
+    qtArcWidget* widget = this->Internal->ContourTree->getItemObject(item);
     vtkSMProxy* implicitLoop = this->Internal->ContourProxyMap[widget];
     if(widget && implicitLoop)
       {
@@ -3108,11 +3101,11 @@ void pqCMBPointsBuilderMainWindowCore::onElevationMaxChanged(double maxZ)
 
 //-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithContour(
-  pqContourWidget* contourWidget)
+  qtArcWidget* contourWidget)
 {
   for (int i=0; i<this->Internal->ContourGroupMap.keys().count(); i++)
     {
-    pqCMBContourTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
+    pqCMBArcTreeItem* item = this->Internal->ContourGroupMap.keys().value(i);
     if(this->Internal->ContourGroupMap[item].contains(contourWidget))
       {
       return item->itemId();
@@ -3196,7 +3189,7 @@ void pqCMBPointsBuilderMainWindowCore::saveContour(const char* filename)
     // Add contours for this group
     for (int j = 0; j < group->childCount(); j++)
       {
-      pqContourWidget* widget = this->Internal->ContourTree->getItemObject(
+      qtArcWidget* widget = this->Internal->ContourTree->getItemObject(
         group->child(j));
       if(!widget)
         {
@@ -3207,7 +3200,7 @@ void pqCMBPointsBuilderMainWindowCore::saveContour(const char* filename)
         "SceneContourSource", this->getActiveServer());
       vtkSMSceneContourSourceProxy* dwProxy =
         vtkSMSceneContourSourceProxy::SafeDownCast(pdSource->getProxy());
-      dwProxy->CopyData( widget->getWidgetProxy() );
+      dwProxy->CopyData( widget->widgetProxy() );
       pdSource->updatePipeline();
       smpContour->AddProxy( dwProxy );
       contourFilter->UpdateProperty("Contour", true);
@@ -3340,7 +3333,7 @@ void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
       groupInvert = static_cast<int>(pRange[0]);
       }
     // for each block, we create a group of contours
-    pqCMBContourTreeItem* groupNode = this->onAddContourGroup();
+    pqCMBArcTreeItem* groupNode = this->onAddContourGroup();
     groupNode->setBackgroundColor(pqCMBLIDARContourTree::NameCol,
       this->Internal->ContourTree->contourFinishedColor);
     Qt::CheckState checkstate = groupInvert ? Qt::Unchecked : Qt::Checked;
@@ -3354,7 +3347,7 @@ void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
       smContours->UpdatePipeline();
       int projNormal = (planeArray && max == planeArray->GetNumberOfTuples()) ? planeArray->GetValue(w) : 2;
       double projPos = (posArray && max == posArray->GetNumberOfTuples()) ? posArray->GetValue(w) : 0.0;
-      pqContourWidget* contourW = this->createContourWidgetFromSource(
+      qtArcWidget* contourW = this->createContourWidgetFromSource(
         projNormal, projPos, smContours);
       if(contourW)
         {
@@ -3381,12 +3374,12 @@ void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
 }
 //-----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBPointsBuilderMainWindowCore::addContourNode(
-  pqContourWidget* contourWidget, int orthoPlane)
+  qtArcWidget* contourWidget, int orthoPlane)
 {
   QTreeWidgetItem* contourNode = this->Internal->ContourTree->addNewContourNode(contourWidget);
   if(contourNode)
     {
-    pqCMBContourTreeItem* groupNode = static_cast<pqCMBContourTreeItem*>(contourNode->parent());
+    pqCMBArcTreeItem* groupNode = static_cast<pqCMBArcTreeItem*>(contourNode->parent());
     this->Internal->ContourGroupMap[groupNode].push_back(contourWidget);
     if(orthoPlane == 2) // z axis
       {

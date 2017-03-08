@@ -18,7 +18,7 @@
 #include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
 #include "pqCMBCommonMainWindowCore.h"
-#include "qtCMBArcWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "qtCMBArcEditWidget.h"
 
 #include "pqApplicationCore.h"
@@ -163,14 +163,15 @@ int qtCMBArcWidgetManager::create()
     this->getDefaultArcPlane(normal, planepos);
     this->resetArcPlane(normal, planepos);
     this->Widget->setView(this->View);
-    this->Widget->setWidgetVisible(true);
+    this->Widget->setEnableInteractivity(true);
 
-    vtkSMPropertyHelper(this->Widget->getWidgetProxy(), "Enabled").Set(1);
-    this->Widget->getWidgetProxy()->UpdateVTKObjects();
-    this->Widget->showWidget();
+    vtkSMPropertyHelper(this->Widget->widgetProxy(), "Enabled").Set(1);
+    this->Widget->widgetProxy()->UpdateVTKObjects();
+    this->Widget->setVisible(true);
     }
 
-  this->Widget->select();
+  this->Widget->emphasize();
+  this->Widget->setVisible(true);
   if(this->Node != NULL)
     {
     pqCMBSceneObjectBase* obj = this->Node->getDataObject();
@@ -202,8 +203,8 @@ int qtCMBArcWidgetManager::edit()
     {
     this->EditWidget = new qtCMBArcEditWidget();
     QObject::connect(this->EditWidget,SIGNAL(
-      arcModified(qtCMBArcWidget*, vtkIdType, vtkIdType)),
-      this,SLOT(updateModifiedArc(qtCMBArcWidget*, vtkIdType, vtkIdType)));
+      arcModified(qtArcWidget*, vtkIdType, vtkIdType)),
+      this,SLOT(updateModifiedArc(qtArcWidget*, vtkIdType, vtkIdType)));
     QObject::connect(this->EditWidget,SIGNAL(arcModificationfinished()),
       this,SLOT(editingFinished()));
     QObject::connect(this->EditWidget,SIGNAL(startArcEditing()),
@@ -244,7 +245,7 @@ void qtCMBArcWidgetManager::updateArcNode()
     (this->Node->getDataObject()):this->Arc;
   if ( obj )
     {
-    vtkSMNewWidgetRepresentationProxy *widget = this->Widget->getWidgetProxy();
+    vtkSMNewWidgetRepresentationProxy *widget = this->Widget->widgetProxy();
 
     //if the object hasn't been created yet update will call createArc
     //this way we don't have to check here
@@ -284,8 +285,8 @@ void qtCMBArcWidgetManager::updateArcNode()
   this->Widget->setVisible(false);
   this->Widget->reset();
   this->Widget->removeAllNodes();
-  this->Widget->setWidgetVisible(false);
-  this->Widget->getWidgetProxy()->UpdatePropertyInformation();
+  this->Widget->setEnableInteractivity(false);
+  this->Widget->widgetProxy()->UpdatePropertyInformation();
   this->Widget->setView(NULL);
   this->ActiveWidget = NULL;
 
@@ -310,7 +311,7 @@ void qtCMBArcWidgetManager::editingFinished()
 
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::updateModifiedArc(
-  qtCMBArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID)
+  qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID)
 {
   if ( (!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
     {
@@ -321,7 +322,7 @@ void qtCMBArcWidgetManager::updateModifiedArc(
   pqCMBArc* obj = (this->Node != NULL)?dynamic_cast<pqCMBArc*>(this->Node->getDataObject()):this->Arc;
   if ( obj )
     {
-    vtkSMNewWidgetRepresentationProxy *widget = subArcWidget->getWidgetProxy();
+    vtkSMNewWidgetRepresentationProxy *widget = subArcWidget->widgetProxy();
 
     //if the object hasn't been created yet update will call createArc
     //this way we don't have to check here
@@ -370,7 +371,7 @@ void qtCMBArcWidgetManager::updateModifiedArc(
 }
 
 //-----------------------------------------------------------------------------
-qtCMBArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(
+qtArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(
   int& normal, double& planePos)
 {
   this->getDefaultArcPlane(normal, planePos);
@@ -378,35 +379,28 @@ qtCMBArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(
 }
 
 //-----------------------------------------------------------------------------
-qtCMBArcWidget* qtCMBArcWidgetManager::createContourWidget(
+qtArcWidget* qtCMBArcWidgetManager::createContourWidget(
    int normal, double position)
 {
-  vtkSMProxy* pointplacer = vtkSMProxyManager::GetProxyManager()->NewProxy(
-    "point_placers", "BoundedPlanePointPlacer");
-
-  qtCMBArcWidget *widget= new qtCMBArcWidget(
-    pointplacer, pointplacer, NULL);
-
+  qtArcWidget *widget= new qtArcWidget(nullptr);
   widget->setObjectName("CmbSceneContourWidget");
 
+  vtkSMProxy* pointplacer = widget->pointPlacer();
   vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(normal);
   vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(position);
-  widget->setLineInterpolator(0);
-  widget->setPointPlacer(pointplacer);
   pointplacer->UpdateVTKObjects();
-  pointplacer->Delete();
 
 
   //this block is needed to create the widget in the right order
   //we need to set on the proxy enabled, not the widget
   //than we need to call Initialize
   widget->setView( this->View );
-  widget->setWidgetVisible( this->View != NULL );
+  widget->setEnableInteractivity(this->View != NULL );
 
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "AlwaysOnTop").Set(1);
-  vtkSMPropertyHelper(widget->getWidgetProxy(), "Enabled").Set(1);
-  widget->getWidgetProxy()->UpdateVTKObjects();
-  widget->showWidget();
+  vtkSMPropertyHelper(widget->widgetProxy(), "AlwaysOnTop").Set(1);
+  vtkSMPropertyHelper(widget->widgetProxy(), "Enabled").Set(1);
+  widget->widgetProxy()->UpdateVTKObjects();
+  widget->setVisible(true);
 
   return widget;
 }
@@ -417,11 +411,11 @@ pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(
   vtkDoubleArray* nodePositions, vtkIdTypeArray* SelIndices)
 {
 
-  qtCMBArcWidget* contourWidget =
+  qtArcWidget* contourWidget =
     this->createContourWidget(normal,position);
 
   vtkSMNewWidgetRepresentationProxy *widgetProxy =
-    contourWidget->getWidgetProxy();
+    contourWidget->widgetProxy();
 
   if(nodePositions && nodePositions->GetNumberOfTuples() > 0)
     {
@@ -503,7 +497,7 @@ void qtCMBArcWidgetManager::resetArcPlane(
 {
   vtkSMProxyProperty* proxyProp =
     vtkSMProxyProperty::SafeDownCast(
-    this->Widget->getWidgetProxy()->GetProperty("PointPlacer"));
+    this->Widget->widgetProxy()->GetProperty("PointPlacer"));
   if (proxyProp && proxyProp->GetNumberOfProxies())
     {
     vtkSMProxy* pointplacer = proxyProp->GetProxy(0);

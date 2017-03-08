@@ -24,7 +24,7 @@
 
 class pqCMBArc;
 class pqCMBSceneNode;
-class qtCMBArcWidget;
+class qtArcWidget;
 class qtCMBArcEditWidget;
 class pqRenderView;
 class pqServer;
@@ -51,7 +51,7 @@ public:
   void setActiveArc(pqCMBArc*);
   pqCMBSceneNode* getActiveNode( );
   pqCMBArc* getActiveArc();
-  qtCMBArcWidget* createDefaultContourWidget(int& normal, double& pos);
+  qtArcWidget* createDefaultContourWidget(int& normal, double& pos);
 
   QWidget* getActiveWidget() { return ActiveWidget; }
 
@@ -92,7 +92,7 @@ protected slots:
   void updateArcNode();
   // called when a sub arc modification is done
   void updateModifiedArc(
-    qtCMBArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID);
+    qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID);
   // called when the edit widget is closed
   void editingFinished();
 
@@ -102,10 +102,10 @@ protected slots:
 protected:
   void getDefaultArcPlane(int& normal, double& pos);
   void resetArcPlane(int normal, double pos);
-  qtCMBArcWidget* createContourWidget( int normal, double position );
+  qtArcWidget* createContourWidget( int normal, double position );
   void modifyArc(vtkIdType startIdx, vtkIdType endIdx, int opType);
 
-  qtCMBArcWidget* Widget;
+  qtArcWidget* Widget;
   qtCMBArcEditWidget* EditWidget;
 
   pqCMBSceneNode *Node;

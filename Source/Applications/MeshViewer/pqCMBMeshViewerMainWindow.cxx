@@ -61,7 +61,7 @@
 #include "pqSMProxy.h"
 #include "pqSpreadSheetViewModel.h"
 #include "pqWaitCursor.h"
-#include "pqContourWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 
 #include "vtkCellData.h"
 #include "vtkCleanUnstructuredGrid.h"
@@ -135,7 +135,7 @@ public:
   QComboBox *SelectionMenu;
   QList<QAction*> EditMenuActions;
   QPointer<pqProxyInformationWidget> InformationWidget;
-  pqContourWidget* CurrentContour;
+  qtArcWidget* CurrentContour;
   vtkSMNewWidgetRepresentationProxy* BoxWidget;
   vtkSMNewWidgetRepresentationProxy* PlaneWidget;
   vtkSmartPointer<vtkEventQtSlotConnect> VTKBoxConnect;

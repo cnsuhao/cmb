@@ -9,8 +9,8 @@
 //=========================================================================
 #include "pqCMBLIDARContourTree.h"
 
-#include "pqContourWidget.h"
-#include "pqCMBContourTreeItem.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
+#include "pqCMBArcTreeItem.h"
 #include "qtCMBTreeWidget.h"
 
 // Qt headers
@@ -131,16 +131,16 @@ void pqCMBLIDARContourTree::customizeTreeWidget()
 
 //----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBLIDARContourTree::createContourNode(
-  QTreeWidgetItem* parentNode, pqContourWidget* contourObj,
+  QTreeWidgetItem* parentNode, qtArcWidget* arcObj,
   Qt::ItemFlags commFlags, const QString& text, int id, int type,
   bool setApplyContour, bool invert)
 {
   //QTreeWidgetItem* mNode = new QTreeWidgetItem(parentNode, type);
-  pqCMBContourTreeItem* mNode = new pqCMBContourTreeItem(parentNode, id, type);
+  pqCMBArcTreeItem* mNode = new pqCMBArcTreeItem(parentNode, id, type);
 
-  if(contourObj)
+  if(arcObj)
     {
-    mNode->setContourObject(contourObj);
+    mNode->setArcObject(arcObj);
     }
 
 // mNode->setData(colId, Qt::UserRole, colData);
@@ -159,10 +159,10 @@ QTreeWidgetItem* pqCMBLIDARContourTree::createContourNode(
 }
 
 //----------------------------------------------------------------------------
-pqContourWidget* pqCMBLIDARContourTree::getItemObject(QTreeWidgetItem* treeItem)
+qtArcWidget* pqCMBLIDARContourTree::getItemObject(QTreeWidgetItem* treeItem)
 {
-  pqCMBContourTreeItem* cmbItem = static_cast<pqCMBContourTreeItem*>(treeItem);
-  return cmbItem ?  cmbItem->getContourObject() : NULL;
+  pqCMBArcTreeItem* cmbItem = static_cast<pqCMBArcTreeItem*>(treeItem);
+  return cmbItem ?  cmbItem->getArcObject() : NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -186,17 +186,17 @@ void pqCMBLIDARContourTree::clearSelection(bool blockSignal)
 //-----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBLIDARContourTree::createContourNode(
     QTreeWidgetItem* parentNode,
-    pqContourWidget* contourObj, Qt::ItemFlags itemFlags, int type,
+    qtArcWidget* arcObj, Qt::ItemFlags itemFlags, int type,
     bool setApplyContour, bool invert)
 {
-  if(contourObj)
+  if(arcObj)
     {
     static int contourId=0;
     contourId++;
     QString contourText("Contour ");
     contourText.append(QString::number(contourId));
     QTreeWidgetItem* contourNode = this->createContourNode(
-      parentNode, contourObj, itemFlags, contourText, contourId, type,
+      parentNode, arcObj, itemFlags, contourText, contourId, type,
       setApplyContour, invert);
     return contourNode;
     }
@@ -221,25 +221,25 @@ QTreeWidgetItem* pqCMBLIDARContourTree::addNewTreeNodeOnRoot()
 }
 
 //-----------------------------------------------------------------------------
-pqCMBContourTreeItem* pqCMBLIDARContourTree::createContourGroupNode()
+pqCMBArcTreeItem* pqCMBLIDARContourTree::createContourGroupNode()
 {
   QTreeWidgetItem* newNode = this->addNewTreeNodeOnRoot();
   if(newNode)
     {
     //this->TreeWidget->sortByColumn(col, Qt::AscendingOrder);
     //this->UpdateInfoTable();
-    return static_cast<pqCMBContourTreeItem*>(newNode);
+    return static_cast<pqCMBArcTreeItem*>(newNode);
     }
   return NULL;
 }
 
 //-----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBLIDARContourTree::addNewContourNode(
-  pqContourWidget* contourObj)
+  qtArcWidget* arcObj)
 {
-  pqCMBContourTreeItem* selItem = this->getSelectedItems().size() ?
-    static_cast<pqCMBContourTreeItem*>(this->getSelectedItems().value(0)) : NULL;
-  if(!selItem || !contourObj)
+  pqCMBArcTreeItem* selItem = this->getSelectedItems().size() ?
+    static_cast<pqCMBArcTreeItem*>(this->getSelectedItems().value(0)) : NULL;
+  if(!selItem || !arcObj)
     {
     return NULL;
     }
@@ -248,7 +248,7 @@ QTreeWidgetItem* pqCMBLIDARContourTree::addNewContourNode(
     Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled |
     Qt::ItemIsDropEnabled | Qt::ItemIsEditable | Qt::ItemIsUserCheckable);
 
-  return this->createContourNode(parentItem, contourObj, itemFlags);
+  return this->createContourNode(parentItem, arcObj, itemFlags);
 
 /*
   //Add the new filter to the table
@@ -323,27 +323,29 @@ void pqCMBLIDARContourTree::onSelectionChanged()
 {
   QTreeWidget *treeWidget = this->TreeWidget;
   QTreeWidgetItem* rootNode = treeWidget->invisibleRootItem();
-  pqContourWidget* contourObj = NULL;
+  qtArcWidget* arcObj = NULL;
   for(int r=0; r<rootNode->childCount(); r++)
     {
     QTreeWidgetItem* item = rootNode->child(r);
     bool pSelected = item->isSelected();
     for(int i=0; i<item->childCount();i++)
       {
-      contourObj = this->getItemObject(item->child(i));
+      arcObj = this->getItemObject(item->child(i));
       bool active = (pSelected || item->child(i)->isSelected()) ? true : false;
       if(active)
         {
-        contourObj->select();
+        arcObj->emphasize();
+        arcObj->setVisible(true);
         }
       else
         {
-        contourObj->deselect();
+        arcObj->deemphasize();
+        arcObj->setVisible(false);
         }
       pqSMAdaptor::setElementProperty(
-        contourObj->getWidgetProxy()->GetProperty("ProcessEvents"),
+        arcObj->widgetProxy()->GetProperty("ProcessEvents"),
         active);
-      contourObj->getWidgetProxy()->UpdateVTKObjects();
+      arcObj->widgetProxy()->UpdateVTKObjects();
       }
     }
 
@@ -492,7 +494,7 @@ void pqCMBLIDARContourTree::moveContourItemsToNode(
         !newChildren.contains(copyItem))
         {
         newChildren.append(copyItem);
-        fromGroup = static_cast<pqCMBContourTreeItem*>(copyItem->parent())->itemId();
+        fromGroup = static_cast<pqCMBArcTreeItem*>(copyItem->parent())->itemId();
         if(copyItem->parent() != copytoNode)
           {
           copyItem->parent()->removeChild(copyItem);
@@ -504,7 +506,7 @@ void pqCMBLIDARContourTree::moveContourItemsToNode(
      this->addUniqueChildren(copyItem, newChildren);
      if(copyItem != copytoNode)
        {
-       fromGroup = static_cast<pqCMBContourTreeItem*>(copyItem)->itemId();
+       fromGroup = static_cast<pqCMBArcTreeItem*>(copyItem)->itemId();
        copyItem->parent()->removeChild(copyItem);
        }
       }
@@ -560,9 +562,9 @@ void pqCMBLIDARContourTree::clearAllUseContours()
 
 //-----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBLIDARContourTree::FindContourItem(
-  pqContourWidget* contourWidget)
+  qtArcWidget* arcWidget)
 {
-  if(!contourWidget)
+  if(!arcWidget)
     {
     return NULL;
     }
@@ -574,7 +576,7 @@ QTreeWidgetItem* pqCMBLIDARContourTree::FindContourItem(
     QTreeWidgetItem* item = rootNode->child(r);
     for(int i=0; i<item->childCount();i++)
       {
-      if(this->getItemObject(item->child(i)) == contourWidget)
+      if(this->getItemObject(item->child(i)) == arcWidget)
         {
         return item->child(i);
         }
@@ -584,9 +586,9 @@ QTreeWidgetItem* pqCMBLIDARContourTree::FindContourItem(
   }
 
 //-----------------------------------------------------------------------------
-QTreeWidgetItem* pqCMBLIDARContourTree::contourFinished(pqContourWidget* contourWidget)
+QTreeWidgetItem* pqCMBLIDARContourTree::contourFinished(qtArcWidget* arcWidget)
 {
-  QTreeWidgetItem* contourItem = this->FindContourItem(contourWidget);
+  QTreeWidgetItem* contourItem = this->FindContourItem(arcWidget);
   if(contourItem)
     {
     contourItem->setDisabled(0);
@@ -627,8 +629,8 @@ void pqCMBLIDARContourTree::deleteSelected()
     return;
     }
   treeWidget->blockSignals(true);
-  QList<pqContourWidget*> removeItems;
-  pqContourWidget* contourObj;
+  QList<qtArcWidget*> removeItems;
+  qtArcWidget* arcObj;
 
   // if we allow Multiple selection, the following logic need to be modified
   for(int r=0; r<selectedItems.size(); r++)
@@ -638,20 +640,20 @@ void pqCMBLIDARContourTree::deleteSelected()
       {
       for(int i=0; i<item->childCount();i++)
         {
-        contourObj = this->getItemObject(item->child(i));
-        if(!removeItems.contains(contourObj))
+        arcObj = this->getItemObject(item->child(i));
+        if(!removeItems.contains(arcObj))
           {
-          removeItems.append(contourObj);
+          removeItems.append(arcObj);
           }
         }
       treeWidget->invisibleRootItem()->removeChild(item);
       }
     else
       {
-      contourObj = this->getItemObject(item);
-      if(!removeItems.contains(contourObj))
+      arcObj = this->getItemObject(item);
+      if(!removeItems.contains(arcObj))
         {
-        removeItems.append(contourObj);
+        removeItems.append(arcObj);
         }
       item->parent()->removeChild(item);
       }
@@ -662,9 +664,9 @@ void pqCMBLIDARContourTree::deleteSelected()
 
 //-----------------------------------------------------------------------------
 QTreeWidgetItem* pqCMBLIDARContourTree::onContourChanged(
-  pqContourWidget* contourWidget)
+  qtArcWidget* arcWidget)
 {
-  QTreeWidgetItem* contourItem = this->FindContourItem(contourWidget);
+  QTreeWidgetItem* contourItem = this->FindContourItem(arcWidget);
   if(contourItem)
     {
     //QColor contourFinishedColor(255, 255, 255);

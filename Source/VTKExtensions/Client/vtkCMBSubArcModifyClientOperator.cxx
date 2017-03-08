@@ -23,7 +23,7 @@
 #include "vtkContourWidget.h"
 #include "vtkCMBArc.h"
 #include "vtkSMArcOperatorProxy.h"
-#include "vtkCMBArcWidgetRepresentation.h"
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 #include "vtkNew.h"
 #include "vtkPVArcInfo.h"
 #include <vector>
@@ -137,8 +137,8 @@ bool vtkCMBSubArcModifyClientOperator::UpdateArc(vtkIdType arcId,
 
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
       widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-      vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMTKArcRepresentation *widgetRep =
+      vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
 
   bool valid = this->FindArcsInWidgetOutput(widgetRep, arcSource);
   if ( valid )
@@ -156,7 +156,7 @@ bool vtkCMBSubArcModifyClientOperator::UpdateArc(vtkIdType arcId,
 
 //----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::FindArcsInWidgetOutput(
-  vtkCMBArcWidgetRepresentation *widgetRep, vtkSMSourceProxy* arcSource)
+  vtkSMTKArcRepresentation *widgetRep, vtkSMSourceProxy* arcSource)
 {
   //go through the widget output looking for the two end nodes that came
   //from the input.
@@ -210,7 +210,7 @@ bool vtkCMBSubArcModifyClientOperator::FindArcsInWidgetOutput(
 //----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::UpdateOperation(
   const vtkIdType& arcId, vtkSMNewWidgetRepresentationProxy *widgetProxy,
-  vtkCMBArcWidgetRepresentation *widgetRep)
+  vtkSMTKArcRepresentation *widgetRep)
 {
   //Send the info from the widget down to the update operator
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
