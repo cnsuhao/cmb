@@ -997,6 +997,8 @@ void pqCMBModelBuilderMainWindowCore::onEditSettings()
 void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 {
   this->Superclass::applyAppSettings();
+  emit sessionCentricModelingPreferenceChanged(
+    this->Internal->AppOptions->sessionCentricModeling());
  /*
   int index = this->Internal->ColorFaceCombo->findText(
     this->Internal->AppOptions->default3DModelFaceColorMode().c_str());

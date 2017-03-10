@@ -86,6 +86,8 @@ signals:
   void newModelCreated();
   void newMeshCreated();
 
+  void sessionCentricModelingPreferenceChanged(bool);
+
 public slots:
   // Description
   /// Called when a new server is connected.

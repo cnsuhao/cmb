@@ -58,6 +58,8 @@ public slots:
   void addTextureFileName(const char *filename);
   const QStringList &getTextureFileNames();
 
+  void toggleSessionCentricMenus(bool sessionCentric);
+
 protected slots:
 
   void onShowCenterAxisChanged(bool enabled);

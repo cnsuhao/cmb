@@ -143,6 +143,8 @@ public:
   QPointer<QAction> CreateModelEdgesAction;
 
   QPointer<QMenu> NewModelSessionMenu;
+  QPointer<QSignalMapper> NewModelSignalMapper;
+  std::vector<QPointer<QAction> > NewModelMenus;
 
   pqPropertyLinks LineResolutionLinks;
   pqCMBSceneTree* SceneGeoTree;
@@ -152,6 +154,67 @@ public:
   QPointer<QAction> ChangeTextureAction;
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*> CurrentDockWidgets;
 
+  template<typename T, typename U>
+  void createSessionCentricMenus(T core, U self)
+    {
+    // Add both sets of menu items and hide some of them...
+
+    // I. Session-centric modeling menus (you create new sessions and populate them as desired)
+
+    // Add "New Session Action", which will show all available sessions
+    this->NewModelSessionMenu = new QMenu(self->getMainDialog()->menu_File);
+    this->NewModelSessionMenu->setObjectName(QString::fromUtf8("menu_newsession"));
+    this->NewModelSessionMenu->setTitle(QString::fromUtf8("New Session..."));
+    self->getMainDialog()->menu_File->insertMenu(
+      self->getMainDialog()->action_Open_File,
+      this->NewModelSessionMenu);
+
+    // Add sessions to the "New Session..." menu
+    smtk::model::StringList newBnames = core->modelManager()->managerProxy()->sessionNames();
+    for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
+      {
+      self->addNewSession((*it).c_str());
+      }
+
+    // II. Single-session, model-based UI:
+
+    // Find sessions with a "create model" operator
+    this->NewModelSignalMapper = new QSignalMapper(self);
+    smtk::model::StringList newSessionNames =
+      core->modelManager()->managerProxy()->sessionNames();
+    for (smtk::model::StringList::iterator it = newSessionNames.begin(); it != newSessionNames.end(); ++it)
+      {
+      std::set<std::string> operatorNames =
+        smtk::model::SessionRegistrar::sessionOperatorNames(*it);
+      if (operatorNames.find("create model") != operatorNames.end())
+        {
+        std::ostringstream os;
+        os << "New " << *it << " model";
+        QAction* act = new QAction(QString::fromUtf8(os.str().c_str()), self);
+        //self->getMainDialog()->menu_File->addAction(act);
+        self->getMainDialog()->menu_File->insertAction(
+          self->getMainDialog()->action_Open_File, act);
+        act->setVisible(false); // Hide these by default since the session-centric menu appears by default.
+        QObject::connect(act, SIGNAL(triggered()), this->NewModelSignalMapper, SLOT(map()));
+        this->NewModelSignalMapper->setMapping(act, QString::fromUtf8(it->c_str()));
+        this->NewModelMenus.push_back(act);
+        }
+      }
+    QObject::connect(
+      this->NewModelSignalMapper, SIGNAL(mapped(QString)),
+      self, SLOT(onCreateNewModel(const QString&)));
+    }
+
+  template<typename T>
+  void switchSessionCentricMenus(T self, bool sessionCentricModeling)
+    {
+    this->NewModelSessionMenu->menuAction()->setVisible(sessionCentricModeling);
+
+    for (auto it = this->NewModelMenus.begin(); it != this->NewModelMenus.end(); ++it)
+      {
+      (*it)->setVisible(!sessionCentricModeling);
+      }
+    }
 };
 
 //----------------------------------------------------------------------------
@@ -280,6 +343,10 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->loadDataReaction(), SIGNAL(filesSelected(const QStringList&)),
       this->getThisCore(), SLOT(onFileOpen(const QStringList&)));
 
+  this->Internal->createSessionCentricMenus(this->getThisCore(), this);
+  QObject::connect(
+    this->getThisCore(), SIGNAL(sessionCentricModelingPreferenceChanged(bool)),
+    this, SLOT(toggleSessionCentricMenus(bool)));
 #if 0
   // Add "New Session Action", which will show all available sessions
   this->Internal->NewModelSessionMenu = new QMenu(this->getMainDialog()->menu_File);
@@ -295,7 +362,7 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     {
     this->addNewSession((*it).c_str());
     }
-#else
+//hash else
   // Single-session, model-based UI:
   /*
   this->Internal->NewModelMenu = new QMenu(this->getMainDialog()->menu_File);
@@ -954,6 +1021,12 @@ void pqCMBModelBuilderMainWindow::addTextureFileName(const char *filename)
     {
     this->Internal->TextureFiles.append(filename);
     }
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::toggleSessionCentricMenus(bool sessionCentric)
+{
+  this->Internal->switchSessionCentricMenus(this, sessionCentric);
 }
 
 //----------------------------------------------------------------------------
