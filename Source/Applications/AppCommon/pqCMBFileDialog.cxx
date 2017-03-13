@@ -407,6 +407,8 @@ pqCMBFileDialog::pqCMBFileDialog(
     }
   this->Implementation->addHistory(startPath);
   this->Implementation->setCurrentPath(startPath);
+  this->Implementation->Ui.Files->resizeColumnToContents(0);
+  this->Implementation->Ui.Files->setTextElideMode(Qt::ElideMiddle);
 }
 
 //-----------------------------------------------------------------------------
