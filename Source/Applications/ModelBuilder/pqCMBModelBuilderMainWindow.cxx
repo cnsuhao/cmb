@@ -275,6 +275,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(
     &pqActiveObjects::instance(), SIGNAL(representationChanged(pqDataRepresentation*)),
     this, SLOT(onActiveRepresentationChanged(pqDataRepresentation*)));
+  QObject::connect(
+    this->getThisCore()->modelManager(), SIGNAL(modelRepresentationAdded(pqDataRepresentation*)),
+    this, SLOT(onModelRepresentationAdded(pqDataRepresentation*)));
 
   pqApplicationCore::instance()->testUtility()->eventTranslator()->addWidgetEventTranslator(
     new pqModelTreeViewEventTranslator(
@@ -795,6 +798,14 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->initUIPanel(qtCMBPanelsManager::COLORMAP);
 
   this->updateEnableState();
+}
+
+void pqCMBModelBuilderMainWindow::onModelRepresentationAdded(
+  pqDataRepresentation* rep)
+{
+  (void)rep;
+  this->initUIPanel(qtCMBPanelsManager::DISPLAY, false);
+  this->initUIPanel(qtCMBPanelsManager::COLORMAP, false);
 }
 
 void pqCMBModelBuilderMainWindow::onNewMeshCreated()

@@ -45,6 +45,7 @@ public slots:
   void onCMBModelCleared();
   void onCMBModelModified();
   void onNewModelCreated();
+  void onModelRepresentationAdded(pqDataRepresentation*);
   void onNewMeshCreated();
 
   // Description:

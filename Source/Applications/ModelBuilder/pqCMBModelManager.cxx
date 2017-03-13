@@ -1990,6 +1990,12 @@ bool pqCMBModelManager::handleOperationResult(
         success = this->Internal->addModelRepresentation(
           newModel, view, this->Internal->ManagerProxy, "", sref);
         this->Internal->createModelAuxiliaryRepresentations(newModel, view);
+        // Emit a signal so ModelBuilder can show the display and colormap panels:
+        auto minfoIt = this->Internal->ModelInfos.find(newModel.entity());
+        if (minfoIt != this->Internal->ModelInfos.end() && minfoIt->second.Representation)
+          {
+          emit modelRepresentationAdded(minfoIt->second.Representation);
+          }
         }
       // update representation
       else if(geometryChangedModels.find(modit->entity()) != geometryChangedModels.end())
