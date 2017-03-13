@@ -208,6 +208,7 @@ public:
   template<typename T>
   void switchSessionCentricMenus(T self, bool sessionCentricModeling)
     {
+    (void)self;
     this->NewModelSessionMenu->menuAction()->setVisible(sessionCentricModeling);
 
     for (auto it = this->NewModelMenus.begin(); it != this->NewModelMenus.end(); ++it)
