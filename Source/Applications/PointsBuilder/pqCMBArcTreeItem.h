@@ -7,28 +7,28 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-// .NAME pqCMBContourTreeItem - a LIDAR tree widget item object.
+// .NAME pqCMBArcTreeItem - a LIDAR tree widget item object.
 // .SECTION Description
 // .SECTION Caveats
 
-#ifndef __pqCMBContourTreeItem_h
-#define __pqCMBContourTreeItem_h
+#ifndef __pqCMBArcTreeItem_h
+#define __pqCMBArcTreeItem_h
 
 #include <QTreeWidgetItem>
 #include "cmbSystemConfig.h"
-class pqContourWidget;
+class qtArcWidget;
 
-class  pqCMBContourTreeItem : public QTreeWidgetItem
+class  pqCMBArcTreeItem : public QTreeWidgetItem
 {
 public:
-  pqCMBContourTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType=0);
-  ~pqCMBContourTreeItem() override;
+  pqCMBArcTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType=0);
+  ~pqCMBArcTreeItem() override;
 
   // Description:
   // Get/Set the model entity object
-  virtual pqContourWidget* getContourObject()
-    {return this->ContourObject;}
-  virtual void setContourObject(pqContourWidget* entity);
+  virtual qtArcWidget* getArcObject()
+    {return this->ArcObject;}
+  virtual void setArcObject(qtArcWidget* entity);
   bool isGroupType()
     {return (this->type() !=0 );}
   int itemId()
@@ -40,7 +40,7 @@ protected:
 
   virtual void init();
   int ItemId;
-  pqContourWidget* ContourObject;
+  qtArcWidget* ArcObject;
 };
 
-#endif /* __pqCMBContourTreeItem_h */
+#endif /* __pqCMBArcTreeItem_h */

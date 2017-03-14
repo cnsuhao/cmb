@@ -3,7 +3,6 @@
 find_package(SMTK REQUIRED)
 
 set(CMB_Graphics_SRC
-  vtkCMBArcWidgetRepresentation.cxx
   vtkCMBBandedPolyDataContourFilter.cxx
   vtkCMBExtractCellFromDataSet.cxx
   vtkCMBExtractMapContour.cxx

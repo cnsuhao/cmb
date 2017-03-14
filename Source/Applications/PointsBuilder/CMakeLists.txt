@@ -75,8 +75,8 @@ qtCMBLIDARFilterDialog.h
 pqCMBLIDARSaveDialog.h
   pqCMBLIDARContourTree.cxx
 pqCMBLIDARContourTree.h
-  pqCMBContourTreeItem.cxx
-pqCMBContourTreeItem.h
+pqCMBArcTreeItem.cxx
+pqCMBArcTreeItem.h
   pqDEMExporterDialog.cxx
 pqDEMExporterDialog.h
 )

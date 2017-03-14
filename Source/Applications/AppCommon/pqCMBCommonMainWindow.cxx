@@ -40,6 +40,11 @@
 #include "pqCMBRubberBandHelper.h"
 #include "pqScalarBarRepresentation.h"
 
+#include "pqEditCameraReaction.h"
+#include "pqHelpReaction.h"
+#include "pqInterfaceTracker.h"
+#include "pqSMAdaptor.h"
+#include "pqSMProxy.h"
 #include "pqScalarsToColors.h"
 #include "pqSelectionManager.h"
 #include "pqServer.h"
@@ -47,13 +52,9 @@
 #include "pqServerDisconnectReaction.h"
 #include "pqServerResource.h"
 #include "pqSetName.h"
-#include "pqSMAdaptor.h"
-#include "pqSMProxy.h"
+#include "pqTimerLogReaction.h"
 #include "pqViewMenuManager.h"
 #include "pqWaitCursor.h"
-#include "pqHelpReaction.h"
-#include "pqEditCameraReaction.h"
-#include "pqTimerLogReaction.h"
 
 #include "vtkObjectFactory.h"
 #include "vtkProcessModule.h"
@@ -88,53 +89,19 @@
 #include "pqManagePluginsReaction.h"
 #include "pqExportReaction.h"
 
-#include "pqCMBLoadDataReaction.h"
-#include "pqPluginIOBehavior.h"
-#include "qtCMBPanelsManager.h"
 #include "pqActiveObjects.h"
-#include "vtkCommand.h"
-#include "pqProxyWidgetDialog.h"
 #include "pqCMBColorMapWidget.h"
+#include "pqCMBLoadDataReaction.h"
+#include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
 #include "pqCMBRulerDialog.h"
+#include "pqPluginIOBehavior.h"
+#include "pqProxyWidgetDialog.h"
+#include "qtCMBPanelsManager.h"
+#include "vtkCommand.h"
 
 #include "vtkPVConfig.h"
 
 #include <vtksys/SystemTools.hxx>
-
-class cmbRecentFilesMenu : public pqRecentFilesMenu
-{
-  QPointer<pqCMBCommonMainWindowCore> Core;
-public:
-  cmbRecentFilesMenu(QMenu& menu, QObject* p=0) :
-    pqRecentFilesMenu(menu, p)
-  {
-  };
-
-  void setCore(pqCMBCommonMainWindowCore* core)
-    { this->Core = core; }
-
-  bool open(
-    pqServer* server, const pqServerResource& resource) const override
-    {
-    if (this->Core && server && !resource.path().isEmpty())
-      {
-      QFileInfo fInfo(resource.path());
-
-      QString readerGroup = resource.data("modelmanager");
-      QString readerName = resource.data("readoperator");
-
-      if ((!readerName.isEmpty() && !readerGroup.isEmpty()) /* ||
-        fInfo.suffix().toLower() == "cmb" */)
-        {
-        QStringList files;
-        files << resource.path();
-        this->Core->onFileOpen(files);
-        return true;
-        }
-      }
-    return pqRecentFilesMenu::open(server, resource);
-    }
-};
 
 class pqCMBCommonMainWindow::vtkInternal
 {
@@ -151,7 +118,7 @@ public:
     }
 
   Ui::qtCMBMainWindow UI;
-  cmbRecentFilesMenu* RecentFilesMenu;
+  pqRecentFilesMenu *RecentFilesMenu;
   pqViewMenuManager* DockPanelViewMenu;
 
   pqPropertyLinks GUILinker;
@@ -191,8 +158,8 @@ Internal(new vtkInternal(this))
 {
   this->MainWindowCore = NULL;
   this->Internal->UI.setupUi(this);
-  this->Internal->RecentFilesMenu = new
-    cmbRecentFilesMenu(*this->Internal->UI.menuRecentFiles, this);
+  this->Internal->RecentFilesMenu =
+      new pqRecentFilesMenu(*this->Internal->UI.menuRecentFiles, this);
 
   vtkProcessModule* proc_module = vtkProcessModule::GetProcessModule();
   std::string self_dir = proc_module->GetSelfDir();
@@ -266,7 +233,6 @@ Internal(new vtkInternal(this))
   #ifdef __APPLE__
     this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
   #endif
-
 }
 
 //----------------------------------------------------------------------------
@@ -477,10 +443,12 @@ void pqCMBCommonMainWindow::initMainWindowCore()
     this->MainWindowCore, SIGNAL(enableExternalProcesses(bool)),
     this, SLOT(onEnableExternalProcesses(bool)));
 
-  this->Internal->RecentFilesMenu->setCore(this->MainWindowCore);
+  pqCMBRecentlyUsedResourceLoaderImplementatation *rli =
+      new pqCMBRecentlyUsedResourceLoaderImplementatation(this->MainWindowCore);
+  pqApplicationCore::instance()->interfaceTracker()->addInterface(rli);
 
-//  QObject::connect(this->Internal->UI.action_Open_File,
-//    SIGNAL(triggered()), this->MainWindowCore, SLOT(onFileOpen()));
+  //  QObject::connect(this->Internal->UI.action_Open_File,
+  //    SIGNAL(triggered()), this->MainWindowCore, SLOT(onFileOpen()));
   QObject::connect(this->Internal->UI.action_Save_Data,
     SIGNAL(triggered()), this->MainWindowCore, SLOT(onSaveData()));
 

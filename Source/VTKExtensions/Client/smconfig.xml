@@ -8514,56 +8514,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
       <!-- End of OrientedGlyphContourRepresentation -->
     </Proxy>
 
-    <Proxy name="CmbArcWidgetRepresentation" class="vtkCMBArcWidgetRepresentation"
-           base_proxygroup="props" base_proxyname="ContourRepresentationBase">
-      <Documentation>
-        Proxy for vtkCMBArcWidgetRepresentation. Don't use directly since it's not
-        coupled with the widget. Use "ArcWidgetRepresentation" instead which
-        include this representation as well as the widget to modify the
-        representation.
-      </Documentation>
-
-      <DoubleVectorProperty name="LineColor"
-        command="SetLineColor"
-        number_of_elements="3"
-        default_values="1.0 1.0 1.0">
-        <DoubleRangeDomain name="range" min="0 0 0" max="1 1 1" />
-      </DoubleVectorProperty>
-
-      <IntVectorProperty name="AlwaysOnTop"
-        command="SetAlwaysOnTop"
-        number_of_elements="1"
-        default_values="0">
-        <BooleanDomain name="bool" />
-      </IntVectorProperty>
-
-       <IntVectorProperty name="EnableLogging"
-        command="SetLoggingEnabled"
-        number_of_elements="1"
-        default_values="0">
-        <BooleanDomain name="bool" />
-      </IntVectorProperty>
-
-       <IntVectorProperty name="CanEdit"
-        command="GetCanEdit"
-        number_of_elements="1"
-        information_only="1"
-        default_values="0">
-        <SimpleIntInformationHelper/>
-      </IntVectorProperty>
-
-      <Property
-        name="Rectangularize"
-        command="Rectangularize">
-      </Property>
-
-      <Hints>
-        <!-- View can be used to specify the way to get the poly data for the representation -->
-        <Output />
-      </Hints>
-      <!-- End of CmbArcWidgetRepresentation -->
-    </Proxy>
-
   </ProxyGroup>
   <ProxyGroup name="representations">
     <!-- ================================================================== -->

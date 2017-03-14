@@ -31,11 +31,11 @@
 #include "vtkCMBArcEditClientOperator.h"
 #include "vtkNew.h"
 #include "vtkContourWidget.h"
-#include "vtkCMBArcWidgetRepresentation.h"
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 
 #include "pqCMBArc.h"
 #include "pqCMBSceneNode.h"
-#include "qtCMBArcWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "qtCMBArcWidgetManager.h"
 #include <QtDebug>
 
@@ -399,11 +399,11 @@ void qtCMBArcEditWidget::hideArcWidget()
 {
   if(this->SubWidget)
     {
-    this->SubWidget->setWidgetVisible(false);
+    this->SubWidget->setEnableInteractivity(false);
     this->SubWidget->setVisible(false);
-    this->SubWidget->deselect();
-    this->SubWidget->hideWidget();
-    this->SubWidget->getWidgetProxy()->UpdatePropertyInformation();
+    this->SubWidget->deemphasize();
+    this->SubWidget->hide();
+    this->SubWidget->widgetProxy()->UpdatePropertyInformation();
     this->SubWidget->setView(NULL);
     this->SubWidget->hide();
     }
@@ -440,12 +440,8 @@ void qtCMBArcEditWidget::modifySubArc()
     this->SubWidget->setView(this->View);
     if(arcObj)
       {
-      vtkSMProxyProperty* proxyProp =
-        vtkSMProxyProperty::SafeDownCast(
-        this->SubWidget->getWidgetProxy()->GetProperty("PointPlacer"));
-      if (proxyProp && proxyProp->GetNumberOfProxies())
+      if (vtkSMProxy* pointplacer = this->SubWidget->pointPlacer())
         {
-        vtkSMProxy* pointplacer = proxyProp->GetProxy(0);
         vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(
           arcObj->getPlaneProjectionNormal());
         vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(
@@ -454,14 +450,14 @@ void qtCMBArcEditWidget::modifySubArc()
         pointplacer->UpdateVTKObjects();
         }
       }
-    vtkSMPropertyHelper(this->SubWidget->getWidgetProxy(), "Enabled").Set(1);
-    this->SubWidget->getWidgetProxy()->UpdateVTKObjects();
+    vtkSMPropertyHelper(this->SubWidget->widgetProxy(), "Enabled").Set(1);
+    this->SubWidget->widgetProxy()->UpdateVTKObjects();
     }
 
   this->SubWidget->useArcEditingUI(this->isWholeArcSelected());
   this->SubWidget->show();
   this->SubWidget->setEnabled(true);
-  this->SubWidget->setWidgetVisible(true);
+  this->SubWidget->setEnableInteractivity(true);
 
   if ( arcObj && arcObj->getType() == pqCMBSceneObjectBase::Arc)
     {
@@ -470,7 +466,7 @@ void qtCMBArcEditWidget::modifySubArc()
     vtkNew<vtkCMBArcEditClientOperator> editOp;
     editOp->SetArcIsClosed(this->Arc->isClosedLoop() && this->isWholeArcSelected());
     editOp->Operate(this->Internals->SubArcSource->getProxy(),
-      this->SubWidget->getWidgetProxy());
+      this->SubWidget->widgetProxy());
     if (!created)
       {
       this->SubWidget->reset();
@@ -496,11 +492,11 @@ void qtCMBArcEditWidget::modifySubArc()
       }
 */
 
-    this->SubWidget->setModified();
     }
   //this->setSubArcVisible(false);
   this->View->forceRender();
-  this->SubWidget->select();
+  this->SubWidget->emphasize();
+  this->SubWidget->setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -607,8 +603,8 @@ void qtCMBArcEditWidget::arcEditingFinished()
 /* TO DO: We may allow this in the future.
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
     this->SubWidget->getWidgetProxy()->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-    vtkCMBArcWidgetRepresentation::SafeDownCast(
+  vtkSMTKArcRepresentation *widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(
     widget->GetRepresentation());
 
   // if the end node of a closed-loop arc is in the middle of the
@@ -710,10 +706,10 @@ void qtCMBArcEditWidget::selectPointMode()
 
 void qtCMBArcEditWidget::selectedPoint(int index)
 {
-  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->SubWidget->getWidgetProxy();
+  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->SubWidget->widgetProxy();
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkCMBArcWidgetRepresentation *widgetRep =
-                          vtkCMBArcWidgetRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMTKArcRepresentation *widgetRep =
+                          vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
   vtkPVArcInfo* arcInfo = this->Arc->getArcInfo();
   if(index >= 0 && index < arcInfo->GetNumberOfPoints())
   {

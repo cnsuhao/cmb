@@ -19,8 +19,6 @@
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
 #include "pqServer.h"
-#include "pqServerResource.h"
-#include "pqRecentlyUsedResourcesList.h"
 #include "pqFileDialog.h"
 #include "pqFileDialogModel.h"
 #include "pqSMAdaptor.h"
@@ -34,6 +32,7 @@
 #include "vtkXMLDataParser.h"
 
 #include "../pqCMBModelBuilderOptions.h"
+#include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
 
 #include "smtk/common/ResourceSet.h"
 #include "smtk/io/Logger.h"
@@ -172,17 +171,12 @@ int SimBuilderCore::LoadSimulation(const char *filename)
     }
   else
     {
-    pqServer* server = reader->getServer();
-
     // Add this to the list of recent server resources ...
-    pqServerResource resource = server->getResource();
-    resource.setPath(filename);
-    resource.addData("readergroup", reader->getProxy()->GetXMLGroup());
-    resource.addData("reader", reader->getProxy()->GetXMLName());
-    core->recentlyUsedResources().add(resource);
-    core->recentlyUsedResources().save(*core->settings());
+    pqCMBRecentlyUsedResourceLoaderImplementatation::
+        addDataFileToRecentResources(reader->getServer(), filename,
+                                     reader->getProxy()->GetXMLGroup(),
+                                     reader->getProxy()->GetXMLName());
     }
-
   return 1;
 }
 
@@ -444,15 +438,11 @@ int SimBuilderCore::LoadResources(const char *filename)
     }
   else
     {
-    pqServer* server = reader->getServer();
-
     // Add this to the list of recent server resources ...
-    pqServerResource resource = server->getResource();
-    resource.setPath(filename);
-    resource.addData("readergroup", reader->getProxy()->GetXMLGroup());
-    resource.addData("reader", reader->getProxy()->GetXMLName());
-    core->recentlyUsedResources().add(resource);
-    core->recentlyUsedResources().save(*core->settings());
+    pqCMBRecentlyUsedResourceLoaderImplementatation::
+        addDataFileToRecentResources(reader->getServer(), filename,
+                                     reader->getProxy()->GetXMLGroup(),
+                                     reader->getProxy()->GetXMLName());
     }
 
   return 1;

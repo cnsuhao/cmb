@@ -43,25 +43,23 @@
 #include <QTreeWidgetItem>
 #include <QProgressDialog>
 
-#include "pq3DWidgetFactory.h"
 #include "pqActionGroupInterface.h"
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
 #include "pqCameraDialog.h"
-#include "qtCMBArcWidget.h"
 #include "qtCMBArcEditWidget.h"
 #include "pqCustomFilterDefinitionModel.h"
 #include "pqCustomFilterDefinitionWizard.h"
 #include "pqCustomFilterManager.h"
 #include "pqCustomFilterManagerModel.h"
 #include "pqDataInformationWidget.h"
-#include "pqCMBLineWidget.h"
 #include "pqDisplayRepresentationWidget.h"
 #include "pqDockWindowInterface.h"
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputWindow.h"
+#include "pqServer.h"
 
 #include "pqOptions.h"
 #include "pqOutputPort.h"
@@ -131,6 +129,7 @@
 #include <vtkSMProxyManager.h>
 #include <vtkSMProxyProperty.h>
 #include <vtkSMRenderViewProxy.h>
+#include <vtkSMSessionProxyManager.h>
 #include <vtkSMSourceProxy.h>
 #include <vtkSMOutputPort.h>
 #include <vtkSMStringVectorProperty.h>
@@ -141,11 +140,12 @@
 #include "vtkWidgetEventTranslator.h"
 #include "pqOmicronModelWriter.h"
 
+#include "smtk/extension/paraview/widgets/qtLineWidget.h"
+#include <smtk/bridge/discrete/kernel/Model/vtkModelItemIterator.h>
 #include <smtk/bridge/discrete/kernel/vtkDiscreteModel.h>
 #include <smtk/bridge/discrete/kernel/vtkDiscreteModelEdge.h>
 #include <smtk/bridge/discrete/kernel/vtkDiscreteModelRegion.h>
 #include <smtk/bridge/discrete/kernel/vtkDiscreteModelWrapper.h>
-#include <smtk/bridge/discrete/kernel/Model/vtkModelItemIterator.h>
 #include <smtk/bridge/discrete/kernel/vtkModelUserName.h>
 #include <smtk/bridge/discrete/operation/vtkCMBIncorporateMeshOperator.h>
 #include <smtk/bridge/discrete/operation/vtkCMBModelBuilder.h>
@@ -155,7 +155,6 @@
 #include <smtk/bridge/discrete/operation/vtkCompleteShells.h>
 #include <smtk/bridge/discrete/operation/vtkEnclosingModelEntityOperator.h>
 #include <smtk/bridge/discrete/operation/vtkMasterPolyDataNormals.h>
-#include "smtk/extension/paraview/widgets/pq3DWidget.h"
 
 #include "vtkSGXMLBCSWriter.h"
 #include "vtkPVArcInfo.h"
@@ -385,9 +384,9 @@ void pqCMBSceneBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObje
 //-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::setupBoxWidget()
 {
-  this->Internal->BoxWidget =
-    pqApplicationCore::instance()->get3DWidgetFactory()->
-    get3DWidget("BoxWidgetRepresentation", this->getActiveServer());
+  this->Internal->BoxWidget = vtkSMNewWidgetRepresentationProxy::SafeDownCast(
+        this->getActiveServer()->proxyManager()->NewProxy("representations",
+                                         "BoxWidgetRepresentation"));
   pqSMAdaptor::setElementProperty(this->Internal->BoxWidget->GetProperty("Visibility"), false);
   vtkSMPropertyHelper(this->Internal->BoxWidget,
     "PlaceFactor").Set(1.05);
@@ -818,73 +817,52 @@ void pqCMBSceneBuilderMainWindowCore::updateWidgetPanel(
     return;
     }
 
-  pq3DWidget* sel3dWidget = NULL;
-  QWidget* selUiWidget = NULL;
-  QString widgetName("");
-  pqCMBSceneObjectBase::enumObjectType type = widgetObject->getType();
-  if(type == pqCMBSceneObjectBase::Line)
-    {
-    pqCMBLine* lineObj = static_cast<pqCMBLine*>(widgetObject);
-    sel3dWidget = lineObj ? lineObj->getLineWidget() : NULL;
-    selUiWidget = sel3dWidget;
-    }
-  else if (type == pqCMBSceneObjectBase::Arc)
-    {
-    qtCMBArcWidgetManager* manager = this->Tree->getArcWidgetManager();
-    selUiWidget = manager->getActiveWidget();
-    sel3dWidget = qobject_cast<pq3DWidget*>(selUiWidget);
-    }
-  if(!selUiWidget)
-    {
-    return;
-    }
-  widgetName = selUiWidget->objectName();
-  this->setAppearanceEditor(NULL);
-  QWidget* pWidget = this->getAppearanceEditorContainer()->layout()->parentWidget();
+    // I am not sure about this piece of code, but I've made an attempt to
+    // convert
+    // old code. May need more updates.
 
-  // we need to make invisible all 3d widget UI panels
-  QList< pq3DWidget* > user3dWidgets = pWidget->findChildren<pq3DWidget*>();
-  QList< QWidget* > userUiWidgets;
-  // if this is not a 3d widget
-  if(!sel3dWidget)
-    {
-    userUiWidgets = pWidget->findChildren<QWidget*>(widgetName);
+    QWidget *selUiWidget = NULL;
+    switch (widgetObject->getType()) {
+    case pqCMBSceneObjectBase::Line: {
+      pqCMBLine *lineObj = dynamic_cast<pqCMBLine *>(widgetObject);
+      selUiWidget = lineObj ? lineObj->getLineWidget() : NULL;
+    } break;
+
+    case pqCMBSceneObjectBase::Arc: {
+      qtCMBArcWidgetManager *manager = this->Tree->getArcWidgetManager();
+      selUiWidget = manager->getActiveWidget();
+    } break;
     }
-  userUiWidgets.append(reinterpret_cast< QList<QWidget*>& >(user3dWidgets));
-  bool found = false;
-  for(int i=0; i<userUiWidgets.count(); i++)
-    {
-    if(!found && userUiWidgets.value(i) == selUiWidget)
-      {
-      found = true;
+    if (!selUiWidget) {
+      return;
+    }
+
+    this->setAppearanceEditor(NULL);
+    QWidget *pWidget =
+        this->getAppearanceEditorContainer()->layout()->parentWidget();
+
+    // Hide all other qtInteractionWidget instances.
+
+    foreach (qtInteractionWidget *iw,
+             pWidget->findChildren<qtInteractionWidget *>()) {
+      if (iw != selUiWidget) {
+        iw->setEnableInteractivity(false);
       }
-    else
-      {
-      userUiWidgets.value(i)->setVisible(0);
-      }
     }
-  if(!found)
-    {
-    selUiWidget->setParent(pWidget);
-    this->getAppearanceEditorContainer()->layout()->
-      addWidget(selUiWidget);
+
+    if (selUiWidget->parentWidget() != pWidget) {
+      selUiWidget->setParent(pWidget);
+      pWidget->layout()->addWidget(selUiWidget);
     }
-  if(sel3dWidget && sel3dWidget->widgetVisible())
-    {
-    sel3dWidget->select();
-    sel3dWidget->setVisible(true);
-    sel3dWidget->setEnabled(true);
-    }
-  else if(!sel3dWidget)
-    {
+
     selUiWidget->setVisible(true);
-    selUiWidget->setEnabled(true);
-    selUiWidget->show();
+    if (qtInteractionWidget *iw =
+            qobject_cast<qtInteractionWidget *>(selUiWidget)) {
+      iw->setEnableInteractivity(true);
     }
 
-  if(this->getAppearanceEditor())
-    {
-    this->getAppearanceEditor()->setDisabled(false);
+    if (this->getAppearanceEditor()) {
+      this->getAppearanceEditor()->setDisabled(false);
     }
 }
 

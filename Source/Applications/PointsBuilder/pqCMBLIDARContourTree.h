@@ -26,8 +26,8 @@ class QTreeWidget;
 class QIcon;
 class QColor;
 class QAction;
-class pqContourWidget;
-class pqCMBContourTreeItem;
+class qtArcWidget;
+class pqCMBArcTreeItem;
 
 class pqCMBLIDARContourTree :  public QObject
 {
@@ -54,13 +54,13 @@ public:
   {this->TreeWidget->setSelectionMode(mode);}
   QAbstractItemView::SelectionMode selectionMode() const
   {return this->TreeWidget->selectionMode();}
-  pqContourWidget* getItemObject(QTreeWidgetItem* treeItem);
+  qtArcWidget* getItemObject(QTreeWidgetItem* treeItem);
 
   // Description:
   // Method to enable/disable sorting in tree widgets
   void setSortingEnabled(bool enable);
-  //pqContourWidget* getContourWidgetFromRow(int row);
-  QTreeWidgetItem* FindContourItem(pqContourWidget*);
+  //qtArcWidget* getContourWidgetFromRow(int row);
+  QTreeWidgetItem* FindContourItem(qtArcWidget*);
   bool isContourApplied(QTreeWidgetItem* contourItem);
 
   // Description:
@@ -80,11 +80,11 @@ public:
 public slots:
   virtual void clear(bool blockSignal = false);
   virtual void clearAllUseContours();
-  virtual QTreeWidgetItem* contourFinished(pqContourWidget*);
-  QTreeWidgetItem* addNewContourNode(pqContourWidget*);
+  virtual QTreeWidgetItem* contourFinished(qtArcWidget*);
+  QTreeWidgetItem* addNewContourNode(qtArcWidget*);
   void deleteSelected();
-  pqCMBContourTreeItem* createContourGroupNode();
-  QTreeWidgetItem* onContourChanged(pqContourWidget* contourWidget);
+  pqCMBArcTreeItem* createContourGroupNode();
+  QTreeWidgetItem* onContourChanged(qtArcWidget* contourWidget);
 
 signals:
   void dragStarted(pqCMBLIDARContourTree*);
@@ -92,7 +92,7 @@ signals:
   void itemChanged(QList<QTreeWidgetItem*>, int, int);
   void onItemsDropped(QTreeWidgetItem*toNode, int fromGroup,
     QList<QTreeWidgetItem*> newChildren);
-  void itemRemoved(QList<pqContourWidget*>);
+  void itemRemoved(QList<qtArcWidget*>);
 
 protected slots:
 
@@ -114,13 +114,13 @@ protected:
   // Methods to create a tree node on the tree widget
   QTreeWidgetItem* createContourNode(
     QTreeWidgetItem* parentNode,
-    pqContourWidget* contourObj, Qt::ItemFlags commFlags,
+    qtArcWidget* contourObj, Qt::ItemFlags commFlags,
     const QString& text, int itemid, int type=0,
     bool setApplyContour=false, bool invert=true);
   QTreeWidgetItem* addNewTreeNodeOnRoot();
   QTreeWidgetItem* createContourNode(
     QTreeWidgetItem* parentNode,
-    pqContourWidget* contourObj, Qt::ItemFlags commFlags, int type=0,
+    qtArcWidget* contourObj, Qt::ItemFlags commFlags, int type=0,
     bool setApplyContour=false, bool invert=true);
   void moveContourItemsToNode(
     QTreeWidgetItem* copytoNode, QList<QTreeWidgetItem*> selItems);

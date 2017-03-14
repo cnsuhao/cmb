@@ -32,7 +32,6 @@ set(UI_FORMS
     UI/qtCMBSceneSurfaceMesherDialog.ui
     UI/qtCMBManualFunctionWidget.ui
     UI/qtCMBTINStitcherDialog.ui
-    UI/qtContourWidget.ui
     UI/qtDefineGroundPlane.ui
     UI/qtDefineVOI.ui
     UI/qtEnumPropertyWidget.ui
@@ -46,7 +45,6 @@ set(UI_FORMS
     UI/qtPreviewDialog.ui
     UI/qtCMBSceneObjectFilterDialog.ui
     UI/qtCMBStackedTINDialog.ui
-    UI/pqContourWidget.ui
     UI/qtArcEditWidget.ui
     UI/pqCMBFileDialog.ui
     )
@@ -97,7 +95,6 @@ set(dynamicHeaders
   "${dynamicHeaders};${CMAKE_CURRENT_BINARY_DIR}/cmbAppCommonExport.h")
 
 add_library(cmbAppCommon
-  pqContourWidget.cxx
   pqCMBLoadDataReaction.cxx
   pqCMBLoadDataReaction.h
   pqPluginIOBehavior.cxx
@@ -132,8 +129,6 @@ add_library(cmbAppCommon
   pqCMBLIDARPieceObject.h
   pqCMBLIDARPieceTable.cxx
   pqCMBLIDARPieceTable.h
-  pqCMBLineWidget.cxx
-  pqCMBLineWidget.h
   pqCMBCommonMainWindow.cxx
   pqCMBCommonMainWindow.h
   pqCMBCommonMainWindowCore.cxx
@@ -164,12 +159,12 @@ add_library(cmbAppCommon
   pqCMBModifierArcManager.cxx
   pqCMBModifierArc.h
   pqCMBModifierArc.cxx
+  pqCMBRecentlyUsedResourceLoaderImplementatation.cxx
+  pqCMBRecentlyUsedResourceLoaderImplementatation.h
   qtCMBApplicationOptions.cxx
   qtCMBApplicationOptions.h
   qtCMBApplicationOptionsDialog.cxx
   qtCMBApplicationOptionsDialog.h
-  qtCMBArcWidget.cxx
-  qtCMBArcWidget.h
   qtCMBBathymetryDialog.cxx
   qtCMBBathymetryDialog.h
   qtCMBColorDialog.cxx
@@ -261,6 +256,7 @@ target_link_libraries(cmbAppCommon
     vtkSMTKDiscreteModel
     vtksys
     vtkSMTKReaderExt
+    vtkSMTKWidgetsExt
   )
 
 set(python_path_sources)

@@ -115,7 +115,8 @@ target_link_libraries(CMB_Plugin
     vtkSMTKReaderExt
     vtkSMTKFilterExtCS
     vtkSMTKMeshingExtCS
-    vtkSMTKReaderExtCS)
+    vtkSMTKReaderExtCS
+    vtkSMTKWidgetsExt)
 
 #now that the target has been created we can do the header generation
 vtk_generate_export_header(CMB_Plugin BASE_NAME vtkCMBClient

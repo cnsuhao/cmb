@@ -11,15 +11,14 @@
 
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
-#include "pqCoreUtilities.h"
 #include "pqCMBFileDialog.h"
+#include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
+#include "pqCoreUtilities.h"
 #include "pqLoadDataReaction.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
-#include "pqRecentlyUsedResourcesList.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
-#include "pqServerResource.h"
 #include "pqUndoStack.h"
 #include "vtkSMProxy.h"
 #include "vtkSMProxyManager.h"
@@ -261,22 +260,15 @@ pqPipelineSource* pqCMBLoadDataReaction::openFile(
     readername, files, server);
   if (reader)
     {
-    pqApplicationCore* core = pqApplicationCore::instance();
-
-    // Add this to the list of recent server resources ...
-    pqServerResource resource = server->getResource();
-    resource.setPath(files[0]);
-    resource.addData("readergroup", reader->getProxy()->GetXMLGroup());
-    resource.addData("reader", reader->getProxy()->GetXMLName());
-    resource.addData("extrafilesCount", QString("%1").arg(files.size()-1));
-    for (int cc=1; cc < files.size(); cc++)
-      {
-      resource.addData(QString("file.%1").arg(cc-1), files[cc]);
-      }
-    core->recentlyUsedResources().add(resource);
-    core->recentlyUsedResources().save(*core->settings());
+    // For now, just using ParaView's code. One can add support for new types
+    // of recent-files items as needed, by creating a subclass of
+    // pqRecentlyUsedResourceLoaderInterface, and registering that with the
+    // pqInterfaceTracker.
+    pqCMBRecentlyUsedResourceLoaderImplementatation::
+        addDataFilesToRecentResources(server, files,
+                                      reader->getProxy()->GetXMLGroup(),
+                                      reader->getProxy()->GetXMLName());
     }
-
   return reader;
 }
 

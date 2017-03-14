@@ -83,7 +83,6 @@
 #include "pqViewContextMenuManager.h"
 #include "pqView.h"
 #include "pqSaveSnapshotDialog.h"
-#include "pq3DWidgetFactory.h"
 #include <pqFileDialog.h>
 #include <pqSetData.h>
 #include <pqSetName.h>
@@ -91,6 +90,7 @@
 #include <pqWaitCursor.h>
 #include <pqSelectionManager.h>
 #include "pqSpreadSheetViewModel.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 
 #include <QVTKWidget.h>
 
@@ -167,7 +167,6 @@
 
 #include "pqProxyWidget.h"
 #include "pqXYBarChartView.h"
-#include "pqContourWidget.h"
 #include "vtkPVContourRepresentationInfo.h"
 #include "vtkBoundingBox.h"
 #include "vtkCollection.h"
@@ -2032,19 +2031,19 @@ vtkSMProxy* pqCMBMeshViewerMainWindowCore::spreadSheetRepresentation()
   return this->Internal->SpreadSheetRepProxy;
 }
 //-----------------------------------------------------------------------------
-pqContourWidget* pqCMBMeshViewerMainWindowCore::defineContourWidget()
+qtArcWidget* pqCMBMeshViewerMainWindowCore::defineContourWidget()
 {
   pqWaitCursor cursor;
 
   this->clearSelection();
 
   int orthoPlane;
-  pqContourWidget* contourWidget = this->createPqContourWidget(orthoPlane);
-  return contourWidget;
+  qtArcWidget* arcWidget = this->createPqContourWidget(orthoPlane);
+  return arcWidget;
 }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::clearContourSelection(
-  pqContourWidget* contourWidget)
+  qtArcWidget* arcWidget)
 {
   if(this->Internal->MeshSculptingSource)
     {
@@ -2059,26 +2058,26 @@ void pqCMBMeshViewerMainWindowCore::clearContourSelection(
     this->Internal->MeshSculptingSource = NULL;
     this->Internal->MeshScultpingRep = NULL;
     }
-  this->deleteContourWidget(contourWidget);
+  this->deleteContourWidget(arcWidget);
 }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::contourSelectSurface(
-  pqContourWidget* contourWidget, bool isCell, int selectContourType)
+  qtArcWidget* arcWidget, bool isCell, int selectArcType)
 {
   pqWaitCursor cursor;
   // Now we need to do a Surface-point-selection on the active source with
-  // the bounds of the contour widget, then pass the selection to
+  // the bounds of the arc widget, then pass the selection to
   // vtkCMBMeshContourSelector filter to get the selected points inside
-  // the contour
+  // the arc
   vtkNew<vtkPVContourRepresentationInfo> contourInfo;
-  contourWidget->getWidgetProxy()->GetRepresentationProxy()->GatherInformation(
+  arcWidget->widgetProxy()->GetRepresentationProxy()->GatherInformation(
         contourInfo.GetPointer());
 
   double disBounds[6];
   this->getContourDisplayBounds(contourInfo.GetPointer(),disBounds);
   if(vtkBoundingBox::IsValid(disBounds))
     {
-    vtkSMNewWidgetRepresentationProxy* widget = contourWidget->getWidgetProxy();
+    vtkSMNewWidgetRepresentationProxy* widget = arcWidget->widgetProxy();
     if (widget)
       {
       vtkSMProxyProperty* proxyProp = vtkSMProxyProperty::SafeDownCast(
@@ -2118,33 +2117,33 @@ void pqCMBMeshViewerMainWindowCore::contourSelectSurface(
           return;
           }
         int fieldType = isCell ? vtkSelectionNode::CELL : vtkSelectionNode::POINT;
-        this->updateMeshContourSelection(contourWidget, 0,
-          selectionSource, selectContourType,fieldType);
-        vtkSMSourceProxy* contourSelSource = this->hasContourSelection() ?
+        this->updateMeshContourSelection(arcWidget, 0,
+          selectionSource, selectArcType,fieldType);
+        vtkSMSourceProxy* arcSelSource = this->hasContourSelection() ?
           vtkSMSourceProxy::SafeDownCast(
             this->Internal->MeshSelectorSelection->getProxy()) : NULL;
-        this->setActiveSelection(contourSelSource);
+        this->setActiveSelection(arcSelSource);
         }
       }
     }
 }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::contourSelectThrough(
-  pqContourWidget* contourWidget, int selectContourType)
+  qtArcWidget* arcWidget, int selectContourType)
 {
   pqWaitCursor cursor;
 
-  this->updateMeshContourSelection(contourWidget, 1,
+  this->updateMeshContourSelection(arcWidget, 1,
     NULL, selectContourType, vtkSelectionNode::CELL);
 
-  vtkSMSourceProxy* contourSelSource = this->hasContourSelection() ?
+  vtkSMSourceProxy* arcSelSource = this->hasContourSelection() ?
     vtkSMSourceProxy::SafeDownCast(
     this->Internal->MeshSelectorSelection->getProxy()) : NULL;
-  this->setActiveSelection(contourSelSource);
+  this->setActiveSelection(arcSelSource);
 }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setShapeSelectionOption(
-  pqContourWidget* contourWidget,int selectCellThrough, int selectShapeType)
+  qtArcWidget* arcWidget,int selectCellThrough, int selectShapeType)
 {
   if(this->shapeSelectionOption()==selectShapeType)
     {
@@ -2157,15 +2156,15 @@ void pqCMBMeshViewerMainWindowCore::setShapeSelectionOption(
     {
     return;
     }
-  if(contourWidget && this->Internal->MeshContourSelector)
+  if(arcWidget && this->Internal->MeshContourSelector)
     {
     if(selectCellThrough)
       {
-      this->contourSelectThrough(contourWidget, selectShapeType);
+      this->contourSelectThrough(arcWidget, selectShapeType);
       }
     else
       {
-      this->contourSelectSurface(contourWidget, true, selectShapeType);
+      this->contourSelectSurface(arcWidget, true, selectShapeType);
       }
     }
   else if(this->Internal->MeshConeSelector &&
@@ -2183,15 +2182,15 @@ void pqCMBMeshViewerMainWindowCore::setShapeSelectionOption(
 
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::getContourDisplayBounds(
-  vtkPVContourRepresentationInfo* contourInfo, double bounds[6])
+  vtkPVContourRepresentationInfo* arcInfo, double bounds[6])
 {
   vtkSMRenderViewProxy* rm = this->activeRenderView()->getRenderViewProxy();
   vtkBoundingBox bb;
   vtkViewport* viewport = rm->GetRenderer();
-  if(contourInfo && contourInfo->GetNumberOfAllNodes()
-    && contourInfo->GetClosedLoop() == 1)
+  if(arcInfo && arcInfo->GetNumberOfAllNodes()
+    && arcInfo->GetClosedLoop() == 1)
     {
-    vtkDoubleArray* coords = contourInfo->GetAllNodesWorldPositions();
+    vtkDoubleArray* coords = arcInfo->GetAllNodesWorldPositions();
     double point[3], transPt[3];
     for(vtkIdType i=0;i<coords->GetNumberOfTuples();i++)
       {
@@ -2213,9 +2212,10 @@ vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createPlaneWid
     {
     return NULL;
     }
-  vtkSMNewWidgetRepresentationProxy* planeWidget =
-    pqApplicationCore::instance()->get3DWidgetFactory()->
-    get3DWidget("CmbPlaneWidgetRepresentation", this->getActiveServer());
+  vtkSMNewWidgetRepresentationProxy* planeWidget = dynamic_cast
+      <vtkSMNewWidgetRepresentationProxy*>(this->getActiveServer()->
+    proxyManager()->NewProxy("representations","CmbPlaneWidgetRepresentation"));
+
   pqSMAdaptor::setElementProperty(planeWidget->GetProperty("Visibility"), false);
   pqSMAdaptor::setElementProperty(planeWidget->GetProperty("DrawPlane"), false);
 
@@ -2368,8 +2368,8 @@ void pqCMBMeshViewerMainWindowCore::createSelectedNodesRepresentation()
 
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(
-  pqContourWidget* contourWidget, int selectCellThrough,
-  vtkSMProxy* selectionSource, int selectContourType,
+  qtArcWidget* arcWidget, int selectCellThrough,
+  vtkSMProxy* selectionSource, int selectArcType,
   int fieldType, int GenerateSelectedOutput)
 {
   this->clearSelection();
@@ -2390,7 +2390,7 @@ void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(
   pqSMAdaptor::setElementProperty(contourSelSource->
     GetProperty("SelectCellThrough"), selectCellThrough);
   pqSMAdaptor::setElementProperty(contourSelSource->
-    GetProperty("SelectContourType"), selectContourType);
+    GetProperty("SelectContourType"), selectArcType);
   pqSMAdaptor::setElementProperty(contourSelSource->
     GetProperty("FieldType"), fieldType);
   pqSMAdaptor::setElementProperty(contourSelSource->
@@ -2413,11 +2413,11 @@ void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(
   vtkSMProxyProperty* contourFunc = vtkSMProxyProperty::SafeDownCast(
     contourSelSource->GetProperty("Contour"));
   contourFunc->RemoveAllProxies();
-  if(contourWidget)
+  if(arcWidget)
     {
     vtkSMProxy* implicitLoop = vtkSMProxyManager::GetProxyManager()->NewProxy(
       "implicit_functions", "ImplicitSelectionLoop");
-    this->updateContourLoop(implicitLoop, contourWidget);
+    this->updateContourLoop(implicitLoop, arcWidget);
     contourFunc->AddProxy(implicitLoop);
     implicitLoop->Delete();
     }
@@ -2449,8 +2449,9 @@ void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(
 vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createBoxWidget()
 {
   vtkSMNewWidgetRepresentationProxy* boxWidget =
-    pqApplicationCore::instance()->get3DWidgetFactory()->
-    get3DWidget("BoxWidgetRepresentation", this->getActiveServer());
+      dynamic_cast<vtkSMNewWidgetRepresentationProxy*>(this->getActiveServer()
+         ->proxyManager()->NewProxy("representations,",
+                                    "BoxWidgetRepresentation"));
   pqSMAdaptor::setElementProperty(boxWidget->GetProperty("Visibility"), false);
   vtkSMPropertyHelper(boxWidget,
     "PlaceFactor").Set(1.05);

@@ -28,7 +28,6 @@
 #include "pqSettings.h"
 #include "pqSMAdaptor.h"
 #include "pqFileDialog.h"
-#include "pqRecentlyUsedResourcesList.h"
 #include "pqSetName.h"
 #include "pqWaitCursor.h"
 
@@ -53,28 +52,29 @@
 #include "SimBuilder/pqSimBuilderUIManager.h"
 #include "SimBuilder/pqSMTKUIHelper.h"
 
-#include "pqCMBProcessWidget.h"
-#include "pqCMBPreviewDialog.h"
-#include "pqCMBEnumPropertyWidget.h"
-#include "pqCMBDisplayProxyEditor.h"
-#include "pqCMBRubberBandHelper.h"
-#include "pqCMBSceneTree.h"
-#include "pqCMBSceneReader.h"
-#include "pqCMBModelBuilderOptions.h"
-#include "pqCMBLoadDataReaction.h"
-#include "pqCMBFileExtensions.h"
-#include "pqSMTKMeshPanel.h"
-#include "pqSMTKModelPanel.h"
 #include "pqActiveObjects.h"
+#include "pqCMBContextMenuHelper.h"
+#include "pqCMBDisplayProxyEditor.h"
+#include "pqCMBEnumPropertyWidget.h"
+#include "pqCMBFileExtensions.h"
+#include "pqCMBLoadDataReaction.h"
+#include "pqCMBModelBuilderOptions.h"
 #include "pqCMBModelManager.h"
+#include "pqCMBPreviewDialog.h"
+#include "pqCMBProcessWidget.h"
+#include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
+#include "pqCMBRubberBandHelper.h"
+#include "pqCMBSceneReader.h"
+#include "pqCMBSceneTree.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
 #include "pqMultiBlockInspectorPanel.h"
-#include "pqSMTKModelInfo.h"
 #include "pqSMTKMeshInfo.h"
-#include "pqCMBContextMenuHelper.h"
+#include "pqSMTKMeshPanel.h"
+#include "pqSMTKModelInfo.h"
+#include "pqSMTKModelPanel.h"
+#include "qtCMBApplicationOptionsDialog.h"
 #include "qtCMBProgressWidget.h"
 #include "qtCMBSceneObjectFilterDialog.h"
-#include "qtCMBApplicationOptionsDialog.h"
 #include "vtkPVSceneGenFileInformation.h"
 
 #include "smtk/attribute/Attribute.h"
@@ -293,15 +293,9 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
   // have readers. These extension are handled by model operators.
   if(files.size()>0 && this->loadModelFile(files[0]))
     {
-    pqApplicationCore* core = pqApplicationCore::instance();
     // Add this to the list of recent server resources ...
-    pqServerResource resource = this->getActiveServer()->getResource();
-    resource.setPath(files[0]);
-    resource.addData("modelmanager", "pqCMBModelManager");
-    resource.addData("readoperator", "read");
-    core->recentlyUsedResources().add(resource);
-    core->recentlyUsedResources().save(*core->settings());
-    //resource.setScheme(QString("cmbmodel"));
+    pqCMBRecentlyUsedResourceLoaderImplementatation::
+        addModelFileToRecentResources(this->getActiveServer(), files[0]);
     }
 }
 

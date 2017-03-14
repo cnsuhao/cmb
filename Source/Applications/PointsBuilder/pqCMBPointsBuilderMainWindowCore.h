@@ -40,15 +40,15 @@ class pqCMBLIDARPieceTable;
 class pqCMBLIDARPieceObject;
 class pqCMBDisplayProxyEditor;
 class pqOutputPort;
-class pqContourWidget;
+class qtArcWidget;
 class vtkSMProxy;
-class pqCMBContourTreeItem;
+class pqCMBArcTreeItem;
 class QTreeWidgetItem;
 class QTableWidgetItem;
 class pqCMBPointsBuilderMainWindowCore;
 class pqCMBLIDARReaderManager;
 class pqCMBLIDARTerrainExtractionManager;
-class qtCMBArcWidget;
+class qtArcWidget;
 class pqCMBLoadDataReaction;
 
 class pqCMBPointsBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
@@ -134,7 +134,7 @@ private slots:
   void onAddThreshold();
   void onRemoveFilter();
   void onActiveFilterChanged();
-  pqCMBContourTreeItem* onAddContourGroup();
+  pqCMBArcTreeItem* onAddContourGroup();
   void onAddContourWidget();
   void onRemoveContour();
   void onContourFinished();
@@ -166,7 +166,7 @@ private slots:
   void onPolygonTableSelectionChanged(QTreeWidgetItem*);
   void onPolygonTreeItemsDropped(QTreeWidgetItem* toGroup,
     int fromGroup, QList<QTreeWidgetItem*> );
-  void onPolygonItemRemoved(QList<pqContourWidget*>);
+  void onPolygonItemRemoved(QList<qtArcWidget*>);
 
   void onUpdateContours();
   void onElevationFilter(bool useFilter);
@@ -237,16 +237,16 @@ private:
 
   void initThresholdTable();
   void initPolygonsTree();
-  void addContourFilter(pqContourWidget*);
+  void addContourFilter(qtArcWidget*);
   void updateTransformPanel(bool enable);
   void resetAllPiecesWithNoFilters();
   void clearThresholdFilters();
   void clearContourFilters();
-  pqCMBContourTreeItem* getContourGroupNodeWithId(int id);
+  pqCMBArcTreeItem* getContourGroupNodeWithId(int id);
   int getContourGroupIdWithNode(QTreeWidgetItem* node);
   int getContourGroupIdWithContour(
-    pqContourWidget* contourWidget);
-  QTreeWidgetItem* addContourNode(pqContourWidget* contourW,
+    qtArcWidget* contourWidget);
+  QTreeWidgetItem* addContourNode(qtArcWidget* contourW,
     int orthoPlane);
   class vtkInternal;
   vtkInternal* const Internal;
@@ -254,7 +254,7 @@ private:
   pqCMBLIDARTerrainExtractionManager *TerrainExtractionManager;
 
   std::vector<pqCMBModifierArc *> pqCMBModifierArcs;
-  qtCMBArcWidget* createArcWidget( int normal, double position );
+  qtArcWidget* createArcWidget( int normal, double position );
 };
 
 

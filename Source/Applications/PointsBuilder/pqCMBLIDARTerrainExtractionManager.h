@@ -17,7 +17,7 @@
 
 class pqCMBPointsBuilderMainWindowCore;
 class qtCMBLIDARPanelWidget;
-class pqContourWidget;
+class qtArcWidget;
 class pqOutputPort;
 class pqDataRepresentation;
 class pqPipelineSource;
@@ -114,7 +114,7 @@ protected:
 
   qtCMBLIDARPanelWidget *LIDARPanel;
   pqCMBPointsBuilderMainWindowCore *LIDARCore;
-  pqContourWidget* Contour;
+  qtArcWidget* Contour;
 
   pqPipelineSource *TerrainExtractFilter;
   pqPipelineSource *FullProcessTerrainExtractFilter;

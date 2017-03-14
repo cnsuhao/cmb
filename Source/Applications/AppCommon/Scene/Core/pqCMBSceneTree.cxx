@@ -32,7 +32,6 @@
 #include <QIcon>
 #include <QStringBuilder>
 #include <QProgressDialog>
-#include "pqCMBLineWidget.h"
 #include "pqApplicationCore.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
@@ -60,24 +59,25 @@
 #include "vtkCMBArcGrowClientOperator.h"
 #include "vtkIdTypeArray.h"
 
-#include "qtCMBGenerateContoursDialog.h"
-#include "qtCMBSceneObjectDuplicateDialog.h"
-#include "qtCMBStackedTINDialog.h"
-#include "qtCMBVOIDialog.h"
-#include "qtCMBGroundPlaneDialog.h"
-#include "pqPlanarTextureRegistrationDialog.h"
-#include "qtCMBUserTypeDialog.h"
-#include "qtCMBConeNodeDialog.h"
-#include "qtCMBArcWidgetManager.h"
-#include "qtCMBTreeWidget.h"
-#include "ui_qtLIDARNumberOfPointsDialog.h"
-#include "ui_qtCMBSceneArcSnappingDialog.h"
-#include "ui_qtCMBSceneArcPolygonMeshingDialog.h"
-#include "qtCMBBathymetryDialog.h"
-#include <vtksys/SystemTools.hxx>
 #include "pqCMBBoreHole.h"
 #include "pqCMBCrossSection.h"
 #include "pqCMBUniformGrid.h"
+#include "pqPlanarTextureRegistrationDialog.h"
+#include "qtCMBArcWidgetManager.h"
+#include "qtCMBBathymetryDialog.h"
+#include "qtCMBConeNodeDialog.h"
+#include "qtCMBGenerateContoursDialog.h"
+#include "qtCMBGroundPlaneDialog.h"
+#include "qtCMBSceneObjectDuplicateDialog.h"
+#include "qtCMBStackedTINDialog.h"
+#include "qtCMBTreeWidget.h"
+#include "qtCMBUserTypeDialog.h"
+#include "qtCMBVOIDialog.h"
+#include "smtk/extension/paraview/widgets/qtLineWidget.h"
+#include "ui_qtCMBSceneArcPolygonMeshingDialog.h"
+#include "ui_qtCMBSceneArcSnappingDialog.h"
+#include "ui_qtLIDARNumberOfPointsDialog.h"
+#include <vtksys/SystemTools.hxx>
 
 #include <fstream>
 
@@ -1671,9 +1671,8 @@ void pqCMBSceneTree::nodeClicked(QTreeWidgetItem*item, int col)
       {
       pqCMBLine* lineObj = dynamic_cast<pqCMBLine*>(
         node->getDataObject());
-      if(lineObj && lineObj->getLineWidget()
-         && lineObj->getLineWidget()->widgetVisible())
-        {
+      if (lineObj && lineObj->getLineWidget() &&
+          lineObj->getLineWidget()->isInteractivityEnabled()) {
         lineObj->select();
         }
       }
@@ -3696,8 +3695,8 @@ void pqCMBSceneTree::editBathymetry()
 //-----------------------------------------------------------------------------
 void pqCMBSceneTree::selectLineNode()
 {
-  pqCMBLineWidget* const lineWidget = qobject_cast<pqCMBLineWidget*>(
-    QObject::sender());
+  qtLineWidget *const lineWidget =
+      qobject_cast<qtLineWidget *>(QObject::sender());
   pqCMBSceneNode* lineNode = this->FindLineNode(lineWidget);
   if(lineNode && !lineNode->isSelected())
     {
@@ -3744,8 +3743,7 @@ pqCMBSceneNode* pqCMBSceneTree::getArcTypeNode(bool createIfDoesntExist/*=true*/
 }
 
 //-----------------------------------------------------------------------------
-pqCMBSceneNode* pqCMBSceneTree::FindLineNode(pqCMBLineWidget* lineWidget)
-{
+pqCMBSceneNode *pqCMBSceneTree::FindLineNode(qtLineWidget *lineWidget) {
   if(!lineWidget || !this->findNode("Lines"))
     {
     return NULL;
@@ -3780,8 +3778,9 @@ void pqCMBSceneTree::setLineWidgetCallbacks(pqCMBLine* obj)
     {
     QObject::connect(obj->getLineWidget(), SIGNAL(widgetStartInteraction()),
       this, SLOT(selectLineNode()));
-    QObject::connect(obj->getLineWidget(), SIGNAL(widgetVisibilityChanged(bool)),
-      this, SLOT(updateLineNodeVisibility(bool)));
+    QObject::connect(obj->getLineWidget(),
+                     SIGNAL(enableInteractivityChanged(bool)), this,
+                     SLOT(updateLineNodeVisibility(bool)));
     QObject::connect(obj->getLineWidget(), SIGNAL(widgetInteraction()),
       this, SLOT(collapseAllDataInfo()));
     }
@@ -3790,8 +3789,8 @@ void pqCMBSceneTree::setLineWidgetCallbacks(pqCMBLine* obj)
 //-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateLineNodeVisibility(bool visible)
 {
-  pqCMBLineWidget* const lineWidget = qobject_cast<pqCMBLineWidget*>(
-    QObject::sender());
+  qtLineWidget *const lineWidget =
+      qobject_cast<qtLineWidget *>(QObject::sender());
   pqCMBSceneNode* lineNode = this->FindLineNode(lineWidget);
   if(lineNode)
     {

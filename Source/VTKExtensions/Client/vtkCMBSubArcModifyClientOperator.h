@@ -30,7 +30,7 @@
 #include "cmbSystemConfig.h"
 
 class vtkIdTypeArray;
-class vtkCMBArcWidgetRepresentation;
+class vtkSMTKArcRepresentation;
 class vtkSMNewWidgetRepresentationProxy;
 class vtkPolyData;
 
@@ -76,10 +76,10 @@ protected:
     vtkSMNewWidgetRepresentationProxy *widgetProxy,
     vtkSMSourceProxy* arcSource);
   bool FindArcsInWidgetOutput(
-    vtkCMBArcWidgetRepresentation *widgetRep, vtkSMSourceProxy* arcSource);
+    vtkSMTKArcRepresentation *widgetRep, vtkSMSourceProxy* arcSource);
   bool UpdateOperation(const vtkIdType& arcId,
                        vtkSMNewWidgetRepresentationProxy *widgetProxy,
-                       vtkCMBArcWidgetRepresentation *widgetRep);
+                       vtkSMTKArcRepresentation *widgetRep);
   bool SplitOperation(const vtkIdType& arcId);
   bool ModifyOperation(const vtkIdType& arcId, const int& opType);
   bool MakeArc(vtkIdType arcId, vtkSMSourceProxy* arcSource);
