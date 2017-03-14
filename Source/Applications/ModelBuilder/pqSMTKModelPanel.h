@@ -82,6 +82,7 @@ public slots:
     smtk::extension::qtModelEntityItem* entItem);
   void requestEntitySelection(const smtk::common::UUIDs& uuids);
   void cancelOperation(const smtk::model::OperatorPtr&);
+  bool removeClosedSession(const smtk::model::SessionRef& sref);
 
 protected slots:
   void onSelectionChanged(const smtk::model::EntityRefs&,

@@ -2147,6 +2147,32 @@ bool pqCMBModelManager::startNewSession(
 }
 
 //----------------------------------------------------------------------------
+bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
+{
+  vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
+  if (sref.isValid() && pxy)
+    {
+    pqRenderView* view = qobject_cast<pqRenderView*>(
+      pqActiveObjects::instance().activeView());
+    // Remove the session from the client side:
+    smtk::model::Models modelsToErase(sref.models<smtk::model::Models>());
+    for (auto mit : modelsToErase)
+      {
+      smtk::common::UUIDs remmodels;
+      remmodels.insert(mit.entity());
+      this->Internal->removeModelRepresentations(remmodels, view);
+      }
+    // Signal the UI to remove the session from the model tree:
+    emit sessionClosing(sref);
+
+    // Remove the session (and all its entities) from both the
+    // client and the server side model managers:
+    return pxy->endSession(sref.entity());
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
 void pqCMBModelManager::onPluginLoaded()
 {
   // force remote server to refetch sessions incase a new session is loaded

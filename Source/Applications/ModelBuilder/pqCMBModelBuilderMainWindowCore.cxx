@@ -684,6 +684,17 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
 
 }
 
+/// Helper to receive pqCMBModelManager signal that session is closing and update model tree view.
+bool pqCMBModelBuilderMainWindowCore::onCloseSession(const smtk::model::SessionRef& sref)
+{
+  pqSMTKModelPanel* panel = this->modelPanel();
+  if (panel)
+    {
+    return panel->removeClosedSession(sref);
+    }
+  return false;
+}
+
 void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
 {
   if(this->Internal->SimBuilder)
@@ -954,6 +965,12 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     const smtk::model::SessionRef&, bool, bool, bool)),
     this, SLOT(processOperatorResult( const smtk::model::OperatorResult&,
     const smtk::model::SessionRef&, bool, bool, bool)));
+
+  QObject::connect(
+    this->Internal->smtkModelManager,
+    SIGNAL(sessionClosing(const smtk::model::SessionRef&)),
+    this,
+    SLOT(onCloseSession(const smtk::model::SessionRef&)));
 
   QObject::connect(
     this->Internal->smtkModelManager, SIGNAL(newModelManagerProxy(vtkSMModelManagerProxy*)),

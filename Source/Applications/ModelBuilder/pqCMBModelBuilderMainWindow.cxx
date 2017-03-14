@@ -86,10 +86,13 @@
 #include "SimBuilder/qtSimBuilderUIPanel.h"
 
 #include <vtksys/SystemTools.hxx>
+#include "smtk/model/Manager.h"
+#include "smtk/model/SessionRef.h"
 #include "smtk/model/StringData.h"
 #include "smtk/model/SessionRegistrar.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
+#include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
@@ -314,6 +317,10 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     SIGNAL(newMeshCreated()),
     this, SLOT(onNewMeshCreated()), Qt::QueuedConnection);
 
+  QObject::connect(
+    this->getMainDialog()->action_Close_Session, SIGNAL(triggered()),
+    this, SLOT(onCloseSession()));
+
   this->initSimBuilder();
 
   this->Internal->SplitterSettings = new QSettings(this);
@@ -348,54 +355,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(
     this->getThisCore(), SIGNAL(sessionCentricModelingPreferenceChanged(bool)),
     this, SLOT(toggleSessionCentricMenus(bool)));
-#if 0
-  // Add "New Session Action", which will show all available sessions
-  this->Internal->NewModelSessionMenu = new QMenu(this->getMainDialog()->menu_File);
-  this->Internal->NewModelSessionMenu->setObjectName(QString::fromUtf8("menu_newsession"));
-  this->Internal->NewModelSessionMenu->setTitle(QString::fromUtf8("New Session..."));
-  this->getMainDialog()->menu_File->insertMenu(
-    this->getMainDialog()->action_Open_File,
-    this->Internal->NewModelSessionMenu);
-
-  // adding sessions to the "New Session..." menu
-  smtk::model::StringList newBnames = this->getThisCore()->modelManager()->managerProxy()->sessionNames();
-  for (smtk::model::StringList::iterator it = newBnames.begin(); it != newBnames.end(); ++it)
-    {
-    this->addNewSession((*it).c_str());
-    }
-//hash else
-  // Single-session, model-based UI:
-  /*
-  this->Internal->NewModelMenu = new QMenu(this->getMainDialog()->menu_File);
-  this->Internal->NewModelMenu->setObjectName(QString::fromUtf8("menu_newmodel"));
-  this->Internal->NewModelMenu->setTitle(QString::fromUtf8("New Model..."));
-  this->getMainDialog()->menu_File->insertMenu(
-    this->getMainDialog()->action_Open_File,
-    this->Internal->NewModelMenu);
-    */
-
-  // Find sessions with a "create model" operator
-  auto mapper = new QSignalMapper(this);
-  smtk::model::StringList newSessionNames =
-    this->getThisCore()->modelManager()->managerProxy()->sessionNames();
-  for (smtk::model::StringList::iterator it = newSessionNames.begin(); it != newSessionNames.end(); ++it)
-    {
-    std::set<std::string> operatorNames =
-      smtk::model::SessionRegistrar::sessionOperatorNames(*it);
-    if (operatorNames.find("create model") != operatorNames.end())
-      {
-      std::ostringstream os;
-      os << "New " << *it << " model";
-      QAction* act = new QAction(QString::fromUtf8(os.str().c_str()), this);
-      this->getMainDialog()->menu_File->addAction(act);
-      QObject::connect(act, SIGNAL(triggered()), mapper, SLOT(map()));
-      mapper->setMapping(act, QString::fromUtf8(it->c_str()));
-      }
-    }
-  QObject::connect(
-    mapper, SIGNAL(mapped(QString)),
-    this, SLOT(onCreateNewModel(const QString&)));
-#endif
 
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(operationLog(const smtk::io::Logger&)),
@@ -479,7 +438,6 @@ void pqCMBModelBuilderMainWindow::onCreateNewSession()
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onCreateNewModel(const QString& sessionType)
 {
-  std::cout << "Create " << sessionType.toUtf8().constData() << " model\n";
   this->getThisCore()->startNewSession(
     sessionType.toUtf8().constData(), true, true);
 }
@@ -615,6 +573,7 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->action_Save_Data->setVisible(false);
   this->getMainDialog()->action_Save_As->setVisible(false);
 
+  this->getMainDialog()->action_Close_Session->setEnabled(false);
 }
 
 //----------------------------------------------------------------------------
@@ -625,6 +584,7 @@ void pqCMBModelBuilderMainWindow::updateEnableState()
   bool model_loaded = this->getThisCore()->modelManager()
     ->numberOfModels() > 0;
   this->updateEnableState(sessions_open);
+  this->getMainDialog()->action_Close_Session->setEnabled(sessions_open);
 
   this->getMainDialog()->action_Select->setEnabled(model_loaded);
   this->getMainDialog()->action_Select->setChecked(false);
@@ -960,6 +920,38 @@ void pqCMBModelBuilderMainWindow::onNewMeshCreated()
 {
   this->getThisCore()->modelPanel()->show();
   this->getThisCore()->modelPanel()->raise();
+}
+
+bool pqCMBModelBuilderMainWindow::onCloseSession()
+{
+  smtk::common::UUIDs uids;
+  this->getThisCore()->smtkSelectionManager()->getSelectedEntities(uids);
+  auto cmbModelMgr = this->getThisCore()->modelManager();
+  auto modelMgrPxy = cmbModelMgr ? cmbModelMgr->managerProxy() : NULL;
+  smtk::model::Manager::Ptr mgr = modelMgrPxy->modelManager();
+  if (!mgr)
+    {
+    std::cerr << "Could not close session: no model manager!\n\n";
+    return false;
+    }
+  smtk::model::SessionRef sref;
+  for (auto uid : uids)
+    {
+    smtk::model::EntityRef ent(mgr, uid);
+    if (ent.isValid() && (sref = ent.owningSession()).isValid())
+      {
+      break;
+      }
+    }
+
+  if (!sref.isValid())
+    {
+    smtkWarningMacro(
+      mgr->log(), "You must select a session you wish to close in the model panel.");
+    return false;
+    }
+
+  return cmbModelMgr->closeSession(sref);
 }
 
 //-----------------------------------------------------------------------------

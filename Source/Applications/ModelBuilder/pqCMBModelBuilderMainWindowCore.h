@@ -102,6 +102,7 @@ public slots:
   void onCloseData() override
     { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
+  bool onCloseSession(const smtk::model::SessionRef&);
   void clearSimBuilder();
   void resetSimulationModel();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);

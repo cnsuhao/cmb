@@ -197,6 +197,7 @@
     <addaction name="action_Save_As"/>
     <addaction name="action_Export"/>
     <addaction name="action_Close"/>
+    <addaction name="action_Close_Session"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
@@ -1567,9 +1568,20 @@
     </font>
    </property>
   </action>
- <action name="actionClear_Log_WIndow">
+  <action name="actionClear_Log_WIndow">
    <property name="text">
     <string>Clear Log WIndow</string>
+   </property>
+  </action>
+  <action name="action_Close_Session">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Close Session</string>
+   </property>
+   <property name="toolTip">
+     <string>Stop the active modeling kernel.</string>
    </property>
   </action>
  </widget>

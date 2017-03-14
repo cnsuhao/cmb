@@ -721,6 +721,17 @@ void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
 }
 
 //----------------------------------------------------------------------------
+bool pqSMTKModelPanel::removeClosedSession(const smtk::model::SessionRef& sref)
+{
+  smtk::extension::qtModelView* view = this->modelView();
+  if (view)
+    {
+    return view->removeSession(sref);
+    }
+  return false;
+}
+
+//----------------------------------------------------------------------------
 void pqSMTKModelPanel::gatherSelectionInfo(pqPipelineSource* source,
                                            vtkPVInformation* pvInfo,
                                            smtk::common::UUIDs& uuids,

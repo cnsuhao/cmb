@@ -47,6 +47,7 @@ public slots:
   void onNewModelCreated();
   void onModelRepresentationAdded(pqDataRepresentation*);
   void onNewMeshCreated();
+  bool onCloseSession();
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
@@ -67,7 +68,7 @@ protected slots:
   void filterDisplayPanel();
 
   // Description:
-  // Slots for smtk related signals.  
+  // Slots for smtk related signals.
   void addNewSessions(const QStringList&);
   void addNewSession(const QString&);
   void onCreateNewSession();
