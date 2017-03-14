@@ -125,7 +125,7 @@ smtk::common::UUID vtkSMModelManagerProxy::beginSession(
       if(( !newSessionId.isNull() && newSessionId == it->first ) ||
          ( newSessionId.isNull() && it->second == sessionName ))
         return it->first;
-      }  
+      }
     }
 
   std::string sessionParams = sessionName;
@@ -203,7 +203,7 @@ bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
   // (Since the server's model manager should hold the only shared pointer
   // to the session, this should kill it.)
   std::string note =
-    "{\"jsonrpc\":\"2.0\", \"method\":\"delete-session\" \"params\":{\"session-id\":\"" +
+    "{\"jsonrpc\":\"2.0\", \"method\":\"delete-session\", \"params\":{\"session-id\":\"" +
     sessionId.toString() + "\"}}";
   this->jsonRPCNotification(note);
 
@@ -547,9 +547,32 @@ cJSON* vtkSMModelManagerProxy::jsonRPCRequest(const std::string& req, vtkSMProxy
   if(req.empty())
     return NULL;
 
+  this->jsonRPCNotification(req, opHelperProxy);
+
+  // Now, unlike notifications, we expect a response.
+  // Get the json response string and parse it:
+  this->UpdatePropertyInformation();
+  std::string responseStr = vtkSMPropertyHelper(this, "JSONResponse").GetAsString();
+  cJSON* response = cJSON_Parse(responseStr.c_str());
+  return response;
+}
+
+void vtkSMModelManagerProxy::jsonRPCNotification(cJSON* note, vtkSMProxy* opHelperProxy)
+{
+  char* noteStr = cJSON_Print(note);
+  cJSON_Delete(note);
+  this->jsonRPCNotification(noteStr, opHelperProxy);
+  free(noteStr);
+}
+
+void vtkSMModelManagerProxy::jsonRPCNotification(const std::string& note, vtkSMProxy* opHelperProxy)
+{
+  if(note.empty())
+    return;
+
   // Check if there is a geometryHelper(for example vtkSMTKOperator) proxy in "params",
   // if yes, pass that to the server too.
-  vtkSMPropertyHelper(this, "JSONRequest").Set(req.c_str());
+  vtkSMPropertyHelper(this, "JSONRequest").Set(note.c_str());
   this->UpdateVTKObjects();
   vtkClientServerStream stream;
   // calls "ProcessJSONRequest" function on object this->GetId() (which gets turned
@@ -570,25 +593,6 @@ cJSON* vtkSMModelManagerProxy::jsonRPCRequest(const std::string& req, vtkSMProxy
             << vtkClientServerStream::End;
     }
   this->ExecuteStream(stream);
-
-  this->UpdatePropertyInformation();
-  // get the json response string
-  std::string responseStr = vtkSMPropertyHelper(this, "JSONResponse").GetAsString();
-  cJSON* response = cJSON_Parse(responseStr.c_str());
-  return response;
-}
-
-void vtkSMModelManagerProxy::jsonRPCNotification(cJSON* note)
-{
-  char* noteStr = cJSON_Print(note);
-  cJSON_Delete(note);
-  this->jsonRPCNotification(noteStr);
-  free(noteStr);
-}
-
-void vtkSMModelManagerProxy::jsonRPCNotification(const std::string& note)
-{
-  (void)note;
 }
 
 void vtkSMModelManagerProxy::fetchWholeModel()
