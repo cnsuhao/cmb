@@ -631,7 +631,7 @@ vtkSMNewWidgetRepresentationProxy* pqPlanarTextureRegistrationDialog::setupPoint
   vtkSMNewWidgetRepresentationProxy* widget;
   QList<QVariant> center;
   center << 0.0 << 0.0 << 0.0;
-  widget = dynamic_cast<vtkSMNewWidgetRepresentationProxy*>(server->proxyManager()->NewProxy("representions", "HandleWidgetRepresentation"));
+  widget = dynamic_cast<vtkSMNewWidgetRepresentationProxy*>(server->proxyManager()->NewProxy("representations", "HandleWidgetRepresentation"));
   pqSMAdaptor::setElementProperty(widget->GetProperty("Visibility"),false);
   pqSMAdaptor::setElementProperty(widget->GetProperty("Enabled"),false);
   pqSMAdaptor::setElementProperty(widget->GetProperty("NumberOfPoints"),1);
