@@ -22,7 +22,11 @@ qtCMBHelpDialog::qtCMBHelpDialog(const char *helpFileResource, QWidget* Parent) 
   this->Ui->setupUi(this);
   this->setWindowTitle(QApplication::translate("HelpDialog",
                                                "Help (Release Notes)",
-                                               0, QApplication::UnicodeUTF8));
+                                               0
+#if QT_VERSION < 0x050000
+                                               , QApplication::UnicodeUTF8
+#endif
+                                               ));
   this->setObjectName("qtCMBHelpDialog");
   this->Ui->textBrowser->clear();
 

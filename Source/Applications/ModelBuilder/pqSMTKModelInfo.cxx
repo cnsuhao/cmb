@@ -122,7 +122,7 @@ void pqSMTKModelInfo::init(
   actual_regname.append(scalarBarProxy->GetXMLName());
 
   proxyManager->RegisterProxy("scalar_bars",
-    actual_regname.toAscii().data(), scalarBarProxy);
+    actual_regname.toLatin1().data(), scalarBarProxy);
 
 */
 }

@@ -1,6 +1,6 @@
-find_package(Qt4 REQUIRED COMPONENTS QtXml QtNetwork QtCore QtGui QtMain)
 pv_find_package_qt(qt_targets REQUIRED
-  QT4_COMPONENTS QtXml QtNetwork QtCore QtGui QtMain)
+  QT4_COMPONENTS QtXml QtNetwork QtCore QtGui QtMain
+  QT5_COMPONENTS Concurrent Xml Network Core Gui Widgets)
 
 set(test_source_directories "${ParaView_SOURCE_DIR}/Qt/Testing")
 set(test_build_directories "${ParaView_DIR}/Qt/Testing")

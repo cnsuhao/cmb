@@ -76,7 +76,7 @@ void qtCMBUserTypeDialog::exec()
 void qtCMBUserTypeDialog::accept()
 {
   this->Node->getDataObject()->
-    setUserDefinedType(this->TypeDialog->ObjectTypes->currentText().toAscii());
+    setUserDefinedType(this->TypeDialog->ObjectTypes->currentText().toLatin1());
 }
 //-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::cancel()
@@ -102,7 +102,7 @@ void qtCMBUserTypeDialog::changeObjectType()
         getUserDefinedObjectTypes().indexOf(newType);
       if (index == -1)
         {
-        this->Node->getTree()->addUserDefinedType(newType.toAscii());
+        this->Node->getTree()->addUserDefinedType(newType.toLatin1());
         index = this->Node->getTree()->
           getUserDefinedObjectTypes().indexOf(newType);
         this->TypeDialog->ObjectTypes->insertItem(index, newType);

@@ -135,7 +135,7 @@ vtkIdType pqCMBLIDARReaderManager::scanTotalNumPointsInfo(
   vtkIdType totNumPts=0;
   foreach(QString filename,files)
     {
-    if(this->isValidFile(filename.toAscii().constData()))
+    if(this->isValidFile(filename.toLatin1().constData()))
       {
       if(reader)
         {
@@ -151,7 +151,7 @@ vtkIdType pqCMBLIDARReaderManager::scanTotalNumPointsInfo(
         }
 
       vtkSMSourceProxy* readerProxy =this->getReaderSourceProxy(
-        filename.toAscii().constData());
+        filename.toLatin1().constData());
       if(!readerProxy)
         {
         continue;
@@ -1595,7 +1595,7 @@ bool pqCMBLIDARReaderManager::getSourcesForOutput(
     {
     QList<pqCMBLIDARPieceObject *> selObjects =
       this->getFilePieceObjects(
-      filename.toAscii().constData(), pieces);
+      filename.toLatin1().constData(), pieces);
 
     readerProxy = vtkSMSourceProxy::SafeDownCast(
       this->ReaderSourceMap[filename]->getProxy());

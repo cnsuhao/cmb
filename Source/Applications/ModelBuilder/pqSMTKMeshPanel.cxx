@@ -30,7 +30,7 @@
 
 #include "smtk/AutoInit.h" // for smtkComponentInitMacro
 
-#include <QtGui/QDockWidget>
+#include <QDockWidget>
 
 #include <QApplication>
 #include <QPointer>

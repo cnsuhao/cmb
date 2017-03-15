@@ -168,7 +168,7 @@ void pqScalarBarWidget::init()
     actual_regname.append(scalarBarProxy->GetXMLName());
 
     pxm->RegisterProxy("scalar_bars",
-      actual_regname.toAscii().data(), scalarBarProxy);
+      actual_regname.toLatin1().data(), scalarBarProxy);
 
     this->Internals->ScalarBarRep =
       pqApplicationCore::instance()->getServerManagerModel()->

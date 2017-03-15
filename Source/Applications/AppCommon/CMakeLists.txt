@@ -248,6 +248,7 @@ target_link_libraries(cmbAppCommon
 #    vtkIOXMLParser
     CMB_Plugin
     smtkPQWidgetsExt
+    ${qt_targets}
   LINK_PRIVATE
     QtTesting
     RemusClient

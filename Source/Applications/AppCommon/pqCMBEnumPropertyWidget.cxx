@@ -119,7 +119,7 @@ void pqCMBEnumPropertyWidget::updateLinks()
 
   vtkSMProxy* displayProxy = this->Internal->Display->getProxy();
   vtkSMProperty* colorbyProperty =displayProxy->
-    GetProperty(this->RepPropertyName.toAscii().data());
+    GetProperty(this->RepPropertyName.toLatin1().data());
   if (colorbyProperty)
     {
 //    colorbyProperty->UpdateDependentDomains();
@@ -159,7 +159,7 @@ void pqCMBEnumPropertyWidget::onQtWidgetChanged()
 
   vtkSMProperty* colorbyProperty =
       this->Internal->Display->getProxy()->
-      GetProperty(this->RepPropertyName.toAscii().data());
+      GetProperty(this->RepPropertyName.toLatin1().data());
   QList<QVariant> domainStrings =
     pqSMAdaptor::getEnumerationPropertyDomain(colorbyProperty);
 
@@ -170,7 +170,7 @@ void pqCMBEnumPropertyWidget::onQtWidgetChanged()
     if(ed)
       {
       int valid;
-      int colorby = ed->GetEntryValue(text.toAscii().data(), valid);
+      int colorby = ed->GetEntryValue(text.toLatin1().data(), valid);
       pqSMAdaptor::setElementProperty(colorbyProperty, colorby);
       }
     else

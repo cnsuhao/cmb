@@ -443,7 +443,7 @@ void pqCMBModelBuilderMainWindowCore::processSceneInfo(const QString& filename,
 //      {
 //      this->Internal->CMBModel->getModelBounds(modBounds);
 //      }
-    FilterDialog.setSceneFile(filename.toAscii().constData());
+    FilterDialog.setSceneFile(filename.toLatin1().constData());
     FilterDialog.setObjectTypes(objTypes);
     FilterDialog.setBounds(modBounds);
     if(FilterDialog.exec())

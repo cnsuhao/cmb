@@ -305,7 +305,7 @@ void qtCMBPlacementConstraintWidget::checkGlyphPlaybackFile(int option)
 bool qtCMBPlacementConstraintWidget::fileExists(QString fileName) const
 {
   struct stat buf;
-  if( stat(fileName.toAscii().data(), &buf) != -1)
+  if( stat(fileName.toLatin1().data(), &buf) != -1)
     {
     return true;
     }

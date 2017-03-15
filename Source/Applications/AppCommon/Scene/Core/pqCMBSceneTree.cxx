@@ -166,12 +166,21 @@ pqCMBSceneTree::pqCMBSceneTree(QPixmap *visPixMap, QPixmap *ivisPixMap,
 
   this->Units = cmbSceneUnits::Unknown;
 
+#if QT_VERSION >= 0x050000
+  this->TreeWidget->header()->setSectionResizeMode(pqCMBSceneNode::getNameColumn(),
+                                                   QHeaderView::ResizeToContents);
+  this->TreeWidget->header()->setSectionResizeMode(pqCMBSceneNode::getVisibilityColumn(),
+                                                   QHeaderView::ResizeToContents);
+  this->TreeWidget->header()->setSectionResizeMode(pqCMBSceneNode::getLockColumn(),
+                                                   QHeaderView::ResizeToContents);
+#else
   this->TreeWidget->header()->setResizeMode(pqCMBSceneNode::getNameColumn(),
                                             QHeaderView::ResizeToContents);
   this->TreeWidget->header()->setResizeMode(pqCMBSceneNode::getVisibilityColumn(),
                                             QHeaderView::ResizeToContents);
   this->TreeWidget->header()->setResizeMode(pqCMBSceneNode::getLockColumn(),
                                             QHeaderView::ResizeToContents);
+#endif
   this->TreeWidget->setColumnWidth(pqCMBSceneNode::getLockColumn(),7);
   this->TreeWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
   this->TreeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -546,8 +555,13 @@ pqCMBSceneNode *pqCMBSceneTree::createRoot(const char *name)
   this->RecordEvents = false;
   this->Root = this->createNode(name, NULL, NULL, NULL);
   this->RecordEvents = recordingState;
+#if QT_VERSION >= 0x050000
+  this->TreeWidget->header()->setSectionResizeMode(pqCMBSceneNode::getNameColumn(),
+                                                   QHeaderView::ResizeToContents);
+#else
   this->TreeWidget->header()->setResizeMode(pqCMBSceneNode::getNameColumn(),
                                             QHeaderView::ResizeToContents);
+#endif
 
   this->Root->setExplicitColor(this->InitialSceneObjectColor);
   this->Root->getWidget()->setSelected(true);
@@ -1881,7 +1895,7 @@ void pqCMBSceneTree::setNewObjectPosition(pqCMBSceneNode *node, bool randomPlace
       QMessageBox::critical(this->TreeWidget, "Glyph Playback File", "Please provide a file to import points from.");
       return;
       }
-    ifstream glyphPlaybackFile(glyphPlaybackFilename.toAscii().data());
+    ifstream glyphPlaybackFile(glyphPlaybackFilename.toLatin1().data());
     if(!glyphPlaybackFile.good())
       {
       QMessageBox::critical(this->TreeWidget, "Glyph Playback File", "Error opening glyph playback file. Check the file and try again.");
@@ -1971,7 +1985,7 @@ void pqCMBSceneTree::setNewObjectPosition(pqCMBSceneNode *node, bool randomPlace
     {
     if(!glyphPlaybackFilename.isEmpty())
       {
-      ofstream glyphPlaybackFile( glyphPlaybackFilename.toAscii().data() );
+      ofstream glyphPlaybackFile( glyphPlaybackFilename.toLatin1().data() );
       std::deque<double>::iterator iter;
       for(iter = glyphPoints->begin(); iter != glyphPoints->end(); iter = iter+3)
         {
@@ -2579,7 +2593,7 @@ void pqCMBSceneTree::duplicateSelectedRandomly()
       QMessageBox::critical(this->TreeWidget, "Glyph Playback File", "Please provide a file to import points from.");
       return;
       }
-    ifstream glyphPlaybackFile(glyphPlaybackFilename.toAscii().data());
+    ifstream glyphPlaybackFile(glyphPlaybackFilename.toLatin1().data());
     if(!glyphPlaybackFile.good())
       {
       QMessageBox::critical(this->TreeWidget, "Glyph Playback File", "Error opening glyph playback file. Check the file and try again.");
@@ -2605,7 +2619,7 @@ void pqCMBSceneTree::duplicateSelectedRandomly()
     {
     if(!glyphPlaybackFilename.isEmpty())
       {
-      ofstream glyphPlaybackFile( glyphPlaybackFilename.toAscii().data() );
+      ofstream glyphPlaybackFile( glyphPlaybackFilename.toLatin1().data() );
       std::deque<double>::iterator iter;
       for(iter = glyphPoints->begin(); iter != glyphPoints->end(); iter = iter+3)
         {
@@ -4682,9 +4696,9 @@ void pqCMBSceneTree::setTextureMap(const QString& filename, int numberOfRegistra
       this->CurrentView->forceRender();
       }
     this->CurrentTextureObj->setTextureMap(
-      filename.toAscii().data(), numberOfRegistrationPoints, points);
+      filename.toLatin1().data(), numberOfRegistrationPoints, points);
     }
-  this->addTextureFileName(filename.toAscii().data());
+  this->addTextureFileName(filename.toLatin1().data());
 }
 //-----------------------------------------------------------------------------
 void pqCMBSceneTree::addTextureFileName(const char *filename)

@@ -96,6 +96,7 @@ add_dependencies(MeshViewer CMBSuiteHelp)
 target_link_libraries(MeshViewer
 LINK_PRIVATE
   cmbAppCommon
+  ${qt_targets}
   )
 
 #------------------------------------------------------------------------------

@@ -750,7 +750,11 @@ void pqCMBModelBuilderMainWindow::onHelpAbout()
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
   dialog->setWindowTitle(QApplication::translate("Model Builder AboutDialog",
                                                "About Model Builder",
-                                               0, QApplication::UnicodeUTF8));
+                                               0
+#if QT_VERSION < 0x050000
+                                               , QApplication::UnicodeUTF8
+#endif
+                                               ));
   dialog->setPixmap(QPixmap(QString(":/cmb/ModelBuilderSplashAbout.png")));
   dialog->setVersionText(
     QString("<html><b>Version: <i>%1</i></b></html>").arg(CMB_VERSION_FULL));

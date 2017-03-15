@@ -633,7 +633,7 @@ void pqCMBMeshViewerMainWindowCore::setInputArray(
     strproperty->SetElement(0, "0"); // idx
     strproperty->SetElement(1, "0"); //port
     strproperty->SetElement(2, "0"); //connection
-    strproperty->SetElement(3, QString::number(type).toAscii().constData()); //type
+    strproperty->SetElement(3, QString::number(type).toLatin1().constData()); //type
     strproperty->SetElement(4, arrayname);
     filter->getProxy()->MarkModified(NULL);
     filter->getProxy()->UpdateVTKObjects();
@@ -1209,7 +1209,7 @@ void pqCMBMeshViewerMainWindowCore::saveMesh(const QString& filename,
   this->setInputArray(meshWriter, "SelectInputScalars", vtkMultiBlockWrapper::GetShellTagName());
 
   vtkSMPropertyHelper(meshWriter->getProxy(), "FileName").Set(
-    filename.toAscii().constData() );
+    filename.toLatin1().constData() );
 
   if (writerName.compare("CMBMeshWriter") == 0)
     {
