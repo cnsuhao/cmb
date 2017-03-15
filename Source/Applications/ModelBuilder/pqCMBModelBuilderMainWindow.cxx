@@ -885,8 +885,13 @@ pqCMBSceneTree* pqCMBModelBuilderMainWindow::getpqCMBSceneTree()
 //-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onNewModelCreated()
 {
+  auto mpanel = this->getThisCore()->modelPanel();
+  if (!mpanel->modelView())
+    {
+    mpanel->resetUI();
+    }
   // legacy slots, should be updated later with new smtk model slots
- // SMTK model loaded
+  // SMTK model loaded
   this->updateSelectionUI(false);
   this->getMainDialog()->action_Select->setEnabled(true);
 
