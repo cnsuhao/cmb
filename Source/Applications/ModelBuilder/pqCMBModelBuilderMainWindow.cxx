@@ -40,6 +40,7 @@
 #include "pqModelTreeViewEventPlayer.h"
 #include "pqModelTreeViewEventTranslator.h"
 #include "pqSearchBox.h"
+#include "smtk/extension/qt/qtSelectionManager.h"
 
 #ifdef ENABLE_JOBS_PANEL
 #include "qtJobsPanel.h"
@@ -192,6 +193,35 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   this->initMainWindowCore();
 
   this->MainWindowCore->setupMousePositionDisplay(this->statusBar());
+  // add selection filter button into ModelBuilder
+  //this->getMainDialog()->toolBar_Selection->addAction(
+  //      this->getMainDialog()->SelectByModels);
+  //this->getMainDialog()->toolBar_Selection->addAction(
+  //      this->getMainDialog()->SelectByVolumes);
+  this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByFaces);
+  this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByEdges);
+  this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByVertices);
+
+  // connect selection filter signals
+  //QObject::connect(this->getMainDialog()->SelectByModels, SIGNAL(toggled(bool)),
+  //                 this->getThisCore()->modelPanel()->selectionManager(),
+  //                 SLOT(filterModels(bool)));
+  //QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
+  //                 this->getThisCore()->modelPanel()->selectionManager(),
+  //                 SLOT(filterVolumes(bool)));
+  QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterFaces(bool)));
+  QObject::connect(this->getMainDialog()->SelectByEdges, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterEdges(bool)));
+  QObject::connect(this->getMainDialog()->SelectByVertices, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterVertices(bool)));
+
 
   QObject::connect(this->getMainDialog()->actionLoad_Simulation_Template,
     SIGNAL(triggered()), this, SLOT(loadSimulationTemplate()));

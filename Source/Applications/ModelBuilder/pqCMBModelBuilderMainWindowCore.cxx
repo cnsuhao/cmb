@@ -1432,16 +1432,24 @@ void pqCMBModelBuilderMainWindowCore::updateSMTKSelection()
 pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if(!this->Internal->ModelDock)
-    {
+  {
     this->Internal->ModelDock = new pqSMTKModelPanel(
       this->Internal->smtkModelManager,
       this->parentWidget(), this->smtkSelectionManager());
     this->Internal->ViewContextBehavior->setModelPanel(
       this->Internal->ModelDock);
     if(this->Internal->SimBuilder)
+    {
       this->Internal->SimBuilder->uiManager()->
         setModelPanel(this->Internal->ModelDock);
     }
+    // store a model manager ptr in smtkSelectionManager
+    if (this->modelManager()->managerProxy()->modelManager())
+    {
+      this->smtkSelectionManager()->setModelManager(this->
+       modelManager()->managerProxy()->modelManager());
+    }
+  }
   return this->Internal->ModelDock;
 }
 

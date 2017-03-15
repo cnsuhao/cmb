@@ -2,6 +2,13 @@
     <qresource prefix="/cmb" >
         <file alias="Arrow.png" >Icons/Arrow.png</file>
         <file alias="AxesGrid.png" >Icons/AxesGrid.png</file>
+        <file alias="AuxGeoms.png" >Icons/AuxGeoms.png</file>
+        <file alias="Vertices.png" >Icons/Vertices.png</file>
+        <file alias="Edges.png" >Icons/Edges.png</file>
+        <file alias="Faces.png" >Icons/Faces.png</file>
+        <file alias="Volumes.png" >Icons/Volumes.png</file>
+        <file alias="Groups.png" >Icons/Groups.png</file>
+        <file alias="Models.png" >Icons/Models.png</file>
         <file alias="GrowAccept.png" >Icons/GrowAccept.png</file>
         <file alias="GrowClear.png" >Icons/GrowClear.png</file>
         <file alias="Icon.png" >Icons/Icon.png</file>

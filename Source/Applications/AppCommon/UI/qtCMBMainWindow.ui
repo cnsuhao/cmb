@@ -90,6 +90,9 @@
    </widget>
   </widget>
   <widget class="QToolBar" name="toolBar_Selection">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>Selection</string>
    </property>
@@ -107,7 +110,7 @@
      <x>0</x>
      <y>0</y>
      <width>1304</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1351,6 +1354,126 @@
    </property>
    <property name="statusTip">
     <string>Zoom to Box</string>
+   </property>
+  </action>
+  <action name="SelectByVolumes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Volumes.png</normaloff>:/cmb/Volumes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Volumes</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by volumes</string>
+   </property>
+  </action>
+  <action name="SelectByFaces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Faces.png</normaloff>:/cmb/Faces.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Faces</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by faces</string>
+   </property>
+  </action>
+  <action name="SelectByEdges">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Edges.png</normaloff>:/cmb/Edges.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Edges</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by edges</string>
+   </property>
+  </action>
+  <action name="SelectByVertices">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Vertices.png</normaloff>:/cmb/Vertices.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Vertices</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by vertices</string>
+   </property>
+  </action>
+  <action name="SelectByGroups">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Groups.png</normaloff>:/cmb/Groups.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Groups</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by groups</string>
+   </property>
+  </action>
+  <action name="SelectByModels">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Models.png</normaloff>:/cmb/Models.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Models</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by models</string>
+   </property>
+  </action>
+  <action name="SelectByAuxGeoms">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/AuxGeoms.png</normaloff>:/cmb/AuxGeoms.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by AuxGeoms</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by AuxGeoms</string>
    </property>
   </action>
  </widget>
