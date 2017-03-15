@@ -234,7 +234,10 @@ smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
 
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
     {
-    std::cout << "Find Session      " << *it << "\n";
+    if (this->GetDebug())
+      {
+      std::cout << "Find Session      " << *it << "\n";
+      }
     std::string reqStr =
       "{\"jsonrpc\":\"2.0\", \"method\":\"session-filetypes\", "
       "\"params\":{ \"session-name\":\"" + *it + "\"}, "
