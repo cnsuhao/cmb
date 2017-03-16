@@ -117,6 +117,7 @@ signals:
   void requestMeshSelectionUpdate(
     const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
   void operationLog(const smtk::io::Logger& summary);
+  void modelRepresentationAdded(pqDataRepresentation*);
 
 public slots:
   void clear();

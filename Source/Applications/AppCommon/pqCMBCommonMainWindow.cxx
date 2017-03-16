@@ -293,7 +293,6 @@ pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
 
     for (size_t index = 0; index < repProxy->GetNumberOfPropertyGroups(); index++)
       {
-      int group_tag  = static_cast<int>(index);
       vtkSMPropertyGroup *group = repProxy->GetPropertyGroup(index);
       if(!group)
         continue;

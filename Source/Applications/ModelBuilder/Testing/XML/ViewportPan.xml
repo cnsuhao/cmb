@@ -3,6 +3,6 @@
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/test2D.cmb" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.76,0.578097,4,4,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.805161,0.393178,4,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.805161,0.393178,4,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.81,0.393178,4,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.81,0.393178,4,0,0)" />
 </pqevents>
