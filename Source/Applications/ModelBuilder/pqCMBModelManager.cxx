@@ -79,6 +79,7 @@
 
 #include <map>
 #include <set>
+#include <QByteArray>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -244,6 +245,9 @@ public:
           this->resetColorTable(model);
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             rep->getProxy(), NULL, vtkDataObject::FIELD);
+          rep->setProperty(
+            "smtkUUID",
+            QByteArray((const char*)model.entity().begin(), model.entity().size()));
           }
         }
       loadOK = (rep != NULL);
@@ -581,12 +585,15 @@ public:
           auxgeoinfo.ImageSource = extractImg;
           }
         }
-      
+
       auxgeoinfo.Representation = builder->createDataRepresentation(
             source->getOutputPort(0), view);
 
       if(auxgeoinfo.Representation)
         {
+        auxgeoinfo.Representation->setProperty(
+          "smtkUUID",
+          QByteArray((const char*)aux.entity().begin(), aux.entity().size()));
         bool scalarColoring = (lastExt == "vti" || lastExt== "dem");// || lastExt== "tif" || lastExt== "tiff")
         if(scalarColoring)
           {
@@ -1008,13 +1015,11 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
   if(!rep)
     return NULL;
 
-  for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
-      mit != this->Internal->ModelInfos.end(); ++mit)
+  smtk::model::EntityRef repref = this->entityOfRepresentation(rep);
+  qInternal::itModelInfo mit = this->Internal->ModelInfos.find(repref.entity());
+  if (mit != this->Internal->ModelInfos.end())
     {
-    if(mit->second.Representation == rep)
-      {
-      return &mit->second;
-      }
+    return &mit->second;
     }
 
   return NULL;
@@ -1108,6 +1113,44 @@ QList<pqSMTKModelInfo*>  pqCMBModelManager::allModels() const
     selModels.append(&mit->second);
     }
   return selModels;
+}
+
+//----------------------------------------------------------------------------
+smtk::model::EntityRef pqCMBModelManager::entityOfRepresentation(
+  const pqDataRepresentation* rep)
+{
+  if (!rep)
+    {
+    return smtk::model::EntityRef();
+    }
+
+  QByteArray uuidData = rep->property("smtkUUID").toByteArray();
+  if (uuidData.size() != static_cast<int>(smtk::common::UUID::size()))
+    {
+    return smtk::model::EntityRef();
+    }
+
+  smtk::common::UUID uid(
+    (smtk::common::UUID::iterator)uuidData.constData(),
+    (smtk::common::UUID::iterator)uuidData.constData() + uuidData.size());
+  return smtk::model::EntityRef(managerProxy()->modelManager(), uid);
+}
+
+//----------------------------------------------------------------------------
+pqDataRepresentation* pqCMBModelManager::representationOfEntity(
+  const smtk::model::EntityRef& ent)
+{
+  auto minfoIt = this->Internal->ModelInfos.find(ent.entity());
+  if (minfoIt != this->Internal->ModelInfos.end())
+    {
+    return minfoIt->second.Representation;
+    }
+  auto ginfoIt = this->Internal->AuxGeoInfos.find(ent.as<smtk::model::AuxiliaryGeometry>().url());
+  if (ginfoIt != this->Internal->AuxGeoInfos.end())
+    {
+    return ginfoIt->second.Representation;
+    }
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
