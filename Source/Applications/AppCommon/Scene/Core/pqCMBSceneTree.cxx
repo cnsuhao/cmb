@@ -3620,8 +3620,9 @@ void pqCMBSceneTree::editTexture()
     }
 
   this->CurrentTextureObj = tobj;
-
-  emit this->setCameraManipulationMode(1);
+  // Save the previous camera mode
+  emit this->pushCameraMode();
+  emit this->set2DCameraMode();
   //Disable scene tree and freeze the scene in 2D mode
   this->enableSceneTree(false);
   emit this->enableToolbars(false);
@@ -3651,7 +3652,8 @@ void pqCMBSceneTree::editTexture()
   this->sceneObjectChanged();
   this->CurrentTextureObj = NULL;
   delete textRegDlg;
-  emit this->resetCameraManipulationMode();
+  // Restore to whatever camera mode the application was in
+  emit this->popCameraMode();
   this->enableSceneTree(true);
   emit this->enableToolbars(true);
 }

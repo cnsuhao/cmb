@@ -1309,7 +1309,7 @@ void pqCMBMeshViewerMainWindow::onDefineContourWidget()
     this->getMainDialog()->action_SelectThrough->setEnabled(1);
     this->getMainDialog()->action_Select->setEnabled(1);
     this->getMainDialog()->action_SelectPoints->setEnabled(1);
-    this->getThisCore()->setCameraManipulationEnabled(true);
+    this->getThisCore()->enableCameraInteractionModeChanges(true);
     return;
     }
   else
@@ -1381,8 +1381,8 @@ void pqCMBMeshViewerMainWindow::onContourFinished()
       this->Internal->CurrentContour, selectContourType);
     }
   this->updateSelection();
-  this->getThisCore()->setCameraManipulationEnabled(true);
-}
+  this->getThisCore()->enableCameraInteractionModeChanges(true);
+ }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onContourChanged()
 {
@@ -1507,7 +1507,7 @@ void pqCMBMeshViewerMainWindow::onClearSelection()
   this->getMainDialog()->action_SelectThrough->setEnabled(1);
   this->getMainDialog()->action_Select->setEnabled(1);
   this->getMainDialog()->action_SelectPoints->setEnabled(1);
-  this->getThisCore()->setCameraManipulationEnabled(true);
+  this->getThisCore()->enableCameraInteractionModeChanges(true);
 }
 //-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onSelectAll()

@@ -329,8 +329,9 @@ signals:
   void focusOnDisplayTab();
   void firstDataObjectAdded();
 
-  void setCameraManipulationMode(int mode);
-  void resetCameraManipulationMode();
+  void set2DCameraMode();
+  void pushCameraMode();
+  void popCameraMode();
   void resetViewDirection(double look_x, double look_y, double look_z,
                           double up_x, double up_y, double up_z);
   void enableToolbars(bool enable);

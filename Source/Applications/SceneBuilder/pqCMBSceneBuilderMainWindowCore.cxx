@@ -832,6 +832,7 @@ void pqCMBSceneBuilderMainWindowCore::updateWidgetPanel(
       qtCMBArcWidgetManager *manager = this->Tree->getArcWidgetManager();
       selUiWidget = manager->getActiveWidget();
     } break;
+    default: {/*nothing to do*/}
     }
     if (!selUiWidget) {
       return;

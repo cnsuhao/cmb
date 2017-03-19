@@ -6,4 +6,7 @@
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton5" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton3" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton7" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton7" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton5" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton9" command="activate" arguments="" />
 </pqevents>

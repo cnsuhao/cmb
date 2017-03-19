@@ -39,6 +39,9 @@
    <addaction name="action_Save_Data"/>
   </widget>
   <widget class="QToolBar" name="toolBar_View">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>Camera Controls</string>
    </property>
@@ -51,6 +54,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action2D_camera"/>
+   <addaction name="action3D_camera"/>
    <addaction name="actionReset_Camera"/>
    <addaction name="actionZoomToSelection"/>
    <addaction name="actionView_Positive_X"/>
@@ -1474,6 +1479,50 @@
    </property>
    <property name="toolTip">
     <string>Select by AuxGeoms</string>
+   </property>
+  </action>
+  <action name="action2D_camera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2D</string>
+   </property>
+   <property name="toolTip">
+    <string>Constrain Camera to 2D Interaction</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="action3D_camera">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>3D</string>
+   </property>
+   <property name="toolTip">
+    <string>Constrain Camera to 3D Interaction</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+    </font>
    </property>
   </action>
  </widget>
