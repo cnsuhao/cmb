@@ -338,7 +338,7 @@ if(BUILD_TESTING)
 # Need path to python executable
 find_package(PythonInterp)
 if (PYTHONINTERP_FOUND)
-  
+
   set(PYTHON_DEFINES
     CMAKE_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}"
     CMAKE_PYTHON_VERSION="${PYTHON_VERSION_STRING}"
@@ -506,8 +506,8 @@ endif()
 
   if (APPLE)
     set(PYTHON_PATH "${prefix}/Applications/paraview.app/Contents/Python:${prefix}/lib/python2.7/site-packages:${prefix}/lib/${paraview_dir}/site-packages")
-    set(DYLD_LIBRARY_PATH "${prefix}/lib/${paraview_dir}:${prefix}/lib")
-    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}")
+    set(DYLD_FALLBACK_LIBRARY_PATH "${prefix}/lib/${paraview_dir}:${prefix}/lib")
+    set(TEST_ENV "PYTHONPATH=${PYTHON_PATH};DYLD_FALLBACK_LIBRARY_PATH=${DYLD_FALLBACK_LIBRARY_PATH}")
   elseif(UNIX)
     set(PYTHON_PATH "${prefix}/lib/${paraview_dir}/site-packages:${prefix}/lib/python2.7/site-packages")
     set(LD_LIBRARY_PATH "${prefix}/lib/${paraview_dir}:${prefix}/lib")

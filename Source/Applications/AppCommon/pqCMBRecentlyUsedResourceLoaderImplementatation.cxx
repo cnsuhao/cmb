@@ -132,6 +132,7 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::
 //-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::loadModel(
     const pqServerResource &resource, pqServer *server) {
+  (void)server;
   QString readerGroup = resource.data("modelmanager");
   QString readerName = resource.data("readoperator");
   if ((!readerName.isEmpty() && !readerGroup.isEmpty()) && this->Core) {
