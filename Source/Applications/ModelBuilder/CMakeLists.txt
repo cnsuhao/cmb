@@ -354,7 +354,6 @@ endif()
 
   set (APPLE_EXCLUDE_TESTS
     HelpDialog
-    OpenExodusFile
     )
   set (APPLE_ONLY_TESTS
     )

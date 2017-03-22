@@ -5,7 +5,7 @@
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Entity List View" />
 
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0" />
@@ -13,7 +13,33 @@
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.0.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="showContextMenu" arguments="/0:0/0:0/0:0/0:0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/1QMenu0" command="activate" arguments="split face" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0" command="showPopup" arguments="" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,43,10,/0:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mousePress" arguments="1,1,0,46,14,/1:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,46,14,/1:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mousePress" arguments="1,1,0,40,6,/5:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,40,6,/5:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1smtk::extension::qtModelEntityItemCombo0" command="hidePopup" arguments="" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame2/1QLineEdit0" command="set_string" arguments="6" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/OpViewApplyButton" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.6.0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_hcontainer/0QScrollBar0" command="mouseWheel" arguments="2,0,0,347,65" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,371,300" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,371,160" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,0,80" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,0,80" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,0,80" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,0,80" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_hcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,1,80" />
+  <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Model" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Entity List View" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.1.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.1.0.6.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="4,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="4,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="4,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="2,0,0,153,313" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseWheel" arguments="4,0,0,153,313" />
 </pqevents>
