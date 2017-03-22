@@ -320,7 +320,7 @@ public:
       if(removedAuxes.size() == it->second.RelatedAuxes.size())
         {
         remUrls.insert(it->first);
-        }  
+        }
       else
         {
         smtk::common::UUIDs diffSet;
@@ -1989,7 +1989,7 @@ bool pqCMBModelManager::handleOperationResult(
   for(qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
     mit != this->Internal->ModelInfos.end(); ++mit)
     {
-    numTess += mit->second.numberOfTessellatedEntities();
+    numTess += static_cast<int>(mit->second.numberOfTessellatedEntities());
     if(modelids.find(mit->first) == modelids.end())
       {
       remmodels.insert(mit->first);
