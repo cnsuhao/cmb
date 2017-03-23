@@ -64,7 +64,7 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.46127,0.291829,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.46127,0.291829,1,0,0)" />
   <pqevent object="qtCMBMainWindow/actionMove_Selected_Contour_Points" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/toolBar_View/cameraManipulationModeBox" command="set_string" arguments="3D Manipulation" />
+  <pqevent object="qtCMBMainWindow/action3D_camera" command="set_boolean" arguments="true" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.650384,0.683852,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.64201,0.464981,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.64201,0.464981,1,0,0)" />

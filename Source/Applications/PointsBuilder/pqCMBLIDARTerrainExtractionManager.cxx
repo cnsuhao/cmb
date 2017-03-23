@@ -211,7 +211,7 @@ void pqCMBLIDARTerrainExtractionManager::onDefineContourWidget()
 //-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onContourFinished()
 {
-  this->LIDARCore->setCameraManipulationEnabled(true);
+  this->LIDARCore->enableCameraInteractionModeChanges(true);
 }
 
 //-----------------------------------------------------------------------------

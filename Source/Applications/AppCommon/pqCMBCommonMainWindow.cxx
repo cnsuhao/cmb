@@ -12,6 +12,7 @@
 
 #include "pqCMBCommonMainWindowCore.h"
 
+
 #include <QDir>
 #include <QMessageBox>
 #include <QScrollArea>
@@ -106,6 +107,7 @@
 class pqCMBCommonMainWindow::vtkInternal
 {
 public:
+
   vtkInternal(QWidget* /*parent*/) :
     RecentFilesMenu(0)
     {
@@ -556,7 +558,22 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   QObject::connect(
     this->Internal->UI.actionView_Negative_Z, SIGNAL(triggered()),
     this->MainWindowCore, SLOT(resetViewDirectionNegZ()));
-  // we want to rotate the object, but the trick here is about camera
+
+  // Setup Camera Interaction Connections
+   QObject::connect(
+    this->Internal->UI.action2D_camera, SIGNAL(triggered()),
+    this->MainWindowCore, SLOT(set2DCameraInteraction()));
+   QObject::connect(
+    this->Internal->UI.action3D_camera, SIGNAL(triggered()),
+    this->MainWindowCore, SLOT(set3DCameraInteraction()));
+   QObject::connect(
+    this->MainWindowCore, SIGNAL(enableCameraInteractionModeChanged(bool)),
+    this, SLOT(onEnableCameraInteractionModeChanges(bool)));
+   QObject::connect(
+    this->MainWindowCore, SIGNAL(cameraInteractionModeChangedTo2D(bool)),
+    this, SLOT(onCameraInteractionModeChangeTo2D(bool)));
+
+ // we want to rotate the object, but the trick here is about camera
   new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_cw,
                        pqCameraReaction::ROTATE_CAMERA_CCW);
   new pqCameraReaction(this->Internal->UI.actionView_Rotate_90_ccw,
@@ -607,8 +624,6 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   // setup some statusBar stuff
   // this->MainWindowCore->setupProcessBar(this->statusBar());
   this->onViewChanged();
-  this->MainWindowCore->setupCameraManipulationModeBox(
-    this->Internal->UI.toolBar_View );
 
   //setup universal shortcuts for all the suite applications
   //these all must come after we call onViewChanged!
@@ -869,4 +884,44 @@ void pqCMBCommonMainWindow::onRecordTestStopped()
       this->repaint();
       }
   #endif
+}
+
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::onCameraInteractionModeChangeTo2D(bool mode)
+{
+  // If mode is true (2D camera) then Disable the 2D camera action and
+  // Enable the 3D camera action so the user can select the 3D action
+  // We also want to turn off some of the connonical views and rotations
+    this->Internal->UI.action2D_camera->setEnabled(!mode);
+    this->Internal->UI.action2D_camera->setChecked(mode);
+    this->Internal->UI.action3D_camera->setEnabled(mode);
+    this->Internal->UI.action3D_camera->setChecked(!mode);
+    // Set the 6 View Direction Actions
+    this->Internal->UI.actionView_Positive_X->setVisible(!mode);
+    this->Internal->UI.actionView_Negative_X->setVisible(!mode);
+    this->Internal->UI.actionView_Positive_Y->setVisible(!mode);
+    this->Internal->UI.actionView_Negative_Y->setVisible(!mode);
+    this->Internal->UI.actionView_Positive_Z->setVisible(!mode);
+    // Set the Rotations
+    this->Internal->UI.actionView_Rotate_90_cw->setVisible(!mode);
+    this->Internal->UI.actionView_Rotate_90_ccw->setVisible(!mode);
+}
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::onEnableCameraInteractionModeChanges(bool mode)
+{
+  if (!mode)
+  {
+    this->Internal->UI.action2D_camera->setEnabled(false);
+    this->Internal->UI.action3D_camera->setEnabled(false);
+    return;
+  }
+  if (this->MainWindowCore->isUsing2DCameraInteraction())
+  {
+    this->Internal->UI.action3D_camera->setEnabled(false);
+  }
+  else
+  {
+    this->Internal->UI.action2D_camera->setEnabled(false);
+  }
+
 }

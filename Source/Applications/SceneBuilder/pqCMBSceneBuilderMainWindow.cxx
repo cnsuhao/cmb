@@ -357,10 +357,12 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
                    this->Tree, SLOT(updateUseGlyphPlayback(bool)));
 
   //Connect Tree signal for scene manipulation mode
-  QObject::connect(this->Tree, SIGNAL(setCameraManipulationMode(int)),
-    mainWinCore, SLOT(setCameraManipulationMode(int)));
-  QObject::connect(this->Tree, SIGNAL(resetCameraManipulationMode()),
-    mainWinCore, SLOT(resetCameraManipulationMode()));
+  QObject::connect(this->Tree, SIGNAL(set2DCameraMode()),
+    mainWinCore, SLOT(set2DCameraInteraction()));
+  QObject::connect(this->Tree, SIGNAL(pushCameraMode()),
+    mainWinCore, SLOT(pushCameraInteraction()));
+  QObject::connect(this->Tree, SIGNAL(popCameraMode()),
+    mainWinCore, SLOT(popCameraInteraction()));
   QObject::connect(this->Tree, SIGNAL(enableToolbars(bool)), this, SLOT(setToolbarsEnabled(bool)));
   QObject::connect(this->Tree, SIGNAL(resetViewDirection(double,double,double,double,double,double)),
                    mainWinCore, SLOT(resetViewDirection(double,double,double,double,double,double)));

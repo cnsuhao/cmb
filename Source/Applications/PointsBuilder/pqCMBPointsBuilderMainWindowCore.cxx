@@ -2204,10 +2204,10 @@ void pqCMBPointsBuilderMainWindowCore::onTabChanged(int tabIndex)
     {
 // NOTE: The camera manipulator should only happen when an arc is actively being edited,
 // which is now handled by slot(onArcWidgetBusy) linked Busy signal from pqArcWidgetmanager
-
-//    this->setCameraManipulationMode(1);
+//    this->pushCameraInteraction();
+//    this->set2DCameraInteraction();
 //    this->resetViewDirectionNegZ();
-//    this->setCameraManipulationEnabled(false);
+//    this->enableCameraInteractionModeChanges(false);
 //    emit(disableAxisChange());
     }
   if (lastTabIndex == 2 && this->TerrainExtractionManager)
@@ -2217,8 +2217,8 @@ void pqCMBPointsBuilderMainWindowCore::onTabChanged(int tabIndex)
     }
   else if(lastTabIndex == 3)
     {
-//    this->resetCameraManipulationMode();
-//    this->setCameraManipulationEnabled(true);
+//    this->enableCameraInteractionModeChanges(true);
+//    this->popCameraInteraction();
 //    emit(enableAxisChange());
     }
   if(update)
@@ -2401,7 +2401,7 @@ void pqCMBPointsBuilderMainWindowCore::onContourFinished()
         pqCMBLIDARContourTree::UseFilterCol, 1);
       }
     }
-  this->setCameraManipulationEnabled(true);
+  this->enableCameraInteractionModeChanges(true);
 }
 
 qtArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, double position )
@@ -2436,7 +2436,7 @@ qtArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget( int normal, doub
 void pqCMBPointsBuilderMainWindowCore::onRemoveContour()
 {
   this->Internal->ContourTree->deleteSelected();
-  this->setCameraManipulationEnabled(true);
+  this->enableCameraInteractionModeChanges(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -3400,13 +3400,13 @@ QTreeWidgetItem* pqCMBPointsBuilderMainWindowCore::addContourNode(
 //-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onModifierArcWidgetStart()
 {
-  this->setCameraManipulationMode(1);
+  this->set2DCameraInteraction();
   this->resetViewDirectionNegZ();
 }
 //-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onModifierArcWidgetFinish()
 {
-  this->setCameraManipulationMode(0);
+  this->set3DCameraInteraction();
 }
 
 void pqCMBPointsBuilderMainWindowCore::startMultiFileRead()

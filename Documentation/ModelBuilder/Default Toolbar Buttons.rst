@@ -32,7 +32,7 @@ Camera Controls
 
 |LinkCenterAndFocal| Make future manipulations of the camera view rotate around the current camera center.
 
-|CameraManipulationStyle| Toggle between 2D and 3D camera manipulation
+|CameraManipulationStyle| Toggle between 2D and 3D camera interaction.
 
 Selection
 ^^^^^^^^^

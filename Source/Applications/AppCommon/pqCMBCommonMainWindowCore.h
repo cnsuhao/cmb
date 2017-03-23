@@ -98,10 +98,6 @@ public:
   /// Returns the selection and pick helper used for 3D views.
   pqCMBRubberBandHelper* renderViewSelectionHelper() const;
 
-  // Description
-  // Setup a camera manipulation combo box within passed toolbar
-  void setupCameraManipulationModeBox(QToolBar* toolbar);
-
   /// Setup a variable-selection toolbar
   //virtual void setVariableToolbar(QToolBar* parent);
   /// Setup a representation-selection toolbar
@@ -189,6 +185,9 @@ public:
   void setDisplayRepresentation(pqDataRepresentation* rep);
   const char* programDirectory();
 
+  /// Return true if the camera is in 2D mode
+  bool isUsing2DCameraInteraction() const;
+
 signals:
   void enableVariableToolbar(bool);
   void enableResetCenter(bool);
@@ -205,11 +204,15 @@ signals:
 
   void enableExternalProcesses(bool);
 
-  void cameraManipulationModeChangedTo2D();
-  void cameraManipulationModeChangedTo3D();
-
   void disableAxisChange();
   void enableAxisChange();
+
+  // Signal fired if the camera interaction controls
+  // were enabled (true) or disabled (false)
+  void enableCameraInteractionModeChanged(bool);
+  // Signal fired if the camera interaction mode was changed
+  // to 2D (true) or 3D (false)
+  void cameraInteractionModeChangedTo2D(bool);
 
 public slots:
 
@@ -242,14 +245,20 @@ public slots:
   void updateFocalPointWithCenter();
 
   // Description:
-  // Determines allowed camera manipulation
-  // 0 = 3D, 1 = 2D
-  void setCameraManipulationMode(int mode);
-  int getCameraManipulationMode();
-  void setCameraManipulationEnabled(bool enabled);
+  // Set the camera interaction mode to 2D or 3D
+  void set2DCameraInteraction();
+  void set3DCameraInteraction();
   // Description:
-  // Called to reset the camera manipulation mode to previousCameraManipulationMode
-  void resetCameraManipulationMode();
+  // Controls the camera mode stack. pushCameraInteraction pushes the current
+  // camera mode onto the stack while popCameraInteraction sets the camera mode
+  // based on the top of the stack.  The stack is then popped.  If the stack is
+  // empty when popCameraInteraction is called then the camera mode is not changed
+  // and the method returns false.  void pushCameraInteraction();
+  void pushCameraInteraction();
+  bool popCameraInteraction();
+  // Description:
+  // These methods lock and unlock the camera interaction mode UI.
+  void enableCameraInteractionModeChanges(bool);
 
   static void getViewCameraInfo(pqRenderView* view, double focalPt[3], double position[3],
     double viewDirection[3], double &distance, double viewUp[3],
@@ -307,11 +316,6 @@ public slots:
   // Saves the data (geometry + region and material IDs) in a file.
   virtual void onSaveData(){}
   virtual void onSaveAsData(){}
-
-  // Description:
-  // Determines allowed camera manipulation
-  // 0 = 3D, 1 = 2D
-  void updateCameraManipulationMode(int mode);
 
   //virtual void onRubberBandSelect(bool) {}
 
@@ -414,7 +418,6 @@ protected:
 
   //Subclass this method to alter the default behavior
   virtual void buildRenderWindowContextMenuBehavior(QObject *parent_widget);
-
 
   /// Event filter callback.
   bool eventFilter(QObject* caller, QEvent* e) override;

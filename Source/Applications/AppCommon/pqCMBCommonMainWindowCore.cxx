@@ -142,6 +142,7 @@
 #include <algorithm>
 #include <map>
 #include <set>
+#include <stack>
 #include <vector>
 #include <vtksys/Process.h>
 #include <vtksys/SystemTools.hxx>
@@ -196,15 +197,10 @@ public:
     TimerLog(0),
     StatusBar(0),
     ProjectManager(NULL),
-    MeshingMonitor(NULL)
+    MeshingMonitor(NULL),
+    CameraManipulationMode(ThreeD),
+    CameraDialog(0)
   {
-  //this->MultiViewManager.setObjectName("MultiViewManager");
-  this->CameraDialog = 0;
-
-  this->PreviousCameraManipulationMode = this->CameraManipulationMode =
-    pqCMBCommonMainWindowCore::vtkInternal::ThreeD; // default to 3D
-//  this->isComparingScreenImage = false;
-
   }
 
   enum ManipulationModes {ThreeD, TwoD};
@@ -225,9 +221,7 @@ public:
   QPointer<pqUndoStack> UndoStack;
 
   QToolBar* VariableToolbar;
-  QPointer<QComboBox> CameraManipulationModeBox;
   int CameraManipulationMode;
-  int PreviousCameraManipulationMode;
 
   pqToolTipTrapper* ToolTipTrapper;
 
@@ -269,7 +263,9 @@ public:
   bool FinalizePython;
 
   QString ProcessExecDirectory;
-
+  // Stack for holding the "saved" camera interaction modes  The bool
+  // reflects the fact if the mode was 2D or not
+  std::stack<bool> CameraInteractionStack;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -429,23 +425,6 @@ smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::smtkSelectionMan
 pqCMBRubberBandHelper* pqCMBCommonMainWindowCore::renderViewSelectionHelper() const
 {
   return &this->Internal->RenderViewSelectionHelper;
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setupCameraManipulationModeBox(QToolBar* toolbar)
-{
-  this->Internal->CameraManipulationModeBox = new QComboBox(toolbar);
-  this->Internal->CameraManipulationModeBox->setObjectName("cameraManipulationModeBox");
-  toolbar->addSeparator();
-  toolbar->addWidget(this->Internal->CameraManipulationModeBox);
-  QStringList list;
-  list << "3D Manipulation" << "2D Manipulation";
-  this->Internal->CameraManipulationModeBox->addItems(list);
-  this->Internal->CameraManipulationModeBox->setToolTip("Camera Manipulation Mode");
-  QObject::connect(
-    this->Internal->CameraManipulationModeBox, SIGNAL(currentIndexChanged(int)),
-    this, SLOT(updateCameraManipulationMode(int)));
-  this->Internal->CameraManipulationModeBox->setCurrentIndex(0);
 }
 
 //-----------------------------------------------------------------------------
@@ -1054,112 +1033,124 @@ void pqCMBCommonMainWindowCore::resetCamera()
     }
 }
 
-//----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::resetCameraManipulationMode()
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::pushCameraInteraction()
 {
-  this->setCameraManipulationMode(
-    this->Internal->PreviousCameraManipulationMode);
+  // Push whether we are currenlty using a 2D camera or not
+  this->Internal->CameraInteractionStack.push(this->isUsing2DCameraInteraction());
 }
 //-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setCameraManipulationEnabled(bool enabled)
+bool pqCMBCommonMainWindowCore::popCameraInteraction()
 {
-  this->Internal->CameraManipulationModeBox->setEnabled(enabled);
-}
-//-----------------------------------------------------------------------------
-int pqCMBCommonMainWindowCore::getCameraManipulationMode()
-{
-  return this->Internal->CameraManipulationMode;
-}
-//-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::setCameraManipulationMode(int mode)
-{
-  this->Internal->PreviousCameraManipulationMode =
-    this->getCameraManipulationMode();
-  this->Internal->CameraManipulationModeBox->setCurrentIndex(mode);
-}
-//-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::updateCameraManipulationMode(int mode)
-{
-  if (mode == this->Internal->CameraManipulationMode)
-    {
-    return;
-    }
-  this->Internal->CameraManipulationMode = mode;
-  if(this->Internal->CameraManipulationModeBox->currentIndex() != mode)
-    {
-    this->Internal->CameraManipulationModeBox->setCurrentIndex(mode);
-    }
-
-  std::string propertyName = "Camera3DManipulators";
-  int interactorMode = vtkPVRenderView::INTERACTION_MODE_3D;
-
-  const int *manipTypes;
-  if (mode == pqCMBCommonMainWindowCore::vtkInternal::ThreeD)
-    {
-    manipTypes = &ThreeDManipulatorTypes[0];
-
-    // turn OFF parallel projection
-    pqSMAdaptor::setElementProperty(
-      this->Internal->RenderView->getProxy()->GetProperty("CameraParallelProjection"), 0);
-    this->Internal->VTKConnect->Disconnect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::MouseMoveEvent);
-    this->Internal->VTKConnect->Disconnect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::EndInteractionEvent);
-    this->Internal->VTKConnect->Disconnect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::LeaveEvent);
-    this->Internal->VTKConnect->Disconnect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::EnterEvent);
-
-    this->Internal->RenderView->render();
-    emit cameraManipulationModeChangedTo3D();
-    }
+  // If the stack is not empty then set the interaction based on the top of the stack
+  // and pop it
+  if (this->Internal->CameraInteractionStack.empty())
+  {
+    return false;
+  }
+  if (this->Internal->CameraInteractionStack.top())
+  {
+    this->set2DCameraInteraction();
+  }
   else
-    {
-    manipTypes = &TwoDManipulatorTypes[0];
-    propertyName="Camera2DManipulators";
-    interactorMode = vtkPVRenderView::INTERACTION_MODE_2D;
+  {
+    this->set3DCameraInteraction();
+  }
+  this->Internal->CameraInteractionStack.pop();
+  return true;
+}
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::enableCameraInteractionModeChanges(bool mode)
+{
+  emit this->enableCameraInteractionModeChanged(mode);
+}
+//----------------------------------------------------------------------------
+bool pqCMBCommonMainWindowCore::isUsing2DCameraInteraction() const
+{
+  return (this->Internal->CameraManipulationMode ==
+    pqCMBCommonMainWindowCore::vtkInternal::TwoD);
+}
 
-    // turn ON parallel projection
-    pqSMAdaptor::setElementProperty(
-      this->Internal->RenderView->getProxy()->GetProperty("CameraParallelProjection"), 1);
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::set2DCameraInteraction()
+{
+  if (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::TwoD)
+  {
+    return; // Already in correct mode
+  }
 
-    // mouse movement and end interaction event both result in update to
-    // mouse position display;  mouse movement alone not enough, because
-    // interaction (such as scroll zoom) could result in change of mouse
-    // position without mouse movement
-    this->Internal->VTKConnect->Connect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::MouseMoveEvent, this, SLOT(updateMousePositionText()));
-    this->Internal->VTKConnect->Connect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::EndInteractionEvent, this, SLOT(updateMousePositionText()));
+  this->Internal->CameraManipulationMode = pqCMBCommonMainWindowCore::vtkInternal::TwoD;
+  // turn ON parallel projection
+  pqSMAdaptor::setElementProperty(
+    this->Internal->RenderView->getProxy()->GetProperty("CameraParallelProjection"), 1);
 
-    // enter and leave events to cache whatever the current temporary message
-    // is (enter), and put it back instead of mouse position upon leaving
-    this->Internal->VTKConnect->Connect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::LeaveEvent, this, SLOT(leaveRenderView()));
-    this->Internal->VTKConnect->Connect(
-      this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
-      vtkCommand::EnterEvent, this, SLOT(enterRenderView()));
+  // mouse movement and end interaction event both result in update to
+  // mouse position display;  mouse movement alone not enough, because
+  // interaction (such as scroll zoom) could result in change of mouse
+  // position without mouse movement
+  this->Internal->VTKConnect->Connect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::MouseMoveEvent, this, SLOT(updateMousePositionText()));
+  this->Internal->VTKConnect->Connect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::EndInteractionEvent, this, SLOT(updateMousePositionText()));
 
-    emit cameraManipulationModeChangedTo2D();
-    }
+  // enter and leave events to cache whatever the current temporary message
+  // is (enter), and put it back instead of mouse position upon leaving
+  this->Internal->VTKConnect->Connect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::LeaveEvent, this, SLOT(leaveRenderView()));
+  this->Internal->VTKConnect->Connect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::EnterEvent, this, SLOT(enterRenderView()));
 
   vtkSMProxy* viewproxy = this->Internal->RenderView->getProxy();
   vtkSMPropertyHelper( viewproxy->GetProperty(
-    propertyName.c_str())).Set(manipTypes, 9);
+    "Camera2DManipulators")).Set(&TwoDManipulatorTypes[0], 9);
 
-  //viewproxy->UpdateProperty(propertyName.c_str(), 1);
-  vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(interactorMode);
-  //viewproxy->UpdateProperty("InteractionMode",1);
+  vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
+
   viewproxy->UpdateVTKObjects();
-
   this->updateCameraPositionDueToModeChange();
+  emit cameraInteractionModeChangedTo2D(true);
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBCommonMainWindowCore::set3DCameraInteraction()
+{
+  if (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::ThreeD)
+  {
+    return; // Already in correct mode
+  }
+
+  // ThreeD mode!
+  this->Internal->CameraManipulationMode = pqCMBCommonMainWindowCore::vtkInternal::ThreeD;
+  // turn OFF parallel projection
+  pqSMAdaptor::setElementProperty(
+    this->Internal->RenderView->getProxy()->GetProperty("CameraParallelProjection"), 0);
+  this->Internal->VTKConnect->Disconnect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::MouseMoveEvent);
+  this->Internal->VTKConnect->Disconnect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::EndInteractionEvent);
+  this->Internal->VTKConnect->Disconnect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::LeaveEvent);
+  this->Internal->VTKConnect->Disconnect(
+    this->Internal->RenderView->getRenderViewProxy()->GetInteractor(),
+    vtkCommand::EnterEvent);
+
+  this->Internal->RenderView->render();
+
+  vtkSMProxy* viewproxy = this->Internal->RenderView->getProxy();
+  vtkSMPropertyHelper( viewproxy->GetProperty(
+    "Camera3DManipulators")).Set(&ThreeDManipulatorTypes[0], 9);
+
+  vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_3D);
+  viewproxy->UpdateVTKObjects();
+  this->updateCameraPositionDueToModeChange();
+  emit cameraInteractionModeChangedTo2D(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -1916,8 +1907,12 @@ pqPipelineSource *pqCMBCommonMainWindowCore::getAppendedSource(QList<pqOutputPor
 qtArcWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
 {
   // We need to explicitly call this to make sure the mode is 2D
-  this->setCameraManipulationMode(1);
-  this->setCameraManipulationEnabled(false);
+  // First save the current camera mode
+  this->pushCameraInteraction();
+  // Set to 2D Camera
+  this->set2DCameraInteraction();
+  // Prevent the user from getting out of the 2D mode
+  this->enableCameraInteractionModeChanges(false);
 
   this->Internal->RenderView->forceRender();
 
@@ -1930,7 +1925,7 @@ qtArcWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
   // the plane - this is assumed to be the focal point but if the point is outside
   // of the Camera's clipping range it is moved to be somewhere between the near
   // and far clip planes,
-  
+
   double focalPt[3], position[3], viewDirection[3], clipRange[2];
   camera->GetFocalPoint(focalPt);
   camera->GetDirectionOfProjection(viewDirection);
