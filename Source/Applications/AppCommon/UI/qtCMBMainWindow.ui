@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1304</width>
-    <height>701</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -20,7 +20,18 @@
    <iconset resource="../../Resources/Resources.qrc">
     <normaloff>:/cmb/Icon.png</normaloff>:/cmb/Icon.png</iconset>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QTextEdit" name="textEdit">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>610</y>
+      <width>104</width>
+      <height>78</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -209,6 +220,37 @@
    <addaction name="menu_View"/>
    <addaction name="menu_Tools"/>
    <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="accessibleName">
+    <string/>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Log Window</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTextEdit" name="LogWidget">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="action_Save_Data">
    <property name="icon">
@@ -1525,9 +1567,31 @@
     </font>
    </property>
   </action>
+ <action name="actionClear_Log_WIndow">
+   <property name="text">
+    <string>Clear Log WIndow</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../../Resources/Resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionClear_Log_WIndow</sender>
+   <signal>triggered()</signal>
+   <receiver>LogWidget</receiver>
+   <slot>clear()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>651</x>
+     <y>640</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

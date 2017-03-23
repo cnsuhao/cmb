@@ -31,6 +31,7 @@ class vtkSMProxy;
 class QDockWidget;
 
 namespace Ui { class qtCMBMainWindow; }
+namespace smtk {namespace io { class Logger; }}
 
 class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindow : public QMainWindow
 {
@@ -61,6 +62,10 @@ public slots:
   // Description:
   // Locks the view size for testing.
   virtual void onLockViewSize(bool);
+
+  // Description:
+  // Updates the log window
+  void updateLog(const smtk::io::Logger&);
 
 protected slots:
 

@@ -100,6 +100,8 @@
 #include "qtCMBPanelsManager.h"
 #include "vtkCommand.h"
 
+#include "smtk/io/Logger.h"
+
 #include "vtkPVConfig.h"
 
 #include <vtksys/SystemTools.hxx>
@@ -533,7 +535,8 @@ void pqCMBCommonMainWindow::initMainWindowCore()
 //    << pqSetName("actionToolsLoadState");
   new pqSaveStateReaction(ssaction);
 //  new pqLoadStateReaction(lsaction);
-
+  this->Internal->UI.menu_Tools->addSeparator();
+  this->Internal->UI.menu_Tools->addAction(this->Internal->UI.actionClear_Log_WIndow);
   QObject::connect(this->Internal->UI.actionSettings,
     SIGNAL(triggered()), this->MainWindowCore, SLOT(onEditSettings()));
 
@@ -923,5 +926,11 @@ void pqCMBCommonMainWindow::onEnableCameraInteractionModeChanges(bool mode)
   {
     this->Internal->UI.action2D_camera->setEnabled(false);
   }
+}
 
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::updateLog(const smtk::io::Logger& log)
+{
+  QString txt(log.convertToString(false).c_str());
+  this->Internal->UI.LogWidget->append(txt);
 }
