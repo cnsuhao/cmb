@@ -294,6 +294,12 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     }
 
   QObject::connect(this->getThisCore()->modelManager(),
+      SIGNAL(operationLog(const smtk::io::Logger&)),
+    this, SLOT(updateLog(const smtk::io::Logger&)));
+  QObject::connect(this->getThisCore()->modelManager(),
+      SIGNAL(newSessionLoaded(const QStringList&)),
+      this, SLOT(addNewSessions(const QStringList&)));
+  QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(newSessionLoaded(const QStringList&)),
       this, SLOT(addNewSessions(const QStringList&)));
   QObject::connect(this->getThisCore()->modelManager(),
