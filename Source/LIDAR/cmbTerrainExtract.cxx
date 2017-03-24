@@ -515,20 +515,6 @@ bool TerrainExtract::SegmentVote(Location& loc)
   return true;
 }
 
-#if 0
-  if(this->Verbose)
-    {
-    fprintf(stderr, "normal = %g %g %g\n", normal[0], normal[1], normal[2]);
-    fprintf(stderr, "dsal   = %g %g %g\n", dsal[0], dsal[1], dsal[2]);
-    vnl_vector_fixed<double, 3> const& ev0 = tensor.basis(0);
-    vnl_vector_fixed<double, 3> const& ev1 = tensor.basis(1);
-    fprintf(stderr, "ev0 = %g %g %g\n", ev0[0], ev0[1], ev0[2]);
-    fprintf(stderr, "ev1 = %g %g %g\n", ev1[0], ev1[1], ev1[2]);
-    fflush(stderr);
-    vcl_cerr << "tdz =\n" << votee_tensor_d[2] << vcl_endl;
-    }
-#endif
-
 void TerrainExtract::SegmentSearch()
 {
   double step = this->Tokens.scale / 2;
