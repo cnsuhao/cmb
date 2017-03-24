@@ -916,9 +916,16 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
 void pqCMBModelBuilderMainWindow::onModelRepresentationAdded(
   pqDataRepresentation* rep)
 {
-  (void)rep;
   this->initUIPanel(qtCMBPanelsManager::DISPLAY, false);
   this->initUIPanel(qtCMBPanelsManager::COLORMAP, false);
+
+  smtk::model::EntityRef ent =
+    this->getThisCore()->modelManager()->entityOfRepresentation(rep);
+  if (ent.isValid())
+    {
+    this->getThisCore()->autoSwitchCameraManipulationMode(
+      ent.embeddingDimension());
+    }
 }
 
 void pqCMBModelBuilderMainWindow::onNewMeshCreated()

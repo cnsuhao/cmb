@@ -94,6 +94,9 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget *widgetParent)
   QObject::connect(this->Internal->defaultSessionModelBox,
     SIGNAL(stateChanged(int)),
     this, SIGNAL(changesAvailable()));
+  QObject::connect(this->Internal->autoSwitchManipulatorBox,
+    SIGNAL(stateChanged(int)),
+    this, SIGNAL(changesAvailable()));
 }
 
 //-----------------------------------------------------------------------------
@@ -161,6 +164,10 @@ void pqCMBModelBuilderOptions::applyChanges()
   // create default session model
   settings->setValue("ModelBuilder/CreateDefaultSessionModel",
     this->Internal->defaultSessionModelBox->isChecked());
+
+  // automatically switch camera manipulator mode
+  settings->setValue("ModelBuilder/AutoSwitchCameraManipulator",
+    this->Internal->autoSwitchManipulatorBox->isChecked());
 }
 
 //-----------------------------------------------------------------------------
@@ -259,6 +266,14 @@ bool pqCMBModelBuilderOptions::createDefaultSessionModel()
   pqSettings* settings = pqApplicationCore::instance()->settings();
   // default to true
   return settings->value("ModelBuilder/CreateDefaultSessionModel", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+bool pqCMBModelBuilderOptions::autoSwitchCameraManipulator()
+{
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  // default to true
+  return settings->value("ModelBuilder/AutoSwitchCameraManipulator", true).toBool();
 }
 
 //-----------------------------------------------------------------------------
