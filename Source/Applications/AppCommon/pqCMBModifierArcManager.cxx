@@ -794,7 +794,7 @@ void pqCMBModifierArcManager::selectLine(int sid)
     QObject::connect(this->Internal->arcEditWidget->Close, SIGNAL(toggled(bool)),
                      this->Internal->CurrentArcWidget, SLOT(closeLoop(bool)), Qt::UniqueConnection);
     QObject::connect(this->Internal->arcEditWidget->EditMode, SIGNAL(toggled(bool)),
-                     this->Internal->CurrentArcWidget, SLOT(EditMode()), Qt::UniqueConnection);
+                     this->Internal->CurrentArcWidget, SLOT(updateMode()), Qt::UniqueConnection);
     QObject::connect(this->Internal->arcEditWidget->ModifyMode, SIGNAL(toggled(bool)),
                      this->Internal->CurrentArcWidget, SLOT(ModifyMode()), Qt::UniqueConnection);
     this->Internal->arcEditWidget->EditMode->setChecked(true);
