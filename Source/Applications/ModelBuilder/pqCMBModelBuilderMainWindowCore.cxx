@@ -300,10 +300,28 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
 }
 
 //----------------------------------------------------------------------------
-bool pqCMBModelBuilderMainWindowCore::startNewSession(const std::string& sessionName)
+bool pqCMBModelBuilderMainWindowCore::startNewSession(
+  const std::string& sessionName)
 {
-  return this->modelManager()->startNewSession(sessionName,
-    this->Internal->AppOptions->createDefaultSessionModel());
+  return this->startNewSession(sessionName,
+    this->Internal->AppOptions->createDefaultSessionModel(),
+    false);
+}
+
+//----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::startNewSession(
+  const std::string& sessionName,
+  bool createDefaultModel,
+  bool useExistingSession)
+{
+  // Make sure the panel is created before we create the session.
+  // Otherwise, the tree view is created with the results of the
+  // first operation already present and this confuses the logic
+  // to add operator results into the tree view.
+  (void) this->modelPanel();
+
+  return this->modelManager()->startNewSession(
+    sessionName, createDefaultModel, useExistingSession);
 }
 
 //----------------------------------------------------------------------------
@@ -666,6 +684,17 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
 
 }
 
+/// Helper to receive pqCMBModelManager signal that session is closing and update model tree view.
+bool pqCMBModelBuilderMainWindowCore::onCloseSession(const smtk::model::SessionRef& sref)
+{
+  pqSMTKModelPanel* panel = this->modelPanel();
+  if (panel)
+    {
+    return panel->removeClosedSession(sref);
+    }
+  return false;
+}
+
 void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
 {
   if(this->Internal->SimBuilder)
@@ -938,6 +967,12 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     const smtk::model::SessionRef&, bool, bool, bool)));
 
   QObject::connect(
+    this->Internal->smtkModelManager,
+    SIGNAL(sessionClosing(const smtk::model::SessionRef&)),
+    this,
+    SLOT(onCloseSession(const smtk::model::SessionRef&)));
+
+  QObject::connect(
     this->Internal->smtkModelManager, SIGNAL(newModelManagerProxy(vtkSMModelManagerProxy*)),
     this, SLOT(modelManagerChanged(vtkSMModelManagerProxy*)));
 
@@ -979,6 +1014,8 @@ void pqCMBModelBuilderMainWindowCore::onEditSettings()
 void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 {
   this->Superclass::applyAppSettings();
+  emit sessionCentricModelingPreferenceChanged(
+    this->Internal->AppOptions->sessionCentricModeling());
  /*
   int index = this->Internal->ColorFaceCombo->findText(
     this->Internal->AppOptions->default3DModelFaceColorMode().c_str());

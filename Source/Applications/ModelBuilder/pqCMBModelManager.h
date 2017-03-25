@@ -110,6 +110,7 @@ signals:
   void newModelManagerProxy(vtkSMModelManagerProxy*); // Emitted each time a new model manager is created on the server.
   void currentModelCleared();
   void newSessionLoaded(const QStringList& bridgeNames);
+  void sessionClosing(const smtk::model::SessionRef& sref);
   void newFileTypesAdded(const QStringList& fileTypes);
   void operationFinished(const smtk::model::OperatorResult&,
     const smtk::model::SessionRef& sref,
@@ -122,7 +123,9 @@ signals:
 public slots:
   void clear();
   bool startNewSession(const std::string& bridgeName,
-                       const bool& createDefaultModel = true);
+                       const bool& createDefaultModel = true,
+                       const bool& useExistingSession = false);
+  bool closeSession(const smtk::model::SessionRef& sref);
   void clearModelSelections();
   void clearMeshSelections();
   void clearAuxGeoSelections();

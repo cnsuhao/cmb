@@ -67,8 +67,8 @@ protected:
                        const smtk::common::UUID& fwdSessionId);
   cJSON* jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperProxy=NULL);
   cJSON* jsonRPCRequest(const std::string& req, vtkSMProxy* opHelperProxy=NULL);
-  void jsonRPCNotification(cJSON* note);
-  void jsonRPCNotification(const std::string& note);
+  void jsonRPCNotification(cJSON* note, vtkSMProxy* opHelperProxy=NULL);
+  void jsonRPCNotification(const std::string& note, vtkSMProxy* opHelperProxy=NULL);
 
   void initFileOperator(
     smtk::model::OperatorPtr fileOp,

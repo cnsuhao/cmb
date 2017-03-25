@@ -46,6 +46,7 @@ public:
   std::string default2DModelEdgeColorMode();
   QColor defaultEdgeColor();
   QColor defaultPolygonColor();
+  bool sessionCentricModeling();
   bool createDefaultSessionModel();
 
 protected slots:

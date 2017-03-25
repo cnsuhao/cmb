@@ -297,7 +297,8 @@ pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
 
     for (size_t index = 0; index < repProxy->GetNumberOfPropertyGroups(); index++)
       {
-      vtkSMPropertyGroup *group = repProxy->GetPropertyGroup(index);
+      int group_tag  = static_cast<int>(index);
+      vtkSMPropertyGroup *group = repProxy->GetPropertyGroup(group_tag);
       if(!group)
         continue;
       QString grplabel = group->GetXMLLabel();

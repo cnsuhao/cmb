@@ -86,6 +86,8 @@ signals:
   void newModelCreated();
   void newMeshCreated();
 
+  void sessionCentricModelingPreferenceChanged(bool);
+
 public slots:
   // Description
   /// Called when a new server is connected.
@@ -100,6 +102,7 @@ public slots:
   void onCloseData() override
     { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
+  bool onCloseSession(const smtk::model::SessionRef&);
   void clearSimBuilder();
   void resetSimulationModel();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);
@@ -182,6 +185,10 @@ public slots:
   // Call pqCMBModelManager::startNewSession with the app setting's entry
   // whether to create a default model.
   bool startNewSession(const std::string& sessionName);
+  bool startNewSession(
+    const std::string& sessionName,
+    bool createDefaultModel,
+    bool useExistingSession);
 
   // Description:
   // Override the zoomToSelection function to do real task

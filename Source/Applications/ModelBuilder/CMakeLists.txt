@@ -360,6 +360,7 @@ endif()
 
   set (XML_TESTS_WITH_BASELINES
     AxesGrid
+    CloseSession
     EdgeModification
     #ChesapeakeBayBathymetry
     OpenCMBFile

@@ -75,10 +75,11 @@ pqCMBLine::pqCMBLine(double point1[3],
 //-----------------------------------------------------------------------------
 void pqCMBLine::initialize(double point1[3],
                               double point2[3],
-                              pqServer *server,
+                              pqServer* server,
                               pqRenderView *view,
                               bool /*updateRep*/)
 {
+  (void)server;
   this->LineWidget = new qtLineWidget();
   this->LineWidget->setObjectName("pqCMBLineWidget");
   this->LineWidget->setView(view);

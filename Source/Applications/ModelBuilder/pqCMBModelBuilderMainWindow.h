@@ -47,6 +47,7 @@ public slots:
   void onNewModelCreated();
   void onModelRepresentationAdded(pqDataRepresentation*);
   void onNewMeshCreated();
+  bool onCloseSession();
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
@@ -58,6 +59,8 @@ public slots:
   void addTextureFileName(const char *filename);
   const QStringList &getTextureFileNames();
 
+  void toggleSessionCentricMenus(bool sessionCentric);
+
 protected slots:
 
   void onShowCenterAxisChanged(bool enabled);
@@ -65,10 +68,11 @@ protected slots:
   void filterDisplayPanel();
 
   // Description:
-  // Slots for smtk related signals.  
+  // Slots for smtk related signals.
   void addNewSessions(const QStringList&);
   void addNewSession(const QString&);
   void onCreateNewSession();
+  void onCreateNewModel(const QString& sessionType);
   void onRequestMeshSelection();
   void onRequestMeshCellSelection(
     const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
