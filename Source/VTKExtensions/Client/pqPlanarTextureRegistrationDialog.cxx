@@ -125,9 +125,7 @@ void pqPlanarTextureRegistrationDialog::initializeTexture(
   pqSMAdaptor::setElementProperty(
     this->imageRenderView->getProxy()->GetProperty("CenterAxesVisibility"), 0);
 
-  const int *manipTypes = &TwoDManipulatorTypes[0];
   vtkSMProxy* viewproxy = this->imageRenderView->getProxy();
-  vtkSMPropertyHelper( viewproxy->GetProperty("Camera2DManipulators")).Set(manipTypes, 9);
   vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
   viewproxy->UpdateVTKObjects();
 

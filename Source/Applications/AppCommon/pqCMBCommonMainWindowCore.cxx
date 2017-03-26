@@ -1105,9 +1105,6 @@ void pqCMBCommonMainWindowCore::set2DCameraInteraction()
     vtkCommand::EnterEvent, this, SLOT(enterRenderView()));
 
   vtkSMProxy* viewproxy = this->Internal->RenderView->getProxy();
-  vtkSMPropertyHelper( viewproxy->GetProperty(
-    "Camera2DManipulators")).Set(&TwoDManipulatorTypes[0], 9);
-
   vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
 
   viewproxy->UpdateVTKObjects();
@@ -1144,9 +1141,6 @@ void pqCMBCommonMainWindowCore::set3DCameraInteraction()
   this->Internal->RenderView->render();
 
   vtkSMProxy* viewproxy = this->Internal->RenderView->getProxy();
-  vtkSMPropertyHelper( viewproxy->GetProperty(
-    "Camera3DManipulators")).Set(&ThreeDManipulatorTypes[0], 9);
-
   vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_3D);
   viewproxy->UpdateVTKObjects();
   this->updateCameraPositionDueToModeChange();
