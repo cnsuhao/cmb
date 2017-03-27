@@ -172,38 +172,7 @@ qtCMBSceneObjectImporter::~qtCMBSceneObjectImporter()
 //-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::assignUnits(pqCMBSceneObjectBase *obj)
 {
-#if 0
-  if (this->ImportDialog->INButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::inches);
-    }
-  else if (this->ImportDialog->FTButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::feet);
-    }
-  else if (this->ImportDialog->MMButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::mm);
-    }
-  else if (this->ImportDialog->CMButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::cm);
-    }
-  else if (this->ImportDialog->MButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::m);
-    }
-  else if (this->ImportDialog->KMButton->isChecked())
-    {
-    obj->setUnits(cmbSceneUnits::km);
-    }
-  else
-    {
-    obj->setUnits(cmbSceneUnits::Unknown);
-    }
-#else
   obj->setUnits(cmbSceneUnits::Unknown);
-#endif
 }
 //-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::setRandomPlacementOption(bool mode)

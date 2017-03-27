@@ -128,13 +128,8 @@ int vtkOSDLReader::RequestData(
     if (tag == "%Veg_Input")
       {
       fin >> tag;
-#if 0
-      vtkSmartPointer<vtkSceneGenVegetationClusterReader> reader =
-        vtkSmartPointer<vtkSceneGenVegetationClusterReader>::New();
-#else
       vtkSmartPointer<vtkSceneGenVegetationReader> reader =
         vtkSmartPointer<vtkSceneGenVegetationReader>::New();
-#endif
       reader->SetFileName( tag.c_str() );
       reader->Update();
       this->AppendBlocks( output, reader->GetOutput() );

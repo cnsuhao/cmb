@@ -78,57 +78,6 @@ vtkIdType GetNextIndex(vtkIdType i, vtkUnsignedCharArray *avail)
   avail->SetValue(i, 0);
   return i;
 }
-#if 0
-//----------------------------------------------------------------------------
-void CreateLookupTable(vtkLookupTable *lut)
-{
-  vtkIdType n = lut->GetNumberOfTableValues();
-  vtkIdType i;
-  int m = vtkMath::Round(cbrt(static_cast<double>(n)));
-  vtkSmartPointer<vtkDoubleArray> colors = vtkDoubleArray::New();
-  colors->SetNumberOfComponents(3);
-  colors->SetNumberOfTuples(m*m*m);
-  vtkSmartPointer<vtkUnsignedCharArray> avail = vtkUnsignedCharArray::New();
-  avail->SetNumberOfComponents(1);
-  avail->SetNumberOfTuples(m*m*m);
-  double color[3];
-  double delta, r, g, b;
-  int  x, y, z;
-  delta = 1.0 / (static_cast<double>(m-1));
-  r = 0.0;
-  for (x = 0, i = 0; (x < m); x++, r+= delta)
-    {
-    g = 0.0;
-    for (y = 0; y < m; y++, g+= delta)
-      {
-      b = 0.0;
-      for (z = 0; z < m; z++, b+= delta, i++)
-        {
-        colors->SetTuple3(i,r,g,b);
-        avail->SetValue(i,1);
-        cout << i << " (" << r <<"," << g << "," << b << ")\n";
-        }
-      }
-    }
-
-
-//   for (i = 0; i < n; i++)
-//     {
-//     colors->GetTypedTuple(i, color);
-//     lut->SetTableValue(i, color[0], color[1], color[2]);
-//     }
-
-  vtkIdType ci, tci;
-  for (i = 0; i < n; i++)
-    {
-    ci = vtkMath::Round(vtkMath::Random(0, n-1));
-    tci = GetNextIndex(ci, avail);
-    cout << "Mapping: " << i << ", " << ci << ", " << tci << "\n";
-    colors->GetTypedTuple(tci, color);
-    lut->SetTableValue(i, color[0], color[1], color[2]);
-    }
-}
-#endif
 //----------------------------------------------------------------------------
 void CreateLookupTable(vtkLookupTable *lut, double llimit, double ulimit, int urange, double rgbD2)
 {

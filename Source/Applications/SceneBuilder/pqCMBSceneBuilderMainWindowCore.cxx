@@ -2697,48 +2697,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
     return;
     }
 
-#if 0 || defined(for_yumin)
-  if(contourObjectsPresent)
-    {
-    vtkSmartPointer<vtkCMBModelWriterBase> writerBase =
-      vtkSmartPointer<vtkCMBModelWriterBase>::New();
-
-    // temporary hack because don't have method to push LineSegment to server (yet)
-    vtkDiscreteModelWrapper *hackWrapper = vtkDiscreteModelWrapper::New();
-    if ( this->AddContourObjectsToModel(hackWrapper) )
-      {
-      writerBase->SetFileName( cmbFileName.toAscii().constData() );
-      writerBase->Operate(hackWrapper);
-      }
-
-    hackWrapper->Delete();
-    return;
-    }
-#endif
-  /*bool success = */this->exportSolidsCMBModel(inputs, cmbFileName, false);
-
-#if 0 || defined(for_yumin)
-  bool success = this->exportSolidsCMBModel(inputs, cmbFileName, false);
-  if (success && lineObjectsPresent)
-    {
-    // temporary hack because don't have method to push LineSegment to server (yet)
-    vtkDiscreteModelWrapper *hackWrapper = vtkDiscreteModelWrapper::New();
-
-    vtkSmartPointer<vtkCMBModelReadOperator> readerOperator =
-      vtkSmartPointer<vtkCMBModelReadOperator>::New();
-    readerOperator->SetFileName( cmbFileName.toAscii().constData() );
-
-    readerOperator->Operate(hackWrapper);
-    this->AddLineSegmentObjectsToModel(hackWrapper, false);
-
-    vtkSmartPointer<vtkCMBModelWriterBase> writerBase =
-      vtkSmartPointer<vtkCMBModelWriterBase>::New();
-    writerBase->SetFileName( cmbFileName.toAscii().constData() );
-    writerBase->Operate(hackWrapper);
-
-    hackWrapper->Delete();
-    }
-#endif
+  this->exportSolidsCMBModel(inputs, cmbFileName, false);
 }
 //----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::exportSelectedPolygons()
@@ -2938,13 +2897,6 @@ void pqCMBSceneBuilderMainWindowCore::exportCMBFile()
   this->AddLineSegmentObjectsToModel(wrapper, true);
   // Adding the contours to the model
   this->AddContourObjectsToModel(wrapper);
-
-#if 0 || defined(for_yumin)
-  vtkSmartPointer<vtkCMBModelWriterBase> modelWriter =
-    vtkSmartPointer<vtkCMBModelWriterBase>::New();
-  modelWriter->SetFileName( cmbFileName.toAscii().constData() );
-  modelWriter->Operate(wrapper);
-#endif
 }
 
 
@@ -3344,23 +3296,11 @@ void pqCMBSceneBuilderMainWindowCore::newScene()
 
   // ToDo:: Need to check to see if there are unsaved changed!!
 
-#if 0
-  cmbSceneUnits::Enum sceneUnits;
-  if (qtCMBNewSceneUnitsDialog::getUnits(cmbSceneUnits::Unknown, sceneUnits))
-    {
-    this->closeData();
-    this->Tree->createRoot("Scene");
-    this->Tree->setUnits(sceneUnits);
-    this->Internal->OutputFileName = "";
-    emit this->newSceneLoaded();
-    }
-#else
   this->closeData();
   this->Tree->createRoot("Scene");
   this->Tree->setUnits(cmbSceneUnits::Unknown);
   this->Internal->OutputFileName = "";
   emit this->newSceneLoaded();
-#endif
 }
 //-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::updateNodeColor()
