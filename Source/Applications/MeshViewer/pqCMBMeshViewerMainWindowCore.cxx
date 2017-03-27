@@ -82,7 +82,6 @@
 #include "pqUndoStackBuilder.h"
 #include "pqViewContextMenuManager.h"
 #include "pqView.h"
-#include "pqSaveSnapshotDialog.h"
 #include <pqFileDialog.h>
 #include <pqSetData.h>
 #include <pqSetName.h>

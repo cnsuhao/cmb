@@ -93,7 +93,6 @@
 #include "pqUndoStackBuilder.h"
 #include "pqViewContextMenuManager.h"
 #include "pqView.h"
-#include "pqSaveSnapshotDialog.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
 #include <pqFileDialog.h>
 #include "pqCMBProcessWidget.h"

@@ -64,6 +64,7 @@
 #include "pqPluginManager.h"
 #include "pqProgressManager.h"
 #include "pqRenderView.h"
+#include "pqSaveScreenshotReaction.h"
 #include "pqCMBRubberBandHelper.h"
 
 #include "pqSelectionManager.h"
@@ -79,7 +80,6 @@
 #include "pqUndoStackBuilder.h"
 #include "pqView.h"
 #include "pqViewContextMenuManager.h"
-#include "pqSaveSnapshotDialog.h"
 #include "pqActiveObjects.h"
 #include "pqPVApplicationCore.h"
 #include "pqCMBTreeWidgetEventTranslator.h"
@@ -197,8 +197,8 @@ public:
     TimerLog(0),
     StatusBar(0),
     ProjectManager(NULL),
-    MeshingMonitor(NULL),
     CameraManipulationMode(ThreeD),
+    MeshingMonitor(NULL),
     CameraDialog(0)
   {
   }
@@ -1620,68 +1620,7 @@ void pqCMBCommonMainWindowCore::onToolsManageLinks()
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onSaveScreenshot()
 {
-  if(!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()))
-    {
-    qDebug() << "Cannot save image. No active render module.";
-    return;
-    }
-
-  QString filters;
-  filters += "PNG Image (*.png)";
-  filters += ";;BMP Image (*.bmp)";
-  filters += ";;TIFF Image (*.tif)";
-  filters += ";;PPM Image (*.ppm)";
-  filters += ";;JPG Image (*.jpg)";
-  filters += ";;All Files (*)";
-  pqFileDialog fileDialog (NULL,
-      this->Internal->Parent, tr("Save Test Screenshot"), QString(),
-      filters);
-  //fileDialog->setAttribute(Qt::WA_DeleteOnClose);
-  fileDialog.setObjectName("RecordTestScreenshotDialog");
-  fileDialog.setFileMode(pqFileDialog::AnyFile);
-  QObject::connect(&fileDialog, SIGNAL(filesSelected(const QStringList &)),
-      this, SLOT(onSaveScreenshot(const QStringList &)));
-  fileDialog.exec();
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBCommonMainWindowCore::onSaveScreenshot(const QStringList &fileNames)
-{
-  pqRenderView* const render_module = qobject_cast<pqRenderView*>(
-    pqActiveObjects::instance().activeView());
-  if(!render_module)
-    {
-    qCritical() << "Cannnot save image. No active render module.";
-    return;
-    }
-
-  QVTKWidget* const widget =
-    qobject_cast<QVTKWidget*>(render_module->widget());
-  assert(widget);
-
-//  this->Internal->isComparingScreenImage = true;
-
-  QSize old_size = widget->size();
-  widget->resize(300,300);
-
-  QStringList::ConstIterator iter = fileNames.begin();
-  for( ; iter != fileNames.end(); ++iter)
-    {
-    vtkSmartPointer<vtkImageData> img;
-    img.TakeReference(render_module->captureImage(widget->size()));
-    if (img.GetPointer() == NULL)
-      {
-      qCritical() << "Save Image failed.";
-      }
-    else
-      {
-      pqImageUtil::saveImage(img, *iter, 100);
-      }
-    }
-
-  widget->resize(old_size);
-  render_module->render();
-//  this->Internal->isComparingScreenImage = false;
+  pqSaveScreenshotReaction::saveScreenshot();
 }
 
 //-----------------------------------------------------------------------------
