@@ -492,7 +492,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
   this->getThisCore()->modelManager()->supportedColorByModes(list);
 
   colorbyBox->addItems(list);
-  colorbyBox->setCurrentIndex(0);
+  colorbyBox->setCurrentIndex(1);
   QObject::connect(
       colorbyBox, SIGNAL(currentIndexChanged(const QString &)),
       this->getThisCore(), SLOT(onColorByModeChanged(const QString &)));
