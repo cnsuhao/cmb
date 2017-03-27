@@ -227,7 +227,6 @@ public slots:
 
   virtual void onToolsManageLinks();
   virtual void onSaveScreenshot();
-  virtual void onSaveScreenshot(const QStringList &fileNames);
   virtual void onHelpEnableTooltips(bool enabled = true);
 
   // Called to show the settings dialog.
