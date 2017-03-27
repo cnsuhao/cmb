@@ -5,4 +5,5 @@
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton6" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Entity List View" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.1.0.6.0" />
+  <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
 </pqevents>

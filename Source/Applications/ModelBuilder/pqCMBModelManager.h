@@ -78,6 +78,8 @@ public:
   smtkAuxGeoInfo* auxGeoInfo(const std::string& auxurl);
   QList<pqSMTKModelInfo*> selectedModels() const;
   QList<pqSMTKModelInfo*> allModels() const;
+  smtk::model::EntityRef entityOfRepresentation(const pqDataRepresentation* rep);
+  pqDataRepresentation* representationOfEntity(const smtk::model::EntityRef& ent);
 
   int numberOfModels();
   int numberOfRemoteSessions();

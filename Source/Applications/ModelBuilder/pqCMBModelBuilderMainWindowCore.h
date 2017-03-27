@@ -194,6 +194,9 @@ public slots:
   // Override the zoomToSelection function to do real task
   bool  zoomToSelection() override;
 
+  /// Call setCameraManipulationMode() to match \a dimension, but only if the user preference is enabled.
+  void autoSwitchCameraManipulationMode(int dimension);
+
 protected:
   void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
   virtual void setSimBuilderModelManager();

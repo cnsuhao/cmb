@@ -48,6 +48,7 @@ public:
   QColor defaultPolygonColor();
   bool sessionCentricModeling();
   bool createDefaultSessionModel();
+  bool autoSwitchCameraManipulator();
 
 protected slots:
   void chooseSimBuilderTemplateDirectory();

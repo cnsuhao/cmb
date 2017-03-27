@@ -378,6 +378,22 @@ bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
 }
 
 //----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::autoSwitchCameraManipulationMode(int dimension)
+{
+  if (this->Internal->AppOptions->autoSwitchCameraManipulator())
+    {
+    if (dimension == 2)
+      {
+      this->set2DCameraInteraction();
+      }
+    else
+      {
+      this->set3DCameraInteraction();
+      }
+    }
+}
+
+//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::processSceneInfo(const QString& filename,
     pqPipelineSource* source)
 {
