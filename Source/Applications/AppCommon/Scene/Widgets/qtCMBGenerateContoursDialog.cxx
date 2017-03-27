@@ -156,10 +156,7 @@ qtCMBGenerateContoursDialog::qtCMBGenerateContoursDialog(
   // setup Parallel projection and 2D manipulation
   pqSMAdaptor::setElementProperty(
     this->RenderView->getProxy()->GetProperty("CameraParallelProjection"), 1);
-  const int *manipTypes = &TwoDManipulatorTypes[0];
   vtkSMProxy* viewproxy = this->RenderView->getProxy();
-  vtkSMPropertyHelper(
-    viewproxy->GetProperty("Camera2DManipulators")).Set(manipTypes, 9);
   vtkSMPropertyHelper(viewproxy, "InteractionMode").Set(vtkPVRenderView::INTERACTION_MODE_2D);
   viewproxy->UpdateVTKObjects();
 
