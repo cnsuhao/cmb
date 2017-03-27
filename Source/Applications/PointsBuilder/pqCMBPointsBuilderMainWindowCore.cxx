@@ -991,7 +991,7 @@ bool pqCMBPointsBuilderMainWindowCore::savePieces(
 
   QFileInfo info(filename);
   QString extension(info.completeSuffix()), writerName;
-  if(extension == "pts" || extension == "bin" || extension == "bin.pts")
+  if(extension == "pts" || extension == "xyz")
     {
     writerName = "LIDARWriter";
     }

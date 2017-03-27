@@ -1070,7 +1070,7 @@
         command="ClearTransform">
       </Property>
       <Hints>
-        <ReaderFactory extensions="pts bin.pts bin xyz"
+        <ReaderFactory extensions="pts xyz"
                        file_description="LIDAR Files" />
       </Hints>
     </SourceProxy>

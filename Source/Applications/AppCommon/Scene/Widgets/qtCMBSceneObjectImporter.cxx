@@ -279,8 +279,7 @@ void qtCMBSceneObjectImporter::accept()
   QString s = finfo.completeSuffix().toLower();
 
   if (s == "pts" ||
-      s == "bin" ||
-      s == "bin.pts" )
+      s == "xyz" )
     {
     // then should be type LIDAR, regardless of how user set????
     this->importLIDARFile(n);
@@ -406,7 +405,7 @@ void qtCMBSceneObjectImporter::updateDialog()
   QString s = finfo.suffix().toLower();
 
   // Now set up the combo box based on the file suffix
-  if ((s == "pts") || (s == "bin") || (s == "las"))
+  if ((s == "pts") || (s == "xyz") || (s == "las"))
     {
     this->ObjectType = pqCMBSceneObjectBase::Points;
     this->ImportDialog->
@@ -536,7 +535,7 @@ void qtCMBSceneObjectImporter::updateDialog()
   // If the scene does contain aleast one data object and we are allowing translation based on view and
   // we are not dealing with LIDAR then check the translateBasedOnView box by default
   if (this->Parent->getTree()->containsDataObjects() && this->ImportDialog->translateBasedOnView->isEnabled() &&
-      !((s == "pts") || (s == "bin") || (s == "las") || (s == "vtk") ||
+      !((s == "pts") || (s == "xyz") || (s == "las") || (s == "vtk") ||
         (s == "vti") || (s == "flt") || (s == "hdr") || (s == "ftw") || (s == "dem") || (s == "tif")))
     {
     translateBasedOnView = true;

@@ -4330,7 +4330,7 @@ bool pqCMBSceneTree::IsTemporaryPtsFileForMesherNeeded(QStringList &surfaceNames
         // but could be vtk or something else)
         QFileInfo info(pobj->getFileName().c_str());
         QString extension(info.completeSuffix());
-        if (extension == "pts" || extension == "bin.pts" || extension == "bin")
+        if (extension == "pts" || extension == "xyz")
           {
           return false;  // just assume a single piece
           }
