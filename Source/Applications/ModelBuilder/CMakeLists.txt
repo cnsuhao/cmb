@@ -192,6 +192,7 @@ set(CMB_ALL_PLUGINS
     smtkRemoteSessionPlugin
     smtkRemusMeshOperatorPlugin
     smtkVTKOperatorsPlugin
+    smtkPQOperatorViewsPlugin
 )
 
 set(CMB_AUTOLOAD_PLUGINLIST)
@@ -359,6 +360,7 @@ endif()
     )
 
   set (XML_TESTS_WITH_BASELINES
+    AssignColors1
     AxesGrid
     CloseSession
     EdgeModification
