@@ -500,7 +500,7 @@
         <BooleanDomain name="bool"/>
       </IntVectorProperty>
       <Hints>
-        <ReaderFactory extensions="2dm 3dm bin bin.pts fac obj poly
+        <ReaderFactory extensions="fac obj poly
 				   smesh pts sol stl tin xyz"
                        file_description="CMB Point, Edge and Surface Geometry Files" />
       </Hints>
