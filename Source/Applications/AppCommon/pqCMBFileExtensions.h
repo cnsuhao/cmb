@@ -70,7 +70,7 @@ namespace pqCMBFileExtensions
   // PointsBuilder file types
   inline QString PointsBuilder_FileTypes()
   {
-    return "Supported LIDAR files (*.pts *.bin *.bin.pts *.las *.dem *.hdr *.FLT *.ftw *.vtp);;PTS (*.pts *.bin *.bin.pts);;LAS (*.las);;DEM (*.dem *.hdr *.FLT *.ftw);;VTK (*.vtp);;All files (*)";
+    return "Supported LIDAR files (*.pts *.xyz  *.las *.dem *.hdr *.FLT *.ftw *.vtp);;PTS (*.pts *.bin *.bin.pts);;LAS (*.las);;DEM (*.dem *.hdr *.FLT *.ftw);;VTK (*.vtp);;All files (*)";
   }
 
   // MeshViewer file types
@@ -124,8 +124,7 @@ namespace pqCMBFileExtensions
   {
     cmb_FileExtMap readerMap = ModelBuilder_ReadersMap();
     readerMap.insert("osd.txt", QPair<QString, QString>("sources", "OSDLReader"));
-    readerMap.insert("bin.pts", QPair<QString, QString>("sources", "CMBGeometryReader"));
-    readerMap.insert("bin", QPair<QString, QString>("sources", "CMBGeometryReader"));
+    readerMap.insert("xyz", QPair<QString, QString>("sources", "CMBGeometryReader"));
     readerMap.insert("pts", QPair<QString, QString>("sources", "CMBGeometryReader"));
     readerMap.insert("fac", QPair<QString, QString>("sources", "CMBGeometryReader"));
     readerMap.insert("dem", QPair<QString, QString>("sources", "GDALRasterReader"));
@@ -135,8 +134,7 @@ namespace pqCMBFileExtensions
   inline cmb_FileExtMap PointsBuilder_ReadersMap()
   {
     cmb_FileExtMap readerMap;
-    readerMap.insert("bin.pts", QPair<QString, QString>("sources", "LIDARReader"));
-    readerMap.insert("bin", QPair<QString, QString>("sources", "LIDARReader"));
+    readerMap.insert("xyz", QPair<QString, QString>("sources", "LIDARReader"));
     readerMap.insert("pts", QPair<QString, QString>("sources", "LIDARReader"));
     readerMap.insert("dem", QPair<QString, QString>("sources", "GDALRasterPolydataWrapper"));
     return readerMap;

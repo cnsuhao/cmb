@@ -165,6 +165,7 @@ if(BUILD_TESTING)
 
   set (XML_TESTS_WITH_BASELINES
     # XXX: nodata(LIDARTest.pts): LIDAROpenFile
+    # XXX: nodata(merced_river.xyz): LIDAROpenXYZFile
     # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDAROpenLAS
     # XXX: nodata(LIDARTest.pts): LIDARThresholdFilter
     # XXX: nodata(kandahar_tile10_crop_A_classified.las): LIDARElevationFilter
@@ -172,6 +173,7 @@ if(BUILD_TESTING)
     # XXX: nodata(LIDARTest.pts): LIDARSaveLoadContours
     # XXX: nodata(clipped5Subset.pts): LIDARTerrainExtraction
     # XXX: nodata(LIDARTest.pts): LIDARZoomToBox
+    LIDAROpenXYZFile
     LIDARSaveDem
     MercedRiver
     TestFarPoints

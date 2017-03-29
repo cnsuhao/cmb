@@ -649,12 +649,7 @@ void pqCMBLIDARTerrainExtractionManager::onProcesssFullData()
     autoSaveInfo.baseName().toStdString().c_str());
 
   QString extension(autoSaveInfo.completeSuffix().toLower()), writerName;
-  if (extension == "bin.pts" || extension == "bin")
-    {
-    pqSMAdaptor::setElementProperty(
-      this->FullProcessTerrainExtractFilter->getProxy()->GetProperty("OutputPtsFormat"), 2);
-    }
-  else if (extension == "pts")
+  if ((extension == "pts")||(extension == "xyz"))
     {
     pqSMAdaptor::setElementProperty(
       this->FullProcessTerrainExtractFilter->getProxy()->GetProperty("OutputPtsFormat"), 1);
@@ -889,7 +884,7 @@ pqCMBLIDARTerrainExtractionManager::createPreviewRepresentation(QString &filenam
   builder->blockSignals(true);
   pqPipelineSource* readerSource;
   double minPt[3] = {0, 0, 0}, maxPt[3] = {0, 0, 0};
-  if (extension == "pts" || extension == "bin" || extension == "bin.pts")
+  if (extension == "pts" || extension == "xyz")
     {
     readerSource =  builder->createReader("sources", "LIDARReader", filenameSL,
       this->LIDARCore->getActiveServer());
