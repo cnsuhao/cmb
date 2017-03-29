@@ -101,7 +101,9 @@
 
 #include <QComboBox>
 #include <QDockWidget>
+#include <QKeySequence>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QScrollArea>
 #include <QShortcut>
 #include <QtDebug>
@@ -147,6 +149,7 @@ public:
 
   QPointer<QMenu> NewModelSessionMenu;
   QPointer<QSignalMapper> NewModelSignalMapper;
+  QPointer<QShortcut> ClearSelection;
   std::vector<QPointer<QAction> > NewModelMenus;
 
   pqPropertyLinks LineResolutionLinks;
@@ -251,6 +254,43 @@ pqCMBModelBuilderMainWindow::~pqCMBModelBuilderMainWindow()
   this->MainWindowCore = NULL;
 }
 
+bool pqCMBModelBuilderMainWindow::eventFilter(QObject* watched,
+                                                  QEvent* event)
+{
+  if (event->type() == QEvent::MouseButtonPress)
+  { // ctrl + left mouse button
+    if (Qt::CTRL == QApplication::keyboardModifiers())
+    {
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+      if (mouseEvent)
+      {
+        if (mouseEvent->button() == Qt::LeftButton)
+        {
+          this->getThisCore()->smtkSelectionManager()->setSelectionModifierToSubtraction();
+          this->getMainDialog()->action_Select->setChecked(true);
+          this->onSurfaceRubberBandSelect(true);
+        }
+      }
+    }
+    else if (Qt::SHIFT == QApplication::keyboardModifiers())
+    { // Shfit + left mouse button
+      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+      if (mouseEvent)
+      {
+        if (mouseEvent->button() == Qt::LeftButton)
+        {
+          this->getThisCore()->smtkSelectionManager()->setSelectionModifierToAddition();
+          this->getMainDialog()->action_Select->setChecked(true);
+          this->onSurfaceRubberBandSelect(true);
+        }
+      }
+
+    }
+  }
+  // continue PV mouse event filter
+  return  pqCMBCommonMainWindow::eventFilter(watched,event);
+}
+
 //----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::initializeApplication()
 {
@@ -290,7 +330,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->SelectByVertices, SIGNAL(toggled(bool)),
                    this->getThisCore()->modelPanel()->selectionManager(),
                    SLOT(filterVertices(bool)));
-
 
   QObject::connect(this->getMainDialog()->actionLoad_Simulation_Template,
     SIGNAL(triggered()), this, SLOT(loadSimulationTemplate()));
@@ -399,6 +438,12 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //launch a local meshing server and monitor so that we can submit jobs
   //any time
   this->MainWindowCore->launchLocalMeshingService();
+
+  // set clear selection shortcut
+  this->Internal->ClearSelection = new QShortcut(Qt::Key_Escape,
+                                                  this->centralWidget());
+  QObject::connect(this->Internal->ClearSelection, SIGNAL(activated()),
+                   this->getThisCore()->modelPanel()->modelView(),SLOT(clearSelection()));
 }
 
 //----------------------------------------------------------------------------
