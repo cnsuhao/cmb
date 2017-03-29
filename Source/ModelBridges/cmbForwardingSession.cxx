@@ -10,8 +10,8 @@
 #include "cmbForwardingSession.h"
 
 #include "smtk/model/EntityRef.h"
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 #include "smtk/model/RemoteOperator.h"
 
 #include "vtkSMModelManagerProxy.h"
@@ -99,7 +99,7 @@ smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
     !resp ||
     (err = cJSON_GetObjectItem(resp, "error")) ||
     !(res = cJSON_GetObjectItem(resp, "result")) ||
-    !smtk::io::ImportJSON::ofOperatorResult(res, result, op))
+    !smtk::io::LoadJSON::ofOperatorResult(res, result, op))
     {
     if(resp)
       cJSON_Delete(resp);

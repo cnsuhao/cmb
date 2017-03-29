@@ -17,8 +17,8 @@
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/RemoteOperator.h"
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 
 #include "cJSON.h"
 
@@ -83,7 +83,7 @@ std::vector<std::string> vtkSMModelManagerProxy::sessionNames(bool forceFetch)
       return std::vector<std::string>();
       }
 
-    smtk::io::ImportJSON::getStringArrayFromJSON(sarr, resultVec);
+    smtk::io::LoadJSON::getStringArrayFromJSON(sarr, resultVec);
     cJSON_Delete(result);
     this->m_remoteSessionNames = std::set<std::string>(
       resultVec .begin(), resultVec.end());
@@ -174,8 +174,8 @@ smtk::common::UUID vtkSMModelManagerProxy::beginSession(
   // OK, construct a special "forwarding" session locally.
   cmbForwardingSession::Ptr session = cmbForwardingSession::create();
   session->setProxy(this);
-  // The ImportJSON registers this session with the model manager.
-  if (ImportJSON::ofRemoteSession(sessionIdObj, session, this->m_modelMgr))
+  // The LoadJSON registers this session with the model manager.
+  if (LoadJSON::ofRemoteSession(sessionIdObj, session, this->m_modelMgr))
     {
     // Failure.
     }
@@ -264,7 +264,7 @@ smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
       if (sarr->type == cJSON_Array)
         {
         smtk::model::StringList bftypes;
-        smtk::io::ImportJSON::getStringArrayFromJSON(sarr, bftypes);
+        smtk::io::LoadJSON::getStringArrayFromJSON(sarr, bftypes);
         retFileTypes[sarr->string].insert(
           retFileTypes[sarr->string].end(), bftypes.begin(), bftypes.end());
         brFileTypes[sarr->string].insert(
@@ -310,7 +310,7 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
     vtksys::SystemTools::GetFilenameLastExtension(fileName);
   if( lastExt == ".smtk" )
     {
-    OperatorPtr smtkImportOp = session->op("import smtk model");
+    OperatorPtr smtkImportOp = session->op("load smtk model");
     // Not all session should have an ImportOperator
     if (smtkImportOp)
       {
@@ -518,7 +518,7 @@ cJSON* vtkSMModelManagerProxy::requestJSONOp(
   cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
   cJSON_AddItemToObject(req, "params", par);
   op->ensureSpecification();
-  smtk::io::ExportJSON::forOperator(op->specification(), par);
+  smtk::io::SaveJSON::forOperator(op->specification(), par);
   // Add the session's session ID so it can be properly instantiated on the server.
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(fwdSessionId.toString().c_str()));
 
@@ -610,7 +610,7 @@ void vtkSMModelManagerProxy::fetchWholeModel()
     (model = cJSON_GetObjectItem(response, "result")) &&
     model->type == cJSON_Object &&
     (topo = cJSON_GetObjectItem(model, "topo")))
-    ImportJSON::ofManager(topo, this->m_modelMgr);
+    LoadJSON::ofManager(topo, this->m_modelMgr);
   cJSON_Delete(response);
 }
 

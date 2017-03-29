@@ -9,8 +9,8 @@
 //=========================================================================
 #include "vtkModelManagerWrapper.h"
 
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/IntItem.h"
@@ -112,7 +112,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
         {
         smtk::model::StringList sessionTypeNames = this->ModelMgr->sessionTypeNames();
         cJSON_AddItemToObject(result, "result",
-          smtk::io::ExportJSON::createStringArray(sessionTypeNames));
+          smtk::io::SaveJSON::createStringArray(sessionTypeNames));
         }
       else if (methStr == "session-filetypes")
         {
@@ -136,7 +136,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
             {
             if(it->second.size())
               cJSON_AddItemToObject(typeObj, it->first.c_str(),
-                smtk::io::ExportJSON::createStringArray(it->second));
+                smtk::io::SaveJSON::createStringArray(it->second));
             }
           cJSON_AddItemToObject(result, "result", typeObj);
           }
@@ -175,7 +175,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
             {
             sref.assignDefaultName();
             cJSON* sess = cJSON_CreateObject();
-            smtk::io::ExportJSON::forManagerSession(
+            smtk::io::SaveJSON::forManagerSession(
               sref.entity(), sess, this->ModelMgr);
             cJSON_AddItemToObject(result, "result", sess);
             //cJSON_AddItemToObject(result, "result",
@@ -188,7 +188,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
         cJSON* model = cJSON_CreateObject();
         // Never include session list or tessellation data
         // Until someone makes us.
-        smtk::io::ExportJSON::fromModelManager(model, this->ModelMgr,
+        smtk::io::SaveJSON::fromModelManager(model, this->ModelMgr,
           static_cast<smtk::io::JSONFlags>(
             smtk::io::JSON_ENTITIES | smtk::io::JSON_PROPERTIES));
         cJSON_AddItemToObject(result, "result", model);
@@ -198,7 +198,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
         smtk::model::OperatorPtr localOp;
         if (
           !param ||
-          !smtk::io::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
+          !smtk::io::LoadJSON::ofOperator(param, localOp, this->ModelMgr) ||
           !localOp)
           {
           this->GenerateError(result,
@@ -225,7 +225,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
         smtk::model::OperatorPtr localOp;
         if (
           !param ||
-          !smtk::io::ImportJSON::ofOperator(param, localOp, this->ModelMgr) ||
+          !smtk::io::LoadJSON::ofOperator(param, localOp, this->ModelMgr) ||
           !localOp)
           {
           this->GenerateError(result,
@@ -262,7 +262,7 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
           if(!exeptionCaught)
             {
             cJSON* oresult = cJSON_CreateObject();
-            smtk::io::ExportJSON::forOperatorResult(ores, oresult);
+            smtk::io::SaveJSON::forOperatorResult(ores, oresult);
             cJSON_AddItemToObject(result, "result", oresult);
             }
           }

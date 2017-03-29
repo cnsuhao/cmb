@@ -18,8 +18,8 @@
 #include "smtk/attribute/StringItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
 
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"

@@ -21,8 +21,8 @@
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/CellEntity.h"
 #include "smtk/model/EntityPhrase.h"

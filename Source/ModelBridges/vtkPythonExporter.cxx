@@ -23,7 +23,7 @@
 
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/Logger.h>
-// #include <smtk/io/ExportJSON.h>
+// #include <smtk/io/SaveJSON.h>
 
 #include <smtk/simulation/ExportSpec.h>
 
@@ -133,7 +133,7 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
 {
 
 //  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");
-//  json << smtk::io::ExportJSON::fromModelManager(modelMgr);
+//  json << smtk::io::SaveJSON::fromModelManager(modelMgr);
 //  json.close();
 
   // Check that we have a python script
@@ -157,11 +157,11 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   }
 
   std::ofstream manjson("/Users/yuminyuan/Downloads/hydrafiles/afterManModelManager.json");
-  manjson << smtk::io::ExportJSON::fromModelManager(manager.refModelManager());
+  manjson << smtk::io::SaveJSON::fromModelManager(manager.refModelManager());
   manjson.close();
 
   std::ofstream expjson("/Users/yuminyuan/Downloads/hydrafiles/afterExpModelManager.json");
-  expjson << smtk::io::ExportJSON::fromModelManager(exportManager.refModelManager());
+  expjson << smtk::io::SaveJSON::fromModelManager(exportManager.refModelManager());
   expjson.close();
 
 */
