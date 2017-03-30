@@ -530,12 +530,12 @@ void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(
   * of the pqCMBModelManager (which owns the instance for the application)
   * should be updated here.
   */
-void pqCMBModelBuilderMainWindowCore::modelManagerChanged(vtkSMModelManagerProxy* proxy)
+void pqCMBModelBuilderMainWindowCore::modelManagerChanged()
 {
-  (void)proxy;
   this->meshPanel()->updateModel(
     this->Internal->smtkModelManager,
     this->meshServiceMonitor());
+  this->smtkSelectionManager()->setModelManager(this->Internal->smtkModelManager->managerProxy()->modelManager());
 }
 
 //-----------------------------------------------------------------------------
@@ -976,6 +976,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
 
   delete this->Internal->smtkModelManager;
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
+  this->smtkSelectionManager()->setModelManager(this->Internal->smtkModelManager->managerProxy()->modelManager());
+
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(const smtk::model::OperatorResult&,
     const smtk::model::SessionRef&, bool, bool, bool)),
@@ -990,7 +992,7 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
 
   QObject::connect(
     this->Internal->smtkModelManager, SIGNAL(newModelManagerProxy(vtkSMModelManagerProxy*)),
-    this, SLOT(modelManagerChanged(vtkSMModelManagerProxy*)));
+    this, SLOT(modelManagerChanged()));
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)),
@@ -1495,12 +1497,6 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     {
       this->Internal->SimBuilder->uiManager()->
         setModelPanel(this->Internal->ModelDock);
-    }
-    // store a model manager ptr in smtkSelectionManager
-    if (this->modelManager()->managerProxy()->modelManager())
-    {
-      this->smtkSelectionManager()->setModelManager(this->
-       modelManager()->managerProxy()->modelManager());
     }
   }
   return this->Internal->ModelDock;
