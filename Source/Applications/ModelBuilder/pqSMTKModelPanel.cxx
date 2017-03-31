@@ -353,11 +353,22 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   smtkAuxGeoInfo* lastAuxInfo = NULL;
   // create vector of selected block ids
   QMap<pqSMTKModelInfo*, std::set<vtkIdType> > selmodelblocks;
+  vtkSMProxy*  selRep;
+  bool hasFace = false;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
     pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(*it);
     if(minfo && minfo->Representation)
       {
+      selRep = minfo->Representation->getProxy();
+      if (it->isFace() && !hasFace)
+      { // switch to surface mode
+        pqSMAdaptor::setElementProperty(selRep->
+                                      GetProperty("SelectionRepresentation"),2);
+        hasFace = true;
+      }
+      selRep->UpdateVTKObjects();
+
       QSet<unsigned int> blockIds;
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
       selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
@@ -372,6 +383,12 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
           lastAuxInfo->Representation);
         }
       }
+    }
+    if (!hasFace)
+    { // no face, switch to wireframe mode
+      pqSMAdaptor::setElementProperty(selRep->
+                                    GetProperty("SelectionRepresentation"),1);
+      selRep->UpdateVTKObjects();
     }
 
   foreach(pqSMTKModelInfo* modinfo, selmodelblocks.keys())
