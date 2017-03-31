@@ -131,7 +131,7 @@ public slots:
 
   // Description:
   // Called when the pqCMBModelManager initializes/re-initializes with a new model manager.
-  void modelManagerChanged(vtkSMModelManagerProxy* proxy);
+  void modelManagerChanged();
 
   // Description:
   // Selection related slots
