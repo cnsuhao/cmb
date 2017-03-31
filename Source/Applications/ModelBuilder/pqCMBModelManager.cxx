@@ -62,8 +62,8 @@
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/io/ImportJSON.h"
-#include "smtk/io/ExportJSON.h"
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/mesh/Manager.h"
@@ -1778,7 +1778,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     smtk::attribute::StringItem::Ptr logItem = result->findString("log");
     if (logItem && logItem->numberOfValues() > 0)
       {
-      smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+      smtk::io::LoadJSON::ofLog(logItem->value().c_str(), log);
       }
     emit operationLog(log);
     brOp->eraseResult(result);
@@ -1839,13 +1839,13 @@ bool pqCMBModelManager::handleOperationResult(
     (logItem = result->findString("log")) &&
     logItem->numberOfValues() > 0)
     {
-    smtk::io::ImportJSON::ofLog(logItem->value().c_str(), log);
+    smtk::io::LoadJSON::ofLog(logItem->value().c_str(), log);
     }
   emit operationLog(log);
 
 /*
   cJSON* json = cJSON_CreateObject();
-  smtk::io::ExportJSON::forOperatorResult(result, json);
+  smtk::io::SaveJSON::forOperatorResult(result, json);
   std::cout << "Result " << cJSON_Print(json) << "\n";
 */
   if (result->findInt("outcome")->value() !=
