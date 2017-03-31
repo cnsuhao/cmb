@@ -39,6 +39,10 @@ public:
   pqCMBModelBuilderMainWindow();
   ~pqCMBModelBuilderMainWindow() override;
 
+  // TODO: When CMB have multiple views, call pqView->widget()->
+  // installEventViewer to each of them to override PV mouse bindings
+  bool eventFilter(QObject *watched, QEvent *event) override;
+
 public slots:
   // Description:
   // CMB model related slots.

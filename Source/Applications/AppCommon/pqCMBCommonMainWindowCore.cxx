@@ -365,6 +365,8 @@ QWidget* pqCMBCommonMainWindowCore::parentWidget() const
 //-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::buildDefaultBehaviors(QObject *parent_widget)
   {
+  // so we can override PV key binds
+  pqParaViewBehaviors::setEnableStandardViewFrameActions(false);
   pqParaViewBehaviors *defaultBehaviors = new pqParaViewBehaviors(static_cast<QMainWindow *>(parent_widget), parent_widget);
 
   //we have no control over changing which default behaviors paraview is going to add.

@@ -240,7 +240,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -303,7 +312,7 @@
     <string>Select</string>
    </property>
    <property name="toolTip">
-    <string>Select Object</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Key S&lt;/span&gt;: Select Object&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Shift + left moue button&lt;/span&gt; : selection addition mode&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Ctrl/cmd + left mouse button&lt;/span&gt;: selection subtraction mode&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Key Escape:&lt;/span&gt; clear all selections&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="actionReset_Camera">
@@ -1581,7 +1590,7 @@
     <string>Close Session</string>
    </property>
    <property name="toolTip">
-     <string>Stop the active modeling kernel.</string>
+    <string>Stop the active modeling kernel.</string>
    </property>
   </action>
  </widget>

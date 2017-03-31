@@ -675,6 +675,15 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   // Set up a callback to before further intialization once the application
   // event loop starts.
   QTimer::singleShot(100, this->MainWindowCore, SLOT(applicationInitialize()));
+
+  // install eventfilter before PV's mouse binds so that CMB's setting has
+  // higher priority than PV's.
+  if ( pqActiveObjects::instance().activeView() && pqActiveObjects::instance().
+       activeView()->getProxy()->IsA("vtkSMRenderViewProxy"))
+  {
+    pqActiveObjects::instance().activeView()->widget()->installEventFilter(this);
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -766,8 +775,8 @@ void pqCMBCommonMainWindow::onSelectionShortcutActivated( )
 {
   if (this->getMainDialog()->action_Select->isEnabled() )
     {
-    //trigger ignores if an action is enabled, so we only fire
-    //if the application is allowing selection
+    // trigger ignores if an action is enabled, so we only fire
+    // if the application is allowing selection
     this->getMainDialog()->action_Select->trigger();
     }
 }

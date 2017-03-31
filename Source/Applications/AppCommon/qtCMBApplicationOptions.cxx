@@ -116,11 +116,12 @@ qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget *widgetParent)
   vtkSMSettings * settings = vtkSMSettings::GetInstance();
   const char *systemdefaults =
   "{\"settings\" : { \"RenderViewInteractionSettings\" : {\
-         \"Camera3DManipulators\" : [ 4, 2, 1, 3, 4, 1, 2, 4, 6 ]\
+          \"Camera2DManipulators\" : [ 1, 3, 2, 0, 2, 6, 0, 1, 4 ],\
+         \"Camera3DManipulators\" : [ 4, 2, 1, 0, 4, 1, 0, 4, 6 ]\
       },\
       \"RenderViewSettings\" : {\
          \"LODThreshold\" : 1024}}}";
-  settings->AddCollectionFromString(systemdefaults, 1.0);
+  settings->AddCollectionFromString(systemdefaults, 2.0);
   foreach (vtkSMProxy* proxy, proxies_to_show)
     {
     if(!settings->GetProxySettings(proxy))

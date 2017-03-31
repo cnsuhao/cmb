@@ -458,8 +458,8 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long,
     return;
     }
 
-  bool ctrl = (rmp->GetInteractor()->GetControlKey() == 1);
-  pqView::SelectionModifier selOp = ctrl ? pqView::PV_SELECTION_ADDITION : pqView::PV_SELECTION_DEFAULT;
+  // qtSelectionManager would handle selection addition and subtraction
+  pqView::SelectionModifier selOp = pqView::PV_SELECTION_DEFAULT;
   int* region = reinterpret_cast<int*>(vregion);
   switch (this->Mode)
     {
