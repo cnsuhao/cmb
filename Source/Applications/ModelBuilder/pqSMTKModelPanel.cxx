@@ -83,6 +83,7 @@
 #include <fstream>
 #include <limits>
 #include <stdlib.h>
+#include <QShortcut>
 
 using namespace std;
 using namespace smtk::model;
@@ -95,6 +96,7 @@ public:
   QPointer<qtModelPanel> ModelPanel;
   bool ModelLoaded;
   QPointer<pqCMBModelManager> smtkManager;
+  QPointer<QShortcut> ClearSelection;
   QPointer<smtk::extension::qtSelectionManager> selectionManager;
   bool ignorePropertyChange;
 
@@ -152,6 +154,30 @@ pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p,
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
   this->Internal->selectionManager= qtSelMgr;
+
+  // TODO: redesign selection logic with one input signal and one output slot
+  // see resetUI for selection logic detail
+  QObject::connect(this,
+     SIGNAL(sendSelectedItemsToSelectionManager(const smtk::common::UUIDs&,
+      const smtk::mesh::MeshSets&)),this->Internal->selectionManager,
+            SLOT(updateSelectedItems(const smtk::common::UUIDs&,
+                                              const smtk::mesh::MeshSets&)));
+
+  QObject::connect(this->Internal->selectionManager,
+    SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&,
+     const smtk::mesh::MeshSets&,
+     const smtk::model::DescriptivePhrases&)),
+    this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
+     const smtk::mesh::MeshSets& ,
+     const smtk::model::DescriptivePhrases& )));
+
+  QObject::connect(this->Internal->selectionManager,
+    SIGNAL(broadcastToRenderView(const smtk::common::UUIDs&,
+     const smtk::mesh::MeshSets&,
+     const smtk::model::DescriptivePhrases&)),
+    this, SLOT(onSelectionChanged(const smtk::common::UUIDs&,
+     const smtk::mesh::MeshSets& ,
+     const smtk::model::DescriptivePhrases& )));
 
   this->resetUI();
 }
@@ -250,14 +276,16 @@ void pqSMTKModelPanel::resetUI()
            const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*)));
 
     // Selection manager related
+    // clear selection
+    // set clear selection shortcut
+    this->Internal->ClearSelection = new QShortcut(Qt::Key_Escape,
+                                                    this->modelView());
+    QObject::connect(this->Internal->ClearSelection, SIGNAL(activated()),
+                     this->modelView(), SLOT(clearSelection()));
     // select from rendering window
     // broadcasting from selelction manager to attribute panel is set
     // in pqSimBuilderUIManager
-    QObject::connect(this,
-       SIGNAL(sendSelectedItemsToSelectionManager(const smtk::common::UUIDs&,
-        const smtk::mesh::MeshSets&)),this->Internal->selectionManager,
-              SLOT(updateSelectedItems(const smtk::common::UUIDs&,
-                                                const smtk::mesh::MeshSets&)));
+    // signal passing from this to SM is set in class constructor
     QObject::connect(this->Internal->selectionManager,
               SIGNAL(broadcastToModelTree(const smtk::common::UUIDs&,
       const smtk::mesh::MeshSets&, bool)), this->Internal->ModelPanel
@@ -266,6 +294,7 @@ void pqSMTKModelPanel::resetUI()
     // select from tree view
     // broadcasting from selelction manager to attribute panel is set
     // in pqSimBuilderUIManager
+    // signal passing from SM to this is set in class constructor
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(selectionChanged(const smtk::model::EntityRefs&,
        const smtk::mesh::MeshSets& ,
@@ -273,23 +302,10 @@ void pqSMTKModelPanel::resetUI()
       this->Internal->selectionManager, SLOT(updateSelectedItems(
        const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
                const smtk::model::DescriptivePhrases&)));
-    QObject::connect(this->Internal->selectionManager,
-      SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&,
-       const smtk::mesh::MeshSets&,
-       const smtk::model::DescriptivePhrases&)),
-      this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
-       const smtk::mesh::MeshSets& ,
-       const smtk::model::DescriptivePhrases& )));
     // select from attribute Panel
     // signal passing into qtSelectionManager is connected in
     // pqSimBuilderUIManager
-    QObject::connect(this->Internal->selectionManager,
-      SIGNAL(broadcastToRenderView(const smtk::common::UUIDs&,
-       const smtk::mesh::MeshSets&,
-       const smtk::model::DescriptivePhrases&)),
-      this, SLOT(onSelectionChanged(const smtk::common::UUIDs&,
-       const smtk::mesh::MeshSets& ,
-       const smtk::model::DescriptivePhrases& )));
+    // signal passing from SM to this is set in class constructor
     }
 
 //  this->linkRepresentations();
