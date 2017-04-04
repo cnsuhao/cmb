@@ -149,7 +149,6 @@ public:
 
   QPointer<QMenu> NewModelSessionMenu;
   QPointer<QSignalMapper> NewModelSignalMapper;
-  QPointer<QShortcut> ClearSelection;
   std::vector<QPointer<QAction> > NewModelMenus;
 
   pqPropertyLinks LineResolutionLinks;
@@ -439,11 +438,6 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //any time
   this->MainWindowCore->launchLocalMeshingService();
 
-  // set clear selection shortcut
-  this->Internal->ClearSelection = new QShortcut(Qt::Key_Escape,
-                                                  this->centralWidget());
-  QObject::connect(this->Internal->ClearSelection, SIGNAL(activated()),
-                   this->getThisCore()->modelPanel()->modelView(),SLOT(clearSelection()));
 }
 
 //----------------------------------------------------------------------------
