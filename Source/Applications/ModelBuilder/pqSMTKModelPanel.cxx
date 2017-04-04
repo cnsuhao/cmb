@@ -384,7 +384,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
         }
       }
     }
-    if (!hasFace)
+    if (!hasFace && entities.size() > 0)
     { // no face, switch to wireframe mode
       pqSMAdaptor::setElementProperty(selRep->
                                     GetProperty("SelectionRepresentation"),1);
