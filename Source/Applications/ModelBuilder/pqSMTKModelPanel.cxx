@@ -369,7 +369,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   smtkAuxGeoInfo* lastAuxInfo = NULL;
   // create vector of selected block ids
   QMap<pqSMTKModelInfo*, std::set<vtkIdType> > selmodelblocks;
-  vtkSMProxy*  selRep;
+  vtkSMProxy*  selRep(nullptr);
   bool hasFace = false;
   for(smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
     {
@@ -400,7 +400,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
         }
       }
     }
-    if (!hasFace && entities.size() > 0)
+    if (!hasFace && entities.size() > 0 && selRep)
     { // no face, switch to wireframe mode
       pqSMAdaptor::setElementProperty(selRep->
                                     GetProperty("SelectionRepresentation"),1);
