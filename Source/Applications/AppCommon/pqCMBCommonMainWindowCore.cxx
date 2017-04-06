@@ -191,15 +191,15 @@ public:
 //    LookupTableManager(new pqPQLookupTableManager(parent)),
     ViewContextMenu(0),
     VariableToolbar(0),
+    CameraManipulationMode(ThreeD),
     ToolTipTrapper(0),
+    CameraDialog(0),
     InCreateSource(false),
     LinksManager(0),
     TimerLog(0),
     StatusBar(0),
     ProjectManager(NULL),
-    CameraManipulationMode(ThreeD),
-    MeshingMonitor(NULL),
-    CameraDialog(0)
+    MeshingMonitor(NULL)
   {
   }
 

@@ -43,6 +43,22 @@ add_library(rtvl STATIC
 #link them to shared libraries.
 set_target_properties( rtvl PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
+set(ignore_rules_for_rtvl "")
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR
+    CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR
+    CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+  #Silence warning about std::auto_ptr being deprecated.
+  set(ignore_rules_for_rtvl
+    "${ignore_rules_for_rtvl} -Wno-deprecated-declarations")
+  #Silence warning about unused parameters.
+  set(ignore_rules_for_rtvl
+    "${ignore_rules_for_rtvl} -Wno-unused-parameter")
+endif()
+
+set_property(TARGET rtvl APPEND_STRING
+  PROPERTY COMPILE_FLAGS ${ignore_rules_for_rtvl})
+
 find_library(RGTL_LIBRARY
   NAMES rgtl
   PATHS ${VXL_LIBRARY_DIR}
