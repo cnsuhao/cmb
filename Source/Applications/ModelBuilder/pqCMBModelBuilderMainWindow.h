@@ -67,6 +67,8 @@ public slots:
 
 protected slots:
 
+  virtual void onAskedToExit();
+
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
   void filterDisplayPanel();

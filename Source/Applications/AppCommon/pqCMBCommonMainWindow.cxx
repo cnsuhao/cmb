@@ -205,8 +205,13 @@ Internal(new vtkInternal(this))
 
   pqApplicationCore* core = pqApplicationCore::instance();
 
-  QObject::connect(this->Internal->UI.action_Exit,
-    SIGNAL(triggered()), core, SLOT(quit()));
+  QObject::connect(
+    this->Internal->UI.action_Exit, SIGNAL(triggered()),
+    this, SLOT(onAskedToExit()));
+
+  QObject::connect(
+    this, SIGNAL(userAcceptsExit()),
+    core, SLOT(quit()));
 
   QObject::connect(this->Internal->UI.action_Help,
     SIGNAL(triggered()), this, SLOT(onHelpHelp()));
@@ -846,6 +851,13 @@ void pqCMBCommonMainWindow::createAxesGridConfigurationDialog()
 void pqCMBCommonMainWindow::showHelpPage(const QString& url)
 {
   pqHelpReaction::showHelp(url);
+}
+
+//----------------------------------------------------------------------------
+void pqCMBCommonMainWindow::onAskedToExit()
+{
+  // Subclasses override to check for unsaved data.
+  emit userAcceptsExit();
 }
 
 //----------------------------------------------------------------------------

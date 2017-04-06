@@ -860,6 +860,15 @@ void pqCMBModelBuilderMainWindow::meshSelectionFinished()
 }
 
 //-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::onAskedToExit()
+{
+  if (!this->getThisCore()->abortActionForUnsavedWork("quit ModelBuilder"))
+    {
+    emit userAcceptsExit();
+    }
+}
+
+//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::onShowCenterAxisChanged(bool enabled)
 {
   this->getMainDialog()->actionShowCenterAxes->setEnabled(enabled);
@@ -993,6 +1002,11 @@ bool pqCMBModelBuilderMainWindow::onCloseSession()
     {
     smtkWarningMacro(
       mgr->log(), "You must select a session you wish to close in the model panel.");
+    return false;
+    }
+
+  if (this->getThisCore()->abortActionForUnsavedWork("close session", sref))
+    {
     return false;
     }
 
