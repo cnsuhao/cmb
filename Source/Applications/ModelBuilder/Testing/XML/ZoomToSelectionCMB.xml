@@ -4,18 +4,7 @@
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/test2D.cmb" />
   <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.369034,0.338303,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.549476,0.604358,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.549476,0.604358,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel" command="mousePress" arguments="1,1,0,107,796" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel" command="mouseRelease" arguments="1,0,0,107,796" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/ClearSelection" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.201397,0.441514,1,1,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.281723,0.519495,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.281723,0.519495,1,0,0)" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.1.0.3.0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.2.0.0.0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.2.0.2.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.0.0" />
   <pqevent object="qtCMBMainWindow/actionZoomToSelection" command="activate" arguments="" />
 </pqevents>
