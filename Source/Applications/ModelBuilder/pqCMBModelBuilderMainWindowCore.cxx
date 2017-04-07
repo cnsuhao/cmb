@@ -84,8 +84,10 @@
 #include "smtk/attribute/IntItem.h"
 #include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/Face.h"
+#include "smtk/model/FloatData.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Tessellation.h"
+#include "smtk/model/Entity.h"
 #include "smtk/model/EntityRef.h"
 #include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
@@ -1150,7 +1152,27 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
        curRef.hasIntegerProperty("block_index")) // a geometric entity
        && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
       {
-      pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
+      smtk::model::FloatList rgba = curRef.color();
+      if ((rgba.size() == 4) && (rgba[3] < 0 || rgba[3] > 1))
+      {
+        // invalid color. Maybe the color is assigned by ENTITY_LIST, check model
+        if (curRef.owningModel().isValid())
+        {
+          smtk::model::Model model = curRef.owningModel();
+          std::string colorName;
+          colorName = smtk::model::Entity::flagSummary(curRef.entityFlags());
+          colorName += " color";
+          if (model.hasFloatProperty(colorName))
+          {
+            smtk::model::FloatList colorList = model.floatProperty(colorName);
+            color.setRgbF(colorList[0], colorList[1], colorList[2], colorList[3]);
+          }
+        }
+      }
+      else
+      {
+        pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
+      }
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
       colorEntities[minfo].insert(curRef, color);        
