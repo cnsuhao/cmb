@@ -52,6 +52,7 @@ public slots:
   void onModelRepresentationAdded(pqDataRepresentation*);
   void onNewMeshCreated();
   bool onCloseSession();
+  bool autoCloseSession(const smtk::model::SessionRef&);
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,

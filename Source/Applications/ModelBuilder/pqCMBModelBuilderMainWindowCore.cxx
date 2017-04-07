@@ -1242,6 +1242,11 @@ pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
   return this->Internal->smtkModelManager;
 }
 
+pqCMBModelBuilderOptions* pqCMBModelBuilderMainWindowCore::userPreferences()
+{
+  return this->Internal->AppOptions;
+}
+
 // we may need to update model representation for display properties
 // of the list of entities that were potentially modified.
 //----------------------------------------------------------------------------

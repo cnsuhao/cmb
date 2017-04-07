@@ -25,6 +25,7 @@ class pqOutputPort;
 class pqCMBRubberBandHelper;
 class pqScalarBarWidget;
 class pqCMBSceneTree;
+class pqCMBModelBuilderOptions;
 class pqCMBModelManager;
 class pqSMTKInfoPanel;
 class pqSMTKModelPanel;
@@ -88,6 +89,9 @@ public:
   // Description:
   // The application's model manager
   pqCMBModelManager* modelManager();
+
+  /// Return the ModelBuilder-specific options.
+  pqCMBModelBuilderOptions* userPreferences();
 
 signals:
 

@@ -79,6 +79,7 @@
 #include "pqCMBModelManager.h"
 #include "pqCMBColorMapWidget.h"
 #include "pqCMBModelBuilderMainWindowCore.h"
+#include "pqCMBModelBuilderOptions.h"
 #include "pqCMBRubberBandHelper.h"
 
 #include "SimBuilder/SimBuilderCore.h"
@@ -404,6 +405,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(newSessionLoaded(const QStringList&)),
       this, SLOT(addNewSessions(const QStringList&)));
+  QObject::connect(
+    this->getThisCore()->modelManager(), SIGNAL(sessionIsNowEmpty(const smtk::model::SessionRef&)),
+    this, SLOT(autoCloseSession(const smtk::model::SessionRef&)));
   QObject::connect(this->getThisCore()->modelManager(),
       SIGNAL(newFileTypesAdded(const QStringList&)),
       this->loadDataReaction(), SLOT(addSpecialExtensions(const QStringList&)));
@@ -1011,6 +1015,23 @@ bool pqCMBModelBuilderMainWindow::onCloseSession()
     }
 
   return cmbModelMgr->closeSession(sref);
+}
+
+/// A slot to close a particular session, called when a
+/// sessionIsNowEmpty signal is emitted by pqCMBModelManager.
+/// This will only close the session when session-centric modeling
+/// is turned off, as it could be annoying when sessions manually
+/// created by the user would be automatically closed after any
+/// subsequent operation.
+bool pqCMBModelBuilderMainWindow::autoCloseSession(
+  const smtk::model::SessionRef& sref)
+{
+  if (!this->getThisCore()->userPreferences()->sessionCentricModeling())
+  {
+    auto cmbModelMgr = this->getThisCore()->modelManager();
+    return cmbModelMgr->closeSession(sref);
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
