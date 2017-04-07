@@ -104,24 +104,38 @@ void pqCMBContextMenuHelper::accumulateChildGeometricEntities(
     blockIds.insert(bidx);
 }
 
-// only use valid color, the rest will be colored
-// randomly with CTF
+// only use valid color, the rest will be colored white
 bool pqCMBContextMenuHelper::getValidEntityColor(QColor& color,
   const smtk::model::EntityRef& entref)
 {
 smtk::model::FloatList rgba = entref.color();
-if ((rgba.size() == 3 || rgba.size() ==4) &&
+if ( rgba.size() ==4 &&
    (rgba[0]>=0. && rgba[0]<=1.0 &&
     rgba[1]>=0. && rgba[1]<=1.0 &&
     rgba[2]>=0. && rgba[2]<=1.0 &&
-    rgba[0]+rgba[1]+rgba[2] != 0))
+    (rgba[3]>= 0. && rgba[3]<= 1.0)))
   {
-  float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
-  // alpha can't be zero
-  alpha = alpha == 0. ? 1.0 : alpha;
-  color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
+  color.setRgbF(rgba[0], rgba[1], rgba[2], rgba[3]);
   return true;
   }
+// if the color is invalid, it might got assigned by ENTITY_LIST. Look up the
+// default color from the entity's model properties.
+if (entref.owningModel().isValid())
+{
+  smtk::model::Model model = entref.owningModel();
+  std::string colorName = smtk::model::Entity::
+      flagSummary(entref.entityFlags());
+  colorName += " color";
+  if (model.hasFloatProperty(colorName))
+  {
+    rgba = model.floatProperty(colorName);
+    float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+    // alpha can't be zero
+    alpha = alpha == 0. ? 1.0 : alpha;
+    color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
+    return true;
+  }
+}
 return false;
 }
 

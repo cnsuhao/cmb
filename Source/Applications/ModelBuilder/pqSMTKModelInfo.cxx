@@ -106,7 +106,7 @@ void pqSMTKModelInfo::init(
     proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
   vtkSMPropertyHelper(this->AttributeLUT, "IndexedLookup", true).Set(1);
 
-  this->ColorMode = "None";
+  this->ColorMode = "Entity";
   this->updateBlockInfo(mgr);
   smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
   if (modelEntity.isValid())

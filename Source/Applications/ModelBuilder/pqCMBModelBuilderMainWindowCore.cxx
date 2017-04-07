@@ -165,6 +165,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqCMBEnumPropertyWidget> RepresentationWidget;
     QPointer<QComboBox> SelectByBox;
     QPointer<QToolBar> ColorByAttToolbar;
+    QPointer<QComboBox> ColorByComboBox;
 
     int SelectByMode;
 
@@ -220,6 +221,12 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* toolbar)
 {
   this->Internal->ColorByAttToolbar = toolbar;
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::setupColorByComboBox(QComboBox* comboBox)
+{
+  this->Internal->ColorByComboBox = comboBox;
 }
 
 //-----------------------------------------------------------------------------
@@ -839,6 +846,11 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     succeeded = this->Internal->smtkModelManager->startOperation(fileOp);
   else
     qCritical() << "No proper file operator found for: " << filename;
+  // after load a file, update render view by `color by` combobox value
+  if (!this->Internal->ColorByComboBox.isNull())
+  {
+    this->onColorByModeChanged(this->Internal->ColorByComboBox->currentText());
+  }
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
@@ -1152,27 +1164,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
        curRef.hasIntegerProperty("block_index")) // a geometric entity
        && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
       {
-      smtk::model::FloatList rgba = curRef.color();
-      if ((rgba.size() == 4) && (rgba[3] < 0 || rgba[3] > 1))
-      {
-        // invalid color. Maybe the color is assigned by ENTITY_LIST, check model
-        if (curRef.owningModel().isValid())
-        {
-          smtk::model::Model model = curRef.owningModel();
-          std::string colorName;
-          colorName = smtk::model::Entity::flagSummary(curRef.entityFlags());
-          colorName += " color";
-          if (model.hasFloatProperty(colorName))
-          {
-            smtk::model::FloatList colorList = model.floatProperty(colorName);
-            color.setRgbF(colorList[0], colorList[1], colorList[2], colorList[3]);
-          }
-        }
-      }
-      else
-      {
-        pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
-      }
+      pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
       colorEntities[minfo].insert(curRef, color);        
@@ -1232,8 +1224,9 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       {
       this->Internal->ViewContextBehavior->updateColorForEntities(
         minfo->Representation, minfo->ColorMode, colorEntities[minfo]);
-      this->Internal->smtkModelManager->updateEntityColorTable(
-        minfo->Representation, colorEntities[minfo], minfo->ColorMode);
+      // EntityColorTable is no longer used to avoid random color
+      // this->Internal->smtkModelManager->updateEntityColorTable(
+      // minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
       }
     }

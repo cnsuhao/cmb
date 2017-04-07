@@ -113,7 +113,7 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
         {
         outport->setSelectionInput(0, 0);
         }
-       // if all blocks are off, the rep should be invisible 
+       // if all blocks are off, the rep should be invisible
        if(rep && outport)
         {
         vtkSMProxy *proxy = rep->getProxy();
@@ -217,7 +217,9 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
     std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
       modinfo->Info->GetUUID2BlockIdMap().begin();
     for(; uit != modinfo->Info->GetUUID2BlockIdMap().end(); ++uit)
-      indices.append(uit->second + 1);
+    {
+      indices.append(uit->second);
+    }
     // clear all colors
     datapanel->clearBlockColor(indices);
 
@@ -251,7 +253,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
       }
     else if (colorMode == vtkModelMultiBlockSource::GetEntityTagName())
       {
-      // if colorby-entity, get entities' color, 
+      // if colorby-entity, get entities' color,
       for(uit = modinfo->Info->GetUUID2BlockIdMap().begin();
         uit != modinfo->Info->GetUUID2BlockIdMap().end(); ++uit)
         {
@@ -267,8 +269,9 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
     if(colorEntities.size() > 0)
       {
       this->updateColorForEntities(activeRep, colorMode, colorEntities);
-      this->m_modelPanel->modelManager()->updateEntityColorTable(
-        activeRep, colorEntities, colorMode);
+      // EntityColorTable is no longer used to avoid random color
+      //this->m_modelPanel->modelManager()->updateEntityColorTable(
+      //  activeRep, colorEntities, colorMode);
       }
     modinfo->ColorMode = colorMode;
     }
@@ -278,11 +281,11 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
     std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator mit =
       meshinfo->Info->GetMesh2BlockIdMap().begin();
     for(; mit != meshinfo->Info->GetMesh2BlockIdMap().end(); ++mit)
-      indices.append(mit->second + 1);
+      indices.append(mit->second);
     // clear all colors
     datapanel->clearBlockColor(indices);
 
-    // if colorby-entity, get meshes' color, 
+    // if colorby-entity, get meshes' color,
     for(mit = meshinfo->Info->GetMesh2BlockIdMap().begin();
       mit != meshinfo->Info->GetMesh2BlockIdMap().end(); ++mit)
       {
@@ -303,22 +306,9 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(
     modinfo = meshinfo->ModelInfo;
     }
 
-  // using model's LUTs for both model entities and meshes coloring
-  if(modinfo)
-    {
-    vtkSMProxy* lutProxy = NULL;
-    if(colorMode == vtkModelMultiBlockSource::GetVolumeTagName())
-      lutProxy = modinfo->VolumeLUT;
-    else if(colorMode == vtkModelMultiBlockSource::GetGroupTagName())
-      lutProxy = modinfo->GroupLUT;
-    else if(colorMode == vtkModelMultiBlockSource::GetEntityTagName())
-      lutProxy = modinfo->EntityLUT;
-
-    RepresentationHelperFunctions::CMB_COLOR_REP_BY_INDEXED_LUT(
-      activeRep->getProxy(), colorMode == "None" ?
-       NULL : colorMode.toStdString().c_str(), lutProxy,
-      vtkDataObject::FIELD);
-    }
+  // EntityColorTable is no longer used to avoid random color
+  // check git history e826a54cbb325016130b19b0d325e4b71e0526d4
+  // for volume, group LUT
 
   activeRep->renderViewEventually();
 
@@ -368,7 +358,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
     minfo->Info->GetUUID2BlockIdMap().begin();
   for(; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
     {
-    indices.append(uit->second + 1);
+    indices.append(uit->second);
     }
   datapanel->clearBlockColor(indices);
 
@@ -550,7 +540,7 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
         if(rightB)
           {
           this->buildMenuFromSelections();
-          this->m_contextMenu->popup(senderWidget->mapToGlobal(newPos));       
+          this->m_contextMenu->popup(senderWidget->mapToGlobal(newPos));
           }
         }
       this->m_clickPosition = QPoint();
@@ -569,7 +559,7 @@ void pqModelBuilderViewContextMenuBehavior::pickRepresentationBlock(
   int height = senderWidget->size().height();
   pos[1] = height - pos[1];
   unsigned int blockIndex = 0;
-  
+
   pqDataRepresentation* pickedRepresentation = view->pickBlock(pos, blockIndex);
   // we want to select this block.
   if(pickedRepresentation)
@@ -609,12 +599,12 @@ void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
       this->m_contextMenu->addAction(QString("%1 Entities").arg(selNumBlocks));
       this->m_contextMenu->addSeparator();
       }
-/*      
+/*
     else // only one block is selected
       {
       QString blockName = this->lookupBlockName(modit.value().value(0), modit.key());
       this->m_contextMenu->addAction(QString("%1").arg(blockName));
-      }   
+      }
 */
 
     // Add actions to (if no meshes are selected, and the underlying model support these operations) :
@@ -1009,7 +999,7 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
   if(this->m_selModelBlocks.count() != 1)
     {
     std::cout << "addToGroup Failed, because this operation requires one and only one model being selected!\n";
-    return;  
+    return;
     }
 
   QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
