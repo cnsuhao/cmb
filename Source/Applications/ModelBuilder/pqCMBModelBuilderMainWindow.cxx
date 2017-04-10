@@ -545,6 +545,7 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
 //    this->getMainDialog()->actionEdit_Color_Map);
 
   this->getThisCore()->setupColorByAttributeToolbar(colorToolbar);
+  this->getThisCore()->setupColorByComboBox(colorbyBox);
 
   this->addToolBar(Qt::TopToolBarArea, colorToolbar);
   this->insertToolBarBreak(colorToolbar);

@@ -84,8 +84,10 @@
 #include "smtk/attribute/IntItem.h"
 #include "smtk/model/AuxiliaryGeometry.h"
 #include "smtk/model/Face.h"
+#include "smtk/model/FloatData.h"
 #include "smtk/model/Group.h"
 #include "smtk/model/Tessellation.h"
+#include "smtk/model/Entity.h"
 #include "smtk/model/EntityRef.h"
 #include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
@@ -163,6 +165,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
     QPointer<pqCMBEnumPropertyWidget> RepresentationWidget;
     QPointer<QComboBox> SelectByBox;
     QPointer<QToolBar> ColorByAttToolbar;
+    QPointer<QComboBox> ColorByComboBox;
 
     int SelectByMode;
 
@@ -218,6 +221,12 @@ pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* toolbar)
 {
   this->Internal->ColorByAttToolbar = toolbar;
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::setupColorByComboBox(QComboBox* comboBox)
+{
+  this->Internal->ColorByComboBox = comboBox;
 }
 
 //-----------------------------------------------------------------------------
@@ -837,6 +846,11 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
     succeeded = this->Internal->smtkModelManager->startOperation(fileOp);
   else
     qCritical() << "No proper file operator found for: " << filename;
+  // after load a file, update render view by `color by` combobox value
+  if (!this->Internal->ColorByComboBox.isNull())
+  {
+    this->onColorByModeChanged(this->Internal->ColorByComboBox->currentText());
+  }
   return succeeded ? 1 : 0;
 /*
   if(this->getCMBModel() &&
@@ -1210,8 +1224,9 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       {
       this->Internal->ViewContextBehavior->updateColorForEntities(
         minfo->Representation, minfo->ColorMode, colorEntities[minfo]);
-      this->Internal->smtkModelManager->updateEntityColorTable(
-        minfo->Representation, colorEntities[minfo], minfo->ColorMode);
+      // EntityColorTable is no longer used to avoid random color
+      // this->Internal->smtkModelManager->updateEntityColorTable(
+      // minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
       }
     }

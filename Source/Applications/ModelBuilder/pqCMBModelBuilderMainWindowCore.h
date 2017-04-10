@@ -26,6 +26,7 @@ class pqCMBSceneTree;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqSMTKMeshPanel;
+class QComboBox;
 class vtkSMModelManagerProxy;
 
 class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
@@ -40,6 +41,10 @@ public:
   // Description
   // Setup a representation-selection toolbar
   void setupColorByAttributeToolbar(QToolBar* parent);
+
+  // Description
+  // Setup a representation-selection comboBox
+  void setupColorByComboBox(QComboBox* parent);
 
   // Description:
   // Get flag to determine how selection is performed in display
