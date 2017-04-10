@@ -2062,7 +2062,7 @@ bool pqCMBModelManager::handleOperationResult(
         }
 
       // Handle new meshes for a model
-      if(newMeshesModels.find(modit->entity()) != newMeshesModels.end())
+     if(newMeshesModels.find(modit->entity()) != newMeshesModels.end())
         {
         // If models are also created from the same operation, we only show models,
         // and set mesh representation invisible.

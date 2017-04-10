@@ -23,7 +23,6 @@
 #include "pqPipelineSource.h"
 #include "pqPluginManager.h"
 #include "pqPropertyLinks.h"
-#include "pqProxyInformationWidget.h"
 #include "pqProxyWidget.h"
 #include "pqRenderView.h"
 #include "pqScalarBarVisibilityReaction.h"
@@ -73,6 +72,7 @@
 #include "pqCMBLoadDataReaction.h"
 #include "pqCMBFileExtensions.h"
 #include "pqCMBSceneTree.h"
+#include "pqSMTKInfoPanel.h"
 #include "pqSMTKMeshPanel.h"
 #include "pqSMTKModelInfo.h"
 #include "pqSMTKModelPanel.h"
@@ -131,11 +131,7 @@ public:
       {
       delete this->SceneGeoTree;
       }
-    if(this->InformationWidget)
-      delete this->InformationWidget;
     }
-
-  QPointer<pqProxyInformationWidget> InformationWidget;
 
   QPointer<QSettings> SplitterSettings;
   QPointer<QToolBar> Model2DToolbar;
@@ -1080,17 +1076,6 @@ void pqCMBModelBuilderMainWindow::updateSMTKSelection()
 }
 
 //----------------------------------------------------------------------------
-pqProxyInformationWidget* pqCMBModelBuilderMainWindow::getInfoWidget()
-{
-  if(!this->Internal->InformationWidget)
-    {
-    this->Internal->InformationWidget = new pqProxyInformationWidget();
-//    pqActiveObjects::instance().disconnect(this->Internal->InformationWidget);
-    }
-  return this->Internal->InformationWidget;
-}
-
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindow::resetUIPanels()
 {
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*>::iterator it;
@@ -1226,7 +1211,8 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
     case qtCMBPanelsManager::INFO:
       {
       dw = panelManager->createDockWidget(this,
-        this->getInfoWidget(), qtCMBPanelsManager::type2String(enType),
+        this->getThisCore()->infoPanel(),
+        qtCMBPanelsManager::type2String(enType),
         Qt::RightDockWidgetArea, lastdw);
       dw->show();
       this->Internal->CurrentDockWidgets[enType] = dw;
@@ -1234,10 +1220,10 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
       pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
       internal_checkRep(rep, cmbModelMgr);
       pqOutputPort* actPort = rep ? rep->getOutputPortFromInput() : NULL;
-      if(this->Internal->InformationWidget &&
-         this->Internal->InformationWidget->getOutputPort() != actPort)
+      if(this->getThisCore()->infoPanel() &&
+         this->getThisCore()->infoPanel()->getOutputPort() != actPort)
         {
-        this->Internal->InformationWidget->setOutputPort(actPort);
+        this->getThisCore()->infoPanel()->setOutputPort(actPort);
         }
       break;
       }

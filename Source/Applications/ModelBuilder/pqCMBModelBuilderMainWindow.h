@@ -25,7 +25,7 @@
 class pqPipelineSource;
 class pqCMBModelBuilderMainWindowCore;
 class pqCMBSceneTree;
-class pqProxyInformationWidget;
+class pqCMBProxyInformationWidget;
 class QDockWidget;
 class pqDataRepresentation;
 class pqSearchBox;
@@ -158,7 +158,7 @@ protected:
   void resetUIPanels();
   QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType,
     bool recreate=false);
-  pqProxyInformationWidget* getInfoWidget();
+  pqCMBProxyInformationWidget* getInfoWidget();
 
   // override base class, because ModelBuilder is providing its own color editor
   QDockWidget* initPVColorEditorDock() override {return NULL;}
