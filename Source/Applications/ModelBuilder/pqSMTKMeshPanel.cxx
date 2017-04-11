@@ -32,6 +32,7 @@
 
 #include <QtGui/QDockWidget>
 
+#include <QApplication>
 #include <QPointer>
 #include <QString>
 #include <QBoxLayout>
@@ -83,8 +84,9 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
 
   //construct a mesh button and add it to the SubmitterWidget
   this->SubmitterWidget->setLayout(new QVBoxLayout());
-  QPushButton* meshButton = new QPushButton(QString("Mesh"));
-  this->SubmitterWidget->layout()->addWidget(meshButton);
+  this->MeshButton = new QPushButton(QString("Mesh"));
+  this->MeshButton->setDefault(true);
+  this->SubmitterWidget->layout()->addWidget(this->MeshButton);
   //by default the widget is not visible
   this->SubmitterWidget->setVisible(false);
 
@@ -131,7 +133,7 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
     SLOT( setVisible(bool) ) );
 
   QObject::connect(
-    meshButton,
+    this->MeshButton,
     SIGNAL( pressed() ),
     this,
     SLOT( submitMeshJob() ) );
@@ -257,7 +259,11 @@ bool pqSMTKMeshPanel::submitMeshJob()
   smtk::io::Logger inputLogger;
   smtk::io::AttributeWriter writer;
   std::string serializedAttributes;
-
+  // First lets change the Mesh Button to reflect that we are mesh
+  this->MeshButton->setText("Meshing ...");
+  this->MeshButton->setEnabled(false);
+  QCoreApplication::processEvents();
+  this->MeshButton->repaint();
   //yes this returns false for being a valid, and true when an error occurs
   bool serialized = !writer.writeContents(*this->AttSystem,
                                           serializedAttributes,
@@ -300,11 +306,16 @@ bool pqSMTKMeshPanel::submitMeshJob()
     meshSpecification->findString("meshingControlAttributes")->setValue(serializedAttributes);
 
     const bool meshCreated = this->ModelManager->startOperation( meshOp );
+
     if(!meshCreated)
       {
       return false;
       }
     }
+  // Finally lets change the Mesh Button to reflect that we are done meshing
+  this->MeshButton->setText("Mesh");
+  this->MeshButton->setEnabled(true);
+
   return true;
 }
 

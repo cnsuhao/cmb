@@ -16,6 +16,7 @@ class pqCMBModelManager;
 class qtCMBMeshingMonitor;
 class qtRemusMesherSelector;
 class QTextEdit;
+class QPushButton;
 
 namespace smtk { namespace  extension { class qtUIManager; } }
 namespace smtk { namespace io { class Logger; } }
@@ -72,6 +73,7 @@ private:
   QPointer<QWidget> RequirementsWidget;
   QPointer<QWidget> SubmitterWidget;
   QPointer<QTextEdit> ResultLog;
+  QPointer<QPushButton> MeshButton;
 
   smtk::attribute::SystemPtr AttSystem;
   smtk::shared_ptr<smtk::extension::qtUIManager> AttUIManager;
