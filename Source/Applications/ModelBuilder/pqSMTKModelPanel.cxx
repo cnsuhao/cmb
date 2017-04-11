@@ -537,9 +537,11 @@ void pqSMTKModelPanel::onModelEntityItemCreated(
   if(entItem)
     {
     QObject::connect(entItem, SIGNAL(requestEntityAssociation()),
-      this, SLOT(onRequestEntityAssociation()));
+      this, SLOT(onRequestEntityAssociation())); // construction
     QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)),
-      this, SLOT(requestEntitySelection(const smtk::common::UUIDs&)));
+      this, SLOT(requestEntitySelection(const smtk::common::UUIDs&))); //hoover highlight
+    QObject::connect(entItem, SIGNAL(updateSelectionManager(smtk::common::UUID,int)),
+      this->selectionManager(), SLOT(updateSelectedItem(smtk::common::UUID, int)));
     }
 }
 
@@ -567,7 +569,25 @@ void pqSMTKModelPanel::onRequestEntityAssociation()
 //----------------------------------------------------------------------------
 void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
 {
-  this->modelView()->selectEntityItems(uuids, false); // not block selection signal
+  // combine current selecton
+  smtk::common::UUIDs uuidsCombined;
+  this->selectionManager()->getSelectedEntities(uuidsCombined);
+  for (auto uuid:uuids)
+  {
+    uuidsCombined.insert(uuid);
+  }
+
+  // update render view + model tree
+  smtk::model::EntityRefs entities;
+  for (const auto & uuid:uuidsCombined)
+  {
+    smtk::model::EntityRef ent(this->Internal->smtkManager->
+                               managerProxy()->modelManager(),uuid);
+    entities.insert(ent);
+  }
+  this->modelView()->selectItems(uuidsCombined,smtk::mesh::MeshSets(),true);
+  this->onSelectionChanged(entities,smtk::mesh::MeshSets(),
+                           smtk::model::DescriptivePhrases());
 }
 
 //----------------------------------------------------------------------------
