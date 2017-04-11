@@ -527,18 +527,36 @@ public:
     }
   }
 
-  void createAuxiliaryRepresentation(const smtk::model::AuxiliaryGeometry& aux,
-                                pqRenderView* view)
+  int sourceDimension(pqPipelineSource* source, int portNum)
+  {
+    if (!source) { return -1; }
+    pqOutputPort* port = source->getOutputPort(portNum);
+    if (!port) { return -1; }
+    vtkPVDataInformation* dinfo = port->getDataInformation();
+    if (!dinfo) { return -1; }
+    double bds[6];
+    dinfo->GetBounds(bds);
+    if (bds[1] < bds[0]) { return -1; }
+    int dim =
+      (bds[1] == bds[0] ? 0 : 1) +
+      (bds[3] == bds[2] ? 0 : 1) +
+      (bds[5] == bds[4] ? 0 : 1);
+    return dim;
+  }
+
+  int createAuxiliaryRepresentation(
+    const smtk::model::AuxiliaryGeometry& aux,
+    pqRenderView* view)
   {
     if(!pqSMTKUIHelper::isAuxiliaryShownSeparate(aux))
-      return;
+      return -1;
 
     std::string aux_url = aux.url();
      // if the auxilary is already loaded, just return
     if(this->AuxGeoInfos.find(aux_url) != this->AuxGeoInfos.end())
       {
       this->AuxGeoInfos[aux_url].RelatedAuxes.insert(aux.entity());
-      return;
+      return -1;
       }
 
     pqApplicationCore* core = pqApplicationCore::instance();
@@ -630,22 +648,34 @@ public:
       {
       qCritical() << "Failed to create an pqRepresentation for the file: "
         << aux_url.c_str();
+      return -1;
       }
-
+    return this->sourceDimension(source, 0);
   }
 
-  void createModelAuxiliaryRepresentations(const smtk::model::Model& model,
-                                pqRenderView* view)
+  int createModelAuxiliaryRepresentations(
+    const smtk::model::Model& model,
+    pqRenderView* view)
   {
     if(this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
-      return;
+      return -1;
 
     smtk::model::AuxiliaryGeometries maux = model.auxiliaryGeometry();
     smtk::model::AuxiliaryGeometries::const_iterator it;
+    int commonAuxDim = -2;
     for(it = maux.begin(); it != maux.end(); ++it)
       {
-      this->createAuxiliaryRepresentation(*it, view);
+      int dim = this->createAuxiliaryRepresentation(*it, view);
+      if (commonAuxDim == -2)
+        {
+        commonAuxDim = dim;
+        }
+      else if (dim >= 0)
+        {
+        commonAuxDim = (dim == commonAuxDim ? dim : -1);
+        }
       }
+    return commonAuxDim < 0 ? -1 : commonAuxDim;
   }
 
   void removeAuxiliaryRepresentation(const smtk::common::UUID& auxid,
@@ -1926,7 +1956,7 @@ bool pqCMBModelManager::handleOperationResult(
     result->findModelEntity("modified");
   for(it = resultEntities->begin(); it != resultEntities->end(); ++it)
       {
-      if(it->isModel())
+      if (it->isModel())
         {
         generalModifiedModels.insert(it->entity()); // TODO: check what kind of operations on the model
         }
@@ -1942,6 +1972,7 @@ bool pqCMBModelManager::handleOperationResult(
 
   hasNewModels = false;
   int numNewModels = 0;
+  bool haveEmittedDimensionality = false;
   // process "created" in result to figure out if there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr newEntities =
     result->findModelEntity("created");
@@ -1952,6 +1983,9 @@ bool pqCMBModelManager::handleOperationResult(
       if (it->isModel())
         {
         ++numNewModels;
+        int dim = it->embeddingDimension();
+        emit newModelWithDimension(dim);
+        haveEmittedDimensionality = (dim == 2 || dim == 3);
         // The new models will be handled later on by checking all the models
         // in the Manager against the internal ModelInfos map here
         hasNewModels = true;
@@ -2032,12 +2066,22 @@ bool pqCMBModelManager::handleOperationResult(
         newModel =  modit->parent().isModel() ? modit->parent() : *modit;
         success = this->Internal->addModelRepresentation(
           newModel, view, this->Internal->ManagerProxy, "", sref);
-        this->Internal->createModelAuxiliaryRepresentations(newModel, view);
+        int dim = this->Internal->createModelAuxiliaryRepresentations(newModel, view);
+        if (dim == 2 || dim == 3)
+          {
+          haveEmittedDimensionality = true;
+          emit newAuxiliaryGeometryWithDimension(dim);
+          }
         // Emit a signal so ModelBuilder can show the display and colormap panels:
         auto minfoIt = this->Internal->ModelInfos.find(newModel.entity());
         if (minfoIt != this->Internal->ModelInfos.end() && minfoIt->second.Representation)
           {
           emit modelRepresentationAdded(minfoIt->second.Representation);
+          // We may already have emitted this, but the dimension may have
+          // changed once the first entity with a tessellation is added:
+          dim = newModel.embeddingDimension();
+          emit newModelWithDimension(dim);
+          haveEmittedDimensionality = (dim == 2 || dim == 3);
           }
         }
       // update representation
@@ -2082,11 +2126,26 @@ bool pqCMBModelManager::handleOperationResult(
 
     // create representations for independent auxiliary geometries
     int numNewAux = 0;
+    int commonAuxDim = -2;
     smtk::model::AuxiliaryGeometries::const_iterator auxit;
     for(auxit = newSeparateAuxGeos.begin(); auxit != newSeparateAuxGeos.end(); ++auxit)
       {
       ++numNewAux;
-      this->Internal->createAuxiliaryRepresentation(*auxit, view);
+      int dim = this->Internal->createAuxiliaryRepresentation(*auxit, view);
+      if (commonAuxDim == -2)
+        {
+        commonAuxDim = dim;
+        }
+      else if (dim >= 0)
+        {
+        commonAuxDim = (dim == commonAuxDim ? dim : -1);
+        }
+      }
+    // Only emit a signal related to aux geom if the model itself didn't have a
+    // dimension as the model dimension is more likely to be what users care about:
+    if (!haveEmittedDimensionality && (commonAuxDim == 2 || commonAuxDim == 3))
+      {
+      emit newAuxiliaryGeometryWithDimension(commonAuxDim);
       }
     // remove representations for independent auxiliary geometries
     smtk::common::UUIDs::const_iterator rmit;
