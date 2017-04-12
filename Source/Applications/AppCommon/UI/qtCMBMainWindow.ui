@@ -1413,6 +1413,24 @@
     <string>Zoom to Box</string>
    </property>
   </action>
+  <action name="SelectByMeshes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../Resources/Resources.qrc">
+     <normaloff>:/cmb/Meshes.png</normaloff>:/cmb/Meshes.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select by Meshes</string>
+   </property>
+   <property name="toolTip">
+    <string>Select by meshes</string>
+   </property>
+  </action>
   <action name="SelectByVolumes">
    <property name="checkable">
     <bool>true</bool>
