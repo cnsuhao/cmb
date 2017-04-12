@@ -1031,6 +1031,10 @@ void pqCMBCommonMainWindowCore::resetCamera()
   if (ren)
     {
     ren->resetCamera();
+    if (this->isUsing2DCameraInteraction())
+      {
+      ren->resetViewDirection(0.,0.,-1.,0.,1.,0.);
+      }
     ren->render();
     }
 }
