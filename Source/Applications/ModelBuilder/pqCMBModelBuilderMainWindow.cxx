@@ -303,6 +303,8 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //this->getMainDialog()->toolBar_Selection->addAction(
   //      this->getMainDialog()->SelectByVolumes);
   this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByMeshes);
+  this->getMainDialog()->toolBar_Selection->addAction(
         this->getMainDialog()->SelectByFaces);
   this->getMainDialog()->toolBar_Selection->addAction(
         this->getMainDialog()->SelectByEdges);
@@ -316,6 +318,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   //QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
   //                 this->getThisCore()->modelPanel()->selectionManager(),
   //                 SLOT(filterVolumes(bool)));
+  QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterMeshes(bool)));
   QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
                    this->getThisCore()->modelPanel()->selectionManager(),
                    SLOT(filterFaces(bool)));
