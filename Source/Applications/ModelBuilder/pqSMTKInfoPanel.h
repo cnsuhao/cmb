@@ -11,9 +11,8 @@
 #ifndef _pqSMTKInfoPanel_h
 #define _pqSMTKInfoPanel_h
 
-#include "pqComponentsModule.h"
-#include <QPointer>
 #include <QWidget>
+#include <QPointer>
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
@@ -38,7 +37,7 @@ class qtSelectionManager;
 /**
 * Widget which provides information about an output port of a source proxy
 */
-class PQCOMPONENTS_EXPORT pqSMTKInfoPanel : public QWidget
+class pqSMTKInfoPanel : public QWidget
 {
   Q_OBJECT
 public:
@@ -51,7 +50,7 @@ public:
   /**
   * destructor
   */
-  ~pqSMTKInfoPanel();
+  ~pqSMTKInfoPanel() override;
 
   /**
   * get the proxy for which properties are displayed
