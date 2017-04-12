@@ -24,6 +24,7 @@ class pqCMBRubberBandHelper;
 class pqScalarBarWidget;
 class pqCMBSceneTree;
 class pqCMBModelManager;
+class pqSMTKInfoPanel;
 class pqSMTKModelPanel;
 class pqSMTKMeshPanel;
 class QComboBox;
@@ -73,6 +74,10 @@ public:
   // Description:
   // Get the internal smtk dockable mesh panel;
   pqSMTKMeshPanel* meshPanel();
+
+  // Description:
+  // Get the internal smtk dockable info panel;
+  pqSMTKInfoPanel* infoPanel();
 
   // Descirption:
   // override the base class to give an editor by default

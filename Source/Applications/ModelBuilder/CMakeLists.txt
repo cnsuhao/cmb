@@ -16,6 +16,7 @@ set(UI_FORMS
   pqCMBImportShapefile.ui
   pqCMBModelBuilderOptions.ui
   qtMesherSelector.ui
+  pqSMTKInfoPanel.ui
   )
 
 qt4_wrap_ui(UI_BUILT_SOURCES
@@ -163,6 +164,8 @@ set(ModelBuilder_SOURCE_FILES
   pqModelTreeViewEventTranslator.cxx
   pqModelTreeViewEventPlayer.h
   pqModelTreeViewEventPlayer.cxx
+  pqSMTKInfoPanel.h
+  pqSMTKInfoPanel.cxx
   pqSMTKMeshInfo.h
   pqSMTKMeshInfo.cxx
   pqSMTKMeshPanel.h

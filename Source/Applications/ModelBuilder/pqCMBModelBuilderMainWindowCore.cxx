@@ -68,6 +68,7 @@
 #include "pqCMBSceneTree.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
 #include "pqMultiBlockInspectorPanel.h"
+#include "pqSMTKInfoPanel.h"
 #include "pqSMTKMeshInfo.h"
 #include "pqSMTKMeshPanel.h"
 #include "pqSMTKModelInfo.h"
@@ -184,6 +185,7 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     QPointer<pqSMTKModelPanel> ModelDock;
     QPointer<pqSMTKMeshPanel> MeshDock;
+    QPointer<pqSMTKInfoPanel> InfoDock;
     QPointer<pqCMBModelManager> smtkModelManager;
     QPointer<pqModelBuilderViewContextMenuBehavior> ViewContextBehavior;
     QPointer<smtk::extension::qtAttributeDisplay> AttributeVisWidget;
@@ -1167,7 +1169,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
-      colorEntities[minfo].insert(curRef, color);        
+      colorEntities[minfo].insert(curRef, color);
       }
     else if(pqSMTKUIHelper::isAuxiliaryShownSeparate(curRef)
             && curRef.hasColor())
@@ -1293,7 +1295,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
       pqCMBContextMenuHelper::getValidMeshColor(color, *it);
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
-      colorEntities[ meshInfo ].insert(*it, color);        
+      colorEntities[ meshInfo ].insert(*it, color);
       }
 
     // For potential visibility changes
@@ -1534,6 +1536,19 @@ pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
       SLOT(requestEntitySelection(const smtk::common::UUIDs&)));
     }
   return this->Internal->MeshDock;
+}
+
+//----------------------------------------------------------------------------
+pqSMTKInfoPanel* pqCMBModelBuilderMainWindowCore::infoPanel()
+{
+  if(!this->Internal->InfoDock)
+    {
+    this->Internal->InfoDock = new pqSMTKInfoPanel(
+      this->Internal->smtkModelManager,
+      this->smtkSelectionManager(),
+      this->parentWidget());
+    }
+  return this->Internal->InfoDock;
 }
 
 //-----------------------------------------------------------------------------
