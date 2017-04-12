@@ -735,6 +735,7 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
   if (numUnsaved > 0)
     {
     QDialog cancelDialog;
+    cancelDialog.setObjectName("UnsavedWork");
     auto lv = new QVBoxLayout;
     auto lh = new QHBoxLayout;
     if (numUnsaved > 5)
@@ -752,18 +753,18 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
     lv->addLayout(lh);
     cancelDialog.setLayout(lv);
     baction->setDefault(false);
+    baction->setObjectName(actionUpper.c_str());
     bcancel->setDefault(true);
     bcancel->setAutoDefault(true);
+    bcancel->setObjectName("Cancel");
     cancelDialog.show();
     bcancel->setFocus();
     QObject::connect(baction, SIGNAL(released()), &cancelDialog, SLOT(accept()));
     QObject::connect(bcancel, SIGNAL(released()), &cancelDialog, SLOT(reject()));
     if (cancelDialog.exec() == QDialog::Accepted)
       {
-      std::cout << "Closing\n";
       return false;
       }
-    std::cout << "Canceled\n";
     return true;
     }
   return false;

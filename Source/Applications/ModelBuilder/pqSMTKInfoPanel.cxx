@@ -73,8 +73,8 @@ pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
                                  QWidget* p)
   : QWidget(p),
     ModelManager(modelManager),
-    SelectionManager(sManager),
-    OutputPort(NULL)
+    OutputPort(NULL),
+    SelectionManager(sManager)
 {
   this->VTKConnect = vtkEventQtSlotConnect::New();
   this->Ui = new pqUi(this);
@@ -531,8 +531,6 @@ namespace
 {
 class MeshAggregate : public smtk::mesh::MeshForEach
 {
-  static const std::size_t Dim_MAX = smtk::mesh::DimensionType_MAX;
-
   smtk::mesh::MeshSet Meshes;
   bool Valid;
 public:

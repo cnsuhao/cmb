@@ -38,6 +38,7 @@
   <pqevent object="FileSaveDialog" command="filesSelected" arguments="tempExport2DFaceMesh.2dm" />
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
+  <pqevent object="UnsavedWork/Close data" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="tempExport2DFaceMesh.2dm" />
 
