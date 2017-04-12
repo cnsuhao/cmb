@@ -9,6 +9,7 @@
         <file alias="Volumes.png" >Icons/Volumes.png</file>
         <file alias="Groups.png" >Icons/Groups.png</file>
         <file alias="Models.png" >Icons/Models.png</file>
+        <file alias="Meshes.png" >Icons/Meshes.png</file>
         <file alias="GrowAccept.png" >Icons/GrowAccept.png</file>
         <file alias="GrowClear.png" >Icons/GrowClear.png</file>
         <file alias="Icon.png" >Icons/Icon.png</file>
