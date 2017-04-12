@@ -157,11 +157,17 @@ pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p,
 
   // TODO: redesign selection logic with one input signal and one output slot
   // see resetUI for selection logic detail
-  QObject::connect(this,
-     SIGNAL(sendSelectedItemsToSelectionManager(const smtk::common::UUIDs&,
-      const smtk::mesh::MeshSets&)),this->Internal->selectionManager,
-            SLOT(updateSelectedItems(const smtk::common::UUIDs&,
-                                              const smtk::mesh::MeshSets&)));
+  QObject::connect(this, SIGNAL(sendSelectionsFromRenderWindowToSelectionManager(
+                          const smtk::model::EntityRefs &,
+                          const smtk::mesh::MeshSets &,
+                          const smtk::model::DescriptivePhrases &,
+                          const smtk::extension::SelectionModifier ,
+                          const smtk::model::StringList)),
+    this->selectionManager(), SLOT(updateSelectedItems(const smtk::model::EntityRefs &,
+                          const smtk::mesh::MeshSets &,
+                          const smtk::model::DescriptivePhrases &,
+                          const smtk::extension::SelectionModifier ,
+                          const smtk::model::StringList )));
 
   QObject::connect(this->Internal->selectionManager,
     SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&,
@@ -285,7 +291,8 @@ void pqSMTKModelPanel::resetUI()
     // select from rendering window
     // broadcasting from selelction manager to attribute panel is set
     // in pqSimBuilderUIManager
-    // signal passing from this to SM is set in class constructor
+    // signal passing from this to SM is set in class constructor since pqSMTKModelPanel
+    // would not be destroyed when close then load new data
     QObject::connect(this->Internal->selectionManager,
               SIGNAL(broadcastToModelTree(const smtk::common::UUIDs&,
       const smtk::mesh::MeshSets&, bool)), this->Internal->ModelPanel
@@ -296,12 +303,16 @@ void pqSMTKModelPanel::resetUI()
     // in pqSimBuilderUIManager
     // signal passing from SM to this is set in class constructor
     QObject::connect(this->Internal->ModelPanel->getModelView(),
-      SIGNAL(selectionChanged(const smtk::model::EntityRefs&,
+      SIGNAL(sendSelectionsFromModelViewToSelectionManager(const smtk::model::EntityRefs&,
        const smtk::mesh::MeshSets& ,
-       const smtk::model::DescriptivePhrases&)),
-      this->Internal->selectionManager, SLOT(updateSelectedItems(
-       const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-               const smtk::model::DescriptivePhrases&)));
+       const smtk::model::DescriptivePhrases&,
+       const smtk::extension::SelectionModifier,
+       const smtk::model::StringList )),
+    this->selectionManager(), SLOT(updateSelectedItems(const smtk::model::EntityRefs&,
+                          const smtk::mesh::MeshSets&,
+                          const smtk::model::DescriptivePhrases&,
+                          const smtk::extension::SelectionModifier ,
+                          const smtk::model::StringList )));
     // select from attribute Panel
     // signal passing into qtSelectionManager is connected in
     // pqSimBuilderUIManager
@@ -480,6 +491,7 @@ void pqSMTKModelPanel::updateTreeSelection()
 {
   smtk::mesh::MeshSets meshes;
   smtk::common::UUIDs uuids;
+  smtk::model::EntityRefs entityRefs;
   QList<pqSMTKModelInfo*> selModels = this->Internal->smtkManager->selectedModels();
   foreach(pqSMTKModelInfo* modinfo, selModels)
     {
@@ -499,11 +511,23 @@ void pqSMTKModelPanel::updateTreeSelection()
       this->Internal->smtkManager->auxGeoRelatedEntities(auxinfo->URL);
     uuids.insert(entities.begin(), entities.end());
     }
-  /************************************************************************/
-  // fire a signal to SM to update uuid and meshes
+
+  // Correct me: For now it only works when we have one model manager in CMB
+  smtk::model::ManagerPtr mgr =
+    this->Internal->smtkManager->managerProxy()->modelManager();
+  for (auto uuid: uuids)
+  {
+    smtk::model::EntityRef entityRef(mgr,uuid);
+    entityRefs.insert(entityRef);
+  }
+  // fire a signal to SM to update entityRefs and meshes
   // select model entities, meshes and entity properties
-  emit sendSelectedItemsToSelectionManager(uuids,meshes);
-  /************************************************************************/
+  smtk::model::StringList skipList;
+  skipList.push_back(std::string("rendering window"));
+  emit sendSelectionsFromRenderWindowToSelectionManager(entityRefs, meshes,
+                                    smtk::model::DescriptivePhrases(),
+                                    smtk::extension::SelectionModifier::SELECTION_INQUIRY,
+                                    skipList);
   //this->modelView()->selectItems(uuids, meshes, true); // block selection signal
 }
 
@@ -540,8 +564,17 @@ void pqSMTKModelPanel::onModelEntityItemCreated(
       this, SLOT(onRequestEntityAssociation())); // construction
     QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)),
       this, SLOT(requestEntitySelection(const smtk::common::UUIDs&))); //hoover highlight
-    QObject::connect(entItem, SIGNAL(updateSelectionManager(smtk::common::UUID,int)),
-      this->selectionManager(), SLOT(updateSelectedItem(smtk::common::UUID, int)));
+    QObject::connect(entItem, SIGNAL(sendSelectionFromModelEntityToSelectionManager(
+                            const smtk::model::EntityRefs &,
+                            const smtk::mesh::MeshSets &,
+                            const smtk::model::DescriptivePhrases &,
+                            const smtk::extension::SelectionModifier ,
+                            const smtk::model::StringList)),
+      this->selectionManager(), SLOT(updateSelectedItems(const smtk::model::EntityRefs &,
+                            const smtk::mesh::MeshSets &,
+                            const smtk::model::DescriptivePhrases &,
+                            const smtk::extension::SelectionModifier ,
+                            const smtk::model::StringList )));
     }
 }
 
