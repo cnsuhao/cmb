@@ -121,6 +121,8 @@ signals:
     const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);
   void operationLog(const smtk::io::Logger& summary);
   void modelRepresentationAdded(pqDataRepresentation*);
+  void newModelWithDimension(int);
+  void newAuxiliaryGeometryWithDimension(int);
 
 public slots:
   void clear();

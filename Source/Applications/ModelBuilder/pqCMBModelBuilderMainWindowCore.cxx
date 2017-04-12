@@ -1010,6 +1010,17 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     this->Internal->smtkModelManager, SIGNAL(newModelManagerProxy(vtkSMModelManagerProxy*)),
     this, SLOT(modelManagerChanged()));
 
+  QObject::connect(
+    this->Internal->smtkModelManager, SIGNAL(newModelWithDimension(int)),
+    this, SLOT(autoSwitchCameraManipulationMode(int)));
+
+  /* If uncommented, any new auxiliary geometry will switch the interaction mode
+   * to the dimension of the geometry added, regardless of the model dimension:
+  QObject::connect(
+    this->Internal->smtkModelManager, SIGNAL(newAuxiliaryGeometryWithDimension(int)),
+    this, SLOT(autoSwitchCameraManipulationMode(int)));
+    */
+
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)),
     this, SLOT(selectRepresentationBlock( pqDataRepresentation*, unsigned int, bool)));
