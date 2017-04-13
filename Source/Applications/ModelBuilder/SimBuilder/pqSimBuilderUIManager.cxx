@@ -130,8 +130,19 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view,
   // send signal from UIManager to selection manager
   if (this->m_ModelPanel)
     {
-    QObject::connect(this->m_attUIManager, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
-      this->m_ModelPanel->selectionManager(), SLOT(updateSelectedItems(const smtk::common::UUIDs&)));
+      QObject::connect(this->m_attUIManager,
+                      SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(
+                          const smtk::model::EntityRefs &,
+                          const smtk::mesh::MeshSets &,
+                          const smtk::model::DescriptivePhrases &,
+                          const smtk::extension::SelectionModifier ,
+                          const smtk::model::StringList)),
+      this->m_ModelPanel->selectionManager(),
+                       SLOT(updateSelectedItems(const smtk::model::EntityRefs &,
+                          const smtk::mesh::MeshSets &,
+                          const smtk::model::DescriptivePhrases &,
+                          const smtk::extension::SelectionModifier ,
+                          const smtk::model::StringList )));
     }
 
   this->m_attUIManager->setSMTKView(view, parentWidget);

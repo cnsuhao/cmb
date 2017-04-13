@@ -35,6 +35,7 @@ namespace smtk {
     class qtModelEntityItem;
     class qtModelView;
     class qtSelectionManager;
+    enum class SelectionModifier;
   }
 }
 
@@ -69,8 +70,13 @@ public:
   smtk::extension::qtSelectionManager* selectionManager() const;
 
 signals:
-  void sendSelectedItemsToSelectionManager(
-   const smtk::common::UUIDs &selEntities, const smtk::mesh::MeshSets &selMeshes);
+  void sendSelectionsFromRenderWindowToSelectionManager(
+                        const smtk::model::EntityRefs &selEntities,
+                        const smtk::mesh::MeshSets &selMeshes,
+                        const smtk::model::DescriptivePhrases &DesPhrases,
+                        const smtk::extension::SelectionModifier modifierFlag,
+                        const smtk::model::StringList skipList
+                        );
 
 public slots:
   /// Called if the user accepts pending modifications
