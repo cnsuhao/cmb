@@ -123,6 +123,7 @@ signals:
   void modelRepresentationAdded(pqDataRepresentation*);
   void newModelWithDimension(int);
   void newAuxiliaryGeometryWithDimension(int);
+  void sessionIsNowEmpty(const smtk::model::SessionRef&);
 
 public slots:
   void clear();
@@ -139,7 +140,8 @@ public slots:
     const smtk::model::OperatorResult& result,
     const smtk::common::UUID& bridgeSessionId,
     bool &hadNewModels, bool& bModelGeometryChanged,
-    bool &hasNewMeshes);
+    bool &hasNewMeshes,
+    std::set<smtk::model::SessionRef>& emptySessions);
   void setActiveModelSource(const smtk::common::UUID&);
 
 protected slots:

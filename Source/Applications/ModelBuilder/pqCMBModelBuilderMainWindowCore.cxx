@@ -104,9 +104,11 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QGroupBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
 #include <QProgressBar>
+#include <QPushButton>
 #include <QStatusBar>
 #include <QToolBar>
 #include <QToolButton>
@@ -115,12 +117,14 @@
 #include <QFileInfo>
 #include <QMap>
 #include <QTreeWidget>
+#include <QVBoxLayout>
 #include <QMainWindow>
 
 #include "vtkSMModelManagerProxy.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkPVSMTKMeshInformation.h"
 #include <algorithm>
+#include <locale>
 #include "assert.h"
 
 using namespace smtk::attribute;
@@ -683,8 +687,97 @@ void pqCMBModelBuilderMainWindowCore::zoomOnSelection()
 }
 
 //-----------------------------------------------------------------------------
+bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
+  const std::string& action,
+  const smtk::model::SessionRef& sref)
+{
+  if (!this->Internal->smtkModelManager)
+    {
+    return false;
+    }
+
+  std::string actionUpper = action;
+  if (!actionUpper.empty())
+    {
+    std::locale loc;
+    actionUpper[0] = std::toupper(actionUpper[0], loc);
+    }
+
+  smtk::model::Manager::Ptr mgr = this->Internal->smtkModelManager->managerProxy()->modelManager();
+  smtk::model::Models models;
+  if (!sref.isValid())
+    {
+    models = mgr->entitiesMatchingFlagsAs<smtk::model::Models>(smtk::model::MODEL_ENTITY);
+    }
+  else
+    {
+    models = sref.models<smtk::model::Models>();
+    }
+
+  std::ostringstream msg;
+  msg << "<center><b>" << actionUpper << "</b></center><br>You have <b>unsaved models</b>:<ul>";
+  int numUnsaved = 0;
+  for (auto model : models)
+    {
+    if (model.hasIntegerProperty("clean"))
+      {
+      if (!model.integerProperty("clean")[0])
+        {
+        ++numUnsaved;
+        if (numUnsaved < 5)
+          {
+          msg << "<li>" << model.name() << "</li>";
+          }
+        }
+      }
+    }
+
+  if (numUnsaved > 0)
+    {
+    QDialog cancelDialog;
+    cancelDialog.setObjectName("UnsavedWork");
+    auto lv = new QVBoxLayout;
+    auto lh = new QHBoxLayout;
+    if (numUnsaved > 5)
+      {
+      msg << "<li>... and " << (numUnsaved - 5) << " more.</li>";
+      }
+    msg << "</ul>Click cancel and save your data or " << action << " to continue.";
+    auto message = new QLabel(msg.str().c_str(), &cancelDialog);
+    auto baction = new QPushButton(actionUpper.c_str());
+    auto bcancel = new QPushButton("Cancel");
+    lh->addWidget(baction);
+    lh->addStretch(10);
+    lh->addWidget(bcancel);
+    lv->addWidget(message);
+    lv->addLayout(lh);
+    cancelDialog.setLayout(lv);
+    baction->setDefault(false);
+    baction->setObjectName(actionUpper.c_str());
+    bcancel->setDefault(true);
+    bcancel->setAutoDefault(true);
+    bcancel->setObjectName("Cancel");
+    cancelDialog.show();
+    bcancel->setFocus();
+    QObject::connect(baction, SIGNAL(released()), &cancelDialog, SLOT(accept()));
+    QObject::connect(bcancel, SIGNAL(released()), &cancelDialog, SLOT(reject()));
+    if (cancelDialog.exec() == QDialog::Accepted)
+      {
+      return false;
+      }
+    return true;
+    }
+  return false;
+}
+
+//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
 {
+  if (this->abortActionForUnsavedWork("close data"))
+    {
+    return;
+    }
+
   if(!modelOnly)
     {
     this->clearSimBuilder();
@@ -1148,6 +1241,11 @@ void pqCMBModelBuilderMainWindowCore::loadJSONFile(const QString& filename)
 pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 {
   return this->Internal->smtkModelManager;
+}
+
+pqCMBModelBuilderOptions* pqCMBModelBuilderMainWindowCore::userPreferences()
+{
+  return this->Internal->AppOptions;
 }
 
 // we may need to update model representation for display properties

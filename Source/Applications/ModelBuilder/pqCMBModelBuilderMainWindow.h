@@ -52,6 +52,7 @@ public slots:
   void onModelRepresentationAdded(pqDataRepresentation*);
   void onNewMeshCreated();
   bool onCloseSession();
+  bool autoCloseSession(const smtk::model::SessionRef&);
 
   // Description:
   // Overwrite super class to set immediate mode rendering to true,
@@ -66,6 +67,8 @@ public slots:
   void toggleSessionCentricMenus(bool sessionCentric);
 
 protected slots:
+
+  virtual void onAskedToExit();
 
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);

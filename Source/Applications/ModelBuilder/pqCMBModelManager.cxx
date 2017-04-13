@@ -1817,16 +1817,24 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     }
 
   bool hasNewModels = false, bModelGeometryChanged = false, hasNewMeshes = false;
-  bool sucess = this->handleOperationResult(result, sessId,
-    hasNewModels, bModelGeometryChanged, hasNewMeshes);
-  if(sucess)
+  std::set<smtk::model::SessionRef> emptySessions;
+  bool success = this->handleOperationResult(result, sessId,
+    hasNewModels, bModelGeometryChanged, hasNewMeshes, emptySessions);
+  if (success)
     {
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
     emit this->operationFinished(result, sref,
       hasNewModels, bModelGeometryChanged, hasNewMeshes);
     }
 
-  return sucess;
+  // Only indicate sessions are empty after the operationFinished signal so
+  // that closing these does not invalidate \a result too early.
+  for (auto session : emptySessions)
+  {
+    emit sessionIsNowEmpty(session);
+  }
+
+  return success;
 }
 
 void internal_updateEntityList(
@@ -1861,7 +1869,8 @@ bool pqCMBModelManager::handleOperationResult(
   const smtk::model::OperatorResult& result,
   const smtk::common::UUID& sessionId,
   bool &hasNewModels, bool& bModelGeometryChanged,
-  bool &hasNewMeshes)
+  bool &hasNewMeshes,
+  std::set<smtk::model::SessionRef>& emptySessions)
 {
   smtk::io::Logger log;
   smtk::attribute::StringItem::Ptr logItem;
@@ -1976,6 +1985,7 @@ bool pqCMBModelManager::handleOperationResult(
   // process "created" in result to figure out if there are new cell entities
   smtk::attribute::ModelEntityItem::Ptr newEntities =
     result->findModelEntity("created");
+  std::set<smtk::model::SessionRef> newSessions;
   if (newEntities)
     {
     for (it = newEntities->begin(); it != newEntities->end(); ++it)
@@ -1990,6 +2000,10 @@ bool pqCMBModelManager::handleOperationResult(
         // in the Manager against the internal ModelInfos map here
         hasNewModels = true;
         continue;
+        }
+      else if (it->isSessionRef())
+        {
+        newSessions.insert(it->as<smtk::model::SessionRef>());
         }
 
       if (internal_isNewGeometricBlock(*it)) // a new entity?
@@ -2163,6 +2177,22 @@ bool pqCMBModelManager::handleOperationResult(
       {
       hasNewModels = true;
       }
+
+  // Because expunged entities have already been removed, we can't query them
+  // to see if they were models (and remove the owning session if there are
+  // no more models). Instead, we loop through sessions and see if they have
+  // no more models; if not, then close the session(s).
+  smtk::model::ManagerPtr mgr = this->Internal->ManagerProxy->modelManager();
+  auto sessions = mgr->entitiesMatchingFlagsAs<smtk::model::SessionRefs>(smtk::model::SESSION);
+  for (auto session : sessions)
+  {
+    if (
+      newSessions.find(session) == newSessions.end() &&
+      session.models<smtk::model::Models>().empty())
+    {
+      emptySessions.insert(session);
+    }
+  }
 
   return success;
 }

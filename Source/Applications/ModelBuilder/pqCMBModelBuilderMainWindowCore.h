@@ -18,11 +18,14 @@
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
 
+#include "smtk/model/SessionRef.h"
+
 class SimBuilderCore;
 class pqOutputPort;
 class pqCMBRubberBandHelper;
 class pqScalarBarWidget;
 class pqCMBSceneTree;
+class pqCMBModelBuilderOptions;
 class pqCMBModelManager;
 class pqSMTKInfoPanel;
 class pqSMTKModelPanel;
@@ -86,6 +89,9 @@ public:
   // Description:
   // The application's model manager
   pqCMBModelManager* modelManager();
+
+  /// Return the ModelBuilder-specific options.
+  pqCMBModelBuilderOptions* userPreferences();
 
 signals:
 
@@ -208,12 +214,24 @@ public slots:
   void autoSwitchCameraManipulationMode(int dimension);
 
 protected:
+  friend class pqCMBModelBuilderMainWindow;
+
   void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
   virtual void setSimBuilderModelManager();
   virtual void processModifiedMeshes(
     const smtk::attribute::MeshItemPtr& modifiedMeshes);
   virtual void processModifiedEntities(
   const smtk::attribute::ModelEntityItemPtr& resultEntities);
+
+  /**\brief Return true if the user wants to abort \a action, false if the application should continue.
+    *
+    * This checks for unsaved/unclean models and -- if any exist -- asks the user before continuing.
+    * If a valid session \a sref is provided, only models of the given session are checked; otherwise
+    * all the models in the model manager are checked.
+    */
+  bool abortActionForUnsavedWork(
+    const std::string& action,
+    const smtk::model::SessionRef& sref = smtk::model::SessionRef());
 
 private:
   // Description:

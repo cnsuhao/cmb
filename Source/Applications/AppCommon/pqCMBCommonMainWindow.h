@@ -67,6 +67,10 @@ public slots:
   // Updates the log window
   void updateLog(const smtk::io::Logger&);
 
+signals:
+  /// Emitted by onAskedToExit() once the user verifies that it's OK to discard unsaved data.
+  void userAcceptsExit();
+
 protected slots:
 
   // Description:
@@ -74,6 +78,12 @@ protected slots:
   virtual void onHelpAbout(){}
   virtual void onHelpHelp(){}
   virtual void showHelpPage(const QString& url);
+
+  /**\brief Called when the user asks the application to exit.
+    *
+    * Subclasses should override to perform checks for unsaved data.
+    */
+  virtual void onAskedToExit();
 
   void onViewSelected(QList<pqOutputPort*> opports);
   void disableAxisChange();
