@@ -51,7 +51,7 @@ class pqSMTKMeshInfo: public QObject
     vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
 
     vtkSmartPointer<vtkPVSMTKMeshInformation> Info;
-    QPointer<pqPipelineSource> MeshSource;    
+    QPointer<pqPipelineSource> MeshSource;
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
     std::string FileName;
