@@ -484,6 +484,27 @@ cJSON* vtkSMModelManagerProxy::requestJSONOp(smtk::model::RemoteOperatorPtr op,
   return resp;
 }
 
+cJSON* vtkSMModelManagerProxy::requestJSONFileExtension(
+  const smtk::model::Model& model, const smtk::common::UUID& fwdSessionId)
+{
+  if (!model.entity())
+    return NULL;
+
+  cJSON* req = cJSON_CreateObject();
+  cJSON* par = cJSON_CreateObject();
+  cJSON_AddItemToObject(req, "jsonrpc", cJSON_CreateString("2.0"));
+  cJSON_AddItemToObject(req, "method", cJSON_CreateString("default-file-extension"));
+  cJSON_AddItemToObject(req, "id", cJSON_CreateString("1")); // TODO
+  cJSON_AddItemToObject(req, "params", par);
+  cJSON_AddItemToObject(par, "model", cJSON_CreateString(model.entity().toString().c_str()));
+  cJSON_AddItemToObject(par, "session-id", cJSON_CreateString(fwdSessionId.toString().c_str()));
+
+  cJSON* resp = this->jsonRPCRequest(req, nullptr);
+  if (req)
+    cJSON_Delete(req);
+  return resp;
+}
+
 cJSON* vtkSMModelManagerProxy::jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperProxy)
 {
   char* reqStr = cJSON_Print(req);

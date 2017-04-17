@@ -117,6 +117,23 @@ public slots:
   void onCloseData() override { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
   bool onCloseSession(const smtk::model::SessionRef&);
+
+  /**\brief Attempt to save the active model.
+    *
+    * This will open the "Model - Save" operator on the operator
+    * panel and, if it is possible to save the model, perform the
+    * operation. Otherwise, the save button will have a red background
+    * (generally because the model has never been given a filename)
+    * and the user must edit operator parameters to save.
+    */
+  void onSave();
+
+  /// Attempt to save the selected model(s) given a new filename.
+  void onSaveAs();
+
+  /// Attempt to save the selected model(s) to a new file, copying all related data.
+  void onSaveACopy();
+
   void clearSimBuilder();
   void resetSimulationModel();
   int onLoadSimulation(bool templateonly = false, bool isScenario = false);

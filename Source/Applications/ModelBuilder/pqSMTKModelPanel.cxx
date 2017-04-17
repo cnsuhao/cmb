@@ -556,15 +556,15 @@ void pqSMTKModelPanel::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
   }
 }
 
-void pqSMTKModelPanel::onLaunchFileBrowser()
+bool pqSMTKModelPanel::onLaunchFileBrowser()
 {
   smtk::extension::qtFileItem* const fileItem =
     qobject_cast<smtk::extension::qtFileItem*>(QObject::sender());
   if (!fileItem)
   {
-    return;
+    return false;
   }
-  pqSMTKUIHelper::process_smtkFileItemRequest(
+  return pqSMTKUIHelper::process_smtkFileItemRequest(
     fileItem, this->Internal->smtkManager->server(), fileItem->widget());
 }
 

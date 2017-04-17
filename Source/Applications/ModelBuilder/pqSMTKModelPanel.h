@@ -93,7 +93,7 @@ protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void selectMeshRepresentations(const smtk::mesh::MeshSets&);
   void onFileItemCreated(smtk::extension::qtFileItem* fileItem);
-  void onLaunchFileBrowser();
+  bool onLaunchFileBrowser();
   void onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
   void updateMeshSelection(const smtk::attribute::MeshSelectionItemPtr&, pqSMTKModelInfo*);

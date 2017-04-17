@@ -248,6 +248,7 @@ LINK_PRIVATE
   cmbAppCommon
   smtkQtExt
   smtkPQComponentsExt
+  smtkPQOperatorViewsExt
   smtkRemusExt
   RemusClient
   smtkCore

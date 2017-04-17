@@ -56,6 +56,8 @@ protected:
 
   cJSON* requestJSONOp(smtk::model::RemoteOperatorPtr op, const std::string& strMethod,
     const smtk::common::UUID& fwdSessionId);
+  cJSON* requestJSONFileExtension(
+    const smtk::model::Model& model, const smtk::common::UUID& fwdSessionId);
   cJSON* jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperProxy = NULL);
   cJSON* jsonRPCRequest(const std::string& req, vtkSMProxy* opHelperProxy = NULL);
   void jsonRPCNotification(cJSON* note, vtkSMProxy* opHelperProxy = NULL);

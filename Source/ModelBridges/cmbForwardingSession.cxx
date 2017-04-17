@@ -32,6 +32,30 @@ cmbForwardingSession::~cmbForwardingSession()
   this->setProxy(NULL);
 }
 
+std::string cmbForwardingSession::defaultFileExtension(const smtk::model::Model& model) const
+{
+  cJSON* resp = this->m_proxy->requestJSONFileExtension(model, this->sessionId());
+  cJSON* err = NULL;
+  cJSON* res;
+
+  if (!resp || (err = cJSON_GetObjectItem(resp, "error")) ||
+    !(res = cJSON_GetObjectItem(resp, "result")) || (res->type != cJSON_String))
+  {
+    if (resp)
+      cJSON_Delete(resp);
+    if (err && err->valuestring && err->valuestring[0])
+    {
+      std::cerr << "Unable to determine default file extension for " << model.name() << ": \""
+                << err->valuestring << "\"\n";
+    }
+    return "";
+  }
+
+  std::string defaultFileExtension = res->valuestring;
+  cJSON_Delete(resp);
+  return defaultFileExtension;
+}
+
 void cmbForwardingSession::setProxy(vtkSMModelManagerProxy* proxy)
 {
   // Unregister old proxy

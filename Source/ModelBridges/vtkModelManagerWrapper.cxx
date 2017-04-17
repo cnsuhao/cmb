@@ -243,6 +243,33 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
           }
         }
       }
+      else if (methStr == "default-file-extension")
+      {
+        cJSON* modelStr;
+        cJSON* bsess;
+        if (!param || !(modelStr = cJSON_GetObjectItem(param, "model")) ||
+          modelStr->type != cJSON_String || !modelStr->valuestring || !modelStr->valuestring[0] ||
+          !(bsess = cJSON_GetObjectItem(param, "session-id")) || bsess->type != cJSON_String ||
+          !bsess->valuestring || !bsess->valuestring[0])
+        {
+          this->GenerateError(
+            result, "Parameters not passed or invalid operator specified.", reqIdStr);
+        }
+        else
+        {
+          smtk::model::SessionRef sref(this->ModelMgr, smtk::common::UUID(bsess->valuestring));
+          smtk::model::Model model(this->ModelMgr, smtk::common::UUID(modelStr->valuestring));
+          if (!sref.isValid() || !sref.session() || !model.isValid())
+          {
+            this->GenerateError(result, "No session or model with given IDs.", reqIdStr);
+          }
+          else
+          {
+            cJSON_AddItemToObject(result, "result",
+              cJSON_CreateString(sref.session()->defaultFileExtension(model).c_str()));
+          }
+        }
+      }
       // II. Notifications:
       //   delete session
       else if (methStr == "delete-session")

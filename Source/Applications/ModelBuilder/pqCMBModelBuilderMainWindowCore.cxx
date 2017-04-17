@@ -81,10 +81,13 @@
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/MeshItem.h"
+#include "smtk/attribute/StringItem.h"
 #include "smtk/attribute/System.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
+#include "smtk/extension/paraview/operators/smtkSaveModelView.h"
 #include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
+#include "smtk/extension/qt/qtModelOperationWidget.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
@@ -164,6 +167,58 @@ public:
     {
       delete this->SimBuilder;
     }
+  }
+
+  /// Bring up the "save smtk model" operator panel and fill in defaults
+  smtkSaveModelView* prepareSaveOp(pqCMBModelBuilderMainWindowCore* self)
+  {
+    smtk::shared_ptr<smtk::extension::qtSelectionManager> selManager =
+      qtActiveObjects::instance().smtkSelectionManager();
+    smtk::model::ManagerPtr modelMgr = self->modelManager()->managerProxy()->modelManager();
+    smtk::model::EntityRefs seln;
+    //smtk::mesh::MeshSets selMeshSets;
+    selManager->getSelectedEntitiesAsEntityRefs(seln);
+    //selManager->getSelectedMeshes(selMeshSets);
+
+    std::set<smtk::model::Model> modelsToSave;
+    // TODO: This should be replaced by fetching the active model
+    for (auto ent : seln)
+    {
+      if (ent.isValid())
+      {
+        modelsToSave.insert(ent.isModel() ? ent.as<smtk::model::Model>() : ent.owningModel());
+      }
+    }
+    if (modelsToSave.empty())
+    {
+      std::cout << "Nothing selected that leads to a model. Saving all models.\n";
+      modelsToSave = modelMgr->entitiesMatchingFlagsAs<std::set<smtk::model::Model> >(
+        smtk::model::MODEL_ENTITY, /* exactMatch */ false);
+    }
+
+    smtk::extension::qtModelView* mv = self->modelPanel()->modelView();
+    if (!mv)
+    {
+      std::cout << "  No model view... Can't save.\n";
+      return nullptr;
+    }
+
+    smtk::extension::qtModelOperationWidget* mow = this->ModelDock->modelView()->operatorsWidget();
+    smtk::model::SessionRef sref = modelsToSave.begin()->session();
+    if (!mow->setCurrentOperator("save smtk model", sref.session()))
+    {
+      std::cout << "  No operator!\n";
+    }
+    smtk::model::OperatorPtr saveOp = mow->existingOperator("save smtk model");
+    auto opview = dynamic_cast<smtkSaveModelView*>(mow->existingOperatorView("save smtk model"));
+    //saveOp->findString("mode")->setDiscreteIndex(0, 0);
+    mv->requestOperation(saveOp, true);
+
+    if (opview)
+    {
+      opview->setModelToSave(*modelsToSave.begin());
+    }
+    return opview;
   }
 
   bool InCreateSource;
@@ -769,6 +824,49 @@ bool pqCMBModelBuilderMainWindowCore::onCloseSession(const smtk::model::SessionR
     return panel->removeClosedSession(sref);
   }
   return false;
+}
+
+/// Attempt to save the selected model(s)
+void pqCMBModelBuilderMainWindowCore::onSave()
+{
+  std::cout << "Save:\n";
+  auto opview = this->Internal->prepareSaveOp(this);
+
+  if (opview)
+  {
+    opview->setModeToPreview("save");
+    opview->setEmbedData(false);
+    opview->setRenameModels(false);
+    opview->attemptSave("save");
+  }
+}
+
+void pqCMBModelBuilderMainWindowCore::onSaveAs()
+{
+  std::cout << "Save as:\n";
+  auto opview = this->Internal->prepareSaveOp(this);
+
+  if (opview)
+  {
+    opview->setModeToPreview("save as");
+    opview->setEmbedData(false);
+    opview->setRenameModels(true);
+    opview->chooseFile("save as");
+  }
+}
+
+void pqCMBModelBuilderMainWindowCore::onSaveACopy()
+{
+  std::cout << "Save a copy:\n";
+  auto opview = this->Internal->prepareSaveOp(this);
+
+  if (opview)
+  {
+    opview->setModeToPreview("save a copy");
+    opview->setEmbedData(true);
+    opview->setRenameModels(true);
+    opview->chooseFile("save a copy");
+  }
 }
 
 void pqCMBModelBuilderMainWindowCore::clearSimBuilder()
