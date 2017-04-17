@@ -169,6 +169,9 @@ protected:
   void initInspectorDock() override;
   pqSearchBox* createSearchBox();
 
+  // Prevent window-close with unsaved models
+  void closeEvent (QCloseEvent *event);
+
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
   void operator=(const pqCMBModelBuilderMainWindow&); // Not implemented.

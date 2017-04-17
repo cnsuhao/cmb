@@ -18,6 +18,7 @@
 #include "pqColorToolbar.h"
 #include "pqEditColorMapReaction.h"
 #include "pqObjectBuilder.h"
+#include "pqOptions.h"
 #include "pqOutputPort.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
@@ -1544,6 +1545,22 @@ pqSearchBox* pqCMBModelBuilderMainWindow::createSearchBox()
   QObject::connect(searchBox, SIGNAL(textChanged(QString)),
     this, SLOT(filterDisplayPanel()));
   return searchBox;
+}
+
+//----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindow::closeEvent (QCloseEvent *event)
+{
+  pqOptions* opts = pqApplicationCore::instance()->getOptions();
+  if (!opts || opts->GetTestScripts().empty())
+    {
+    if (this->getThisCore()->abortActionForUnsavedWork("close main window"))
+      {
+        event->ignore();
+        return;
+      }
+    }
+
+  return QMainWindow::closeEvent(event);
 }
 
 //----------------------------------------------------------------------------

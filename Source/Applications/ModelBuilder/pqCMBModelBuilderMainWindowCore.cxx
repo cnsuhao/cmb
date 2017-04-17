@@ -717,16 +717,21 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
   std::ostringstream msg;
   msg << "<center><b>" << actionUpper << "</b></center><br>You have <b>unsaved models</b>:<ul>";
   int numUnsaved = 0;
+  std::set<smtk::model::Model> visited;
   for (auto model : models)
     {
     if (model.hasIntegerProperty("clean"))
       {
       if (!model.integerProperty("clean")[0])
-        {
-        ++numUnsaved;
-        if (numUnsaved < 5)
-          {
-          msg << "<li>" << model.name() << "</li>";
+        { // model is not clean
+        if (visited.find(model) == visited.end())
+          { // do not report duplicates
+          visited.insert(model);
+          ++numUnsaved;
+          if (numUnsaved < 5)
+            { // only report 5 or fewer models
+            msg << "<li>" << model.name() << "</li>";
+            }
           }
         }
       }
