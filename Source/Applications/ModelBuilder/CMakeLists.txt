@@ -418,6 +418,7 @@ endif()
     ImportExport2dm
     ModelAndMeshTransformLink
     ColorByAttribute
+    ColorModelByElevation
     ExtractImageContours
     AuxGeoVtpPts
     AuxGeoTif
