@@ -942,11 +942,11 @@ void pqCMBCommonMainWindow::onEnableCameraInteractionModeChanges(bool mode)
   }
   if (this->MainWindowCore->isUsing2DCameraInteraction())
   {
-    this->Internal->UI.action3D_camera->setEnabled(false);
+    this->Internal->UI.action3D_camera->setEnabled(true);
   }
   else
   {
-    this->Internal->UI.action2D_camera->setEnabled(false);
+    this->Internal->UI.action2D_camera->setEnabled(true);
   }
 }
 
