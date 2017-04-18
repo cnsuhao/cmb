@@ -2449,7 +2449,7 @@ vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createBoxWidge
 {
   vtkSMNewWidgetRepresentationProxy* boxWidget =
       dynamic_cast<vtkSMNewWidgetRepresentationProxy*>(this->getActiveServer()
-         ->proxyManager()->NewProxy("representations,",
+         ->proxyManager()->NewProxy("representations",
                                     "BoxWidgetRepresentation"));
   pqSMAdaptor::setElementProperty(boxWidget->GetProperty("Visibility"), false);
   vtkSMPropertyHelper(boxWidget,

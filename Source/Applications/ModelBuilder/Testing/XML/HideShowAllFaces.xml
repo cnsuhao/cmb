@@ -11,5 +11,5 @@
   <pqevent object="qtCMBMainWindow" command="contextMenu" arguments="" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.305306,0.467852,2,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.305306,0.467852,2,0,0)" />
-  <pqevent object="PipelineContextMenu" command="activate" arguments="Show Whole Model" />
+ <pqevent object="PipelineContextMenu" command="activate" arguments="Show All Models" />
 </pqevents>
