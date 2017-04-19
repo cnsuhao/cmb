@@ -1,17 +1,25 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <!-- Open a non-native (2DM) model -->
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/mesh/2d/test2D.2dm" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_viewport" command="contextMenu" arguments="" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="showContextMenu" arguments="/0:0/0:0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/1QMenu0" command="activate" arguments="save smtk model" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/1QFrame0/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/SimBuilder Select File Dialog" command="filesSelected" arguments="test2D2dm.smtk" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame1/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/test2D2dm.smtk" />
+  <!-- We shouldn't have to select the model to operate on (the context menu should associate it). But that's not working, so... -->
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0" command="showPopup" arguments="" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,35,4,/1:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mousePress" arguments="1,1,0,34,10,/1:0" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,30,9,/1:0" />
+  <!-- Click "apply" to save the model. This should mark it clean. -->
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/OpViewApplyButton" command="activate" arguments="" />
+  <!-- Now close the model. If the model is dirty, closing will create a modal popup causing test failure. -->
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
+  <!-- Open the SMTK file we just saved. -->
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
-  <pqevent object="UnsavedWork/Close data" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/toolBar/1QToolButton0" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="test2D2dm.smtk" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/test2D2dm.smtk" />
 </pqevents>
