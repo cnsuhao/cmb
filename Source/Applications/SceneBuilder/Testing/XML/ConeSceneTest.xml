@@ -63,12 +63,4 @@
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph/1QColorDialog0/1QColorShower0/1QSpinBox4" command="set_int" arguments="170" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph/1QColorDialog0/1QColorShower0/1QSpinBox5" command="set_int" arguments="255" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBSceneBuilderPanel/tabWidget/qt_tabwidget_stackedwidget/tab/SceneGraph/1QColorDialog0/1QDialogButtonBox0/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
-  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_As" />
-  <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ConeSceneTest.sg" />
-  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
-  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Close" />
-  <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ConeSceneTest.sg" />
-  <pqevent object="qtCMBMainWindow" command="pause" arguments="300" />
 </pqevents>
