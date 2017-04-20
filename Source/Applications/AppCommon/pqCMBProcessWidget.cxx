@@ -41,7 +41,11 @@ pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent/*=0*/)
     QIcon(QString::fromUtf8(":/QtWidgets/Icons/pqDelete16.png")));
   this->AbortButton->setIconSize(QSize(12, 12));
   this->AbortButton->setToolTip(
-    QApplication::translate("Form", "Abort", 0, QApplication::UnicodeUTF8));
+    QApplication::translate("Form", "Abort", 0
+#if QT_VERSION < 0x050000
+                                               , QApplication::UnicodeUTF8
+#endif
+                                               ));
 
   this->AbortButton->setEnabled(false);
   QObject::connect(this->AbortButton, SIGNAL(pressed()),

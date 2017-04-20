@@ -100,7 +100,11 @@ void pqCMBLIDARContourTree::customizeTreeWidget()
 
   for(int col=0; col<treeWidget->columnCount(); col++)
     {
+#if QT_VERSION >= 0x050000
+    treeWidget->header()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+#else
     treeWidget->header()->setResizeMode(col, QHeaderView::ResizeToContents);
+#endif
     }
 
   //QObject::connect(treeWidget, SIGNAL(itemEntered(QTreeWidgetItem*, int)),

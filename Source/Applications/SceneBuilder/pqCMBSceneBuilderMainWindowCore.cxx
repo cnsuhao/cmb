@@ -1482,7 +1482,7 @@ void pqCMBSceneBuilderMainWindowCore::onExport2DBCSFile()
     {
     vtkSmartPointer<vtkSGXMLBCSWriter> bcsWriter =
       vtkSmartPointer<vtkSGXMLBCSWriter>::New();
-    bcsWriter->SetFileName(files[0].toAscii().constData());
+    bcsWriter->SetFileName(files[0].toLatin1().constData());
     bcsWriter->SetCoords(arcInfo->GetPointLocations());
     bcsWriter->SetModelVertexIds(arcInfo->GetEndNodeIds());
     bcsWriter->Modified();
@@ -2311,7 +2311,7 @@ int pqCMBSceneBuilderMainWindowCore::selectSurfaceMesher()
     this->Internal->MesherOptionDlg->blockSignals(true);
     this->Internal->MesherOptionDlg->insertMesherPath(
       this->Internal->MesherOptionDlg->getNumberOfMesherPaths() - 1,
-      newMesher.toAscii().constData());
+      newMesher.toLatin1().constData());
     this->Internal->MesherOptionDlg->setCurrentMesherPathIndex(
       this->Internal->MesherOptionDlg->getNumberOfMesherPaths() - 2);
     this->Internal->LastMesherPathIndex =
@@ -2790,7 +2790,7 @@ void pqCMBSceneBuilderMainWindowCore::exportCMBFile()
     vtkSmartPointer<vtkUnstructuredGridReader>::New();
   QString mesherOutputFileName = this->getProcessExecDirectory() + "/" +
     this->Internal->MesherOutputPrefix + ".vtk";
-  reader->SetFileName( mesherOutputFileName.toAscii().constData() );
+  reader->SetFileName( mesherOutputFileName.toLatin1().constData() );
 
   vtkSmartPointer<vtkDataSetSurfaceFilter> surface =
     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
@@ -2938,7 +2938,7 @@ void pqCMBSceneBuilderMainWindowCore::addOmicronModelFaceData(vtkPolyData *outpu
       this->Internal->MesherOutputPrefix + "_BCfaces.vtk";
     vtkSmartPointer<vtkPolyDataReader> faceReader =
       vtkSmartPointer<vtkPolyDataReader>::New();
-    faceReader->SetFileName( bcFacesFile.toAscii().constData() );
+    faceReader->SetFileName( bcFacesFile.toLatin1().constData() );
     faceReader->Update();
 
     vtkIntArray *modelFaceIDs =

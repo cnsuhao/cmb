@@ -599,7 +599,11 @@ void pqCMBSceneBuilderMainWindow::onHelpAbout()
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
   dialog->setWindowTitle(QApplication::translate("Scene Builder AboutDialog",
                                                "About Scene Builder",
-                                               0, QApplication::UnicodeUTF8));
+                                               0
+#if QT_VERSION < 0x050000
+                                               , QApplication::UnicodeUTF8
+#endif
+                                               ));
   dialog->setPixmap(QPixmap(QString(":/cmb/SceneBuilderSplashAbout.png")));
   dialog->setVersionText(
     QString("<html><b>Version: <i>%1</i></b></html>").arg(SceneGen_VERSION_FULL));

@@ -1,8 +1,3 @@
-
-if(PARAVIEW_BUILD_QT_GUI)
-  include(${QT_USE_FILE})
-endif(PARAVIEW_BUILD_QT_GUI)
-
 #include the export header generater since we need to manually export
 #some classes so they can be used in the applications
 include(GenerateExportHeader)
@@ -51,14 +46,14 @@ set(PLUGIN_SRC
 )
 
 # objects panels
-qt4_wrap_ui(UI_BUILT_SRCS
+pv_qt_wrap_ui(UI_BUILT_SRCS
   pqBandedPolyDataContourControls.ui
   qtPlanarTextureRegistrationDialog.ui
 )
 
 #we can't use automoc since paraview plugin macro generated headers
 #will be mocced twice
-qt4_wrap_cpp(MOC_SRCS
+pv_qt_wrap_cpp(MOC_SRCS
   pqCMBTabWidgetTranslator.h
   pqCMBPluginStarter.h
   pqGeneralTransferFunctionWidget.h

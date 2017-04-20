@@ -10,7 +10,7 @@
 #ifndef __pqCMBImportShapefile_h
 #define __pqCMBImportShapefile_h
 
-#include <QtGui/QDialog>
+#include <QDialog>
 #include "cmbSystemConfig.h"
 
 class pqServer;

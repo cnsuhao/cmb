@@ -33,9 +33,9 @@
 #include "smtk/mesh/Collection.h"
 #include "smtk/mesh/Manager.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QTreeView>
-#include <QtGui/QDockWidget>
+#include <QApplication>
+#include <QTreeView>
+#include <QDockWidget>
 #include <QPointer>
 #include <QString>
 #include <QGridLayout>

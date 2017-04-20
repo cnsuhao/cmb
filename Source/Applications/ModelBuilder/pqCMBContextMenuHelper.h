@@ -16,6 +16,7 @@
 #include "smtk/model/EntityRef.h"
 #include "smtk/mesh/MeshSet.h"
 #include <QColor>
+#include <QMap>
 
 class pqSMTKModelInfo;
 class pqSMTKMeshInfo;

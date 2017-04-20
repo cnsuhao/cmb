@@ -126,7 +126,7 @@ int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
       {
-      return this->LoadSimulation(files[0].toAscii().constData());
+      return this->LoadSimulation(files[0].toLatin1().constData());
       }
     }
   return 0;
@@ -327,7 +327,7 @@ int SimBuilderCore::SaveSimulation(bool writeScenario)
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
       {
-      return this->SaveSimulation(files[0].toAscii().constData(), writeScenario);
+      return this->SaveSimulation(files[0].toLatin1().constData(), writeScenario);
       }
     }
   return 0;

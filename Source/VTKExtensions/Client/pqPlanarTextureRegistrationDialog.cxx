@@ -537,14 +537,14 @@ void pqPlanarTextureRegistrationDialog::displayImage(const QString &filename)
   if(!this->textureImageSource)
     {
     this->textureImageSource = ReadTextureImage(builder,
-      this->CurrentServer, this->currentImageFileName.toAscii().data());
+      this->CurrentServer, this->currentImageFileName.toLatin1().data());
     this->imageDataRepresentation = builder->createDataRepresentation(
       this->textureImageSource->getOutputPort(0), this->imageRenderView);
     defaultPosition = true;
     }
 
   vtkSMPropertyHelper(this->textureImageSource->getProxy(), "FileName").Set(
-        this->currentImageFileName.toAscii().data() );
+        this->currentImageFileName.toLatin1().data() );
   vtkSMSourceProxy::SafeDownCast(this->textureImageSource->getProxy())->UpdateVTKObjects();
   vtkSMSourceProxy::SafeDownCast(this->textureImageSource->getProxy())->UpdatePipeline();
   vtkSMPropertyHelper(this->imageDataRepresentation->getProxy(), "MapScalars").Set(0);

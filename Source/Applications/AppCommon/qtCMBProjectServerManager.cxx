@@ -8,7 +8,7 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "qtCMBProjectServerManager.h"
-#include <QtGui>
+#include <QDir>
 #include <QProcess>
 #include <QProcessEnvironment>
 

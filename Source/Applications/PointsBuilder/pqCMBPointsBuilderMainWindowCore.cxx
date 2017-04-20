@@ -390,7 +390,7 @@ void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(const QStringList& files
 
   foreach(QString filename,newFiles)
     {
-    int result = this->ImportLIDARFile(filename.toAscii().constData());
+    int result = this->ImportLIDARFile(filename.toLatin1().constData());
     if(!result)
       {
       QString message("Failed to load file, \n");
@@ -414,7 +414,7 @@ void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(const QStringList& files
     // FIXME: not sure I've translated this code correctly. Please validate.
     // Add this to the list of recent server resources ...
     vtkSMProxy *readerProxy = this->ReaderManager->getReaderSourceProxy(
-        files[0].toAscii().constData());
+        files[0].toLatin1().constData());
     pqCMBRecentlyUsedResourceLoaderImplementatation::
         addDataFilesToRecentResources(this->getActiveServer(), files,
                                       readerProxy->GetXMLGroup(),
@@ -584,7 +584,7 @@ void pqCMBPointsBuilderMainWindowCore::onReaderForFilesCreated(pqPipelineSource*
       }
     newFileList.append(filename);
     QString strDir = vtksys::SystemTools::GetFilenamePath(
-      filename.toAscii().constData()).c_str();
+      filename.toLatin1().constData()).c_str();
     for(int i=1; i<files.count(); i++)
       {
       filename = strDir;
@@ -1592,7 +1592,7 @@ void pqCMBPointsBuilderMainWindowCore::updatePieceRepresentations(
   foreach(QString filename, filePieces.uniqueKeys())
     {
     this->ReaderManager->updatePieces(
-      filename.toAscii().constData(),
+      filename.toLatin1().constData(),
       filePieces[filename], forceRead,
       this->Internal->PieceMainTable, bclipdata, clipbounds);
     }
@@ -3142,7 +3142,7 @@ void pqCMBPointsBuilderMainWindowCore::onSaveContour()
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
       {
-      return this->saveContour(files[0].toAscii().constData());
+      return this->saveContour(files[0].toLatin1().constData());
       }
     }
 }
@@ -3161,7 +3161,7 @@ void pqCMBPointsBuilderMainWindowCore::onLoadContour()
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
       {
-      return this->loadContour(files[0].toAscii().constData());
+      return this->loadContour(files[0].toLatin1().constData());
       }
     }
 }

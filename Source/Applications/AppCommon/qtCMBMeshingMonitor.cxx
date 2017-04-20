@@ -8,7 +8,6 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "qtCMBMeshingMonitor.h"
-#include <QtGui>
 #include <QtConcurrentRun>
 
 #include "pqSMAdaptor.h"

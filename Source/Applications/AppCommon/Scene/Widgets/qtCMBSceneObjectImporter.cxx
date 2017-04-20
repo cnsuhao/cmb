@@ -430,7 +430,7 @@ void qtCMBSceneObjectImporter::updateDialog()
     this->ImportDialog->RandomPlacement->hide();
 
     // See if this is a Raw DEM File
-    if (pqCMBUniformGrid::isRawDEM(fname.toAscii().constData()))
+    if (pqCMBUniformGrid::isRawDEM(fname.toLatin1().constData()))
       {
       this->ImportDialog->rawDEMParameters->show();
       this->updateDEMExtents();
@@ -593,7 +593,7 @@ void qtCMBSceneObjectImporter::changeObjectType()
         getUserDefinedObjectTypes().indexOf(newType);
       if (index == -1)
         {
-        this->Parent->getTree()->addUserDefinedType(newType.toAscii());
+        this->Parent->getTree()->addUserDefinedType(newType.toLatin1());
         index = this->Parent->getTree()->
           getUserDefinedObjectTypes().indexOf(newType);
         this->ImportDialog->ObjectTypes->insertItem(index, newType);
@@ -705,7 +705,7 @@ void qtCMBSceneObjectImporter::importLIDARFile(const QString &fileName)
     sprintf(buffer, "Piece %d", pieceId);
     this->createObjectNode(obj, buffer, this->Node);
 
-    obj->setFileName(fileName.toAscii().constData());
+    obj->setFileName(fileName.toLatin1().constData());
     obj->getBounds(bounds);
     bbox.AddBounds(bounds);
     }
@@ -732,7 +732,7 @@ void qtCMBSceneObjectImporter::importLIDARFile(const QString &fileName)
       sprintf(buffer, "Piece %d", pieceId);
       this->createObjectNode(obj, buffer, this->Node);
 
-      obj->setFileName(fileName.toAscii().constData());
+      obj->setFileName(fileName.toLatin1().constData());
       }
     }
 
@@ -886,7 +886,7 @@ void qtCMBSceneObjectImporter::importLASFile(const QString &fileName)
                                              this->Parent->getTree()->getCurrentView(),
                                              this->Parent->getTree()->getCurrentServer(),
                                              false);
-    obj->setFileName(fileName.toAscii().constData());
+    obj->setFileName(fileName.toLatin1().constData());
 
     this->createObjectNode(obj, classificationName, this->Node);
 
@@ -922,7 +922,7 @@ void qtCMBSceneObjectImporter::importUniformGrid(const QString &fileName)
 
   // this->Progress->show();
   pqCMBUniformGrid *grid =
-    new pqCMBUniformGrid(fileName.toAscii().constData(),
+    new pqCMBUniformGrid(fileName.toLatin1().constData(),
                             this->Parent->getTree()->getCurrentServer(),
                             this->Parent->getTree()->getCurrentView(),
                             false);
@@ -1245,7 +1245,7 @@ pqCMBSceneNode *qtCMBSceneObjectImporter::createObjectNode(pqCMBSceneObjectBase 
                                                     const char *name,
                                                     pqCMBSceneNode *parentNode)
 {
-  obj->setUserDefinedType(this->ImportDialog->ObjectTypes->currentText().toAscii());
+  obj->setUserDefinedType(this->ImportDialog->ObjectTypes->currentText().toLatin1());
   this->assignUnits(obj);
 
   double data[3];

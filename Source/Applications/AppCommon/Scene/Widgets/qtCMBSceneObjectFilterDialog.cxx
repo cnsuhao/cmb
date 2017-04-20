@@ -110,7 +110,7 @@ void qtCMBSceneObjectFilterDialog::getSelectedObjectTypes(QStringList& objTypes)
 //-----------------------------------------------------------------------------
 const char* qtCMBSceneObjectFilterDialog::getSceneFile()
 {
-  return this->FilterDialog->labelFile->text().toAscii().constData();
+  return this->FilterDialog->labelFile->text().toLatin1().constData();
 }
 
 //-----------------------------------------------------------------------------

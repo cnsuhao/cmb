@@ -598,9 +598,15 @@ void pqCMBMeshViewerMainWindow::onMeshLoaded()
     inputList->setColumnCount(4);
     inputList->setHeaderLabels(
       QStringList() << tr("Mesh")<< tr("Active") << tr("Visibility") <<tr("") );
+#if QT_VERSION >= 0x050000
+    inputList->header()->setSectionResizeMode(TREE_INPUT_COL, QHeaderView::ResizeToContents);
+    inputList->header()->setSectionResizeMode(TREE_VISIBLE_COL, QHeaderView::Fixed);
+    inputList->header()->setSectionResizeMode(TREE_ACTIVE_COL, QHeaderView::Fixed);
+#else
     inputList->header()->setResizeMode(TREE_INPUT_COL, QHeaderView::ResizeToContents);
     inputList->header()->setResizeMode(TREE_VISIBLE_COL, QHeaderView::Fixed);
     inputList->header()->setResizeMode(TREE_ACTIVE_COL, QHeaderView::Fixed);
+#endif
     inputList->setColumnWidth(TREE_VISIBLE_COL, 60);
     inputList->setColumnWidth(TREE_ACTIVE_COL, 60);
     inputList->header()->setStretchLastSection(true);
@@ -676,7 +682,11 @@ void pqCMBMeshViewerMainWindow::onHelpAbout()
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
   dialog->setWindowTitle(QApplication::translate("Mesh Viewer AboutDialog",
                                                "About Mesh Viewer",
-                                               0, QApplication::UnicodeUTF8));
+                                               0
+#if QT_VERSION < 0x050000
+                                               , QApplication::UnicodeUTF8
+#endif
+                                               ));
   dialog->setPixmap(QPixmap(QString(":/cmb/MeshViewerSplashAbout.png")));
   dialog->setVersionText(
     QString("<html><b>Version: <i>%1</i></b></html>").arg(MeshViewer_VERSION_FULL));

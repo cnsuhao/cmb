@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QHeaderView>
 #include <QLayout>
+#include <QMimeData>
 #include <QDragEnterEvent>
 #include <QDragMoveEvent>
 #include <QMouseEvent>
