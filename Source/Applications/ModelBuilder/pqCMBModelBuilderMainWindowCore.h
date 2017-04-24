@@ -137,9 +137,9 @@ public slots:
   void resetCenterOfRotationToCenterOfCurrentData() override;
 
   // Description:
-  // Called when a CMB model is loaded/cleared
-  void onModelLoaded();
-  void onCMBModelCleared();
+  // Called when a CMB model is loaded/created
+  void onNewModelCreated(const smtk::model::EntityRef& newModel);
+  void onNewModelsCreationFinished();
 
   // Description:
   // Called when a new VTK connection is setup for the rep.
