@@ -247,7 +247,8 @@ public:
             rep->getProxy(), NULL, vtkDataObject::FIELD);
           rep->setProperty(
             "smtkUUID",
-            QByteArray((const char*)model.entity().begin(), model.entity().size()));
+            QByteArray((const char*)model.entity().begin(),
+                       (int)model.entity().size()));
           }
         }
       loadOK = (rep != NULL);
@@ -611,7 +612,8 @@ public:
         {
         auxgeoinfo.Representation->setProperty(
           "smtkUUID",
-          QByteArray((const char*)aux.entity().begin(), aux.entity().size()));
+          QByteArray((const char*)aux.entity().begin(),
+                     (int)aux.entity().size()));
         bool scalarColoring = (lastExt == "vti" || lastExt== "dem");// || lastExt== "tif" || lastExt== "tiff")
         if(scalarColoring)
           {
