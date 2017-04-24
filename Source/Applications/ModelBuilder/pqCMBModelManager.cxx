@@ -504,8 +504,31 @@ public:
           repSrc->getOutputPort(0), view);
         if(rep)
           {
+          // for 1-D meshes, we construct an additional representation to show
+          // the points as mesh demarcations.
+          pqDataRepresentation* pointsRep = NULL;
+
+          std::size_t dimension =
+            (!(*cit)->meshes().cells(smtk::mesh::Dims3).is_empty() ? 3 :
+             !(*cit)->meshes().cells(smtk::mesh::Dims2).is_empty() ? 2 :
+             !(*cit)->meshes().cells(smtk::mesh::Dims1).is_empty() ? 1 : 0);
+
+          std::cout<<"dimension: "<<dimension<<std::endl;
+
+          if (dimension == 1)
+            {
+            pointsRep = builder->createDataRepresentation(
+              repSrc->getOutputPort(0), view);
+
+            vtkSMPropertyHelper(pointsRep->getProxy(),
+                                "Representation").Set("Points");
+            // set the point size to be half that of the vertices
+            vtkSMPropertyHelper(pointsRep->getProxy(), "PointSize").Set(4.0);
+            pointsRep->setVisible(visible);
+            }
+
           smtk::model::ManagerPtr mgr = smProxy->modelManager();
-          modelInfo->MeshInfos[cid].init(meshSrc, repSrc, rep,
+          modelInfo->MeshInfos[cid].init(meshSrc, repSrc, rep, pointsRep,
             (*cit)->readLocation().absolutePath(), mgr, modelInfo);
 
           vtkSMPropertyHelper(rep->getProxy(),
@@ -731,11 +754,20 @@ public:
 
       vtkSMRepresentationProxy::SafeDownCast(
           meshiter->second.Representation->getProxy())->UpdatePipeline();
+      if (meshiter->second.PointsRepresentation)
+        {
+        vtkSMRepresentationProxy::SafeDownCast(
+          meshiter->second.PointsRepresentation->getProxy())->UpdatePipeline();
+        }
 
       meshiter->second.updateBlockInfo(
         this->ManagerProxy->modelManager());
 
       meshiter->second.Representation->renderViewEventually();
+      if (meshiter->second.PointsRepresentation)
+        {
+        meshiter->second.PointsRepresentation->renderViewEventually();
+        }
       }
   }
 

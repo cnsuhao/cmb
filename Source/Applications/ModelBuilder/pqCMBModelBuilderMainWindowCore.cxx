@@ -1327,10 +1327,14 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   foreach(pqSMTKModelInfo* minfo, visBlocks.keys())
     {
     if(minfo->Representation && visBlocks[minfo].count())
+      {
       foreach(bool isVisible, visBlocks[minfo].keys())
+        {
         this->Internal->ViewContextBehavior->syncBlockVisibility(
           minfo->Representation, visBlocks[minfo][isVisible], isVisible,
           minfo->Info->GetUUID2BlockIdMap().size());
+        }
+      }
     }
 
   // update entities color
@@ -1433,10 +1437,20 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   foreach(pqSMTKMeshInfo* meshinfo, visBlocks.keys())
     {
     if(meshinfo->Representation && visBlocks[meshinfo].count())
+      {
       foreach(bool isVisible, visBlocks[meshinfo].keys())
+        {
         this->Internal->ViewContextBehavior->syncBlockVisibility(
           meshinfo->Representation, visBlocks[meshinfo][isVisible], isVisible,
           meshinfo->Info->GetMesh2BlockIdMap().size());
+        if (meshinfo->PointsRepresentation)
+          {
+          this->Internal->ViewContextBehavior->syncBlockVisibility(
+            meshinfo->PointsRepresentation, visBlocks[meshinfo][isVisible],
+            isVisible, meshinfo->Info->GetMesh2BlockIdMap().size());
+          }
+        }
+      }
     }
 
   // update mesh representation color
