@@ -157,6 +157,7 @@
 #include "qtCMBApplicationOptions.h"
 #include "pqImageUtil.h"
 
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 
 #include <stdio.h>
@@ -344,7 +345,10 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget) :
 
   core->testUtility()->eventPlayer()->addWidgetEventPlayer(
              new pqCMBFileDialogEventPlayer(core->testUtility() ));
+
   this->qtSelectionMgr = new smtk::extension::qtSelectionManager();
+  QObject::connect(&qtActiveObjects::instance(),SIGNAL(activeModelChanged()),
+                   this->qtSelectionMgr, SLOT(clearAllSelections()));
 
 }
 

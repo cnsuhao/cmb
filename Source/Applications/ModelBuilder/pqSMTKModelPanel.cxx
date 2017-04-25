@@ -9,6 +9,7 @@
 //=========================================================================
 #include "pqSMTKModelPanel.h"
 
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtEntityItemDelegate.h"
 #include "smtk/extension/qt/qtEntityItemModel.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
@@ -317,6 +318,12 @@ void pqSMTKModelPanel::resetUI()
     // signal passing into qtSelectionManager is connected in
     // pqSimBuilderUIManager
     // signal passing from SM to this is set in class constructor
+
+    // when active Model changed, reset view by calling onViewTypeChanged
+    // load new model would trigget modelPanel->resetUI in
+    // cmbMBMainWindowCore::processOperatorResult
+    QObject::connect(&qtActiveObjects::instance(), SIGNAL(activeModelChanged()),
+             this->Internal->ModelPanel, SLOT(onViewTypeChanged()));
     }
 
 //  this->linkRepresentations();

@@ -65,6 +65,7 @@
 #include "smtk/io/LoadJSON.h"
 #include "smtk/io/SaveJSON.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
 #include "smtk/mesh/Manager.h"
 #include "smtk/mesh/Collection.h"
@@ -340,8 +341,19 @@ public:
       }
   }
 
+  smtk::model::Model InternalSortExistingModels(smtk::model::Models& models)
+  {
+      std::sort(models.begin(), models.end(),
+                [](const smtk::model::Model &a, smtk::model::Model &b)
+      { return a.name() < b.name();});
+      smtk::model::Model newActiveModel = models.size() ?
+         models[0] : smtk::model::Model();
+      return newActiveModel;
+
+  }
+
   void removeModelRepresentations(const smtk::common::UUIDs& modeluids,
-                                 pqRenderView* view)
+                                pqRenderView* view, vtkSMModelManagerProxy* pxy)
   {
     bool modelRemoved = false;
     for (smtk::common::UUIDs::const_iterator mit = modeluids.begin();
@@ -349,6 +361,7 @@ public:
       {
       if(this->ModelInfos.find(*mit) == this->ModelInfos.end())
         {
+        // removeModel not on client side
         continue;
         }
 
@@ -371,8 +384,32 @@ public:
       this->ModelInfos.erase(*mit);
       modelRemoved = true;
       }
-  if(modelRemoved)
-    view->render();
+    if(modelRemoved)
+    {
+      view->render();
+    }
+    // Update the active model
+    smtk::common::UUID activeModel =
+        qtActiveObjects::instance().activeModel().entity();
+    if (modeluids.find(activeModel) != modeluids.end())
+    {
+      // find a new active model since the current one is removed
+      smtk::model::Models allModels =
+        pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(
+        smtk::model::MODEL_ENTITY);
+      smtk::model::Models existingModels;
+      for (const auto& model : allModels)
+      {
+        if (std::find(modeluids.begin(),modeluids.end(), model.entity())
+            == modeluids.end())
+        {
+          existingModels.push_back(model);
+        }
+      }
+    qtActiveObjects::instance().setActiveModel(
+          this->InternalSortExistingModels(existingModels));
+
+    }
   }
 
   void updateModelRepresentation(const smtk::model::EntityRef& model)
@@ -2027,6 +2064,8 @@ bool pqCMBModelManager::handleOperationResult(
       if (it->isModel())
         {
         ++numNewModels;
+        // inform modelBuilderMainWindowCore that we have new model
+        emit newModelCreated(*it);
         int dim = it->embeddingDimension();
         emit newModelWithDimension(dim);
         haveEmittedDimensionality = (dim == 2 || dim == 3);
@@ -2053,6 +2092,8 @@ bool pqCMBModelManager::handleOperationResult(
         newSeparateAuxGeos.push_back(it->as<smtk::model::AuxiliaryGeometry>());
         }
       }
+    // inform modelBuilderMainWindowCore
+    emit newModelsCreationFinished();
     }
   bModelGeometryChanged = geometryChangedModels.size() > 0;
 
@@ -2077,7 +2118,7 @@ bool pqCMBModelManager::handleOperationResult(
       remmodels.insert(mit->first);
       }
     }
-  this->Internal->removeModelRepresentations(remmodels, view);
+  this->Internal->removeModelRepresentations(remmodels, view, pxy);
 
   // remove expunged mesh collection representations
   smtk::attribute::MeshItem::Ptr remMeshes =
@@ -2280,6 +2321,9 @@ void pqCMBModelManager::clear()
   if(this->Internal->ManagerProxy)
     this->Internal->ManagerProxy->endSessions();
   this->Internal->ManagerProxy = NULL;
+  // Reset current model
+  qtActiveObjects::instance().setActiveModel(smtk::model::Model());
+  // Actually all models have been cleared.
   emit currentModelCleared();
 }
 
@@ -2322,12 +2366,13 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
       pqActiveObjects::instance().activeView());
     // Remove the session from the client side:
     smtk::model::Models modelsToErase(sref.models<smtk::model::Models>());
+    smtk::common::UUIDs remmodels;
     for (auto mit : modelsToErase)
       {
-      smtk::common::UUIDs remmodels;
       remmodels.insert(mit.entity());
-      this->Internal->removeModelRepresentations(remmodels, view);
       }
+    // @David, I see you added this line 3/14/2017 to add close session support, May I ask why keep it in the loop?
+    this->Internal->removeModelRepresentations(remmodels, view, pxy);
     // Signal the UI to remove the session from the model tree:
     emit sessionClosing(sref);
 
@@ -2438,4 +2483,11 @@ void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
   pqSMTKModelInfo* activeInfo = this->modelInfo(entity);
   pqPipelineSource* activeSource =  activeInfo ? activeInfo->RepSource : NULL;
   pqActiveObjects::instance().setActiveSource(activeSource);
+}
+
+//----------------------------------------------------------------------------
+smtk::model::Model pqCMBModelManager::sortExistingModels(smtk::model::Models &models)
+{
+    return this->Internal->InternalSortExistingModels(models);
+
 }

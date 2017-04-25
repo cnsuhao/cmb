@@ -108,6 +108,8 @@ public:
   QList<smtkAuxGeoInfo*> selectedAuxGeos() const;
   smtk::common::UUIDs auxGeoRelatedEntities(const std::string& auxurl) const;
 
+  /// A convenience method to sort models alphabetically and return the first one
+  smtk::model::Model sortExistingModels(smtk::model::Models& models);
 signals:
   void newModelManagerProxy(vtkSMModelManagerProxy*); // Emitted each time a new model manager is created on the server.
   void currentModelCleared();
@@ -124,6 +126,8 @@ signals:
   void newModelWithDimension(int);
   void newAuxiliaryGeometryWithDimension(int);
   void sessionIsNowEmpty(const smtk::model::SessionRef&);
+  void newModelCreated(const smtk::model::EntityRef& newModel);
+  void newModelsCreationFinished();
 
 public slots:
   void clear();

@@ -16,6 +16,7 @@
 #include "smtk/attribute/DirectoryItemDefinition.h"
 #include "smtk/attribute/FileItem.h"
 #include "smtk/attribute/FileItemDefinition.h"
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtItem.h"
 #include "smtk/extension/qt/qtAttribute.h"
 #include "smtk/extension/qt/qtFileItem.h"
@@ -60,6 +61,9 @@ pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
   this->m_AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
   this->m_attUIManager = new smtk::extension::qtUIManager(*(this->m_AttSystem));
   this->Internals = new pqSimBuilderUIManagerInternals;
+  // switching active model would update all model views
+  QObject::connect(&qtActiveObjects::instance(),SIGNAL(activeModelChanged()),
+                   this->m_attUIManager, SLOT(updateModelViews()));
  }
 
 //----------------------------------------------------------------------------

@@ -84,6 +84,7 @@
 #include "smtk/attribute/System.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/model/AuxiliaryGeometry.h"
+#include "smtk/model/EntityIterator.h"
 #include "smtk/model/Face.h"
 #include "smtk/model/FloatData.h"
 #include "smtk/model/Group.h"
@@ -92,6 +93,7 @@
 #include "smtk/model/EntityRef.h"
 #include "smtk/model/Volume.h"
 #include "smtk/model/Operator.h"
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
@@ -176,6 +178,9 @@ class pqCMBModelBuilderMainWindowCore::vtkInternal
 
     ///////////////////////////////////////////////////////////////////////////
     // The Model related variables
+    // a temporary variable that would be cleared each time
+    // after set up activeModel
+    smtk::model::Models createdModels;
     pqCMBRubberBandHelper cmbRenderViewSelectionHelper;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -570,29 +575,7 @@ SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
   return this->Internal->SimBuilder;
 }
 
-//----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindowCore::onCMBModelCleared()
-{
-}
-
-//-----------------------------------------------------------------------------
-void pqCMBModelBuilderMainWindowCore::onModelLoaded()
-{
-//    this->Internal->SelectByBox->addItems(list);
-//    this->Internal->SelectByBox->setCurrentIndex(0);
-
-
-    if(this->getSimBuilder()->isSimModelLoaded() &&
-      !this->getSimBuilder()->isLoadingScenario())
-      {
-      this->getSimBuilder()->clearCMBModel();
-      }
-    // Make sure the mesh is cleared first
-    //this->getSimBuilder()->getMeshManager()->clearMesh();
-
-//    this->Internal->SelectByBox->blockSignals(false);
-
-}
+// onCMBModelCleared and onModelLoaded are dreprecated. check git history.
 
 //-----------------------------------------------------------------------------
 pqCMBRubberBandHelper* pqCMBModelBuilderMainWindowCore::cmbRenderViewSelectionHelper() const
@@ -806,6 +789,8 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
     {
     this->clearpqCMBSceneTree();
     }
+  // reset current model
+  qtActiveObjects::instance().setActiveModel(smtk::model::Model());
 
 }
 
@@ -903,6 +888,32 @@ int pqCMBModelBuilderMainWindowCore::previewWindow(QString path)
 void pqCMBModelBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::onNewModelCreated(const
+                                           smtk::model::EntityRef& newModel)
+{
+  smtk::model::Model model = newModel.as<smtk::model::Model>();
+  if (model.isValid())
+  {
+    this->Internal->createdModels.push_back(model);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void pqCMBModelBuilderMainWindowCore::onNewModelsCreationFinished()
+{
+  // pick one model in createdModels as activeModel
+  if (this->Internal->createdModels.size() > 0)
+  {
+    // sort the created models alphabetically
+    smtk::model::Model newActiveModel = this->Internal->smtkModelManager
+        ->sortExistingModels(this->Internal->createdModels);
+    qtActiveObjects::instance().setActiveModel(newActiveModel);
+  }
+  this->Internal->createdModels.clear();
+
 }
 
 //----------------------------------------------------------------------------
@@ -1118,6 +1129,21 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer *server)
     this->Internal->smtkModelManager, SIGNAL(newAuxiliaryGeometryWithDimension(int)),
     this, SLOT(autoSwitchCameraManipulationMode(int)));
     */
+
+  /* Active model support. When a new model is created, it would be added into
+    * Internal->createdModels. After all creation, CMB will pick the first one
+    * according to alphabetical name as the active model. createdModels will be
+    * cleared!
+    * Active model is stored in qtActiveObjects
+    */
+   QObject::connect(
+      this->Internal->smtkModelManager, SIGNAL(newModelCreated(const
+      smtk::model::EntityRef&)), this, SLOT(onNewModelCreated(
+                                                 const smtk::model::EntityRef&)));
+   QObject::connect(
+      this->Internal->smtkModelManager, SIGNAL(newModelsCreationFinished()),
+       this, SLOT(onNewModelsCreationFinished()));
+
 
   QObject::connect(this->Internal->ViewContextBehavior,
     SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)),
@@ -1497,6 +1523,22 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
     modelTree->updateWithOperatorResult(sref, result);
     }
   this->modelPanel()->update();
+  // reset model tree if we have new active model
+  smtk::attribute::ModelEntityItem::Ptr createdEntities =
+    result->findModelEntity("created");
+  if (createdEntities)
+  {
+    for(smtk::model::EntityRefArray::const_iterator iterator = createdEntities->begin();
+         iterator != createdEntities->end(); ++iterator)
+    {
+      if (iterator->isModel())
+      {
+        this->modelPanel()->resetUI();
+        break;
+      }
+    }
+  }
+
 
   // FIXME, we need more info regarding what changed in the result entities,
   // for example, is this a color change, visibility change, etc
