@@ -58,13 +58,14 @@ void pqSMTKMeshInfo::clearLinks()
 
 //----------------------------------------------------------------------------
 void pqSMTKMeshInfo::init(
-  pqPipelineSource* meshsource, pqPipelineSource* repsource, pqDataRepresentation* rep,
+  pqPipelineSource* meshsource, pqPipelineSource* repsource, pqDataRepresentation* rep, pqDataRepresentation* pointsRep,
   const std::string& filename, smtk::model::ManagerPtr mgr, pqSMTKModelInfo* modinfo)
 {
   this->MeshSource = meshsource;
   this->RepSource = repsource;
   this->FileName = filename;
   this->Representation = rep;
+  this->PointsRepresentation = pointsRep;
   this->Info = vtkSmartPointer<vtkPVSMTKMeshInformation>::New();
 
   // create block selection source proxy
@@ -83,30 +84,51 @@ void pqSMTKMeshInfo::init(
     {
     vtkSMProxy* modelRepProxy = modinfo->Representation->getProxy();
     vtkSMProxy* meshRepProxy = rep->getProxy();
+    vtkSMProxy* meshPointsRepProxy = (pointsRep ? pointsRep->getProxy() : NULL);
 
     this->PositionLink = vtkSmartPointer<vtkSMPropertyLink>::New();
     this->PositionLink->AddLinkedProperty(modelRepProxy, "Position",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
     this->PositionLink->AddLinkedProperty(meshRepProxy, "Position",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    if (meshPointsRepProxy)
+      {
+      this->PositionLink->AddLinkedProperty(meshPointsRepProxy, "Position",
+                                            vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+      }
 
     this->OrientationLink = vtkSmartPointer<vtkSMPropertyLink>::New();
     this->OrientationLink->AddLinkedProperty(modelRepProxy, "Orientation",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
     this->OrientationLink->AddLinkedProperty(meshRepProxy, "Orientation",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    if (meshPointsRepProxy)
+      {
+      this->OrientationLink->AddLinkedProperty(
+        meshPointsRepProxy, "Orientation", vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+      }
 
     this->ScaleLink = vtkSmartPointer<vtkSMPropertyLink>::New();
     this->ScaleLink->AddLinkedProperty(modelRepProxy, "Scale",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
     this->ScaleLink->AddLinkedProperty(meshRepProxy, "Scale",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    if (meshPointsRepProxy)
+      {
+      this->ScaleLink->AddLinkedProperty(meshPointsRepProxy, "Scale",
+                                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+      }
 
     this->OriginLink = vtkSmartPointer<vtkSMPropertyLink>::New();
     this->OriginLink->AddLinkedProperty(modelRepProxy, "Origin",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
     this->OriginLink->AddLinkedProperty(meshRepProxy, "Origin",
                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    if (meshPointsRepProxy)
+      {
+      this->OriginLink->AddLinkedProperty(meshPointsRepProxy, "Origin",
+                                          vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+      }
 
     }
 
@@ -148,6 +170,15 @@ void pqSMTKMeshInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
     proxy->UpdateVTKObjects();
     prop.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
     proxy->UpdateVTKObjects();
+    if (this->PointsRepresentation)
+      {
+      proxy = this->PointsRepresentation->getProxy();
+      vtkSMPropertyHelper prop_(proxy, "BlockVisibility");
+      prop_.SetNumberOfElements(0);
+      proxy->UpdateVTKObjects();
+      prop_.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
+      proxy->UpdateVTKObjects();
+      }
     }
 }
 
@@ -159,6 +190,7 @@ pqSMTKMeshInfo::pqSMTKMeshInfo(const pqSMTKMeshInfo& other)
   this->FileName = other.FileName;
   this->Info = other.Info;
   this->Representation = other.Representation;
+  this->PointsRepresentation = other.PointsRepresentation;
   this->BlockSelectionSource = other.BlockSelectionSource;
   this->CompositeDataIdSelectionSource = other.CompositeDataIdSelectionSource;
   this->ColorMode = other.ColorMode;

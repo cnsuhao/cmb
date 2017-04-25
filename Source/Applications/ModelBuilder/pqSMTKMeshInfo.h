@@ -42,7 +42,7 @@ class pqSMTKMeshInfo: public QObject
     ~pqSMTKMeshInfo() override;
     pqSMTKMeshInfo(const pqSMTKMeshInfo& other);
     void init(pqPipelineSource* meshSource, pqPipelineSource* repSource,
-      pqDataRepresentation*, const std::string& filename,
+      pqDataRepresentation*, pqDataRepresentation*, const std::string& filename,
       smtk::model::ManagerPtr, pqSMTKModelInfo* modinfo);
     void updateBlockInfo(smtk::model::ManagerPtr mgr);
     void clearLinks();
@@ -54,6 +54,7 @@ class pqSMTKMeshInfo: public QObject
     QPointer<pqPipelineSource> MeshSource;
     QPointer<pqPipelineSource> RepSource;
     QPointer<pqDataRepresentation> Representation;
+    QPointer<pqDataRepresentation> PointsRepresentation;
     std::string FileName;
     QString ColorMode;
     QPointer<pqSMTKModelInfo> ModelInfo;
