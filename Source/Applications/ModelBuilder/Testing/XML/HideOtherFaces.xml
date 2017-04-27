@@ -1,10 +1,14 @@
 <?xml version="1.0" ?>
-<pqevents>
+<pqevents>  
+  <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
+  <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionLock_View_Size" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/test2D.cmb" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.569796,0.347469,2,2,0)" />
-  <pqevent object="qtCMBMainWindow" command="contextMenu" arguments="" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.569796,0.347469,2,0,0)" />
-  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.569796,0.347469,2,0,0)" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.0.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.1.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.2.0" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.580925,0.393983,2,2,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.580925,0.393983,2,0,0)" />
+  <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.580925,0.393983,2,0,0)" />
   <pqevent object="PipelineContextMenu" command="activate" arguments="Hide Others" />
 </pqevents>
