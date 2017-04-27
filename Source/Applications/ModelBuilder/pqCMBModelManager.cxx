@@ -2371,7 +2371,6 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
       {
       remmodels.insert(mit.entity());
       }
-    // @David, I see you added this line 3/14/2017 to add close session support, May I ask why keep it in the loop?
     this->Internal->removeModelRepresentations(remmodels, view, pxy);
     // Signal the UI to remove the session from the model tree:
     emit sessionClosing(sref);

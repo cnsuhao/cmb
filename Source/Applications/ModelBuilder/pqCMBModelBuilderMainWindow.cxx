@@ -1002,6 +1002,11 @@ bool pqCMBModelBuilderMainWindow::onCloseSession()
   for (auto uid : uids)
     {
     smtk::model::EntityRef ent(mgr, uid);
+    if (ent.isSessionRef())
+    {
+      sref = ent;
+      break;
+    }
     if (ent.isValid() && (sref = ent.owningSession()).isValid())
       {
       break;
