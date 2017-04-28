@@ -38,13 +38,13 @@ namespace
   // Given the attributes serialized into contents, deserialize that
   // data into manager.
   void DeserializeSMTK(const char* contents,
-                       smtk::attribute::System& manager)
+                       smtk::attribute::SystemPtr manager)
   {
     smtk::io::AttributeReader xmlr;
     smtk::io::Logger logger;
     xmlr.readContents(manager, contents, logger);
     std::vector<smtk::attribute::DefinitionPtr> definitions;
-    manager.findBaseDefinitions(definitions);
+    manager->findBaseDefinitions(definitions);
   }
 }
 
@@ -81,12 +81,12 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
   // create the attributes from smtkContents
-  smtk::attribute::System simManager;
-  simManager.setRefModelManager(modelWrapper->GetModelManager());
+  auto simManager = smtk::attribute::System::create();
+  simManager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, simManager);
 
-  smtk::attribute::System exportManager;
-  exportManager.setRefModelManager(modelWrapper->GetModelManager());
+  auto exportManager = smtk::attribute::System::create();
+  exportManager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(exportContents, exportManager);
 
   this->Operate(modelWrapper->GetModelManager(), simManager, exportManager);
@@ -105,12 +105,12 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
   // all the ModelEntityItems have associated EntityRefs properly initialized.
   // create the attributes from smtkContents
   // create the attributes from smtkContents
-  smtk::attribute::System manager;
-  manager.setRefModelManager(modelWrapper->GetModelManager());
+  auto manager = smtk::attribute::System::create();
+  manager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, manager);
 
   // Create empty export manager
-  smtk::attribute::System exportManager;
+  auto exportManager = smtk::attribute::System::create();
   this->Operate(modelWrapper->GetModelManager(), manager, exportManager);
 }
 
@@ -128,8 +128,8 @@ template<class IN> std::string to_hex_address(IN* ptr)
 }
 
 void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
-                                smtk::attribute::System& manager,
-                                smtk::attribute::System& exportManager)
+                                smtk::attribute::SystemPtr manager,
+                                smtk::attribute::SystemPtr exportManager)
 {
 
 //  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");
@@ -144,11 +144,11 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
     return;
     }
 
-  manager.setRefModelManager(modelMgr);
-  exportManager.setRefModelManager(modelMgr);
+  manager->setRefModelManager(modelMgr);
+  exportManager->setRefModelManager(modelMgr);
 
 /*
-  smtk::attribute::AttributePtr att = manager.findAttribute("Material-0");
+  smtk::attribute::AttributePtr att = manager->findAttribute("Material-0");
   if(att)
   {
     smtk::model::EntityRefArray entarray = att->associatedModelEntities<smtk::model::EntityRefArray>();
@@ -157,11 +157,11 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   }
 
   std::ofstream manjson("/Users/yuminyuan/Downloads/hydrafiles/afterManModelManager.json");
-  manjson << smtk::io::SaveJSON::fromModelManager(manager.refModelManager());
+  manjson << smtk::io::SaveJSON::fromModelManager(manager->refModelManager());
   manjson.close();
 
   std::ofstream expjson("/Users/yuminyuan/Downloads/hydrafiles/afterExpModelManager.json");
-  expjson << smtk::io::SaveJSON::fromModelManager(exportManager.refModelManager());
+  expjson << smtk::io::SaveJSON::fromModelManager(exportManager->refModelManager());
   expjson.close();
 
 */
@@ -241,8 +241,8 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
 
   // Initialize ExportSpec object
   smtk::simulation::ExportSpec spec;
-  spec.setSimulationAttributes(&manager);
-  spec.setExportAttributes(&exportManager);
+  spec.setSimulationAttributes(manager);
+  spec.setExportAttributes(exportManager);
 //  spec.setAnalysisGridInfo(gridInfo);
 
   std::string runscript;

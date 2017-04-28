@@ -58,8 +58,8 @@ pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
-  this->m_AttSystem = smtk::attribute::SystemPtr(new smtk::attribute::System());
-  this->m_attUIManager = new smtk::extension::qtUIManager(*(this->m_AttSystem));
+  this->m_AttSystem = smtk::attribute::System::create();
+  this->m_attUIManager = new smtk::extension::qtUIManager(this->m_AttSystem);
   this->Internals = new pqSimBuilderUIManagerInternals;
   // switching active model would update all model views
   QObject::connect(&qtActiveObjects::instance(),SIGNAL(activeModelChanged()),

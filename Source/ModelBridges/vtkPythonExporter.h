@@ -43,8 +43,8 @@ public:
 
   // This method is for standalone & test apps
   virtual void Operate(smtk::model::ManagerPtr mgr,
-                       smtk::attribute::System& simulationAttributes,
-                       smtk::attribute::System& exportAttributes);
+                       smtk::attribute::SystemPtr simulationAttributes,
+                       smtk::attribute::SystemPtr exportAttributes);
 
   // Description:
   // Returns success (1) or failue (0) for Operation.

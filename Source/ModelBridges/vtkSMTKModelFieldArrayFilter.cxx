@@ -259,10 +259,8 @@ int vtkSMTKModelFieldArrayFilter::RequestData(
 
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
-  smtk::attribute::SystemPtr attsys =
-    smtk::attribute::SystemPtr(new smtk::attribute::System());
-  bool hasErrors = attributeReader.readContents(*attsys,
-    this->GetAttributeSystemContents(), logger);
+  smtk::attribute::SystemPtr attsys = smtk::attribute::System::create();
+  bool hasErrors = attributeReader.readContents(attsys, this->GetAttributeSystemContents(), logger);
   if(hasErrors)
     {
     std::cerr << logger.convertToString() << std::endl;

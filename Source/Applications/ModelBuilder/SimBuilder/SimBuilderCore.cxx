@@ -237,8 +237,8 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
   searchPaths.push_back(dirPath);
   xmlr.setSearchPaths(searchPaths);
   smtk::io::Logger logger;
-  bool errStatus = xmlr.readContents(*(this->uiManager()->attributeSystem()),
-                                     info->GetFileContents(), logger);
+  bool errStatus = xmlr.readContents(this->uiManager()->attributeSystem(),
+    info->GetFileContents(), logger);
 
   if(errStatus)
     {
@@ -253,7 +253,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
     vtkGenericWarningMacro("There is no TopLevel View in  " <<  info->GetFileName());
     return 0;
     }
-  
+
   //parse element, create GUI components
   this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget());
   if(!this->uiManager()->topView())
@@ -370,8 +370,8 @@ int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
     {
     // SimBuilderWriter xmlw;
     smtk::io::AttributeWriter xmlw;
-    errStatus = xmlw.writeContents( *(this->uiManager()->attributeSystem()),
-                                         filecontents, logger);
+    errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(),
+      filecontents, logger);
     }
 
   if(errStatus)
@@ -568,9 +568,8 @@ bool SimBuilderCore::setDefaultExportTemplate()
 {
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
-  smtk::attribute::SystemPtr system =
-    smtk::attribute::SystemPtr(new smtk::attribute::System());
-  bool hasErrors = attributeReader.readContents(*system,
+  smtk::attribute::SystemPtr system = smtk::attribute::System::create();
+  bool hasErrors = attributeReader.readContents(system,
     defaultExportTemplateString, logger);
   if (hasErrors)
     {
@@ -727,8 +726,7 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
     std::string simContents;
     smtk::io::AttributeWriter xmlw;
     smtk::io::Logger logger;
-    bool errStatus = xmlw.writeContents( *(this->uiManager()->attributeSystem()),
-                                         simContents, logger);
+    bool errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(), simContents, logger);
     if(errStatus)
       {
       QMessageBox::warning(NULL,
@@ -739,8 +737,7 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
       }
 
     std::string exportContents;
-    errStatus = xmlw.writeContents(*(this->ExportDialog->exportAttSystem()),
-                                   exportContents, logger);
+    errStatus = xmlw.writeContents(this->ExportDialog->exportAttSystem(), exportContents, logger);
     if(errStatus)
       {
       QMessageBox::warning(NULL,

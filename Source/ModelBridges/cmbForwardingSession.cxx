@@ -21,11 +21,10 @@
 cmbForwardingSession::cmbForwardingSession()
 {
   this->m_proxy = NULL;
-  // lets clear out the attribute so there are no
-  // prexesting operation definitions - the operators
-  // should come from what ever session we are actually using
-  delete this->m_operatorSys;
-  this->m_operatorSys = new smtk::attribute::System;
+  // Let's clear out the attribute system so there are no
+  // pre-existing operation definitions - the operators
+  // should come from what ever session we are actually using.
+  this->m_operatorSys = smtk::attribute::System::create();
 }
 
 cmbForwardingSession::~cmbForwardingSession()

@@ -286,7 +286,7 @@ void SimBuilderExportDialog::updatePanel()
   std::string serializedSystem;
   bool hasError;
   hasError =
-    attWriter.writeContents(*this->ExportAttSystem, serializedSystem, logger);
+    attWriter.writeContents(this->ExportAttSystem, serializedSystem, logger);
 
   // std::string filename("export.sbt");
   // hasError =
@@ -295,7 +295,7 @@ void SimBuilderExportDialog::updatePanel()
 
   // Reload into export panel
   smtk::io::AttributeReader attReader;
-  hasError = attReader.readContents(*(this->ExportUIManager->attributeSystem()),
+  hasError = attReader.readContents(this->ExportUIManager->attributeSystem(),
     serializedSystem, logger);
   if (hasError)
     {

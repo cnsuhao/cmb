@@ -1609,7 +1609,7 @@ void pqCMBModelManager::colorRepresentationByAttribute(
   xmlw.includeViews(false);
 
   smtk::io::Logger logger;
-  bool errStatus = xmlw.writeContents( *attsys, simContents, logger);
+  bool errStatus = xmlw.writeContents(attsys, simContents, logger);
   if(errStatus)
     {
     std::cerr << logger.convertToString() << std::endl;
