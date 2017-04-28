@@ -167,7 +167,8 @@ bool pqCMBContextMenuHelper::getValidMeshColor(QColor& color,
 bool pqCMBContextMenuHelper::validMeshColorMode(const QString& colorMode,
   const smtk::mesh::MeshSet& mesh)
 {
-  smtk::model::EntityRefArray meshEntRefs = mesh.modelEntities();
+  smtk::model::EntityRefArray meshEntRefs;
+  mesh.modelEntities(meshEntRefs);
   if(meshEntRefs.size() == 0)
     return false;
 
