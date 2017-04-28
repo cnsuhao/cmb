@@ -344,7 +344,7 @@ public:
   smtk::model::Model InternalSortExistingModels(smtk::model::Models& models)
   {
       std::sort(models.begin(), models.end(),
-                [](const smtk::model::Model &a, smtk::model::Model &b)
+                [](const smtk::model::Model& a,const smtk::model::Model& b)
       { return a.name() < b.name();});
       smtk::model::Model newActiveModel = models.size() ?
          models[0] : smtk::model::Model();
@@ -550,8 +550,6 @@ public:
             (!(*cit)->meshes().cells(smtk::mesh::Dims3).is_empty() ? 3 :
              !(*cit)->meshes().cells(smtk::mesh::Dims2).is_empty() ? 2 :
              !(*cit)->meshes().cells(smtk::mesh::Dims1).is_empty() ? 1 : 0);
-
-          std::cout<<"dimension: "<<dimension<<std::endl;
 
           if (dimension == 1)
             {
