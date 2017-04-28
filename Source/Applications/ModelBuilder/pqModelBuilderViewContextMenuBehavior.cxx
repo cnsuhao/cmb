@@ -406,10 +406,15 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(
     {
     smtk::mesh::CollectionPtr c = mesh.collection();
     if(!c->hasIntegerProperty(mesh, "block_index"))
+      {
       continue;
-    smtk::model::EntityRefArray meshEntRefs = mesh.modelEntities();
+      }
+    smtk::model::EntityRefArray meshEntRefs;
+    mesh.modelEntities(meshEntRefs);
     if(meshEntRefs.size() == 0)
+      {
       continue;
+      }
 
     smtk::model::EntityRef entref = meshEntRefs[0];
     QSet<unsigned int> blockIds;
@@ -428,8 +433,10 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(
         }
       }
     if(blockIds.size() > 0)
+      {
       this->syncBlockColor(rep,
         QList<unsigned int>::fromSet(blockIds), colorEntities[mesh]);
+      }
     }
 }
 
