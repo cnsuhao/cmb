@@ -620,7 +620,7 @@ std::string SimBuilderExportDialog::findPythonScriptPath(
   // Look for installed workflow directory
   QString appDirPath = QCoreApplication::applicationDirPath();
 #ifdef __APPLE__
-  QString workflowsPath = appDirPath + "/../../../../../Workflows";
+  QString workflowsPath = appDirPath + "/../../../../Workflows";
 #else
   QString workflowsPath = appDirPath + "/../share/cmb/workflows";
 #endif
