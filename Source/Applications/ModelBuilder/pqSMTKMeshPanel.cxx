@@ -196,14 +196,14 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
     smtk::io::AttributeWriter writer;
     std::string serializedAttributes;
 
-    writer.writeContents(*this->AttSystem, serializedAttributes, inputLogger);
+    writer.writeContents(this->AttSystem, serializedAttributes, inputLogger);
     this->cacheAtts(serializedAttributes);
     }
 
   //each time a new mesher is selected this needs to rebuild the UI
   this->ActiveModel = modelToDisplay;
   this->ActiveRequirements = reqs;
-  this->AttSystem.reset( new smtk::attribute::System() );
+  this->AttSystem = smtk::attribute::System::create();
   this->AttSystem->setRefModelManager( this->ModelManager->managerProxy()->modelManager() );
 
   smtk::io::AttributeReader reader;
@@ -212,17 +212,17 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   bool err = false;
   if (this->hasCachedAtts(reqs) )
     {
-    reader.readContents(*this->AttSystem, this->fetchCachedAtts(), inputLogger);
+    reader.readContents(this->AttSystem, this->fetchCachedAtts(), inputLogger);
     }
   else if(reqs.sourceType() == (remus::common::ContentSource::File) )
     { //the requirements are the file name so pass that to the attribute reader
     const std::string p(reqs.requirements(), reqs.requirementsSize());
-    err = reader.read(*this->AttSystem, p, true, inputLogger);
+    err = reader.read(this->AttSystem, p, true, inputLogger);
     }
   else
     { //the requirements are in memory xml contents
 
-    err = reader.readContents(*this->AttSystem,
+    err = reader.readContents(this->AttSystem,
                               reqs.requirements(),
                               reqs.requirementsSize(),
                               inputLogger);
@@ -230,7 +230,7 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
 
   smtk::common::ViewPtr root = this->AttSystem->findTopLevelView();
   const bool useInternalFileBrowser = true;
-  this->AttUIManager.reset( new smtk::extension::qtUIManager( *this->AttSystem));
+  this->AttUIManager.reset( new smtk::extension::qtUIManager(this->AttSystem));
                             this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(),
                                                             useInternalFileBrowser);
   QObject::connect(this->AttUIManager.get(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
@@ -265,7 +265,7 @@ bool pqSMTKMeshPanel::submitMeshJob()
   QCoreApplication::processEvents();
   this->MeshButton->repaint();
   //yes this returns false for being a valid, and true when an error occurs
-  bool serialized = !writer.writeContents(*this->AttSystem,
+  bool serialized = !writer.writeContents(this->AttSystem,
                                           serializedAttributes,
                                           inputLogger);
   if(!serialized)
