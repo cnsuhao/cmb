@@ -110,9 +110,13 @@ public:
     modelInfo->grp_annotations.clear();
     smtk::model::Groups modGroups =
       model.as<smtk::model::Model>().groups();
-    // if there are no groups at all in the model, just return
+
+    // If there are no groups at all in the model, just return
     if(modGroups.size() == 0)
+      {
       return;
+      }
+
     vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
       modelInfo->RepSource->getProxy());
     vtkSMPropertyHelper(smSource,"AddGroupArray").Set(0);
@@ -440,8 +444,12 @@ public:
     this->updateGeometryEntityAnnotations(model);
     this->updateEntityGroupFieldArrayAndAnnotations(model);
     this->resetColorTable(model);
-    modelInfo->Representation->renderViewEventually();
 
+    // Force a pipeline update also in the filter connected to ModelSource's
+    // output port.
+    modelInfo->RepSource->updatePipeline();
+
+    modelInfo->Representation->renderViewEventually();
   }
 
   void createMeshRepresentation(smtk::model::ManagerPtr manager,
