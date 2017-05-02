@@ -1418,7 +1418,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../Resources/Resources.qrc">
@@ -1428,7 +1428,7 @@
     <string>Select by Meshes</string>
    </property>
    <property name="toolTip">
-    <string>Select by meshes</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Select by meshes&lt;/span&gt;&lt;/p&gt;&lt;p&gt;You cannot filter by model and mesh entities at the same time. Be sure meshes are visible before starting selection.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </action>
   <action name="SelectByVolumes">

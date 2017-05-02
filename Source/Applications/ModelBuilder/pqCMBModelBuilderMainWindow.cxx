@@ -152,6 +152,8 @@ public:
   pqPropertyLinks LineResolutionLinks;
   pqCMBSceneTree* SceneGeoTree;
 
+  // cache toolBar_Selection status
+  std::vector<bool> toolBar_Selection;
   // Texture related
   QStringList TextureFiles;
   QPointer<QAction> ChangeTextureAction;
@@ -300,12 +302,12 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   this->MainWindowCore->setupMousePositionDisplay(this->statusBar());
   // add selection filter button into ModelBuilder
-  //this->getMainDialog()->toolBar_Selection->addAction(
-  //      this->getMainDialog()->SelectByModels);
-  //this->getMainDialog()->toolBar_Selection->addAction(
-  //      this->getMainDialog()->SelectByVolumes);
   this->getMainDialog()->toolBar_Selection->addAction(
         this->getMainDialog()->SelectByMeshes);
+  this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByModels);
+  this->getMainDialog()->toolBar_Selection->addAction(
+        this->getMainDialog()->SelectByVolumes);
   this->getMainDialog()->toolBar_Selection->addAction(
         this->getMainDialog()->SelectByFaces);
   this->getMainDialog()->toolBar_Selection->addAction(
@@ -314,15 +316,18 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
         this->getMainDialog()->SelectByVertices);
 
   // connect selection filter signals
-  //QObject::connect(this->getMainDialog()->SelectByModels, SIGNAL(toggled(bool)),
-  //                 this->getThisCore()->modelPanel()->selectionManager(),
-  //                 SLOT(filterModels(bool)));
-  //QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
-  //                 this->getThisCore()->modelPanel()->selectionManager(),
-  //                 SLOT(filterVolumes(bool)));
   QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
                    this->getThisCore()->modelPanel()->selectionManager(),
                    SLOT(filterMeshes(bool)));
+  QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
+                   this,
+                   SLOT(updateToolBar_Selection(bool)));
+  QObject::connect(this->getMainDialog()->SelectByModels, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterModels(bool)));
+  QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
+                   this->getThisCore()->modelPanel()->selectionManager(),
+                   SLOT(filterVolumes(bool)));
   QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
                    this->getThisCore()->modelPanel()->selectionManager(),
                    SLOT(filterFaces(bool)));
@@ -1590,4 +1595,35 @@ void pqCMBModelBuilderMainWindow::filterDisplayPanel()
       pxyWidgets[0]->filterWidgets(searchBox->isAdvancedSearchActive(), searchBox->text());
       }
     }
+}
+
+void pqCMBModelBuilderMainWindow::updateToolBar_Selection(bool checked)
+{
+  if (checked)
+  { // cache the toolBar_Selection status
+    this->Internal->toolBar_Selection.push_back(this->getMainDialog()->SelectByModels->isChecked());
+    this->Internal->toolBar_Selection.push_back(this->getMainDialog()->SelectByVolumes->isChecked());
+    this->Internal->toolBar_Selection.push_back(this->getMainDialog()->SelectByFaces->isChecked());
+    this->Internal->toolBar_Selection.push_back(this->getMainDialog()->SelectByEdges->isChecked());
+    this->Internal->toolBar_Selection.push_back(this->getMainDialog()->SelectByVertices->isChecked());
+    // reset all to false since selection by entity would do nothing
+    this->getMainDialog()->SelectByModels->setChecked(false);
+    this->getMainDialog()->SelectByVolumes->setChecked(false);
+    this->getMainDialog()->SelectByFaces->setChecked(false);
+    this->getMainDialog()->SelectByEdges->setChecked(false);
+    this->getMainDialog()->SelectByVertices->setChecked(false);
+  }
+  else
+  { // reset to initial state
+    if (this->Internal->toolBar_Selection.size() == 5)
+    {
+      this->getMainDialog()->SelectByModels->setChecked(this->Internal->toolBar_Selection[0]);
+      this->getMainDialog()->SelectByVolumes->setChecked(this->Internal->toolBar_Selection[1]);
+      this->getMainDialog()->SelectByFaces->setChecked(this->Internal->toolBar_Selection[2]);
+      this->getMainDialog()->SelectByEdges->setChecked(this->Internal->toolBar_Selection[3]);
+      this->getMainDialog()->SelectByVertices->setChecked(this->Internal->toolBar_Selection[4]);
+      this->Internal->toolBar_Selection.clear();
+    }
+  }
+
 }
