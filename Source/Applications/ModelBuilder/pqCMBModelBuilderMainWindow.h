@@ -73,6 +73,9 @@ protected slots:
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
   void filterDisplayPanel();
+  // Description:
+  // slots for update toobar_selection from mesh togglability
+  void updateToolBar_Selection(bool checked);
 
   // Description:
   // Slots for smtk related signals.
