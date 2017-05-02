@@ -44,8 +44,7 @@ public:
   /**
   * constructor
   */
-  pqSMTKInfoPanel(
-    QPointer<pqCMBModelManager> mmgr, smtk::extension::qtSelectionManager* smgr, QWidget* p = 0);
+  pqSMTKInfoPanel(QPointer<pqCMBModelManager> mmgr, QWidget* p = 0);
   /**
   * destructor
   */
@@ -74,7 +73,8 @@ public slots:
 
 protected slots:
   void onCurrentItemChanged(QTreeWidgetItem* item);
-  void onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&);
+  void onSelectionChangedUpdateInfoPanel(
+    const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&);
 
 private:
   /**
@@ -88,7 +88,6 @@ private:
 private:
   QPointer<pqCMBModelManager> ModelManager;
   QPointer<pqOutputPort> OutputPort;
-  smtk::extension::qtSelectionManager* SelectionManager;
   vtkEventQtSlotConnect* VTKConnect;
   class pqUi;
   pqUi* Ui;

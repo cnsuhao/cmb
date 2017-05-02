@@ -338,12 +338,16 @@ bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
     finalBBox.push_back(tmp);
   }
 
-  smtk::extension::qtSelectionManager* selManager = this->modelPanel()->selectionManager();
+  smtk::extension::qtSelectionManagerPtr selManager =
+    qtActiveObjects::instance().smtkSelectionManager();
   smtk::model::ManagerPtr modelMgr = this->modelManager()->managerProxy()->modelManager();
   smtk::common::UUIDs selEntities;
   smtk::mesh::MeshSets selMeshSets;
-  selManager->getSelectedEntities(selEntities);
-  selManager->getSelectedMeshes(selMeshSets);
+  if (selManager)
+  {
+    selManager->getSelectedEntities(selEntities);
+    selManager->getSelectedMeshes(selMeshSets);
+  }
 
   // loop through seleced entities get bounding Box
   for (smtk::common::UUIDs::iterator selEnt = selEntities.begin(); selEnt != selEntities.end();
@@ -528,8 +532,11 @@ void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(pqDataRepresentatio
 void pqCMBModelBuilderMainWindowCore::modelManagerChanged()
 {
   this->meshPanel()->updateModel(this->Internal->smtkModelManager, this->meshServiceMonitor());
-  this->smtkSelectionManager()->setModelManager(
-    this->Internal->smtkModelManager->managerProxy()->modelManager());
+  if (this->smtkSelectionManager())
+  {
+    this->smtkSelectionManager()->setModelManager(
+      this->Internal->smtkModelManager->managerProxy()->modelManager());
+  }
 }
 
 SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
@@ -1043,8 +1050,11 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
 
   delete this->Internal->smtkModelManager;
   this->Internal->smtkModelManager = new pqCMBModelManager(this->getActiveServer());
-  this->smtkSelectionManager()->setModelManager(
-    this->Internal->smtkModelManager->managerProxy()->modelManager());
+  if (this->smtkSelectionManager())
+  {
+    this->smtkSelectionManager()->setModelManager(
+      this->Internal->smtkModelManager->managerProxy()->modelManager());
+  }
 
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(
@@ -1576,8 +1586,8 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if (!this->Internal->ModelDock)
   {
-    this->Internal->ModelDock = new pqSMTKModelPanel(
-      this->Internal->smtkModelManager, this->parentWidget(), this->smtkSelectionManager());
+    this->Internal->ModelDock =
+      new pqSMTKModelPanel(this->Internal->smtkModelManager, this->parentWidget());
     this->Internal->ViewContextBehavior->setModelPanel(this->Internal->ModelDock);
     if (this->Internal->SimBuilder)
     {
@@ -1605,8 +1615,8 @@ pqSMTKInfoPanel* pqCMBModelBuilderMainWindowCore::infoPanel()
 {
   if (!this->Internal->InfoDock)
   {
-    this->Internal->InfoDock = new pqSMTKInfoPanel(
-      this->Internal->smtkModelManager, this->smtkSelectionManager(), this->parentWidget());
+    this->Internal->InfoDock =
+      new pqSMTKInfoPanel(this->Internal->smtkModelManager, this->parentWidget());
   }
   return this->Internal->InfoDock;
 }

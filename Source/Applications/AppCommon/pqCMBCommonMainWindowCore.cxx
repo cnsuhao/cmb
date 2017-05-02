@@ -344,16 +344,17 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget)
   core->testUtility()->eventPlayer()->addWidgetEventPlayer(
     new pqCMBFileDialogEventPlayer(core->testUtility()));
 
-  this->qtSelectionMgr = new smtk::extension::qtSelectionManager();
-  QObject::connect(&qtActiveObjects::instance(), SIGNAL(activeModelChanged()), this->qtSelectionMgr,
-    SLOT(clearAllSelections()));
+  this->qtSelectionMgr = std::make_shared<smtk::extension::qtSelectionManager>();
+  QObject::connect(&qtActiveObjects::instance(), SIGNAL(activeModelChanged()),
+    this->qtSelectionMgr.get(), SLOT(clearAllSelections()));
+
+  qtActiveObjects::instance().setSmtkSelectionManager(this->qtSelectionMgr);
 }
 
 pqCMBCommonMainWindowCore::~pqCMBCommonMainWindowCore()
 {
   pqActiveObjects::instance().setActiveView(NULL);
   delete Internal;
-  delete this->qtSelectionMgr;
 }
 
 QWidget* pqCMBCommonMainWindowCore::parentWidget() const
@@ -413,7 +414,7 @@ pqSelectionManager* pqCMBCommonMainWindowCore::pvSelectionManager()
   return pqPVApplicationCore::instance()->selectionManager();
 }
 
-smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::smtkSelectionManager() const
+smtk::extension::qtSelectionManagerPtr pqCMBCommonMainWindowCore::smtkSelectionManager() const
 {
   return this->qtSelectionMgr;
 }

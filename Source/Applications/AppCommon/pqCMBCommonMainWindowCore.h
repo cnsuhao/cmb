@@ -17,12 +17,14 @@
 #include "pqVariableType.h"
 #include "qtCMBProjectServerManager.h"
 
+#include <smtk/SharedPtr.h>
 #include <vtkIOStream.h>
 
 #include <QList>
 #include <QObject>
 #include <QPointer>
 #include <QWidget>
+#include <memory>
 
 #include <string>
 
@@ -75,6 +77,7 @@ namespace smtk
 namespace extension
 {
 class qtSelectionManager;
+typedef smtk::shared_ptr<smtk::extension::qtSelectionManager> qtSelectionManagerPtr;
 }
 }
 
@@ -95,7 +98,7 @@ public:
 
   /// Returns the qtSelectionManager which handles selection between smtk
   // and CMB
-  smtk::extension::qtSelectionManager* smtkSelectionManager() const;
+  smtk::extension::qtSelectionManagerPtr smtkSelectionManager() const;
 
   /// Returns the selection and pick helper used for 3D views.
   pqCMBRubberBandHelper* renderViewSelectionHelper() const;
@@ -412,7 +415,7 @@ protected:
   bool eventFilter(QObject* caller, QEvent* e) override;
 
   qtCMBProjectServerManager::PROGRAM ProgramKey;
-  smtk::extension::qtSelectionManager* qtSelectionMgr;
+  smtk::extension::qtSelectionManagerPtr qtSelectionMgr;
 
 private:
   class vtkInternal;

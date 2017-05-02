@@ -36,7 +36,6 @@ class qtFileItem;
 class qtMeshSelectionItem;
 class qtModelEntityItem;
 class qtModelView;
-class qtSelectionManager;
 enum class SelectionModifier;
 }
 }
@@ -45,12 +44,12 @@ class pqSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  pqSMTKModelPanel(
-    pqCMBModelManager* mmgr, QWidget* p, smtk::extension::qtSelectionManager* qtSelMgr);
+  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
   ~pqSMTKModelPanel() override;
 
   pqCMBModelManager* modelManager();
   smtk::extension::qtModelView* modelView();
+  virtual std::string selectionSourceName() { return this->m_selectionSourceName; }
 
   void setBlockVisibility(const smtk::common::UUID& sessionid, const smtk::common::UUIDs& entids,
     const smtk::mesh::MeshSets& meshes, bool visible);
@@ -62,12 +61,12 @@ public:
   void setCurrentMeshSelectionItem(smtk::extension::qtMeshSelectionItem* meshItem);
   void startMeshSelectionOperation(const QList<pqOutputPort*>&);
   void resetMeshSelectionItems();
-  smtk::extension::qtSelectionManager* selectionManager() const;
 
 signals:
   void sendSelectionsFromRenderWindowToSelectionManager(const smtk::model::EntityRefs& selEntities,
     const smtk::mesh::MeshSets& selMeshes, const smtk::model::DescriptivePhrases& DesPhrases,
-    const smtk::extension::SelectionModifier modifierFlag, const smtk::model::StringList skipList);
+    const smtk::extension::SelectionModifier modifierFlag,
+    const std::string& incomingSelectionSource);
 
 public slots:
   /// Called if the user accepts pending modifications
@@ -81,10 +80,9 @@ public slots:
   bool removeClosedSession(const smtk::model::SessionRef& sref);
 
 protected slots:
-  void onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-    const smtk::model::DescriptivePhrases&);
-  void onSelectionChanged(const smtk::common::UUIDs&, const smtk::mesh::MeshSets&,
-    const smtk::model::DescriptivePhrases&);
+  void onSelectionChangedUpdateRenderView(const smtk::model::EntityRefs& selEntites,
+    const smtk::mesh::MeshSets& selMeshes, const smtk::model::DescriptivePhrases& DesPhrases,
+    const std::string& incomingSelectionSource);
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void selectMeshRepresentations(const smtk::mesh::MeshSets&);
   void onFileItemCreated(smtk::extension::qtFileItem* fileItem);
@@ -98,4 +96,5 @@ protected slots:
 private:
   class qInternal;
   qInternal* Internal;
+  std::string m_selectionSourceName;
 };

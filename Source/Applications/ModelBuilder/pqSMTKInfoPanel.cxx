@@ -52,6 +52,7 @@
 #include "pqCMBModelManager.h"
 
 // SMTK includes
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/mesh/Collection.h"
 #include "smtk/mesh/DimensionTypes.h"
@@ -67,12 +68,10 @@ public:
   }
 };
 
-pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
-  smtk::extension::qtSelectionManager* sManager, QWidget* p)
+pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager, QWidget* p)
   : QWidget(p)
   , ModelManager(modelManager)
   , OutputPort(NULL)
-  , SelectionManager(sManager)
 {
   this->VTKConnect = vtkEventQtSlotConnect::New();
   this->Ui = new pqUi(this);
@@ -85,10 +84,11 @@ pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
   this->connect(&pqActiveObjects::instance(), SIGNAL(portChanged(pqOutputPort*)), this,
     SLOT(setOutputPort(pqOutputPort*)));
 
-  QObject::connect(this->SelectionManager,
-    SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-      const smtk::model::DescriptivePhrases&)),
-    this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&)));
+  QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
+    SIGNAL(broadcastToReceivers(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+      const smtk::model::DescriptivePhrases&, const std::string&)),
+    this, SLOT(onSelectionChangedUpdateInfoPanel(
+            const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&)));
 }
 
 pqSMTKInfoPanel::~pqSMTKInfoPanel()
@@ -543,7 +543,8 @@ public:
 };
 }
 
-void pqSMTKInfoPanel::onSelectionChanged(
+//-----------------------------------------------------------------------------
+void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(
   const smtk::model::EntityRefs& erefs, const smtk::mesh::MeshSets& meshes)
 {
   (void)erefs;
