@@ -123,7 +123,7 @@ inline void process_smtkModelEntityItemSelectionRequest(
     entityItem->associateEntities(selentityrefs);
 }
 
-/// Fetch children for volum and group entities.
+/// Fetch children for volume and group entities.
 inline bool containsGroup(const smtk::common::UUID& grpId, const smtk::model::EntityRef& toplevel)
 {
   if (toplevel.isGroup())
