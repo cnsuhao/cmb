@@ -13,6 +13,8 @@ import smtk
 
 # Common data structures & functions
 ConfigData = type('ConfigData', (object,), dict())
+
+
 def standard_section(attribute_type, title=None, group_name=None, comment=None):
     config = ConfigData()
     config.type = 'standard'
@@ -22,6 +24,8 @@ def standard_section(attribute_type, title=None, group_name=None, comment=None):
     config.comment = comment
     return config
 ss = standard_section  # shorthand
+
+
 def boundary_condition_section(attribute_type, title=None):
     config = ConfigData()
     config.type = 'boundary_condition'
@@ -29,11 +33,15 @@ def boundary_condition_section(attribute_type, title=None):
     config.title = title
     return config
 bc = boundary_condition_section
+
+
 def custom_section(section_name):
     config = ConfigData()
     config.type = 'custom'
     config.section_name = section_name
     return config
+
+
 def item_format(item_name, keyword=None, item_format_list=None):
     config = ConfigData()
     config.name = item_name
@@ -41,6 +49,8 @@ def item_format(item_name, keyword=None, item_format_list=None):
     config.item_format_list = item_format_list  # conditional children
     return config
 fmt = item_format  # shorthand
+
+
 def group_format(group_name, item_format_list):
     config = ConfigData()
     config.group_name = group_name
@@ -67,20 +77,23 @@ section_table = [
     custom_section('output'),
     ss('energy'),
     custom_section('turbulence'),
-    ss('Material', 'material', comment='Material model setup & assignment to sets'),
-    # TODO materialset, probably a custom_section (or part of a custom Material section)
+    ss('Material', 'material',
+       comment='Material model setup & assignment to sets'),
+    # TODO materialset, probably a custom_section (or part of a custom
+    # Material section)
     custom_section('plotvar'),
     custom_section('histvar'),
     custom_section('plotstatvar'),
-    #ss('InitialConditions', 'initial', 'InitialConditions', comment='Simple IC\'s'),
+    # ss('InitialConditions', 'initial', 'InitialConditions', comment='Simple
+    # IC\'s'),
     custom_section('InitialConditions'),
     custom_section('BodyForce'),
     bc('distancebc', 'distance'),
     bc('Pressure', 'pressure'),
-    #custom_section('distance'),  # Wall and Penetration att types
+    # custom_section('distance'),  # Wall and Penetration att types
     bc('TurbulentViscosity', 'turbnu'),
     custom_section('velocity'),  # 6 different att types
-    #vector_bc('velocity', [
+    # vector_bc('velocity', [
     #        ('VelXBoundaryCondition', 'velx'),
     #        ('VelYBoundaryCondition', 'vely'),
     #        ('VelZBoundaryCondition', 'velz'),
@@ -110,7 +123,7 @@ format_table = {
     ],
     'solution_method': [
         fmt('strategy', 'strategy', [
-                fmt('error_norm'),
+            fmt('error_norm'),
                 fmt('nvec')]
             ),
         fmt('itmax'),
@@ -233,8 +246,8 @@ def ExportCMB(spec):
     manager = spec.getSimulationAttributes()
     export_manager = spec.getExportAttributes()
     modelmgr = manager.refModelManager()
-    #analysis_name = spec.getAnalysisNames()[0]  # deprecated
-    #output_file_name = spec.getOutputPath()     # deprecated
+    # analysis_name = spec.getAnalysisNames()[0]  # deprecated
+    # output_file_name = spec.getOutputPath()     # deprecated
 
     ok = True
 
@@ -293,8 +306,8 @@ def ExportCMB(spec):
     print 'categories', categories
     if not categories:
         print 'WARMING: No categories found for analysis \"%s\"' % \
-          analysis_type
-        #return False
+            analysis_type
+        # return False
 
     # Instantiate output file and write contents
     with open(output_file_name, 'w') as out:
@@ -321,6 +334,7 @@ def ExportCMB(spec):
     print 'Export ok status: %s' % ok
     return ok
 
+
 def get_id_from_name(name):
     '''
     A hack by acbauer to get the sideset or cell block id from
@@ -335,10 +349,11 @@ def get_id_from_name(name):
         return name[l:]
 
     tokens = name.split()
-    if tokens: # checks if tokens is empty
+    if tokens:  # checks if tokens is empty
         return tokens[-1]
 
     return "BAD_VALUE"
+
 
 def write_output_section(manager, categories, out):
     '''
@@ -350,13 +365,19 @@ def write_output_section(manager, categories, out):
     # This is awkward - must put keyword as last item in the list, instead
     # of Item name, because format_table[] is set up that way
     # TODO Redo format table to put Item name first?
-    write_item(manager, categories, out, 'Output', 'FieldOutput', 'type')  # pltype
-    #write_item(manager, categories, out, 'Output', 'RestartOutput', 'type')  # filetype
+    write_item(manager, categories, out,
+               'Output', 'FieldOutput', 'type')  # pltype
+    # write_item(manager, categories, out, 'Output', 'RestartOutput', 'type')
+    # filetype
     write_item(manager, categories, out, 'Output', 'type')  # filetype
-    write_item(manager, categories, out, 'Output', 'FieldOutput', 'frequency')  # plti
-    write_item(manager, categories, out, 'StatusInformation', 'minmaxfrequency')  # ttyi
-    write_item(manager, categories, out, 'StatusInformation', 'PrintLevel')  # prtlev
-    write_item(manager, categories, out, 'Output', 'RestartOutput', 'frequency')  # dump
+    write_item(manager, categories, out,
+               'Output', 'FieldOutput', 'frequency')  # plti
+    write_item(manager, categories, out,
+               'StatusInformation', 'minmaxfrequency')  # ttyi
+    write_item(manager, categories, out,
+               'StatusInformation', 'PrintLevel')  # prtlev
+    write_item(manager, categories, out, 'Output',
+               'RestartOutput', 'frequency')  # dump
     return True
 
 
@@ -375,7 +396,8 @@ def write_turbulence_section(manager, categories, out):
         print 'WARNING: No format info for', att_type
         return False
 
-    attribute = turb_att_list[0] # there should only be a single instance of this attribute
+    attribute = turb_att_list[
+        0]  # there should only be a single instance of this attribute
 
     if not attribute.isMemberOf(categories):
         return True
@@ -399,7 +421,8 @@ def write_turbulence_section(manager, categories, out):
                 if item is None:
                     continue
 
-                write_item_tree(item, item_config, format_string, out, indent='  ')
+                write_item_tree(item, item_config,
+                                format_string, out, indent='  ')
                 out.write('  end\n')
     else:
         out.write('  tmodel %s\n' % item.value(0))
@@ -414,7 +437,7 @@ def write_plotvar_section(manager, categories, out, name):
     config = {
         'plotvar': ('NodePlotVarOutput', 'ElemPlotVarOutput', 'SideSetPlotVarOutput'),
         'plotstatvar': ('NodeTempStatVarOutput', 'ElemTempStatVarOutput', 'SideSetTempStatVarOutput'),
-        }
+    }
 
     node_att_list = manager.findAttributes(config[name][0])
     elem_att_list = manager.findAttributes(config[name][1])
@@ -432,14 +455,14 @@ def write_plotvar_section(manager, categories, out, name):
         for i in range(len(itemlabels)):
             item = var_groupitem.item(i)
             var_item = smtk.attribute.to_concrete(item)
-            out.write('    %s %s\n' % (itemlabels[i],var_item.value(0)) )
+            out.write('    %s %s\n' % (itemlabels[i], var_item.value(0)))
         out.write('  end\n')
 
     out.write('\n')
     out.write('  %s\n' % name)
 
-    types = [ 'node', 'elem']
-    lists = [ node_att_list, elem_att_list]
+    types = ['node', 'elem']
+    lists = [node_att_list, elem_att_list]
     # Create list of (type, varname) tuples
     ne_tlist = list()
     for i in range(len(lists)):
@@ -462,11 +485,12 @@ def write_plotvar_section(manager, categories, out, name):
         var_item = smtk.attribute.to_concrete(item)
         entities = att.associatedEntities()
         for entity in entities:
-            #out.write('    block %s\n' % get_id_from_name(entity.name()))
+            # out.write('    block %s\n' % get_id_from_name(entity.name()))
             etyp = entity.stringProperty('exodus type')
             if len(etyp) > 0 and etyp[0] == 'side set':
-              t = ('side ', entity.integer_property('exodus id')[0], var_item.value(0))
-              ss_tlist.append(t)
+                t = ('side ', entity.integer_property(
+                    'exodus id')[0], var_item.value(0))
+                ss_tlist.append(t)
 
     ss_tlist.sort()
 
@@ -475,6 +499,7 @@ def write_plotvar_section(manager, categories, out, name):
 
     out.write('  end\n')
     return True
+
 
 def write_histvar_section(manager, categories, out):
     '''
@@ -489,8 +514,8 @@ def write_histvar_section(manager, categories, out):
     out.write('\n')
     out.write('  histvar\n')
 
-    types = [ 'node', 'elem']
-    lists = [ node_att_list, elem_att_list]
+    types = ['node', 'elem']
+    lists = [node_att_list, elem_att_list]
 
     # Create list of (type, varname) tuples
     ne_tlist = list()
@@ -515,11 +540,12 @@ def write_histvar_section(manager, categories, out):
         var_item = smtk.attribute.to_concrete(item)
         entities = att.associatedEntities()
         for entity in entities:
-            #out.write('    block %s\n' % get_id_from_name(entity.name()))
+            # out.write('    block %s\n' % get_id_from_name(entity.name()))
             etyp = entity.stringProperty('exodus type')
             if len(etyp) > 0 and etyp[0] == 'side set':
-              t = ('side ', entity.integer_property('exodus id')[0], var_item.value(0))
-              ss_tlist.append(t)
+                t = ('side ', entity.integer_property(
+                    'exodus id')[0], var_item.value(0))
+                ss_tlist.append(t)
 
     ss_tlist.sort()
 
@@ -528,6 +554,7 @@ def write_histvar_section(manager, categories, out):
 
     out.write('  end\n')
     return True
+
 
 def write_bc_section(manager, section_config, categories, out):
     '''
@@ -546,11 +573,12 @@ def write_bc_section(manager, section_config, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_arr = [smtk.model.Cursor(modelmgr,x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr, x)
+                   for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number (is this a UserData thing?)
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
-              continue
+                continue
             sideset = ent.integerProperty('exodus id')[0]
 
             item = att.find('LoadCurve')
@@ -585,21 +613,23 @@ def write_distance_section(manager, categories, out):
         if not att.isMemberOf(categories):
             continue
 
-        ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr, x)
+                   for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
-              continue
+                continue
             sideset = ent.integerProperty('exodus id')
             out.write('    sideset %s -1 0.0\n' % sideset)
 
     # Then write penetration atts
     for att in plist:
-        ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
+        ent_arr = [smtk.model.Cursor(modelmgr, x)
+                   for x in att.associatedModelEntityIds()]
         # TODO sort by sideset number
         for ent in ent_arr:
             if not ent.hasIntegerProperty('exodus id'):
-              continue
+                continue
             sideset = ent.integerProperty('exodus id')
 
             item = att.find('LoadCurve')
@@ -645,10 +675,11 @@ def write_vector_bc_section(manager, config, categories, out):
             if not att.isMemberOf(categories):
                 continue
 
-            ent_arr = [smtk.model.Cursor(modelmgr, x) for x in att.associatedModelEntityIds()]
+            ent_arr = [smtk.model.Cursor(modelmgr, x)
+                       for x in att.associatedModelEntityIds()]
             for ent in ent_arr:
                 if not ent.hasIntegerProperty('exodus id'):
-                  continue
+                    continue
                 sideset = ent.integerProperty('exodus id')[0]
                 ent_att_list = bc_dict.get(sideset)
                 if ent_att_list is None:
@@ -683,8 +714,8 @@ def write_vector_bc_section(manager, config, categories, out):
             item = att.find('Scale')
             double_item = smtk.attribute.to_concrete(item)
             scale = get_item_value(double_item)
-            out.write('    %s sideset %s %d %s\n' % \
-                (label, sideset, lcid, scale))
+            out.write('    %s sideset %s %d %s\n' %
+                      (label, sideset, lcid, scale))
 
     out.write('  end\n')
     return True
@@ -727,7 +758,7 @@ def write_initial_conditions_section(manager, categories, out):
     for item_config in format_list:
         item = group_item.find(item_config.name)
         if item is None:
-            #print 'WARNING: No %s item found' % item_config.name
+            # print 'WARNING: No %s item found' % item_config.name
             continue
 
         if not item.isMemberOf(categories):
@@ -756,12 +787,14 @@ def write_initial_conditions_section(manager, categories, out):
     out.write('  end\n')
     return True
 
+
 def write_body_force_section(manager, categories, out):
     '''
     Write the body_force, boussinesqforce and porous_drag section
     of the cntl file.
     '''
-    att_types = ['GravityForce', 'BoussinesqForce', 'porous_drag', 'HeatSource']
+    att_types = [
+        'GravityForce', 'BoussinesqForce', 'porous_drag', 'HeatSource']
     model = None  # if needed for un-associated attributes
     domain_sets = None  # ditto (only created if needed)
     for att_type in att_types:
@@ -787,9 +820,9 @@ def write_body_force_section(manager, categories, out):
                         (unassociated_att.name(), att.name())
                     print msg
             elif model is None:
-              # Retrieve set of all model domain sets
-              model = att.associatedEntities().pop().owningModel()
-              domain_sets = get_domain_sets(model)
+                # Retrieve set of all model domain sets
+                model = att.associatedEntities().pop().owningModel()
+                domain_sets = get_domain_sets(model)
 
         # Traverse again to actually write the output.
         # Keep track of which domains get output.
@@ -819,10 +852,10 @@ def write_body_force(att, entity, out):
     '''Writes body force for one attribute-entity pair.
 
     '''
-    #print 'Writing', att.type(), 'for', entity.name()
-    att_keywords = {'GravityForce' : ['fx', 'fy', 'fz'],
-                     'BoussinesqForce' : ['gx', 'gy', 'gz'],
-                     'porous_drag' : ['amp'], 'HeatSource' : ['Q'] }
+    # print 'Writing', att.type(), 'for', entity.name()
+    att_keywords = {'GravityForce': ['fx', 'fy', 'fz'],
+                    'BoussinesqForce': ['gx', 'gy', 'gz'],
+                    'porous_drag': ['amp'], 'HeatSource': ['Q']}
     att_type = att.type()
     out.write('\n')
     out.write('  %s\n' % att_type)
@@ -841,7 +874,6 @@ def write_body_force(att, entity, out):
         value = double_item.value(i)
         out.write('    %s %f\n' % (keyword, value))
     out.write('  end\n')
-
 
 
 def write_item(manager, categories, out, attribute_type, *item_names):
@@ -904,9 +936,8 @@ def write_item_tree(item, item_config, format_string, out, indent=None):
             write_item_tree(subitem, subitem_config, format_string, out)
 
 
-
-materialCounter = 1 # acbauer -- global counter for materials
-materialSetCounter = 1 # acbauer -- global counter for material sets
+materialCounter = 1  # acbauer -- global counter for materials
+materialSetCounter = 1  # acbauer -- global counter for material sets
 
 
 def write_section(manager, section_config, categories, out):
@@ -940,7 +971,6 @@ def write_section(manager, section_config, categories, out):
 
     elif section_config.type == 'boundary_condition':
         return write_bc_section(manager, section_config, categories, out)
-
 
     att_list = manager.findAttributes(section_config.attribute_type)
     if not att_list:
@@ -1008,11 +1038,12 @@ def write_section(manager, section_config, categories, out):
         global materialSetCounter
         out.write('\n  materialset\n')
         out.write('    id %i\n' % materialSetCounter)
-        materialSetCounter = materialSetCounter+1
+        materialSetCounter = materialSetCounter + 1
         out.write('    material %i\n' % att.materialId)
         entities = att.associatedEntities()
         for entity in entities:
-            out.write('    block %s\n' % entity.integerProperty('exodus id')[0])
+            out.write('    block %s\n' %
+                      entity.integerProperty('exodus id')[0])
         out.write('  end\n')
 
     return True
@@ -1059,13 +1090,13 @@ def find_item_config(attribute_type, *item_names):
     '''
     Finds and returns Item config from format_table
     '''
-    #print 'attribute_type', attribute_type, 'item_names', item_names
+    # print 'attribute_type', attribute_type, 'item_names', item_names
 
     config_list = format_table.get(attribute_type)
     if config_list is None:
         return None
 
-    #print 'config_list', config_list
+    # print 'config_list', config_list
 
     # Traverse item_names in sequence
     matching_config = None
@@ -1073,7 +1104,7 @@ def find_item_config(attribute_type, *item_names):
         # Traverse format_table[] for current item_name
         matching_config = None
         for config in config_list:
-            #print 'config', config.__dict__
+            # print 'config', config.__dict__
             if config.name == item_name:
                 matching_config = config
                 break
@@ -1134,7 +1165,7 @@ def write_load_curves(manager, out):
 
     '''
     # Sort by id (dictionary value)
-    lc_tuples = sorted(lcid_dictionary.items(), key=lambda t:t[1])
+    lc_tuples = sorted(lcid_dictionary.items(), key=lambda t: t[1])
     for name, lcid in lc_tuples:
         att = manager.findAttribute(name)
         out.write('\n')
@@ -1150,6 +1181,7 @@ def write_load_curves(manager, out):
         val_item = smtk.attribute.DoubleItem.CastTo(val_item)
         num_vals = x_item.numberOfValues()
         for i in range(num_vals):
-          out.write('      %.10e %.10e\n' % (x_item.value(i), val_item.value(i)))
+            out.write('      %.10e %.10e\n' %
+                      (x_item.value(i), val_item.value(i)))
 
         out.write('  end\n')
