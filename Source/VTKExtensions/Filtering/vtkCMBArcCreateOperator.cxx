@@ -23,18 +23,15 @@
 
 vtkStandardNewMacro(vtkCMBArcCreateOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcCreateOperator::vtkCMBArcCreateOperator()
 {
   this->CreatedArcId = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcCreateOperator::~vtkCMBArcCreateOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcCreateOperator::Operate(vtkPolyData* source)
 {
   if (source == NULL)
@@ -98,7 +95,6 @@ bool vtkCMBArcCreateOperator::Operate(vtkPolyData* source)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcCreateOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

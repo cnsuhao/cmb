@@ -15,7 +15,6 @@
 #include <QProgressBar>
 #include <QToolButton>
 
-//-----------------------------------------------------------------------------
 qtCMBProgressWidget::qtCMBProgressWidget(QWidget* _parent /*=0*/)
   : QWidget(_parent)
 {
@@ -46,21 +45,18 @@ qtCMBProgressWidget::qtCMBProgressWidget(QWidget* _parent /*=0*/)
   gridLayout->addWidget(this->AbortButton, 0, 0, 1, 1);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBProgressWidget::~qtCMBProgressWidget()
 {
   delete this->ProgressBar;
   delete this->AbortButton;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProgressWidget::setProgress(const QString& message, int value)
 {
   this->ProgressBar->setFormat(QString("%1: %p").arg(message));
   this->ProgressBar->setValue(value);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProgressWidget::enableProgress(bool enabled)
 {
   if (this->ProgressBar->isEnabled() != enabled)
@@ -74,7 +70,6 @@ void qtCMBProgressWidget::enableProgress(bool enabled)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProgressWidget::enableAbort(bool enabled)
 {
   this->AbortButton->setEnabled(enabled);

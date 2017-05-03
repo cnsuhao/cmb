@@ -41,10 +41,8 @@
 #include <algorithm>
 #include <functional>
 
-//---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkCMBStreamTracer);
 
-//---------------------------------------------------------------------------
 vtkCMBStreamTracer::vtkCMBStreamTracer()
 {
   this->SetInterpolatorTypeToCellLocator();
@@ -57,12 +55,10 @@ vtkCMBStreamTracer::vtkCMBStreamTracer()
   //this->SetIntegratorTypeToRungeKutta45();
 }
 
-//---------------------------------------------------------------------------
 vtkCMBStreamTracer::~vtkCMBStreamTracer()
 {
 }
 
-//---------------------------------------------------------------------------
 int vtkCMBStreamTracer::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -135,7 +131,6 @@ int vtkCMBStreamTracer::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBStreamTracer::Integrate(vtkDataSet* input0, vtkPolyData* output,
   vtkDataArray* seedSource, vtkIdList* seedIds, vtkIntArray* integrationDirections,
   double lastPoint[3], vtkAbstractInterpolatedVelocityField* func, int maxCellSize,
@@ -498,7 +493,6 @@ void vtkCMBStreamTracer::Integrate(vtkDataSet* input0, vtkPolyData* output,
   return;
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBStreamTracer::SetNumberOfTestLocations(int NumTests)
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -508,7 +502,7 @@ void vtkCMBStreamTracer::SetNumberOfTestLocations(int NumTests)
     solver->SetNumberOfTestLocations(NumTests);
   }
 }
-//---------------------------------------------------------------------------
+
 int vtkCMBStreamTracer::GetNumberOfTestLocations()
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -519,7 +513,7 @@ int vtkCMBStreamTracer::GetNumberOfTestLocations()
   }
   return 0;
 }
-//---------------------------------------------------------------------------
+
 double vtkCMBStreamTracer::GetSensorDefaultRelativeOffset()
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -530,7 +524,7 @@ double vtkCMBStreamTracer::GetSensorDefaultRelativeOffset()
   }
   return 0.0;
 }
-//---------------------------------------------------------------------------
+
 void vtkCMBStreamTracer::SetSensorDefaultRelativeOffset(double offset)
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -541,7 +535,6 @@ void vtkCMBStreamTracer::SetSensorDefaultRelativeOffset(double offset)
   }
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBStreamTracer::SetRelativeOffsetOfTestLocation(int index, double offset[3])
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -551,7 +544,7 @@ void vtkCMBStreamTracer::SetRelativeOffsetOfTestLocation(int index, double offse
     solver->SetRelativeOffsetOfTestLocation(index, offset);
   }
 }
-//---------------------------------------------------------------------------
+
 void vtkCMBStreamTracer::GetRelativeOffsetOfTestLocation(int index, double offset[3])
 {
   vtkCMBInitialValueProblemSolver* solver =
@@ -562,7 +555,6 @@ void vtkCMBStreamTracer::GetRelativeOffsetOfTestLocation(int index, double offse
   }
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBStreamTracer::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

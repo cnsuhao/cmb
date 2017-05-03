@@ -14,7 +14,6 @@
 #include "pqFileDialog.h"
 #include <QPushButton>
 
-//-----------------------------------------------------------------------------
 qtCMBSceneMesherDialog::qtCMBSceneMesherDialog(
   pqCMBSceneTree* tree, QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
@@ -30,66 +29,56 @@ qtCMBSceneMesherDialog::qtCMBSceneMesherDialog(
     this->InternalWidget->BrowseNewPtsFile, SIGNAL(clicked()), this, SLOT(displayFileBrowser()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneMesherDialog::~qtCMBSceneMesherDialog()
 {
   delete this->InternalWidget;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::insertMesherPath(int i, const char* mpath)
 {
   this->InternalWidget->Mesher->insertItem(i, mpath);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::removeMesherPath(int i)
 {
   this->InternalWidget->Mesher->removeItem(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::removeAllMesherPaths()
 {
   this->InternalWidget->Mesher->clear();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getMesherPath(int i) const
 {
   return this->InternalWidget->Mesher->itemText(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setCurrentMesherPathIndex(int i)
 {
   this->InternalWidget->Mesher->setCurrentIndex(i);
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBSceneMesherDialog::getCurrentMesherPathIndex() const
 {
   return this->InternalWidget->Mesher->currentIndex();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getCurrentMesherPath() const
 {
   return this->InternalWidget->Mesher->currentText();
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneMesherDialog::getNumberOfMesherPaths() const
 {
   return this->InternalWidget->Mesher->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::insertSurfaceName(int i, const char* vname)
 {
   this->InternalWidget->SurfaceList->insertItem(i, vname);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::removeAllSurfaceNames()
 {
   this->InternalWidget->SurfaceList->blockSignals(true);
@@ -97,7 +86,6 @@ void qtCMBSceneMesherDialog::removeAllSurfaceNames()
   this->InternalWidget->SurfaceList->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setSelectedSurfaceNames(QList<int>& currentIndices)
 {
   QListIterator<int> listIter(currentIndices);
@@ -110,7 +98,6 @@ void qtCMBSceneMesherDialog::setSelectedSurfaceNames(QList<int>& currentIndices)
   this->surfaceSelectionChanged();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::getSelectedSurfaceNames(QStringList& selectedNames) const
 {
   selectedNames.clear();
@@ -122,60 +109,51 @@ void qtCMBSceneMesherDialog::getSelectedSurfaceNames(QStringList& selectedNames)
   }
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneMesherDialog::getNumberOfSurfaceNames() const
 {
   return this->InternalWidget->SurfaceList->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::insertVOIName(int i, const char* vname)
 {
   this->InternalWidget->VOI->insertItem(i, vname);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneMesherDialog::removeVOIName(int i)
 {
   this->InternalWidget->VOI->removeItem(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::removeAllVOINames()
 {
   this->InternalWidget->VOI->clear();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getVOIName(int i) const
 {
   return this->InternalWidget->VOI->itemText(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setCurrentVOINameIndex(int i)
 {
   this->InternalWidget->VOI->setCurrentIndex(i);
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneMesherDialog::getCurrentVOINameIndex() const
 {
   return this->InternalWidget->VOI->currentIndex();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getCurrentVOIName() const
 {
   return this->InternalWidget->VOI->currentText();
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneMesherDialog::getNumberOfVOINames() const
 {
   return this->InternalWidget->VOI->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setMeshLength(double c, bool isRelative)
 {
   this->InternalWidget->MeshLength->setValue(c);
@@ -188,26 +166,23 @@ void qtCMBSceneMesherDialog::setMeshLength(double c, bool isRelative)
     this->InternalWidget->MeshLengthType->setCurrentIndex(0);
   }
 }
-//-----------------------------------------------------------------------------
+
 double qtCMBSceneMesherDialog::getMeshLength(bool& isRelative) const
 {
   isRelative = (this->InternalWidget->MeshLengthType->currentIndex() == 1);
   return this->InternalWidget->MeshLength->value();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setInterpolatingRadius(double c)
 {
   this->InternalWidget->InterpolatingRadius->setValue(c);
 }
 
-//-----------------------------------------------------------------------------
 double qtCMBSceneMesherDialog::getInterpolatingRadius() const
 {
   return this->InternalWidget->InterpolatingRadius->value();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::surfaceSelectionChanged()
 {
   this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)
@@ -221,7 +196,6 @@ void qtCMBSceneMesherDialog::surfaceSelectionChanged()
   this->InternalWidget->TemporaryPtsFileName->setEnabled(enableState);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::displayFileBrowser()
 {
   QString filters = "LIDAR Pts (*.pts *.bin *.bin.pts)";
@@ -238,7 +212,6 @@ void qtCMBSceneMesherDialog::displayFileBrowser()
   file_dialog.exec();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::filesSelected(const QStringList& files)
 {
   if (files.size() == 0)
@@ -249,35 +222,28 @@ void qtCMBSceneMesherDialog::filesSelected(const QStringList& files)
   this->InternalWidget->TemporaryPtsFileName->setText(files[0]);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setTemporaryPtsFileName(const char* name)
 {
   this->InternalWidget->TemporaryPtsFileName->setText(name);
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getTemporaryPtsFileName()
 {
   return this->InternalWidget->TemporaryPtsFileName->text();
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBSceneMesherDialog::getDeleteCreatedPtsFile()
 {
   return this->InternalWidget->DeleteCreatedPtsFile->isEnabled() &&
     this->InternalWidget->DeleteCreatedPtsFile->checkState() == Qt::Checked;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneMesherDialog::setOmicronBaseName(const char* name)
 {
   this->InternalWidget->OmicronBaseName->setText(name);
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneMesherDialog::getOmicronBaseName()
 {
   return this->InternalWidget->OmicronBaseName->text();
 }
-
-//-----------------------------------------------------------------------------

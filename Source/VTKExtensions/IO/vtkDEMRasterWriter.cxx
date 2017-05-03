@@ -34,7 +34,6 @@
 
 vtkStandardNewMacro(vtkDEMRasterWriter);
 
-//-----------------------------------------------------------------------------
 vtkDEMRasterWriter::vtkDEMRasterWriter()
 {
   this->FileName = NULL;
@@ -42,12 +41,10 @@ vtkDEMRasterWriter::vtkDEMRasterWriter()
   GDALAllRegister();
 }
 
-//-----------------------------------------------------------------------------
 vtkDEMRasterWriter::~vtkDEMRasterWriter()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkDEMRasterWriter::WriteData()
 {
   int numInputs = this->GetNumberOfInputConnections(0);
@@ -95,7 +92,6 @@ void vtkDEMRasterWriter::WriteData()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkDEMRasterWriter::AddInputData(int index, vtkDataObject* input)
 {
   if (input)
@@ -104,7 +100,6 @@ void vtkDEMRasterWriter::AddInputData(int index, vtkDataObject* input)
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkDEMRasterWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
@@ -112,13 +107,11 @@ int vtkDEMRasterWriter::FillInputPortInformation(int, vtkInformation* info)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkDEMRasterWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 vtkDataObject* vtkDEMRasterWriter::GetInputFromPort0(int connection)
 {
   return this->GetExecutive()->GetInputData(0, connection);

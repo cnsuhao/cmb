@@ -15,7 +15,6 @@
 #include <vnl/vnl_matrix_fixed.h>
 #include <vnl/vnl_vector_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 class rtvl_vote_internal : private rtvl_terms<N>
 {
@@ -75,7 +74,6 @@ private:
   void compute_dvc();
 };
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_vote_internal<N>::rtvl_vote_internal(vnl_vector_fixed<double, N> const& voter_location,
   vnl_vector_fixed<double, N> const& votee_location,
@@ -105,7 +103,6 @@ rtvl_vote_internal<N>::rtvl_vote_internal(vnl_vector_fixed<double, N> const& vot
   vtu.fill(0);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::move_basis(unsigned int d)
 {
@@ -116,7 +113,6 @@ void rtvl_vote_internal<N>::move_basis(unsigned int d)
   vtu += b * v_projected[d - 1];
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute(vnl_matrix_fixed<double, N, N>& vote)
 {
@@ -146,7 +142,6 @@ void rtvl_vote_internal<N>::compute(vnl_matrix_fixed<double, N, N>& vote)
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_curved(vnl_matrix_fixed<double, N, N>& vote)
 {
@@ -183,7 +178,6 @@ void rtvl_vote_internal<N>::compute_curved(vnl_matrix_fixed<double, N, N>& vote)
   vote += vc_outer_vc * wcurve;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_dvhat()
 {
@@ -201,7 +195,6 @@ void rtvl_vote_internal<N>::compute_dvhat()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_dvn()
 {
@@ -220,7 +213,6 @@ void rtvl_vote_internal<N>::compute_dvn()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_dvt()
 {
@@ -240,7 +232,6 @@ void rtvl_vote_internal<N>::compute_dvt()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_dtheta()
 {
@@ -251,7 +242,6 @@ void rtvl_vote_internal<N>::compute_dtheta()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_dvc()
 {
@@ -265,7 +255,6 @@ void rtvl_vote_internal<N>::compute_dvc()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_internal<N>::compute_d(vnl_matrix_fixed<double, N, N> dvote[N])
 {
@@ -311,7 +300,6 @@ void rtvl_vote_internal<N>::compute_d(vnl_matrix_fixed<double, N, N> dvote[N])
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote(rtvl_voter<N>& voter, rtvl_votee<N>& votee, rtvl_weight<N>& w, bool include_ball)
 {
@@ -332,21 +320,17 @@ void rtvl_vote(rtvl_voter<N>& voter, rtvl_votee<N>& votee, rtvl_weight<N>& w, bo
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_component(rtvl_vote_internal<N>& vi, vnl_matrix_fixed<double, N, N>& vote)
 {
   vi.compute(vote);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_vote_component_d(rtvl_vote_internal<N>& vi, vnl_matrix_fixed<double, N, N> (&dvote)[N])
 {
   vi.compute_d(dvote);
 }
-
-//----------------------------------------------------------------------------
 
 #define RTVL_VOTE_INSTANTIATE(N)                                                                   \
   template class rtvl_vote_internal<N>;                                                            \

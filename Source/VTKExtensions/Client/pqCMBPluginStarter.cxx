@@ -18,29 +18,23 @@
 
 // ParaView Includes.
 
-//----------------------------------------------------------------------------
 // ClientServer wrapper initialization functions.
 //extern "C" void vtkCMBVTKExtensions_Initialize(vtkClientServerInterpreter*);
-//----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
 pqCMBPluginStarter::pqCMBPluginStarter(QObject* p /*=0*/)
   : QObject(p)
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPluginStarter::~pqCMBPluginStarter()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPluginStarter::onStartup()
 {
   // FIXME SEB Don't need that anymore // vtkCMBVTKExtensionsCS_Initialize(vtkProcessModule::GetProcessModule()->GetInterpreter());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPluginStarter::onShutdown()
 {
   //qWarning() << "Message from pqCMBPluginStarter: Application Shutting down";

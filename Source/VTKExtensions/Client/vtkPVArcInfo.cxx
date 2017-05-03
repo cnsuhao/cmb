@@ -23,7 +23,6 @@
 
 vtkStandardNewMacro(vtkPVArcInfo);
 
-//----------------------------------------------------------------------------
 vtkPVArcInfo::vtkPVArcInfo()
 {
   this->ArcId = -1;
@@ -44,7 +43,6 @@ vtkPVArcInfo::vtkPVArcInfo()
   this->EndNodePos[5] = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkPVArcInfo::~vtkPVArcInfo()
 {
   if (this->PointLocations)
@@ -59,13 +57,11 @@ vtkPVArcInfo::~vtkPVArcInfo()
   delete[] this->EndNodePos;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::CopyFromObject(vtkObject* obj)
 {
   //reset member variables to defaults
@@ -103,7 +99,6 @@ void vtkPVArcInfo::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::GatherLoopInfo()
 {
   vtkCMBArc* arc = vtkCMBArcManager::GetInstance()->GetArc(this->ArcId);
@@ -113,7 +108,6 @@ void vtkPVArcInfo::GatherLoopInfo()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::GatherDetailedInfo()
 {
   this->GatherLoopInfo();
@@ -168,7 +162,6 @@ void vtkPVArcInfo::GatherDetailedInfo()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkPVArcInfo::GetEndNodePos(vtkIdType index, double pos[3])
 {
   if (this->ArcId == -1)
@@ -190,7 +183,6 @@ bool vtkPVArcInfo::GetEndNodePos(vtkIdType index, double pos[3])
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkPVArcInfo::GetPointLocation(vtkIdType index, double pos[3])
 {
   if (this->PointLocations && index >= 0 && index < this->PointLocations->GetNumberOfTuples())
@@ -229,7 +221,6 @@ bool vtkPVArcInfo::GetPointID(vtkIdType index, vtkIdType& id)
   return false;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -237,7 +228,6 @@ void vtkPVArcInfo::CopyToStream(vtkClientServerStream* css)
   *css << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVArcInfo::CopyFromStream(const vtkClientServerStream*)
 {
 }

@@ -44,16 +44,13 @@ class pqCMBModelBuilderOptions::pqInternal : public Ui::pqCMBModelBuilderOptions
 public:
 };
 
-//-----------------------------------------------------------------------------
 pqCMBModelBuilderOptions* pqCMBModelBuilderOptions::Instance = 0;
 
-//-----------------------------------------------------------------------------
 pqCMBModelBuilderOptions* pqCMBModelBuilderOptions::instance()
 {
   return pqCMBModelBuilderOptions::Instance;
 }
 
-//----------------------------------------------------------------------------
 pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget* widgetParent)
   : qtCMBOptionsContainer(widgetParent)
 {
@@ -89,13 +86,11 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget* widgetParent)
     SIGNAL(changesAvailable()));
 }
 
-//-----------------------------------------------------------------------------
 pqCMBModelBuilderOptions::~pqCMBModelBuilderOptions()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderOptions::setPage(const QString& page)
 {
   int count = this->Internal->stackedWidget->count();
@@ -109,7 +104,6 @@ void pqCMBModelBuilderOptions::setPage(const QString& page)
   }
 }
 
-//-----------------------------------------------------------------------------
 QStringList pqCMBModelBuilderOptions::getPageList()
 {
   QStringList pages;
@@ -122,7 +116,6 @@ QStringList pqCMBModelBuilderOptions::getPageList()
   return pages;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderOptions::applyChanges()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -154,7 +147,6 @@ void pqCMBModelBuilderOptions::applyChanges()
     this->Internal->autoSwitchManipulatorBox->isChecked());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderOptions::resetChanges()
 {
   QString str3dmodelfacecolor = this->default3DModelFaceColorMode().c_str();
@@ -183,7 +175,6 @@ void pqCMBModelBuilderOptions::resetChanges()
   this->Internal->defaultSessionModelBox->setChecked(this->createDefaultSessionModel());
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBModelBuilderOptions::defaultSimBuilderTemplateDirectory()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -191,7 +182,7 @@ std::string pqCMBModelBuilderOptions::defaultSimBuilderTemplateDirectory()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 std::string pqCMBModelBuilderOptions::default3DModelFaceColorMode()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -200,7 +191,7 @@ std::string pqCMBModelBuilderOptions::default3DModelFaceColorMode()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 std::string pqCMBModelBuilderOptions::default2DModelFaceColorMode()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -209,7 +200,7 @@ std::string pqCMBModelBuilderOptions::default2DModelFaceColorMode()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 std::string pqCMBModelBuilderOptions::default2DModelEdgeColorMode()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -218,7 +209,7 @@ std::string pqCMBModelBuilderOptions::default2DModelEdgeColorMode()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 QColor pqCMBModelBuilderOptions::defaultPolygonColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -226,7 +217,7 @@ QColor pqCMBModelBuilderOptions::defaultPolygonColor()
   return settings->value("ModelBuilder/PolygonColor", QColor::fromRgbF(1.0, 1.0, 1.0))
     .value<QColor>();
 }
-//-----------------------------------------------------------------------------
+
 QColor pqCMBModelBuilderOptions::defaultEdgeColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -234,7 +225,6 @@ QColor pqCMBModelBuilderOptions::defaultEdgeColor()
   return settings->value("ModelBuilder/EdgeColor", QColor::fromRgbF(1.0, 1.0, 1.0)).value<QColor>();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBModelBuilderOptions::sessionCentricModeling()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -242,7 +232,6 @@ bool pqCMBModelBuilderOptions::sessionCentricModeling()
   return settings->value("ModelBuilder/SessionCentricModeling", false).toBool();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBModelBuilderOptions::createDefaultSessionModel()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -250,7 +239,6 @@ bool pqCMBModelBuilderOptions::createDefaultSessionModel()
   return settings->value("ModelBuilder/CreateDefaultSessionModel", true).toBool();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBModelBuilderOptions::autoSwitchCameraManipulator()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -258,7 +246,6 @@ bool pqCMBModelBuilderOptions::autoSwitchCameraManipulator()
   return settings->value("ModelBuilder/AutoSwitchCameraManipulator", true).toBool();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderOptions::chooseSimBuilderTemplateDirectory()
 {
   pqFileDialog dialog(pqApplicationCore::instance()->getActiveServer(), this,

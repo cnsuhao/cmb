@@ -90,7 +90,6 @@ using namespace std;
 using namespace smtk::model;
 using namespace smtk::extension;
 
-//-----------------------------------------------------------------------------
 class pqSMTKModelPanel::qInternal
 {
 public:
@@ -142,7 +141,6 @@ public:
   }
 };
 
-//-----------------------------------------------------------------------------
 pqSMTKModelPanel::pqSMTKModelPanel(
   pqCMBModelManager* mmgr, QWidget* p, smtk::extension::qtSelectionManager* qtSelMgr)
   : QDockWidget(p)
@@ -178,13 +176,11 @@ pqSMTKModelPanel::pqSMTKModelPanel(
   this->resetUI();
 }
 
-//-----------------------------------------------------------------------------
 pqSMTKModelPanel::~pqSMTKModelPanel()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBModelManager* pqSMTKModelPanel::modelManager()
 {
   return this->Internal->smtkManager;
@@ -195,7 +191,6 @@ smtk::extension::qtModelView* pqSMTKModelPanel::modelView()
   return this->Internal->ModelPanel ? this->Internal->ModelPanel->getModelView() : NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::clearUI()
 {
   if (this->Internal->ModelPanel)
@@ -207,7 +202,6 @@ void pqSMTKModelPanel::clearUI()
   this->Internal->ModelLoaded = false;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::setBlockVisibility(const smtk::common::UUID& sessid,
   const smtk::common::UUIDs& entids, const smtk::mesh::MeshSets& meshes, bool visible)
 {
@@ -216,7 +210,6 @@ void pqSMTKModelPanel::setBlockVisibility(const smtk::common::UUID& sessid,
   this->Internal->ModelPanel->update();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::setBlockColor(const smtk::common::UUID& sessid,
   const smtk::common::UUIDs& entids, const smtk::mesh::MeshSets& meshes, const QColor& color)
 {
@@ -224,7 +217,6 @@ void pqSMTKModelPanel::setBlockColor(const smtk::common::UUID& sessid,
   this->Internal->ModelPanel->update();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::resetUI()
 {
   if (!this->Internal->smtkManager)
@@ -308,7 +300,6 @@ void pqSMTKModelPanel::resetUI()
     this->modelView()->operatorsWidget(), SLOT(displayResult(const smtk::io::Logger&)));
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::onEntitiesExpunged(const smtk::model::EntityRefs& expungedEnts)
 {
   if (!this->Internal->ModelPanel)
@@ -316,7 +307,6 @@ void pqSMTKModelPanel::onEntitiesExpunged(const smtk::model::EntityRefs& expunge
   this->Internal->ModelPanel->getModelView()->onEntitiesExpunged(expungedEnts);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::onSelectionChanged(const smtk::model::EntityRefs& selentities,
   const smtk::mesh::MeshSets& selmeshes, const smtk::model::DescriptivePhrases& /* selproperties */)
 {
@@ -326,7 +316,6 @@ void pqSMTKModelPanel::onSelectionChanged(const smtk::model::EntityRefs& selenti
   this->selectEntityRepresentations(selentities);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::onSelectionChanged(const smtk::common::UUIDs& selentities,
   const smtk::mesh::MeshSets& selmeshes, const smtk::model::DescriptivePhrases& /* selproperties */)
 {
@@ -343,7 +332,6 @@ void pqSMTKModelPanel::onSelectionChanged(const smtk::common::UUIDs& selentities
   this->selectEntityRepresentations(selentitiesInEntitrRefs);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs& entities)
 {
   //clear current selections
@@ -410,7 +398,6 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   this->Internal->updateSelectionView();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKModelPanel::selectMeshRepresentations(const smtk::mesh::MeshSets& selmeshes)
 {
   //clear current selections
@@ -451,7 +438,7 @@ void pqSMTKModelPanel::selectMeshRepresentations(const smtk::mesh::MeshSets& sel
 
   this->Internal->updateSelectionView();
 }
-//-----------------------------------------------------------------------------
+
 void pqSMTKModelPanel::updateTreeSelection()
 {
   smtk::mesh::MeshSets meshes;
@@ -493,7 +480,6 @@ void pqSMTKModelPanel::updateTreeSelection()
   //this->modelView()->selectItems(uuids, meshes, true); // block selection signal
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
 {
   if (fileItem)
@@ -502,7 +488,6 @@ void pqSMTKModelPanel::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::onLaunchFileBrowser()
 {
   smtk::extension::qtFileItem* const fileItem =
@@ -515,7 +500,6 @@ void pqSMTKModelPanel::onLaunchFileBrowser()
     fileItem, this->Internal->smtkManager->server(), fileItem->widget());
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem)
 {
   if (entItem)
@@ -535,7 +519,6 @@ void pqSMTKModelPanel::onModelEntityItemCreated(smtk::extension::qtModelEntityIt
   }
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::requestEntityAssociation(smtk::extension::qtModelEntityItem* entItem)
 {
   if (!entItem)
@@ -546,7 +529,6 @@ void pqSMTKModelPanel::requestEntityAssociation(smtk::extension::qtModelEntityIt
   pqSMTKUIHelper::process_smtkModelEntityItemSelectionRequest(entItem, this->modelView());
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::onRequestEntityAssociation()
 {
   smtk::extension::qtModelEntityItem* const entItem =
@@ -554,7 +536,6 @@ void pqSMTKModelPanel::onRequestEntityAssociation()
   this->requestEntityAssociation(entItem);
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
 {
   // combine current selecton
@@ -576,19 +557,18 @@ void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
   this->onSelectionChanged(entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases());
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::addMeshSelectionOperation(smtk::extension::qtMeshSelectionItem* meshItem,
   const std::string& opName, const smtk::common::UUID& uuid)
 {
   if (meshItem)
     this->Internal->SelectionOperations[meshItem] = qMakePair(opName, uuid);
 }
-//----------------------------------------------------------------------------
+
 void pqSMTKModelPanel::setCurrentMeshSelectionItem(smtk::extension::qtMeshSelectionItem* meshItem)
 {
   this->Internal->CurrentMeshSelectItem = meshItem;
 }
-//----------------------------------------------------------------------------
+
 void pqSMTKModelPanel::startMeshSelectionOperation(const QList<pqOutputPort*>& selPorts)
 {
   smtk::extension::qtMeshSelectionItem* currSelItem = this->Internal->CurrentMeshSelectItem;
@@ -651,7 +631,6 @@ void pqSMTKModelPanel::startMeshSelectionOperation(const QList<pqOutputPort*>& s
       this->Internal->SelectionOperations[currSelItem].second, true);
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::updateMeshSelection(
   const smtk::attribute::MeshSelectionItemPtr& meshSelectionItem, pqSMTKModelInfo* minfo)
 {
@@ -709,7 +688,6 @@ void pqSMTKModelPanel::updateMeshSelection(
   renView->render();
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::resetMeshSelectionItems()
 {
   foreach (
@@ -718,13 +696,11 @@ void pqSMTKModelPanel::resetMeshSelectionItems()
       meshItem->resetSelectionState();
 }
 
-//----------------------------------------------------------------------------
 smtk::extension::qtSelectionManager* pqSMTKModelPanel::selectionManager() const
 {
   return this->Internal->selectionManager;
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
 {
   smtk::extension::qtMeshSelectionItem* currSelItem = this->Internal->CurrentMeshSelectItem;
@@ -739,7 +715,6 @@ void pqSMTKModelPanel::cancelOperation(const smtk::model::OperatorPtr& op)
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqSMTKModelPanel::removeClosedSession(const smtk::model::SessionRef& sref)
 {
   smtk::extension::qtModelView* view = this->modelView();
@@ -750,7 +725,6 @@ bool pqSMTKModelPanel::removeClosedSession(const smtk::model::SessionRef& sref)
   return false;
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelPanel::gatherSelectionInfo(pqPipelineSource* source, vtkPVInformation* pvInfo,
   smtk::common::UUIDs& uuids, smtk::mesh::MeshSets& meshes)
 {

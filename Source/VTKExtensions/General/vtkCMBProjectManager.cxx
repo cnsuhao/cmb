@@ -15,23 +15,19 @@
 
 #include <vtksys/SystemTools.hxx>
 
-//----------------------------------------------------------------------------
-
 vtkCMBProjectManager* vtkCMBProjectManager::Instance = 0;
 vtkCMBProjectManagerCleanup vtkCMBProjectManager::Cleanup;
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManagerCleanup::vtkCMBProjectManagerCleanup()
 {
 }
-//-----------------------------------------------------------------------------
+
 vtkCMBProjectManagerCleanup::~vtkCMBProjectManagerCleanup()
 {
   // Destroy any remaining output window.
   vtkCMBProjectManager::SetInstance(NULL);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManager::vtkCMBProjectManager()
   : ProjectFilePath("")
   , ActiveProgram(NUM_PROGRAMS)
@@ -44,7 +40,6 @@ vtkCMBProjectManager::vtkCMBProjectManager()
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManager::~vtkCMBProjectManager()
 {
   for (int i = 0; i < NUM_PROGRAMS; ++i)
@@ -55,7 +50,7 @@ vtkCMBProjectManager::~vtkCMBProjectManager()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBProjectManager::ResetProjectManager()
 {
   for (int i = 0; i < NUM_PROGRAMS; ++i)
@@ -72,7 +67,6 @@ void vtkCMBProjectManager::ResetProjectManager()
   this->VersionMajor = 0, this->VersionMinor = 2;
 }
 
-//-----------------------------------------------------------------------------
 // Up the reference count so it behaves like New
 vtkCMBProjectManager* vtkCMBProjectManager::New()
 {
@@ -81,7 +75,6 @@ vtkCMBProjectManager* vtkCMBProjectManager::New()
   return ret;
 }
 
-//-----------------------------------------------------------------------------
 // Return the single instance of the vtkCMBProjectManager
 vtkCMBProjectManager* vtkCMBProjectManager::GetInstance()
 {
@@ -103,7 +96,6 @@ vtkCMBProjectManager* vtkCMBProjectManager::GetInstance()
   return vtkCMBProjectManager::Instance;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::SetInstance(vtkCMBProjectManager* instance)
 {
   if (vtkCMBProjectManager::Instance == instance)
@@ -124,7 +116,6 @@ void vtkCMBProjectManager::SetInstance(vtkCMBProjectManager* instance)
   instance->Register(NULL);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManager::PROGRAM vtkCMBProjectManager::GetProgramType(const char* name)
 {
   if (strcmp(name, "Points Builder") == 0)
@@ -146,7 +137,6 @@ vtkCMBProjectManager::PROGRAM vtkCMBProjectManager::GetProgramType(const char* n
   return vtkCMBProjectManager::NUM_PROGRAMS;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkCMBProjectManager::GetProgramName(vtkCMBProjectManager::PROGRAM const& program)
 {
   switch (program)
@@ -166,7 +156,6 @@ const char* vtkCMBProjectManager::GetProgramName(vtkCMBProjectManager::PROGRAM c
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::RegisterProgram(
   vtkCMBProjectManager::PROGRAM const& program, vtkStdString const& directory)
 {
@@ -181,7 +170,6 @@ void vtkCMBProjectManager::RegisterProgram(
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProgramManager const* vtkCMBProjectManager::GetProgramManager(
   vtkCMBProjectManager::PROGRAM const& program) const
 {
@@ -189,7 +177,6 @@ vtkCMBProgramManager const* vtkCMBProjectManager::GetProgramManager(
   return this->Programs[index];
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::SetActiveProgram(int program)
 {
   if (program >= vtkCMBProjectManager::PointsBuilder &&
@@ -199,12 +186,11 @@ void vtkCMBProjectManager::SetActiveProgram(int program)
   }
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkCMBProjectManager::GetActiveDefaultProgramDirectory()
 {
   return this->GetDefaultFolder(this->ActiveProgram);
 }
-//-----------------------------------------------------------------------------
+
 const char* vtkCMBProjectManager::GetDefaultFolder(const vtkCMBProjectManager::PROGRAM& program)
 {
   std::string folder;
@@ -252,13 +238,11 @@ const char* vtkCMBProjectManager::GetDefaultFolder(const vtkCMBProjectManager::P
   return this->ProgramDefaultFolder[program].c_str();
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkCMBProjectManager::GetActiveProgramDirectory() const
 {
   return this->GetProgramDirectory(this->ActiveProgram);
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkCMBProjectManager::GetProgramDirectory(
   vtkCMBProjectManager::PROGRAM const& program) const
 {
@@ -269,7 +253,6 @@ const char* vtkCMBProjectManager::GetProgramDirectory(
   return this->Programs[program]->GetDirectoryPath().c_str();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::SetActiveProgramDirectory(const char* dir)
 {
   if (dir == NULL || strlen(dir) < 1 || this->ActiveProgram == NUM_PROGRAMS)
@@ -279,19 +262,16 @@ void vtkCMBProjectManager::SetActiveProgramDirectory(const char* dir)
   vtkCMBProjectManager::RegisterProgram(this->ActiveProgram, dir);
 }
 
-//-----------------------------------------------------------------------------
 int const& vtkCMBProjectManager::GetVersionMajor() const
 {
   return this->VersionMajor;
 }
 
-//-----------------------------------------------------------------------------
 int const& vtkCMBProjectManager::GetVersionMinor() const
 {
   return this->VersionMinor;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::SetVersionMajor(int const& major)
 {
   if (major != this->VersionMajor)
@@ -300,7 +280,6 @@ void vtkCMBProjectManager::SetVersionMajor(int const& major)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::SetVersionMinor(int const& minor)
 {
   if (minor != this->VersionMinor)
@@ -309,7 +288,6 @@ void vtkCMBProjectManager::SetVersionMinor(int const& minor)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -9,14 +9,13 @@
 //=========================================================================
 #include "pqCMBArcTreeItem.h"
 
-//-----------------------------------------------------------------------------
 pqCMBArcTreeItem::pqCMBArcTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType)
   : QTreeWidgetItem(pNode, nodeType)
 {
   this->ItemId = itemId;
   this->init();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBArcTreeItem::~pqCMBArcTreeItem()
 {
   // the model face object is kept in the model,
@@ -28,13 +27,11 @@ pqCMBArcTreeItem::~pqCMBArcTreeItem()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArcTreeItem::init()
 {
   this->ArcObject = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArcTreeItem::setArcObject(qtArcWidget* entity)
 {
   this->ArcObject = entity;

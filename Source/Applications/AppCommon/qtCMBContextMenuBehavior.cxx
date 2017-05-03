@@ -27,7 +27,6 @@
 #include <QRegExp>
 #include <QWidget>
 
-//-----------------------------------------------------------------------------
 qtCMBContextMenuBehavior::qtCMBContextMenuBehavior(QObject* parentObject)
   : Superclass(parentObject)
 {
@@ -37,13 +36,11 @@ qtCMBContextMenuBehavior::qtCMBContextMenuBehavior(QObject* parentObject)
   this->Menu << pqSetName("PipelineContextMenu");
 }
 
-//-----------------------------------------------------------------------------
 qtCMBContextMenuBehavior::~qtCMBContextMenuBehavior()
 {
   delete this->Menu;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBContextMenuBehavior::onViewAdded(pqView* view)
 {
   if (view && view->getProxy()->IsA("vtkSMRenderViewProxy"))
@@ -53,7 +50,6 @@ void qtCMBContextMenuBehavior::onViewAdded(pqView* view)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 {
   if (e->type() == QEvent::MouseButtonPress)
@@ -98,7 +94,6 @@ bool qtCMBContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
   return Superclass::eventFilter(caller, e);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBContextMenuBehavior::buildMenu(pqDataRepresentation* repr)
 {
   /*
@@ -123,7 +118,6 @@ void qtCMBContextMenuBehavior::buildMenu(pqDataRepresentation* repr)
   QObject::connect(reprMenu, SIGNAL(triggered(QAction*)), this, SLOT(reprTypeChanged(QAction*)));
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBContextMenuBehavior::reprTypeChanged(QAction* action)
 {
   pqDataRepresentation* repr = this->PickedRepresentation;
@@ -138,7 +132,6 @@ void qtCMBContextMenuBehavior::reprTypeChanged(QAction* action)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBContextMenuBehavior::hide()
 {
   pqDataRepresentation* repr = this->PickedRepresentation;

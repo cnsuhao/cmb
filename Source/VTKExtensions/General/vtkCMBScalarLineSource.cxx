@@ -22,7 +22,6 @@
 
 vtkStandardNewMacro(vtkCMBScalarLineSource);
 
-//-----------------------------------------------------------------------------
 vtkCMBScalarLineSource::vtkCMBScalarLineSource()
 {
   this->Point1[0] = this->Point1[1] = 0.0;
@@ -35,12 +34,10 @@ vtkCMBScalarLineSource::vtkCMBScalarLineSource()
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBScalarLineSource::~vtkCMBScalarLineSource()
 {
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBScalarLineSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -91,7 +88,6 @@ int vtkCMBScalarLineSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBScalarLineSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -103,4 +99,3 @@ void vtkCMBScalarLineSource::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Scalar1: " << this->Scalar1 << "\n";
   os << indent << "Scalar2: " << this->Scalar2 << "\n";
 }
-//-----------------------------------------------------------------------------

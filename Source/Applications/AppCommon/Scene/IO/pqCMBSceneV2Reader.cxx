@@ -70,7 +70,6 @@ void InitSceneGenCoutourNodesArray(vtkXMLDataElement* e, void* dstArray)
   memcpy(dstArray, dataBuffer, dataLength * sizeof(T));
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneV2Reader::pqCMBSceneV2Reader()
 {
   this->Tree = NULL;
@@ -83,7 +82,6 @@ pqCMBSceneV2Reader::pqCMBSceneV2Reader()
   this->FilterObjectByType = 0;
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneV2Reader::~pqCMBSceneV2Reader()
 {
   if (this->Progress)
@@ -92,7 +90,6 @@ pqCMBSceneV2Reader::~pqCMBSceneV2Reader()
   }
 }
 
-//----------------------------------------------------------------------------
 int pqCMBSceneV2Reader::process(vtkXMLDataElement* root)
 {
   if (!this->Tree)
@@ -218,7 +215,7 @@ int pqCMBSceneV2Reader::process(vtkXMLDataElement* root)
 
   return -1;
 }
-//----------------------------------------------------------------------------
+
 int pqCMBSceneV2Reader::getUserDefinedObjectTypes(vtkXMLDataElement* root, QStringList& objTypes)
 {
   if (strcmp(root->GetName(), "Scene"))
@@ -251,7 +248,6 @@ int pqCMBSceneV2Reader::getUserDefinedObjectTypes(vtkXMLDataElement* root, QStri
   return status;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Reader::processTypes(vtkXMLDataElement* typeSection)
 {
   pqCMBSceneNode *parent, *node;
@@ -291,7 +287,6 @@ void pqCMBSceneV2Reader::processTypes(vtkXMLDataElement* typeSection)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Reader::processUserDefinedObjectTypes(vtkXMLDataElement* typesSection)
 {
   vtkXMLDataElement* fe;
@@ -305,7 +300,6 @@ void pqCMBSceneV2Reader::processUserDefinedObjectTypes(vtkXMLDataElement* typesS
   this->Tree->cleanUpUserDefinedTypes();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Reader::processContourFile(vtkXMLDataElement* contourSection)
 {
   std::string fullOrigPath = vtksys::SystemTools::CollapseFullPath(this->FileName.c_str());
@@ -343,14 +337,13 @@ void pqCMBSceneV2Reader::processContourFile(vtkXMLDataElement* contourSection)
     }
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::createContour(vtkSMSourceProxy* proxy)
 {
   pqCMBArc* obj = new pqCMBArc(proxy);
   this->Contours.push(obj);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Reader::processFiles(vtkXMLDataElement* dirSection)
 {
   std::string fullOrigPath = vtksys::SystemTools::CollapseFullPath(this->FileName.c_str());
@@ -367,7 +360,7 @@ void pqCMBSceneV2Reader::processFiles(vtkXMLDataElement* dirSection)
     this->Sources.push_back(NULL);
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::processTextureFiles(vtkXMLDataElement* dirSection)
 {
   std::string fullOrigPath = vtksys::SystemTools::CollapseFullPath(this->FileName.c_str());
@@ -383,7 +376,7 @@ void pqCMBSceneV2Reader::processTextureFiles(vtkXMLDataElement* dirSection)
     this->TextureFileNames.push_back(fullPath);
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::processObjects(vtkXMLDataElement* objSection)
 {
   vtkXMLDataElement* oe;
@@ -434,8 +427,6 @@ void pqCMBSceneV2Reader::processObjects(vtkXMLDataElement* objSection)
   }
 }
 
-//----------------------------------------------------------------------------
-
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processVOI(vtkXMLDataElement* elem)
 {
   pqCMBSceneObjectBase* obj;
@@ -469,7 +460,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processVOI(vtkXMLDataElement* elem)
     position, bounds, this->Tree->getCurrentServer(), this->Tree->getCurrentView(), false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processLine(vtkXMLDataElement* elem)
 {
@@ -496,7 +486,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processLine(vtkXMLDataElement* elem)
 
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processContour(vtkXMLDataElement* elem)
 {
@@ -520,7 +509,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processContour(vtkXMLDataElement* elem
   this->Contours.pop();
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processCone(vtkXMLDataElement* elem)
 {
@@ -592,7 +580,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processCone(vtkXMLDataElement* elem)
     p1, br, h, tr, dir, r, this->Tree->getCurrentServer(), this->Tree->getCurrentView(), false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPlane(vtkXMLDataElement* elem)
 {
@@ -635,7 +622,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPlane(vtkXMLDataElement* elem)
   obj->setPosition(position, false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPoints(vtkXMLDataElement* elem)
 {
@@ -735,7 +721,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPoints(vtkXMLDataElement* elem)
   obj->setPosition(position, false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processFacetedObject(vtkXMLDataElement* elem)
 {
@@ -786,7 +771,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processFacetedObject(vtkXMLDataElement
   obj->setPosition(position, false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processUniformGrid(vtkXMLDataElement* elem)
 {
@@ -847,7 +831,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processUniformGrid(vtkXMLDataElement* 
   obj->setPosition(position, false);
   return obj;
 }
-//----------------------------------------------------------------------------
 
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processUnknownObject(vtkXMLDataElement* elem)
 {
@@ -857,7 +840,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processUnknownObject(vtkXMLDataElement
   return NULL; // We don't support this!
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processGlyphObject(vtkXMLDataElement* elem)
 {
   pqCMBGlyphObject* obj;
@@ -911,7 +893,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processGlyphObject(vtkXMLDataElement* 
   return obj;
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPolygons(vtkXMLDataElement* elem)
 {
   pqCMBPolygon* obj = NULL;
@@ -964,8 +945,6 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processPolygons(vtkXMLDataElement* ele
 
   return obj;
 }
-
-//----------------------------------------------------------------------------
 
 void pqCMBSceneV2Reader::processObject(vtkXMLDataElement* elem)
 {
@@ -1142,7 +1121,6 @@ void pqCMBSceneV2Reader::processObject(vtkXMLDataElement* elem)
   }
 }
 
-//----------------------------------------------------------------------------
 int pqCMBSceneV2Reader::processTextureInfo(vtkXMLDataElement* elem, pqCMBSceneObjectBase* obj)
 {
   int index;
@@ -1169,7 +1147,6 @@ int pqCMBSceneV2Reader::processTextureInfo(vtkXMLDataElement* elem, pqCMBSceneOb
   return 0;
 }
 
-//----------------------------------------------------------------------------
 int pqCMBSceneV2Reader::processBathymetryInfo(vtkXMLDataElement* elem, pqCMBSceneObjectBase* obj)
 {
   pqCMBTexturedObject* tobj = dynamic_cast<pqCMBTexturedObject*>(obj);
@@ -1195,7 +1172,7 @@ int pqCMBSceneV2Reader::processBathymetryInfo(vtkXMLDataElement* elem, pqCMBScen
   tobj->applyBathymetry(node->getDataObject(), radius);
   return 0;
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::processConstraints(
   vtkXMLDataElement* constraintSection, pqCMBSceneObjectBase* obj)
 {
@@ -1257,7 +1234,7 @@ void pqCMBSceneV2Reader::processConstraints(
     }
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::appendStatus(const std::string& newStatus)
 {
   if (this->Status != "")
@@ -1266,7 +1243,7 @@ void pqCMBSceneV2Reader::appendStatus(const std::string& newStatus)
   }
   this->Status += newStatus;
 }
-//----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBSceneV2Reader::processSolidMesh(vtkXMLDataElement* elem)
 {
   pqCMBSceneObjectBase* obj;
@@ -1311,10 +1288,9 @@ pqCMBSceneObjectBase* pqCMBSceneV2Reader::processSolidMesh(vtkXMLDataElement* el
   obj->setPosition(position, false);
   return obj;
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneV2Reader::abortSceneLoading()
 {
   this->Tree->empty();
   this->Status = "Loading aborted by User";
 }
-//----------------------------------------------------------------------------

@@ -170,7 +170,7 @@ bool pqCMBContextMenuHelper::validMeshColorMode(
 }
 
 // return total number of blocks selected
-//-----------------------------------------------------------------------------
+
 int pqCMBContextMenuHelper::getSelectedRepBlocks(const QList<pqSMTKModelInfo*>& selModels,
   const QList<pqSMTKMeshInfo*>& selMeshes,
   QMap<pqSMTKModelInfo*, QList<unsigned int> >& modelresult,

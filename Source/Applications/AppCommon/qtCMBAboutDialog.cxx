@@ -20,7 +20,6 @@
 #include <QPixmap>
 #include <sstream>
 
-//-----------------------------------------------------------------------------
 qtCMBAboutDialog::qtCMBAboutDialog(QWidget* Parent)
   : QDialog(Parent)
   , Ui(new Ui::qtAboutDialog())
@@ -35,13 +34,11 @@ void qtCMBAboutDialog::setVersionText(const QString& versionText)
   this->Ui->VersionLabel->setText(versionText);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBAboutDialog::setPixmap(const QPixmap& pixMap)
 {
   this->Ui->label->setPixmap(pixMap);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBAboutDialog::~qtCMBAboutDialog()
 {
   delete this->Ui;

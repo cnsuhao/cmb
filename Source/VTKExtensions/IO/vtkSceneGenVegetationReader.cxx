@@ -40,7 +40,6 @@ struct ModelInstance
   double Translation[3];
 };
 
-//-----------------------------------------------------------------------------
 vtkSceneGenVegetationReader::vtkSceneGenVegetationReader()
 {
   this->FileName = 0;
@@ -51,14 +50,12 @@ vtkSceneGenVegetationReader::vtkSceneGenVegetationReader()
   this->InputFluxFile = -1;
 }
 
-//-----------------------------------------------------------------------------
 vtkSceneGenVegetationReader::~vtkSceneGenVegetationReader()
 {
   this->SetFileName(0);
   this->ClearModel();
 }
 
-//-----------------------------------------------------------------------------
 int vtkSceneGenVegetationReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -330,7 +327,6 @@ int vtkSceneGenVegetationReader::RequestData(vtkInformation* vtkNotUsed(request)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkSceneGenVegetationReader::AddBlock(vtkMultiBlockDataSet* output, VegetationModel& model,
   double scale, double zRotation, double translation[3], double color[3])
 {
@@ -395,7 +391,6 @@ int vtkSceneGenVegetationReader::AddBlock(vtkMultiBlockDataSet* output, Vegetati
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneGenVegetationReader::ClearModel()
 {
   for (std::map<std::string, VegetationModel>::iterator i = this->Models.begin();
@@ -411,7 +406,6 @@ void vtkSceneGenVegetationReader::ClearModel()
   this->EnsightStomatal.clear();
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneGenVegetationReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -419,7 +413,6 @@ void vtkSceneGenVegetationReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkSceneGenVegetationReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

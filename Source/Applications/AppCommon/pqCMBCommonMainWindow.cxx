@@ -141,14 +141,12 @@ public:
   QPointer<QDockWidget> PVColorEditorDock;
 };
 
-//----------------------------------------------------------------------------
 static void add_python_path(std::string const& path)
 {
   std::string const& full_path = vtksys::SystemTools::CollapseFullPath(path);
   vtkPythonInterpreter::PrependPythonPath(full_path.c_str());
 }
 
-//----------------------------------------------------------------------------
 pqCMBCommonMainWindow::pqCMBCommonMainWindow()
   : SelectionShortcut(NULL)
   , ResetCameraShortcut(NULL)
@@ -234,7 +232,6 @@ pqCMBCommonMainWindow::pqCMBCommonMainWindow()
 #endif
 }
 
-//----------------------------------------------------------------------------
 pqCMBCommonMainWindow::~pqCMBCommonMainWindow()
 {
   this->m_isExiting = true;
@@ -251,7 +248,6 @@ pqCMBCommonMainWindow::~pqCMBCommonMainWindow()
   }
 }
 
-//----------------------------------------------------------------------------
 qtCMBPanelsManager* pqCMBCommonMainWindow::panelsManager()
 {
   if (!this->Internal->panelsManager)
@@ -261,7 +257,6 @@ qtCMBPanelsManager* pqCMBCommonMainWindow::panelsManager()
   return this->Internal->panelsManager;
 }
 
-//----------------------------------------------------------------------------
 inline void customizePanelVisibility(vtkSMProxy* smProxy, const char* propName,
   const char* panelvis, bool removePanelVisForRepresentation = false)
 {
@@ -327,7 +322,6 @@ pqProxyWidget* pqCMBCommonMainWindow::displayPanel(vtkSMProxy* repProxy)
   return this->Internal->displayPanel;
 }
 
-//----------------------------------------------------------------------------
 pqCMBColorMapWidget* pqCMBCommonMainWindow::colorEditor(QWidget* p)
 {
   if (!this->Internal->ColorEditor)
@@ -337,13 +331,11 @@ pqCMBColorMapWidget* pqCMBCommonMainWindow::colorEditor(QWidget* p)
   return this->Internal->ColorEditor;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::initInspectorDock()
 {
   this->Internal->UI.faceParametersDock->setEnabled(false);
 }
 
-//----------------------------------------------------------------------------
 QDockWidget* pqCMBCommonMainWindow::initPVColorEditorDock()
 {
   if (!this->Internal->PVColorEditorDock)
@@ -359,7 +351,6 @@ QDockWidget* pqCMBCommonMainWindow::initPVColorEditorDock()
   return this->Internal->PVColorEditorDock;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::appendDatasetNameToTitle(const QString& strTitle)
 {
   QString currentTitle =
@@ -369,7 +360,7 @@ void pqCMBCommonMainWindow::appendDatasetNameToTitle(const QString& strTitle)
     strTitle.isEmpty() ? currentTitle : currentTitle.append(" ( ").append(strTitle).append(" )");
   this->setWindowTitle(newTitle);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindow::onViewChanged()
 {
   if (this->MainWindowCore && this->MainWindowCore->activeRenderView())
@@ -396,7 +387,7 @@ void pqCMBCommonMainWindow::onViewChanged()
     vtkMapper::SetResolveCoincidentTopologyLineOffsetParameters(1.0, 1.0);
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindow::onLockViewSize(bool lock)
 {
   if (!lock)
@@ -409,7 +400,6 @@ void pqCMBCommonMainWindow::onLockViewSize(bool lock)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::initMainWindowCore()
 {
   if (!this->MainWindowCore)
@@ -639,25 +629,21 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   }
 }
 
-//----------------------------------------------------------------------------
 Ui::qtCMBMainWindow* pqCMBCommonMainWindow::getMainDialog()
 {
   return &this->Internal->UI;
 }
 
-//----------------------------------------------------------------------------
 QList<pqOutputPort*>& pqCMBCommonMainWindow::getLastSelectionPorts()
 {
   return this->Internal->LastSelectionPorts;
 }
 
-//----------------------------------------------------------------------------
 pqCMBLoadDataReaction* pqCMBCommonMainWindow::loadDataReaction()
 {
   return this->Internal->LoadDataReaction;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::addControlPanel(QWidget* panel)
 {
   if (panel)
@@ -667,7 +653,6 @@ void pqCMBCommonMainWindow::addControlPanel(QWidget* panel)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::updateEnableState(bool data_loaded)
 {
   this->Internal->UI.action_Save_Data->setEnabled(data_loaded);
@@ -678,7 +663,6 @@ void pqCMBCommonMainWindow::updateEnableState(bool data_loaded)
   this->Internal->UI.toolBar_Selection->setEnabled(data_loaded);
 }
 
-//----------------------------------------------------------------------------
 // THIS PROB. SHOULD BE REMOVED!
 void pqCMBCommonMainWindow::onViewSelected(QList<pqOutputPort*> opports)
 {
@@ -689,20 +673,17 @@ void pqCMBCommonMainWindow::onViewSelected(QList<pqOutputPort*> opports)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::clearGUI()
 {
   this->updateEnableState(false);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindow::compareView(
   const QString& ReferenceImage, double Threshold, ostream& Output, const QString& TempDirectory)
 {
   return this->MainWindowCore->compareView(ReferenceImage, Threshold, Output, TempDirectory);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onEnableMenuItems(bool state)
 {
   // File menu
@@ -714,13 +695,11 @@ void pqCMBCommonMainWindow::onEnableMenuItems(bool state)
   this->getMainDialog()->menuRecentFiles->setEnabled(state);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::initProjectManager()
 {
   this->MainWindowCore->initProjectManager();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onSelectionShortcutActivated()
 {
   if (this->getMainDialog()->action_Select->isEnabled())
@@ -790,20 +769,17 @@ void pqCMBCommonMainWindow::createAxesGridConfigurationDialog()
   AxesGridDialog->show();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::showHelpPage(const QString& url)
 {
   pqHelpReaction::showHelp(url);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onAskedToExit()
 {
   // Subclasses override to check for unsaved data.
   emit userAcceptsExit();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onRecordTest()
 {
   if (pqApplicationCore::instance()->testUtility())
@@ -841,7 +817,6 @@ void pqCMBCommonMainWindow::onRecordTest()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onRecordTestStopped()
 {
 #ifdef __APPLE__
@@ -853,7 +828,6 @@ void pqCMBCommonMainWindow::onRecordTestStopped()
 #endif
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::onCameraInteractionModeChangeTo2D(bool mode)
 {
   // If mode is true (2D camera) then Disable the 2D camera action and
@@ -873,7 +847,7 @@ void pqCMBCommonMainWindow::onCameraInteractionModeChangeTo2D(bool mode)
   this->Internal->UI.actionView_Rotate_90_cw->setVisible(!mode);
   this->Internal->UI.actionView_Rotate_90_ccw->setVisible(!mode);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindow::onEnableCameraInteractionModeChanges(bool mode)
 {
   if (!mode)
@@ -892,7 +866,6 @@ void pqCMBCommonMainWindow::onEnableCameraInteractionModeChanges(bool mode)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindow::updateLog(const smtk::io::Logger& log)
 {
   QString txt(log.convertToString(false).c_str());

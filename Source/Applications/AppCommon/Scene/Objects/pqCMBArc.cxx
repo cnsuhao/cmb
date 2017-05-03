@@ -42,7 +42,6 @@
 #include "vtkSMProxyProperty.h"
 #include "vtkSMSourceProxy.h"
 
-//-----------------------------------------------------------------------------
 pqCMBArc::pqCMBArc()
   : pqCMBSceneObjectBase()
 {
@@ -58,7 +57,6 @@ pqCMBArc::pqCMBArc()
   this->origColor[0] = this->origColor[1] = this->origColor[2] = this->origColor[3] = 1.0;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArc::pqCMBArc(vtkSMSourceProxy* proxy)
   : pqCMBSceneObjectBase()
 {
@@ -76,7 +74,6 @@ pqCMBArc::pqCMBArc(vtkSMSourceProxy* proxy)
   this->createArc(proxy);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArc::~pqCMBArc()
 {
   if (this->ArcInfo)
@@ -99,7 +96,6 @@ pqCMBArc::~pqCMBArc()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBArc::createArc(vtkSMNewWidgetRepresentationProxy* widget)
 {
   if (this->ArcId == -1)
@@ -124,7 +120,6 @@ bool pqCMBArc::createArc(vtkSMNewWidgetRepresentationProxy* widget)
   return false;
 }
 
-//------------- ----------------------------------------------------------------
 bool pqCMBArc::createArc(vtkSMSourceProxy* proxy)
 {
   if (this->ArcId == -1)
@@ -143,7 +138,6 @@ bool pqCMBArc::createArc(vtkSMSourceProxy* proxy)
   return false;
 }
 
-//------------------------------------------------------------------------------
 bool pqCMBArc::createArc(const vtkIdType& arcId)
 {
   if (this->ArcId == -1 && arcId > -1)
@@ -155,7 +149,6 @@ bool pqCMBArc::createArc(const vtkIdType& arcId)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBArc::editArc(vtkSMNewWidgetRepresentationProxy* widget)
 {
   if (this->ArcId == -1)
@@ -169,7 +162,6 @@ bool pqCMBArc::editArc(vtkSMNewWidgetRepresentationProxy* widget)
   return editOp->Operate(this->Source->getProxy(), widget);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBArc::findPickPoint(vtkSMOutputPort* port)
 {
   if (this->ArcId == -1)
@@ -181,7 +173,7 @@ bool pqCMBArc::findPickPoint(vtkSMOutputPort* port)
   vtkNew<vtkCMBArcFindPickPointOperator> pickOp;
   return pickOp->Operate(this->ArcId, port);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBArc::updateArc(
   vtkSMNewWidgetRepresentationProxy* widget, vtkIdTypeArray* newlyCreatedArcIds)
 {
@@ -222,7 +214,6 @@ bool pqCMBArc::updateArc(
   return true;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqCMBArc::autoConnect(const vtkIdType& secondArcId)
 {
   if (this->ArcId == -1 || secondArcId == -1 || this->ArcId == secondArcId)
@@ -239,7 +230,6 @@ vtkIdType pqCMBArc::autoConnect(const vtkIdType& secondArcId)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 vtkPVArcInfo* pqCMBArc::getArcInfo()
 {
   if (!this->Source)
@@ -260,7 +250,6 @@ vtkPVArcInfo* pqCMBArc::getArcInfo()
   return this->ArcInfo;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBArc::isClosedLoop()
 {
   //we need to query the server for this information. The reason is
@@ -285,7 +274,7 @@ bool pqCMBArc::isClosedLoop()
 
   return this->ArcInfo->IsClosedLoop();
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBArc::getClosedLoop()
 {
   //we need to query the server for this information. The reason is
@@ -294,7 +283,6 @@ int pqCMBArc::getClosedLoop()
   return this->isClosedLoop() ? 1 : 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::inheritPolygonRelationships(pqCMBArc* parent)
 {
   //make us have the same polygons
@@ -306,20 +294,17 @@ void pqCMBArc::inheritPolygonRelationships(pqCMBArc* parent)
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBArc::getType() const
 {
   return pqCMBSceneObjectBase::Arc;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBArc::duplicate(
   pqServer* /*server*/, pqRenderView* /*view*/, bool /*updateRep*/)
 {
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
   if (!selectionInput)
@@ -333,20 +318,16 @@ void pqCMBArc::setSelectionInput(vtkSMSourceProxy* selectionInput)
   this->Superclass::setSelectionInput(selectionInput);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::select()
 {
   this->Superclass::setColor(this->selColor);
 }
-
-//-----------------------------------------------------------------------------
 
 void pqCMBArc::deselect()
 {
   this->Superclass::setColor(this->origColor);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::getColor(double color[4]) const
 {
   for (int i = 0; i < 4; i++)
@@ -355,7 +336,6 @@ void pqCMBArc::getColor(double color[4]) const
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::setColor(double color[4], bool updateRep)
 {
   for (int i = 0; i < 4; i++)
@@ -365,7 +345,6 @@ void pqCMBArc::setColor(double color[4], bool updateRep)
   this->Superclass::setColor(color, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::setMarkedForDeletion()
 {
   if (!this->Source)
@@ -379,7 +358,6 @@ void pqCMBArc::setMarkedForDeletion()
   this->Superclass::setMarkedForDeletion();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::unsetMarkedForDeletion()
 {
   if (!this->Source)
@@ -393,7 +371,6 @@ void pqCMBArc::unsetMarkedForDeletion()
   this->Superclass::unsetMarkedForDeletion();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::arcIsModified()
 {
   std::set<pqCMBPolygon*>::iterator it;
@@ -403,7 +380,6 @@ void pqCMBArc::arcIsModified()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::updateRepresentation()
 {
   if (this->ArcId == -1)
@@ -450,19 +426,16 @@ void pqCMBArc::updateRepresentation()
   this->Superclass::updateRepresentation();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::addPolygon(pqCMBPolygon* poly)
 {
   this->PolygonsUsingArc.insert(poly);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::removePolygon(pqCMBPolygon* poly)
 {
   this->PolygonsUsingArc.erase(poly);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::setRepresentation(pqDataRepresentation* rep)
 {
   pqCMBSceneObjectBase::setRepresentation(rep);
@@ -476,7 +449,6 @@ void pqCMBArc::setRepresentation(pqDataRepresentation* rep)
   this->origColor[3] = vtkSMPropertyHelper(reprProxy, "Opacity").GetAsDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBArc::updatePlaneProjectionInfo(vtkSMNewWidgetRepresentationProxy* widget)
 {
   vtkSMProxy* repProxy = widget->GetRepresentationProxy();

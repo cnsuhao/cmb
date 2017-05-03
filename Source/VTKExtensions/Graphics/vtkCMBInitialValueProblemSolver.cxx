@@ -19,7 +19,6 @@ vtkStandardNewMacro(vtkCMBInitialValueProblemSolver);
 
 using namespace vtkCMBTracerNamespace;
 
-//---------------------------------------------------------------------------
 vtkCMBInitialValueProblemSolver::vtkCMBInitialValueProblemSolver()
 {
   this->NumberOfTestLocations = 1;
@@ -29,13 +28,11 @@ vtkCMBInitialValueProblemSolver::vtkCMBInitialValueProblemSolver()
   this->TestLocationOffsets.push_back(offset);
 }
 
-//---------------------------------------------------------------------------
 vtkCMBInitialValueProblemSolver::~vtkCMBInitialValueProblemSolver()
 {
   this->ClearTestLocations();
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBInitialValueProblemSolver::ClearTestLocations()
 {
   for (TestLocationIterator iter = this->TestLocations.begin(); iter != this->TestLocations.end();
@@ -52,7 +49,7 @@ void vtkCMBInitialValueProblemSolver::ClearTestLocations()
   this->TestLocationOffsets.clear();
   this->Modified();
 }
-//---------------------------------------------------------------------------
+
 int vtkCMBInitialValueProblemSolver::ComputeNextStep(double* xprev, double* dxprev, double* xnext,
   double t, double& delT, double& delTActual, double minStep, double maxStep, double maxError,
   double& error)
@@ -133,7 +130,6 @@ int vtkCMBInitialValueProblemSolver::ComputeNextStep(double* xprev, double* dxpr
   return 0;
 }
 
-//---------------------------------------------------------------------------
 int vtkCMBInitialValueProblemSolver::ComputeNextStepWithTestLocations(double* xprev, double* xnext,
   double t, double& delT, double& /*delTActual*/, double, double, double, double& /*error*/)
 {
@@ -185,7 +181,6 @@ int vtkCMBInitialValueProblemSolver::ComputeNextStepWithTestLocations(double* xp
   return 0;
 }
 
-//---------------------------------------------------------------------------
 bool vtkCMBInitialValueProblemSolver::InitializeTestLocations(double* xprev)
 {
   this->TestLocations.clear();
@@ -207,7 +202,7 @@ bool vtkCMBInitialValueProblemSolver::InitializeTestLocations(double* xprev)
   }
   return true;
 }
-//---------------------------------------------------------------------------
+
 void vtkCMBInitialValueProblemSolver::SetNumberOfTestLocations(int val)
 {
   if (this->NumberOfTestLocations != val)
@@ -224,7 +219,6 @@ void vtkCMBInitialValueProblemSolver::SetNumberOfTestLocations(int val)
   }
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBInitialValueProblemSolver::SetRelativeOffsetOfTestLocation(
   int testLocactionIndex, double* OffsetOfTestLocation)
 {
@@ -239,7 +233,7 @@ void vtkCMBInitialValueProblemSolver::SetRelativeOffsetOfTestLocation(
   }
   this->Modified();
 }
-//---------------------------------------------------------------------------
+
 void vtkCMBInitialValueProblemSolver::GetRelativeOffsetOfTestLocation(
   int testLocactionIndex, double* OffsetOfTestLocation)
 {
@@ -254,7 +248,6 @@ void vtkCMBInitialValueProblemSolver::GetRelativeOffsetOfTestLocation(
   }
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBInitialValueProblemSolver::GetTestLocationPosition(
   int /*testLocactionIndex*/, double* seedpos, double* relativeoffset, double* testlocation)
 {
@@ -264,7 +257,7 @@ void vtkCMBInitialValueProblemSolver::GetTestLocationPosition(
     testlocation[j] = seedpos[j] + relativeoffset[j];
   }
 }
-//---------------------------------------------------------------------------
+
 bool vtkCMBInitialValueProblemSolver::GetTestLocationCellInfo(
   double testlocation[3], double* velocity, vtkIdType& cellId)
 {
@@ -278,7 +271,6 @@ bool vtkCMBInitialValueProblemSolver::GetTestLocationCellInfo(
   return false;
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBInitialValueProblemSolver::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -13,7 +13,6 @@
 #include "pqCMBSceneTree.h"
 #include <QPushButton>
 
-//-----------------------------------------------------------------------------
 qtCMBSceneSurfaceMesherDialog::qtCMBSceneSurfaceMesherDialog(
   pqCMBSceneTree* tree, QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
@@ -25,19 +24,16 @@ qtCMBSceneSurfaceMesherDialog::qtCMBSceneSurfaceMesherDialog(
     SLOT(surfaceSelectionChanged()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneSurfaceMesherDialog::~qtCMBSceneSurfaceMesherDialog()
 {
   delete this->InternalWidget;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::insertSurfaceName(int i, const char* vname)
 {
   this->InternalWidget->SurfaceList->insertItem(i, vname);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::removeAllSurfaceNames()
 {
   this->InternalWidget->SurfaceList->blockSignals(true);
@@ -45,7 +41,6 @@ void qtCMBSceneSurfaceMesherDialog::removeAllSurfaceNames()
   this->InternalWidget->SurfaceList->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::setSelectedSurfaceNames(QList<int>& currentIndices)
 {
   QListIterator<int> listIter(currentIndices);
@@ -58,7 +53,6 @@ void qtCMBSceneSurfaceMesherDialog::setSelectedSurfaceNames(QList<int>& currentI
   this->surfaceSelectionChanged();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::getSelectedSurfaceNames(QStringList& selectedNames) const
 {
   selectedNames.clear();
@@ -70,73 +64,62 @@ void qtCMBSceneSurfaceMesherDialog::getSelectedSurfaceNames(QStringList& selecte
   }
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneSurfaceMesherDialog::getNumberOfSurfaceNames() const
 {
   return this->InternalWidget->SurfaceList->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::insertVOIName(int i, const char* vname)
 {
   this->InternalWidget->VOI->insertItem(i, vname);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneSurfaceMesherDialog::removeVOIName(int i)
 {
   this->InternalWidget->VOI->removeItem(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::removeAllVOINames()
 {
   this->InternalWidget->VOI->clear();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneSurfaceMesherDialog::getVOIName(int i) const
 {
   return this->InternalWidget->VOI->itemText(i);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::setCurrentVOINameIndex(int i)
 {
   this->InternalWidget->VOI->setCurrentIndex(i);
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneSurfaceMesherDialog::getCurrentVOINameIndex() const
 {
   return this->InternalWidget->VOI->currentIndex();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBSceneSurfaceMesherDialog::getCurrentVOIName() const
 {
   return this->InternalWidget->VOI->currentText();
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneSurfaceMesherDialog::getNumberOfVOINames() const
 {
   return this->InternalWidget->VOI->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::surfaceSelectionChanged()
 {
   this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)
     ->setEnabled(this->InternalWidget->SurfaceList->selectedItems().count() > 0);
 }
 
-//-----------------------------------------------------------------------------
 double qtCMBSceneSurfaceMesherDialog::getElevationWeightRadius()
 {
   return this->InternalWidget->ElevationWeightRadius->value();
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBSceneSurfaceMesherDialog::getMeshVisibleArcSets()
 {
   return this->InternalWidget->MeshVisibleArcSets->isChecked();

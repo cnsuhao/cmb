@@ -56,7 +56,6 @@
 #include <QProgressDialog>
 #include <QTreeWidget>
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* qtCMBSceneObjectImporter::importNode(pqCMBSceneNode* parent,
   bool enableRandomOption, bool allowTextureConstraintPlacement, bool* randomPlacement,
   bool* translateBasedOnView, int* count, QMap<pqCMBSceneNode*, int>& constraints,
@@ -70,7 +69,6 @@ pqCMBSceneNode* qtCMBSceneObjectImporter::importNode(pqCMBSceneNode* parent,
     glyphPlaybackFilename, glyphPlaybackOption);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectImporter::qtCMBSceneObjectImporter(pqCMBSceneNode* n)
   : Node(NULL)
 {
@@ -134,7 +132,6 @@ qtCMBSceneObjectImporter::qtCMBSceneObjectImporter(pqCMBSceneNode* n)
   this->Progress = NULL;
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectImporter::~qtCMBSceneObjectImporter()
 {
   if (this->PlacementWidget)
@@ -159,12 +156,12 @@ qtCMBSceneObjectImporter::~qtCMBSceneObjectImporter()
     this->Progress = NULL;
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::assignUnits(pqCMBSceneObjectBase* obj)
 {
   obj->setUnits(cmbSceneUnits::Unknown);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::setRandomPlacementOption(bool mode)
 {
   this->ImportDialog->RandomPlacement->setEnabled(mode);
@@ -177,7 +174,7 @@ void qtCMBSceneObjectImporter::setRandomPlacementOption(bool mode)
 
   this->ImportDialog->translateBasedOnView->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::setupObjectTypes()
 {
   this->ImportDialog->GeometricTypes->addItem("Points", pqCMBSceneObjectBase::Points);
@@ -194,7 +191,7 @@ void qtCMBSceneObjectImporter::setupObjectTypes()
   this->ImportDialog->ObjectTypes->setCurrentIndex(3);
   this->ImportDialog->ObjectTypes->addItem("Specify New Type");
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneNode* qtCMBSceneObjectImporter::exec(bool* randomPlacement,
   bool allowTextureConstraintPlacement, bool* translateBasedOnView, int* count,
   QMap<pqCMBSceneNode*, int>& constaints, bool& usingGlyphs, bool& useTextureConstraint,
@@ -248,7 +245,7 @@ pqCMBSceneNode* qtCMBSceneObjectImporter::exec(bool* randomPlacement,
 
   return this->Node;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::accept()
 {
   QString n = this->ImportDialog->FileNameText->text();
@@ -344,12 +341,11 @@ void qtCMBSceneObjectImporter::accept()
   }
   tree->getCurrentView()->forceRender();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::cancel()
 {
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::updateDialog()
 {
   QString fname = this->ImportDialog->FileNameText->text();
@@ -519,7 +515,7 @@ void qtCMBSceneObjectImporter::updateDialog()
     this->ImportDialog->maxPtsLabel->setEnabled(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::filesSelected(const QStringList& files)
 {
   if (files.size() == 0)
@@ -532,12 +528,11 @@ void qtCMBSceneObjectImporter::filesSelected(const QStringList& files)
   this->updateDialog();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::changeGeometricType()
 {
   this->PlacementWidget->enableGlyphOption(this->ImportDialog->GeometricTypes->currentIndex() != 0);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::changeObjectType()
 {
   if (this->ImportDialog->ObjectTypes->currentIndex() ==
@@ -569,7 +564,6 @@ void qtCMBSceneObjectImporter::changeObjectType()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::displayFileBrowser()
 {
   QString filters = "All Geometry (*.2dm *.3dm *.bin *.bin.pts *.fac *.las *.obj *.pts *.sol *.tin "
@@ -593,7 +587,6 @@ void qtCMBSceneObjectImporter::displayFileBrowser()
   file_dialog.exec();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::importLIDARFile(const QString& fileName)
 {
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
@@ -700,7 +693,6 @@ void qtCMBSceneObjectImporter::importLIDARFile(const QString& fileName)
   builder->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::importLASFile(const QString& fileName)
 {
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
@@ -848,7 +840,6 @@ void qtCMBSceneObjectImporter::importLASFile(const QString& fileName)
   builder->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::importUniformGrid(const QString& fileName)
 {
   // pqProgressManager* progress_manager =
@@ -912,7 +903,7 @@ void qtCMBSceneObjectImporter::importUniformGrid(const QString& fileName)
   // delete this->Progress;
   // this->Progress = NULL;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::importBorFile(const QString& fileName)
 {
   // Load the file and set up the pipeline to display the dataset.
@@ -935,7 +926,6 @@ void qtCMBSceneObjectImporter::importBorFile(const QString& fileName)
   this->Parent->getTree()->createBorFileObjects(fileName, reader);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::importSolidMesh(const QString& fileName)
 {
   pqProgressManager* progress_manager = pqApplicationCore::instance()->getProgressManager();
@@ -964,7 +954,7 @@ void qtCMBSceneObjectImporter::importSolidMesh(const QString& fileName)
   delete this->Progress;
   this->Progress = NULL;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::importShapeFile(const QString& fileName)
 {
 
@@ -1075,7 +1065,7 @@ void qtCMBSceneObjectImporter::importShapeFile(const QString& fileName)
   delete this->Progress;
   this->Progress = NULL;
 }
-//----------------------------------------------------------------------------
+
 int qtCMBSceneObjectImporter::computeApproximateRepresentingFloatDigits(double min, double max)
 {
   double maxComponent = fabs(min) > max ? fabs(min) : max;
@@ -1086,7 +1076,6 @@ int qtCMBSceneObjectImporter::computeApproximateRepresentingFloatDigits(double m
   return static_cast<int>(7.0 - ceil(logMaxComponent - logRange - 0.2));
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBSceneObjectImporter::userRequestsDoubleData(double bounds[6])
 {
   // all default to float right now, but need to be able to check at some point
@@ -1109,7 +1098,6 @@ bool qtCMBSceneObjectImporter::userRequestsDoubleData(double bounds[6])
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectImporter::updateRowExtents()
 {
   int rowExtents[2] = { this->ImportDialog->minRowExtent->text().toInt(),
@@ -1121,7 +1109,7 @@ void qtCMBSceneObjectImporter::updateRowExtents()
     rowExtents[0] = tempExtent;
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::updateColumnExtents()
 {
   int columnExtents[2] = { this->ImportDialog->minColumnExtent->text().toInt(),
@@ -1133,7 +1121,7 @@ void qtCMBSceneObjectImporter::updateColumnExtents()
     columnExtents[0] = tempExtent;
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::updateDEMExtents()
 {
   pqPipelineSource* readerSource;
@@ -1164,7 +1152,6 @@ void qtCMBSceneObjectImporter::updateDEMExtents()
   this->ImportDialog->maxColumnExtent->setText(QString::number(dimensions[0] - 1));
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* qtCMBSceneObjectImporter::createObjectNode(
   pqCMBSceneObjectBase* obj, const char* name, pqCMBSceneNode* parentNode)
 {
@@ -1200,7 +1187,7 @@ pqCMBSceneNode* qtCMBSceneObjectImporter::createObjectNode(
 
   return this->Parent->getTree()->createNode(name, parentNode, obj, NULL);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectImporter::updateProgress(const QString& message, int progress)
 {
   // Is there any progress being reported?
@@ -1212,4 +1199,3 @@ void qtCMBSceneObjectImporter::updateProgress(const QString& message, int progre
   this->Progress->setValue(progress);
   QCoreApplication::processEvents();
 }
-//-----------------------------------------------------------------------------

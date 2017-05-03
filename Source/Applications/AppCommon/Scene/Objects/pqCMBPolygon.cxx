@@ -36,7 +36,6 @@
 
 #include <algorithm>
 
-//-----------------------------------------------------------------------------
 pqCMBPolygon::pqCMBPolygon(
   double minAngle, double edgeLength, std::vector<pqCMBSceneNode*>& inputNodes)
   : pqCMBTexturedObject()
@@ -82,7 +81,6 @@ pqCMBPolygon::pqCMBPolygon(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPolygon::~pqCMBPolygon()
 {
   //remove ourselves from each arc
@@ -93,31 +91,27 @@ pqCMBPolygon::~pqCMBPolygon()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBPolygon::getType() const
 {
   return pqCMBSceneObjectBase::Polygon;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBPolygon::duplicate(
   pqServer* /*server*/, pqRenderView* /*view*/, bool /*updateRep*/)
 {
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBPolygon::getFileName() const
 {
   return this->FileName;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPolygon::setFileName(std::string& filename)
 {
   this->FileName = filename;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPolygon::writeToFile()
 {
   if (this->FileName.size() == 0)
@@ -137,7 +131,6 @@ bool pqCMBPolygon::writeToFile()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPolygon::updateRepresentation()
 {
   if (!this->Source)
@@ -168,7 +161,6 @@ void pqCMBPolygon::updateRepresentation()
   this->NeedsRemesh = !remeshed;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPolygon::remesh()
 {
   if (!this->NeedsRemesh)
@@ -191,7 +183,6 @@ bool pqCMBPolygon::remesh()
   return this->ValidPolygon;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPolygon::addArc(pqCMBArc* arc)
 {
   typedef std::set<pqCMBArc*>::iterator iterator;
@@ -199,14 +190,12 @@ void pqCMBPolygon::addArc(pqCMBArc* arc)
   this->NeedsRemesh = result.second;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPolygon::removeArc(pqCMBArc* arc)
 {
   std::size_t countRemoved = this->InputArcs.erase(arc);
   this->NeedsRemesh = countRemoved > 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPolygon::arcIsDirty(pqCMBArc*)
 {
   this->NeedsRemesh = true;

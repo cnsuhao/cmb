@@ -28,7 +28,6 @@ vtkStandardNewMacro(vtkSGXMLBCSWriter);
 vtkCxxSetObjectMacro(vtkSGXMLBCSWriter, Coords, vtkDoubleArray);
 vtkCxxSetObjectMacro(vtkSGXMLBCSWriter, ModelVertexIds, vtkIdTypeArray);
 
-//----------------------------------------------------------------------------
 vtkSGXMLBCSWriter::vtkSGXMLBCSWriter()
 {
   this->SetNumberOfInputPorts(0);
@@ -36,32 +35,27 @@ vtkSGXMLBCSWriter::vtkSGXMLBCSWriter()
   this->ModelVertexIds = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkSGXMLBCSWriter::~vtkSGXMLBCSWriter()
 {
   this->SetCoords(0);
   this->SetModelVertexIds(0);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkSGXMLBCSWriter::GetDefaultFileExtension()
 {
   return "bcs";
 }
 
-//----------------------------------------------------------------------------
 int vtkSGXMLBCSWriter::GetDataSetMajorVersion()
 {
   return 2;
 }
 
-//----------------------------------------------------------------------------
 int vtkSGXMLBCSWriter::GetDataSetMinorVersion()
 {
   return 0;
 }
 
-//----------------------------------------------------------------------------
 int vtkSGXMLBCSWriter::WriteData()
 {
   if (!this->Coords || this->Coords->GetNumberOfComponents() != 3 || !this->ModelVertexIds ||
@@ -304,13 +298,11 @@ int vtkSGXMLBCSWriter::WriteData()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkSGXMLBCSWriter::GetDataSetName()
 {
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSGXMLBCSWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

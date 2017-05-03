@@ -376,12 +376,10 @@ pqCMBFileDialog::pqCMBFileDialog(pqServer* server, QWidget* p, const QString& ti
   this->Implementation->Ui.Files->setTextElideMode(Qt::ElideMiddle);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBFileDialog::~pqCMBFileDialog()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onCreateNewFolder()
 {
   // Add a directory entry with a default name to the model
@@ -432,7 +430,6 @@ void pqCMBFileDialog::onCreateNewFolder()
   this->Implementation->Ui.FileName->clear();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onContextMenuRequested(const QPoint& menuPos)
 {
   QMenu menu;
@@ -455,7 +452,6 @@ void pqCMBFileDialog::onContextMenuRequested(const QPoint& menuPos)
   menu.exec(this->Implementation->Ui.Files->mapToGlobal(menuPos));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::setFileMode(pqCMBFileDialog::FileMode mode)
 {
   //this code is only needed for the 3.10 release as
@@ -487,7 +483,6 @@ void pqCMBFileDialog::setFileMode(pqCMBFileDialog::FileMode mode)
   this->Implementation->Ui.Favorites->setSelectionMode(selectionMode);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::setRecentlyUsedExtension(const QString& fileExtension)
 {
   if (fileExtension == QString())
@@ -506,7 +501,6 @@ void pqCMBFileDialog::setRecentlyUsedExtension(const QString& fileExtension)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::addToFilesSelected(const QStringList& files)
 {
   // Ensure that we are hidden before broadcasting the selection,
@@ -515,7 +509,6 @@ void pqCMBFileDialog::addToFilesSelected(const QStringList& files)
   this->Implementation->SelectedFiles.append(files);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::emitFilesSelectionDone()
 {
   emit filesSelected(this->Implementation->SelectedFiles);
@@ -527,13 +520,11 @@ void pqCMBFileDialog::emitFilesSelectionDone()
   this->done(QDialog::Accepted);
 }
 
-//-----------------------------------------------------------------------------
 QList<QStringList> pqCMBFileDialog::getAllSelectedFiles()
 {
   return this->Implementation->SelectedFiles;
 }
 
-//-----------------------------------------------------------------------------
 QStringList pqCMBFileDialog::getSelectedFiles(int index)
 {
   if (index < 0 || index >= this->Implementation->SelectedFiles.size())
@@ -543,7 +534,6 @@ QStringList pqCMBFileDialog::getSelectedFiles(int index)
   return this->Implementation->SelectedFiles[index];
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::accept()
 {
   bool loadedFile = false;
@@ -564,7 +554,6 @@ void pqCMBFileDialog::accept()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialog::acceptExistingFiles()
 {
   bool loadedFiles = false;
@@ -586,7 +575,6 @@ bool pqCMBFileDialog::acceptExistingFiles()
   return loadedFiles;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialog::acceptDefault(const bool& checkForGrouping)
 {
   QString filename = this->Implementation->Ui.FileName->text();
@@ -607,7 +595,6 @@ bool pqCMBFileDialog::acceptDefault(const bool& checkForGrouping)
   return this->acceptInternal(files, false);
 }
 
-//-----------------------------------------------------------------------------
 QStringList pqCMBFileDialog::buildFileGroup(const QString& filename)
 {
   QStringList files;
@@ -658,7 +645,6 @@ QStringList pqCMBFileDialog::buildFileGroup(const QString& filename)
   return files;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onModelReset()
 {
   this->Implementation->Ui.Parents->clear();
@@ -702,14 +688,12 @@ void pqCMBFileDialog::onModelReset()
   this->Implementation->Ui.Parents->setCurrentIndex(parents.size() - 1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onNavigate(const QString& Path)
 {
   this->Implementation->addHistory(this->Implementation->Model->getCurrentPath());
   this->Implementation->setCurrentPath(Path);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onNavigateUp()
 {
   this->Implementation->addHistory(this->Implementation->Model->getCurrentPath());
@@ -717,7 +701,6 @@ void pqCMBFileDialog::onNavigateUp()
   this->Implementation->setCurrentPath(info.path());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onNavigateDown(const QModelIndex& idx)
 {
   if (!this->Implementation->Model->isDir(idx))
@@ -732,21 +715,18 @@ void pqCMBFileDialog::onNavigateDown(const QModelIndex& idx)
   this->Implementation->setCurrentPath(paths[0]);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onNavigateBack()
 {
   QString path = this->Implementation->backHistory();
   this->Implementation->setCurrentPath(path);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onNavigateForward()
 {
   QString path = this->Implementation->forwardHistory();
   this->Implementation->setCurrentPath(path);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onFilterChange(const QString& filter)
 {
   // set filter on proxy
@@ -756,25 +736,21 @@ void pqCMBFileDialog::onFilterChange(const QString& filter)
   this->Implementation->FileFilter.clear();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onClickedFavorite(const QModelIndex&)
 {
   this->Implementation->Ui.Files->clearSelection();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onClickedRecent(const QModelIndex&)
 {
   this->Implementation->Ui.Files->clearSelection();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onClickedFile(const QModelIndex& vtkNotUsed(index))
 {
   this->Implementation->Ui.Favorites->clearSelection();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onActivateFavorite(const QModelIndex& index)
 {
   if (this->Implementation->FavoriteModel->isDir(index))
@@ -785,7 +761,6 @@ void pqCMBFileDialog::onActivateFavorite(const QModelIndex& index)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onActivateRecent(const QModelIndex& index)
 {
   QString file = this->Implementation->RecentModel->filePath(index);
@@ -793,7 +768,6 @@ void pqCMBFileDialog::onActivateRecent(const QModelIndex& index)
   this->Implementation->Ui.FileName->selectAll();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onDoubleClickFile(const QModelIndex& index)
 {
   if (this->Implementation->Mode == Directory)
@@ -819,25 +793,21 @@ void pqCMBFileDialog::onDoubleClickFile(const QModelIndex& index)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onShowHiddenFiles(const bool& hidden)
 {
   this->Implementation->FileFilter.setShowHidden(hidden);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::setShowHidden(const bool& hidden)
 {
   this->onShowHiddenFiles(hidden);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialog::getShowHidden()
 {
   return this->Implementation->FileFilter.getShowHidden();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::onTextEdited(const QString& str)
 {
   this->Implementation->Ui.Favorites->clearSelection();
@@ -859,7 +829,6 @@ void pqCMBFileDialog::onTextEdited(const QString& str)
   this->Implementation->Ui.Files->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 QString pqCMBFileDialog::fixFileExtension(const QString& filename, const QString& filter)
 {
   // Add missing extension if necessary
@@ -918,7 +887,6 @@ QString pqCMBFileDialog::fixFileExtension(const QString& filename, const QString
   return fixedFilename;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialog::acceptInternal(const QStringList& selected_files, const bool& doubleclicked)
 {
   if (selected_files.empty())
@@ -1030,7 +998,6 @@ void pqCMBFileDialog::setMetadata(QStringList const& metadata)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::fileSelectionChanged()
 {
   // Selection changed, update the FileName entry box
@@ -1097,7 +1064,6 @@ void pqCMBFileDialog::fileSelectionChanged()
   emit currentSelectedFilesChanged(fullPathFiles);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialog::selectFile(const QString& f)
 {
   // We don't use QFileInfo here since it messes the paths up if the client and
@@ -1130,7 +1096,6 @@ bool pqCMBFileDialog::selectFile(const QString& f)
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBFileDialog::showEvent(QShowEvent* _showEvent)
 {
   QDialog::showEvent(_showEvent);
@@ -1141,7 +1106,6 @@ void pqCMBFileDialog::showEvent(QShowEvent* _showEvent)
   this->Implementation->Ui.FileName->setFocus(Qt::OtherFocusReason);
 }
 
-//-----------------------------------------------------------------------------
 QString pqCMBFileDialog::getSaveFileName(pqServer* server, QWidget* parentWdg, const QString& title,
   const QString& directory, const QString& filter)
 {

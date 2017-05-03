@@ -39,7 +39,6 @@ enum qtCMBTreeWidgetPixmap
   pqMaxCheck = 6
 };
 
-//-----------------------------------------------------------------------------
 // array of style corresponding with the qtCMBTreeWidgetPixmap enum
 static const QStyle::State qtCMBTreeWidgetPixmapStyle[] = { QStyle::State_On |
     QStyle::State_Enabled,
@@ -48,7 +47,6 @@ static const QStyle::State qtCMBTreeWidgetPixmapStyle[] = { QStyle::State_On |
   QStyle::State_NoChange | QStyle::State_Enabled | QStyle::State_Active,
   QStyle::State_Off | QStyle::State_Enabled | QStyle::State_Active };
 
-//-----------------------------------------------------------------------------
 QPixmap qtCMBTreeWidget::pixmap(Qt::CheckState cs, bool active)
 {
   int offset = active ? pqMaxCheck / 2 : 0;
@@ -64,7 +62,6 @@ QPixmap qtCMBTreeWidget::pixmap(Qt::CheckState cs, bool active)
   return QPixmap();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBTreeWidget::qtCMBTreeWidget(QWidget* p)
   : QTreeWidget(p)
 {
@@ -110,7 +107,6 @@ qtCMBTreeWidget::qtCMBTreeWidget(QWidget* p)
   //  this, SLOT(updateCheckStateInternal()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBTreeWidget::~qtCMBTreeWidget()
 {
   delete this->Timer;
@@ -121,7 +117,6 @@ qtCMBTreeWidget::~qtCMBTreeWidget()
   delete[] this->CheckPixmaps;
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBTreeWidget::event(QEvent* e)
 {
   /*
@@ -141,7 +136,6 @@ bool qtCMBTreeWidget::event(QEvent* e)
   return Superclass::event(e);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::updateCheckState()
 {
   this->Timer->start();
@@ -150,7 +144,6 @@ void qtCMBTreeWidget::updateCheckState()
   // after every insert. To avoid that we use this timer.
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::updateCheckStateInternal()
 {
   Qt::CheckState newState = Qt::Checked;
@@ -196,7 +189,6 @@ void qtCMBTreeWidget::updateCheckStateInternal()
   this->headerItem()->setData(0, Qt::DecorationRole, pixmap(newState, this->hasFocus()));
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::allOn()
 {
   QTreeWidgetItem* item;
@@ -208,7 +200,6 @@ void qtCMBTreeWidget::allOn()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::allOff()
 {
   QTreeWidgetItem* item;
@@ -220,7 +211,6 @@ void qtCMBTreeWidget::allOff()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::doToggle(int column)
 {
   if (column == 0)
@@ -242,7 +232,6 @@ void qtCMBTreeWidget::doToggle(int column)
   }
 }
 
-//-----------------------------------------------------------------------------
 QSize qtCMBTreeWidget::sizeHint() const
 {
   // lets show X items before we get a scrollbar
@@ -268,13 +257,11 @@ QSize qtCMBTreeWidget::sizeHint() const
   return QSize(156, h);
 }
 
-//-----------------------------------------------------------------------------
 QSize qtCMBTreeWidget::minimumSizeHint() const
 {
   return this->sizeHint();
 }
 
-//-----------------------------------------------------------------------------
 QModelIndex qtCMBTreeWidget::getItemIndex(QTreeWidgetItem* item)
 {
   if (item)
@@ -284,7 +271,6 @@ QModelIndex qtCMBTreeWidget::getItemIndex(QTreeWidgetItem* item)
   return QModelIndex();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::invalidateLayout()
 {
   // sizeHint is dynamic, so we need to invalidate parent layouts
@@ -295,7 +281,6 @@ void qtCMBTreeWidget::invalidateLayout()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::dropEvent(QDropEvent* dEvent)
 {
   /*
@@ -332,21 +317,19 @@ void qtCMBTreeWidget::dropEvent(QDropEvent* dEvent)
   }
   dEvent->accept();
 }
-//-----------------------------------------------------------------------------
+
 Qt::DropActions qtCMBTreeWidget::supportedDropActions() const
 {
   // returns what actions are supported when dropping
   return Qt::CopyAction;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::startDrag(Qt::DropActions supportedActions)
 {
   emit this->dragStarted(this);
   this->Superclass::startDrag(supportedActions);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::dragEnterEvent(QDragEnterEvent* event)
 {
   QStringList mType = this->mimeTypes();
@@ -361,7 +344,6 @@ void qtCMBTreeWidget::dragEnterEvent(QDragEnterEvent* event)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTreeWidget::dragMoveEvent(QDragMoveEvent* event)
 {
   if (event->proposedAction() & this->supportedDropActions())
@@ -370,7 +352,6 @@ void qtCMBTreeWidget::dragMoveEvent(QDragMoveEvent* event)
   }
 }
 
-//-----------------------------------------------------------------------------
 QModelIndex qtCMBTreeWidget::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
   QModelIndex suggestedIndex = this->Superclass::moveCursor(cursorAction, modifiers);
@@ -441,7 +422,7 @@ QModelIndex qtCMBTreeWidget::moveCursor(CursorAction cursorAction, Qt::KeyboardM
 
   return suggestedIndex;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBTreeWidget::mouseReleaseEvent(QMouseEvent* event)
 {
   QPoint pos = event->pos();

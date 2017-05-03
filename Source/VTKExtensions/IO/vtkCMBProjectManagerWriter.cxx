@@ -19,19 +19,16 @@
 
 vtkStandardNewMacro(vtkCMBProjectManagerWriter);
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManagerWriter::vtkCMBProjectManagerWriter()
 {
   this->ProjectFileName = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManagerWriter::~vtkCMBProjectManagerWriter()
 {
   this->SetProjectFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManagerWriter::WriteProjectFile()
 {
   if (!this->ProjectFileName)
@@ -75,7 +72,6 @@ void vtkCMBProjectManagerWriter::WriteProjectFile()
   return;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManagerWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -32,7 +32,6 @@
 
 vtkStandardNewMacro(vtkOmicronModelInputReader);
 
-//-----------------------------------------------------------------------------
 vtkOmicronModelInputReader::vtkOmicronModelInputReader()
 {
   this->FileName = 0;
@@ -40,13 +39,11 @@ vtkOmicronModelInputReader::vtkOmicronModelInputReader()
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkOmicronModelInputReader::~vtkOmicronModelInputReader()
 {
   this->SetFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 int vtkOmicronModelInputReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -162,7 +159,6 @@ int vtkOmicronModelInputReader::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 vtkPolyData* vtkOmicronModelInputReader::AddBlock(vtkMultiBlockDataSet* output,
   const char* fileName, double translation[3], double rotation[3], double scale, double color[3],
   const char* additionalIdentifier /*=0*/)
@@ -303,7 +299,6 @@ vtkPolyData* vtkOmicronModelInputReader::AddBlock(vtkMultiBlockDataSet* output,
   return block;
 }
 
-//-----------------------------------------------------------------------------
 int vtkOmicronModelInputReader::AddROIBlock(vtkMultiBlockDataSet* output,
   double (*boundaryCoords)[2], vtkPolyData* surface, double translation[3], double domainBottom)
 {
@@ -420,7 +415,6 @@ int vtkOmicronModelInputReader::AddROIBlock(vtkMultiBlockDataSet* output,
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkOmicronModelInputReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -428,7 +422,6 @@ void vtkOmicronModelInputReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkOmicronModelInputReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

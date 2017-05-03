@@ -14,7 +14,6 @@
 #include <QScrollBar>
 #include <QTextStream>
 
-//-----------------------------------------------------------------------------
 qtCMBHelpDialog::qtCMBHelpDialog(const char* helpFileResource, QWidget* Parent)
   : QDialog(Parent)
   , Ui(new Ui::qtHelpDialog())
@@ -38,13 +37,11 @@ qtCMBHelpDialog::qtCMBHelpDialog(const char* helpFileResource, QWidget* Parent)
   this->Ui->textBrowser->append(line);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBHelpDialog::~qtCMBHelpDialog()
 {
   delete this->Ui;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBHelpDialog::setToTop()
 {
   this->Ui->textBrowser->verticalScrollBar()->setSliderPosition(

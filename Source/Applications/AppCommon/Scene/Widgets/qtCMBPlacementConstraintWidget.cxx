@@ -37,7 +37,6 @@ public:
   QMap<pqCMBSceneNode*, int> SelectedContraints;
 };
 
-//-----------------------------------------------------------------------------
 qtCMBPlacementConstraintWidget::qtCMBPlacementConstraintWidget(pqCMBSceneNode* node, QWidget* _p)
   : QWidget(_p)
   , parentNode(node)
@@ -53,19 +52,16 @@ qtCMBPlacementConstraintWidget::qtCMBPlacementConstraintWidget(pqCMBSceneNode* n
     SLOT(checkGlyphPlaybackFile(int)));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBPlacementConstraintWidget::~qtCMBPlacementConstraintWidget()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 Ui::qtObjectPlacementConstraint* qtCMBPlacementConstraintWidget::getWidget()
 {
   return this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBPlacementConstraintWidget::setupConstraintTable()
 {
   if (!this->parentNode)
@@ -88,7 +84,6 @@ void qtCMBPlacementConstraintWidget::setupConstraintTable()
     SLOT(onItemChanged(QTableWidgetItem*)) /*, Qt::QueuedConnection*/);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBPlacementConstraintWidget::updateConstraintTable()
 {
   QTableWidget* table = this->Internal->tableWidget;
@@ -109,7 +104,7 @@ void qtCMBPlacementConstraintWidget::updateConstraintTable()
     this->addTableRow(this->Internal->Contours[i]);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::addTableRow(pqCMBSceneNode* scenenode)
 {
   //Add the new filter to the table
@@ -136,15 +131,14 @@ void qtCMBPlacementConstraintWidget::addTableRow(pqCMBSceneNode* scenenode)
   invertItem->setCheckState(Qt::Unchecked);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBPlacementConstraintWidget::onTableSelectionChanged()
 {
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::onItemChanged(QTableWidgetItem* /*item*/)
 {
 }
-//-----------------------------------------------------------------------------
+
 const QMap<pqCMBSceneNode*, int>& qtCMBPlacementConstraintWidget::getSelectedConstraints() const
 {
   this->Internal->SelectedContraints.clear();
@@ -162,12 +156,12 @@ const QMap<pqCMBSceneNode*, int>& qtCMBPlacementConstraintWidget::getSelectedCon
   }
   return this->Internal->SelectedContraints;
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBPlacementConstraintWidget::getPlacementCount()
 {
   return this->Internal->RandomCount->value();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::enableGlyphOption(bool mode)
 {
   this->Internal->glyphOption->setEnabled(mode);
@@ -176,7 +170,7 @@ void qtCMBPlacementConstraintWidget::enableGlyphOption(bool mode)
     this->Internal->glyphOption->setChecked(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::enableTextureConstraintOption(bool mode)
 {
   this->Internal->useTextureAsConstraint->setEnabled(mode);
@@ -185,18 +179,18 @@ void qtCMBPlacementConstraintWidget::enableTextureConstraintOption(bool mode)
     this->Internal->useTextureAsConstraint->setChecked(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBPlacementConstraintWidget::useGlyphs() const
 {
   return (this->Internal->glyphOption->isEnabled()) && (this->Internal->glyphOption->isChecked());
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBPlacementConstraintWidget::useTextureConstraint() const
 {
   return (this->Internal->useTextureAsConstraint->isEnabled()) &&
     (this->Internal->useTextureAsConstraint->isChecked());
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::displayGlyphPlaybackFileBrowser()
 {
   QString filters = "Glyph Playback Files (*.gp);;All files (*)";
@@ -223,7 +217,7 @@ void qtCMBPlacementConstraintWidget::displayGlyphPlaybackFileBrowser()
   file_dialog.setWindowModality(Qt::WindowModal);
   file_dialog.exec();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::filesSelected(const QList<QStringList>& files)
 {
   if (files.size() == 0)
@@ -233,7 +227,7 @@ void qtCMBPlacementConstraintWidget::filesSelected(const QList<QStringList>& fil
 
   this->Internal->GlyphPointsFileNameText->setText(files[0][0]);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBPlacementConstraintWidget::showGlyphPlaybackGroupBox(bool show) const
 {
   if (show)
@@ -247,18 +241,17 @@ void qtCMBPlacementConstraintWidget::showGlyphPlaybackGroupBox(bool show) const
     this->Internal->GlyphPlaybackGroupBox->hide();
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBPlacementConstraintWidget::getGlyphPlaybackOption() const
 {
   return this->Internal->GlyphPlaybackOption->currentIndex();
 }
-//-----------------------------------------------------------------------------
+
 QString qtCMBPlacementConstraintWidget::getGlyphPlaybackFilename() const
 {
   return this->Internal->GlyphPointsFileNameText->text();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBPlacementConstraintWidget::checkGlyphPlaybackFile(int option)
 {
   if (option == 0)
@@ -290,7 +283,6 @@ void qtCMBPlacementConstraintWidget::checkGlyphPlaybackFile(int option)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBPlacementConstraintWidget::fileExists(QString fileName) const
 {
   struct stat buf;

@@ -27,7 +27,7 @@
 #include "vtkSmartPointer.h"
 
 vtkStandardNewMacro(vtkCMBLargeTextureSurfaceRepresentation);
-//----------------------------------------------------------------------------
+
 vtkCMBLargeTextureSurfaceRepresentation::vtkCMBLargeTextureSurfaceRepresentation()
 {
   this->SetNumberOfInputPorts(2); // 2nd input port for image for large texture
@@ -39,7 +39,6 @@ vtkCMBLargeTextureSurfaceRepresentation::vtkCMBLargeTextureSurfaceRepresentation
   this->LargeTexture = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBLargeTextureSurfaceRepresentation::~vtkCMBLargeTextureSurfaceRepresentation()
 {
   this->LODTextureCrop->Delete();
@@ -50,19 +49,16 @@ vtkCMBLargeTextureSurfaceRepresentation::~vtkCMBLargeTextureSurfaceRepresentatio
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBLargeTextureSurfaceRepresentation::RemoveLargeTextureInput()
 {
   this->SetInputConnection(1, 0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBLargeTextureSurfaceRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBLargeTextureSurfaceRepresentation::AddToView(vtkView* view)
 {
   vtkPVRenderView* rView = vtkPVRenderView::SafeDownCast(view);
@@ -74,7 +70,6 @@ bool vtkCMBLargeTextureSurfaceRepresentation::AddToView(vtkView* view)
   return this->Superclass::AddToView(view);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBLargeTextureSurfaceRepresentation::ProcessViewRequest(
   vtkInformationRequestKey* request_type, vtkInformation* inInfo, vtkInformation* outInfo)
 {
@@ -106,7 +101,6 @@ int vtkCMBLargeTextureSurfaceRepresentation::ProcessViewRequest(
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBLargeTextureSurfaceRepresentation::RequestData(
   vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -170,7 +164,6 @@ int vtkCMBLargeTextureSurfaceRepresentation::RequestData(
   return this->vtkPVDataRepresentation::RequestData(request, inputVector, outputVector);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBLargeTextureSurfaceRepresentation::FillInputPortInformation(
   int port, vtkInformation* info)
 {

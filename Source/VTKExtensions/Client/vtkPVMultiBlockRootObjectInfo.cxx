@@ -28,7 +28,6 @@
 
 vtkStandardNewMacro(vtkPVMultiBlockRootObjectInfo);
 
-//----------------------------------------------------------------------------
 vtkPVMultiBlockRootObjectInfo::vtkPVMultiBlockRootObjectInfo()
 {
   this->MaterialNames = NULL;
@@ -43,18 +42,15 @@ vtkPVMultiBlockRootObjectInfo::vtkPVMultiBlockRootObjectInfo()
   this->ShellTranslationPoints = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkPVMultiBlockRootObjectInfo::~vtkPVMultiBlockRootObjectInfo()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::CopyFromObject(vtkObject* obj)
 {
   vtkDataObject* dataObject = vtkDataObject::SafeDownCast(obj);
@@ -112,31 +108,26 @@ void vtkPVMultiBlockRootObjectInfo::CopyFromObject(vtkObject* obj)
     dataObject->GetFieldData()->GetArray(vtkMultiBlockWrapper::GetShellTranslationPointString()));
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVMultiBlockRootObjectInfo::GetMaterialNameWithId(int id)
 {
   return this->GetNameArrayValue(this->MaterialNames, id);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVMultiBlockRootObjectInfo::GetShellNameWithId(int id)
 {
   return this->GetNameArrayValue(this->ShellNames, id);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVMultiBlockRootObjectInfo::GetFaceNameWithId(int id)
 {
   return this->GetNameArrayValue(this->FaceNames, id);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVMultiBlockRootObjectInfo::GetBCNameWithId(int id)
 {
   return this->GetNameArrayValue(this->BCNames, id);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVMultiBlockRootObjectInfo::GetNameArrayValue(vtkStringArray* nameArray, int id)
 {
   if (nameArray && id >= 0 && id < nameArray->GetNumberOfTuples())
@@ -147,25 +138,21 @@ const char* vtkPVMultiBlockRootObjectInfo::GetNameArrayValue(vtkStringArray* nam
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetShellColorWithId(int id, float* rgba)
 {
   this->GetColorArrayValue(this->ShellColors, id, rgba);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetMaterialColorWithId(int id, float* rgba)
 {
   this->GetColorArrayValue(this->MaterialColors, id, rgba);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetModelFaceColorWithId(int id, float* rgba)
 {
   this->GetColorArrayValue(this->ModelFaceColors, id, rgba);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetModelFaceIds(vtkIdList* list)
 {
   if (this->ModelFaceColors)
@@ -183,13 +170,11 @@ void vtkPVMultiBlockRootObjectInfo::GetModelFaceIds(vtkIdList* list)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetBCColorWithId(int id, float* rgba)
 {
   this->GetColorArrayValue(this->BCColors, id, rgba);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::GetColorArrayValue(
   vtkFloatArray* colorArray, int id, float* rgba)
 {
@@ -199,7 +184,6 @@ void vtkPVMultiBlockRootObjectInfo::GetColorArrayValue(
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkPVMultiBlockRootObjectInfo::IsShellTranslationPointsLoaded()
 {
   if (this->ShellTranslationPoints)
@@ -218,7 +202,6 @@ int vtkPVMultiBlockRootObjectInfo::IsShellTranslationPointsLoaded()
   return 0;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -226,7 +209,6 @@ void vtkPVMultiBlockRootObjectInfo::CopyToStream(vtkClientServerStream* css)
   *css << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMultiBlockRootObjectInfo::CopyFromStream(const vtkClientServerStream*)
 {
 }

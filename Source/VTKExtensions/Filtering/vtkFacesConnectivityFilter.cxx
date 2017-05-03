@@ -39,7 +39,6 @@
 #include "assert.h"
 #include <sstream>
 
-//----------------------------------------------------------------------------
 class vtkFacesConnectivityFilter::vtkInternal
 {
 public:
@@ -52,7 +51,6 @@ public:
 
 vtkStandardNewMacro(vtkFacesConnectivityFilter);
 
-//----------------------------------------------------------------------------
 vtkFacesConnectivityFilter::vtkFacesConnectivityFilter()
 {
   //this->NewBlockIndices = vtkIdList::New();
@@ -72,7 +70,6 @@ vtkFacesConnectivityFilter::vtkFacesConnectivityFilter()
   this->Internal->extractLeaf = vtkExtractModelFaceBlock::New();
 }
 
-//----------------------------------------------------------------------------
 vtkFacesConnectivityFilter::~vtkFacesConnectivityFilter()
 {
   //this->NewBlockIndices->Delete();
@@ -86,7 +83,6 @@ vtkFacesConnectivityFilter::~vtkFacesConnectivityFilter()
   delete this->Internal;
 }
 
-//----------------------------------------------------------------------------
 int vtkFacesConnectivityFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -164,7 +160,6 @@ int vtkFacesConnectivityFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkFacesConnectivityFilter::UpdateFaceIDArray(int maxFaceId, vtkIdTypeArray* newRegionIds,
   vtkIntArray* selCellIndices, std::map<vtkIdType, vtkIdList*>& faceList)
 {
@@ -192,7 +187,6 @@ void vtkFacesConnectivityFilter::UpdateFaceIDArray(int maxFaceId, vtkIdTypeArray
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkFacesConnectivityFilter::FillInputPortInformation(int /*port*/, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
@@ -210,7 +204,6 @@ int vtkFacesConnectivityFilter::FillInputPortInformation(int /*port*/, vtkInform
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkFacesConnectivityFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

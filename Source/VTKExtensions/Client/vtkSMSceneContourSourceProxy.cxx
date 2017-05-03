@@ -27,17 +27,14 @@
 
 vtkStandardNewMacro(vtkSMSceneContourSourceProxy);
 
-//---------------------------------------------------------------------------
 vtkSMSceneContourSourceProxy::vtkSMSceneContourSourceProxy()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkSMSceneContourSourceProxy::~vtkSMSceneContourSourceProxy()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkSMSceneContourSourceProxy::CopyData(vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
   if (!widgetProxy)
@@ -81,7 +78,7 @@ void vtkSMSceneContourSourceProxy::CopyData(vtkSMNewWidgetRepresentationProxy* w
     this->MarkModified(this);
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkSMSceneContourSourceProxy::EditData(
   vtkSMNewWidgetRepresentationProxy* widgetProxy, bool& closed)
 {
@@ -218,7 +215,7 @@ void vtkSMSceneContourSourceProxy::EditData(
     widgetProxy->UpdateProperty("EnableLogging");
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkSMSceneContourSourceProxy::ExtractContour(vtkSMSourceProxy* sourceProxy)
 {
   if (!sourceProxy)
@@ -240,7 +237,7 @@ void vtkSMSceneContourSourceProxy::ExtractContour(vtkSMSourceProxy* sourceProxy)
 
   this->ExecuteStream(stream);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMSceneContourSourceProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

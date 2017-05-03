@@ -23,7 +23,7 @@
 #include "vtkUnsignedIntArray.h"
 
 vtkStandardNewMacro(vtkCMBArcProvider);
-//----------------------------------------------------------------------------
+
 vtkCMBArcProvider::vtkCMBArcProvider()
 {
   this->ArcId = -1;
@@ -34,7 +34,6 @@ vtkCMBArcProvider::vtkCMBArcProvider()
   this->SetNumberOfOutputPorts(1);
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcProvider::~vtkCMBArcProvider()
 {
   this->ArcId = -1;
@@ -44,7 +43,6 @@ vtkCMBArcProvider::~vtkCMBArcProvider()
   this->ArcManager = NULL;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcProvider::SetArcId(vtkIdType arcId)
 {
   if (this->ArcId != arcId)
@@ -58,7 +56,7 @@ void vtkCMBArcProvider::SetArcId(vtkIdType arcId)
     this->Modified();
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBArcProvider::SetStartPointId(vtkIdType ptId)
 {
   if (this->StartPointId != ptId)
@@ -67,7 +65,7 @@ void vtkCMBArcProvider::SetStartPointId(vtkIdType ptId)
     this->Modified();
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBArcProvider::SetEndPointId(vtkIdType ptId)
 {
   if (this->EndPointId != ptId)
@@ -77,7 +75,6 @@ void vtkCMBArcProvider::SetEndPointId(vtkIdType ptId)
   }
 }
 
-//----------------------------------------------------------------------------
 vtkMTimeType vtkCMBArcProvider::GetMTime()
 {
   vtkMTimeType mTime = this->Superclass::GetMTime();
@@ -89,7 +86,6 @@ vtkMTimeType vtkCMBArcProvider::GetMTime()
   return mTime;
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
 {
   vtkPolyData* representation = vtkPolyData::New();
@@ -177,7 +173,6 @@ vtkPolyData* vtkCMBArcProvider::CreatePolyDataRepresentation()
   return representation;
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
 {
   vtkIdType numPoints = (this->EndPointId >= this->StartPointId)
@@ -340,7 +335,6 @@ vtkPolyData* vtkCMBArcProvider::CreateSubArcPolyDataRepresentation()
   return representation;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArcProvider::RequestData(
   vtkInformation*, vtkInformationVector**, vtkInformationVector* outputVector)
 {
@@ -375,7 +369,6 @@ int vtkCMBArcProvider::RequestData(
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcProvider::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -22,13 +22,12 @@
 
 namespace
 {
-//----------------------------------------------------------------------------
+
 void trim(std::string& s)
 {
   boost::algorithm::trim_if(s, boost::algorithm::is_cntrl());
 }
 
-//----------------------------------------------------------------------------
 bool get_value(
   const remus::proto::JobSubmission& data, const std::string& key, remus::proto::JobContent& value)
 {
@@ -42,7 +41,6 @@ bool get_value(
   return true;
 }
 
-//----------------------------------------------------------------------------
 remus::proto::JobStatus make_jobFailedStatus(const remus::worker::Job& j, const std::string& reason)
 {
   remus::proto::JobProgress failure_message(reason);
@@ -54,7 +52,6 @@ remus::proto::JobStatus make_jobFailedStatus(const remus::worker::Job& j, const 
 }
 }
 
-//-----------------------------------------------------------------------------
 omicronSettings::omicronSettings(remus::worker::Job& job)
   : executionDirectory()
   , executablePath()
@@ -90,7 +87,6 @@ omicronSettings::omicronSettings(remus::worker::Job& job)
   }
 }
 
-//-----------------------------------------------------------------------------
 OmicronWorker::OmicronWorker(
   remus::proto::JobRequirements const& reqs, remus::worker::ServerConnection const& conn)
   : remus::worker::Worker(reqs, conn)
@@ -98,13 +94,11 @@ OmicronWorker::OmicronWorker(
 {
 }
 
-//-----------------------------------------------------------------------------
 OmicronWorker::~OmicronWorker()
 {
   this->cleanlyExitOmicron();
 }
 
-//-----------------------------------------------------------------------------
 void OmicronWorker::meshJob()
 {
   remus::worker::Job job = this->getJob();
@@ -134,7 +128,6 @@ void OmicronWorker::meshJob()
   this->cleanlyExitOmicron();
 }
 
-//-----------------------------------------------------------------------------
 bool OmicronWorker::terminateMeshJob(remus::worker::Job& job)
 {
   if (this->OmicronProcess)
@@ -149,7 +142,6 @@ bool OmicronWorker::terminateMeshJob(remus::worker::Job& job)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void OmicronWorker::launchOmicron(omicronSettings& settings)
 {
   //wait for any current process to finish before starting new one
@@ -173,7 +165,6 @@ void OmicronWorker::launchOmicron(omicronSettings& settings)
   boost::filesystem::current_path(cwd);
 }
 
-//-----------------------------------------------------------------------------
 void OmicronWorker::cleanlyExitOmicron()
 {
   //waits for omicron to exit and then cleans up the OmicronProcess
@@ -185,7 +176,6 @@ void OmicronWorker::cleanlyExitOmicron()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool OmicronWorker::pollOmicronStatus(remus::worker::Job& job)
 {
   //loop on polling of the omicron process

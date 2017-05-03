@@ -142,7 +142,6 @@ public:
   vtkSmartPointer<vtkEventQtSlotConnect> VTKPlaneConnect;
 };
 
-//----------------------------------------------------------------------------
 pqCMBMeshViewerMainWindow::pqCMBMeshViewerMainWindow()
   : Internal(new vtkInternal())
 {
@@ -152,7 +151,6 @@ pqCMBMeshViewerMainWindow::pqCMBMeshViewerMainWindow()
   this->MainWindowCore->applyAppSettings();
 }
 
-//----------------------------------------------------------------------------
 pqCMBMeshViewerMainWindow::~pqCMBMeshViewerMainWindow()
 {
   this->clearAllInputsList();
@@ -180,7 +178,6 @@ pqCMBMeshViewerMainWindow::~pqCMBMeshViewerMainWindow()
   this->MainWindowCore = NULL;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::initializeApplication()
 {
   this->MainWindowCore = new pqCMBMeshViewerMainWindowCore(this);
@@ -383,7 +380,7 @@ void pqCMBMeshViewerMainWindow::initializeApplication()
   this->loadDataReaction()->setSupportedFileTypes(filters);
   this->loadDataReaction()->addReaderExtensionMap(pqCMBFileExtensions::MeshViewer_ReadersMap());
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::showPointLabel(bool showLocal)
 {
   vtkSMPropertyHelper(
@@ -395,7 +392,7 @@ void pqCMBMeshViewerMainWindow::showPointLabel(bool showLocal)
   this->getThisCore()->activeRepresentation()->getProxy()->UpdateVTKObjects();
   this->getThisCore()->activeRenderView()->render();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::showCellLabel(bool showLocal)
 {
   vtkSMPropertyHelper(
@@ -408,14 +405,12 @@ void pqCMBMeshViewerMainWindow::showCellLabel(bool showLocal)
   this->getThisCore()->activeRenderView()->render();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onFilterPropertiesModified(bool modifed)
 {
   this->Internal->MeshViewerPanel->getGUIPanel()->pushButton_Apply->setEnabled(modifed);
   this->Internal->MeshViewerPanel->getGUIPanel()->pushButton_Reset->setEnabled(modifed);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::setupMenuActions()
 {
   // Add actions to "File" menu.
@@ -444,7 +439,6 @@ void pqCMBMeshViewerMainWindow::setupMenuActions()
     this->getMainDialog()->actionExtract_Subset, this->getMainDialog()->actionEdit_Conical_Region);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::showQueryDialog()
 {
   pqFindDataDialog dialog(this);
@@ -475,7 +469,6 @@ void pqCMBMeshViewerMainWindow::showQueryDialog()
   //  }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::applyFilters()
 {
   this->getThisCore()->acceptFilterPanels();
@@ -483,7 +476,6 @@ void pqCMBMeshViewerMainWindow::applyFilters()
   this->Internal->InformationWidget->updateInformation();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::setSelectionMode()
 {
   if (this->getThisCore()->is2DMesh())
@@ -499,7 +491,6 @@ void pqCMBMeshViewerMainWindow::setSelectionMode()
   this->getThisCore()->setSelectionMode(this->Internal->SelectionMenu->currentIndex());
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onMeshLoaded()
 {
   this->clearAllInputsList();
@@ -593,19 +584,17 @@ void pqCMBMeshViewerMainWindow::onMeshLoaded()
   this->updateEnableState();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onMeshModified()
 {
   this->updateSelection();
   this->Internal->InformationWidget->updateInformation();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBMeshViewerMainWindowCore* pqCMBMeshViewerMainWindow::getThisCore()
 {
   return qobject_cast<pqCMBMeshViewerMainWindowCore*>(this->MainWindowCore);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::updateEnableState()
 {
   bool data_loaded = this->getThisCore()->isMeshLoaded();
@@ -623,7 +612,6 @@ void pqCMBMeshViewerMainWindow::updateEnableState()
   this->updateEnableState(data_loaded);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onHelpAbout()
 {
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
@@ -640,18 +628,15 @@ void pqCMBMeshViewerMainWindow::onHelpAbout()
   dialog->show();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onHelpHelp()
 {
   this->showHelpPage("qthelp://paraview.org/cmbsuite/MeshViewer_README.html");
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onEnableExternalProcesses(bool vtkNotUsed(state))
 {
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::updateSelection()
 {
   if (!this->getThisCore()->activeSource() ||
@@ -729,7 +714,6 @@ void pqCMBMeshViewerMainWindow::updateSelection()
   this->updateChangeMaterialButton();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::updateChangeMaterialButton()
 {
   vtkSMSourceProxy* smSource =
@@ -750,7 +734,6 @@ void pqCMBMeshViewerMainWindow::updateChangeMaterialButton()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onChangeSelectionMaterialId()
 {
   QString vtext = this->Internal->MeshViewerPanel->getGUIPanel()->MaterialIdEntry->text();
@@ -759,7 +742,6 @@ void pqCMBMeshViewerMainWindow::onChangeSelectionMaterialId()
   this->Internal->MeshViewerPanel->getGUIPanel()->pushButton_ChangeMaterial->setEnabled(0);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onInputChanged()
 {
   QTreeWidget* inputList = this->inputTreeWidget();
@@ -790,7 +772,7 @@ void pqCMBMeshViewerMainWindow::onInputChanged()
   this->updateSelection();
   this->onInputSelectionChanged();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onExportSubset()
 {
   QTreeWidget* inputList = this->Internal->MeshViewerPanel->getGUIPanel()->treeInputs;
@@ -804,7 +786,7 @@ void pqCMBMeshViewerMainWindow::onExportSubset()
     }
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::extractSelection()
 {
   this->getMainDialog()->actionExtract_Subset->setEnabled(0);
@@ -819,7 +801,7 @@ void pqCMBMeshViewerMainWindow::extractSelection()
     this->Internal->NumberOfExtractedSubsets++;
   }
 }
-//----------------------------------------------------------------------------
+
 QTreeWidgetItem* pqCMBMeshViewerMainWindow::findItemFromSource(
   QTreeWidgetItem* parentItem, pqPipelineSource* currentS)
 {
@@ -844,7 +826,6 @@ QTreeWidgetItem* pqCMBMeshViewerMainWindow::findItemFromSource(
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::invertSelection()
 {
   if (this->getThisCore()->invertCurrentSelection())
@@ -852,7 +833,7 @@ void pqCMBMeshViewerMainWindow::invertSelection()
     this->updateSelection();
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::addInputItem(
   QTreeWidgetItem* parentLocal, pqDataRepresentation* extractRep, bool select)
 {
@@ -896,7 +877,7 @@ void pqCMBMeshViewerMainWindow::addInputItem(
     //    this->onInputChanged();
   }
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBMeshViewerMainWindow::getInputRepresentationFromItem(
   QTreeWidgetItem* item)
 {
@@ -905,7 +886,6 @@ pqDataRepresentation* pqCMBMeshViewerMainWindow::getInputRepresentationFromItem(
     : NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBMeshViewerMainWindow::getInputSourceFromItem(QTreeWidgetItem* item)
 {
 
@@ -916,7 +896,7 @@ pqPipelineSource* pqCMBMeshViewerMainWindow::getInputSourceFromItem(QTreeWidgetI
   pqDataRepresentation* inputRep = this->getInputRepresentationFromItem(item);
   return inputRep ? inputRep->getInput() : NULL;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onRemoveInputSource()
 {
   QTreeWidget* treeInputs = this->Internal->MeshViewerPanel->getGUIPanel()->treeInputs;
@@ -938,7 +918,7 @@ void pqCMBMeshViewerMainWindow::onRemoveInputSource()
     treeInputs->blockSignals(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onInputSelectionChanged()
 {
   QTreeWidget* treeInputs = this->inputTreeWidget();
@@ -979,7 +959,7 @@ void pqCMBMeshViewerMainWindow::onInputSelectionChanged()
     this->getThisCore()->getAppearanceEditor()->setEnabled(0);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::removeSubsets(QTreeWidgetItem* parentLocal)
 {
   foreach (QTreeWidgetItem* child, parentLocal->takeChildren())
@@ -991,7 +971,7 @@ void pqCMBMeshViewerMainWindow::removeSubsets(QTreeWidgetItem* parentLocal)
     this->removeInputItem(child, false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onInputClicked(QTreeWidgetItem* item, int col)
 {
   // Change visibility
@@ -1020,12 +1000,12 @@ void pqCMBMeshViewerMainWindow::onInputClicked(QTreeWidgetItem* item, int col)
     this->getThisCore()->activeRenderView()->render();
   }
 }
-//-----------------------------------------------------------------------------
+
 QTreeWidget* pqCMBMeshViewerMainWindow::inputTreeWidget()
 {
   return this->Internal->MeshViewerPanel->getGUIPanel()->treeInputs;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::removeInputItem(QTreeWidgetItem* selItem, bool checkRemovable)
 {
   if (!selItem)
@@ -1044,7 +1024,7 @@ void pqCMBMeshViewerMainWindow::removeInputItem(QTreeWidgetItem* selItem, bool c
   }
   delete selItem;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::clearAllInputsList()
 {
   QTreeWidget* treeInputs = this->inputTreeWidget();
@@ -1055,7 +1035,6 @@ void pqCMBMeshViewerMainWindow::clearAllInputsList()
   treeInputs->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBMeshViewerMainWindow::isItemInActiveChain(QTreeWidgetItem* item)
 {
   if (!item)
@@ -1073,7 +1052,7 @@ bool pqCMBMeshViewerMainWindow::isItemInActiveChain(QTreeWidgetItem* item)
 
   return this->hasChildItem(item, activeItem);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindow::hasChildItem(
   QTreeWidgetItem* parentLocal, QTreeWidgetItem* theChild)
 {
@@ -1093,7 +1072,6 @@ bool pqCMBMeshViewerMainWindow::hasChildItem(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::onInvokePlaneWidget()
 {
   if (!this->getThisCore()->meshSculptingSource() &&
@@ -1156,7 +1134,7 @@ void pqCMBMeshViewerMainWindow::onInvokePlaneWidget()
   this->getMainDialog()->actionEdit_Conical_Region->setEnabled(0);
   this->getThisCore()->activeRenderView()->render();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onInvokeBoxWidget()
 {
   if (!this->getThisCore()->meshSculptingSource() &&
@@ -1224,7 +1202,7 @@ void pqCMBMeshViewerMainWindow::onInvokeBoxWidget()
 
   this->getThisCore()->activeRenderView()->render();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onDefineContourWidget()
 {
   if (this->Internal->CurrentContour)
@@ -1290,7 +1268,7 @@ void pqCMBMeshViewerMainWindow::onDefineContourWidget()
   this->getMainDialog()->action_SelectPoints->setEnabled(0);
   this->getMainDialog()->actionExtract_Subset->setEnabled(0);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onContourFinished()
 {
   if (this->getMainDialog()->actionSelect_Contour_Surface_Point->isChecked() ||
@@ -1312,7 +1290,7 @@ void pqCMBMeshViewerMainWindow::onContourFinished()
   this->updateSelection();
   this->getThisCore()->enableCameraInteractionModeChanges(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onContourChanged()
 {
   if (this->getMainDialog()->actionSelect_Contour_Surface_Point->isChecked() ||
@@ -1329,7 +1307,7 @@ void pqCMBMeshViewerMainWindow::onContourChanged()
   }
   this->updateSelection();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::updateBoxWidget()
 {
   if (this->Internal->BoxWidget)
@@ -1347,7 +1325,7 @@ void pqCMBMeshViewerMainWindow::updateBoxWidget()
       vtkCommand::EndInteractionEvent, this, SLOT(onUpdateBoxInteraction()));
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::updatePlaneWidget()
 {
   if (this->Internal->PlaneWidget)
@@ -1364,26 +1342,25 @@ void pqCMBMeshViewerMainWindow::updatePlaneWidget()
       vtkCommand::EndInteractionEvent, this, SLOT(onEndPlaneInteraction()));
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onUpdateBoxInteraction()
 {
   //  this->getMainDialog()->actionModify_Mesh_Surface_Nodes->setEnabled(1);
   this->getThisCore()->moveMeshScultpingPoints();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onEndPlaneInteraction()
 {
   // First make sure the plane and contour is synchronized.
   this->onUpdatePlaneInteraction();
   this->getThisCore()->moveMeshScultpingPoints();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onUpdatePlaneInteraction()
 {
   this->getThisCore()->updatePlaneInteraction(this->Internal->PlaneWidget);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindow::hidePlaneWidget()
 {
   if (this->Internal->PlaneWidget)
@@ -1395,7 +1372,7 @@ void pqCMBMeshViewerMainWindow::hidePlaneWidget()
   this->getMainDialog()->actionPush_Selected_Contour_Points->setChecked(0);
   this->getMainDialog()->actionPush_Selected_Contour_Points->setEnabled(0);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::hideBoxWidget()
 {
   if (this->Internal->BoxWidget)
@@ -1407,7 +1384,7 @@ void pqCMBMeshViewerMainWindow::hideBoxWidget()
   this->getMainDialog()->actionMove_Selected_Contour_Points->setChecked(0);
   this->getMainDialog()->actionMove_Selected_Contour_Points->setEnabled(0);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onClearSelection()
 {
   this->getThisCore()->clearSelection();
@@ -1426,23 +1403,23 @@ void pqCMBMeshViewerMainWindow::onClearSelection()
   this->getMainDialog()->action_SelectPoints->setEnabled(1);
   this->getThisCore()->enableCameraInteractionModeChanges(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onSelectAll()
 {
   this->getThisCore()->selectAll();
   this->updateSelection();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onExtractShortcutActivated()
 {
   this->extractSelection();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onSetActiveShortcutActivated()
 {
   this->onInputChanged();
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBMeshViewerMainWindow::getShapeSelectionOption()
 {
   if (this->Internal->MeshViewerPanel->getGUIPanel()->contourPartiallyIn->isChecked())
@@ -1455,7 +1432,7 @@ int pqCMBMeshViewerMainWindow::getShapeSelectionOption()
   }
   return vtkCMBMeshContourSelector::ALL_IN;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onShapeSelectionOptionClicked()
 {
   int selOption = this->getShapeSelectionOption();
@@ -1470,17 +1447,17 @@ void pqCMBMeshViewerMainWindow::onShapeSelectionOptionClicked()
     this->updateSelection();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onApplySmoothing()
 {
   this->getThisCore()->applySmoothing();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onSwitchHistogramAndSpreadsheet(bool showHist)
 {
   this->Internal->MeshViewerPanel->getGUIPanel()->stackedWidget->setCurrentIndex(showHist ? 0 : 1);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindow::onStartConeSelection(bool showDialog)
 {
   // showDialog==true => from "Edit" menu

@@ -21,7 +21,6 @@
 
 vtkStandardNewMacro(vtkStringWriter);
 
-//-----------------------------------------------------------------------------
 vtkStringWriter::vtkStringWriter()
 {
   this->FileName = 0;
@@ -29,21 +28,18 @@ vtkStringWriter::vtkStringWriter()
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkStringWriter::~vtkStringWriter()
 {
   this->SetFileName(0);
   this->SetText(0);
 }
 
-//----------------------------------------------------------------------------
 int vtkStringWriter::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkStringWriter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -71,7 +67,6 @@ int vtkStringWriter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkStringWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

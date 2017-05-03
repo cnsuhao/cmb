@@ -24,20 +24,17 @@
 
 vtkStandardNewMacro(vtkSceneGenV2ContourWriter);
 
-//-----------------------------------------------------------------------------
 vtkSceneGenV2ContourWriter::vtkSceneGenV2ContourWriter()
 {
   this->SetNumberOfInputPorts(1);
   this->FileName = NULL;
 }
 
-//-----------------------------------------------------------------------------
 vtkSceneGenV2ContourWriter::~vtkSceneGenV2ContourWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 int vtkSceneGenV2ContourWriter::FillInputPortInformation(int /*port*/, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
@@ -45,7 +42,6 @@ int vtkSceneGenV2ContourWriter::FillInputPortInformation(int /*port*/, vtkInform
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkSceneGenV2ContourWriter::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/)
 {
@@ -77,7 +73,7 @@ int vtkSceneGenV2ContourWriter::RequestData(vtkInformation* /*request*/,
   append->Delete();
   return 1;
 }
-//----------------------------------------------------------------------------
+
 void vtkSceneGenV2ContourWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

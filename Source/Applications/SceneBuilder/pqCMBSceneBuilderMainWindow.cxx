@@ -115,7 +115,6 @@ public:
   QList<QAction*> EditMenuActions;
 };
 
-//----------------------------------------------------------------------------
 pqCMBSceneBuilderMainWindow::pqCMBSceneBuilderMainWindow()
   : Internal(new vtkInternal(this))
 {
@@ -126,7 +125,6 @@ pqCMBSceneBuilderMainWindow::pqCMBSceneBuilderMainWindow()
   this->MainWindowCore->applyAppSettings();
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneBuilderMainWindow::~pqCMBSceneBuilderMainWindow()
 {
   delete this->Tree;
@@ -135,7 +133,6 @@ pqCMBSceneBuilderMainWindow::~pqCMBSceneBuilderMainWindow()
   this->MainWindowCore = NULL;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::initializeApplication()
 {
   this->MainWindowCore = new pqCMBSceneBuilderMainWindowCore(this);
@@ -351,7 +348,6 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
   this->loadDataReaction()->addReaderExtensionMap(pqCMBFileExtensions::SceneBuilder_ReadersMap());
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::setupMenuActions()
 {
   //this->Internal->ScenePanel->getGUIPanel()->setupUi(this);
@@ -481,7 +477,6 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menu_Tools->insertSeparator(this->getMainDialog()->actionGlyph_Playback);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onSceneLoaded()
 {
   if (this->Tree->isEmpty())
@@ -505,7 +500,6 @@ void pqCMBSceneBuilderMainWindow::onSceneLoaded()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onSceneSaved()
 {
   QFileInfo finfo(this->getThisCore()->getOutputFileName());
@@ -513,7 +507,6 @@ void pqCMBSceneBuilderMainWindow::onSceneSaved()
   this->updateEnableState();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::updateEnableState()
 {
   bool data_loaded = !this->Tree->isEmpty();
@@ -537,7 +530,7 @@ void pqCMBSceneBuilderMainWindow::updateEnableState()
   this->getMainDialog()->actionCreate_Omicron_Input->setEnabled(data_loaded);
   this->getMainDialog()->actionExport_2D_BCS_File->setEnabled(data_loaded);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindow::setToolbarsEnabled(bool enable)
 {
   this->getMainDialog()->toolBar->setEnabled(enable);
@@ -545,7 +538,6 @@ void pqCMBSceneBuilderMainWindow::setToolbarsEnabled(bool enable)
   this->getMainDialog()->toolBar_Selection->setEnabled(enable);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onHelpAbout()
 {
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
@@ -563,25 +555,21 @@ void pqCMBSceneBuilderMainWindow::onHelpAbout()
   dialog->show();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onHelpHelp()
 {
   this->showHelpPage("qthelp://paraview.org/cmbsuite/SceneBuilder_README.html");
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onEnableExternalProcesses(bool state)
 {
   this->getMainDialog()->actionCreate_CMB_Model->setEnabled(state);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::clearGUI()
 {
   this->updateEnableState();
 }
 
-//-----------------------------------------------------------------------------
 // For processing selections via the Scene Tree's nodes
 void pqCMBSceneBuilderMainWindow::onSceneNodeSelected(
   const QList<pqCMBSceneNode*>*, const QList<pqCMBSceneNode*>*)
@@ -610,7 +598,7 @@ void pqCMBSceneBuilderMainWindow::onSceneNodeSelected(
   }
   this->Internal->ScenePanel->getGUIPanel()->ZoomButton->setEnabled(true);
 }
-//-----------------------------------------------------------------------------
+
 // For processing name changes via the Scene Tree's nodes
 void pqCMBSceneBuilderMainWindow::onSceneNodeNameChanged(pqCMBSceneNode* node)
 {
@@ -625,7 +613,6 @@ void pqCMBSceneBuilderMainWindow::onSceneNodeNameChanged(pqCMBSceneNode* node)
   this->getThisCore()->showStatusMessage(text);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::updateSelection()
 {
   int isShiftKeyDown =
@@ -701,7 +688,6 @@ void pqCMBSceneBuilderMainWindow::updateSelection()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onSelectGlyph(bool checked)
 {
   //if(checked)
@@ -717,7 +703,7 @@ void pqCMBSceneBuilderMainWindow::onSelectGlyph(bool checked)
 
   this->getThisCore()->onSelectGlyph(checked);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindow::onRubberBandSelect(bool checked)
 {
   //if(checked)
@@ -734,13 +720,11 @@ void pqCMBSceneBuilderMainWindow::onRubberBandSelect(bool checked)
   this->getThisCore()->onRubberBandSelect(checked);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneBuilderMainWindowCore* pqCMBSceneBuilderMainWindow::getThisCore()
 {
   return qobject_cast<pqCMBSceneBuilderMainWindowCore*>(this->MainWindowCore);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onEnableMenuItems(bool state)
 {
   this->Superclass::onEnableMenuItems(state);

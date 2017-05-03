@@ -25,27 +25,23 @@
 
 vtkStandardNewMacro(vtkCMBClassifyPointsFilter);
 
-//----------------------------------------------------------------------------
 // Construct with defaults
 vtkCMBClassifyPointsFilter::vtkCMBClassifyPointsFilter()
 {
   this->SetNumberOfInputPorts(2);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBClassifyPointsFilter::SetSolidConnection(vtkAlgorithmOutput* algOutput)
 {
   this->SetInputConnection(1, algOutput);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBClassifyPointsFilter::FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBClassifyPointsFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -98,7 +94,6 @@ int vtkCMBClassifyPointsFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBClassifyPointsFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

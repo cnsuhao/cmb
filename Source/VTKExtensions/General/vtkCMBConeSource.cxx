@@ -23,7 +23,6 @@
 
 vtkStandardNewMacro(vtkCMBConeSource);
 
-//----------------------------------------------------------------------------
 // Construct with default resolution 6, height 1.0, radius 0.5, and capping
 // on.
 vtkCMBConeSource::vtkCMBConeSource(int res)
@@ -46,7 +45,6 @@ vtkCMBConeSource::vtkCMBConeSource(int res)
   this->SetNumberOfInputPorts(0);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBConeSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -331,7 +329,6 @@ int vtkCMBConeSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBConeSource::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -340,7 +337,6 @@ int vtkCMBConeSource::RequestInformation(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBConeSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

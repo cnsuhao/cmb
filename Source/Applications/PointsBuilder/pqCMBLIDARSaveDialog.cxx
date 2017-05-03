@@ -18,7 +18,6 @@
 #include <QLineEdit>
 #include <pqFileDialog.h>
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARSaveDialog::getFile(QWidget* parent, pqServer* server, bool enableSavePieces,
   QString* name, bool* saveAsSinglePiece, bool* loadAsDisplayed)
 {
@@ -33,7 +32,6 @@ int pqCMBLIDARSaveDialog::getFile(QWidget* parent, pqServer* server, bool enable
   return status;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARSaveDialog::pqCMBLIDARSaveDialog(QWidget* parent, pqServer* server, bool enableSavePieces)
   : Status(-1)
   , Server(server)
@@ -54,7 +52,6 @@ pqCMBLIDARSaveDialog::pqCMBLIDARSaveDialog(QWidget* parent, pqServer* server, bo
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARSaveDialog::~pqCMBLIDARSaveDialog()
 {
   if (this->SaveDialog)
@@ -66,7 +63,7 @@ pqCMBLIDARSaveDialog::~pqCMBLIDARSaveDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBLIDARSaveDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -74,7 +71,7 @@ int pqCMBLIDARSaveDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARSaveDialog::accept()
 {
   this->Status = 1;
@@ -82,13 +79,12 @@ void pqCMBLIDARSaveDialog::accept()
   this->SaveAsSinglePiece = this->SaveDialog->saveAsSinglePiece->isChecked();
   this->SaveAsDisplayed = this->SaveDialog->saveAsDisplayed->isChecked();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARSaveDialog::cancel()
 {
   this->Status = 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARSaveDialog::filesSelected(const QStringList& files)
 {
   if (files.size() == 0)
@@ -99,7 +95,6 @@ void pqCMBLIDARSaveDialog::filesSelected(const QStringList& files)
   this->SaveDialog->fileNameEntry->setText(files[0]);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARSaveDialog::displayFileBrowser()
 {
   QString filters =
@@ -117,5 +112,3 @@ void pqCMBLIDARSaveDialog::displayFileBrowser()
     this->filesSelected(file_dialog.getSelectedFiles());
   }
 }
-
-//-----------------------------------------------------------------------------

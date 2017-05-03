@@ -41,7 +41,7 @@
 
 namespace Ui
 {
-//-----------------------------------------------------------------------------
+
 ArcPointPicker::ArcPointPicker(QObject* parent)
   : QAction(parent)
   , Info(NULL)
@@ -52,7 +52,6 @@ ArcPointPicker::ArcPointPicker(QObject* parent)
   this->setCheckable(true);
 }
 
-//-----------------------------------------------------------------------------
 ArcPointPicker::~ArcPointPicker()
 {
   if (this->Selecter)
@@ -62,7 +61,6 @@ ArcPointPicker::~ArcPointPicker()
   }
 }
 
-//-----------------------------------------------------------------------------
 void ArcPointPicker::doPick(pqRenderView* view, pqCMBArc* arc, PickInfo& info)
 {
   if (this->Selecter)
@@ -93,7 +91,6 @@ void ArcPointPicker::doPick(pqRenderView* view, pqCMBArc* arc, PickInfo& info)
   }
 }
 
-//-----------------------------------------------------------------------------
 void ArcPointPicker::selectedInfo(pqOutputPort* port)
 {
   //always update the port
@@ -129,7 +126,6 @@ void ArcPointPicker::selectedInfo(pqOutputPort* port)
   }
 }
 
-//-----------------------------------------------------------------------------
 void ArcPointPicker::onPickingFinished()
 {
   //we want the connection to happen once the view goes away so
@@ -157,7 +153,6 @@ public:
   QPointer<pqPipelineSource> SubArcSource;
 };
 
-//-----------------------------------------------------------------------------
 qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget* parent)
   : QWidget(parent)
   , Internals(new qtCMBArcEditWidget::pqInternals)
@@ -206,8 +201,6 @@ qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget* parent)
   //this->resetWidget();
 }
 
-//-----------------------------------------------------------------------------
-
 qtCMBArcEditWidget::~qtCMBArcEditWidget()
 {
   if (this->Internals->SubArcSource)
@@ -229,7 +222,6 @@ qtCMBArcEditWidget::~qtCMBArcEditWidget()
   delete Internals;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::setArc(pqCMBArc* arc)
 {
   if (this->Arc != arc)
@@ -242,7 +234,6 @@ void qtCMBArcEditWidget::setArc(pqCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBArcEditWidget::isSubArcValid()
 {
   // for a closed loop arc, we don't allow a sub-arc to include the end node
@@ -261,7 +252,6 @@ bool qtCMBArcEditWidget::isSubArcValid()
     this->StartPoint.PointId != this->EndPoint.PointId);
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBArcEditWidget::isWholeArcSelected()
 {
   if (!this->StartPoint.IsValid || !this->EndPoint.IsValid)
@@ -280,7 +270,6 @@ bool qtCMBArcEditWidget::isWholeArcSelected()
     (closedArc && this->StartPoint.PointId == this->EndPoint.PointId));
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::showEditWidget()
 {
   //hide the pointWidget from the layout to reclaim the space
@@ -295,7 +284,6 @@ void qtCMBArcEditWidget::showEditWidget()
   emit this->startArcEditing();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::showPickWidget()
 {
   //shows the pick widget and hides the edit widget
@@ -334,7 +322,6 @@ void qtCMBArcEditWidget::showPickWidget()
   this->updateSubArcRepresentation(enabled);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::PickStartPoint()
 {
   //need to convey what we are pick (start,end)
@@ -343,7 +330,6 @@ void qtCMBArcEditWidget::PickStartPoint()
   //do we need to lock the UI?
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::pickWholeArc()
 {
   if (!this->Arc || !this->Arc->getSource())
@@ -372,12 +358,11 @@ void qtCMBArcEditWidget::pickWholeArc()
   this->showPickWidget();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::PickEndPoint()
 {
   this->Picker.doPick(this->View, this->Arc, this->EndPoint);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBArcEditWidget::hideArcWidget()
 {
   if (this->SubWidget)
@@ -392,7 +377,6 @@ void qtCMBArcEditWidget::hideArcWidget()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::modifySubArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
@@ -479,7 +463,6 @@ void qtCMBArcEditWidget::modifySubArc()
   this->SubWidget->setVisible(true);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::resetWidget()
 {
   //resets the widget to what it would be like if it was just created
@@ -495,7 +478,6 @@ void qtCMBArcEditWidget::resetWidget()
   this->showPickWidget();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::updateWholeArcRepresentation(bool visible)
 {
   if (!this->Arc || !this->Arc->getRepresentation())
@@ -515,7 +497,6 @@ void qtCMBArcEditWidget::updateWholeArcRepresentation(bool visible)
   this->View->forceRender();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::updateSubArcRepresentation(bool visible)
 {
   if (!this->Arc || !this->Arc->getSource())
@@ -563,7 +544,6 @@ void qtCMBArcEditWidget::updateSubArcRepresentation(bool visible)
   this->setSubArcVisible(visible);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::setSubArcVisible(int visible)
 {
   if (this->Internals->SubArcRepresentation)
@@ -576,7 +556,6 @@ void qtCMBArcEditWidget::setSubArcVisible(int visible)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::arcEditingFinished()
 {
   /* TO DO: We may allow this in the future.
@@ -605,7 +584,6 @@ void qtCMBArcEditWidget::arcEditingFinished()
   emit this->arcModificationfinished();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::finishedArcModification()
 {
   //marks that we are finished editing this arc
@@ -616,7 +594,6 @@ void qtCMBArcEditWidget::finishedArcModification()
   this->close();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::cancelEdit()
 {
   //marks that that we don't want to save the modifications
@@ -628,7 +605,6 @@ void qtCMBArcEditWidget::cancelEdit()
   emit this->arcModificationfinished();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::saveEdit()
 {
   // modify/replace the sub-arc with the arc from the arc widget
@@ -641,7 +617,6 @@ void qtCMBArcEditWidget::saveEdit()
   this->resetWidget();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::onStraightenArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
@@ -653,7 +628,6 @@ void qtCMBArcEditWidget::onStraightenArc()
   this->resetWidget();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::onCollapseSubArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
@@ -665,7 +639,6 @@ void qtCMBArcEditWidget::onCollapseSubArc()
   this->resetWidget();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::onMakeArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)

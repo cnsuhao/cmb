@@ -67,7 +67,6 @@ public:
   }
 };
 
-//-----------------------------------------------------------------------------
 pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
   smtk::extension::qtSelectionManager* sManager, QWidget* p)
   : QWidget(p)
@@ -92,14 +91,12 @@ pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
     this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&)));
 }
 
-//-----------------------------------------------------------------------------
 pqSMTKInfoPanel::~pqSMTKInfoPanel()
 {
   this->VTKConnect->Disconnect();
   this->VTKConnect->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKInfoPanel::setOutputPort(pqOutputPort* source)
 {
   if (this->OutputPort == source)
@@ -125,14 +122,12 @@ void pqSMTKInfoPanel::setOutputPort(pqOutputPort* source)
   this->updateInformation();
 }
 
-//-----------------------------------------------------------------------------
 /// get the proxy for which properties are displayed
 pqOutputPort* pqSMTKInfoPanel::getOutputPort()
 {
   return this->OutputPort;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKInfoPanel::updateInformation()
 {
   this->Ui->compositeTree->clear();
@@ -242,7 +237,6 @@ void pqSMTKInfoPanel::updateInformation()
   pModel->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKInfoPanel::fillDataInformation(vtkPVDataInformation* dataInformation)
 {
   this->Ui->properties->setVisible(false);
@@ -442,7 +436,6 @@ void pqSMTKInfoPanel::fillDataInformation(vtkPVDataInformation* dataInformation)
   this->Ui->zRange->setText(zrange);
 }
 
-//-----------------------------------------------------------------------------
 QTreeWidgetItem* pqSMTKInfoPanel::fillCompositeInformation(
   vtkPVDataInformation* info, QTreeWidgetItem* parentItem /*=0*/)
 {
@@ -512,7 +505,6 @@ QTreeWidgetItem* pqSMTKInfoPanel::fillCompositeInformation(
   return node;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKInfoPanel::onCurrentItemChanged(QTreeWidgetItem* item)
 {
   if (item)
@@ -523,7 +515,6 @@ void pqSMTKInfoPanel::onCurrentItemChanged(QTreeWidgetItem* item)
   }
 }
 
-//-----------------------------------------------------------------------------
 namespace
 {
 class MeshAggregate : public smtk::mesh::MeshForEach
@@ -532,7 +523,6 @@ class MeshAggregate : public smtk::mesh::MeshForEach
   bool Valid;
 
 public:
-  //--------------------------------------------------------------------------
   MeshAggregate(const smtk::mesh::CollectionPtr& collection)
     : smtk::mesh::MeshForEach()
     , Meshes(collection, smtk::mesh::Handle())
@@ -540,7 +530,6 @@ public:
   {
   }
 
-  //--------------------------------------------------------------------------
   void forMesh(smtk::mesh::MeshSet& mesh)
   {
     if (this->Valid)
@@ -554,7 +543,6 @@ public:
 };
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKInfoPanel::onSelectionChanged(
   const smtk::model::EntityRefs& erefs, const smtk::mesh::MeshSets& meshes)
 {

@@ -21,16 +21,14 @@
 
 vtkStandardNewMacro(vtkSMMeshSourceProxy);
 
-//---------------------------------------------------------------------------
 vtkSMMeshSourceProxy::vtkSMMeshSourceProxy()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkSMMeshSourceProxy::~vtkSMMeshSourceProxy()
 {
 }
-//----------------------------------------------------------------------------
+
 bool vtkSMMeshSourceProxy::MovePoints(vtkSMProxy* movedProxy, vtkSMProxy* transformProxy)
 {
   if (!movedProxy)
@@ -61,7 +59,7 @@ bool vtkSMMeshSourceProxy::MovePoints(vtkSMProxy* movedProxy, vtkSMProxy* transf
   this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0, 0, &moved);
   return moved;
 }
-//----------------------------------------------------------------------------
+
 void vtkSMMeshSourceProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

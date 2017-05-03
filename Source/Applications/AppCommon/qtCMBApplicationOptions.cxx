@@ -60,16 +60,13 @@ public:
   QList<pqProxyWidget*> ProxyWidgets;
 };
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptions* qtCMBApplicationOptions::Instance = 0;
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptions* qtCMBApplicationOptions::instance()
 {
   return qtCMBApplicationOptions::Instance;
 }
 
-//----------------------------------------------------------------------------
 qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget* widgetParent)
   : qtCMBOptionsContainer(widgetParent)
 {
@@ -184,13 +181,11 @@ qtCMBApplicationOptions::qtCMBApplicationOptions(QWidget* widgetParent)
     this->Internal->dirTempBrowserButton, SIGNAL(clicked()), this, SLOT(chooseTempScratchDir()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptions::~qtCMBApplicationOptions()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::setPage(const QString& page)
 {
   int count = this->Internal->stackedWidget->count();
@@ -204,7 +199,6 @@ void qtCMBApplicationOptions::setPage(const QString& page)
   }
 }
 
-//-----------------------------------------------------------------------------
 QStringList qtCMBApplicationOptions::getPageList()
 {
   QStringList pages;
@@ -217,7 +211,6 @@ QStringList qtCMBApplicationOptions::getPageList()
   return pages;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::applyChanges()
 {
   pqSettings* cmbSettings = this->cmbAppSettings();
@@ -238,14 +231,13 @@ void qtCMBApplicationOptions::applyChanges()
   // render all views.
   pqApplicationCore::instance()->render();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBApplicationOptions::loadGlobalPropertiesFromSettings()
 {
   foreach (pqProxyWidget* pw, this->Internal->ProxyWidgets)
     pw->apply();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::loadBuiltinColorPresets()
 {
   vtkNew<vtkSMTransferFunctionPresets> presets;
@@ -300,7 +292,6 @@ void qtCMBApplicationOptions::loadBuiltinColorPresets()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::resetChanges()
 {
   int maxNumOfPtsCloud = this->maxNumberOfCloudPoints();
@@ -312,7 +303,6 @@ void qtCMBApplicationOptions::resetChanges()
     pw->reset();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::saveOptions()
 {
   // save the settings
@@ -323,7 +313,6 @@ void qtCMBApplicationOptions::saveOptions()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBApplicationOptions::restoreDefaults()
 {
   foreach (pqProxyWidget* pw, this->Internal->ProxyWidgets)
@@ -332,7 +321,6 @@ void qtCMBApplicationOptions::restoreDefaults()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqSettings* qtCMBApplicationOptions::cmbAppSettings()
 {
   if (!this->Internal->CMBCommonSettings)
@@ -354,14 +342,14 @@ pqSettings* qtCMBApplicationOptions::cmbAppSettings()
   }
   return this->Internal->CMBCommonSettings;
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBApplicationOptions::maxNumberOfCloudPoints()
 {
   pqSettings* cmbSettings = this->cmbAppSettings();
   // default to 0.1M points
   return cmbSettings->value("MaxNumberOfCloudPoints", 100000).toInt();
 }
-//-----------------------------------------------------------------------------
+
 std::string qtCMBApplicationOptions::defaultMeshStorageDirectory()
 {
   pqSettings* cmbSettings = this->cmbAppSettings();
@@ -369,7 +357,7 @@ std::string qtCMBApplicationOptions::defaultMeshStorageDirectory()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 std::string qtCMBApplicationOptions::defaultTempScratchDirectory()
 {
   pqSettings* cmbSettings = this->cmbAppSettings();
@@ -377,7 +365,7 @@ std::string qtCMBApplicationOptions::defaultTempScratchDirectory()
     .toString()
     .toStdString();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBApplicationOptions::chooseMeshStorageDir()
 {
   pqFileDialog dialog(pqApplicationCore::instance()->getActiveServer(), this,
@@ -390,7 +378,7 @@ void qtCMBApplicationOptions::chooseMeshStorageDir()
     emit this->changesAvailable();
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBApplicationOptions::chooseTempScratchDir()
 {
   pqFileDialog dialog(pqApplicationCore::instance()->getActiveServer(), this,

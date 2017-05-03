@@ -56,7 +56,6 @@ struct RowCol
   vtkIdType Column;
 };
 
-//----------------------------------------------------------------------------
 class vtkRawDEMReaderInternals
 {
 public:
@@ -76,7 +75,6 @@ public:
   std::vector<RowCol> NoDataValueInstances;
 };
 
-//----------------------------------------------------------------------------
 bool SortPredicate(RawDEMReaderFileInfo elem1, RawDEMReaderFileInfo elem2)
 {
   if (elem1.LatitudeOrigin > elem2.LatitudeOrigin)
@@ -91,7 +89,6 @@ bool SortPredicate(RawDEMReaderFileInfo elem1, RawDEMReaderFileInfo elem2)
   return false;
 }
 
-//----------------------------------------------------------------------------
 int vtkRawDEMReaderInternals::GetFilesInfo(const char* fileName, bool readSet)
 {
   std::vector<std::string> files;
@@ -206,7 +203,6 @@ int vtkRawDEMReaderInternals::GetFilesInfo(const char* fileName, bool readSet)
   return READ_OK;
 }
 
-//-----------------------------------------------------------------------------
 int vtkRawDEMReaderInternals::ReadFileInfo(const char* fileName, RawDEMReaderFileInfo& fileInfo)
 {
   // read the "hdr" file
@@ -239,7 +235,6 @@ int vtkRawDEMReaderInternals::ReadFileInfo(const char* fileName, RawDEMReaderFil
   return READ_OK;
 }
 
-//-----------------------------------------------------------------------------
 vtkRawDEMReader::vtkRawDEMReader()
 {
   this->FileName = NULL;
@@ -275,7 +270,6 @@ vtkRawDEMReader::vtkRawDEMReader()
   this->Origin[0] = this->Origin[1] = this->Origin[2] = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkRawDEMReader::~vtkRawDEMReader()
 {
   delete this->Internals;
@@ -283,7 +277,6 @@ vtkRawDEMReader::~vtkRawDEMReader()
   this->SetTransform(static_cast<vtkTransform*>(0));
 }
 
-//-----------------------------------------------------------------------------
 // vtkSetStringMacro except we clear some variables if we update the value
 void vtkRawDEMReader::SetFileName(const char* filename)
 {
@@ -322,7 +315,6 @@ void vtkRawDEMReader::SetFileName(const char* filename)
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -331,7 +323,6 @@ void vtkRawDEMReader::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::SetupReadExtents()
 {
   vtkIdType readExtents[4] = { 0, this->Internals->NumberOfColumns - 1, 0,
@@ -387,7 +378,6 @@ void vtkRawDEMReader::SetupReadExtents()
     readExtents[3] - (this->Internals->OutputNumberOfRows - 1) * onRatio;
 }
 
-//-----------------------------------------------------------------------------
 int vtkRawDEMReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -432,7 +422,6 @@ int vtkRawDEMReader::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::ReadPolyDataOutput(vtkPolyData* output)
 {
   if (!this->OutputImageData && this->ConvertFromLatLongToXYZ && this->TransformForZUp)
@@ -520,7 +509,6 @@ void vtkRawDEMReader::ReadPolyDataOutput(vtkPolyData* output)
   newPts->Squeeze();
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::ReadImageDataOutput(vtkImageData* output)
 {
   vtkImageData* data = this->AllocateOutputData(output);
@@ -572,7 +560,6 @@ void vtkRawDEMReader::ReadImageDataOutput(vtkImageData* output)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::ReadData(
   RawDEMReaderFileInfo& fileInfo, vtkFloatArray* scalars, vtkPoints* pts, vtkCellArray* verts)
 {
@@ -792,7 +779,6 @@ void vtkRawDEMReader::ReadData(
   bbox.GetBounds(this->DataBounds);
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkRawDEMReader::GetTotalNumberOfPoints()
 {
   if (this->Internals->GetFilesInfo(this->FileName, this->ReadSetOfFiles) == READ_ERROR)
@@ -804,7 +790,6 @@ vtkIdType vtkRawDEMReader::GetTotalNumberOfPoints()
   return this->Internals->TotalNumberOfPoints;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkRawDEMReader::GetRealNumberOfOutputPoints()
 {
   if (this->Internals->GetFilesInfo(this->FileName, this->ReadSetOfFiles) == READ_ERROR)
@@ -816,7 +801,6 @@ vtkIdType vtkRawDEMReader::GetRealNumberOfOutputPoints()
   return this->RealNumberOfOutputPoints;
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::GatherDimensions()
 {
   if (this->Internals->GetFilesInfo(this->FileName, this->ReadSetOfFiles) == READ_ERROR)
@@ -829,7 +813,6 @@ void vtkRawDEMReader::GatherDimensions()
   this->Dimensions[1] = this->Internals->NumberOfRows;
 }
 
-//-----------------------------------------------------------------------------
 void vtkRawDEMReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -839,7 +822,6 @@ void vtkRawDEMReader::PrintSelf(ostream& os, vtkIndent indent)
      << "Convert From Lat/Long to xyz: " << (this->ConvertFromLatLongToXYZ ? "On" : "Off");
 }
 
-//-----------------------------------------------------------------------------
 int vtkRawDEMReader::RequestDataObject(vtkInformation*,
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -878,7 +860,6 @@ int vtkRawDEMReader::RequestDataObject(vtkInformation*,
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkRawDEMReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -932,7 +913,6 @@ int vtkRawDEMReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 vtkImageData* vtkRawDEMReader::AllocateOutputData(vtkDataObject* output)
 {
   // set the extent to be the update extent

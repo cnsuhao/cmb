@@ -122,7 +122,6 @@ public:
   vtkBoundingBox boundingBox;
 };
 
-//-----------------------------------------------------------------------------
 pqCMBModifierArcManager::pqCMBModifierArcManager(
   QLayout* layout, pqServer* serverInput, pqRenderView* renderer)
 {
@@ -255,7 +254,6 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(
   this->Internal->UI->PointBathChangeControl->hide();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBModifierArcManager::~pqCMBModifierArcManager()
 {
   if (this->Internal->ArcPointSelectSource)
@@ -274,7 +272,6 @@ pqCMBModifierArcManager::~pqCMBModifierArcManager()
   //TODO clean up editableWidget
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::initialize()
 {
   this->TableWidget->setColumnCount(4);
@@ -314,7 +311,6 @@ void pqCMBModifierArcManager::initialize()
     Qt::UniqueConnection);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::accepted()
 {
   foreach (QString filename, ServerProxies.keys())
@@ -367,7 +363,6 @@ void pqCMBModifierArcManager::showDialog()
   addApplyControl();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::clear()
 {
   selectLine(-1);
@@ -403,7 +398,6 @@ void pqCMBModifierArcManager::disableSelection()
   this->TableWidget->setSelectionMode(QAbstractItemView::NoSelection);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::onClearSelection()
 {
   this->TableWidget->blockSignals(true);
@@ -414,7 +408,6 @@ void pqCMBModifierArcManager::onClearSelection()
   this->TableWidget->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc* dataObj, int visible)
 {
   this->TableWidget->insertRow(this->TableWidget->rowCount());
@@ -474,7 +467,6 @@ void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc* dataObj)
   this->TableWidget->setItem(row, Relative, objItem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::onCurrentObjectChanged()
 {
 }
@@ -551,7 +543,6 @@ bool pqCMBModifierArcManager::remove(int id, bool all)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::onItemChanged(QTableWidgetItem* item)
 {
   int id = this->TableWidget->item(item->row(), Id)->text().toInt();

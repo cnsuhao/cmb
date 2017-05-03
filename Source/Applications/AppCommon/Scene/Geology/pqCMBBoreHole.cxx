@@ -39,12 +39,11 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
-//-----------------------------------------------------------------------------
 pqCMBBoreHole::pqCMBBoreHole()
   : pqCMBSceneObjectBase()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBBoreHole::pqCMBBoreHole(pqPipelineSource* source, pqRenderView* view, pqServer* /*server*/)
   : pqCMBSceneObjectBase(source)
 {
@@ -65,7 +64,6 @@ pqCMBBoreHole::pqCMBBoreHole(pqPipelineSource* source, pqRenderView* view, pqSer
   this->UserDefinedType = "GeoBoreHole";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBBoreHole::~pqCMBBoreHole()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -77,19 +75,19 @@ pqCMBBoreHole::~pqCMBBoreHole()
     this->TubeFilter = 0;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBBoreHole::setTubeRadius(double radius)
 {
   vtkSMPropertyHelper(this->TubeFilter->getProxy(), "Radius").Set(radius);
   this->TubeFilter->getProxy()->UpdateVTKObjects();
   this->updateRepresentation();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase::enumObjectType pqCMBBoreHole::getType() const
 {
   return pqCMBSceneObjectBase::GeoBoreHole;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBBoreHole::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -108,13 +106,12 @@ pqCMBSceneObjectBase* pqCMBBoreHole::duplicate(pqServer* server, pqRenderView* v
   }
   return nobj;
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBBoreHole::getSelectionSource() const
 {
   return this->TubeFilter;
 }
 
-//-----------------------------------------------------------------------------
 vtkSMSourceProxy* pqCMBBoreHole::getSelectionInput() const
 {
   vtkSMSourceProxy* proxy;
@@ -122,7 +119,6 @@ vtkSMSourceProxy* pqCMBBoreHole::getSelectionInput() const
   return proxy->GetSelectionInput(0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBBoreHole::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
   vtkSMSourceProxy* proxy;
@@ -130,7 +126,6 @@ void pqCMBBoreHole::setSelectionInput(vtkSMSourceProxy* selectionInput)
   proxy->SetSelectionInput(0, selectionInput, 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBBoreHole::getDataBounds(double bounds[6]) const
 {
   vtkSMSourceProxy::SafeDownCast(this->TubeFilter->getProxy())

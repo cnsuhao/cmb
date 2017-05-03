@@ -23,24 +23,20 @@
 
 vtkStandardNewMacro(vtkHydroModelCreator);
 
-//-----------------------------------------------------------------------------
 vtkHydroModelCreator::vtkHydroModelCreator()
 {
 }
 
-//-----------------------------------------------------------------------------
 vtkHydroModelCreator::~vtkHydroModelCreator()
 {
 }
 
-//-----------------------------------------------------------------------------
 int vtkHydroModelCreator::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkHydroModelCreator::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -143,7 +139,6 @@ int vtkHydroModelCreator::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelCreator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

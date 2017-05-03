@@ -25,7 +25,6 @@
 
 vtkStandardNewMacro(vtkTexturePointIntensityFilter);
 
-//-----------------------------------------------------------------------------
 vtkTexturePointIntensityFilter::vtkTexturePointIntensityFilter()
 {
   this->Translation[0] = this->Translation[1] = this->Translation[2] = 0.0;
@@ -39,20 +38,17 @@ vtkTexturePointIntensityFilter::vtkTexturePointIntensityFilter()
   this->TransformInverse = NULL;
 }
 
-//-----------------------------------------------------------------------------
 vtkTexturePointIntensityFilter::~vtkTexturePointIntensityFilter()
 {
   this->Locator->Delete();
   this->Transform->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkTexturePointIntensityFilter::SetTextureData(vtkImageData* input)
 {
   this->SetInputData(1, input);
 }
 
-//----------------------------------------------------------------------------
 vtkImageData* vtkTexturePointIntensityFilter::GetTextureData()
 {
   if (this->GetNumberOfInputConnections(2) != 2)
@@ -63,13 +59,11 @@ vtkImageData* vtkTexturePointIntensityFilter::GetTextureData()
   return vtkImageData::SafeDownCast(this->GetExecutive()->GetInputData(1, 0));
 }
 
-//----------------------------------------------------------------------------
 void vtkTexturePointIntensityFilter::SetTextureDataConnection(vtkAlgorithmOutput* algOutput)
 {
   this->SetInputConnection(1, algOutput);
 }
 
-//-----------------------------------------------------------------------------
 int vtkTexturePointIntensityFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -211,7 +205,6 @@ int vtkTexturePointIntensityFilter::RequestData(vtkInformation* vtkNotUsed(reque
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTexturePointIntensityFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -228,7 +221,6 @@ void vtkTexturePointIntensityFilter::PrintSelf(ostream& os, vtkIndent indent)
      << ")\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkTexturePointIntensityFilter::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)

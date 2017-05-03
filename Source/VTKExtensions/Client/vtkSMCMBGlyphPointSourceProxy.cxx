@@ -21,23 +21,20 @@
 
 vtkStandardNewMacro(vtkSMCMBGlyphPointSourceProxy);
 
-//---------------------------------------------------------------------------
 vtkSMCMBGlyphPointSourceProxy::vtkSMCMBGlyphPointSourceProxy()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkSMCMBGlyphPointSourceProxy::~vtkSMCMBGlyphPointSourceProxy()
 {
   this->SetVTKClassName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkSMCMBGlyphPointSourceProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
-//----------------------------------------------------------------------------
+
 vtkIdType vtkSMCMBGlyphPointSourceProxy::InsertNextPoint(double* p)
 {
   vtkClientServerStream stream;
@@ -56,7 +53,6 @@ vtkIdType vtkSMCMBGlyphPointSourceProxy::InsertNextPoint(double* p)
   this->MarkModified(this);
   return id;
 }
-//----------------------------------------------------------------------------
 
 // Description:
 // Insert the next point and its properties into the object
@@ -87,18 +83,17 @@ vtkIdType vtkSMCMBGlyphPointSourceProxy::InsertNextPoint(
   this->MarkModified(this);
   return id;
 }
-//----------------------------------------------------------------------------
 
 void vtkSMCMBGlyphPointSourceProxy::SetScale(vtkIdType index, double* scale)
 {
   this->SendDouble3Vector("SetScale", index, scale);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetOrientation(vtkIdType index, double* orientation)
 {
   this->SendDouble3Vector("SetOrientation", index, orientation);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetVisibility(vtkIdType index, int visibility)
 {
   vtkClientServerStream stream;
@@ -107,7 +102,7 @@ void vtkSMCMBGlyphPointSourceProxy::SetVisibility(vtkIdType index, int visibilit
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetColor(vtkIdType index, double* color)
 {
   vtkClientServerStream stream;
@@ -116,7 +111,7 @@ void vtkSMCMBGlyphPointSourceProxy::SetColor(vtkIdType index, double* color)
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::UnsetColor(vtkIdType index)
 {
   vtkClientServerStream stream;
@@ -125,7 +120,7 @@ void vtkSMCMBGlyphPointSourceProxy::UnsetColor(vtkIdType index)
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::ResetColorsToDefault()
 {
   vtkClientServerStream stream;
@@ -134,7 +129,7 @@ void vtkSMCMBGlyphPointSourceProxy::ResetColorsToDefault()
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetDefaultColor(double* color)
 {
   vtkClientServerStream stream;
@@ -143,7 +138,7 @@ void vtkSMCMBGlyphPointSourceProxy::SetDefaultColor(double* color)
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetGlyphSourceBounds(double bounds[6])
 {
   vtkClientServerStream stream;
@@ -153,7 +148,6 @@ void vtkSMCMBGlyphPointSourceProxy::SetGlyphSourceBounds(double bounds[6])
   this->MarkModified(this);
 }
 
-//----------------------------------------------------------------------------
 void vtkSMCMBGlyphPointSourceProxy::ApplyTransform(vtkIdType index, double* o, double* p, double* s)
 {
   vtkClientServerStream stream;
@@ -163,7 +157,7 @@ void vtkSMCMBGlyphPointSourceProxy::ApplyTransform(vtkIdType index, double* o, d
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::ApplyTransform(double* o, double* p, double* s)
 {
   vtkClientServerStream stream;
@@ -173,37 +167,37 @@ void vtkSMCMBGlyphPointSourceProxy::ApplyTransform(double* o, double* p, double*
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::ReadFromFile(const char* fname)
 {
   this->SendString("ReadFromFile", fname);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::WriteToFile(const char* fname)
 {
   this->SendString("WriteToFile", fname);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SetPoint(vtkIdType index, double* point)
 {
   this->SendDouble3Vector("SetPoint", index, point);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetPoint(vtkIdType index, double* p)
 {
   this->ReceiveDouble3Vector("GetPoint", index, p);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetScale(vtkIdType index, double* s)
 {
   this->ReceiveDouble3Vector("GetScale", index, s);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetOrientation(vtkIdType index, double* o)
 {
   this->ReceiveDouble3Vector("GetOrientation", index, o);
 }
-//----------------------------------------------------------------------------
+
 int vtkSMCMBGlyphPointSourceProxy::GetVisibility(vtkIdType index)
 {
   int val;
@@ -230,7 +224,7 @@ int vtkSMCMBGlyphPointSourceProxy::GetVisibility(vtkIdType index)
   }
   return val;
 }
-//----------------------------------------------------------------------------
+
 vtkIdType vtkSMCMBGlyphPointSourceProxy::GetNumberOfPoints()
 {
   vtkIdType val;
@@ -257,7 +251,7 @@ vtkIdType vtkSMCMBGlyphPointSourceProxy::GetNumberOfPoints()
   }
   return val;
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetColor(vtkIdType index, double* color)
 {
 
@@ -289,7 +283,7 @@ void vtkSMCMBGlyphPointSourceProxy::GetColor(vtkIdType index, double* color)
     vtkErrorMacro("Error getting color.");
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetDefaultColor(double* color)
 {
 
@@ -321,7 +315,7 @@ void vtkSMCMBGlyphPointSourceProxy::GetDefaultColor(double* color)
     vtkErrorMacro("Error getting  default color.");
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::GetBounds(vtkIdType index, double* b)
 {
 
@@ -338,7 +332,7 @@ void vtkSMCMBGlyphPointSourceProxy::GetBounds(vtkIdType index, double* b)
     vtkErrorMacro("Error getting bounds from server.");
   }
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SendString(const char* func, const char* data)
 {
   vtkClientServerStream stream;
@@ -346,7 +340,7 @@ void vtkSMCMBGlyphPointSourceProxy::SendString(const char* func, const char* dat
          << vtkClientServerStream::End;
   this->ExecuteStream(stream);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::SendDouble3Vector(
   const char* func, vtkIdType index, double* data)
 {
@@ -356,7 +350,7 @@ void vtkSMCMBGlyphPointSourceProxy::SendDouble3Vector(
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 void vtkSMCMBGlyphPointSourceProxy::ReceiveDouble3Vector(
   const char* func, vtkIdType index, double* data)
 {
@@ -389,4 +383,3 @@ void vtkSMCMBGlyphPointSourceProxy::ReceiveDouble3Vector(
     vtkErrorMacro("Error getting double vector 3.");
   }
 }
-//----------------------------------------------------------------------------

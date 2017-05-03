@@ -35,13 +35,11 @@
 
 #include <QTableWidgetItem>
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceObject::pqCMBLIDARPieceObject()
 {
   this->init();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::init()
 {
   this->Source = NULL;
@@ -81,7 +79,6 @@ void pqCMBLIDARPieceObject::init()
   this->ThresholdOrigin[2] = 0.0;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceObject::~pqCMBLIDARPieceObject()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -120,7 +117,6 @@ pqCMBLIDARPieceObject::~pqCMBLIDARPieceObject()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setDisplayOnRatio(int onRatio)
 {
   if (onRatio > 0 && onRatio != this->DisplayOnRatio)
@@ -129,7 +125,6 @@ void pqCMBLIDARPieceObject::setDisplayOnRatio(int onRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setSaveOnRatio(int onRatio)
 {
   if (onRatio > 0 && onRatio != this->SaveOnRatio)
@@ -138,7 +133,6 @@ void pqCMBLIDARPieceObject::setSaveOnRatio(int onRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setReadOnRatio(int onRatio)
 {
   if (onRatio > 0 && onRatio != this->ReadOnRatio)
@@ -147,71 +141,61 @@ void pqCMBLIDARPieceObject::setReadOnRatio(int onRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setRepresentation(pqDataRepresentation* rep)
 {
   this->Representation = rep;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setSource(pqPipelineSource* source)
 {
   this->Source = source;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARPieceObject::getSource() const
 {
   return this->Source;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::setThresholdSource(pqPipelineSource* thresholdSource)
 {
   this->ThresholdSource = thresholdSource;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARPieceObject::getThresholdSource() const
 {
   return this->ThresholdSource;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::setContourSource(pqPipelineSource* contourSource)
 {
   this->ContourSource = contourSource;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARPieceObject::getContourSource() const
 {
   return this->ContourSource;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARPieceObject::getDiggerSource() const
 {
   return this->DiggerSource;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARPieceObject::getElevationSource() const
 {
   return this->ElevationSource;
 }
 
-//-----------------------------------------------------------------------------
 pqDataRepresentation* pqCMBLIDARPieceObject::getRepresentation() const
 {
   return this->Representation;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setPieceIndex(int pieceIdx)
 {
   this->PieceIndex = pieceIdx;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setElevationFilterLowPoint(double* lowPoint)
 {
   pqSMAdaptor::setMultipleElementProperty(
@@ -223,7 +207,6 @@ void pqCMBLIDARPieceObject::setElevationFilterLowPoint(double* lowPoint)
   this->ElevationSource->getProxy()->UpdateProperty("LowPoint", true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setElevationFilterHighPoint(double* highPoint)
 {
   pqSMAdaptor::setMultipleElementProperty(
@@ -235,7 +218,6 @@ void pqCMBLIDARPieceObject::setElevationFilterHighPoint(double* highPoint)
   this->ElevationSource->getProxy()->UpdateProperty("HighPoint", true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::useElevationFilter(bool useElevation)
 {
   if (useElevation == this->UseElevationFilter)
@@ -253,7 +235,6 @@ void pqCMBLIDARPieceObject::useElevationFilter(bool useElevation)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updateRepresentation()
 {
   this->getContourSource()->updatePipeline();
@@ -270,7 +251,6 @@ void pqCMBLIDARPieceObject::updateRepresentation()
   this->Representation->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceObject* pqCMBLIDARPieceObject::createObject(pqPipelineSource* source, double* bounds,
   pqServer* /*server*/, pqRenderView* view, bool updateRep)
 {
@@ -325,7 +305,6 @@ pqCMBLIDARPieceObject* pqCMBLIDARPieceObject::createObject(pqPipelineSource* sou
   return obj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setLODMode(int mode, bool updateRep)
 {
   vtkSMIntVectorProperty::SafeDownCast(this->Representation->getProxy()->GetProperty("SuppressLOD"))
@@ -335,7 +314,7 @@ void pqCMBLIDARPieceObject::setLODMode(int mode, bool updateRep)
     this->Representation->getProxy()->UpdateVTKObjects();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::getBounds(double bounds[6]) const
 {
   vtkSMRepresentationProxy::SafeDownCast(this->Representation->getProxy())
@@ -343,7 +322,6 @@ void pqCMBLIDARPieceObject::getBounds(double bounds[6]) const
     ->GetBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::zoomOnObject()
 {
   double bounds[6];
@@ -361,7 +339,6 @@ void pqCMBLIDARPieceObject::zoomOnObject()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setVisibility(int visible)
 {
   if (this->Visibility != visible)
@@ -373,7 +350,6 @@ void pqCMBLIDARPieceObject::setVisibility(int visible)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setSelectionInput(vtkSMSourceProxy* selInput)
 {
   vtkSMSourceProxy::SafeDownCast(this->getElevationSource() ? this->getElevationSource()->getProxy()
@@ -381,7 +357,6 @@ void pqCMBLIDARPieceObject::setSelectionInput(vtkSMSourceProxy* selInput)
     ->SetSelectionInput(0, selInput, 0);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setHighlight(int highlight)
 {
   if (this->Highlight != highlight)
@@ -409,7 +384,6 @@ void pqCMBLIDARPieceObject::setHighlight(int highlight)
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBLIDARPieceObject::isObjectUpToDate(bool clipEnabled, vtkBoundingBox& clipBBox)
 {
   // is our clipping state up-to-date
@@ -427,7 +401,6 @@ bool pqCMBLIDARPieceObject::isObjectUpToDate(bool clipEnabled, vtkBoundingBox& c
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBLIDARPieceObject::isClipUpToDate(bool clipEnabled, vtkBoundingBox& clipBBox)
 {
   // is our clipping state up-to-date
@@ -439,7 +412,6 @@ bool pqCMBLIDARPieceObject::isClipUpToDate(bool clipEnabled, vtkBoundingBox& cli
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARPieceObject::isClipTransformationUnchanged()
 {
   double position[3], scale[3], orientation[3], origin[3];
@@ -462,32 +434,27 @@ bool pqCMBLIDARPieceObject::isClipTransformationUnchanged()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveClipPosition()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Position").Get(this->ClipPosition, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveClipOrientation()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Orientation")
     .Get(this->ClipOrientation, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveClipScale()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Scale").Get(this->ClipScale, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveClipOrigin()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Origin").Get(this->ClipOrigin, 3);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARPieceObject::isThresholdTransformationUnchanged()
 {
   double position[3], scale[3], orientation[3], origin[3];
@@ -511,38 +478,32 @@ bool pqCMBLIDARPieceObject::isThresholdTransformationUnchanged()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveThresholdPosition()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Position").Get(this->ThresholdPosition, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveThresholdOrientation()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Orientation")
     .Get(this->ThresholdOrientation, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveThresholdScale()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Scale").Get(this->ThresholdScale, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::saveThresholdOrigin()
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Origin").Get(this->ThresholdOrigin, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::getPosition(double pos[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Position").Get(pos, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setPosition(double pos[3], bool updateRep /*=true*/)
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Position").Set(pos, 3);
@@ -552,13 +513,11 @@ void pqCMBLIDARPieceObject::setPosition(double pos[3], bool updateRep /*=true*/)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::getOrientation(double ori[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Orientation").Get(ori, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setOrientation(double ori[3], bool updateRep /*=true*/)
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Orientation").Set(ori, 3);
@@ -568,13 +527,11 @@ void pqCMBLIDARPieceObject::setOrientation(double ori[3], bool updateRep /*=true
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::getScale(double scale[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Scale").Get(scale, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setScale(double scale[3], bool updateRep /*=true*/)
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Scale").Set(scale, 3);
@@ -584,13 +541,11 @@ void pqCMBLIDARPieceObject::setScale(double scale[3], bool updateRep /*=true*/)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::getOrigin(double origin[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Origin").Get(origin, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::setOrigin(double origin[3], bool updateRep /*=true*/)
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Origin").Set(origin, 3);
@@ -600,7 +555,6 @@ void pqCMBLIDARPieceObject::setOrigin(double origin[3], bool updateRep /*=true*/
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARPieceObject::isPieceTransformed()
 {
   double position[3], scale[3], orientation[3];
@@ -616,7 +570,6 @@ bool pqCMBLIDARPieceObject::isPieceTransformed()
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::getTransform(vtkTransform* transform) const
 {
   if (!transform)
@@ -641,25 +594,21 @@ void pqCMBLIDARPieceObject::getTransform(vtkTransform* transform) const
   transform->Translate(-origin[0], -origin[1], -origin[2]);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updateThresholdUseFilter(int idx, int useFilter)
 {
   this->updateProxyProperty(this->getThresholdSource(), "SetUseFilter", idx, useFilter);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updatePolygonUseFilter(int idx, int useFilter)
 {
   this->updateProxyProperty(this->getContourSource(), "ClipApplyPolygon", idx, useFilter);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updatePolygonInvert(int idx, int invert)
 {
   this->updateProxyProperty(this->getContourSource(), "InsideOut", idx, invert);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updateGroupInvert(int groupIdx, int invert)
 {
   this->setActiveContourGroup(groupIdx);
@@ -671,13 +620,11 @@ void pqCMBLIDARPieceObject::updateGroupInvert(int groupIdx, int invert)
   this->getContourSource()->getProxy()->UpdateProperty("GroupInvert", true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updatePolygonROI(int idx, int roi)
 {
   this->updateProxyProperty(this->getContourSource(), "ClipAsROI", idx, roi);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::updateProxyProperty(
   pqPipelineSource* source, const char* name, int idx, int val)
 {
@@ -689,7 +636,6 @@ void pqCMBLIDARPieceObject::updateProxyProperty(
   smSource->UpdatePipeline();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::resetWithNoThresholds(bool update)
 {
   vtkSMSourceProxy* currentThresholds =
@@ -715,7 +661,7 @@ void pqCMBLIDARPieceObject::resetWithNoThresholds(bool update)
     this->updateRepresentation();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::resetWithNoContours(bool update)
 {
   pqPipelineSource* clipPoly = this->getContourSource();
@@ -740,7 +686,6 @@ void pqCMBLIDARPieceObject::resetWithNoContours(bool update)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceObject::addThreshold()
 {
   vtkSMSourceProxy* thresholdSourceProxy =
@@ -748,7 +693,7 @@ void pqCMBLIDARPieceObject::addThreshold()
   thresholdSourceProxy->Modified();
   thresholdSourceProxy->InvokeCommand("AddFilter");
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::removeThreshold()
 {
   vtkSMSourceProxy* thresholdSourceProxy =
@@ -762,7 +707,7 @@ void pqCMBLIDARPieceObject::removeThreshold()
   thresholdSourceProxy->UpdateVTKObjects();
   thresholdSourceProxy->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::clearThresholds()
 {
   vtkSMSourceProxy* thresholdSourceProxy =
@@ -773,7 +718,7 @@ void pqCMBLIDARPieceObject::clearThresholds()
   thresholdSourceProxy->UpdateVTKObjects();
   thresholdSourceProxy->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::addContour(vtkSMProxy* implicitLoop)
 {
   pqPipelineSource* clipPoly = this->getContourSource();
@@ -786,7 +731,7 @@ void pqCMBLIDARPieceObject::addContour(vtkSMProxy* implicitLoop)
     clipPoly->updatePipeline();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::removeContour(vtkSMProxy* implicitLoop)
 {
   pqPipelineSource* clipPoly = this->getContourSource();
@@ -799,7 +744,7 @@ void pqCMBLIDARPieceObject::removeContour(vtkSMProxy* implicitLoop)
     clipPoly->updatePipeline();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::clearContours()
 {
 
@@ -815,7 +760,7 @@ void pqCMBLIDARPieceObject::clearContours()
     this->getContourSource()->updatePipeline();
   }
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBLIDARPieceObject::hasActiveFilters()
 {
   this->getThresholdSource()->getProxy()->UpdatePropertyInformation();
@@ -831,7 +776,7 @@ bool pqCMBLIDARPieceObject::hasActiveFilters()
   }
   return false;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARPieceObject::setActiveContourGroup(int groupId)
 {
   vtkSMProxy* contourProxy = this->getContourSource()->getProxy();

@@ -21,18 +21,15 @@
 
 vtkStandardNewMacro(vtkCMBArcDeleteOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcDeleteOperator::vtkCMBArcDeleteOperator()
 {
   this->DeleteMode = 0; //default is real delete
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcDeleteOperator::~vtkCMBArcDeleteOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcDeleteOperator::Operate(vtkIdType arcId)
 {
   int deleteMode = this->DeleteMode;
@@ -65,7 +62,6 @@ bool vtkCMBArcDeleteOperator::Operate(vtkIdType arcId)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcDeleteOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

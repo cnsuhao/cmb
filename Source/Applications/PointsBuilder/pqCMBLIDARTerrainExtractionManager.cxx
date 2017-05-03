@@ -54,7 +54,6 @@
 #include "vtkDataObject.h"
 #include <vtksys/Glob.hxx>
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARTerrainExtractionManager::pqCMBLIDARTerrainExtractionManager(
   pqCMBPointsBuilderMainWindowCore* core, qtCMBLIDARPanelWidget* panel)
 {
@@ -80,7 +79,6 @@ pqCMBLIDARTerrainExtractionManager::pqCMBLIDARTerrainExtractionManager(
   this->setupExtractionPanel();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARTerrainExtractionManager::~pqCMBLIDARTerrainExtractionManager()
 {
   if (this->TerrainExtractFilter)
@@ -101,7 +99,6 @@ pqCMBLIDARTerrainExtractionManager::~pqCMBLIDARTerrainExtractionManager()
   delete this->IconInvisible;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::setupExtractionPanel()
 {
 
@@ -163,7 +160,6 @@ void pqCMBLIDARTerrainExtractionManager::setupExtractionPanel()
     SIGNAL(toggled(bool)), this, SLOT(onElevationFilter(bool)));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onShow()
 {
   if (this->LIDARCore->getLIDARPieceTable()->getVisiblePieceObjects().count() == 0)
@@ -185,7 +181,6 @@ void pqCMBLIDARTerrainExtractionManager::onShow()
   this->GuessCacheDirectory();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onDefineContourWidget()
 {
   if (this->Contour)
@@ -201,18 +196,15 @@ void pqCMBLIDARTerrainExtractionManager::onDefineContourWidget()
     Qt::QueuedConnection);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onContourFinished()
 {
   this->LIDARCore->enableCameraInteractionModeChanges(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onContourChanged()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onRemoveContourWidget()
 {
   QObject::disconnect(this->Contour, SIGNAL(contourLoopClosed()), this, SLOT(onContourFinished()));
@@ -223,7 +215,6 @@ void pqCMBLIDARTerrainExtractionManager::onRemoveContourWidget()
   this->Contour = 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onExitExtraction(bool changeTabs /*=true*/)
 {
   // cleanup everything
@@ -271,7 +262,6 @@ void pqCMBLIDARTerrainExtractionManager::onExitExtraction(bool changeTabs /*=tru
   this->LIDARCore->onRequestRender();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onResolutionScaleChange(QString scaleString)
 {
   double scale = scaleString.toDouble();
@@ -283,7 +273,6 @@ void pqCMBLIDARTerrainExtractionManager::onResolutionScaleChange(QString scaleSt
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::ComputeBasicResolution()
 {
   this->LIDARPanel->getGUIPanel()->tabWidget->setEnabled(false);
@@ -319,7 +308,6 @@ void pqCMBLIDARTerrainExtractionManager::ComputeBasicResolution()
   emit this->enableMenuItems(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::ComputeDetailedResolution()
 {
   if (this->DetailedScale == 0)
@@ -363,7 +351,6 @@ void pqCMBLIDARTerrainExtractionManager::ComputeDetailedResolution()
   this->LIDARPanel->getGUIPanel()->resolutionEdit->setText(scaleString);
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBLIDARTerrainExtractionManager::ComputeResolution(
   pqPipelineSource* extractionFilter, bool computeDetailedScale)
 {
@@ -399,7 +386,6 @@ double pqCMBLIDARTerrainExtractionManager::ComputeResolution(
   return scale;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onMaskSizeTextChanged(QString text)
 {
   if (text.size() == 0 || text == ".")
@@ -425,7 +411,6 @@ void pqCMBLIDARTerrainExtractionManager::onMaskSizeTextChanged(QString text)
   }
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARTerrainExtractionManager::PrepDataForTerrainExtraction()
 {
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
@@ -487,7 +472,6 @@ pqPipelineSource* pqCMBLIDARTerrainExtractionManager::PrepDataForTerrainExtracti
   return pdSource;
 }
 
-//----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLIDARTerrainExtractionManager::setupFullProcessTerrainFilter()
 {
   pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
@@ -539,7 +523,6 @@ pqPipelineSource* pqCMBLIDARTerrainExtractionManager::setupFullProcessTerrainFil
   return appendedSource;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onProcesssFullData()
 {
   // turn off all representations
@@ -772,7 +755,6 @@ void pqCMBLIDARTerrainExtractionManager::onProcesssFullData()
   this->LIDARCore->onRequestRender();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::addExtractionOutputToTree(
   int minLevel, int maxLevel, double initialScale, QFileInfo& autoSaveInfo)
 {
@@ -856,7 +838,6 @@ void pqCMBLIDARTerrainExtractionManager::addExtractionOutputToTree(
   }
 }
 
-//----------------------------------------------------------------------------
 pqDataRepresentation* pqCMBLIDARTerrainExtractionManager::createPreviewRepresentation(
   QString& filename)
 {
@@ -949,7 +930,6 @@ pqDataRepresentation* pqCMBLIDARTerrainExtractionManager::createPreviewRepresent
   return representation;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onItemClicked(QTreeWidgetItem* item, int col)
 {
   // Change visibility
@@ -1011,7 +991,6 @@ void pqCMBLIDARTerrainExtractionManager::onItemClicked(QTreeWidgetItem* item, in
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::getNumPointsCounts(
   QTreeWidgetItem* item, qulonglong& loadedNumPoints, qulonglong& actualNumPoints)
 {
@@ -1044,7 +1023,6 @@ void pqCMBLIDARTerrainExtractionManager::getNumPointsCounts(
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onItemSelectionChanged()
 {
   qulonglong loadedNumPoints = 0;
@@ -1077,7 +1055,6 @@ void pqCMBLIDARTerrainExtractionManager::onItemSelectionChanged()
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBLIDARTerrainExtractionManager::setSubTreeVisibility(
   QTreeWidgetItem* item, bool visible, QIcon* icon)
 {
@@ -1125,7 +1102,6 @@ bool pqCMBLIDARTerrainExtractionManager::setSubTreeVisibility(
   return representationLoaded;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::makeAllInvisible()
 {
   QTreeWidgetItem* rootNode =
@@ -1137,7 +1113,6 @@ void pqCMBLIDARTerrainExtractionManager::makeAllInvisible()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::clearTree()
 {
   this->makeAllInvisible();
@@ -1153,7 +1128,6 @@ void pqCMBLIDARTerrainExtractionManager::clearTree()
   this->LIDARPanel->getGUIPanel()->numActualPointsLabel->clear();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::destroyTreeRepresentations(QTreeWidgetItem* treeNode)
 {
   if (treeNode->childCount())
@@ -1174,7 +1148,6 @@ void pqCMBLIDARTerrainExtractionManager::destroyTreeRepresentations(QTreeWidgetI
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBLIDARTerrainExtractionManager::onAutoSaveExtractFileName()
 {
   QString filters = "LIDAR ASCII (*.pts);; LIDAR binary (*.bin.pts);; VTK PolyData (*.vtp);;";
@@ -1197,7 +1170,6 @@ bool pqCMBLIDARTerrainExtractionManager::onAutoSaveExtractFileName()
   return ret;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::GuessCacheDirectory()
 {
   this->CacheRefineDataForFullProcess = true;
@@ -1215,7 +1187,6 @@ void pqCMBLIDARTerrainExtractionManager::GuessCacheDirectory()
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBLIDARTerrainExtractionManager::onSelectCacheDirectory()
 {
   QString directory = this->LIDARPanel->getGUIPanel()->CacheDirectoryLabel->text();
@@ -1243,13 +1214,11 @@ bool pqCMBLIDARTerrainExtractionManager::onSelectCacheDirectory()
   return ret;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onSaveRefineResultsChange(bool change)
 {
   this->SaveRefineResults = change;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::onElevationFilter(bool useElevation)
 {
   QTreeWidgetItem* rootNode =
@@ -1258,7 +1227,6 @@ void pqCMBLIDARTerrainExtractionManager::onElevationFilter(bool useElevation)
   this->LIDARCore->onRequestRender();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARTerrainExtractionManager::updateRepresentationsElevationFilter(
   QTreeWidgetItem* treeNode, bool useElevation)
 {

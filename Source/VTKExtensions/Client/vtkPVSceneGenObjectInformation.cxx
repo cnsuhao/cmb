@@ -26,7 +26,6 @@
 
 vtkStandardNewMacro(vtkPVSceneGenObjectInformation);
 
-//----------------------------------------------------------------------------
 vtkPVSceneGenObjectInformation::vtkPVSceneGenObjectInformation()
 {
   this->Transform = vtkTransform::New();
@@ -38,13 +37,11 @@ vtkPVSceneGenObjectInformation::vtkPVSceneGenObjectInformation()
   this->HasColorPointData = false;
 }
 
-//----------------------------------------------------------------------------
 vtkPVSceneGenObjectInformation::~vtkPVSceneGenObjectInformation()
 {
   this->Transform->Delete();
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenObjectInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -61,7 +58,6 @@ void vtkPVSceneGenObjectInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "HasColorPointData: " << (this->HasColorPointData ? "true" : "false") << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenObjectInformation::CopyFromObject(vtkObject* obj)
 {
   vtkDataObject* dataObject = vtkDataObject::SafeDownCast(obj);
@@ -197,7 +193,6 @@ void vtkPVSceneGenObjectInformation::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenObjectInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVSceneGenObjectInformation* sceneGenInfo = vtkPVSceneGenObjectInformation::SafeDownCast(info);
@@ -214,7 +209,6 @@ void vtkPVSceneGenObjectInformation::AddInformation(vtkPVInformation* info)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenObjectInformation::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -230,7 +224,6 @@ void vtkPVSceneGenObjectInformation::CopyToStream(vtkClientServerStream* css)
        << this->ObjectType.c_str() << this->HasColorPointData << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenObjectInformation::CopyFromStream(const vtkClientServerStream* css)
 {
   double elements[16];

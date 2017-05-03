@@ -90,7 +90,6 @@ public:
   std::set<std::string> Groups;
 };
 
-//-----------------------------------------------------------------------------
 pqPluginIOBehavior::pqPluginIOBehavior(QObject* parentObject)
   : Superclass(parentObject)
 {
@@ -101,13 +100,11 @@ pqPluginIOBehavior::pqPluginIOBehavior(QObject* parentObject)
   //  this->updateResources();
 }
 
-//-----------------------------------------------------------------------------
 pqPluginIOBehavior::~pqPluginIOBehavior()
 {
   delete this->Internals;
 }
 
-//-----------------------------------------------------------------------------
 void pqPluginIOBehavior::updateResources()
 {
   vtkSMProxyManager* proxyManager = vtkSMProxyManager::GetProxyManager();
@@ -138,7 +135,6 @@ void pqPluginIOBehavior::updateResources()
   }
 }
 
-//----------------------------------------------------------------------------
 const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 {
   std::ostringstream all_types;
@@ -174,7 +170,6 @@ const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
   return this->Internals->SupportedFileTypes.c_str();
 }
 
-//----------------------------------------------------------------------------
 pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
   vtkSMSession* vtkNotUsed(session))
 {
@@ -193,7 +188,6 @@ pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
   return readerMap;
 }
 
-//-----------------------------------------------------------------------------
 bool pqPluginIOBehavior::isPluginReader(vtkPVXMLElement* hints)
 {
   return (hints && hints->FindNestedElementByName("ReaderFactory") &&

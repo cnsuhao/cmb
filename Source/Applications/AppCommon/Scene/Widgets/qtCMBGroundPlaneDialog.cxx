@@ -21,7 +21,6 @@
 #include <QDoubleValidator>
 #include <QLineEdit>
 
-//-----------------------------------------------------------------------------
 int qtCMBGroundPlaneDialog::manageGroundPlane(pqCMBSceneNode* node)
 {
   if (node->isTypeNode() || (dynamic_cast<pqCMBPlane*>(node->getDataObject()) == NULL))
@@ -33,7 +32,6 @@ int qtCMBGroundPlaneDialog::manageGroundPlane(pqCMBSceneNode* node)
   return editor.exec();
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBGroundPlaneDialog::defineGroundPlane(double p1[3], double p2[3])
 {
   int status;
@@ -48,7 +46,6 @@ int qtCMBGroundPlaneDialog::defineGroundPlane(double p1[3], double p2[3])
   return status;
 }
 
-//-----------------------------------------------------------------------------
 qtCMBGroundPlaneDialog::qtCMBGroundPlaneDialog(pqCMBSceneNode* n)
   : Status(-1)
   , Node(n)
@@ -85,7 +82,6 @@ qtCMBGroundPlaneDialog::qtCMBGroundPlaneDialog(pqCMBSceneNode* n)
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBGroundPlaneDialog::~qtCMBGroundPlaneDialog()
 {
   if (this->GroundPlaneDialog)
@@ -97,7 +93,7 @@ qtCMBGroundPlaneDialog::~qtCMBGroundPlaneDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBGroundPlaneDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -105,7 +101,7 @@ int qtCMBGroundPlaneDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBGroundPlaneDialog::accept()
 {
   this->Status = 1;
@@ -124,10 +120,8 @@ void qtCMBGroundPlaneDialog::accept()
     object->setPlaneInfo(this->Point1, this->Point2);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBGroundPlaneDialog::cancel()
 {
   this->Status = 0;
 }
-
-//-----------------------------------------------------------------------------

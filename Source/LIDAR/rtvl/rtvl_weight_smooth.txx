@@ -13,7 +13,6 @@
 #include <vcl_cstdlib.h>
 #include <vnl/vnl_vector_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_weight_smooth<N>::rtvl_weight_smooth(double gs, unsigned int n)
   : derived(gs)
@@ -51,7 +50,6 @@ rtvl_weight_smooth<N>::rtvl_weight_smooth(double gs, unsigned int n)
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_weight_smooth<N>::compute_flat(rtvl_terms<N> const& terms)
 {
@@ -70,7 +68,6 @@ double rtvl_weight_smooth<N>::compute_flat(rtvl_terms<N> const& terms)
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_smooth<N>::compute_flat_d(
   rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwflat)
@@ -85,7 +82,6 @@ void rtvl_weight_smooth<N>::compute_flat_d(
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_weight_smooth<N>::compute_curved(rtvl_terms<N> const& terms)
 {
@@ -94,7 +90,6 @@ double rtvl_weight_smooth<N>::compute_curved(rtvl_terms<N> const& terms)
   return terms.wflat * wangle;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_smooth<N>::compute_curved_d(
   rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwcurve)
@@ -104,7 +99,6 @@ void rtvl_weight_smooth<N>::compute_curved_d(
   dwcurve = terms.dwflat * wangle + dwangle * terms.wflat;
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_WEIGHT_SMOOTH_INSTANTIATE(N) template class rtvl_weight_smooth<N>
 
 #endif

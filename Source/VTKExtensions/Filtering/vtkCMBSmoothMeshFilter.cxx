@@ -34,7 +34,6 @@
 
 vtkStandardNewMacro(vtkCMBSmoothMeshFilter);
 
-//----------------------------------------------------------------------------
 vtkCMBSmoothMeshFilter::vtkCMBSmoothMeshFilter()
 {
   this->SetNumberOfInputPorts(3);
@@ -51,7 +50,6 @@ vtkCMBSmoothMeshFilter::vtkCMBSmoothMeshFilter()
   this->SmoothPolyFilter = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBSmoothMeshFilter::~vtkCMBSmoothMeshFilter()
 {
   if (this->SmoothPolyFilter)
@@ -60,7 +58,6 @@ vtkCMBSmoothMeshFilter::~vtkCMBSmoothMeshFilter()
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSmoothMeshFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -271,7 +268,6 @@ int vtkCMBSmoothMeshFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSmoothMeshFilter::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -290,7 +286,7 @@ int vtkCMBSmoothMeshFilter::FillInputPortInformation(int port, vtkInformation* i
   }
   return 1;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBSmoothMeshFilter::ExtractSurfaceCells(bool bVolume, vtkIdList* tmpIds, vtkIdList* nxtPts,
   vtkIdType cellId, vtkUnstructuredGrid* input, vtkIdTypeArray* meshCellIdArray,
   vtkIdTypeArray* meshNodeIdArray, vtkPoints* smoothPoints, vtkCellArray* smoothPolys,
@@ -349,7 +345,6 @@ void vtkCMBSmoothMeshFilter::ExtractSurfaceCells(bool bVolume, vtkIdList* tmpIds
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSmoothMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

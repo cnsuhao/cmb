@@ -35,7 +35,6 @@
 namespace detail
 {
 
-//----------------------------------------------------------------------------
 struct tetgen_wrapper
 {
   tetgenbehavior behavior;
@@ -119,7 +118,6 @@ struct tetgen_wrapper
   }
 };
 
-//----------------------------------------------------------------------------
 std::string make_tetgenFlags(const remus::proto::JobContent& rawInstance)
 {
   //p mesh
@@ -192,7 +190,6 @@ std::string make_tetgenFlags(const remus::proto::JobContent& rawInstance)
   return buffer.str();
 }
 
-//----------------------------------------------------------------------------
 detail::tetgen_wrapper make_tetgenInput(const remus::proto::JobContent& discreteMesh)
 {
   std::istringstream serializedDiscreteMesh;
@@ -309,7 +306,6 @@ bool write_3dm_file(const std::string path, const tetgenio& output)
   return (can_write && fileWritten);
 }
 
-//----------------------------------------------------------------------------
 bool write_bc_file(
   const std::string path, const detail::KnownFaces& knownFaces, const tetgenio& output)
 {
@@ -361,7 +357,6 @@ bool write_bc_file(
   return (can_write && fileWritten);
 }
 
-//----------------------------------------------------------------------------
 bool get_value(
   const remus::proto::JobSubmission& data, const std::string& key, remus::proto::JobContent& value)
 {
@@ -375,7 +370,6 @@ bool get_value(
   return true;
 }
 
-//----------------------------------------------------------------------------
 std::string make_outputFile(const std::string& input, const std::string newExt)
 {
   //remove from the inputPath the extension and the period
@@ -397,7 +391,6 @@ std::string make_outputFile(const std::string& input, const std::string newExt)
   return outputFile.string();
 }
 
-//----------------------------------------------------------------------------
 void send_jobFailedStatus(
   remus::worker::Worker* const w, const remus::worker::Job& j, const std::string& reason)
 {
@@ -409,7 +402,6 @@ void send_jobFailedStatus(
   w->updateStatus(status);
 }
 
-//----------------------------------------------------------------------------
 void send_jobProgress(
   remus::worker::Worker* const w, const remus::worker::Job& j, const std::string& progress)
 {
@@ -419,7 +411,6 @@ void send_jobProgress(
 }
 }
 
-//----------------------------------------------------------------------------
 TetGenWorker::TetGenWorker(
   remus::common::FileHandle const& fhandle, remus::worker::ServerConnection const& connection)
   : remus::worker::Worker(
@@ -430,7 +421,7 @@ TetGenWorker::TetGenWorker(
       connection)
 {
 }
-//----------------------------------------------------------------------------
+
 void TetGenWorker::meshJob()
 {
   remus::worker::Job j = this->getJob();

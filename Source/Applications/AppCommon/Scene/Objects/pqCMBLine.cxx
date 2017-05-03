@@ -20,20 +20,17 @@
 
 #include "smtk/extension/paraview/widgets/qtLineWidget.h"
 
-//-----------------------------------------------------------------------------
 pqCMBLine::pqCMBLine()
   : pqCMBSceneObjectBase()
 {
   this->LineWidget = NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLine::~pqCMBLine()
 {
   delete this->LineWidget;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::getDefaultBounds(pqRenderView* theView, double bounds[6])
 {
   if (!theView)
@@ -50,7 +47,6 @@ void pqCMBLine::getDefaultBounds(pqRenderView* theView, double bounds[6])
   bounds[5] = focal[2] + 0.5;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLine::pqCMBLine(
   pqCMBSceneObjectBase* refObj, pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -72,13 +68,12 @@ pqCMBLine::pqCMBLine(
   this->initialize(pos1, pos2, server, view, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLine::pqCMBLine(
   double point1[3], double point2[3], pqServer* server, pqRenderView* view, bool updateRep)
 {
   this->initialize(point1, point2, server, view, updateRep);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLine::initialize(
   double point1[3], double point2[3], pqServer* server, pqRenderView* view, bool /*updateRep*/)
 {
@@ -90,7 +85,6 @@ void pqCMBLine::initialize(
   this->UserDefinedType = "Line";
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::setVisibility(bool mode)
 {
   if (this->LineWidget)
@@ -99,7 +93,6 @@ void pqCMBLine::setVisibility(bool mode)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
   if (!selectionInput)
@@ -112,14 +105,11 @@ void pqCMBLine::setSelectionInput(vtkSMSourceProxy* selectionInput)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::select()
 {
   this->LineWidget->emphasize();
   this->LineWidget->setVisible(true);
 }
-
-//-----------------------------------------------------------------------------
 
 void pqCMBLine::deselect()
 {
@@ -127,7 +117,6 @@ void pqCMBLine::deselect()
   this->LineWidget->deemphasize();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLine::getPointPosition(int pointIdx, double& x, double& y, double& z)
 {
   if (!this->LineWidget)
@@ -158,7 +147,6 @@ int pqCMBLine::getPointPosition(int pointIdx, double& x, double& y, double& z)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBLine::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   double point1[3], point2[3];
@@ -172,7 +160,6 @@ pqCMBSceneObjectBase* pqCMBLine::duplicate(pqServer* server, pqRenderView* view,
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::getColor(double color[4]) const
 {
   QColor qcolor = this->LineWidget->color();
@@ -182,29 +169,25 @@ void pqCMBLine::getColor(double color[4]) const
   color[3] = 1.0; // Assume we don't support transparent lines for now
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::setColor(double color[4], bool /*updateRep*/)
 {
   //  vtkSMPropertyHelper(this->LineWidget->getWidgetProxy(), "LineColor").Set(color, 3);
   this->LineWidget->setLineColor(color);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLine::getBounds(double /*bounds*/[6]) const
 {
   return;
   //this->LineWidget->getBounds(bounds);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLine::getDataBounds(double /*bounds*/[6]) const
 {
   return;
   //this->getBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBLine::getType() const
 {
   return pqCMBSceneObjectBase::Line;
 }
-//-----------------------------------------------------------------------------

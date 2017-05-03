@@ -109,7 +109,7 @@ void pqCMBStreamTracerPanel::onTestLocationChanged()
 {
   emit this->changeAvailable();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBStreamTracerPanel::SendDouble3Vector(const char* func, int index, double* data)
 {
   vtkClientServerStream stream;

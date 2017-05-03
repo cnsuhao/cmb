@@ -21,7 +21,6 @@
 #include <QDoubleValidator>
 #include <QMessageBox>
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectFilterDialog::qtCMBSceneObjectFilterDialog(QWidget* /*parent*/)
 {
   this->FilterDialog = new Ui::qtqtCMBSceneObjectFilterDialog();
@@ -36,7 +35,6 @@ qtCMBSceneObjectFilterDialog::qtCMBSceneObjectFilterDialog(QWidget* /*parent*/)
   this->FilterDialog->Z2->setValidator(this->BoundsValidator);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectFilterDialog::~qtCMBSceneObjectFilterDialog()
 {
   if (this->FilterDialog)
@@ -45,7 +43,6 @@ qtCMBSceneObjectFilterDialog::~qtCMBSceneObjectFilterDialog()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectFilterDialog::accept()
 {
   if (this->FilterDialog->listObjectTypes->selectedItems().count() == 0)
@@ -64,7 +61,6 @@ void qtCMBSceneObjectFilterDialog::accept()
   this->Superclass::accept();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectFilterDialog::setBounds(double bounds[6])
 {
   this->FilterDialog->X1->setText(QString::number(bounds[0]));
@@ -74,7 +70,7 @@ void qtCMBSceneObjectFilterDialog::setBounds(double bounds[6])
   this->FilterDialog->Z1->setText(QString::number(bounds[4]));
   this->FilterDialog->Z2->setText(QString::number(bounds[5]));
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectFilterDialog::getBounds(double bounds[6])
 {
   bounds[0] = this->FilterDialog->X1->text().toDouble();
@@ -84,13 +80,12 @@ void qtCMBSceneObjectFilterDialog::getBounds(double bounds[6])
   bounds[4] = this->FilterDialog->Z1->text().toDouble();
   bounds[5] = this->FilterDialog->Z2->text().toDouble();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectFilterDialog::setObjectTypes(QStringList& objTypes)
 {
   this->FilterDialog->listObjectTypes->addItems(objTypes);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectFilterDialog::getSelectedObjectTypes(QStringList& objTypes)
 {
   objTypes.clear();
@@ -101,23 +96,21 @@ void qtCMBSceneObjectFilterDialog::getSelectedObjectTypes(QStringList& objTypes)
   }
 }
 
-//-----------------------------------------------------------------------------
 const char* qtCMBSceneObjectFilterDialog::getSceneFile()
 {
   return this->FilterDialog->labelFile->text().toLatin1().constData();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneObjectFilterDialog::setSceneFile(const char* filename)
 {
   this->FilterDialog->labelFile->setText(QString(filename));
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBSceneObjectFilterDialog::getUseBoundsConstraint()
 {
   return this->FilterDialog->groupBox_Bounds->isChecked();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectFilterDialog::setUseBoundsConstraint(bool use)
 {
   this->FilterDialog->groupBox_Bounds->setChecked(use);

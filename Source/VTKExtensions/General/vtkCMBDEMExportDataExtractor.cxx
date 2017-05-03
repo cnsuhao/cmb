@@ -25,7 +25,6 @@
 
 vtkStandardNewMacro(vtkCMBDEMExportDataExtractor);
 
-//-----------------------------------------------------------------------------
 vtkCMBDEMExportDataExtractor::vtkCMBDEMExportDataExtractor()
 {
   //this->SetNumberOfOutputPorts(0);

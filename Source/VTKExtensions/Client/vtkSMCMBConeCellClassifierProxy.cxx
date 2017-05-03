@@ -20,23 +20,20 @@
 
 vtkStandardNewMacro(vtkSMCMBConeCellClassifierProxy);
 
-//---------------------------------------------------------------------------
 vtkSMCMBConeCellClassifierProxy::vtkSMCMBConeCellClassifierProxy()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkSMCMBConeCellClassifierProxy::~vtkSMCMBConeCellClassifierProxy()
 {
   this->SetVTKClassName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkSMCMBConeCellClassifierProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
-//----------------------------------------------------------------------------
+
 // Description:
 // Insert the next cone
 void vtkSMCMBConeCellClassifierProxy::InsertNextCone(const double baseCenter[3],
@@ -50,7 +47,7 @@ void vtkSMCMBConeCellClassifierProxy::InsertNextCone(const double baseCenter[3],
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------
+
 // Description:
 // Insert the next cone
 void vtkSMCMBConeCellClassifierProxy::InsertNextCone(const double baseCenter[3],
@@ -68,4 +65,3 @@ void vtkSMCMBConeCellClassifierProxy::InsertNextCone(const double baseCenter[3],
   this->ExecuteStream(stream);
   this->MarkModified(this);
 }
-//----------------------------------------------------------------------------

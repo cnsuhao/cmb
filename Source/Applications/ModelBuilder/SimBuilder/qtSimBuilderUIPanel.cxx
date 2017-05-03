@@ -14,7 +14,6 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
-//----------------------------------------------------------------------------
 qtSimBuilderUIPanel::qtSimBuilderUIPanel(QWidget* pW)
   : QDockWidget(pW)
 {
@@ -22,18 +21,15 @@ qtSimBuilderUIPanel::qtSimBuilderUIPanel(QWidget* pW)
   this->setObjectName("SimBuilderDockWidget");
 }
 
-//----------------------------------------------------------------------------
 qtSimBuilderUIPanel::~qtSimBuilderUIPanel()
 {
 }
 
-//----------------------------------------------------------------------------
 QWidget* qtSimBuilderUIPanel::panelWidget()
 {
   return this->ContainerWidget;
 }
 
-//----------------------------------------------------------------------------
 void qtSimBuilderUIPanel::initialize()
 {
   if (this->ContainerWidget)

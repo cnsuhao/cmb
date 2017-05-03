@@ -18,18 +18,15 @@
 
 vtkStandardNewMacro(vtkCMBArcFindPickPointOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcFindPickPointOperator::vtkCMBArcFindPickPointOperator()
   : PickedPointId(-1)
 {
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcFindPickPointOperator::~vtkCMBArcFindPickPointOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcFindPickPointOperator::Operate(const vtkIdType& arcId, vtkSMOutputPort* selectionPort)
 {
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
@@ -55,7 +52,6 @@ bool vtkCMBArcFindPickPointOperator::Operate(const vtkIdType& arcId, vtkSMOutput
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcFindPickPointOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

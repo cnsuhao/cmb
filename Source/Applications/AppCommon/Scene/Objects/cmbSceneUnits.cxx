@@ -13,7 +13,6 @@
 
 #include "cmbSceneUnits.h"
 
-//-----------------------------------------------------------------------------
 const double cmbSceneUnits::ConvertFromTo[7][7] = { { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 },
   { 1.0, 1.0, 1.0 / 12.0, 25.4, 2.54, 0.0254, 0.0000254 },
   { 1.0, 12.0, 1.0, 12.0 * 25.4, 12.0 * 2.54, 12.0 * 0.0254, 12.0 * 0.0000254 },
@@ -22,7 +21,6 @@ const double cmbSceneUnits::ConvertFromTo[7][7] = { { 1.0, 1.0, 1.0, 1.0, 1.0, 1
   { 1.0, 100.0 / 2.54, 100.0 / (12.0 * 2.54), 1000.0, 100.0, 1.0, 0.001 },
   { 1.0, 100000.0 / 2.54, 100000.0 / (12.0 * 2.54), 1000000.0, 100000.0, 1000.0, 1.0 } };
 
-//-----------------------------------------------------------------------------
 cmbSceneUnits::Enum cmbSceneUnits::convertFromString(const char* unit)
 {
   std::string s = unit;
@@ -59,7 +57,6 @@ cmbSceneUnits::Enum cmbSceneUnits::convertFromString(const char* unit)
   return cmbSceneUnits::Unknown;
 }
 
-//-----------------------------------------------------------------------------
 std::string cmbSceneUnits::convertToString(cmbSceneUnits::Enum unit)
 {
   switch (unit)
@@ -81,4 +78,3 @@ std::string cmbSceneUnits::convertToString(cmbSceneUnits::Enum unit)
   }
   return "Unknown";
 }
-//-----------------------------------------------------------------------------

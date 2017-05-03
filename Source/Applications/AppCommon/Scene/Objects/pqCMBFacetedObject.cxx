@@ -39,13 +39,12 @@
 #include <vtkSMSourceProxy.h>
 #include <vtkTransform.h>
 
-//-----------------------------------------------------------------------------
 pqCMBFacetedObject::pqCMBFacetedObject()
   : pqCMBTexturedObject()
 {
   this->SurfaceType = pqCMBSceneObjectBase::Other;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBFacetedObject::pqCMBFacetedObject(
   pqPipelineSource* source, pqRenderView* view, pqServer* server, const char* filename)
   : pqCMBTexturedObject(source, view, server)
@@ -54,7 +53,6 @@ pqCMBFacetedObject::pqCMBFacetedObject(
   this->SurfaceType = pqCMBSceneObjectBase::Other;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBFacetedObject::pqCMBFacetedObject(
   pqPipelineSource* source, pqServer* server, pqRenderView* view, bool updateRep)
   : pqCMBTexturedObject(source, view, server)
@@ -66,7 +64,6 @@ pqCMBFacetedObject::pqCMBFacetedObject(
   this->SurfaceType = pqCMBSceneObjectBase::Other;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBFacetedObject::pqCMBFacetedObject(
   const char* filename, pqServer* server, pqRenderView* view, bool /*updateRep*/)
 {
@@ -86,17 +83,15 @@ pqCMBFacetedObject::pqCMBFacetedObject(
   this->SurfaceType = pqCMBSceneObjectBase::Other;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBFacetedObject::~pqCMBFacetedObject()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBFacetedObject::enumObjectType pqCMBFacetedObject::getType() const
 {
   return pqCMBSceneObjectBase::Faceted;
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBFacetedObject::getTransformedSource(pqServer* server) const
 {
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
@@ -142,7 +137,6 @@ pqPipelineSource* pqCMBFacetedObject::getTransformedSource(pqServer* server) con
   return this->Source;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBFacetedObject::duplicatePipelineSource(pqServer* server)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -155,7 +149,6 @@ pqPipelineSource* pqCMBFacetedObject::duplicatePipelineSource(pqServer* server)
   return pdSource;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBFacetedObject::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -179,10 +172,7 @@ pqCMBSceneObjectBase* pqCMBFacetedObject::duplicate(
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBFacetedObject::getSurfaceTypeAsString() const
 {
   return this->convertSurfaceTypeToString(this->SurfaceType);
 }
-
-//-----------------------------------------------------------------------------

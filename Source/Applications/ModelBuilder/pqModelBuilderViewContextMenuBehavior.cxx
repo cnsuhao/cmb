@@ -53,7 +53,6 @@
 #include <QMouseEvent>
 #include <QWidget>
 
-//-----------------------------------------------------------------------------
 pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QObject* parentObject)
   : Superclass(parentObject)
 {
@@ -65,7 +64,6 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
   this->m_dataInspector->setVisible(false);
 }
 
-//-----------------------------------------------------------------------------
 pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 {
   delete this->m_contextMenu;
@@ -76,13 +74,11 @@ pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* panel)
 {
   this->m_modelPanel = panel;
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(pqDataRepresentation* rep,
   const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
@@ -152,7 +148,6 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(pqDataRepresenta
   }
 }
 
-//----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMode)
 {
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
@@ -304,7 +299,6 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
   activeRep->renderViewEventually();
 }
 
-//----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   smtk::attribute::SystemPtr attSys, const QString& attdeftype, const QString& itemname)
 {
@@ -355,7 +349,6 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
     activeRep, attSys, attdeftype, itemname);
 }
 
-//----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(pqDataRepresentation* rep,
   const QString& colorMode, const QMap<smtk::model::EntityRef, QColor>& colorEntities)
 {
@@ -377,7 +370,6 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(pqDataReprese
   }
 }
 
-//----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(pqDataRepresentation* rep,
   const QString& colorMode, const QMap<smtk::mesh::MeshSet, QColor>& colorEntities)
 {
@@ -418,7 +410,6 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(pqDataRepresent
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
   pqDataRepresentation* rep, const QList<unsigned int>& colorBlocks, const QColor& color)
 {
@@ -449,7 +440,6 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::onViewAdded(pqView* view)
 {
   if (view && view->getProxy()->IsA("vtkSMRenderViewProxy"))
@@ -459,7 +449,6 @@ void pqModelBuilderViewContextMenuBehavior::onViewAdded(pqView* view)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 {
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
@@ -528,7 +517,6 @@ bool pqModelBuilderViewContextMenuBehavior::eventFilter(QObject* caller, QEvent*
   return Superclass::eventFilter(caller, e);
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::pickRepresentationBlock(
   pqRenderView* view, const QPoint& newPos, QWidget* senderWidget, bool ctrl)
 {
@@ -546,7 +534,6 @@ void pqModelBuilderViewContextMenuBehavior::pickRepresentationBlock(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
 {
   // get currently selected <representation, block ids>
@@ -687,7 +674,6 @@ void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
   this->m_contextMenu->addAction("Show All Models", this, SLOT(showAllRepresentations()));
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -707,7 +693,6 @@ void pqModelBuilderViewContextMenuBehavior::switchModelTessellation()
   action->setChecked(!analysisMeshShown);
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::reprTypeChanged(QAction* action)
 {
   foreach (pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
@@ -719,7 +704,7 @@ void pqModelBuilderViewContextMenuBehavior::reprTypeChanged(QAction* action)
     pqCMBContextMenuHelper::setRepresentationType(minfo->Representation, action->text());
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqModelBuilderViewContextMenuBehavior::getSelectedEntitiesAndMeshes(
   QMap<smtk::common::UUID, QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> >& sessionBlocks)
 {
@@ -740,7 +725,7 @@ void pqModelBuilderViewContextMenuBehavior::getSelectedEntitiesAndMeshes(
 /// a SetProperty op in smtk, then the application will
 /// process the op result to set visibilities through
 /// pqModelBuilderViewContextMenuBehavior::setBlockVisibility()
-//-----------------------------------------------------------------------------
+
 void pqModelBuilderViewContextMenuBehavior::hideBlock()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -758,7 +743,6 @@ void pqModelBuilderViewContextMenuBehavior::hideBlock()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -799,7 +783,6 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -810,7 +793,6 @@ void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
   this->showAllEntitiesAndMeshes(this->m_selModelBlocks.keys(), this->m_selMeshBlocks.keys());
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllEntitiesAndMeshes(
   const QList<pqSMTKModelInfo*>& ents, const QList<pqSMTKMeshInfo*>& meshes)
 {
@@ -838,7 +820,6 @@ void pqModelBuilderViewContextMenuBehavior::showAllEntitiesAndMeshes(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
 {
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
@@ -855,7 +836,6 @@ void pqModelBuilderViewContextMenuBehavior::showAllRepresentations()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setBlockColor()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -904,7 +884,6 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
 {
   QAction* action = qobject_cast<QAction*>(sender());
@@ -915,7 +894,6 @@ void pqModelBuilderViewContextMenuBehavior::unsetBlockColor()
   this->setSelectedBlocksColor(QColor());
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::setSelectedBlocksColor(const QColor& color)
 {
   // map of <sessionId, < Entities, Meshes> >
@@ -928,7 +906,6 @@ void pqModelBuilderViewContextMenuBehavior::setSelectedBlocksColor(const QColor&
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqModelBuilderViewContextMenuBehavior::createGroup()
 {
   pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
@@ -940,7 +917,7 @@ void pqModelBuilderViewContextMenuBehavior::createGroup()
 }
 
 // This slot will only be available when there is only one model is selected
-//-----------------------------------------------------------------------------
+
 void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
 {
   if (this->m_selModelBlocks.count() != 1)
@@ -959,7 +936,6 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
     smtk::model::Group(modMgr->managerProxy()->modelManager(), entId));
 }
 
-//-----------------------------------------------------------------------------
 QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
   unsigned int blockIdx, pqSMTKModelInfo* minfo) const
 {

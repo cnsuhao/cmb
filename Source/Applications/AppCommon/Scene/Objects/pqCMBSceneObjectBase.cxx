@@ -55,7 +55,6 @@ using namespace RepresentationHelperFunctions;
 //transform matrix, generally done through the display editor panel
 vtkCallbackCommand* CallBack;
 
-//-----------------------------------------------------------------------------
 class pqCMBSceneObjectBase::pqCMBSceneObjectBaseInternal
 {
 public:
@@ -82,14 +81,13 @@ public:
   unsigned long ScaleTag;
 };
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::pqCMBSceneObjectBase()
 {
   this->Source = NULL;
   this->Representation = NULL;
   this->setupSceneObject();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase::pqCMBSceneObjectBase(pqPipelineSource* source)
 {
   this->Source = source;
@@ -97,7 +95,6 @@ pqCMBSceneObjectBase::pqCMBSceneObjectBase(pqPipelineSource* source)
   this->setupSceneObject();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setupSceneObject()
 {
   this->clearConstraints();
@@ -109,7 +106,7 @@ void pqCMBSceneObjectBase::setupSceneObject()
 
   this->Internal = new pqCMBSceneObjectBaseInternal(this);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::clearConstraints()
 {
   this->Constraints[0] = this->Constraints[1] = this->Constraints[2] = this->Constraints[3] =
@@ -117,7 +114,6 @@ void pqCMBSceneObjectBase::clearConstraints()
       this->Constraints[8] = this->Constraints[9] = false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::DoRepresentationCallback(
   vtkObject* /*vtk_obj*/, unsigned long /*event*/, void* client_data, void* /*call_data*/)
 {
@@ -128,7 +124,6 @@ void pqCMBSceneObjectBase::DoRepresentationCallback(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::~pqCMBSceneObjectBase()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -164,13 +159,11 @@ pqCMBSceneObjectBase::~pqCMBSceneObjectBase()
   }
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBSceneObjectBase::getTypeAsString() const
 {
   return this->convertTypeToString(this->getType());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setVisibility(bool mode)
 {
   if (this->Representation)
@@ -178,7 +171,7 @@ void pqCMBSceneObjectBase::setVisibility(bool mode)
     this->Representation->setVisible(mode);
   }
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBSceneObjectBase::getPickable()
 {
   if (this->Representation)
@@ -189,7 +182,7 @@ int pqCMBSceneObjectBase::getPickable()
   }
   return 0;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setPickable(bool mode)
 {
   if (this->Representation)
@@ -198,7 +191,7 @@ void pqCMBSceneObjectBase::setPickable(bool mode)
       this->Representation->getProxy()->GetProperty("Pickable"), mode);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setRepresentation(pqDataRepresentation* rep)
 {
   if (this->Representation)
@@ -227,25 +220,21 @@ void pqCMBSceneObjectBase::setRepresentation(pqDataRepresentation* rep)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setSource(pqPipelineSource* source)
 {
   this->Source = source;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBSceneObjectBase::getSource() const
 {
   return this->Source;
 }
 
-///-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBSceneObjectBase::getSelectionSource() const
 {
   return this->Source;
 }
 
-//-----------------------------------------------------------------------------
 vtkSMSourceProxy* pqCMBSceneObjectBase::getSelectionInput() const
 {
   if (!this->Source)
@@ -257,7 +246,6 @@ vtkSMSourceProxy* pqCMBSceneObjectBase::getSelectionInput() const
   return proxy->GetSelectionInput(0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
   if (!this->Source)
@@ -269,12 +257,11 @@ void pqCMBSceneObjectBase::setSelectionInput(vtkSMSourceProxy* selectionInput)
   proxy->SetSelectionInput(0, selectionInput, 0);
 }
 
-//-----------------------------------------------------------------------------
 pqDataRepresentation* pqCMBSceneObjectBase::getRepresentation() const
 {
   return this->Representation;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::duplicateInternals(pqCMBSceneObjectBase* nobj)
 {
   nobj->UserDefinedType = this->UserDefinedType;
@@ -293,7 +280,7 @@ void pqCMBSceneObjectBase::duplicateInternals(pqCMBSceneObjectBase* nobj)
 
   destProxy->GetProperty("DiffuseColor")->Copy(srcProxy->GetProperty("DiffuseColor"));
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getCameraFocalPoint(pqRenderView* view, double pos[3])
 {
   QList<QVariant> values =
@@ -302,18 +289,17 @@ void pqCMBSceneObjectBase::getCameraFocalPoint(pqRenderView* view, double pos[3]
   pos[1] = values[1].toDouble();
   pos[2] = values[2].toDouble();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setUnits(cmbSceneUnits::Enum utype)
 {
   this->Units = utype;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setConstraint(int i, bool mode)
 {
   this->Constraints[i] = mode;
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBSceneObjectBase::convertTypeToString(pqCMBSceneObjectBase::enumObjectType t)
 {
   //TODO: This should be replaced with getting the string from the object it self
@@ -351,7 +337,6 @@ std::string pqCMBSceneObjectBase::convertTypeToString(pqCMBSceneObjectBase::enum
   return "Unknown";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBSceneObjectBase::convertStringToType(const char* typeName)
 {
   std::string name = typeName;
@@ -426,7 +411,7 @@ pqCMBSceneObjectBase::enumObjectType pqCMBSceneObjectBase::convertStringToType(c
 
   return pqCMBSceneObjectBase::Unknown;
 }
-//-----------------------------------------------------------------------------
+
 std::string pqCMBSceneObjectBase::convertSurfaceTypeToString(
   pqCMBSceneObjectBase::enumSurfaceType t)
 {
@@ -444,7 +429,6 @@ std::string pqCMBSceneObjectBase::convertSurfaceTypeToString(
   return "Other";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumSurfaceType pqCMBSceneObjectBase::convertStringToSurfaceType(
   const char* typeName)
 {
@@ -467,14 +451,13 @@ pqCMBSceneObjectBase::enumSurfaceType pqCMBSceneObjectBase::convertStringToSurfa
 
   return pqCMBSceneObjectBase::Other;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getColor(double color[4]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "DiffuseColor").Get(color, 3);
   color[3] = vtkSMPropertyHelper(this->Representation->getProxy(), "Opacity").GetAsDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setColor(double color[4], bool updateRep)
 {
   if (!this->Representation)
@@ -490,13 +473,12 @@ void pqCMBSceneObjectBase::setColor(double color[4], bool updateRep)
     this->Representation->getProxy()->UpdateVTKObjects();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getBounds(vtkBoundingBox* inBB) const
 {
   GetRepresentationTransformedBounds(this->Internal->Transform, this->Representation, inBB);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::getBounds(double bounds[6]) const
 {
   vtkBoundingBox bb;
@@ -504,13 +486,11 @@ void pqCMBSceneObjectBase::getBounds(double bounds[6]) const
   bb.GetBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::getDataBounds(double bounds[6]) const
 {
   vtkSMSourceProxy::SafeDownCast(this->Source->getProxy())->GetDataInformation()->GetBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::updateVectorProperty(
   const char* name, double* v, const int& size, const bool& updateRep)
 {
@@ -522,47 +502,46 @@ void pqCMBSceneObjectBase::updateVectorProperty(
   this->Internal->TransformNeedsUpdate = true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::getPosition(double pos[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Position").Get(pos, 3);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setPosition(double pos[3], bool updateRep)
 {
   this->updateVectorProperty("Position", pos, 3, updateRep);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getOrientation(double ori[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Orientation").Get(ori, 3);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setOrientation(double ori[3], bool updateRep)
 {
   this->updateVectorProperty("Orientation", ori, 3, updateRep);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getScale(double scale[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Scale").Get(scale, 3);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setScale(double scale[3], bool updateRep)
 {
   this->updateVectorProperty("Scale", scale, 3, updateRep);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getOrigin(double origin[3]) const
 {
   vtkSMPropertyHelper(this->Representation->getProxy(), "Origin").Get(origin, 3);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setOrigin(double origin[3], bool updateRep)
 {
   this->updateVectorProperty("Origin", origin, 3, updateRep);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::updateRepresentation()
 {
   if (!this->Representation)
@@ -572,7 +551,6 @@ void pqCMBSceneObjectBase::updateRepresentation()
   this->Representation->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::updateTransform() const
 {
   if (!this->Internal->TransformNeedsUpdate)
@@ -600,7 +578,6 @@ void pqCMBSceneObjectBase::updateTransform() const
   this->Internal->TransformNeedsUpdate = false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::getTransform(vtkTransform* transform) const
 {
   if (!transform)
@@ -611,7 +588,6 @@ void pqCMBSceneObjectBase::getTransform(vtkTransform* transform) const
   transform->DeepCopy(this->Internal->Transform);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setTransform(vtkTransform* transform, bool updateRep)
 {
   if (!transform)
@@ -637,7 +613,7 @@ void pqCMBSceneObjectBase::setTransform(vtkTransform* transform, bool updateRep)
   this->Internal->Transform->DeepCopy(transform);
   this->Internal->TransformNeedsUpdate = false;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getAreaStats(double* areaStats)
 {
   this->updatePolyDataStats();
@@ -648,7 +624,7 @@ void pqCMBSceneObjectBase::getAreaStats(double* areaStats)
       pqSMAdaptor::getMultipleElementProperty(fproxy->GetProperty("AreaStats"), i).toDouble();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getGeometryBounds(double* geoBounds) const
 {
   (const_cast<pqCMBSceneObjectBase*>(this))->updatePolyDataStats();
@@ -659,7 +635,7 @@ void pqCMBSceneObjectBase::getGeometryBounds(double* geoBounds) const
       pqSMAdaptor::getMultipleElementProperty(fproxy->GetProperty("GeometryBounds"), i).toDouble();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getPolySideStats(double* polySide)
 {
   this->updatePolyDataStats();
@@ -671,7 +647,7 @@ void pqCMBSceneObjectBase::getPolySideStats(double* polySide)
         .toDouble();
   }
 }
-//-----------------------------------------------------------------------------
+
 double pqCMBSceneObjectBase::getSurfaceArea()
 {
   this->updatePolyDataStats();
@@ -679,7 +655,7 @@ double pqCMBSceneObjectBase::getSurfaceArea()
   return pqSMAdaptor::getElementProperty(fproxy->GetProperty("TotalSurfaceArea")).toDouble();
   ;
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType pqCMBSceneObjectBase::getNumberOfPoints()
 {
   this->updatePolyDataStats();
@@ -687,7 +663,7 @@ vtkIdType pqCMBSceneObjectBase::getNumberOfPoints()
   return vtkSMIdTypeVectorProperty::SafeDownCast(fproxy->GetProperty("NumberOfPoints"))
     ->GetElement(0);
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType pqCMBSceneObjectBase::getNumberOfPolygons()
 {
   this->updatePolyDataStats();
@@ -695,7 +671,7 @@ vtkIdType pqCMBSceneObjectBase::getNumberOfPolygons()
   return vtkSMIdTypeVectorProperty::SafeDownCast(fproxy->GetProperty("NumberOfPolygons"))
     ->GetElement(0);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::updatePolyDataStats()
 {
   // Do we already have a poly data stats filter?
@@ -719,7 +695,7 @@ void pqCMBSceneObjectBase::updatePolyDataStats()
   vtkSMSourceProxy::SafeDownCast(fproxy)->UpdatePipeline();
   fproxy->UpdatePropertyInformation();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::getClosestPoint(const double p[3], double cp[3])
 {
   // Do we already have a closest point filter?
@@ -751,7 +727,7 @@ void pqCMBSceneObjectBase::getClosestPoint(const double p[3], double cp[3])
   cp[1] = data[1];
   cp[2] = data[2];
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::setLODMode(int mode, bool updateRep)
 {
   vtkSMIntVectorProperty::SafeDownCast(this->Representation->getProxy()->GetProperty("SuppressLOD"))
@@ -762,7 +738,6 @@ void pqCMBSceneObjectBase::setLODMode(int mode, bool updateRep)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::zoomOnObject()
 {
   double bounds[6];
@@ -775,7 +750,7 @@ void pqCMBSceneObjectBase::zoomOnObject()
     renModule->render();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneObjectBase::applyTransform(
   double scaleDelta[3], double orientationDelta[3], double translationDelta[3])
 {
@@ -804,13 +779,11 @@ void pqCMBSceneObjectBase::applyTransform(
   this->Representation->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::setMarkedForDeletion()
 {
   this->setSelectionInput(NULL);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneObjectBase::unsetMarkedForDeletion()
 {
 }

@@ -27,7 +27,6 @@
 #include "vtkUnsignedCharArray.h"
 #include <string>
 
-//----------------------------------------------------------------------------
 void CreatePolyDataGrid(vtkPolyData* poly, const int numColors)
 {
   // we hard code how many steps to display

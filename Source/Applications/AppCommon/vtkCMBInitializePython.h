@@ -28,7 +28,6 @@ namespace
 // locations for various platforms. There are always two cases to handle: when
 // running from build-location and when running from installed-location.
 
-//----------------------------------------------------------------------------
 void vtkPythonAppInitPrependPythonPath(const std::string& dir)
 {
   if (dir != "")
@@ -51,7 +50,6 @@ void vtkPythonAppInitPrependPathLinux(const std::string& SELF_DIR);
 #endif
 //#endif // ifndef PARAVIEW_FREEZE_PYTHON
 
-//----------------------------------------------------------------------------
 void vtkCMBPythonAppInitPrependPath(const std::string& SELF_DIR)
 {
 // We don't initialize Python paths when Frozen Python is being used. This

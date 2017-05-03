@@ -41,12 +41,12 @@
 
 #include "vtkPVXMLElement.h"
 #include "vtkSMPropertyIterator.h"
-//-----------------------------------------------------------------------------
+
 pqCMBVOI::pqCMBVOI()
   : pqCMBSceneObjectBase()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBVOI::pqCMBVOI(pqPipelineSource* source, pqRenderView* view, pqServer* /*server*/)
   : pqCMBSceneObjectBase(source)
 {
@@ -56,7 +56,7 @@ pqCMBVOI::pqCMBVOI(pqPipelineSource* source, pqRenderView* view, pqServer* /*ser
   this->setRepresentation(builder->createDataRepresentation(
     this->Source->getOutputPort(0), view, "GeometryRepresentation"));
 }
-//-----------------------------------------------------------------------------
+
 pqCMBVOI::pqCMBVOI(
   double origin[3], double bounds[6], pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -84,17 +84,15 @@ pqCMBVOI::pqCMBVOI(
   this->UserDefinedType = "VOI";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBVOI::~pqCMBVOI()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBVOI::getType() const
 {
   return pqCMBSceneObjectBase::VOI;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBVOI::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -113,7 +111,6 @@ pqCMBSceneObjectBase* pqCMBVOI::duplicate(pqServer* server, pqRenderView* view, 
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBVOI::setVOI(double minPnt[3], double maxPnt[3])
 {
 
@@ -139,7 +136,6 @@ void pqCMBVOI::setVOI(double minPnt[3], double maxPnt[3])
   this->Source->updatePipeline();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBVOI::getVOI(double minPnt[3], double maxPnt[3]) const
 {
   double bounds[6];
@@ -154,7 +150,6 @@ int pqCMBVOI::getVOI(double minPnt[3], double maxPnt[3]) const
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBVOI::contains(pqCMBSceneObjectBase* object) const
 {
   if (!object)

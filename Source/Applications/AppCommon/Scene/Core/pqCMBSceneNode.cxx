@@ -31,7 +31,6 @@
 #include <vtkMatrixToLinearTransform.h>
 #include <vtkTransform.h>
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode::pqCMBSceneNode(const char* name, pqCMBSceneTree* tree)
 {
   this->Object = NULL;
@@ -51,7 +50,6 @@ pqCMBSceneNode::pqCMBSceneNode(const char* name, pqCMBSceneTree* tree)
   this->init();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode::pqCMBSceneNode(const char* name, pqCMBSceneNode* parent, pqCMBSceneObjectBase* obj)
 {
   this->Object = obj;
@@ -78,7 +76,6 @@ pqCMBSceneNode::pqCMBSceneNode(const char* name, pqCMBSceneNode* parent, pqCMBSc
   this->init();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::init()
 {
   this->Visible = true;
@@ -135,14 +132,12 @@ void pqCMBSceneNode::init()
   this->Widget->setFlags(flags);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneNode::getNodeFromWidget(QTreeWidgetItem* widget)
 {
   return static_cast<pqCMBSceneNode*>(
     widget->data(pqCMBSceneNode::getNameColumn(), Qt::UserRole).value<void*>());
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode::~pqCMBSceneNode()
 {
   this->BeingDeleted = true;
@@ -193,13 +188,11 @@ pqCMBSceneNode::~pqCMBSceneNode()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::addChild(pqCMBSceneNode* node)
 {
   this->Children.push_back(node);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::removeChild(pqCMBSceneNode* node, bool deleteNode)
 {
   std::vector<pqCMBSceneNode*>::iterator it;
@@ -218,7 +211,6 @@ void pqCMBSceneNode::removeChild(pqCMBSceneNode* node, bool deleteNode)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::changeName(const char* name)
 {
   if (this->Name == name)
@@ -235,7 +227,6 @@ void pqCMBSceneNode::changeName(const char* name)
   this->Name = newName;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::setParent(pqCMBSceneNode* newParent)
 {
   if (this->Parent == newParent)
@@ -254,13 +245,11 @@ void pqCMBSceneNode::setParent(pqCMBSceneNode* newParent)
   this->Parent = newParent;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::toggleVisibility()
 {
   this->setVisibility(!this->Visible);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::setParentVisibilityOn()
 {
   if ((!this->Parent) || this->Parent->Visible)
@@ -272,7 +261,6 @@ void pqCMBSceneNode::setParentVisibilityOn()
   this->Parent->Visible = true;
   this->Parent->setParentVisibilityOn();
 }
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::setVisibility(bool mode)
 {
   if (this->isMarkedForDeletion() && mode)
@@ -310,13 +298,11 @@ void pqCMBSceneNode::setVisibility(bool mode)
   this->Tree->sceneObjectChanged();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::toggleLocked()
 {
   this->setIsLocked(!this->IsLocked);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::unlockParent()
 {
   if ((!this->Parent) || !this->Parent->IsLocked)
@@ -328,7 +314,7 @@ void pqCMBSceneNode::unlockParent()
   this->Parent->IsLocked = false;
   this->Parent->unlockParent();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::setIsLocked(bool mode)
 {
   if (this->IsLocked == mode)
@@ -368,7 +354,6 @@ void pqCMBSceneNode::setIsLocked(bool mode)
   this->Tree->sceneObjectChanged();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::setSelected(bool mode)
 {
   this->Selected = mode;
@@ -383,14 +368,14 @@ void pqCMBSceneNode::setSelected(bool mode)
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::setExplicitColor(QColor& qColor)
 {
   double color[4];
   qColor.getRgbF(&(color[0]), &(color[1]), &(color[2]), &(color[3]));
   this->setExplicitColor(color);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::setExplicitColor(double color[4])
 {
   if (this->ExplicitColor && (this->NodeColor[0] == color[0]) && (this->NodeColor[1] == color[1]) &&
@@ -415,7 +400,7 @@ void pqCMBSceneNode::setExplicitColor(double color[4])
     this->Tree->updateSelectedColorMode();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::unsetExplicitColor()
 {
   if (!(this->ExplicitColor && this->Parent))
@@ -441,12 +426,12 @@ void pqCMBSceneNode::unsetExplicitColor()
     this->Tree->updateSelectedColorMode();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::setMeshOutputIndex(int meshIndex)
 {
   this->MeshOutputIndex = meshIndex;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::pushColor()
 {
   std::stack<pqCMBSceneNode*> stack;
@@ -482,17 +467,17 @@ void pqCMBSceneNode::pushColor()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::select()
 {
   this->Widget->setSelected(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::unselect()
 {
   this->Widget->setSelected(false);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::zoomOnData()
 {
   if (this->Object)
@@ -500,7 +485,7 @@ void pqCMBSceneNode::zoomOnData()
     this->Object->zoomOnObject();
   }
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBSceneNode::getBounds(vtkBoundingBox* bb) const
 {
   if (this->Object)
@@ -520,7 +505,7 @@ bool pqCMBSceneNode::getBounds(vtkBoundingBox* bb) const
 
   return bb->IsValid();
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBSceneNode::isAncestorWidgetSelected() const
 {
   pqCMBSceneNode* parent = this->Parent;
@@ -535,18 +520,16 @@ bool pqCMBSceneNode::isAncestorWidgetSelected() const
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneNode::isLineNode()
 {
   return (this->Object && this->Object->getType() == pqCMBSceneObjectBase::Line);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBSceneNode::isArcNode()
 {
   return (this->Object && this->Object->getType() == pqCMBSceneObjectBase::Arc);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneNode::collapseAllDataInfo()
 {
   if (this->InfoWidget)
@@ -561,7 +544,7 @@ void pqCMBSceneNode::collapseAllDataInfo()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 //Checks the size of trees and expands them to the appropriate size
 //by adding nodes
 void pqCMBSceneNode::populateInfoNodes()
@@ -639,7 +622,7 @@ void pqCMBSceneNode::populateInfoNodes()
       break;
   }
 }
-//-----------------------------------------------------------------------------
+
 //Changes the names of the information nodes to reflect new information
 void pqCMBSceneNode::renameInfoNodes()
 {
@@ -866,7 +849,7 @@ void pqCMBSceneNode::renameInfoNodes()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::recomputeInfo(QTreeWidgetItem* item)
 {
   if (this->InfoWidget)
@@ -882,7 +865,7 @@ void pqCMBSceneNode::recomputeInfo(QTreeWidgetItem* item)
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::setMarkedForDeletion()
 {
   // Set all children nodes not to have any selection representation
@@ -904,7 +887,7 @@ void pqCMBSceneNode::setMarkedForDeletion()
   this->Widget->setHidden(true);
   this->setVisibility(false);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::unsetMarkedForDeletion()
 {
   this->MarkedForDeletion = false;
@@ -925,7 +908,7 @@ void pqCMBSceneNode::unsetMarkedForDeletion()
   this->Widget->setHidden(false);
   this->setVisibility(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneNode::replaceObject(pqCMBSceneObjectBase* object)
 {
   if (this->Object)
@@ -934,4 +917,3 @@ void pqCMBSceneNode::replaceObject(pqCMBSceneObjectBase* object)
   }
   this->Object = object;
 }
-//-----------------------------------------------------------------------------

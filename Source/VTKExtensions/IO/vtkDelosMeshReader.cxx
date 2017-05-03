@@ -31,20 +31,17 @@
 
 vtkStandardNewMacro(vtkDelosMeshReader);
 
-//----------------------------------------------------------------------------
 vtkDelosMeshReader::vtkDelosMeshReader()
 {
   this->FileName = NULL;
   this->SetNumberOfInputPorts(0);
 }
 
-//----------------------------------------------------------------------------
 vtkDelosMeshReader::~vtkDelosMeshReader()
 {
   delete[] this->FileName;
 }
 
-//----------------------------------------------------------------------------
 int vtkDelosMeshReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -157,7 +154,6 @@ int vtkDelosMeshReader::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkDelosMeshReader::CanReadFile(const char* fname)
 {
   struct stat fs;
@@ -168,14 +164,12 @@ int vtkDelosMeshReader::CanReadFile(const char* fname)
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkDelosMeshReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << endl;
 }
 
-//----------------------------------------------------------------------------
 int vtkDelosMeshReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

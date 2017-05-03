@@ -21,7 +21,6 @@
 #include <QIntValidator>
 #include <QLineEdit>
 
-//-----------------------------------------------------------------------------
 int qtCMBConeNodeDialog::manageCone(pqCMBSceneNode* node)
 {
   if (node->isTypeNode() || (node->getDataObject()->getType() != pqCMBSceneObjectBase::GeneralCone))
@@ -33,7 +32,6 @@ int qtCMBConeNodeDialog::manageCone(pqCMBSceneNode* node)
   return editor.exec();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode* n)
   : Status(-1)
   , Node(n)
@@ -81,7 +79,6 @@ qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode* n)
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBConeNodeDialog::~qtCMBConeNodeDialog()
 {
   if (this->ConeDialog)
@@ -93,7 +90,7 @@ qtCMBConeNodeDialog::~qtCMBConeNodeDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBConeNodeDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -101,7 +98,7 @@ int qtCMBConeNodeDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBConeNodeDialog::accept()
 {
   this->Status = 1;
@@ -123,10 +120,8 @@ void qtCMBConeNodeDialog::accept()
   b = this->ConeDialog->Resolution->text().toInt();
   object->setResolution(b);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBConeNodeDialog::cancel()
 {
   this->Status = 0;
 }
-
-//-----------------------------------------------------------------------------

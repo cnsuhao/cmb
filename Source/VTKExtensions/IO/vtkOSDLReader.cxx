@@ -31,20 +31,17 @@
 
 vtkStandardNewMacro(vtkOSDLReader);
 
-//-----------------------------------------------------------------------------
 vtkOSDLReader::vtkOSDLReader()
 {
   this->FileName = NULL;
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkOSDLReader::~vtkOSDLReader()
 {
   this->SetFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 int vtkOSDLReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -263,7 +260,6 @@ int vtkOSDLReader::RequestData(vtkInformation* vtkNotUsed(request),
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 
-//-----------------------------------------------------------------------------
 void vtkOSDLReader::AppendBlocks(vtkMultiBlockDataSet* output, vtkDataObject* dataObject)
 {
   vtkCompositeDataSet* mds = vtkCompositeDataSet::SafeDownCast(dataObject);
@@ -316,7 +312,6 @@ void vtkOSDLReader::AppendBlocks(vtkMultiBlockDataSet* output, vtkDataObject* da
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkOSDLReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -324,7 +319,6 @@ void vtkOSDLReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkOSDLReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

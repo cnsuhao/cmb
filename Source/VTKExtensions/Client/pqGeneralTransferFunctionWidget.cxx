@@ -97,7 +97,6 @@ public:
   double max_y;
 };
 
-//-----------------------------------------------------------------------------
 // We extend vtkChartXY to add logic to reset view bounds automatically. This
 // ensures that when LUT changes, we are always showing the complete LUT.
 class vtkTransferFunctionChartXY : public vtkChartXY
@@ -187,8 +186,6 @@ private:
 
 vtkStandardNewMacro(vtkTransferFunctionChartXY);
 
-//-----------------------------------------------------------------------------
-
 class pqGeneralTransferFunctionWidget::pqInternals
 {
 public:
@@ -260,7 +257,6 @@ public:
   }
 };
 
-//-----------------------------------------------------------------------------
 pqGeneralTransferFunctionWidget::pqGeneralTransferFunctionWidget(QWidget* parentObject)
   : Superclass(parentObject)
   , Internals(new pqInternals(this))
@@ -268,7 +264,6 @@ pqGeneralTransferFunctionWidget::pqGeneralTransferFunctionWidget(QWidget* parent
   QObject::connect(&this->Internals->Timer, SIGNAL(timeout()), this, SLOT(renderInternal()));
 }
 
-//-----------------------------------------------------------------------------
 pqGeneralTransferFunctionWidget::~pqGeneralTransferFunctionWidget()
 {
   delete this->Internals;
@@ -280,7 +275,6 @@ void pqGeneralTransferFunctionWidget::clear()
   this->Internals->cleanup();
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::addFunction(vtkPiecewiseFunction* pwf, bool pwf_editable)
 {
   vtkNew<vtkSplineFunctionItem> item;
@@ -437,7 +431,6 @@ bool pqGeneralTransferFunctionWidget::changeVisablity(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::onCurrentPointEditEvent()
 {
   vtkColorTransferControlPointsItem* cpitem =
@@ -471,7 +464,6 @@ void pqGeneralTransferFunctionWidget::onCurrentPointEditEvent()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::onCurrentChangedEvent()
 {
   if (this->Internals->ControlPointsItem)
@@ -480,7 +472,6 @@ void pqGeneralTransferFunctionWidget::onCurrentChangedEvent()
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqGeneralTransferFunctionWidget::currentPoint() const
 {
   if (this->Internals->ControlPointsItem)
@@ -491,7 +482,6 @@ vtkIdType pqGeneralTransferFunctionWidget::currentPoint() const
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::setCurrentPoint(vtkIdType index)
 {
   if (this->Internals->ControlPointsItem)
@@ -504,13 +494,11 @@ void pqGeneralTransferFunctionWidget::setCurrentPoint(vtkIdType index)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::render()
 {
   this->Internals->Timer.start();
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::renderInternal()
 {
   if (this->isVisible() && this->Internals->ContextView->GetRenderWindow()->IsDrawable())
@@ -519,7 +507,6 @@ void pqGeneralTransferFunctionWidget::renderInternal()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqGeneralTransferFunctionWidget::setCurrentPointPosition(double xpos)
 {
   vtkIdType currentPid = this->currentPoint();

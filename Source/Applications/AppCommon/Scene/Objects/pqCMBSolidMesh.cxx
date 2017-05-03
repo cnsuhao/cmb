@@ -39,12 +39,11 @@
 #include <vtkSMSourceProxy.h>
 #include <vtkTransform.h>
 
-//-----------------------------------------------------------------------------
 pqCMBSolidMesh::pqCMBSolidMesh()
   : pqCMBSceneObjectBase()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSolidMesh::pqCMBSolidMesh(
   pqPipelineSource* source, pqRenderView* /*view*/, pqServer* /*server*/, const char* filename)
   : pqCMBSceneObjectBase(source)
@@ -52,7 +51,6 @@ pqCMBSolidMesh::pqCMBSolidMesh(
   this->FileName = filename;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSolidMesh::pqCMBSolidMesh(
   pqPipelineSource* source, pqServer* /*server*/, pqRenderView* /*view*/, bool updateRep)
   : pqCMBSceneObjectBase(source)
@@ -63,7 +61,6 @@ pqCMBSolidMesh::pqCMBSolidMesh(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSolidMesh::pqCMBSolidMesh(
   const char* filename, pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -82,17 +79,15 @@ pqCMBSolidMesh::pqCMBSolidMesh(
   this->prepSolidMesh(server, view, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSolidMesh::~pqCMBSolidMesh()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBSolidMesh::getType() const
 {
   return pqCMBSceneObjectBase::SolidMesh;
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBSolidMesh::getTransformedSource(pqServer* server) const
 {
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
@@ -138,7 +133,6 @@ pqPipelineSource* pqCMBSolidMesh::getTransformedSource(pqServer* server) const
   return this->Source;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBSolidMesh::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -161,7 +155,6 @@ pqCMBSceneObjectBase* pqCMBSolidMesh::duplicate(
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSolidMesh::prepSolidMesh(pqServer* /*server*/, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();

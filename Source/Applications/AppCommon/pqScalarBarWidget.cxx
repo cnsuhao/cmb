@@ -46,7 +46,7 @@ public:
 
   ~cmbInternals() {}
 };
-//-----------------------------------------------------------------------------
+
 /// constructor
 pqScalarBarWidget::pqScalarBarWidget(pqDataRepresentation* repr, QWidget* /*p*/)
   : Internals(new pqScalarBarWidget::cmbInternals(repr))
@@ -54,13 +54,12 @@ pqScalarBarWidget::pqScalarBarWidget(pqDataRepresentation* repr, QWidget* /*p*/)
   this->init();
 }
 
-//-----------------------------------------------------------------------------
 /// destructor
 pqScalarBarWidget::~pqScalarBarWidget()
 {
   delete this->Internals;
 }
-//-----------------------------------------------------------------------------
+
 void pqScalarBarWidget::setIndexedColors(const QList<QColor>& colors)
 {
   vtkSMProxy* proxy = this->Internals->LookupTableProxy;
@@ -85,7 +84,7 @@ void pqScalarBarWidget::setIndexedColors(const QList<QColor>& colors)
   }
   proxy->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqScalarBarWidget::setAnnotations(const QList<QVariant>& annotations)
 {
   vtkSMProxy* proxy = this->Internals->LookupTableProxy;
@@ -94,7 +93,6 @@ void pqScalarBarWidget::setAnnotations(const QList<QVariant>& annotations)
   proxy->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqScalarBarWidget::setPositionToLeft()
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
@@ -111,7 +109,6 @@ void pqScalarBarWidget::setPositionToLeft()
   proxy->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqScalarBarWidget::setPositionToRight()
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
@@ -125,7 +122,7 @@ void pqScalarBarWidget::setPositionToRight()
   smPos.Set(tlPos, 2);
   proxy->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqScalarBarWidget::setTitle(const QString& title)
 {
   vtkSMProxy* proxy = this->Internals->ScalarBarProxy;
@@ -134,14 +131,12 @@ void pqScalarBarWidget::setTitle(const QString& title)
   proxy->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqScalarBarWidget::setVisible(bool visible)
 {
   this->Internals->ScalarBarRep->setVisible(visible);
   vtkSMPropertyHelper(this->Internals->ScalarBarProxy, "Enabled").Set(visible);
 }
 
-//-----------------------------------------------------------------------------
 void pqScalarBarWidget::init()
 {
   if (this->Internals->CurrentRep)

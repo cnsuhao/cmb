@@ -55,7 +55,6 @@ const char* SM_GDAL_READER_NAME = "GDALRasterPolydataWrapper";
 const char* SM_VTP_READER_NAME = "XMLPolyDataReader";
 };
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARReaderManager::pqCMBLIDARReaderManager(
   pqCMBPointsBuilderMainWindowCore* core, pqObjectBuilder* builder)
 {
@@ -67,17 +66,15 @@ pqCMBLIDARReaderManager::pqCMBLIDARReaderManager(
   this->ChangeOrigin = false;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARReaderManager::~pqCMBLIDARReaderManager()
 {
 }
-//-----------------------------------------------------------------------------
+
 vtkSMSourceProxy* pqCMBLIDARReaderManager::activeReader()
 {
   return this->ActiveReader;
 }
 
-//-----------------------------------------------------------------------------
 vtkSMSourceProxy* pqCMBLIDARReaderManager::getReaderSourceProxy(const char* filename)
 {
   if (this->ReaderSourceMap.contains(filename))
@@ -86,7 +83,7 @@ vtkSMSourceProxy* pqCMBLIDARReaderManager::getReaderSourceProxy(const char* file
   }
   return NULL;
 }
-//-----------------------------------------------------------------------------
+
 QString pqCMBLIDARReaderManager::getFileTitle() const
 {
   QString filename("");
@@ -102,12 +99,12 @@ QString pqCMBLIDARReaderManager::getFileTitle() const
   }
   return filename;
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBLIDARReaderManager::isFileLoaded(QString& filename)
 {
   return this->ReaderSourceMap.contains(filename);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBLIDARReaderManager::isValidFile(const char* filename)
 {
   if (!(filename && *filename))
@@ -126,7 +123,6 @@ bool pqCMBLIDARReaderManager::isValidFile(const char* filename)
   return true;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqCMBLIDARReaderManager::scanTotalNumPointsInfo(
   const QStringList& files, pqPipelineSource* reader)
 {
@@ -157,8 +153,6 @@ vtkIdType pqCMBLIDARReaderManager::scanTotalNumPointsInfo(
   }
   return totNumPts;
 }
-
-//-----------------------------------------------------------------------------
 
 bool pqCMBLIDARReaderManager::setOrigin()
 {
@@ -216,7 +210,6 @@ bool pqCMBLIDARReaderManager::setOutputDataTypeToDouble()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::convertFromLatLongToXYZ(int convertFromLatLong)
 {
   if (!this->ReaderSourceMap.count())
@@ -238,7 +231,6 @@ void pqCMBLIDARReaderManager::convertFromLatLongToXYZ(int convertFromLatLong)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::limitReadToBounds(bool limitRead)
 {
   if (!this->ReaderSourceMap.count())
@@ -261,7 +253,6 @@ void pqCMBLIDARReaderManager::limitReadToBounds(bool limitRead)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::setReadBounds(QList<QVariant>& values)
 {
   if (!this->ReaderSourceMap.count())
@@ -284,7 +275,6 @@ void pqCMBLIDARReaderManager::setReadBounds(QList<QVariant>& values)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::getDataBounds(double bounds[6])
 {
   if (!this->ReaderSourceMap.count())
@@ -326,7 +316,6 @@ void pqCMBLIDARReaderManager::getDataBounds(double bounds[6])
   }
 }
 
-//----------------------------------------------------------------------------
 int pqCMBLIDARReaderManager::computeApproximateRepresentingFloatDigits(double min, double max)
 {
   double maxComponent = fabs(min) > max ? fabs(min) : max;
@@ -360,7 +349,6 @@ bool pqCMBLIDARReaderManager::userRequestsOrigin()
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARReaderManager::userRequestsDoubleData()
 {
   if (this->CurrentReaderBounds[1] < this->CurrentReaderBounds[0])
@@ -391,7 +379,6 @@ bool pqCMBLIDARReaderManager::userRequestsDoubleData()
   return false;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARReaderManager::importData(const char* filename, pqCMBLIDARPieceTable* table,
   pqCMBModifierArcManager* arcManager,
   QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >& FilePieceIdMap, bool showElevation)
@@ -433,7 +420,7 @@ int pqCMBLIDARReaderManager::importData(const char* filename, pqCMBLIDARPieceTab
 
   return res;
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType pqCMBLIDARReaderManager::scanFileNumberOfPoints(pqPipelineSource* reader)
 {
   vtkSMSourceProxy* readerProxy = vtkSMSourceProxy::SafeDownCast(reader->getProxy());
@@ -529,7 +516,6 @@ vtkIdType pqCMBLIDARReaderManager::scanFileNumberOfPoints(pqPipelineSource* read
   return totNumPts;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqCMBLIDARReaderManager::scanLASPiecesInfo(pqPipelineSource* reader)
 {
   vtkIdType totNumPts = 0;
@@ -577,7 +563,6 @@ vtkIdType pqCMBLIDARReaderManager::scanLASPiecesInfo(pqPipelineSource* reader)
   return totNumPts;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARReaderManager::importLIDARData(const char* filename, pqCMBLIDARPieceTable* table,
   pqCMBModifierArcManager* arcManager,
   QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >& FilePieceIdMap, bool showElevation)
@@ -674,7 +659,6 @@ int pqCMBLIDARReaderManager::importLIDARData(const char* filename, pqCMBLIDARPie
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARReaderManager::importLASData(const char* filename, pqCMBLIDARPieceTable* table,
   pqCMBModifierArcManager* arcManager,
   QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >& FilePieceIdMap, bool showElevation)
@@ -775,7 +759,7 @@ int pqCMBLIDARReaderManager::importLASData(const char* filename, pqCMBLIDARPiece
 
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBLIDARReaderManager::importDEMData(const char* filename, pqCMBLIDARPieceTable* table,
   pqCMBModifierArcManager* arcManager,
   QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >& FilePieceIdMap, bool showElevation)
@@ -1026,7 +1010,6 @@ int pqCMBLIDARReaderManager::importVTPData(const char* filename, pqCMBLIDARPiece
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqCMBLIDARReaderManager::getPieceNumPointsInfo(
   const char* filename, QList<vtkIdType>& pieceInfo)
 {
@@ -1057,7 +1040,6 @@ vtkIdType pqCMBLIDARReaderManager::getPieceNumPointsInfo(
   return totalNumberOfPoints;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::readPieces(
   pqPipelineSource* reader, QList<QVariant>& pieces, QList<pqPipelineSource*>& pdSources)
 {
@@ -1118,7 +1100,6 @@ void pqCMBLIDARReaderManager::readPieces(
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARReaderManager::readData(vtkSMSourceProxy* readerProxy, QList<QVariant>& pieces)
 {
   if (!readerProxy)
@@ -1201,7 +1182,6 @@ int pqCMBLIDARReaderManager::readData(vtkSMSourceProxy* readerProxy, QList<QVari
   return numberOfPointsRead; // not valid value for LASReader
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::setReaderTransform(
   vtkSMSourceProxy* readerProxy, pqCMBLIDARPieceObject* dataObj)
 {
@@ -1233,7 +1213,6 @@ void pqCMBLIDARReaderManager::setReaderTransform(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::setReaderTransformData(
   vtkSMSourceProxy* readerProxy, bool transformData)
 {
@@ -1252,7 +1231,6 @@ void pqCMBLIDARReaderManager::setReaderTransformData(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::clearTransform(vtkSMSourceProxy* readerProxy)
 {
   if (!readerProxy)
@@ -1274,7 +1252,6 @@ void pqCMBLIDARReaderManager::clearTransform(vtkSMSourceProxy* readerProxy)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::updatePieces(const char* filename,
   QList<pqCMBLIDARPieceObject*>& pieces, bool forceRead, pqCMBLIDARPieceTable* table, bool clipData,
   double* clipBounds)
@@ -1297,7 +1274,6 @@ void pqCMBLIDARReaderManager::updatePieces(const char* filename,
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::updateLIDARPieces(const char* filename,
   QList<pqCMBLIDARPieceObject*>& pieces, bool forceRead, pqCMBLIDARPieceTable* table, bool clipData,
   double* clipBounds)
@@ -1367,7 +1343,6 @@ void pqCMBLIDARReaderManager::updateLIDARPieces(const char* filename,
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARReaderManager::updateLASPieces(const char* filename,
   QList<pqCMBLIDARPieceObject*>& pieces, bool forceRead, pqCMBLIDARPieceTable* table, bool clipData,
   double* clipBounds)
@@ -1477,7 +1452,7 @@ void pqCMBLIDARReaderManager::updateLASPieces(const char* filename,
     table->updateWithPieceInfo(dataObj);
   }
 }
-//-----------------------------------------------------------------------------
+
 QList<pqCMBLIDARPieceObject*> pqCMBLIDARReaderManager::getFilePieceObjects(
   const char* filename, QList<pqCMBLIDARPieceObject*>& sourcePieces)
 {
@@ -1493,7 +1468,6 @@ QList<pqCMBLIDARPieceObject*> pqCMBLIDARReaderManager::getFilePieceObjects(
   return selObjects;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARReaderManager::getSourcesForOutput(bool atDisplayRatio,
   QList<pqCMBLIDARPieceObject*>& pieces, QList<pqPipelineSource*>& outputSources,
   bool forceUpdate /*= false*/)
@@ -1534,7 +1508,6 @@ bool pqCMBLIDARReaderManager::getSourcesForOutput(bool atDisplayRatio,
   return result;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARReaderManager::getSourcesForOutputLIDAR(pqPipelineSource* reader,
   bool atDisplayRatio, QList<pqCMBLIDARPieceObject*>& pieces,
   QList<pqPipelineSource*>& outputSources, bool forceUpdate)
@@ -1596,7 +1569,6 @@ bool pqCMBLIDARReaderManager::getSourcesForOutputLIDAR(pqPipelineSource* reader,
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLIDARReaderManager::getSourcesForOutputLAS(pqPipelineSource* reader, bool atDisplayRatio,
   QList<pqCMBLIDARPieceObject*>& pieces, QList<pqPipelineSource*>& outputSources, bool forceUpdate)
 {
@@ -1698,7 +1670,7 @@ bool pqCMBLIDARReaderManager::getSourcesForOutputLAS(pqPipelineSource* reader, b
   }
   return true;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARReaderManager::destroyAllReaders()
 {
   if (this->ReaderSourceMap.count() > 0)
@@ -1714,7 +1686,7 @@ void pqCMBLIDARReaderManager::destroyAllReaders()
   this->DEMTransformForZOrigin[0] = this->DEMTransformForZOrigin[1] = 90.0;
   this->DEMZRotationAngle = 0.0;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBLIDARReaderManager::destroyTemporarySources()
 {
   // destroy threshold filters 1st, as it is consumer of Contour filter

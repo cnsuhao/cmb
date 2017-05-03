@@ -17,20 +17,17 @@
 
 vtkStandardNewMacro(vtkExtractLeafBlock);
 
-//----------------------------------------------------------------------------
 vtkExtractLeafBlock::vtkExtractLeafBlock()
 {
   this->BlockIndex = -1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractLeafBlock::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractLeafBlock::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -85,7 +82,6 @@ int vtkExtractLeafBlock::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkExtractLeafBlock::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

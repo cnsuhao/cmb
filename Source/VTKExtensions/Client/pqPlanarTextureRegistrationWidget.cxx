@@ -78,7 +78,6 @@ public:
   bool isSettingTexture;
 };
 
-//-----------------------------------------------------------------------------
 pqPlanarTextureRegistrationWidget::pqPlanarTextureRegistrationWidget(
   vtkSMProxy* smproxy, vtkSMProperty*, QWidget* parentObject)
   : Superclass(smproxy, parentObject)
@@ -131,31 +130,26 @@ pqPlanarTextureRegistrationWidget::pqPlanarTextureRegistrationWidget(
   PV_DEBUG_PANELS() << "pqPlanarTextureRegistrationWidget.";
 }
 
-//-----------------------------------------------------------------------------
 pqPlanarTextureRegistrationWidget::~pqPlanarTextureRegistrationWidget()
 {
   delete this->Implementation;
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::apply()
 {
   this->Implementation->TextureControls->apply();
   this->pqPropertyWidget::apply();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::reset()
 {
   this->Implementation->TextureControls->getLinks()->reset();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::updateEnableState()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::unsetTextureMap()
 {
   this->Implementation->ClearTexture();
@@ -173,7 +167,6 @@ void pqPlanarTextureRegistrationWidget::unsetTextureMap()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::setTextureMap(
   const QString& tmpfilename, int numberOfRegistrationPoints, double* points)
 {
@@ -249,7 +242,6 @@ void pqPlanarTextureRegistrationWidget::setTextureMap(
   this->Implementation->isSettingTexture = false;
 }
 
-//-----------------------------------------------------------------------------
 vtkSMProperty* pqPlanarTextureRegistrationWidget::getTextureProperty()
 {
   vtkSMProperty* textureProperty(0);
@@ -261,7 +253,7 @@ vtkSMProperty* pqPlanarTextureRegistrationWidget::getTextureProperty()
   }
   return textureProperty;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqPlanarTextureRegistrationWidget::getRepresentation()
 {
   pqRenderView* view = this->Implementation->TextureControls->currentView();
@@ -280,7 +272,6 @@ pqDataRepresentation* pqPlanarTextureRegistrationWidget::getRepresentation()
   return selfRep;
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::fetchTextureFiles(QStringList& textureslist)
 {
   textureslist.clear();
@@ -300,7 +291,6 @@ void pqPlanarTextureRegistrationWidget::fetchTextureFiles(QStringList& texturesl
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::updateTextureList()
 {
   QStringList textureslist;
@@ -308,7 +298,7 @@ void pqPlanarTextureRegistrationWidget::updateTextureList()
   this->Implementation->TextureControls->updateTextureList(
     textureslist, this->Implementation->TextureFileName);
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationWidget::proxyRegistered(const QString& group)
 {
   if (group == "textures")
@@ -317,7 +307,6 @@ void pqPlanarTextureRegistrationWidget::proxyRegistered(const QString& group)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationWidget::proxyUnRegistered(
   const QString& group, const QString&, vtkSMProxy* /*proxy*/)
 {

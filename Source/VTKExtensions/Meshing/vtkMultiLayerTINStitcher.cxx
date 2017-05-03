@@ -22,7 +22,6 @@
 
 vtkStandardNewMacro(vtkMultiLayerTINStitcher);
 
-//-----------------------------------------------------------------------------
 vtkMultiLayerTINStitcher::vtkMultiLayerTINStitcher()
 {
   this->UseQuads = true;
@@ -32,12 +31,10 @@ vtkMultiLayerTINStitcher::vtkMultiLayerTINStitcher()
   this->UserSpecifiedTINType = 0; // auto-detect
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiLayerTINStitcher::~vtkMultiLayerTINStitcher()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkMultiLayerTINStitcher::AddInputData(vtkPolyData* input)
 {
   if (input)
@@ -46,7 +43,6 @@ void vtkMultiLayerTINStitcher::AddInputData(vtkPolyData* input)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkMultiLayerTINStitcher::AddInputData(vtkUnstructuredGrid* input)
 {
   if (input)
@@ -55,7 +51,6 @@ void vtkMultiLayerTINStitcher::AddInputData(vtkUnstructuredGrid* input)
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiLayerTINStitcher::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/)
 {
@@ -120,7 +115,6 @@ int vtkMultiLayerTINStitcher::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkMultiLayerTINStitcher::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (!this->Superclass::FillInputPortInformation(port, info))
@@ -132,7 +126,6 @@ int vtkMultiLayerTINStitcher::FillInputPortInformation(int port, vtkInformation*
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiLayerTINStitcher::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

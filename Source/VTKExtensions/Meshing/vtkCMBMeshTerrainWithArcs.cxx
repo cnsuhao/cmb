@@ -91,7 +91,6 @@ public:
   int GroundIndex;
 };
 
-//-----------------------------------------------------------------------------
 vtkCMBMeshTerrainWithArcs::vtkCmbInternalTerrainInfo::vtkCmbInternalTerrainInfo(
   vtkInformationVector* input, const double& radius, const double& groundElevation)
   : Radius(radius)
@@ -154,7 +153,7 @@ vtkCMBMeshTerrainWithArcs::vtkCmbInternalTerrainInfo::vtkCmbInternalTerrainInfo(
   this->Locator->BuildLocator();
   pointSet->Delete();
 }
-//-----------------------------------------------------------------------------
+
 template <class T>
 T vtkCMBMeshTerrainWithArcs::vtkCmbInternalTerrainInfo::getElevation(T* point)
 {
@@ -183,7 +182,6 @@ T vtkCMBMeshTerrainWithArcs::vtkCmbInternalTerrainInfo::getElevation(T* point)
   return elev;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBMeshTerrainWithArcs::vtkCMBMeshTerrainWithArcs()
 {
   this->PolygonInfo = new vtkCmbPolygonInfo();
@@ -204,7 +202,6 @@ vtkCMBMeshTerrainWithArcs::vtkCMBMeshTerrainWithArcs()
   this->MesherMaxArea = 0.125;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBMeshTerrainWithArcs::~vtkCMBMeshTerrainWithArcs()
 {
   delete this->PolygonInfo;
@@ -212,7 +209,6 @@ vtkCMBMeshTerrainWithArcs::~vtkCMBMeshTerrainWithArcs()
   this->Mesher->Delete();
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshTerrainWithArcs::FillInputPortInformation(int port, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
@@ -224,19 +220,16 @@ int vtkCMBMeshTerrainWithArcs::FillInputPortInformation(int port, vtkInformation
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::RemoveInputConnections()
 {
   this->SetInputConnection(0, NULL);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::RemoveSourceConnections()
 {
   this->SetInputConnection(1, NULL);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::DetermineNumberOfProgressSteps(const int& numInputs)
 {
   //the number of progress steps is:
@@ -253,7 +246,6 @@ void vtkCMBMeshTerrainWithArcs::DetermineNumberOfProgressSteps(const int& numInp
   //the end of request data is where we set progress to 1.0
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::NextProgressStep()
 {
   if (this->CurrentProgressStep < this->NumberOfProgressSteps)
@@ -267,7 +259,6 @@ void vtkCMBMeshTerrainWithArcs::NextProgressStep()
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshTerrainWithArcs::RequestData(
   vtkInformation*, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -350,7 +341,6 @@ int vtkCMBMeshTerrainWithArcs::RequestData(
   return validMesh;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::PrepForMeshing(vtkInformationVector* input, vtkPolyData* mesh)
 {
   //make sure we have no verts, triangles, and strips
@@ -444,7 +434,6 @@ bool vtkCMBMeshTerrainWithArcs::PrepForMeshing(vtkInformationVector* input, vtkP
   return validMesh;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::AssignPolygonIds(vtkPolyData* mesh, const vtkIdType& /*size*/) const
 {
   typedef vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
@@ -490,7 +479,7 @@ bool vtkCMBMeshTerrainWithArcs::AssignPolygonIds(vtkPolyData* mesh, const vtkIdT
 
   return true;
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBMeshTerrainWithArcs::FlattenMesh(vtkPoints* points) const
 {
   bool valid = true;
@@ -514,7 +503,7 @@ bool vtkCMBMeshTerrainWithArcs::FlattenMesh(vtkPoints* points) const
   }
   return valid;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBMeshTerrainWithArcs::InsertGroundPlane(vtkPoints* points, vtkCellArray* newCells) const
 {
   vtkIdType bl, br, tr, tl;
@@ -543,7 +532,6 @@ void vtkCMBMeshTerrainWithArcs::InsertGroundPlane(vtkPoints* points, vtkCellArra
   this->PolygonInfo->GroundIndex = static_cast<int>(this->PolygonInfo->Info.size() - 1);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::GenerateGroundMesh(vtkPolyData* finalMesh)
 {
   bool valid = this->ExtrudeMeshPoints(finalMesh->GetPoints());
@@ -551,7 +539,6 @@ bool vtkCMBMeshTerrainWithArcs::GenerateGroundMesh(vtkPolyData* finalMesh)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::GenerateExtrudedArcSets(vtkPolyData* input, vtkPolyData* output)
 {
   bool valid;
@@ -601,7 +588,6 @@ bool vtkCMBMeshTerrainWithArcs::GenerateExtrudedArcSets(vtkPolyData* input, vtkP
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::CreateArcSetForMeshing(
   vtkPolyData* input, vtkPolyData* output, const int& index) const
 {
@@ -650,7 +636,6 @@ void vtkCMBMeshTerrainWithArcs::CreateArcSetForMeshing(
   mapInterface->FinalizeNewMapInfo();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::ExtrudeArcMesh(vtkPolyData* mesh, const int& index) const
 {
   //note this method modifies the mesh
@@ -712,7 +697,6 @@ bool vtkCMBMeshTerrainWithArcs::ExtrudeArcMesh(vtkPolyData* mesh, const int& ind
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::UnFlattenMesh(vtkPoints* points, const double& height) const
 {
   //get the point data void pointer
@@ -739,7 +723,6 @@ bool vtkCMBMeshTerrainWithArcs::UnFlattenMesh(vtkPoints* points, const double& h
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshTerrainWithArcs::ExtrudeMeshPoints(vtkPoints* points) const
 {
   //get the point data void pointer
@@ -766,7 +749,6 @@ bool vtkCMBMeshTerrainWithArcs::ExtrudeMeshPoints(vtkPoints* points) const
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshTerrainWithArcs::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

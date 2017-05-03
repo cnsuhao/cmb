@@ -11,7 +11,6 @@
 
 #include <vnl/vnl_matrix_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_votee_d<N>::rtvl_votee_d(vnl_vector_fixed<double, N> const& votee_location,
   vnl_matrix_fixed<double, N, N>& votee_tensor, vnl_matrix_fixed<double, N, N> (&votee_dtensor)[N])
@@ -20,7 +19,6 @@ rtvl_votee_d<N>::rtvl_votee_d(vnl_vector_fixed<double, N> const& votee_location,
 {
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_votee_d<N>::go(rtvl_vote_internal<N>& vi, double saliency)
 {
@@ -38,7 +36,6 @@ void rtvl_votee_d<N>::go(rtvl_vote_internal<N>& vi, double saliency)
   }
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_VOTEE_D_INSTANTIATE(N) template class rtvl_votee_d<N>
 
 #endif

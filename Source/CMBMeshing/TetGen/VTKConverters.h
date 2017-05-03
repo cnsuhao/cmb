@@ -16,7 +16,7 @@
 
 namespace detail
 {
-//----------------------------------------------------------------------------
+
 template <typename ValueType>
 inline bool writeToStream(std::ostream& buffer, ValueType* begin, ValueType* end,
   vtkIdType numTuples, vtkIdType numComponents)
@@ -40,7 +40,6 @@ inline bool writeToStream(std::ostream& buffer, ValueType* begin, ValueType* end
   return true;
 }
 
-//----------------------------------------------------------------------------
 template <typename VTKType, typename DesiredType>
 std::vector<DesiredType> makeAndConvertDataArryFromStream(
   VTKType, DesiredType, std::istringstream& buffer, vtkIdType numTuples, vtkIdType numComponents)
@@ -83,7 +82,6 @@ std::vector<DesiredType> makeAndConvertDataArryFromStream(
   return result;
 }
 
-//----------------------------------------------------------------------------
 template <typename T>
 std::vector<T> readAndConvert_vtkDataArray(std::istringstream& buffer)
 {

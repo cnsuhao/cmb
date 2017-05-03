@@ -15,7 +15,6 @@
 #include "vtkXMLDataElement.h"
 #include "vtkXMLUtilities.h"
 
-//----------------------------------------------------------------------------
 pqCMBSceneReader::pqCMBSceneReader()
 {
   this->Tree = NULL;
@@ -27,12 +26,10 @@ pqCMBSceneReader::pqCMBSceneReader()
   this->FilterObjectByType = 0;
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneReader::~pqCMBSceneReader()
 {
 }
 
-//----------------------------------------------------------------------------
 int pqCMBSceneReader::process(const char* data)
 {
   if (!this->Tree)
@@ -104,7 +101,6 @@ int pqCMBSceneReader::process(const char* data)
   return status;
 }
 
-//----------------------------------------------------------------------------
 int pqCMBSceneReader::getUserDefinedObjectTypes(const char* data, QStringList& objTypes)
 {
   this->Status = "";

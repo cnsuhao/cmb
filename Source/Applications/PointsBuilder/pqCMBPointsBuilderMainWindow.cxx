@@ -103,7 +103,6 @@ public:
   QPointer<QAction> SaveContourAction;
 };
 
-//----------------------------------------------------------------------------
 pqCMBPointsBuilderMainWindow::pqCMBPointsBuilderMainWindow()
   : Internal(new vtkInternal(this))
 {
@@ -114,7 +113,6 @@ pqCMBPointsBuilderMainWindow::pqCMBPointsBuilderMainWindow()
   this->MainWindowCore->applyAppSettings();
 }
 
-//----------------------------------------------------------------------------
 pqCMBPointsBuilderMainWindow::~pqCMBPointsBuilderMainWindow()
 {
   delete this->Internal;
@@ -122,7 +120,6 @@ pqCMBPointsBuilderMainWindow::~pqCMBPointsBuilderMainWindow()
   this->MainWindowCore = NULL;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::initializeApplication()
 {
   this->MainWindowCore = new pqCMBPointsBuilderMainWindowCore(this);
@@ -172,7 +169,6 @@ void pqCMBPointsBuilderMainWindow::initializeApplication()
   this->loadDataReaction()->setMultiFiles(true);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::setupMenuActions()
 {
   this->getMainDialog()->menuEdit->insertAction(
@@ -197,7 +193,6 @@ void pqCMBPointsBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menu_File->insertSeparator(this->getMainDialog()->action_Exit);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::updateEnableState()
 {
   bool dataLoaded = this->getThisCore()->IsDataLoaded();
@@ -206,7 +201,6 @@ void pqCMBPointsBuilderMainWindow::updateEnableState()
   this->updateEnableState(dataLoaded);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onHelpAbout()
 {
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
@@ -223,19 +217,16 @@ void pqCMBPointsBuilderMainWindow::onHelpAbout()
   dialog->show();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onHelpHelp()
 {
   this->showHelpPage("qthelp://paraview.org/cmbsuite/PointsBuilder_README.html");
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onViewSelected(pqOutputPort* selPort)
 {
   this->Internal->LastSelectedPort = selPort;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onEnableMenuItems(bool state)
 {
   // File menu
@@ -252,13 +243,11 @@ void pqCMBPointsBuilderMainWindow::onEnableMenuItems(bool state)
   this->getMainDialog()->actionConvert_from_Lat_Long->setEnabled(state);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::updateSelection()
 {
   this->getThisCore()->updateSelection(this->Internal->LastSelectedPort);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onDataLoaded()
 {
   this->updateEnableState();
@@ -277,13 +266,11 @@ void pqCMBPointsBuilderMainWindow::onDataLoaded()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindow::onOpenMoreFiles()
 {
   this->getThisCore()->onOpenMoreFiles(this->loadDataReaction());
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPointsBuilderMainWindowCore* pqCMBPointsBuilderMainWindow::getThisCore()
 {
   return qobject_cast<pqCMBPointsBuilderMainWindowCore*>(this->MainWindowCore);

@@ -37,13 +37,11 @@
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 
-//-----------------------------------------------------------------------------
 pqSMTKMeshInfo::~pqSMTKMeshInfo()
 {
   this->clearLinks();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshInfo::clearLinks()
 {
   if (this->PositionLink)
@@ -56,7 +54,6 @@ void pqSMTKMeshInfo::clearLinks()
     this->OriginLink->RemoveAllLinks();
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKMeshInfo::init(pqPipelineSource* meshsource, pqPipelineSource* repsource,
   pqDataRepresentation* rep, pqDataRepresentation* pointsRep, const std::string& filename,
   smtk::model::ManagerPtr mgr, pqSMTKModelInfo* modinfo)

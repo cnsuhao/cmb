@@ -27,7 +27,6 @@ public:
   QButtonGroup* RadioGroup;
 };
 
-//-----------------------------------------------------------------------------
 qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(QWidget* _p)
   : QWidget(_p)
 {
@@ -73,7 +72,6 @@ qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(QWidget* _p)
   this->Internal->MaterialIdEntry->setValidator(new QIntValidator(this->Internal->MaterialIdEntry));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBMeshViewerPanelWidget::~qtCMBMeshViewerPanelWidget()
 {
   delete this->Internal->IconVisible;
@@ -87,47 +85,47 @@ qtCMBMeshViewerPanelWidget::~qtCMBMeshViewerPanelWidget()
   delete this->Internal->RadioGroup;
   delete this->Internal;
 }
-//-----------------------------------------------------------------------------
+
 QIcon* qtCMBMeshViewerPanelWidget::iconVisible()
 {
   return this->Internal->IconVisible;
 }
-//-----------------------------------------------------------------------------
+
 QIcon* qtCMBMeshViewerPanelWidget::iconInvisible()
 {
   return this->Internal->IconInvisible;
 }
-//-----------------------------------------------------------------------------
+
 QIcon* qtCMBMeshViewerPanelWidget::iconActive()
 {
   return this->Internal->IconActive;
 }
-//-----------------------------------------------------------------------------
+
 QIcon* qtCMBMeshViewerPanelWidget::iconInactive()
 {
   return this->Internal->IconInactive;
 }
-//-----------------------------------------------------------------------------
+
 Ui::qtMeshViewerPanel* qtCMBMeshViewerPanelWidget::getGUIPanel()
 {
   return this->Internal;
 }
-//-----------------------------------------------------------------------------
+
 QAction* qtCMBMeshViewerPanelWidget::deleteInputAction()
 {
   return this->Internal->DeleteAction;
 }
-//-----------------------------------------------------------------------------
+
 QAction* qtCMBMeshViewerPanelWidget::activeInputAction()
 {
   return this->Internal->ActiveInputAction;
 }
-//-----------------------------------------------------------------------------
+
 QAction* qtCMBMeshViewerPanelWidget::exportSubsetAction()
 {
   return this->Internal->ExportSubsetAction;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBMeshViewerPanelWidget::showContextMenu(const QPoint& p)
 {
   this->Internal->ContextMenu->popup(this->Internal->treeInputs->mapToGlobal(p));

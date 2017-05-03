@@ -37,7 +37,6 @@ public:
   QStringList CMBSpecialExtensions;
 };
 
-//-----------------------------------------------------------------------------
 pqCMBLoadDataReaction::pqCMBLoadDataReaction(QAction* parentObject, bool multiFiles)
   : Superclass(parentObject)
   , m_MultiFiles(multiFiles)
@@ -49,13 +48,11 @@ pqCMBLoadDataReaction::pqCMBLoadDataReaction(QAction* parentObject, bool multiFi
   this->updateEnableState();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLoadDataReaction::~pqCMBLoadDataReaction()
 {
   delete this->Internals;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::addSpecialExtensions(const QStringList& exts)
 {
   foreach (QString ext, exts)
@@ -64,7 +61,6 @@ void pqCMBLoadDataReaction::addSpecialExtensions(const QStringList& exts)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::updateEnableState()
 {
   pqActiveObjects& activeObjects = pqActiveObjects::instance();
@@ -72,12 +68,11 @@ void pqCMBLoadDataReaction::updateEnableState()
   this->parentAction()->setEnabled(enable_state);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::setPluginIOBehavior(pqPluginIOBehavior* pluginBhv)
 {
   this->m_pluginBehavior = pluginBhv;
 }
-//-----------------------------------------------------------------------------
+
 QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(bool& cancelled, QStringList& files)
 {
   return pqCMBLoadDataReaction::loadData(cancelled, files, this->m_fileTypes, this->m_programDir,
@@ -85,7 +80,6 @@ QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(bool& cancelled, QStrin
     this->m_ReaderExtensionMap, this);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::onTriggered()
 {
   bool cancelled = true;
@@ -98,13 +92,11 @@ void pqCMBLoadDataReaction::onTriggered()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLoadDataReaction::isSpecialExtension(const QStringList& files)
 {
   return this->isSpecialExtension(files, this->Internals->CMBSpecialExtensions);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBLoadDataReaction::isSpecialExtension(
   const QStringList& files, const QStringList& specialExts)
 {
@@ -129,7 +121,6 @@ bool pqCMBLoadDataReaction::isSpecialExtension(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(bool& cancelled, QStringList& selfiles,
   const QString& fileTypes, const QString& pgmDir, pqPluginIOBehavior* pluginBhv,
   const QStringList& specialExts, bool multiFiles,
@@ -212,7 +203,6 @@ void pqCMBLoadDataReaction::getFileHeader(QStringList const& files)
   emit fileheaders(headers);
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLoadDataReaction::openFiles(const QStringList& files,
   const QStringList& specialExts, const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap)
 {
@@ -241,7 +231,6 @@ pqPipelineSource* pqCMBLoadDataReaction::openFiles(const QStringList& files,
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLoadDataReaction::openFile(
   const QStringList& files, const QString& group, const QString& readername)
 {
@@ -260,7 +249,6 @@ pqPipelineSource* pqCMBLoadDataReaction::openFile(
   return reader;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::addReaderExtensionMap(
   const pqCMBLoadDataReaction::FileExtMap& readerMap)
 {
@@ -272,7 +260,6 @@ void pqCMBLoadDataReaction::addReaderExtensionMap(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::addReaderExtensionMap(
   const QString& fileext, const QString& readergroup, const QString& readername)
 {

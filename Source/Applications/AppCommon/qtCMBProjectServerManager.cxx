@@ -21,7 +21,6 @@
 #include "vtkSMProxyManager.h"
 #include "vtkSMSessionProxyManager.h"
 
-//-----------------------------------------------------------------------------
 struct qtCMBProjectServerManager::ScopedPointerVTKDeleter
 {
   template <typename T>
@@ -34,7 +33,6 @@ struct qtCMBProjectServerManager::ScopedPointerVTKDeleter
   }
 };
 
-//-----------------------------------------------------------------------------
 struct qtCMBProjectServerManager::ProjectDetails
 {
   ProjectDetails()
@@ -76,72 +74,61 @@ struct qtCMBProjectServerManager::ProjectDetails
   QRegExp ProgramFileRegExps[qtCMBProjectServerManager::NUM_PROGRAMS];
 };
 
-//-----------------------------------------------------------------------------
 qtCMBProjectServerManager::qtCMBProjectServerManager()
   : ActiveProject(new ProjectDetails())
   , ProjectManagerProxy()
 {
 }
 
-//-----------------------------------------------------------------------------
 qtCMBProjectServerManager::qtCMBProjectServerManager(QString const& path)
   : ActiveProject(new ProjectDetails(path))
   , ProjectManagerProxy()
 {
 }
 
-//-----------------------------------------------------------------------------
 qtCMBProjectServerManager::~qtCMBProjectServerManager()
 {
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBProjectServerManager::isOpen() const
 {
   return this->ActiveProject->Open;
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBProjectServerManager::isModified() const
 {
   return this->ActiveProject->Modified;
 }
 
-//-----------------------------------------------------------------------------
 QString const& qtCMBProjectServerManager::filePath() const
 {
   return this->ActiveProject->ProjectFilePath;
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBProjectServerManager::haveProgramDirectory(
   qtCMBProjectServerManager::PROGRAM const& program) const
 {
   return (this->ActiveProject->ProgramDirs[program].size() != 0);
 }
 
-//-----------------------------------------------------------------------------
 QString const& qtCMBProjectServerManager::programDirectory(
   qtCMBProjectServerManager::PROGRAM const& program) const
 {
   return this->ActiveProject->ProgramDirs[program];
 }
 
-//-----------------------------------------------------------------------------
 QString const& qtCMBProjectServerManager::programName(
   qtCMBProjectServerManager::PROGRAM const& program) const
 {
   return this->ActiveProject->ProgramNames[program];
 }
 
-//-----------------------------------------------------------------------------
 QRegExp const& qtCMBProjectServerManager::programFileRegExp(
   qtCMBProjectServerManager::PROGRAM const& program) const
 {
   return this->ActiveProject->ProgramFileRegExps[program];
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBProjectServerManager::programDirectoryHasFiles(
   qtCMBProjectServerManager::PROGRAM const& program) const
 {
@@ -168,7 +155,6 @@ bool qtCMBProjectServerManager::programDirectoryHasFiles(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::newProject()
 {
   bool didExist = !this->ActiveProject.isNull();
@@ -182,7 +168,6 @@ void qtCMBProjectServerManager::newProject()
   emit this->updateUI();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::closeProject()
 {
   if (this->ActiveProject)
@@ -193,7 +178,6 @@ void qtCMBProjectServerManager::closeProject()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::ProjectModified(bool mod)
 {
   if (mod != this->ActiveProject->Modified)
@@ -204,7 +188,6 @@ void qtCMBProjectServerManager::ProjectModified(bool mod)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::ProjectLoaded()
 {
   //update the file actions
@@ -213,7 +196,6 @@ void qtCMBProjectServerManager::ProjectLoaded()
   emit this->projectLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::ProjectSaved()
 {
   this->ActiveProject->Open = true;
@@ -221,7 +203,6 @@ void qtCMBProjectServerManager::ProjectSaved()
   emit this->projectSaved();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::ProjectClosed()
 {
   this->ActiveProject->Open = false;
@@ -229,7 +210,6 @@ void qtCMBProjectServerManager::ProjectClosed()
   emit this->projectClosed();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::serverOpenProject(QString const& project)
 {
   //create the reader on the server, which uses the singelton project manager
@@ -251,7 +231,6 @@ void qtCMBProjectServerManager::serverOpenProject(QString const& project)
   this->ProjectLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::serverSaveProjectAs(QString const& project)
 {
   //than we save the project file out
@@ -278,7 +257,6 @@ void qtCMBProjectServerManager::serverSaveProjectAs(QString const& project)
   this->ProjectSaved();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::serverResetProject()
 {
   if (this->ProjectManagerProxy)
@@ -291,7 +269,6 @@ void qtCMBProjectServerManager::serverResetProject()
   this->ProjectClosed();
 }
 
-//-----------------------------------------------------------------------------
 QString qtCMBProjectServerManager::getDefaultDirectoryForProgram(
   qtCMBProjectServerManager::PROGRAM const& program)
 {
@@ -316,7 +293,6 @@ QString qtCMBProjectServerManager::getDefaultDirectoryForProgram(
   return directory;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::SetProgramDirectory(
   qtCMBProjectServerManager::PROGRAM const& program, QString const& directory)
 {
@@ -341,7 +317,6 @@ void qtCMBProjectServerManager::SetProgramDirectory(
   this->pullFromServer();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBProjectServerManager::pullFromServer()
 {
   //create the project manager on the data server

@@ -21,24 +21,20 @@
 
 vtkStandardNewMacro(vtkPVSMTKMeshInformation);
 
-//----------------------------------------------------------------------------
 vtkPVSMTKMeshInformation::vtkPVSMTKMeshInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkPVSMTKMeshInformation::~vtkPVSMTKMeshInformation()
 {
   this->Mesh2BlockIdMap.clear();
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSMTKMeshInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSMTKMeshInformation::CopyFromObject(vtkObject* obj)
 {
   this->Mesh2BlockIdMap.clear();
@@ -61,7 +57,6 @@ void vtkPVSMTKMeshInformation::CopyFromObject(vtkObject* obj)
   this->m_MeshCollectionId = smtk::common::UUID(meshsource->GetMeshCollectionID());
 }
 
-//----------------------------------------------------------------------------
 bool vtkPVSMTKMeshInformation::GetBlockId(const smtk::mesh::MeshSet& mesh, unsigned int& bid)
 {
   if (this->Mesh2BlockIdMap.find(mesh) != this->Mesh2BlockIdMap.end())
@@ -71,23 +66,22 @@ bool vtkPVSMTKMeshInformation::GetBlockId(const smtk::mesh::MeshSet& mesh, unsig
   }
   return false;
 }
-//----------------------------------------------------------------------------
+
 const smtk::common::UUID& vtkPVSMTKMeshInformation::GetModelUUID()
 {
   return this->m_ModelUUID;
 }
-//----------------------------------------------------------------------------
+
 const smtk::common::UUID& vtkPVSMTKMeshInformation::GetMeshCollectionID()
 {
   return this->m_MeshCollectionId;
 }
 
-//----------------------------------------------------------------------------
 const smtk::mesh::MeshSet& vtkPVSMTKMeshInformation::GetMeshSet(unsigned int bid)
 {
   return this->BlockId2MeshMap[bid];
 }
-//----------------------------------------------------------------------------
+
 void vtkPVSMTKMeshInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVSMTKMeshInformation* modelInfo = vtkPVSMTKMeshInformation::SafeDownCast(info);

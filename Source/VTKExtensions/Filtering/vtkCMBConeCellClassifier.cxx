@@ -25,7 +25,7 @@
 #include "vtkUnstructuredGridWriter.h"
 
 vtkStandardNewMacro(vtkCMBConeCellClassifier);
-//-----------------------------------------------------------------------------
+
 vtkCMBConeCellClassifier::vtkCMBConeCellClassifier()
 {
   this->ClassificationMode = 0;
@@ -47,12 +47,10 @@ vtkCMBConeCellClassifier::vtkCMBConeCellClassifier()
     0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, vtkDataSetAttributes::SCALARS);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBConeCellClassifier::~vtkCMBConeCellClassifier()
 {
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBConeCellClassifier::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -189,7 +187,7 @@ int vtkCMBConeCellClassifier::RequestData(vtkInformation* vtkNotUsed(request),
   delete[] pids;
   return 1;
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBConeCellClassifier::IsInside(const double p[3])
 {
   double vec[3];
@@ -218,9 +216,8 @@ bool vtkCMBConeCellClassifier::IsInside(const double p[3])
   }
   return true;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBConeCellClassifier::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
-//-----------------------------------------------------------------------------

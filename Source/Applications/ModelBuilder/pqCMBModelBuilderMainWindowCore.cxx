@@ -222,26 +222,22 @@ pqCMBModelBuilderMainWindowCore::pqCMBModelBuilderMainWindowCore(QWidget* parent
   this->Internal->smtkViewBehavior = new pqPluginSMTKViewBehavior(this);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
 {
   //pqActiveView::instance().setCurrent(0);
   delete Internal;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setupColorByAttributeToolbar(QToolBar* toolbar)
 {
   this->Internal->ColorByAttToolbar = toolbar;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setupColorByComboBox(QComboBox* comboBox)
 {
   this->Internal->ColorByComboBox = comboBox;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setRubberSelectionMode(int mode)
 {
   if (mode == this->Internal->SelectByMode)
@@ -252,13 +248,11 @@ void pqCMBModelBuilderMainWindowCore::setRubberSelectionMode(int mode)
   emit this->rubberSelectionModeChanged();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::getRubberSelectionMode()
 {
   return this->Internal->SelectByMode;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::clearpqCMBSceneTree()
 {
   if (this->Internal->SceneGeoTree)
@@ -271,12 +265,12 @@ void pqCMBModelBuilderMainWindowCore::clearpqCMBSceneTree()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBModelBuilderMainWindowCore::isSceneEmpty()
 {
   return (this->Internal->SceneGeoTree && !(this->Internal->SceneGeoTree->isEmpty()));
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::setpqCMBSceneTree(pqCMBSceneTree* tree)
 {
   if (this->Internal->SceneGeoTree == tree)
@@ -294,7 +288,6 @@ void pqCMBModelBuilderMainWindowCore::setpqCMBSceneTree(pqCMBSceneTree* tree)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onLoadScene()
 {
   QString filters = "SceneGen files(*.sg)";
@@ -304,7 +297,6 @@ void pqCMBModelBuilderMainWindowCore::onLoadScene()
   pqCMBLoadDataReaction::loadData(cancelled, files, filters);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
 {
   // This handles the special extensions of "cmb" and "bc", which do not
@@ -317,14 +309,12 @@ void pqCMBModelBuilderMainWindowCore::onFileOpen(const QStringList& files)
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::startNewSession(const std::string& sessionName)
 {
   return this->startNewSession(
     sessionName, this->Internal->AppOptions->createDefaultSessionModel(), false);
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::startNewSession(
   const std::string& sessionName, bool createDefaultModel, bool useExistingSession)
 {
@@ -337,7 +327,6 @@ bool pqCMBModelBuilderMainWindowCore::startNewSession(
   return this->modelManager()->startNewSession(sessionName, createDefaultModel, useExistingSession);
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
 {
   typedef std::vector<double> boundingBox; // follow vtk's bbox rule
@@ -392,7 +381,6 @@ bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
   return true;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::autoSwitchCameraManipulationMode(int dimension)
 {
   if (this->Internal->AppOptions->autoSwitchCameraManipulator())
@@ -408,7 +396,6 @@ void pqCMBModelBuilderMainWindowCore::autoSwitchCameraManipulationMode(int dimen
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::processSceneInfo(
   const QString& filename, pqPipelineSource* source)
 {
@@ -489,7 +476,6 @@ void pqCMBModelBuilderMainWindowCore::processSceneInfo(
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::processMapInfo(
   const QString& vtkNotUsed(filename), pqPipelineSource* source)
 {
@@ -523,15 +509,12 @@ void pqCMBModelBuilderMainWindowCore::processMapInfo(
   emit this->newSceneLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onVTKConnectionChanged(pqDataRepresentation* connRep)
 {
   this->setDisplayRepresentation(connRep);
 
   // this->Internal->ColorFaceWidget->setRepresentation(connRep);
 }
-
-//-----------------------------------------------------------------------------
 
 /**\brief Updated UI when the model manager changes.
   *
@@ -549,7 +532,6 @@ void pqCMBModelBuilderMainWindowCore::modelManagerChanged()
     this->Internal->smtkModelManager->managerProxy()->modelManager());
 }
 
-//-----------------------------------------------------------------------------
 SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
 {
   if (!this->Internal->SimBuilder)
@@ -567,13 +549,11 @@ SimBuilderCore* pqCMBModelBuilderMainWindowCore::getSimBuilder()
 
 // onCMBModelCleared and onModelLoaded are dreprecated. check git history.
 
-//-----------------------------------------------------------------------------
 pqCMBRubberBandHelper* pqCMBModelBuilderMainWindowCore::cmbRenderViewSelectionHelper() const
 {
   return &this->Internal->cmbRenderViewSelectionHelper;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onRubberBandSelect(bool checked)
 {
   if (checked)
@@ -598,7 +578,6 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelect(bool checked)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onRubberBandSelectCells(bool checked)
 {
   if (checked)
@@ -610,7 +589,7 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelectCells(bool checked)
     this->Internal->cmbRenderViewSelectionHelper.endSelection();
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::onRubberBandSelectPoints(bool checked)
 {
   if (checked)
@@ -623,42 +602,37 @@ void pqCMBModelBuilderMainWindowCore::onRubberBandSelectPoints(bool checked)
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::onLoadSimulation(bool templateOnly, bool isScenario)
 {
   this->setSimBuilderModelManager();
   int res = this->getSimBuilder()->LoadSimulation(templateOnly, isScenario);
   return res;
 }
-//-----------------------------------------------------------------------------
+
 int pqCMBModelBuilderMainWindowCore::onLoadScenario()
 {
   return this->onLoadSimulation(false, true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onSaveScenario()
 {
   this->getSimBuilder()->SaveSimulation(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::onSaveSimulation()
 {
   this->getSimBuilder()->SaveSimulation(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onExportSimFile()
 {
   this->getSimBuilder()->ExportSimFile(this->modelManager()->managerProxy());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::zoomOnSelection()
 {
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
   const std::string& action, const smtk::model::SessionRef& sref)
 {
@@ -746,7 +720,6 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
 {
   if (this->abortActionForUnsavedWork("close data"))
@@ -816,7 +789,6 @@ void pqCMBModelBuilderMainWindowCore::resetSimulationModel()
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::previewWindow(QString path)
 {
 
@@ -869,13 +841,11 @@ int pqCMBModelBuilderMainWindowCore::previewWindow(QString path)
   return result;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onNewModelCreated(const smtk::model::EntityRef& newModel)
 {
   smtk::model::Model model = newModel.as<smtk::model::Model>();
@@ -885,7 +855,6 @@ void pqCMBModelBuilderMainWindowCore::onNewModelCreated(const smtk::model::Entit
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onNewModelsCreationFinished()
 {
   // pick one model in createdModels as activeModel
@@ -899,7 +868,6 @@ void pqCMBModelBuilderMainWindowCore::onNewModelsCreationFinished()
   this->Internal->createdModels.clear();
 }
 
-//----------------------------------------------------------------------------
 int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
 {
   pqFileDialogModel fModel(this->getActiveServer());
@@ -962,7 +930,6 @@ int pqCMBModelBuilderMainWindowCore::loadModelFile(const QString& filename)
 */
 }
 
-//-----------------------------------------------------------------------------
 /// Called when a new reader is created by the GUI.
 void pqCMBModelBuilderMainWindowCore::onReaderCreated(
   pqPipelineSource* reader, const QString& filename)
@@ -1036,7 +1003,7 @@ void pqCMBModelBuilderMainWindowCore::onReaderCreated(
     }
 */
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
 {
   //this->Internal->SceneGeoTree->blockSignals(true);
@@ -1124,13 +1091,12 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
   //  pqActiveObjects::instance().blockSignals(true);
   this->activeRenderView()->setOrientationAxesVisibility(false);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::onRemovingServer(pqServer* server)
 {
   this->Superclass::onRemovingServer(server);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onEditSettings()
 {
   if (!this->appSettingsDialog())
@@ -1147,7 +1113,6 @@ void pqCMBModelBuilderMainWindowCore::onEditSettings()
   this->Superclass::onEditSettings();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 {
   this->Superclass::applyAppSettings();
@@ -1170,7 +1135,6 @@ void pqCMBModelBuilderMainWindowCore::applyAppSettings()
 */
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
   pqScalarBarWidget* scalarBar, const QString& strDefType, bool show)
 {
@@ -1205,7 +1169,6 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::loadJSONFile(const QString& filename)
 {
   // Now, all the extensions (except .cmb)
@@ -1235,7 +1198,6 @@ void pqCMBModelBuilderMainWindowCore::loadJSONFile(const QString& filename)
   }
 }
 
-//----------------------------------------------------------------------------
 pqCMBModelManager* pqCMBModelBuilderMainWindowCore::modelManager()
 {
   return this->Internal->smtkModelManager;
@@ -1248,7 +1210,7 @@ pqCMBModelBuilderOptions* pqCMBModelBuilderMainWindowCore::userPreferences()
 
 // we may need to update model representation for display properties
 // of the list of entities that were potentially modified.
-//----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   const smtk::attribute::ModelEntityItemPtr& resultEntities)
 {
@@ -1366,7 +1328,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
 
 // we may need to update mesh representation for display properties
 // of the list of mehse that were potentially modified.
-//----------------------------------------------------------------------------
+
 void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   const smtk::attribute::MeshItemPtr& modifiedMeshes)
 {
@@ -1463,7 +1425,6 @@ void internal_collectAllMeshes(
     meshes.insert(dimMesh.subset(i));
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   const smtk::model::OperatorResult& result, const smtk::model::SessionRef& sref, bool hasNewModels,
   bool bModelGeometryChanged, bool hasNewMeshes)
@@ -1558,7 +1519,6 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   return true;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onColorByModeChanged(const QString& colorMode)
 {
   bool byAttribute = colorMode == vtkModelMultiBlockSource::GetAttributeTagName();
@@ -1592,7 +1552,6 @@ void pqCMBModelBuilderMainWindowCore::onColorByModeChanged(const QString& colorM
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::onColorByAttribute()
 {
   if (this->Internal->AttributeVisWidget && this->Internal->AttVisAction->isVisible())
@@ -1601,7 +1560,6 @@ void pqCMBModelBuilderMainWindowCore::onColorByAttribute()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::colorByAttributeFieldSelected(
   const QString& attdeftype, const QString& itemname)
 {
@@ -1609,13 +1567,11 @@ void pqCMBModelBuilderMainWindowCore::colorByAttributeFieldSelected(
     this->getSimBuilder()->uiManager()->attributeSystem(), attdeftype, itemname);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::updateSMTKSelection()
 {
   this->modelPanel()->updateTreeSelection();
 }
 
-//----------------------------------------------------------------------------
 pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if (!this->Internal->ModelDock)
@@ -1631,7 +1587,6 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
   return this->Internal->ModelDock;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
 {
   if (!this->Internal->MeshDock)
@@ -1646,7 +1601,6 @@ pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
   return this->Internal->MeshDock;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKInfoPanel* pqCMBModelBuilderMainWindowCore::infoPanel()
 {
   if (!this->Internal->InfoDock)
@@ -1657,7 +1611,6 @@ pqSMTKInfoPanel* pqCMBModelBuilderMainWindowCore::infoPanel()
   return this->Internal->InfoDock;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBDisplayProxyEditor* pqCMBModelBuilderMainWindowCore::getAppearanceEditor()
 {
   if (!this->Superclass::getAppearanceEditor())
@@ -1671,13 +1624,11 @@ pqCMBDisplayProxyEditor* pqCMBModelBuilderMainWindowCore::getAppearanceEditor()
   return this->Superclass::getAppearanceEditor();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObject* parent_widget)
 {
   this->Internal->ViewContextBehavior = new pqModelBuilderViewContextMenuBehavior(parent_widget);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
   pqDataRepresentation* repr, unsigned int blockIndex, bool ctrlKey)
 {
@@ -1733,7 +1684,6 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
 {
   this->getSimBuilder()->uiManager()->setModelManager(

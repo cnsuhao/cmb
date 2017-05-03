@@ -11,19 +11,16 @@
 #include "vtkQtCMBConnectComboBox.h"
 #include "vtkEventQtSlotConnect.h"
 
-//-----------------------------------------------------------------------------
 vtkQtCMBConnectComboBox::vtkQtCMBConnectComboBox(QWidget* p)
   : QComboBox(p)
 {
   this->VTKUserEventConnect = vtkSmartPointer<vtkEventQtSlotConnect>::New();
 }
 
-//-----------------------------------------------------------------------------
 vtkQtCMBConnectComboBox::~vtkQtCMBConnectComboBox()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkQtCMBConnectComboBox::showPopup()
 {
   emit this->startingPopup();
@@ -31,7 +28,6 @@ void vtkQtCMBConnectComboBox::showPopup()
   this->Superclass::showPopup();
 }
 
-//----------------------------------------------------------------------------
 void vtkQtCMBConnectComboBox::setVTKConnectObject(vtkObject* obj, unsigned long evt)
 {
   if (obj)
@@ -41,7 +37,6 @@ void vtkQtCMBConnectComboBox::setVTKConnectObject(vtkObject* obj, unsigned long 
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkQtCMBConnectComboBox::onVTKEventInvoked()
 {
   emit this->vtkObjectEventInvoked();

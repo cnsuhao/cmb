@@ -21,7 +21,7 @@
 #define SEPARATOR "    "
 
 vtkStandardNewMacro(vtkOmicronMeshInputWriter);
-//----------------------------------------------------------------------------
+
 vtkOmicronMeshInputWriter::vtkOmicronMeshInputWriter()
 {
   this->FileName = 0;
@@ -29,20 +29,17 @@ vtkOmicronMeshInputWriter::vtkOmicronMeshInputWriter()
   this->VolumeConstraint = 0.001;
 }
 
-//----------------------------------------------------------------------------
 vtkOmicronMeshInputWriter::~vtkOmicronMeshInputWriter()
 {
   this->SetFileName(0);
   this->SetGeometryFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkOmicronMeshInputWriter::SetInputData(vtkMultiBlockDataSet* dataSet)
 {
   this->Superclass::SetInputData(dataSet);
 }
 
-//----------------------------------------------------------------------------
 void vtkOmicronMeshInputWriter::WriteData()
 {
   if (!this->FileName)
@@ -106,14 +103,12 @@ void vtkOmicronMeshInputWriter::WriteData()
   fout.close();
 }
 
-//----------------------------------------------------------------------------
 int vtkOmicronMeshInputWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkOmicronMeshInputWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

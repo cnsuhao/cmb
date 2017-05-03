@@ -36,7 +36,6 @@ class vtkCMBExtractContours::vtkInternalSet : public vtkInternalSetBase
 {
 };
 
-//-----------------------------------------------------------------------------
 vtkCMBExtractContours::vtkCMBExtractContours()
 {
   this->SetNumberOfInputPorts(1);
@@ -46,7 +45,6 @@ vtkCMBExtractContours::vtkCMBExtractContours()
   this->SelectedIds = new vtkCMBExtractContours::vtkInternalSet();
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBExtractContours::~vtkCMBExtractContours()
 {
   if (this->SelectedIds)
@@ -55,7 +53,6 @@ vtkCMBExtractContours::~vtkCMBExtractContours()
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBExtractContours::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -152,7 +149,6 @@ int vtkCMBExtractContours::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBExtractContours::BuildSelectedIds(vtkPolyData* input)
 {
   vtkIdList* ids = vtkIdList::New();
@@ -169,7 +165,6 @@ void vtkCMBExtractContours::BuildSelectedIds(vtkPolyData* input)
   ids->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBExtractContours::BuildGlobalPointCollection(vtkPolyData* input)
 {
   if (this->BuildGlobalPointCollectionBefore == false)
@@ -189,7 +184,6 @@ void vtkCMBExtractContours::BuildGlobalPointCollection(vtkPolyData* input)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBExtractContours::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

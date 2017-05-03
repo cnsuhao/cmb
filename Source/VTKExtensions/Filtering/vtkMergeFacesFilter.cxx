@@ -130,7 +130,6 @@ public:
   }
 };
 
-//----------------------------------------------------------------------------
 class vtkMergeFacesFilter::vtkInternal
 {
 public:
@@ -139,7 +138,6 @@ public:
 
 vtkStandardNewMacro(vtkMergeFacesFilter);
 
-//----------------------------------------------------------------------------
 vtkMergeFacesFilter::vtkMergeFacesFilter()
 {
   //  this->NewIds = vtkIdList::New();
@@ -156,14 +154,12 @@ vtkMergeFacesFilter::vtkMergeFacesFilter()
   */
 }
 
-//----------------------------------------------------------------------------
 vtkMergeFacesFilter::~vtkMergeFacesFilter()
 {
   //  this->NewIds->Delete();
   delete this->Internal;
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::Merge(vtkIdType mergeInto, vtkIdType faceid)
 {
   vtkMergeGroup group;
@@ -173,20 +169,17 @@ void vtkMergeFacesFilter::Merge(vtkIdType mergeInto, vtkIdType faceid)
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::RemoveAllMergedFaces()
 {
   this->RemoveAllMergedFacesInternal();
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::RemoveAllMergedFacesInternal()
 {
   this->Internal->MergeTable.Clear();
 }
 
-//----------------------------------------------------------------------------
 int vtkMergeFacesFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -232,7 +225,6 @@ int vtkMergeFacesFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::Begin()
 {
   this->Internal->MergeTable.TraversalIterator = this->Internal->MergeTable.Rows.begin();
@@ -243,26 +235,22 @@ void vtkMergeFacesFilter::Begin()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkMergeFacesFilter::IsDone()
 {
   return this->Internal->MergeTable.TraversalIterator == this->Internal->MergeTable.Rows.end();
 }
 
-//----------------------------------------------------------------------------
 bool vtkMergeFacesFilter::IsDoneGroup()
 {
   return this->IsDone() ||
     this->Internal->MergeTable.GroupIterator == this->Internal->MergeTable.TraversalIterator->end();
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::NextElement()
 {
   this->Internal->MergeTable.GroupIterator++;
 }
 
-//----------------------------------------------------------------------------
 void vtkMergeFacesFilter::NextGroup()
 {
   this->Internal->MergeTable.TraversalIterator++;
@@ -273,7 +261,6 @@ void vtkMergeFacesFilter::NextGroup()
   }
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkMergeFacesFilter::GetElement()
 {
   return *this->Internal->MergeTable.GroupIterator;
@@ -284,7 +271,7 @@ int vtkMergeFacesFilter::FillInputPortInformation(int /*port*/, vtkInformation* 
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
-//----------------------------------------------------------------------------
+
 void vtkMergeFacesFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -19,13 +19,11 @@
 
 vtkStandardNewMacro(vtkCMBArcGrowClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcGrowClientOperator::vtkCMBArcGrowClientOperator()
 {
   this->GrownArcIds = NULL;
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcGrowClientOperator::~vtkCMBArcGrowClientOperator()
 {
   if (this->GrownArcIds)
@@ -34,7 +32,6 @@ vtkCMBArcGrowClientOperator::~vtkCMBArcGrowClientOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcGrowClientOperator::Operate(std::list<vtkIdType> arcIds)
 {
   if (arcIds.size() == 0)
@@ -80,7 +77,6 @@ bool vtkCMBArcGrowClientOperator::Operate(std::list<vtkIdType> arcIds)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcGrowClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

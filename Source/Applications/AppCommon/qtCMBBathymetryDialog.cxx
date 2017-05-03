@@ -27,7 +27,6 @@
 #include <QStackedWidget>
 #include <QTreeWidget>
 
-//-----------------------------------------------------------------------------
 int qtCMBBathymetryDialog::manageBathymetry(pqCMBSceneNode* node)
 {
   if (!node || node->isTypeNode())
@@ -43,7 +42,6 @@ int qtCMBBathymetryDialog::manageBathymetry(pqCMBSceneNode* node)
   return importer.exec();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBBathymetryDialog::qtCMBBathymetryDialog(pqCMBSceneTree* sceneTree)
   : Status(-1)
   , Node(0)
@@ -51,7 +49,7 @@ qtCMBBathymetryDialog::qtCMBBathymetryDialog(pqCMBSceneTree* sceneTree)
 {
   this->initUI();
 }
-//-----------------------------------------------------------------------------
+
 qtCMBBathymetryDialog::qtCMBBathymetryDialog(pqCMBSceneNode* n)
   : Status(-1)
   , Node(n)
@@ -69,7 +67,6 @@ qtCMBBathymetryDialog::qtCMBBathymetryDialog(pqCMBSceneNode* n)
   this->initUI();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBBathymetryDialog::~qtCMBBathymetryDialog()
 {
   if (this->BathymetryDialog)
@@ -81,7 +78,7 @@ qtCMBBathymetryDialog::~qtCMBBathymetryDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBBathymetryDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -89,7 +86,7 @@ int qtCMBBathymetryDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBBathymetryDialog::accept()
 {
   if (!this->bathymetrySourceObject())
@@ -111,13 +108,12 @@ void qtCMBBathymetryDialog::accept()
   this->MainDialog->close();
   this->Status = 1;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBBathymetryDialog::cancel()
 {
   this->Status = 0;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBBathymetryDialog::displaySourceImporter()
 {
   bool randomPlacement, translateBasedOnView, useTextureConstraint, useGlyphs;
@@ -144,7 +140,7 @@ void qtCMBBathymetryDialog::displaySourceImporter()
   this->BathymetryDialog->BathymetrySources->setCurrentIndex(idx);
   this->BathymetryDialog->BathymetrySources->setItemData(idx, vdata);
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* qtCMBBathymetryDialog::bathymetrySourceObject() const
 {
   int n = this->BathymetryDialog->BathymetrySources->currentIndex();
@@ -153,37 +149,36 @@ pqCMBSceneObjectBase* qtCMBBathymetryDialog::bathymetrySourceObject() const
   return sObj;
 }
 
-//-----------------------------------------------------------------------------
 double qtCMBBathymetryDialog::elevationRadius()
 {
   return this->BathymetryDialog->ElevationRadius->text().toDouble();
 }
-//-----------------------------------------------------------------------------
+
 double qtCMBBathymetryDialog::highElevationLimit()
 {
   return this->BathymetryDialog->highElevation->text().toDouble();
 }
-//-----------------------------------------------------------------------------
+
 double qtCMBBathymetryDialog::lowElevationLimit()
 {
   return this->BathymetryDialog->lowElevation->text().toDouble();
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBBathymetryDialog::useHighElevationLimit()
 {
   return this->BathymetryDialog->checkBoxHighLimit->isChecked();
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBBathymetryDialog::useLowElevationLimit()
 {
   return this->BathymetryDialog->checkBoxLowLimit->isChecked();
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBBathymetryDialog::applyOnlyToVisibleMeshes()
 {
   return this->BathymetryDialog->OnlyApplyToVisibleMesh->isChecked();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBBathymetryDialog::removeBathymetry()
 {
   if (this->Node)
@@ -199,7 +194,6 @@ void qtCMBBathymetryDialog::removeBathymetry()
   this->Status = 2;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBBathymetryDialog::initUI()
 {
   if (!this->SceneTree)
@@ -266,7 +260,6 @@ void qtCMBBathymetryDialog::initUI()
   this->initConnections();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBBathymetryDialog::initConnections()
 {
   QObject::connect(this->BathymetryDialog->RemoveBathymetryButton, SIGNAL(clicked()), this,
@@ -277,7 +270,6 @@ void qtCMBBathymetryDialog::initConnections()
     SLOT(displaySourceImporter()));
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBBathymetryDialog::setMeshAndModelMode(bool isModel)
 {
   this->ModelAndMeshMode = isModel;

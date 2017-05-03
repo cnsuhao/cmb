@@ -57,7 +57,6 @@ typename std::vector<T>::iterator erase_remove(std::vector<T>& v, const T& elem)
 }
 }
 
-//-----------------------------------------------------------------------------
 qtCMBMeshingMonitor::qtCMBMeshingMonitor(const remus::client::ServerConnection& conn)
   : RemusClient(NULL)
   , LastestStatusMessages()
@@ -76,7 +75,6 @@ qtCMBMeshingMonitor::qtCMBMeshingMonitor(const remus::client::ServerConnection& 
   this->Timer.start(250);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBMeshingMonitor::qtCMBMeshingMonitor(const LocalMeshServer& localProcessHandle)
   : RemusClient(NULL)
   , LastestStatusMessages()
@@ -97,7 +95,6 @@ qtCMBMeshingMonitor::qtCMBMeshingMonitor(const LocalMeshServer& localProcessHand
   this->Timer.start(250);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBMeshingMonitor::~qtCMBMeshingMonitor()
 {
   if (this->RemusClient)
@@ -117,13 +114,11 @@ qtCMBMeshingMonitor::~qtCMBMeshingMonitor()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBMeshingMonitor::isConnected() const
 {
   return (this->RemusClient);
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBMeshingMonitor::monitorJob(const remus::proto::Job& job)
 {
   //fetch status for the job, so we have the initial status
@@ -131,7 +126,6 @@ bool qtCMBMeshingMonitor::monitorJob(const remus::proto::Job& job)
   return sorted_insert(this->LastestStatusMessages, state);
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBMeshingMonitor::terminateJob(const remus::proto::Job& job)
 {
   remus::proto::JobStatus recvStatus = this->RemusClient->jobStatus(job);
@@ -151,13 +145,11 @@ bool qtCMBMeshingMonitor::terminateJob(const remus::proto::Job& job)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 const remus::client::ServerConnection& qtCMBMeshingMonitor::connection() const
 {
   return this->RemusClient->connection();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBMeshingMonitor::updateJobStates()
 {
   std::vector<MeshingJobState> jobsToRemove;
@@ -202,7 +194,6 @@ void qtCMBMeshingMonitor::updateJobStates()
   }
 }
 
-//-----------------------------------------------------------------------------
 qtCMBMeshingMonitor::LocalMeshServer qtCMBMeshingMonitor::launchLocalMeshServer()
 {
 

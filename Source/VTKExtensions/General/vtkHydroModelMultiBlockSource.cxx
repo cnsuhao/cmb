@@ -17,20 +17,17 @@
 
 vtkStandardNewMacro(vtkHydroModelMultiBlockSource);
 
-//-----------------------------------------------------------------------------
 vtkHydroModelMultiBlockSource::vtkHydroModelMultiBlockSource()
 {
   this->Source = vtkMultiBlockDataSet::New();
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkHydroModelMultiBlockSource::~vtkHydroModelMultiBlockSource()
 {
   this->Source->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet* source)
 {
   this->Source->ShallowCopy(source);
@@ -49,7 +46,6 @@ void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet* source)
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 int vtkHydroModelMultiBlockSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -62,7 +58,6 @@ int vtkHydroModelMultiBlockSource::RequestData(vtkInformation* vtkNotUsed(reques
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelMultiBlockSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

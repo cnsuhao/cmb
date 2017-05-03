@@ -16,7 +16,6 @@
 #include <QLabel>
 #include <QToolButton>
 
-//-----------------------------------------------------------------------------
 pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent /*=0*/)
   : QWidget(_parent)
 {
@@ -61,7 +60,6 @@ pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent /*=0*/)
   //  this->OutputWindow->setShowOutput(false);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBProcessWidget::~pqCMBProcessWidget()
 {
   delete this->Message;
@@ -70,25 +68,21 @@ pqCMBProcessWidget::~pqCMBProcessWidget()
   delete this->OutputWindow;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBProcessWidget::setMessage(const QString& message)
 {
   this->Message->setText(message);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBProcessWidget::appendToOutput(const QString& message)
 {
   this->OutputWindow->onDisplayText(message);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBProcessWidget::showOutputWindow()
 {
   this->OutputWindow->show();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBProcessWidget::enableAbort(bool enabled)
 {
   this->AbortButton->setEnabled(enabled);

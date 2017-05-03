@@ -27,7 +27,6 @@
 
 vtkStandardNewMacro(vtkGMSMeshSelectionRegionFilter);
 
-//----------------------------------------------------------------------------
 vtkGMSMeshSelectionRegionFilter::vtkGMSMeshSelectionRegionFilter()
 {
   this->SelectionRegionId = -1;
@@ -35,11 +34,10 @@ vtkGMSMeshSelectionRegionFilter::vtkGMSMeshSelectionRegionFilter()
   this->SetNumberOfInputPorts(3);
 }
 
-//----------------------------------------------------------------------------
 vtkGMSMeshSelectionRegionFilter::~vtkGMSMeshSelectionRegionFilter()
 {
 }
-//----------------------------------------------------------------------------
+
 void vtkGMSMeshSelectionRegionFilter::SetSelectionRegionId(int val)
 {
   if (this->SelectionRegionId == val)
@@ -51,7 +49,7 @@ void vtkGMSMeshSelectionRegionFilter::SetSelectionRegionId(int val)
   this->IsNewRegionIdSet = 1;
   this->Modified();
 }
-//----------------------------------------------------------------------------
+
 int vtkGMSMeshSelectionRegionFilter::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -72,7 +70,6 @@ int vtkGMSMeshSelectionRegionFilter::FillInputPortInformation(int port, vtkInfor
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkGMSMeshSelectionRegionFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -157,7 +154,6 @@ int vtkGMSMeshSelectionRegionFilter::RequestData(vtkInformation* vtkNotUsed(requ
   return res;
 }
 
-//-----------------------------------------------------------------------------
 int vtkGMSMeshSelectionRegionFilter::ModifySelectedCellRegions(
   vtkSelectionNode* selNode, vtkIntArray* outArray, vtkIdTypeArray* cellIDArray)
 {
@@ -221,7 +217,6 @@ int vtkGMSMeshSelectionRegionFilter::ModifySelectedCellRegions(
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkGMSMeshSelectionRegionFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

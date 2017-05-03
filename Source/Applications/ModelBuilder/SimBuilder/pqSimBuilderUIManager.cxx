@@ -42,7 +42,6 @@
 #include <QMessageBox>
 #include <QStringList>
 
-//----------------------------------------------------------------------------
 class pqSimBuilderUIManagerInternals
 {
 public:
@@ -51,7 +50,6 @@ public:
   typedef QMap<QString, QList<smtk::attribute::DefinitionPtr> >::const_iterator DefMapIt;
 };
 
-//----------------------------------------------------------------------------
 pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
   : QObject(parent)
 {
@@ -65,7 +63,6 @@ pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
     SLOT(updateModelViews()));
 }
 
-//----------------------------------------------------------------------------
 pqSimBuilderUIManager::~pqSimBuilderUIManager()
 {
   delete this->Internals;
@@ -78,19 +75,16 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
   }
 }
 
-//----------------------------------------------------------------------------
 smtk::extension::qtBaseView* pqSimBuilderUIManager::topView()
 {
   return this->m_attUIManager->topView();
 }
 
-//----------------------------------------------------------------------------
 smtk::model::ManagerPtr pqSimBuilderUIManager::attModelManager() const
 {
   return this->Internals->ModelMgr.lock();
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
 {
   smtk::model::ManagerPtr curManager = this->Internals->ModelMgr.lock();
@@ -100,13 +94,12 @@ void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
   }
   this->m_AttSystem->setRefModelManager(refModelMgr);
 }
-//-----------------------------------------------------------------------------
+
 void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 {
   this->m_ModelPanel = panel;
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* parentWidget)
 {
   // connect qtSelectionManager to qtUIManager
@@ -229,7 +222,6 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
   }
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onFileItemCreated(smtk::extension::qtFileItem* fileItem)
 {
   if (fileItem)
@@ -237,7 +229,7 @@ void pqSimBuilderUIManager::onFileItemCreated(smtk::extension::qtFileItem* fileI
     QObject::connect(fileItem, SIGNAL(launchFileBrowser()), this, SLOT(onLaunchFileBrowser()));
   }
 }
-//----------------------------------------------------------------------------
+
 void pqSimBuilderUIManager::onLaunchFileBrowser()
 {
   smtk::extension::qtFileItem* const fileItem =
@@ -250,7 +242,6 @@ void pqSimBuilderUIManager::onLaunchFileBrowser()
     fileItem, this->ActiveServer, this->topView()->parentWidget());
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem)
 {
   if (entItem)
@@ -261,7 +252,7 @@ void pqSimBuilderUIManager::onModelEntityItemCreated(smtk::extension::qtModelEnt
       SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
   }
 }
-//----------------------------------------------------------------------------
+
 void pqSimBuilderUIManager::onRequestEntityAssociation()
 {
   smtk::extension::qtModelEntityItem* const entItem =
@@ -274,14 +265,12 @@ void pqSimBuilderUIManager::onRequestEntityAssociation()
   this->m_ModelPanel->requestEntityAssociation(entItem);
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
 {
   if (this->m_ModelPanel)
     this->m_ModelPanel->requestEntitySelection(uuids);
 }
 
-//----------------------------------------------------------------------------
 void pqSimBuilderUIManager::createFunctionWithExpression(
   QString& funcExpr, double initVal, double deltaVal, int numValues)
 {
@@ -328,7 +317,6 @@ void pqSimBuilderUIManager::createFunctionWithExpression(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqSimBuilderUIManager::getAttributeDefinitions(
   QMap<QString, QList<smtk::attribute::DefinitionPtr> >& outDefMap)
 {

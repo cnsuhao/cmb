@@ -33,7 +33,6 @@ vtkStandardNewMacro(vtkCMBTriangleMultiBlockMesher);
 
 using namespace CmbFaceMesherClasses;
 
-//--------------------------------------------------------------------
 vtkCMBTriangleMultiBlockMesher::vtkCMBTriangleMultiBlockMesher()
 {
   MinAngle = 20.0f;
@@ -49,7 +48,7 @@ vtkCMBTriangleMultiBlockMesher::vtkCMBTriangleMultiBlockMesher()
   this->SetNumberOfInputPorts(1);
   this->SetNumberOfOutputPorts(1);
 }
-//--------------------------------------------------------------------
+
 //This multiblockdataset algorithm uses a polydata as input instead of
 //multiblockdataset
 int vtkCMBTriangleMultiBlockMesher::FillInputPortInformation(
@@ -58,11 +57,11 @@ int vtkCMBTriangleMultiBlockMesher::FillInputPortInformation(
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
   return 1;
 }
-//--------------------------------------------------------------------
+
 vtkCMBTriangleMultiBlockMesher::~vtkCMBTriangleMultiBlockMesher()
 {
 }
-//--------------------------------------------------------------------
+
 void vtkCMBTriangleMultiBlockMesher::PrintSelf(ostream& os, vtkIndent indent)
 {
   const char* areaModeType[4] = { "NoMaxArea", "AbsoluteArea", "RelativeToBounds",
@@ -79,7 +78,7 @@ void vtkCMBTriangleMultiBlockMesher::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "     Verbose Output: " << VerboseOutput << endl;
   this->Superclass::PrintSelf(os, indent);
 }
-//--------------------------------------------------------------------
+
 int vtkCMBTriangleMultiBlockMesher::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {

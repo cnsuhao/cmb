@@ -45,7 +45,6 @@
 #include "pqRepresentationHelperFunctions.h"
 using namespace RepresentationHelperFunctions;
 
-//-----------------------------------------------------------------------------
 pqPlanarTextureRegistrationDialog::pqPlanarTextureRegistrationDialog(
   pqServer* server, pqRenderView* view, const QString& strTitle, QWidget* parent)
   : Status(-1)
@@ -59,7 +58,6 @@ pqPlanarTextureRegistrationDialog::pqPlanarTextureRegistrationDialog(
   this->MainDialog->setWindowTitle(strTitle);
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::initializeTexture(const double bounds[6],
   const QStringList& textureFiles, const QString& currentTextureFile, const double regPoints[12],
   int numRegPoints, bool pluginPanel)
@@ -289,7 +287,6 @@ void pqPlanarTextureRegistrationDialog::initializeTexture(const double bounds[6]
   }
 }
 
-//-----------------------------------------------------------------------------
 pqPlanarTextureRegistrationDialog::~pqPlanarTextureRegistrationDialog()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -339,13 +336,12 @@ pqPlanarTextureRegistrationDialog::~pqPlanarTextureRegistrationDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::showButtons(bool showing)
 {
   this->TextureDialog->buttonBox->setVisible(showing);
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::registrationModeChanged(int mode)
 {
   this->TextureDialog->Point3->setVisible((mode == 1));
@@ -355,28 +351,27 @@ void pqPlanarTextureRegistrationDialog::registrationModeChanged(int mode)
     this->updateAllViews();
   }
 }
-//-----------------------------------------------------------------------------
+
 QDialog* pqPlanarTextureRegistrationDialog::getMainDialog()
 {
   return this->MainDialog;
 }
-//-----------------------------------------------------------------------------
+
 pqRenderView* pqPlanarTextureRegistrationDialog::getImageRenderView()
 {
   return this->imageRenderView;
 }
-//-----------------------------------------------------------------------------
+
 pqRenderView* pqPlanarTextureRegistrationDialog::currentView()
 {
   return this->CurrentView;
 }
-//-----------------------------------------------------------------------------
+
 pqPropertyLinks* pqPlanarTextureRegistrationDialog::getLinks()
 {
   return this->Links;
 }
 
-//-----------------------------------------------------------------------------
 int pqPlanarTextureRegistrationDialog::exec()
 {
   this->MainDialog->setModal(false);
@@ -384,7 +379,7 @@ int pqPlanarTextureRegistrationDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::accept()
 {
   this->Status = 1;
@@ -397,7 +392,7 @@ void pqPlanarTextureRegistrationDialog::accept()
   }
   this->applyTexture();
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::apply()
 {
   if (this->currentImageFileName.isEmpty())
@@ -407,7 +402,6 @@ void pqPlanarTextureRegistrationDialog::apply()
   this->applyTexture();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::applyTexture()
 {
   int num;
@@ -435,14 +429,13 @@ void pqPlanarTextureRegistrationDialog::applyTexture()
   this->TextureDialog->RemoveTextureButton->setEnabled(
     !(this->currentImageFileName.isEmpty() || this->currentImageFileName.isNull()));
 }
-//-----------------------------------------------------------------------------
+
 int pqPlanarTextureRegistrationDialog::getNumberOfRegistrationPoints()
 {
   // Get the point information
   return this->TextureDialog->RegistrationMode->currentIndex() + 2;
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::getRegistrationPoints(double pnts[12])
 {
   int num = this->getNumberOfRegistrationPoints();
@@ -467,13 +460,11 @@ void pqPlanarTextureRegistrationDialog::getRegistrationPoints(double pnts[12])
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::cancel()
 {
   this->Status = 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::filesSelected(const QStringList& files)
 {
   if (files.size() == 0)
@@ -486,7 +477,6 @@ void pqPlanarTextureRegistrationDialog::filesSelected(const QStringList& files)
     this->TextureDialog->TextureFiles->count() - 1);
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::displayFileBrowser()
 {
   QString filters = "All Image Formats (*.tiff, *.tif, *.jpeg, *.jpg);;TIFF (*.tiff, *.tif);;JPEG "
@@ -504,7 +494,6 @@ void pqPlanarTextureRegistrationDialog::displayFileBrowser()
   file_dialog.exec();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::removeTexture()
 {
   emit this->removeCurrentTexture();
@@ -518,7 +507,6 @@ void pqPlanarTextureRegistrationDialog::removeTexture()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::displayImage(const QString& filename)
 {
   if (filename.isEmpty() || filename.isNull())
@@ -553,7 +541,6 @@ void pqPlanarTextureRegistrationDialog::displayImage(const QString& filename)
   this->CurrentView->resetCamera();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::PlaceWidgets(bool defaultPosition)
 {
   if (!this->textureImageSource)
@@ -624,7 +611,6 @@ void pqPlanarTextureRegistrationDialog::PlaceWidgets(bool defaultPosition)
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkSMNewWidgetRepresentationProxy* pqPlanarTextureRegistrationDialog::setupPointWidget(
   pqServer* server, pqRenderView* view)
 {
@@ -643,7 +629,6 @@ vtkSMNewWidgetRepresentationProxy* pqPlanarTextureRegistrationDialog::setupPoint
   return widget;
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::updatePointWidget(
   vtkSMNewWidgetRepresentationProxy* widget, QList<QVariant> center, bool visibility, bool enable)
 {
@@ -653,7 +638,6 @@ void pqPlanarTextureRegistrationDialog::updatePointWidget(
   widget->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::updateAllViews()
 {
   if (this->imageRenderView)
@@ -667,7 +651,7 @@ void pqPlanarTextureRegistrationDialog::updateAllViews()
     this->CurrentView->render();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::destroyingView(pqView* view)
 {
   if (view == NULL)
@@ -696,7 +680,7 @@ void pqPlanarTextureRegistrationDialog::destroyingView(pqView* view)
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::getRegistrationPointPair(
   int i, double xy[2], double st[2], const double regPoints[12]) const
 {
@@ -706,7 +690,7 @@ void pqPlanarTextureRegistrationDialog::getRegistrationPointPair(
   st[0] = regPoints[j++];
   st[1] = regPoints[j++];
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::updateTextureList(
   const QStringList& textureFiles, const QString& currentTextureFile)
 {
@@ -726,7 +710,6 @@ void pqPlanarTextureRegistrationDialog::updateTextureList(
   this->TextureDialog->TextureFiles->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqPlanarTextureRegistrationDialog::removeSWidgets()
 {
   if (this->widgetS1)
@@ -748,7 +731,7 @@ void pqPlanarTextureRegistrationDialog::removeSWidgets()
     this->widgetS3 = NULL;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqPlanarTextureRegistrationDialog::removeIWidgets()
 {
   if (this->widgetI1)

@@ -23,10 +23,8 @@
 
 #include <cassert>
 
-//-----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSplineFunctionItem);
 
-//-----------------------------------------------------------------------------
 vtkSplineFunctionItem::vtkSplineFunctionItem()
 {
   this->PolyLinePen->SetLineType(vtkPen::SOLID_LINE);
@@ -40,7 +38,6 @@ vtkSplineFunctionItem::vtkSplineFunctionItem()
   DrawAsSpline = true;
 }
 
-//-----------------------------------------------------------------------------
 vtkSplineFunctionItem::~vtkSplineFunctionItem()
 {
   if (this->SplineFunction)
@@ -54,7 +51,6 @@ vtkSplineFunctionItem::~vtkSplineFunctionItem()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSplineFunctionItem::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -70,7 +66,6 @@ void vtkSplineFunctionItem::PrintSelf(ostream& os, vtkIndent indent)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSplineFunctionItem::ComputeBounds(double* bounds)
 {
   this->Superclass::ComputeBounds(bounds);
@@ -80,7 +75,6 @@ void vtkSplineFunctionItem::ComputeBounds(double* bounds)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSplineFunctionItem::SetSplineFunction(vtkPiecewiseFunction* t)
 {
   if (t == this->PiecewiseFunction)
@@ -99,7 +93,6 @@ void vtkSplineFunctionItem::SetSplineFunction(vtkPiecewiseFunction* t)
   this->ScalarsToColorsModified(this->PiecewiseFunction, vtkCommand::ModifiedEvent, 0);
 }
 
-//-----------------------------------------------------------------------------
 void vtkSplineFunctionItem::ComputeTexture()
 {
   double bounds[4];

@@ -36,7 +36,7 @@ public:
 };
 
 vtkStandardNewMacro(vtkCMBArcPolygonProvider);
-//----------------------------------------------------------------------------
+
 vtkCMBArcPolygonProvider::vtkCMBArcPolygonProvider()
 {
   this->ArcManager = vtkCMBArcManager::GetInstance();
@@ -48,14 +48,12 @@ vtkCMBArcPolygonProvider::vtkCMBArcPolygonProvider()
   this->SetNumberOfOutputPorts(1);
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcPolygonProvider::~vtkCMBArcPolygonProvider()
 {
   this->ArcManager = NULL;
   delete this->Loops;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPolygonProvider::SetOuterLoopArcIds(vtkIdTypeArray* ids)
 {
   this->Loops->OuterLoop.clear();
@@ -68,7 +66,6 @@ void vtkCMBArcPolygonProvider::SetOuterLoopArcIds(vtkIdTypeArray* ids)
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPolygonProvider::AddInnerLoopArcIds(vtkIdTypeArray* ids)
 {
   vtkIdType size = ids->GetNumberOfTuples();
@@ -82,14 +79,12 @@ void vtkCMBArcPolygonProvider::AddInnerLoopArcIds(vtkIdTypeArray* ids)
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPolygonProvider::ClearInnerLoops()
 {
   this->Loops->InnerLoops.clear();
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkCMBArcPolygonProvider::CreatePolyDataRepresentation()
 {
 
@@ -183,7 +178,6 @@ vtkPolyData* vtkCMBArcPolygonProvider::CreatePolyDataRepresentation()
   return polygonResult;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArcPolygonProvider::RequestData(
   vtkInformation*, vtkInformationVector**, vtkInformationVector* outputVector)
 {
@@ -204,7 +198,6 @@ int vtkCMBArcPolygonProvider::RequestData(
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPolygonProvider::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

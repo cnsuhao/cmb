@@ -338,7 +338,6 @@ pqCMBMeshViewerMainWindowCore::pqCMBMeshViewerMainWindowCore(QWidget* parent_wid
   this->setObjectName("MeshViewerMainWindowCore");
 }
 
-//-----------------------------------------------------------------------------
 pqCMBMeshViewerMainWindowCore::~pqCMBMeshViewerMainWindowCore()
 {
   this->pvSelectionManager()->blockSignals(true);
@@ -346,7 +345,6 @@ pqCMBMeshViewerMainWindowCore::~pqCMBMeshViewerMainWindowCore()
   delete Internal;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::destroyInputRepresentations()
 {
   foreach (pqDataRepresentation* subsetRep, this->Internal->InputRepMap.keys())
@@ -355,7 +353,6 @@ void pqCMBMeshViewerMainWindowCore::destroyInputRepresentations()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::processMesh(const QString& filename, pqPipelineSource* source)
 {
   if (filename.compare(this->Internal->CurrentMeshFileName, Qt::CaseInsensitive) == 0)
@@ -488,7 +485,6 @@ void pqCMBMeshViewerMainWindowCore::processMesh(const QString& filename, pqPipel
   emit this->newMeshLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::createHistogramViews()
 {
   this->Internal->MeshHistogram = this->createFilter("ExtractHistogram", this->activeSource());
@@ -536,7 +532,6 @@ void pqCMBMeshViewerMainWindowCore::createHistogramViews()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqXYBarChartView* pqCMBMeshViewerMainWindowCore::createHistogramView(pqPipelineSource* source)
 {
   pqObjectBuilder* builder = pqPVApplicationCore::instance()->getObjectBuilder();
@@ -564,7 +559,6 @@ pqXYBarChartView* pqCMBMeshViewerMainWindowCore::createHistogramView(pqPipelineS
   return view;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::removeFiltertPanel(pqProxyWidget* panel)
 {
   if (panel)
@@ -574,7 +568,6 @@ void pqCMBMeshViewerMainWindowCore::removeFiltertPanel(pqProxyWidget* panel)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::createFilters(pqPipelineSource* source)
 {
   this->Internal->MeshThresholdSource = this->createFilter("Threshold", source);
@@ -592,7 +585,6 @@ void pqCMBMeshViewerMainWindowCore::createFilters(pqPipelineSource* source)
     this->createFilter("LIDARElevationFilter", this->Internal->QualityThreshSource);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setInputArray(
   pqPipelineSource* filter, const char* propName, const char* arrayname)
 {
@@ -616,7 +608,6 @@ void pqCMBMeshViewerMainWindowCore::setInputArray(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBMeshViewerMainWindowCore::createFilter(
   const char* filterxmlname, pqPipelineSource* source)
 {
@@ -627,7 +618,6 @@ pqPipelineSource* pqCMBMeshViewerMainWindowCore::createFilter(
   return builder->createFilter("filters", filterxmlname, source);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::createFilterPanels()
 {
   QFont font;
@@ -751,7 +741,7 @@ void pqCMBMeshViewerMainWindowCore::createFilterPanels()
   QObject::connect(
     this->Internal->ElevationPanel, SIGNAL(changeAvailable()), this, SLOT(filterModified()));
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::setFiltersSource(pqPipelineSource* selSource)
 {
   if (!selSource || selSource == this->currentInputSource())
@@ -812,7 +802,6 @@ void pqCMBMeshViewerMainWindowCore::setFiltersSource(pqPipelineSource* selSource
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateMeshHistogram()
 {
   this->updateSource(this->Internal->MeshHistogram);
@@ -823,7 +812,7 @@ void pqCMBMeshViewerMainWindowCore::updateMeshHistogram()
   this->Internal->MeshHistogramView->getContextViewProxy()->Update();
   this->Internal->MeshHistogramView->resetDisplay();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::filterModified()
 {
   pqProxyWidget* const proxyWidget = qobject_cast<pqProxyWidget*>(QObject::sender());
@@ -840,26 +829,24 @@ void pqCMBMeshViewerMainWindowCore::filterModified()
   this->updateApplyState(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateMeshThreshold()
 {
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::updateMeshQuality()
 {
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::updateQualityThreshold()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateApplyState(bool changesAvailable)
 {
   // watch for modified state changes
   emit this->filterPropertiesChanged(changesAvailable);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::resetFilterPanels()
 {
   this->Internal->MeshThreshPanel->reset();
@@ -872,7 +859,7 @@ void pqCMBMeshViewerMainWindowCore::resetFilterPanels()
 
   this->updateApplyState(false);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::acceptFilterPanels(bool ignoreList)
 {
   if (ignoreList)
@@ -917,7 +904,6 @@ void pqCMBMeshViewerMainWindowCore::acceptFilterPanels(bool ignoreList)
   this->updateApplyState(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateSource(pqPipelineSource* source)
 {
   if (!source)
@@ -929,7 +915,7 @@ void pqCMBMeshViewerMainWindowCore::updateSource(pqPipelineSource* source)
   smSource->UpdateVTKObjects();
   smSource->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::updateFilters()
 {
   this->updateSource(this->Internal->MeshThresholdSource);
@@ -940,19 +926,19 @@ void pqCMBMeshViewerMainWindowCore::updateFilters()
   this->updateSource(this->Internal->MeshHistogram);
   //  this->updateSource(this->Internal->SelectionHistogram);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::is2DMesh()
 {
   //QFileInfo fInfo(this->Internal->CurrentMeshFileName);
   //return (fInfo.suffix().toLower()=="2dm");
   return this->Internal->is2DMesh;
 }
-//-----------------------------------------------------------------------------
+
 QString pqCMBMeshViewerMainWindowCore::getCurrentMeshFile() const
 {
   return this->Internal->CurrentMeshFileName;
 }
-//-----------------------------------------------------------------------------
+
 QScrollArea* pqCMBMeshViewerMainWindowCore::createScrollArea(QWidget* parent)
 {
   QWidget* container = new QWidget();
@@ -972,19 +958,16 @@ QScrollArea* pqCMBMeshViewerMainWindowCore::createScrollArea(QWidget* parent)
   return s;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setupSelectionPanel(QWidget* parent)
 {
   this->Internal->SelectionContainer = this->createScrollArea(parent);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setupInspectorPanel(QWidget* parent)
 {
   this->Internal->InspectorContainer = this->createScrollArea(parent);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::initScrollArea(QScrollArea* area)
 {
   QWidget* container = new QWidget();
@@ -996,12 +979,10 @@ void pqCMBMeshViewerMainWindowCore::initScrollArea(QScrollArea* area)
   area->setWidget(container);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::zoomOnSelection()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setHistogramMode(int mode)
 {
   if (this->Internal->HistogramMode == mode)
@@ -1036,7 +1017,6 @@ void pqCMBMeshViewerMainWindowCore::setHistogramMode(int mode)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::setSelectionMode(int mode)
 {
 
@@ -1059,13 +1039,11 @@ void pqCMBMeshViewerMainWindowCore::setSelectionMode(int mode)
   }
 }
 
-//-----------------------------------------------------------------------------
 QString pqCMBMeshViewerMainWindowCore::getOutputFileName() const
 {
   return this->Internal->OutputFileName;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::onSaveAsData()
 {
   if (!this->isMeshLoaded() || !this->activeSource())
@@ -1080,7 +1058,7 @@ void pqCMBMeshViewerMainWindowCore::onSaveAsData()
   }
   this->Internal->OutputFileName.clear();
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::getMeshSaveAsFileName(QString& filename)
 {
   QString filters = this->is2DMesh() ? "GMS 2D Mesh (*.2dm);;GAMBIT  Mesh (*.neu)"
@@ -1102,7 +1080,6 @@ bool pqCMBMeshViewerMainWindowCore::getMeshSaveAsFileName(QString& filename)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::onSaveData()
 {
   if (this->Internal->OutputFileName == "")
@@ -1114,7 +1091,7 @@ void pqCMBMeshViewerMainWindowCore::onSaveData()
     this->saveMesh(this->Internal->OutputFileName);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::exportMesh(pqPipelineSource* meshSource)
 {
   if (!this->isMeshLoaded() || !this->activeSource())
@@ -1127,7 +1104,7 @@ void pqCMBMeshViewerMainWindowCore::exportMesh(pqPipelineSource* meshSource)
     this->saveMesh(filename, meshSource);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::saveMesh(const QString& filename, pqPipelineSource* meshSource)
 {
   if (!this->isMeshLoaded() || !this->meshSource())
@@ -1197,7 +1174,6 @@ void pqCMBMeshViewerMainWindowCore::saveMesh(const QString& filename, pqPipeline
   builder->destroy(meshWriter);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::onCloseData()
 {
   if (this->checkForPreviewDialog())
@@ -1215,7 +1191,6 @@ void pqCMBMeshViewerMainWindowCore::onCloseData()
   emit this->newMeshLoaded();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::onFrustumSelect(bool checked)
 {
   if (checked)
@@ -1227,7 +1202,7 @@ void pqCMBMeshViewerMainWindowCore::onFrustumSelect(bool checked)
     this->renderViewSelectionHelper()->endSelection();
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::onRubberBandSelectCell(bool checked)
 {
   if (checked)
@@ -1239,7 +1214,7 @@ void pqCMBMeshViewerMainWindowCore::onRubberBandSelectCell(bool checked)
     this->renderViewSelectionHelper()->endSelection();
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::onRubberBandSelectPoints(bool checked)
 {
   if (checked)
@@ -1252,7 +1227,6 @@ void pqCMBMeshViewerMainWindowCore::onRubberBandSelectPoints(bool checked)
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateSelection(bool isShapeSel)
 {
   if (!this->activeSource())
@@ -1299,7 +1273,6 @@ void pqCMBMeshViewerMainWindowCore::updateSelection(bool isShapeSel)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::clearSelection()
 {
   if (this->activeSource())
@@ -1310,7 +1283,7 @@ void pqCMBMeshViewerMainWindowCore::clearSelection()
     smSource->UpdatePipeline();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::setActiveSelection(vtkSMSourceProxy* selSource)
 {
   if (this->activeSource())
@@ -1322,7 +1295,6 @@ void pqCMBMeshViewerMainWindowCore::setActiveSelection(vtkSMSourceProxy* selSour
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::selectAll()
 {
   if (this->activeSource())
@@ -1339,7 +1311,6 @@ void pqCMBMeshViewerMainWindowCore::selectAll()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::closeData()
 {
   pqActiveObjects::instance().setActiveSource(NULL);
@@ -1435,7 +1406,7 @@ void pqCMBMeshViewerMainWindowCore::closeData()
   this->destroyInputRepresentations();
   this->Superclass::closeData();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::removeHistogramView()
 {
   pqObjectBuilder* const builder = pqPVApplicationCore::instance()->getObjectBuilder();
@@ -1462,7 +1433,6 @@ void pqCMBMeshViewerMainWindowCore::removeHistogramView()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::destroySources()
 {
   pqObjectBuilder* const builder = pqPVApplicationCore::instance()->getObjectBuilder();
@@ -1492,7 +1462,6 @@ void pqCMBMeshViewerMainWindowCore::destroySources()
   this->destroySource(builder, this->Internal->MeshSource);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::destroySource(
   pqObjectBuilder* builder, pqPipelineSource* source)
 {
@@ -1502,50 +1471,46 @@ void pqCMBMeshViewerMainWindowCore::destroySource(
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBMeshViewerMainWindowCore::isMeshLoaded()
 {
   return !this->Internal->CurrentMeshFileName.isEmpty();
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBMeshViewerMainWindowCore::meshSource()
 {
   return this->Internal->MeshSource;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBMeshViewerMainWindowCore::activeRepresentation()
 {
   return this->Internal->MeshRepresentation;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBMeshViewerMainWindowCore::fullMeshRepresentation()
 {
   return this->Internal->FullMeshRepresentation;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBMeshViewerMainWindowCore::currentInputSource()
 {
   return this->Internal->CurrentInputSource;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBMeshViewerMainWindowCore::meshSculptingRepresentation()
 {
   return this->Internal->MeshScultpingRep;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBMeshViewerMainWindowCore::meshSculptingSource()
 {
   return this->Internal->MeshSculptingSource;
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBMeshViewerMainWindowCore::activeSource()
 {
   return this->Internal->ElevationFilter;
 }
 
-//-----------------------------------------------------------------------------
 /// Called when a new reader is created by the GUI.
 void pqCMBMeshViewerMainWindowCore::onReaderCreated(
   pqPipelineSource* reader, const QString& filename)
@@ -1582,7 +1547,6 @@ void pqCMBMeshViewerMainWindowCore::onReaderCreated(
   this->processMesh(filename, reader);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::changeSelectionMaterialId(int newId)
 {
   this->changeMeshMaterialId(newId);
@@ -1637,13 +1601,11 @@ void pqCMBMeshViewerMainWindowCore::changeSelectionMaterialId(int newId)
   emit this->meshModified();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::changeMeshMaterialId(int newId)
 {
   vtkSMSourceProxy* currentSource =
@@ -1705,7 +1667,7 @@ void pqCMBMeshViewerMainWindowCore::changeMeshMaterialId(int newId)
   builder->destroy(ModifyMaterialFilter);
   //builder->destroy(tmpSource);
 }
-//-----------------------------------------------------------------------------
+
 vtkSMProxy* pqCMBMeshViewerMainWindowCore::getActiveSelection(int selFieldType)
 {
   if (this->activeSource())
@@ -1721,7 +1683,6 @@ vtkSMProxy* pqCMBMeshViewerMainWindowCore::getActiveSelection(int selFieldType)
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqDataRepresentation* pqCMBMeshViewerMainWindowCore::extractSelectionAsInput()
 {
   // make a copy of active selection
@@ -1793,7 +1754,7 @@ pqDataRepresentation* pqCMBMeshViewerMainWindowCore::extractSelectionAsInput()
 
   return repr;
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::invertCurrentSelection()
 {
   vtkSMSourceProxy* selSource = vtkSMSourceProxy::SafeDownCast(this->getActiveSelection());
@@ -1820,7 +1781,7 @@ bool pqCMBMeshViewerMainWindowCore::invertCurrentSelection()
   this->activeRenderView()->render();
   return true;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::resetFilterInputArrays()
 {
   const char* arrayName = NULL;
@@ -1855,7 +1816,7 @@ void pqCMBMeshViewerMainWindowCore::resetFilterInputArrays()
   this->Internal->ElevationPanel->apply();
   this->Internal->ElevationPanel->updatePanel();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::destroyRepresentation(pqDataRepresentation* selRep)
 {
   if (selRep && selRep != this->Internal->FullMeshRepresentation)
@@ -1871,7 +1832,7 @@ void pqCMBMeshViewerMainWindowCore::destroyRepresentation(pqDataRepresentation* 
     builder->destroy(source);
   }
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBMeshViewerMainWindowCore::getRepresentationFromSource(
   pqPipelineSource* selSource)
 {
@@ -1888,7 +1849,7 @@ pqDataRepresentation* pqCMBMeshViewerMainWindowCore::getRepresentationFromSource
   }
   return NULL;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::onServerCreationFinished(pqServer* server)
 {
   this->Superclass::onServerCreationFinished(server);
@@ -1924,25 +1885,25 @@ void pqCMBMeshViewerMainWindowCore::onServerCreationFinished(pqServer* server)
   this->Internal->SpreadSheetViewModel =
     new pqSpreadSheetViewModel(this->Internal->SpreadSheetViewProxy, this);
 }
-//-----------------------------------------------------------------------------
+
 pqSpreadSheetViewModel* pqCMBMeshViewerMainWindowCore::spreadSheetViewModel()
 {
   //  vtkSMPropertyHelper(view, "Representations").Set(repr);
   return this->Internal->SpreadSheetViewModel;
 }
-//-----------------------------------------------------------------------------
+
 vtkSMViewProxy* pqCMBMeshViewerMainWindowCore::spreadSheetView()
 {
   //  vtkSMPropertyHelper(view, "Representations").Set(repr);
   return this->Internal->SpreadSheetViewProxy;
 }
-//-----------------------------------------------------------------------------
+
 vtkSMProxy* pqCMBMeshViewerMainWindowCore::spreadSheetRepresentation()
 {
   //  vtkSMPropertyHelper(view, "Representations").Set(repr);
   return this->Internal->SpreadSheetRepProxy;
 }
-//-----------------------------------------------------------------------------
+
 qtArcWidget* pqCMBMeshViewerMainWindowCore::defineContourWidget()
 {
   pqWaitCursor cursor;
@@ -1953,7 +1914,7 @@ qtArcWidget* pqCMBMeshViewerMainWindowCore::defineContourWidget()
   qtArcWidget* arcWidget = this->createPqContourWidget(orthoPlane);
   return arcWidget;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::clearContourSelection(qtArcWidget* arcWidget)
 {
   if (this->Internal->MeshSculptingSource)
@@ -1970,7 +1931,7 @@ void pqCMBMeshViewerMainWindowCore::clearContourSelection(qtArcWidget* arcWidget
   }
   this->deleteContourWidget(arcWidget);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::contourSelectSurface(
   qtArcWidget* arcWidget, bool isCell, int selectArcType)
 {
@@ -2036,7 +1997,7 @@ void pqCMBMeshViewerMainWindowCore::contourSelectSurface(
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::contourSelectThrough(
   qtArcWidget* arcWidget, int selectContourType)
 {
@@ -2049,7 +2010,7 @@ void pqCMBMeshViewerMainWindowCore::contourSelectThrough(
     : NULL;
   this->setActiveSelection(arcSelSource);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::setShapeSelectionOption(
   qtArcWidget* arcWidget, int selectCellThrough, int selectShapeType)
 {
@@ -2086,7 +2047,6 @@ void pqCMBMeshViewerMainWindowCore::setShapeSelectionOption(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::getContourDisplayBounds(
   vtkPVContourRepresentationInfo* arcInfo, double bounds[6])
 {
@@ -2109,7 +2069,6 @@ void pqCMBMeshViewerMainWindowCore::getContourDisplayBounds(
   bb.GetBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createPlaneWidget()
 {
   if (!this->Internal->MeshScultpingRep || !this->Internal->MeshSculptingSource)
@@ -2134,7 +2093,7 @@ vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createPlaneWid
 
   return planeWidget;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::linkContourPlaneWidget(
   vtkSMNewWidgetRepresentationProxy* planeWidget)
 {
@@ -2167,7 +2126,7 @@ void pqCMBMeshViewerMainWindowCore::linkContourPlaneWidget(
     this->Internal->LastPlaneOrigin[i] = origin[i].toDouble();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::updatePlaneInteraction(
   vtkSMNewWidgetRepresentationProxy* planeWidget)
 {
@@ -2186,7 +2145,6 @@ void pqCMBMeshViewerMainWindowCore::updatePlaneInteraction(
   srcProxy->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::createSelectedNodesRepresentation()
 {
   int fieldType = this->getActiveSelection(vtkSelectionNode::CELL) ? vtkSelectionNode::CELL
@@ -2215,7 +2173,6 @@ void pqCMBMeshViewerMainWindowCore::createSelectedNodesRepresentation()
     return;
   }
 
-  // --------------------------------------------------
   vtkSMSourceProxy* contourSelSource =
     vtkSMSourceProxy::SafeDownCast(this->Internal->MeshContourSelector->getProxy());
 
@@ -2255,7 +2212,6 @@ void pqCMBMeshViewerMainWindowCore::createSelectedNodesRepresentation()
   this->Internal->MeshScultpingRep->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(qtArcWidget* arcWidget,
   int selectCellThrough, vtkSMProxy* selectionSource, int selectArcType, int fieldType,
   int GenerateSelectedOutput)
@@ -2331,7 +2287,6 @@ void pqCMBMeshViewerMainWindowCore::updateMeshContourSelection(qtArcWidget* arcW
   meshSelSource->UpdatePipeline();
 }
 
-//-----------------------------------------------------------------------------
 vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createBoxWidget()
 {
   vtkSMNewWidgetRepresentationProxy* boxWidget = dynamic_cast<vtkSMNewWidgetRepresentationProxy*>(
@@ -2373,7 +2328,7 @@ vtkSMNewWidgetRepresentationProxy* pqCMBMeshViewerMainWindowCore::createBoxWidge
     vtkEvent::ControlModifier, 0, 0, NULL, vtkWidgetEvent::EndSelect);
   return boxWidget;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::linkContourBoxWidget(
   vtkSMNewWidgetRepresentationProxy* boxWidget, bool enable)
 {
@@ -2404,7 +2359,7 @@ void pqCMBMeshViewerMainWindowCore::linkContourBoxWidget(
   this->linkBoxWidget(this->Internal->PositionLink, this->Internal->OrientationLink,
     this->Internal->ScaleLink, boxWidget, this->Internal->MeshScultpingRep, enable);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::linkBoxWidget(vtkSMPropertyLink* positionLink,
   vtkSMPropertyLink* rotationLink, vtkSMPropertyLink* scaleLink,
   vtkSMNewWidgetRepresentationProxy* boxWidget, pqDataRepresentation* dataRep, bool enable)
@@ -2440,7 +2395,6 @@ void pqCMBMeshViewerMainWindowCore::linkBoxWidget(vtkSMPropertyLink* positionLin
   boxWidget->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBMeshViewerMainWindowCore::moveMeshScultpingPoints()
 {
   if (!this->Internal->MeshScultpingRep || !this->Internal->MeshSculptingSource)
@@ -2490,7 +2444,7 @@ bool pqCMBMeshViewerMainWindowCore::moveMeshScultpingPoints()
   return this->moveMeshPoints(
     this->Internal->MeshSculptingSource, this->Internal->ContourTransform);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::moveMeshPoints(
   pqPipelineSource* movedsource, vtkSMProxy* transformProxy)
 {
@@ -2516,7 +2470,7 @@ bool pqCMBMeshViewerMainWindowCore::moveMeshPoints(
   }
   return meshmoved;
 }
-//----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::hasContourSelection()
 {
   if (!this->Internal->MeshContourSelector)
@@ -2535,12 +2489,12 @@ bool pqCMBMeshViewerMainWindowCore::hasContourSelection()
   }
   return false;
 }
-//----------------------------------------------------------------------------
+
 int pqCMBMeshViewerMainWindowCore::shapeSelectionOption()
 {
   return this->Internal->ShapeSelectionOption;
 }
-//----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::hasConeSelection()
 {
   if (!this->Internal->MeshConeSelector)
@@ -2559,7 +2513,7 @@ bool pqCMBMeshViewerMainWindowCore::hasConeSelection()
   }
   return false;
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::applySmoothing()
 {
   if (!this->activeSource())
@@ -2600,7 +2554,7 @@ void pqCMBMeshViewerMainWindowCore::applySmoothing()
   this->Internal->ElevationPanel->apply();
   this->moveMeshPoints(this->Internal->MeshSmoother);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::createSmoothMeshPanel()
 {
   if (!this->Internal->MeshSmoother)
@@ -2616,7 +2570,7 @@ void pqCMBMeshViewerMainWindowCore::createSmoothMeshPanel()
     this->Internal->MeshSmootherPanel->setView(this->activeRenderView());
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::setSmoothMeshPanelParent(QWidget* parent)
 {
   this->Internal->MeshSmootherPanelParent = parent;
@@ -2625,7 +2579,7 @@ pqDataRepresentation* pqCMBMeshViewerMainWindowCore::coneRepresentation()
 {
   return this->Internal->ConeRepresentation;
 }
-//----------------------------------------------------------------------------
+
 bool pqCMBMeshViewerMainWindowCore::startConeSelection(bool showDialog)
 {
   if (!this->meshSource())
@@ -2737,7 +2691,7 @@ bool pqCMBMeshViewerMainWindowCore::startConeSelection(bool showDialog)
   this->activeRenderView()->render();
   return true;
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::stopConeSelection()
 {
   if (this->Internal->ConeWidget)
@@ -2754,7 +2708,7 @@ void pqCMBMeshViewerMainWindowCore::stopConeSelection()
   }
   this->activeRenderView()->render();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBMeshViewerMainWindowCore::onUpdateConeInteraction()
 {
   pqWaitCursor cursor;

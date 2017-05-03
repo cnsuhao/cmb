@@ -15,7 +15,6 @@
 #include "pqCMBSceneNode.h"
 #include "pqCMBSceneTree.h"
 
-//-----------------------------------------------------------------------------
 cmbSceneNodeReplaceEvent::cmbSceneNodeReplaceEvent(
   std::size_t creationSize, std::size_t deletionSize)
 {
@@ -23,7 +22,6 @@ cmbSceneNodeReplaceEvent::cmbSceneNodeReplaceEvent(
   this->DeletedNodes.reserve(deletionSize);
 }
 
-//-----------------------------------------------------------------------------
 cmbSceneNodeReplaceEvent::~cmbSceneNodeReplaceEvent()
 {
   // If we are not to apply the changes then delete the nodes created
@@ -46,7 +44,6 @@ cmbSceneNodeReplaceEvent::~cmbSceneNodeReplaceEvent()
   }
 }
 
-//-----------------------------------------------------------------------------
 void cmbSceneNodeReplaceEvent::undo()
 {
   // Make sure the event has not been applied
@@ -77,7 +74,6 @@ void cmbSceneNodeReplaceEvent::undo()
   cmbEvent::undo();
 }
 
-//-----------------------------------------------------------------------------
 void cmbSceneNodeReplaceEvent::redo()
 {
   // Make sure the event has  been applied
@@ -107,4 +103,3 @@ void cmbSceneNodeReplaceEvent::redo()
   }
   cmbEvent::redo();
 }
-//-----------------------------------------------------------------------------

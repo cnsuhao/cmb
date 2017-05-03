@@ -41,7 +41,6 @@ vtkStandardNewMacro(vtkImageTextureCrop);
 vtkCxxSetObjectMacro(vtkImageTextureCrop, Renderer, vtkRenderer);
 vtkCxxSetObjectMacro(vtkImageTextureCrop, TransformationMatrix, vtkMatrix4x4);
 
-//----------------------------------------------------------------------------
 vtkImageTextureCrop::vtkImageTextureCrop()
 {
   this->Renderer = 0;
@@ -70,7 +69,6 @@ vtkImageTextureCrop::vtkImageTextureCrop()
   this->TransformationMatrix = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkImageTextureCrop::~vtkImageTextureCrop()
 {
   this->SetRenderer(0);
@@ -78,13 +76,11 @@ vtkImageTextureCrop::~vtkImageTextureCrop()
   this->SetTransformationMatrix(0);
 }
 
-//-----------------------------------------------------------------------------
 void vtkImageTextureCrop::SetImageData(vtkDataSet* input)
 {
   this->SetInputData(1, input);
 }
 
-//----------------------------------------------------------------------------
 vtkDataSet* vtkImageTextureCrop::GetImageData()
 {
   if (this->GetNumberOfInputConnections(2) != 2)
@@ -95,19 +91,16 @@ vtkDataSet* vtkImageTextureCrop::GetImageData()
   return vtkDataSet::SafeDownCast(this->GetExecutive()->GetInputData(1, 0));
 }
 
-//----------------------------------------------------------------------------
 void vtkImageTextureCrop::SetImageDataConnection(vtkAlgorithmOutput* algOutput)
 {
   this->SetInputConnection(1, algOutput);
 }
 
-//----------------------------------------------------------------------------
 void vtkImageTextureCrop::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 // Change the WholeExtent
 int vtkImageTextureCrop::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
@@ -137,7 +130,6 @@ int vtkImageTextureCrop::RequestInformation(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 // This method simply copies by reference the input data to the output.
 int vtkImageTextureCrop::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
@@ -243,7 +235,6 @@ int vtkImageTextureCrop::RequestData(vtkInformation* vtkNotUsed(request),
   return VTK_OK;
 }
 
-//----------------------------------------------------------------------------
 int vtkImageTextureCrop::ComputeSAndTRangeBasedOnRenderer(vtkPolyData* inputPD,
   vtkFloatArray* tCoords, vtkSignedCharArray*& insidedness, double computedSRange[2],
   double computedTRange[2])
@@ -348,7 +339,6 @@ int vtkImageTextureCrop::ComputeSAndTRangeBasedOnRenderer(vtkPolyData* inputPD,
   return VTK_OK;
 }
 
-//----------------------------------------------------------------------------
 void vtkImageTextureCrop::DoImageResample(
   int inputExtents[6], int outputExtents[6], vtkImageData* cropImage, vtkImageData* outputImage)
 {
@@ -374,7 +364,6 @@ void vtkImageTextureCrop::DoImageResample(
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkImageTextureCrop::ComputeTCoords(vtkFloatArray* inputTCoords,
   vtkSignedCharArray* insidedness, vtkPolyData* outputPD, double* sRange, double* tRange)
 {
@@ -396,7 +385,6 @@ void vtkImageTextureCrop::ComputeTCoords(vtkFloatArray* inputTCoords,
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkImageTextureCrop::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -414,7 +402,6 @@ int vtkImageTextureCrop::FillInputPortInformation(int port, vtkInformation* info
   return 0;
 }
 
-//----------------------------------------------------------------------------
 int vtkImageTextureCrop::FillOutputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)

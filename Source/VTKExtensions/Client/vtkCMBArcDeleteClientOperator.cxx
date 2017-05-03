@@ -19,34 +19,29 @@
 
 vtkStandardNewMacro(vtkCMBArcDeleteClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcDeleteClientOperator::vtkCMBArcDeleteClientOperator()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcDeleteClientOperator::~vtkCMBArcDeleteClientOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcDeleteClientOperator::SetMarkedForDeletion(const vtkIdType& arcId)
 {
   return this->Operate(arcId, Mark_Mode);
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBArcDeleteClientOperator::SetUnMarkedForDeletion(const vtkIdType& arcId)
 {
   return this->Operate(arcId, UnMark_Mode);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcDeleteClientOperator::DeleteArc(const vtkIdType& arcId)
 {
   return this->Operate(arcId, Delete_Mode);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcDeleteClientOperator::Operate(
   const vtkIdType& arcId, vtkCMBArcDeleteClientOperator::Mode mode)
 {
@@ -64,7 +59,6 @@ bool vtkCMBArcDeleteClientOperator::Operate(
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcDeleteClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

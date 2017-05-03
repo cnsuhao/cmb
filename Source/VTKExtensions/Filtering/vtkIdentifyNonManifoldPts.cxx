@@ -23,7 +23,6 @@
 
 vtkStandardNewMacro(vtkIdentifyNonManifoldPts);
 
-//----------------------------------------------------------------------------
 int vtkIdentifyNonManifoldPts::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {

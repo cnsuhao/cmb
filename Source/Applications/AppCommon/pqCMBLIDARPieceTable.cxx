@@ -35,7 +35,6 @@ enum DataTableCol
   NumSavePtsCol
 };
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceTable::pqCMBLIDARPieceTable(QTableWidget* tableWidget, bool advancedTable /*=false*/)
 {
   this->TableWidget = tableWidget;
@@ -43,12 +42,10 @@ pqCMBLIDARPieceTable::pqCMBLIDARPieceTable(QTableWidget* tableWidget, bool advan
   this->initialize(advancedTable);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceTable::~pqCMBLIDARPieceTable()
 {
 }
 
-//-----------------------------------------------------------------------------
 QList<pqCMBLIDARPieceObject*> pqCMBLIDARPieceTable::getAllPieceObjects()
 {
   QList<pqCMBLIDARPieceObject*> selObjects;
@@ -63,7 +60,6 @@ QList<pqCMBLIDARPieceObject*> pqCMBLIDARPieceTable::getAllPieceObjects()
   return selObjects;
 }
 
-//-----------------------------------------------------------------------------
 QList<pqCMBLIDARPieceObject*> pqCMBLIDARPieceTable::getVisiblePieceObjects()
 {
   QList<pqCMBLIDARPieceObject*> selObjects;
@@ -81,13 +77,11 @@ QList<pqCMBLIDARPieceObject*> pqCMBLIDARPieceTable::getVisiblePieceObjects()
   return selObjects;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceObject* pqCMBLIDARPieceTable::getCurrentObject(bool onlyIfSelectable /*=true*/)
 {
   return this->getRowObject(this->getCurrentRow(onlyIfSelectable));
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARPieceTable::getCurrentRow(bool onlyIfSelectable /*=true*/)
 {
   if (this->TableWidget->selectedItems().count() == 0)
@@ -103,7 +97,6 @@ int pqCMBLIDARPieceTable::getCurrentRow(bool onlyIfSelectable /*=true*/)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceObject* pqCMBLIDARPieceTable::getRowObject(int row)
 {
   return (row >= 0 && row < this->TableWidget->rowCount())
@@ -112,7 +105,6 @@ pqCMBLIDARPieceObject* pqCMBLIDARPieceTable::getRowObject(int row)
     : NULL;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARPieceTable::getObjectRow(pqCMBLIDARPieceObject* dataObj)
 {
   for (int row = 0; row < this->TableWidget->rowCount(); row++)
@@ -125,7 +117,6 @@ int pqCMBLIDARPieceTable::getObjectRow(pqCMBLIDARPieceObject* dataObj)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::setCurrentPiece(int pieceId)
 {
   if (this->getCurrentObject() && this->getCurrentObject()->getPieceIndex() == pieceId)
@@ -146,7 +137,6 @@ void pqCMBLIDARPieceTable::setCurrentPiece(int pieceId)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::setCurrentOnRatio(int onRatio)
 {
   int currentRow = this->getCurrentRow();
@@ -156,7 +146,6 @@ void pqCMBLIDARPieceTable::setCurrentOnRatio(int onRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::checkAll()
 {
   this->TableWidget->blockSignals(true);
@@ -207,7 +196,6 @@ void pqCMBLIDARPieceTable::checkAll()
   emit this->checkedObjectsChanged(newChecked, newUnChecked);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::uncheckAll()
 {
   this->TableWidget->blockSignals(true);
@@ -236,7 +224,6 @@ void pqCMBLIDARPieceTable::uncheckAll()
   emit this->checkedObjectsChanged(newChecked, newUnChecked);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::initialize(bool advancedTable)
 {
   // Set up the data table
@@ -264,7 +251,6 @@ void pqCMBLIDARPieceTable::initialize(bool advancedTable)
     SLOT(onItemChanged(QTableWidgetItem*)) /*, Qt::QueuedConnection*/);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::clear()
 {
   this->TableWidget->clearContents();
@@ -274,7 +260,6 @@ void pqCMBLIDARPieceTable::clear()
   this->configureTable(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::onClearSelection()
 {
   this->TableWidget->blockSignals(true);
@@ -286,7 +271,6 @@ void pqCMBLIDARPieceTable::onClearSelection()
   this->TableWidget->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::configureTable(int advancedTable)
 {
   if (advancedTable)
@@ -316,7 +300,6 @@ void pqCMBLIDARPieceTable::configureTable(int advancedTable)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::AddLIDARPiece(pqCMBLIDARPieceObject* dataObj, int visible)
 {
   this->TableWidget->insertRow(this->TableWidget->rowCount());
@@ -374,7 +357,6 @@ void pqCMBLIDARPieceTable::AddLIDARPiece(pqCMBLIDARPieceObject* dataObj, int vis
   this->setVisibility(row, visible);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::addAdvancedColumns(int row, pqCMBLIDARPieceObject* dataObj)
 {
   Qt::ItemFlags commFlags = this->TableWidget->item(row, 2)->flags();
@@ -405,13 +387,11 @@ void pqCMBLIDARPieceTable::addAdvancedColumns(int row, pqCMBLIDARPieceObject* da
   this->TableWidget->item(row, SaveOnRatioCol)->setBackground(backgroundBrush);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::updateWithPieceInfo(int row)
 {
   this->updateWithPieceInfo(this->getRowObject(row), row);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::updateWithPieceInfo(pqCMBLIDARPieceObject* dataObj, int row /*=-1*/)
 {
   if (dataObj)
@@ -454,7 +434,6 @@ void pqCMBLIDARPieceTable::updateWithPieceInfo(pqCMBLIDARPieceObject* dataObj, i
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARPieceTable::computeDisplayNumberOfPointsEstimate(pqCMBLIDARPieceObject* dataObj)
 {
   int numDisplayPoints;
@@ -491,7 +470,6 @@ int pqCMBLIDARPieceTable::computeDisplayNumberOfPointsEstimate(pqCMBLIDARPieceOb
   return numDisplayPoints;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBLIDARPieceTable::computeSaveNumberOfPointsEstimate(pqCMBLIDARPieceObject* dataObj)
 {
   int numSavePoints;
@@ -512,7 +490,6 @@ int pqCMBLIDARPieceTable::computeSaveNumberOfPointsEstimate(pqCMBLIDARPieceObjec
   return numSavePoints;
 }
 
-//-----------------------------------------------------------------------------
 QMap<int, int> pqCMBLIDARPieceTable::getSelectedPieceOnRatios()
 {
   QMap<int, int> selIndices;
@@ -531,7 +508,6 @@ QMap<int, int> pqCMBLIDARPieceTable::getSelectedPieceOnRatios()
   return selIndices;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::onCurrentObjectChanged()
 {
   int currentRow = this->getCurrentRow(false);
@@ -549,7 +525,6 @@ void pqCMBLIDARPieceTable::onCurrentObjectChanged()
   emit this->currentObjectChanged(this->getCurrentObject());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::onItemChanged(QTableWidgetItem* item)
 {
   pqCMBLIDARPieceObject* dataObj = this->getRowObject(item->row());
@@ -601,7 +576,6 @@ void pqCMBLIDARPieceTable::onItemChanged(QTableWidgetItem* item)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::setVisibility(int row, int visibilityState)
 {
   bool signalsAlreadyBlocked = this->TableWidget->signalsBlocked();
@@ -640,7 +614,6 @@ void pqCMBLIDARPieceTable::setVisibility(int row, int visibilityState)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::updateCheckedItems(QList<int> newChecked, QList<int> newUnChecked)
 {
   this->TableWidget->blockSignals(true);
@@ -658,7 +631,6 @@ void pqCMBLIDARPieceTable::updateCheckedItems(QList<int> newChecked, QList<int> 
   this->TableWidget->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::setSelection(int selectionRow)
 {
   this->TableWidget->blockSignals(true);
@@ -666,7 +638,6 @@ void pqCMBLIDARPieceTable::setSelection(int selectionRow)
   this->TableWidget->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::setOnRatioOfSelectedPieces(int newOnRatio)
 {
   for (int i = 0; i < this->TableWidget->rowCount(); i++)
@@ -678,7 +649,6 @@ void pqCMBLIDARPieceTable::setOnRatioOfSelectedPieces(int newOnRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBLIDARPieceTable::selectObject(pqPipelineSource* selSource)
 {
   for (int i = 0; i < this->TableWidget->rowCount(); i++)

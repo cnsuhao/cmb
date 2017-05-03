@@ -18,7 +18,7 @@
 #define TABLE_CIRCLE_DEGREE 800
 
 vtkStandardNewMacro(vtkDiscreteLookupTable);
-//-----------------------------------------------------------------------------
+
 vtkDiscreteLookupTable::vtkDiscreteLookupTable()
 {
   this->Discretize = 1;
@@ -36,12 +36,10 @@ vtkDiscreteLookupTable::vtkDiscreteLookupTable()
   this->ValueDelta = 0.2;
 }
 
-//-----------------------------------------------------------------------------
 vtkDiscreteLookupTable::~vtkDiscreteLookupTable()
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::Build()
 {
   // skip the vtkPVLookupTable::Build()
@@ -111,7 +109,6 @@ void vtkDiscreteLookupTable::Build()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

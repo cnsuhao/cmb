@@ -25,7 +25,6 @@
 #include "vtkTesting.h"
 #include <string>
 
-//----------------------------------------------------------------------------
 // Tests Glyph Point Source's individual property settings
 int main(int argc, char* argv[])
 {

@@ -20,13 +20,11 @@
 
 vtkStandardNewMacro(vtkCMBExtractCellFromDataSet);
 
-//----------------------------------------------------------------------------
 vtkCMBExtractCellFromDataSet::vtkCMBExtractCellFromDataSet()
 {
   this->CellIndex = -1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBExtractCellFromDataSet::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -103,7 +101,6 @@ int vtkCMBExtractCellFromDataSet::RequestData(vtkInformation* vtkNotUsed(request
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBExtractCellFromDataSet::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

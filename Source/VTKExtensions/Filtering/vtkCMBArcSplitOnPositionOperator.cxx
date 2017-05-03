@@ -29,7 +29,6 @@ bool pointsEqual(double pos1[3], vtkCMBArc::Point pos2, double tol)
 }
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcSplitOnPositionOperator::vtkCMBArcSplitOnPositionOperator()
 {
   this->PositionTolerance = 1e-05;
@@ -40,12 +39,10 @@ vtkCMBArcSplitOnPositionOperator::vtkCMBArcSplitOnPositionOperator()
   this->CreatedArcId = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcSplitOnPositionOperator::~vtkCMBArcSplitOnPositionOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcSplitOnPositionOperator::SetSplitPosition(double x, double y, double z)
 {
   this->ValidPosition = true;
@@ -55,7 +52,6 @@ void vtkCMBArcSplitOnPositionOperator::SetSplitPosition(double x, double y, doub
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcSplitOnPositionOperator::Operate(vtkIdType arcId)
 {
   //we have to reset the CreatedArcId everytime we split
@@ -101,7 +97,6 @@ bool vtkCMBArcSplitOnPositionOperator::Operate(vtkIdType arcId)
   return retCode;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcSplitOnPositionOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -21,7 +21,6 @@
 #include <QDoubleValidator>
 #include <QLineEdit>
 
-//-----------------------------------------------------------------------------
 int qtCMBVOIDialog::manageVOI(pqCMBSceneNode* node)
 {
   if (node->isTypeNode() || (node->getDataObject()->getType() != pqCMBSceneObjectBase::VOI))
@@ -33,7 +32,6 @@ int qtCMBVOIDialog::manageVOI(pqCMBSceneNode* node)
   return editor.exec();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode* n)
   : Status(-1)
   , Node(n)
@@ -67,7 +65,6 @@ qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode* n)
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBVOIDialog::~qtCMBVOIDialog()
 {
   if (this->VOIDialog)
@@ -79,7 +76,7 @@ qtCMBVOIDialog::~qtCMBVOIDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBVOIDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -87,7 +84,7 @@ int qtCMBVOIDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBVOIDialog::accept()
 {
   this->Status = 1;
@@ -116,10 +113,8 @@ void qtCMBVOIDialog::accept()
   pqCMBVOI* object = dynamic_cast<pqCMBVOI*>(this->Node->getDataObject());
   object->setVOI(p1, p2);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBVOIDialog::cancel()
 {
   this->Status = 0;
 }
-
-//-----------------------------------------------------------------------------

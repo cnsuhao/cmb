@@ -25,24 +25,20 @@
 
 vtkStandardNewMacro(vtkPVSceneGenFileInformation);
 
-//----------------------------------------------------------------------------
 vtkPVSceneGenFileInformation::vtkPVSceneGenFileInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkPVSceneGenFileInformation::~vtkPVSceneGenFileInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenFileInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "FileName: " << this->FileName << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenFileInformation::CopyFromObject(vtkObject* obj)
 {
   vtkStringReader* dataObject = vtkStringReader::SafeDownCast(obj);
@@ -57,12 +53,10 @@ void vtkPVSceneGenFileInformation::CopyFromObject(vtkObject* obj)
   this->FileName = dataObject->GetFileName();
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenFileInformation::AddInformation(vtkPVInformation* /*info*/)
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenFileInformation::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -72,7 +66,6 @@ void vtkPVSceneGenFileInformation::CopyToStream(vtkClientServerStream* css)
   *css << this->FileName.c_str() << this->FileContents.c_str() << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSceneGenFileInformation::CopyFromStream(const vtkClientServerStream* css)
 {
   /*

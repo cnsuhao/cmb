@@ -29,7 +29,6 @@
 #include <QTreeWidgetItem>
 #include <QWidget>
 
-//-----------------------------------------------------------------------------
 qtCMBSceneBuilderContextMenuBehavior::qtCMBSceneBuilderContextMenuBehavior(
   pqCMBSceneTree* tree, QObject* parentObject)
   : Superclass(parentObject)
@@ -39,13 +38,11 @@ qtCMBSceneBuilderContextMenuBehavior::qtCMBSceneBuilderContextMenuBehavior(
   this->Tree = tree;
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneBuilderContextMenuBehavior::~qtCMBSceneBuilderContextMenuBehavior()
 {
   this->Tree = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneBuilderContextMenuBehavior::onViewAdded(pqView* view)
 {
   if (view && view->getProxy()->IsA("vtkSMRenderViewProxy"))
@@ -55,7 +52,6 @@ void qtCMBSceneBuilderContextMenuBehavior::onViewAdded(pqView* view)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBSceneBuilderContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 {
   if (e->type() == QEvent::MouseButtonPress)
@@ -99,7 +95,6 @@ bool qtCMBSceneBuilderContextMenuBehavior::eventFilter(QObject* caller, QEvent* 
   return Superclass::eventFilter(caller, e);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBSceneBuilderContextMenuBehavior::buildMenu(QPoint position)
 {
   pqPipelineRepresentation* pipelineRepr =

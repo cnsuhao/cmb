@@ -69,7 +69,6 @@ public:
   bool ApplyNeeded;
 };
 
-//----------------------------------------------------------------------------
 qtCMBOptionsDialogModelItem::qtCMBOptionsDialogModelItem()
   : Name()
   , Children()
@@ -93,7 +92,6 @@ qtCMBOptionsDialogModelItem::~qtCMBOptionsDialogModelItem()
   }
 }
 
-//----------------------------------------------------------------------------
 qtCMBOptionsDialogModel::qtCMBOptionsDialogModel(QObject* parentObject)
   : QAbstractItemModel(parentObject)
 {
@@ -282,7 +280,6 @@ QModelIndex qtCMBOptionsDialogModel::getIndex(qtCMBOptionsDialogModelItem* item)
   return QModelIndex();
 }
 
-//----------------------------------------------------------------------------
 qtCMBOptionsDialogForm::qtCMBOptionsDialogForm()
   : Ui::qtCMBOptionsFrame()
   , Pages()
@@ -297,7 +294,6 @@ qtCMBOptionsDialogForm::~qtCMBOptionsDialogForm()
   delete this->Model;
 }
 
-//----------------------------------------------------------------------------
 qtCMBOptionsDialog::qtCMBOptionsDialog(QWidget* widgetParent)
   : QDialog(widgetParent)
 {

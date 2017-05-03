@@ -19,7 +19,6 @@
 
 vtkStandardNewMacro(vtkPVModelVertexObjectInformation);
 
-//----------------------------------------------------------------------------
 vtkPVModelVertexObjectInformation::vtkPVModelVertexObjectInformation()
 {
   this->Location[0] = this->Location[1] = this->Location[2] = 0;
@@ -27,12 +26,10 @@ vtkPVModelVertexObjectInformation::vtkPVModelVertexObjectInformation()
   this->PointId = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkPVModelVertexObjectInformation::~vtkPVModelVertexObjectInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVModelVertexObjectInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -42,7 +39,6 @@ void vtkPVModelVertexObjectInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "PointId: " << this->PointId << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVModelVertexObjectInformation::CopyFromObject(vtkObject* obj)
 {
   vtkDataObject* dataObject = vtkDataObject::SafeDownCast(obj);
@@ -84,7 +80,6 @@ void vtkPVModelVertexObjectInformation::CopyFromObject(vtkObject* obj)
   return;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVModelVertexObjectInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVModelVertexObjectInformation* modelVertexInfo =
@@ -96,7 +91,6 @@ void vtkPVModelVertexObjectInformation::AddInformation(vtkPVInformation* info)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVModelVertexObjectInformation::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -105,7 +99,6 @@ void vtkPVModelVertexObjectInformation::CopyToStream(vtkClientServerStream* css)
        << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVModelVertexObjectInformation::CopyFromStream(const vtkClientServerStream* css)
 {
   css->GetArgument(0, 0, this->Location, 3);

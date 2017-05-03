@@ -11,21 +11,18 @@
 #include <vnl/vnl_matrix_fixed.h>
 #include <vnl/vnl_vector_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_tensor<N>::rtvl_tensor()
 {
   this->set_ball_tensor();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_tensor<N>::rtvl_tensor(vnl_matrix_fixed<double, N, N> const& tensor)
 {
   this->set_tensor(tensor);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor<N>::set_tensor(vnl_matrix_fixed<double, N, N> const& tensor)
 {
@@ -38,7 +35,6 @@ void rtvl_tensor<N>::set_tensor(vnl_matrix_fixed<double, N, N> const& tensor)
   this->lambda_[N] = 0;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor<N>::set_ball_tensor()
 {
@@ -51,7 +47,6 @@ void rtvl_tensor<N>::set_ball_tensor()
   this->lambda_[N] = 0;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor<N>::normalize()
 {
@@ -65,7 +60,6 @@ void rtvl_tensor<N>::normalize()
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor<N>::limit_saliency(double limit)
 {
@@ -80,7 +74,6 @@ void rtvl_tensor<N>::limit_saliency(double limit)
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor<N>::next_scale(double scale_multiplier, double max_saliency)
 {
@@ -115,7 +108,6 @@ void rtvl_tensor<N>::next_scale(double scale_multiplier, double max_saliency)
   }
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_TENSOR_INSTANTIATE(N) template class rtvl_tensor<N>
 
 #endif

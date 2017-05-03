@@ -349,7 +349,6 @@ pqCMBCommonMainWindowCore::pqCMBCommonMainWindowCore(QWidget* parent_widget)
     SLOT(clearAllSelections()));
 }
 
-//-----------------------------------------------------------------------------
 pqCMBCommonMainWindowCore::~pqCMBCommonMainWindowCore()
 {
   pqActiveObjects::instance().setActiveView(NULL);
@@ -357,13 +356,11 @@ pqCMBCommonMainWindowCore::~pqCMBCommonMainWindowCore()
   delete this->qtSelectionMgr;
 }
 
-//-----------------------------------------------------------------------------
 QWidget* pqCMBCommonMainWindowCore::parentWidget() const
 {
   return this->Internal->Parent;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::buildDefaultBehaviors(QObject* parent_widget)
 {
   // so we can override PV key binds
@@ -386,13 +383,11 @@ void pqCMBCommonMainWindowCore::buildDefaultBehaviors(QObject* parent_widget)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::buildRenderWindowContextMenuBehavior(QObject* parent_widget)
 {
   new qtCMBContextMenuBehavior(parent_widget);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::loadProgramFile()
 {
   const char* fileToLoad = getenv("CMB_FILE_TO_LOAD");
@@ -402,7 +397,6 @@ void pqCMBCommonMainWindowCore::loadProgramFile()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::initProjectManager()
 {
   const char* projectFile = getenv("CMB_PROJECT_FILE_PATH");
@@ -414,25 +408,21 @@ void pqCMBCommonMainWindowCore::initProjectManager()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqSelectionManager* pqCMBCommonMainWindowCore::pvSelectionManager()
 {
   return pqPVApplicationCore::instance()->selectionManager();
 }
 
-//-----------------------------------------------------------------------------
 smtk::extension::qtSelectionManager* pqCMBCommonMainWindowCore::smtkSelectionManager() const
 {
   return this->qtSelectionMgr;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBRubberBandHelper* pqCMBCommonMainWindowCore::renderViewSelectionHelper() const
 {
   return &this->Internal->RenderViewSelectionHelper;
 }
 
-//-----------------------------------------------------------------------------
 pqViewContextMenuManager* pqCMBCommonMainWindowCore::getViewContextMenuManager()
 {
   if (!this->Internal->ViewContextMenu)
@@ -448,7 +438,6 @@ pqViewContextMenuManager* pqCMBCommonMainWindowCore::getViewContextMenuManager()
   return this->Internal->ViewContextMenu;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setupProgressBar(QStatusBar* toolbar)
 {
   qtCMBProgressWidget* const progress_bar = new qtCMBProgressWidget(toolbar);
@@ -471,7 +460,6 @@ void pqCMBCommonMainWindowCore::setupProgressBar(QStatusBar* toolbar)
   progress_manager->addNonBlockableObject(progress_bar->getAbortButton());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setupAppearanceEditor(QWidget* parent)
 {
   QVBoxLayout* vboxlayout = new QVBoxLayout(parent);
@@ -491,7 +479,6 @@ void pqCMBCommonMainWindowCore::setupAppearanceEditor(QWidget* parent)
   this->Internal->AppearanceEditorContainer = container;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setShowAxisGrid(bool show)
 {
   pqRenderView* view = this->activeRenderView();
@@ -504,7 +491,6 @@ void pqCMBCommonMainWindowCore::setShowAxisGrid(bool show)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setAppearanceEditor(pqCMBDisplayProxyEditor* displayEditor)
 {
   if (this->Internal->AppearanceEditor == displayEditor)
@@ -518,19 +504,16 @@ void pqCMBCommonMainWindowCore::setAppearanceEditor(pqCMBDisplayProxyEditor* dis
   this->Internal->AppearanceEditor = displayEditor;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBDisplayProxyEditor* pqCMBCommonMainWindowCore::getAppearanceEditor()
 {
   return this->Internal->AppearanceEditor;
 }
 
-//-----------------------------------------------------------------------------
 QWidget* pqCMBCommonMainWindowCore::getAppearanceEditorContainer()
 {
   return this->Internal->AppearanceEditorContainer;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::compareView(const QString& referenceImage, double threshold,
   ostream& /*output*/, const QString& tempDirectory)
 {
@@ -539,13 +522,11 @@ bool pqCMBCommonMainWindowCore::compareView(const QString& referenceImage, doubl
     this->activeRenderView(), referenceImage, threshold, tempDirectory, QSize(300, 300));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::initializeStates()
 {
   emit this->enableVariableToolbar(false);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::makeServerConnectionIfNoneExists()
 {
   if (this->getActiveServer())
@@ -564,26 +545,22 @@ bool pqCMBCommonMainWindowCore::makeServerConnectionIfNoneExists()
   return this->makeServerConnection();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::makeServerConnection()
 {
   pqServerConnectReaction::connectToServer();
   return (this->getActiveServer() != NULL);
 }
 
-//-----------------------------------------------------------------------------
 const QString& pqCMBCommonMainWindowCore::getProcessExecDirectory() const
 {
   return this->Internal->ProcessExecDirectory;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setProcessExecDirectory(QString execPath)
 {
   this->Internal->ProcessExecDirectory = execPath;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::makeDefaultConnectionIfNoneExists()
 {
   if (this->getActiveServer())
@@ -603,7 +580,6 @@ void pqCMBCommonMainWindowCore::makeDefaultConnectionIfNoneExists()
   core->getObjectBuilder()->createServer(resource);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::checkForPreviewDialog()
 {
   if (this->Internal->PreviewDialog->isVisible())
@@ -615,7 +591,6 @@ bool pqCMBCommonMainWindowCore::checkForPreviewDialog()
   return false;
 }
 
-//-----------------------------------------------------------------------------
 const char* pqCMBCommonMainWindowCore::programDirectory()
 {
   //if we have a project server manager and
@@ -627,7 +602,6 @@ const char* pqCMBCommonMainWindowCore::programDirectory()
     : NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setupMousePositionDisplay(QStatusBar* toolbar)
 {
   QWidget* mousePositionWidget = new QWidget;
@@ -659,13 +633,11 @@ void pqCMBCommonMainWindowCore::setupMousePositionDisplay(QStatusBar* toolbar)
   this->Internal->StatusBar = toolbar;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPreviewDialog* pqCMBCommonMainWindowCore::previewDialog()
 {
   return this->Internal->PreviewDialog;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::launchLocalMeshingService()
 {
   if (!this->Internal->MeshingMonitor)
@@ -686,7 +658,6 @@ void pqCMBCommonMainWindowCore::launchLocalMeshingService()
   }
 }
 
-//----------------------------------------------------------------------------
 QString pqCMBCommonMainWindowCore::meshingServiceEndpoint() const
 {
   if (this->Internal->MeshingMonitor)
@@ -697,13 +668,11 @@ QString pqCMBCommonMainWindowCore::meshingServiceEndpoint() const
   return QString();
 }
 
-//-----------------------------------------------------------------------------
 QPointer<qtCMBMeshingMonitor> pqCMBCommonMainWindowCore::meshServiceMonitor()
 {
   return this->Internal->MeshingMonitor;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::closeData()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -725,7 +694,6 @@ void pqCMBCommonMainWindowCore::closeData()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::getExistingFileName(
   const QString filters, const QString title, QString& selectedFile)
 {
@@ -746,7 +714,6 @@ bool pqCMBCommonMainWindowCore::getExistingFileName(
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onHelpEnableTooltips(bool enabled)
 {
   if (enabled)
@@ -760,7 +727,6 @@ void pqCMBCommonMainWindowCore::onHelpEnableTooltips(bool enabled)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onEditSettings()
 {
   if (!this->Internal->AppSettingsDialog)
@@ -772,7 +738,6 @@ void pqCMBCommonMainWindowCore::onEditSettings()
   this->Internal->AppSettingsDialog->raise();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onActiveViewChanged(pqView* view)
 {
   pqRenderView* renderView = qobject_cast<pqRenderView*>(view);
@@ -806,7 +771,6 @@ void pqCMBCommonMainWindowCore::onActiveViewChanged(pqView* view)
   }
 }
 
-//-----------------------------------------------------------------------------
 pqServerManagerModelItem* pqCMBCommonMainWindowCore::getActiveObject() const
 {
   return pqActiveObjects::instance().activeSource();
@@ -859,7 +823,6 @@ QStringList getLibraries(const QString& serverPath, pqServer* server)
 }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer* server)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -921,7 +884,7 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer* server)
 
   this->setCenterAxesVisibility(false);
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBCommonMainWindowCore::eventFilter(QObject* caller, QEvent* e)
 {
   if (qobject_cast<QVTKWidget*>(caller) && e->type() == QEvent::Resize)
@@ -933,7 +896,6 @@ bool pqCMBCommonMainWindowCore::eventFilter(QObject* caller, QEvent* e)
   return QObject::eventFilter(caller, e);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::updateViewPositions()
 {
   // find a rectangle that bounds all views
@@ -960,25 +922,21 @@ void pqCMBCommonMainWindowCore::updateViewPositions()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBCommonMainWindowCore::getActiveSource()
 {
   return qobject_cast<pqPipelineSource*>(this->getActiveObject());
 }
 
-//-----------------------------------------------------------------------------
 pqServer* pqCMBCommonMainWindowCore::getActiveServer() const
 {
   return this->Internal->ActiveServer; //.current();
 }
 
-//-----------------------------------------------------------------------------
 pqRenderView* pqCMBCommonMainWindowCore::activeRenderView() const
 {
   return this->Internal->RenderView;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::removeActiveSource()
 {
   pqPipelineSource* source = this->getActiveSource();
@@ -990,7 +948,6 @@ void pqCMBCommonMainWindowCore::removeActiveSource()
   pqApplicationCore::instance()->getObjectBuilder()->destroy(source);
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBCommonMainWindowCore::createSourceOnActiveServer(const QString& /*xmlname*/)
 {
   /*
@@ -1008,7 +965,6 @@ pqPipelineSource* pqCMBCommonMainWindowCore::createSourceOnActiveServer(const QS
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetCamera()
 {
   pqRenderView* ren = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
@@ -1023,13 +979,12 @@ void pqCMBCommonMainWindowCore::resetCamera()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::pushCameraInteraction()
 {
   // Push whether we are currenlty using a 2D camera or not
   this->Internal->CameraInteractionStack.push(this->isUsing2DCameraInteraction());
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBCommonMainWindowCore::popCameraInteraction()
 {
   // If the stack is not empty then set the interaction based on the top of the stack
@@ -1049,18 +1004,17 @@ bool pqCMBCommonMainWindowCore::popCameraInteraction()
   this->Internal->CameraInteractionStack.pop();
   return true;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::enableCameraInteractionModeChanges(bool mode)
 {
   emit this->enableCameraInteractionModeChanged(mode);
 }
-//----------------------------------------------------------------------------
+
 bool pqCMBCommonMainWindowCore::isUsing2DCameraInteraction() const
 {
   return (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::TwoD);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::set2DCameraInteraction()
 {
   if (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::TwoD)
@@ -1101,7 +1055,6 @@ void pqCMBCommonMainWindowCore::set2DCameraInteraction()
   emit cameraInteractionModeChangedTo2D(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::set3DCameraInteraction()
 {
   if (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::ThreeD)
@@ -1133,7 +1086,6 @@ void pqCMBCommonMainWindowCore::set3DCameraInteraction()
   emit cameraInteractionModeChangedTo2D(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::enterRenderView()
 {
   this->Internal->MessageBeforeEnterRenderView = "";
@@ -1143,7 +1095,6 @@ void pqCMBCommonMainWindowCore::enterRenderView()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::leaveRenderView()
 {
   if (this->Internal->StatusBar)
@@ -1154,13 +1105,11 @@ void pqCMBCommonMainWindowCore::leaveRenderView()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::showStatusMessage(const QString& strMessage)
 {
   this->Internal->StatusMessage->setText(strMessage);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::updateMousePositionText()
 {
   if (!this->Internal->StatusBar)
@@ -1222,7 +1171,6 @@ void pqCMBCommonMainWindowCore::updateMousePositionText()
   this->Internal->Position2Message->setText(pos2Message);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirection(
   double look_x, double look_y, double look_z, double up_x, double up_y, double up_z)
 {
@@ -1248,49 +1196,43 @@ void pqCMBCommonMainWindowCore::resetViewDirection(
   this->Internal->RenderView->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirectionPosX()
 {
   this->resetViewDirection(1, 0, 0, 0, 0, 1);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::resetViewDirectionNegX()
 {
   this->resetViewDirection(-1, 0, 0, 0, 0, 1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirectionPosY()
 {
   this->resetViewDirection(0, 1, 0, 0, 0, 1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirectionNegY()
 {
   this->resetViewDirection(0, -1, 0, 0, 0, 1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirectionPosZ()
 {
   this->resetViewDirection(0, 0, 1, 0, 1, 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetViewDirectionNegZ()
 {
   this->resetViewDirection(0, 0, -1, 0, 1, 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::getCameraInfo(double focalPt[3], double position[3],
   double viewDirection[3], double& distance, double viewUp[3], double& parallelScale)
 {
   this->getViewCameraInfo(
     this->Internal->RenderView, focalPt, position, viewDirection, distance, viewUp, parallelScale);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::getViewCameraInfo(pqRenderView* view, double focalPt[3],
   double position[3], double viewDirection[3], double& distance, double viewUp[3],
   double& parallelScale)
@@ -1323,7 +1265,6 @@ void pqCMBCommonMainWindowCore::getViewCameraInfo(pqRenderView* view, double foc
   viewUp[2] = values[2].toDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::updateCameraPositionDueToModeChange()
 {
   QList<QVariant> values;
@@ -1393,19 +1334,16 @@ void pqCMBCommonMainWindowCore::updateCameraPositionDueToModeChange()
   this->Internal->RenderView->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::enableTestingRenderWindowSize(bool enable)
 {
   this->setMaxRenderWindowSize(enable ? QSize(300, 300) : QSize(-1, -1));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setMaxRenderWindowSize(const QSize& /*size*/)
 {
   //this->Internal->MultiViewManager.setMaxViewWindowSize(size);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::pickCenterOfRotation(bool begin)
 {
   if (!qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView()))
@@ -1422,7 +1360,7 @@ void pqCMBCommonMainWindowCore::pickCenterOfRotation(bool begin)
     this->Internal->RenderViewSelectionHelper.endPick();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::linkCenterWithFocalPoint(bool linked)
 {
   this->Internal->CenterFocalLinked = linked;
@@ -1432,7 +1370,6 @@ void pqCMBCommonMainWindowCore::linkCenterWithFocalPoint(bool linked)
   //  }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::updateFocalPointWithCenter()
 {
   double pos[3];
@@ -1480,14 +1417,13 @@ void pqCMBCommonMainWindowCore::updateFocalPointWithCenter()
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::pickCenterOfRotationFinished(double x, double y, double z)
 {
   //this->Internal->RenderViewSelectionHelper.endPick();
   emit this->pickingCenter(false);
   this->setCenterOfRotation(x, y, z);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::setCenterOfRotation(double x, double y, double z)
 {
   pqRenderView* rm = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
@@ -1539,7 +1475,6 @@ void pqCMBCommonMainWindowCore::setCenterOfRotation(double x, double y, double z
   rm->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->resetCamera();
@@ -1553,7 +1488,6 @@ bool pqCMBCommonMainWindowCore::zoomToSelection()
 }
 /******************   Zoom to Selection           ************************/
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setCenterAxesVisibility(bool visible)
 {
   pqRenderView* rm = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
@@ -1566,7 +1500,6 @@ void pqCMBCommonMainWindowCore::setCenterAxesVisibility(bool visible)
   rm->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onToolsManageLinks()
 {
   if (this->Internal->LinksManager)
@@ -1582,19 +1515,17 @@ void pqCMBCommonMainWindowCore::onToolsManageLinks()
     this->Internal->LinksManager->show();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::onSaveScreenshot()
 {
   pqSaveScreenshotReaction::saveScreenshot();
 }
 
-//-----------------------------------------------------------------------------
 pqUndoStack* pqCMBCommonMainWindowCore::getApplicationUndoStack() const
 {
   return this->Internal->UndoStack;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::applicationInitialize()
 {
   /*pqApplicationCore* core = */ pqApplicationCore::instance();
@@ -1631,7 +1562,6 @@ void pqCMBCommonMainWindowCore::applicationInitialize()
   this->InitializePythonEnvironment();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::showCameraDialog(pqView* view)
 {
   if (!view)
@@ -1670,7 +1600,6 @@ void pqCMBCommonMainWindowCore::showCameraDialog(pqView* view)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::fiveMinuteTimeoutWarning()
 {
   QMessageBox::warning(this->Internal->Parent, tr("Server Timeout Warning"),
@@ -1679,7 +1608,6 @@ void pqCMBCommonMainWindowCore::fiveMinuteTimeoutWarning()
     QMessageBox::Ok);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::finalTimeoutWarning()
 {
   QMessageBox::critical(this->Internal->Parent, tr("Server Timeout Warning"),
@@ -1688,7 +1616,6 @@ void pqCMBCommonMainWindowCore::finalTimeoutWarning()
     QMessageBox::Ok);
 }
 
-//-----------------------------------------------------------------------------
 // update the state of the \c node if node is not an ancestor of any of the
 // non-blockable widgets. If so, then it recurses over all its children.
 static void selectiveEnabledInternal(
@@ -1737,7 +1664,7 @@ static void selectiveEnabledInternal(
   // we can simply update its enable state.
   node->setEnabled(enable);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::setSelectiveEnabledState(bool enable)
 {
   pqProgressManager* progress_manager = pqApplicationCore::instance()->getProgressManager();
@@ -1753,13 +1680,11 @@ void pqCMBCommonMainWindowCore::setSelectiveEnabledState(bool enable)
   selectiveEnabledInternal(this->Internal->Parent, nonblockable, enable);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::requestRender()
 {
   this->Internal->RenderView->render();
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBCommonMainWindowCore::getAppendedSource(QList<pqOutputPort*>& inputs)
 {
   if (inputs.count() == 0)
@@ -1791,7 +1716,6 @@ pqPipelineSource* pqCMBCommonMainWindowCore::getAppendedSource(QList<pqOutputPor
   return pdSource;
 }
 
-//-----------------------------------------------------------------------------
 qtArcWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
 {
   // We need to explicitly call this to make sure the mode is 2D
@@ -1863,7 +1787,7 @@ qtArcWidget* pqCMBCommonMainWindowCore::createPqContourWidget(int& orthoPlane)
 
   return arcWidget;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::deleteContourWidget(qtArcWidget* arcWidget)
 {
   if (arcWidget)
@@ -1878,7 +1802,7 @@ void pqCMBCommonMainWindowCore::deleteContourWidget(qtArcWidget* arcWidget)
     delete arcWidget;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::updateContourLoop(vtkSMProxy* implicitLoop, qtArcWidget* arcWidget)
 {
   // force read
@@ -1925,7 +1849,6 @@ void pqCMBCommonMainWindowCore::updateContourLoop(vtkSMProxy* implicitLoop, qtAr
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::getContourNormal(double normal[3], qtArcWidget* arcWidget)
 {
   int orthoPlane;
@@ -1957,7 +1880,7 @@ bool pqCMBCommonMainWindowCore::getContourNormal(double normal[3], qtArcWidget* 
   }
   return false;
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBCommonMainWindowCore::getContourProjectionNormal(int& projNormal, qtArcWidget* arcWidget)
 {
   vtkSMNewWidgetRepresentationProxy* widget = arcWidget->widgetProxy();
@@ -1975,7 +1898,7 @@ bool pqCMBCommonMainWindowCore::getContourProjectionNormal(int& projNormal, qtAr
   }
   return false;
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBCommonMainWindowCore::getContourProjectionPosition(
   double& position, qtArcWidget* arcWidget)
 {
@@ -1995,7 +1918,6 @@ bool pqCMBCommonMainWindowCore::getContourProjectionPosition(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 qtArcWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
   int orthoplane, double projPos, vtkSMSourceProxy* source)
 {
@@ -2023,7 +1945,7 @@ qtArcWidget* pqCMBCommonMainWindowCore::createContourWidgetFromSource(
 
   return arcWidget;
 }
-//-----------------------------------------------------------------------------
+
 qtArcWidget* pqCMBCommonMainWindowCore::createDefaultArcWidget()
 {
   qtArcWidget* arcWidget = new qtArcWidget(nullptr);
@@ -2032,7 +1954,7 @@ qtArcWidget* pqCMBCommonMainWindowCore::createDefaultArcWidget()
   this->activeRenderView()->getProxy()->UpdateVTKObjects();
   return arcWidget;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::setArcPlane(qtArcWidget* arcWidget, int orthoPlane, double projpos)
 {
   vtkSMProxyProperty* proxyProp =
@@ -2048,7 +1970,6 @@ void pqCMBCommonMainWindowCore::setArcPlane(qtArcWidget* arcWidget, int orthoPla
   }
 }
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptions* pqCMBCommonMainWindowCore::cmbAppOptions()
 {
   if (!this->Internal->CmbAppOptions)
@@ -2059,7 +1980,6 @@ qtCMBApplicationOptions* pqCMBCommonMainWindowCore::cmbAppOptions()
   return this->Internal->CmbAppOptions;
 }
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptionsDialog* pqCMBCommonMainWindowCore::appSettingsDialog()
 {
   if (!this->Internal->AppSettingsDialog)
@@ -2079,14 +1999,13 @@ qtCMBApplicationOptionsDialog* pqCMBCommonMainWindowCore::appSettingsDialog()
   }
   return this->Internal->AppSettingsDialog;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBCommonMainWindowCore::applyAppSettings()
 {
   this->appSettingsDialog();
   //this->cmbAppOptions()->loadGlobalPropertiesFromSettings();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBCommonMainWindowCore::InitializePythonEnvironment()
 {
   if (!vtkPythonInterpreter::IsInitialized())
@@ -2108,7 +2027,6 @@ bool pqCMBCommonMainWindowCore::InitializePythonEnvironment()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::setDisplayRepresentation(pqDataRepresentation* rep)
 {
   if (this->Internal->AppearanceEditor &&
@@ -2146,7 +2064,6 @@ void pqCMBCommonMainWindowCore::setDisplayRepresentation(pqDataRepresentation* r
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBCommonMainWindowCore::onViewCreated(pqView* view)
 {
   // we need to make sure the current in pqActiveView instance is always

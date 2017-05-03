@@ -32,22 +32,18 @@ class vtkContourPointCollection::vtkInternalSet : public vtkInternalSetBase
 {
 };
 
-//----------------------------------------------------------------------------
-
 vtkContourPointCollection* vtkContourPointCollection::Instance = 0;
 vtkContourPointCollectionCleanup vtkContourPointCollection::Cleanup;
 
-//-----------------------------------------------------------------------------
 vtkContourPointCollectionCleanup::vtkContourPointCollectionCleanup()
 {
 }
-//-----------------------------------------------------------------------------
+
 vtkContourPointCollectionCleanup::~vtkContourPointCollectionCleanup()
 {
   vtkContourPointCollection::SetInstance(NULL);
 }
 
-//-----------------------------------------------------------------------------
 vtkContourPointCollection::vtkContourPointCollection()
 {
   this->Points = vtkPoints::New();
@@ -57,7 +53,6 @@ vtkContourPointCollection::vtkContourPointCollection()
   this->InitLocator();
 }
 
-//-----------------------------------------------------------------------------
 vtkContourPointCollection::~vtkContourPointCollection()
 {
   this->Points->Delete();
@@ -66,7 +61,6 @@ vtkContourPointCollection::~vtkContourPointCollection()
   delete this->RegisteredContourIds;
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -75,7 +69,6 @@ void vtkContourPointCollection::PrintSelf(ostream& os, vtkIndent indent)
      << static_cast<void*>(vtkContourPointCollection::Instance) << endl;
 }
 
-//-----------------------------------------------------------------------------
 // Up the reference count so it behaves like New
 vtkContourPointCollection* vtkContourPointCollection::New()
 {
@@ -84,7 +77,6 @@ vtkContourPointCollection* vtkContourPointCollection::New()
   return ret;
 }
 
-//-----------------------------------------------------------------------------
 // Return the single instance of the vtkContourPointCollection
 vtkContourPointCollection* vtkContourPointCollection::GetInstance()
 {
@@ -106,7 +98,6 @@ vtkContourPointCollection* vtkContourPointCollection::GetInstance()
   return vtkContourPointCollection::Instance;
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::SetInstance(vtkContourPointCollection* instance)
 {
   if (vtkContourPointCollection::Instance == instance)
@@ -127,7 +118,6 @@ void vtkContourPointCollection::SetInstance(vtkContourPointCollection* instance)
   instance->Register(NULL);
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::ResetContourPointCollection()
 {
   this->Points->Delete();
@@ -142,7 +132,6 @@ void vtkContourPointCollection::ResetContourPointCollection()
   this->InitLocator();
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::InitLocator()
 {
   //have to set the tolerance before doing init
@@ -154,7 +143,6 @@ void vtkContourPointCollection::InitLocator()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::SetPoints(vtkPoints* points)
 {
   if (this->Points != points)
@@ -173,13 +161,11 @@ void vtkContourPointCollection::SetPoints(vtkPoints* points)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool vtkContourPointCollection::IsEndNode(const vtkIdType& id) const
 {
   return (this->EndNodes->find(id) != this->EndNodes->end());
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::SetAsEndNode(const vtkIdType& id, const vtkIdType& contourId)
 {
   if (!this->IsEndNode(id))
@@ -189,7 +175,6 @@ void vtkContourPointCollection::SetAsEndNode(const vtkIdType& id, const vtkIdTyp
   this->EndNodes->find(id)->second.insert(contourId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::RemoveAsEndNode(const vtkIdType& id, const vtkIdType& contourId)
 {
   if (this->IsEndNode(id))
@@ -203,7 +188,6 @@ void vtkContourPointCollection::RemoveAsEndNode(const vtkIdType& id, const vtkId
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkContourPointCollection::NumberOfContoursUsingEndNode(const vtkIdType& id) const
 {
   if (!this->IsEndNode(id))
@@ -213,7 +197,6 @@ int vtkContourPointCollection::NumberOfContoursUsingEndNode(const vtkIdType& id)
   return static_cast<int>(this->EndNodes->find(id)->second.size());
 }
 
-//-----------------------------------------------------------------------------
 std::set<vtkIdType> vtkContourPointCollection::ContoursUsingEndNode(const vtkIdType& id) const
 {
   if (!this->IsEndNode(id))
@@ -223,13 +206,11 @@ std::set<vtkIdType> vtkContourPointCollection::ContoursUsingEndNode(const vtkIdT
   return this->EndNodes->find(id)->second;
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::RegisterContour(const vtkIdType& id)
 {
   this->RegisteredContourIds->insert(id);
 }
 
-//-----------------------------------------------------------------------------
 void vtkContourPointCollection::UnRegisterContour(const vtkIdType& id)
 {
   this->RegisteredContourIds->erase(id);

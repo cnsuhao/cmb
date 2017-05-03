@@ -22,17 +22,14 @@
 
 vtkStandardNewMacro(vtkAddMeshDataArrayFilter);
 
-//----------------------------------------------------------------------------
 vtkAddMeshDataArrayFilter::vtkAddMeshDataArrayFilter()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkAddMeshDataArrayFilter::~vtkAddMeshDataArrayFilter()
 {
 }
 
-//----------------------------------------------------------------------------
 int vtkAddMeshDataArrayFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -99,7 +96,6 @@ int vtkAddMeshDataArrayFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkAddMeshDataArrayFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

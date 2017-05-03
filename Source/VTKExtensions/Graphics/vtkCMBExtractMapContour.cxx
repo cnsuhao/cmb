@@ -31,11 +31,11 @@ vtkStandardNewMacro(vtkCMBExtractMapContour);
 vtkCMBExtractMapContour::vtkCMBExtractMapContour()
 {
 }
-//-----------------------------------------------------------------------------
+
 vtkCMBExtractMapContour::~vtkCMBExtractMapContour()
 {
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -162,20 +162,20 @@ int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
   return 1;
   */
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBExtractMapContour::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << " \n";
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBExtractMapContour::AddContourToExtract(int index)
 {
   contoursToExtract.push_back(index);
   this->Modified();
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBExtractMapContour::ExtractSingleContour(int index)
 {
   contoursToExtract.clear();

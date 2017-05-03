@@ -38,12 +38,11 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
-//-----------------------------------------------------------------------------
 pqCMBCrossSection::pqCMBCrossSection()
   : pqCMBSceneObjectBase()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBCrossSection::pqCMBCrossSection(
   pqPipelineSource* source, pqRenderView* view, pqServer* /*server*/)
   : pqCMBSceneObjectBase(source)
@@ -66,17 +65,15 @@ pqCMBCrossSection::pqCMBCrossSection(
   this->UserDefinedType = "GeoCrossSection";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBCrossSection::~pqCMBCrossSection()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBCrossSection::getType() const
 {
   return pqCMBSceneObjectBase::GeoCrossSection;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBCrossSection::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {

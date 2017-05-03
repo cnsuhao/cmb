@@ -48,19 +48,16 @@
 #include "vtkSMStringVectorProperty.h"
 #include "vtkStringList.h"
 
-//----------------------------------------------------------------------------
 pqCMBSceneV2Writer::pqCMBSceneV2Writer()
 {
   this->Tree = NULL;
   this->WriterSource = NULL;
 }
 
-//----------------------------------------------------------------------------
 pqCMBSceneV2Writer::~pqCMBSceneV2Writer()
 {
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::write(bool packageScene)
 {
   // generate the server writer
@@ -136,7 +133,6 @@ void pqCMBSceneV2Writer::write(bool packageScene)
   this->ContourInputs = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::getUserDefinedObjectTypes()
 {
   vtkXMLDataElement* typeSection = vtkXMLDataElement::New();
@@ -154,7 +150,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getUserDefinedObjectTypes()
   return typeSection;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::getTypes()
 {
   vtkXMLDataElement* typeSection = vtkXMLDataElement::New();
@@ -210,7 +205,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getTypes()
   return typeSection;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::getDirectory(bool packageScene)
 {
   //the goal is to push to the server a list of files that need to be checked
@@ -356,7 +350,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getDirectory(bool packageScene)
   return dirSection;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::updateDirectoryInfo(
   const std::string& fname, vtkStringList* absFiles, int& nextEntry)
 {
@@ -373,7 +366,7 @@ void pqCMBSceneV2Writer::updateDirectoryInfo(
     absFiles->AddString(fname.c_str());
   }
 }
-//----------------------------------------------------------------------------
+
 vtkXMLDataElement* pqCMBSceneV2Writer::getTextureDirectory(bool packageScene)
 {
 
@@ -449,7 +442,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getTextureDirectory(bool packageScene)
   return dirSection;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::getObjects()
 {
   vtkXMLDataElement* objSection = vtkXMLDataElement::New();
@@ -466,7 +458,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getObjects()
   return objSection;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::getObjectDescription(pqCMBSceneNode* node)
 {
   pqCMBSceneObjectBase* obj = node->getDataObject();
@@ -535,7 +526,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::getObjectDescription(pqCMBSceneNode* node
   return elem;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processVOI(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBVOI* obj = dynamic_cast<pqCMBVOI*>(node->getDataObject());
@@ -551,7 +541,6 @@ void pqCMBSceneV2Writer::processVOI(pqCMBSceneNode* node, vtkXMLDataElement* ele
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processLine(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBLine* obj = dynamic_cast<pqCMBLine*>(node->getDataObject());
@@ -573,7 +562,6 @@ void pqCMBSceneV2Writer::processLine(pqCMBSceneNode* node, vtkXMLDataElement* el
   this->processNonTransformProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processContour(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBArc* obj = dynamic_cast<pqCMBArc*>(node->getDataObject());
@@ -608,7 +596,6 @@ void pqCMBSceneV2Writer::processContour(pqCMBSceneNode* node, vtkXMLDataElement*
   this->processNonTransformProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processPlane(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBPlane* obj = dynamic_cast<pqCMBPlane*>(node->getDataObject());
@@ -628,7 +615,6 @@ void pqCMBSceneV2Writer::processPlane(pqCMBSceneNode* node, vtkXMLDataElement* e
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processCone(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBConicalRegion* obj = dynamic_cast<pqCMBConicalRegion*>(node->getDataObject());
@@ -674,7 +660,6 @@ void pqCMBSceneV2Writer::processCone(pqCMBSceneNode* node, vtkXMLDataElement* el
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processFacetedObject(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBFacetedObject* obj = dynamic_cast<pqCMBFacetedObject*>(node->getDataObject());
@@ -690,7 +675,7 @@ void pqCMBSceneV2Writer::processFacetedObject(pqCMBSceneNode* node, vtkXMLDataEl
   }
   this->processGeometricProperties(node, elem);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneV2Writer::processSolidMesh(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBSolidMesh* obj = dynamic_cast<pqCMBSolidMesh*>(node->getDataObject());
@@ -706,7 +691,6 @@ void pqCMBSceneV2Writer::processSolidMesh(pqCMBSceneNode* node, vtkXMLDataElemen
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processUniformGrid(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBUniformGrid* obj = dynamic_cast<pqCMBUniformGrid*>(node->getDataObject());
@@ -737,7 +721,6 @@ void pqCMBSceneV2Writer::processUniformGrid(pqCMBSceneNode* node, vtkXMLDataElem
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processPoints(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBPoints* obj = dynamic_cast<pqCMBPoints*>(node->getDataObject());
@@ -773,7 +756,6 @@ void pqCMBSceneV2Writer::processPoints(pqCMBSceneNode* node, vtkXMLDataElement* 
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processGlyphObject(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBGlyphObject* obj = dynamic_cast<pqCMBGlyphObject*>(node->getDataObject());
@@ -801,7 +783,6 @@ void pqCMBSceneV2Writer::processGlyphObject(pqCMBSceneNode* node, vtkXMLDataElem
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processPolygon(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   pqCMBPolygon* obj = dynamic_cast<pqCMBPolygon*>(node->getDataObject());
@@ -842,7 +823,6 @@ void pqCMBSceneV2Writer::processPolygon(pqCMBSceneNode* node, vtkXMLDataElement*
   this->processGeometricProperties(node, elem);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processNonTransformProperties(
   pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
@@ -894,7 +874,6 @@ void pqCMBSceneV2Writer::processNonTransformProperties(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneV2Writer::processGeometricProperties(pqCMBSceneNode* node, vtkXMLDataElement* elem)
 {
   this->processNonTransformProperties(node, elem);
@@ -961,7 +940,6 @@ void pqCMBSceneV2Writer::processGeometricProperties(pqCMBSceneNode* node, vtkXML
   }
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::addConstraints(pqCMBSceneObjectBase* obj)
 {
   vtkXMLDataElement* elem = vtkXMLDataElement::New();
@@ -1048,7 +1026,7 @@ vtkXMLDataElement* pqCMBSceneV2Writer::addConstraints(pqCMBSceneObjectBase* obj)
   }
   return elem;
 }
-//-----------------------------------------------------------------------------
+
 vtkXMLDataElement* pqCMBSceneV2Writer::addTextureInfo(pqCMBTexturedObject* obj)
 {
   vtkXMLDataElement* elem = vtkXMLDataElement::New();
@@ -1077,7 +1055,7 @@ vtkXMLDataElement* pqCMBSceneV2Writer::addTextureInfo(pqCMBTexturedObject* obj)
   elem->SetVectorAttribute("Points", 4 * n, data);
   return elem;
 }
-//-----------------------------------------------------------------------------
+
 vtkXMLDataElement* pqCMBSceneV2Writer::addBathyMetryInfo(pqCMBTexturedObject* obj)
 {
   pqCMBSceneNode* bathynode = this->Tree->getSceneObjectNode(obj->getBathymetrySource());
@@ -1097,7 +1075,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::addBathyMetryInfo(pqCMBTexturedObject* ob
   return elem;
 }
 
-//----------------------------------------------------------------------------
 std::string pqCMBSceneV2Writer::getContourFileName(bool packageScene, std::string absoluteFileName)
 {
   //the scene file only uses relative paths, so we need to query the writer
@@ -1135,7 +1112,6 @@ std::string pqCMBSceneV2Writer::getContourFileName(bool packageScene, std::strin
   return relativeFileName;
 }
 
-//----------------------------------------------------------------------------
 vtkXMLDataElement* pqCMBSceneV2Writer::generateContourFile(bool packageScene)
 {
   //drop the .sg extension and add _contour.vtp

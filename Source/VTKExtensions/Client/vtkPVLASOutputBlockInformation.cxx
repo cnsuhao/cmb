@@ -23,7 +23,6 @@
 
 vtkStandardNewMacro(vtkPVLASOutputBlockInformation);
 
-//----------------------------------------------------------------------------
 vtkPVLASOutputBlockInformation::vtkPVLASOutputBlockInformation()
 {
   this->NumberOfPoints = -1;
@@ -33,12 +32,10 @@ vtkPVLASOutputBlockInformation::vtkPVLASOutputBlockInformation()
   this->Bounds[1] = this->Bounds[3] = this->Bounds[5] = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkPVLASOutputBlockInformation::~vtkPVLASOutputBlockInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVLASOutputBlockInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -52,7 +49,6 @@ void vtkPVLASOutputBlockInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ClassificationName: " << this->ClassificationName << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVLASOutputBlockInformation::CopyFromObject(vtkObject* obj)
 {
   vtkDataObject* dataObject = vtkDataObject::SafeDownCast(obj);
@@ -126,7 +122,6 @@ void vtkPVLASOutputBlockInformation::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVLASOutputBlockInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVLASOutputBlockInformation* outputBlockInfo =
@@ -141,7 +136,6 @@ void vtkPVLASOutputBlockInformation::AddInformation(vtkPVInformation* info)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVLASOutputBlockInformation::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -151,7 +145,6 @@ void vtkPVLASOutputBlockInformation::CopyToStream(vtkClientServerStream* css)
        << this->ClassificationName.c_str() << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVLASOutputBlockInformation::CopyFromStream(const vtkClientServerStream* css)
 {
   css->GetArgument(0, 0, &this->NumberOfPoints);

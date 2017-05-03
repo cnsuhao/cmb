@@ -498,7 +498,7 @@ int vtkCMBBandedPolyDataContourFilter::RequestData(vtkInformation* vtkNotUsed(re
       polys = tmpPolys;
     }
 
-    // Process polygons to produce edge intersections.------------------------
+    // Process polygons to produce edge intersections
     //
     numPolys = polys->GetNumberOfCells();
     vtkIdType updateCount = numPolys / 20 + 1;
@@ -544,7 +544,7 @@ int vtkCMBBandedPolyDataContourFilter::RequestData(vtkInformation* vtkNotUsed(re
       }
     } //for all polygons
 
-    // Process polygons to produce output triangles------------------------
+    // Process polygons to produce output triangles
     //
     vtkCellArray* newPolys = vtkCellArray::New();
     newPolys->Allocate(polys->GetSize());
