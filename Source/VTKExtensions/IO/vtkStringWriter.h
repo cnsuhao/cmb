@@ -13,12 +13,12 @@
 #ifndef __StringWriter_h
 #define __StringWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 class vtkMultiBlockDataSet;
 class vtkPolyData;
@@ -26,8 +26,8 @@ class vtkPolyData;
 class VTKCMBIO_EXPORT vtkStringWriter : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkStringWriter *New();
-  vtkTypeMacro(vtkStringWriter,vtkPolyDataAlgorithm);
+  static vtkStringWriter* New();
+  vtkTypeMacro(vtkStringWriter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -44,18 +44,15 @@ protected:
   vtkStringWriter();
   ~vtkStringWriter() override;
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  char *FileName;
-  char *Text;
+  char* FileName;
+  char* Text;
+
 private:
-  vtkStringWriter(const vtkStringWriter&);  // Not implemented.
+  vtkStringWriter(const vtkStringWriter&); // Not implemented.
   void operator=(const vtkStringWriter&);  // Not implemented.
-
 };
 
 #endif

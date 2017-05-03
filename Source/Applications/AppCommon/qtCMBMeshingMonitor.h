@@ -12,24 +12,30 @@
 #define __qtCMBMeshingMonitor_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QString>
 #include <QTimer>
-#include "cmbSystemConfig.h"
 
 //Don't let QMOC see remus headers that include boost headers
 //or bad things happen
 #ifndef Q_MOC_RUN
-  #include <remus/client/ServerConnection.h>
-  #include <remus/proto/Job.h>
-  #include <remus/proto/JobStatus.h>
-  #include <remus/proto/JobResult.h>
+#include <remus/client/ServerConnection.h>
+#include <remus/proto/Job.h>
+#include <remus/proto/JobResult.h>
+#include <remus/proto/JobStatus.h>
 #endif
 
 #include <vector>
 
 class vtkSMProxy;
-namespace remus{namespace client{class Client;}}
+namespace remus
+{
+namespace client
+{
+class Client;
+}
+}
 
 //The meshing monitor is the client side interface
 //to the meshing process that is happening on the local or remote
@@ -46,20 +52,17 @@ class CMBAPPCOMMON_EXPORT qtCMBMeshingMonitor : public QObject
   class MeshingJobState
   {
   public:
-    MeshingJobState( const remus::proto::Job &j,
-                     const remus::proto::JobStatus& jstatus ):
-      Job( j ),
-      Status( jstatus )
-      { }
+    MeshingJobState(const remus::proto::Job& j, const remus::proto::JobStatus& jstatus)
+      : Job(j)
+      , Status(jstatus)
+    {
+    }
 
-    bool operator<( const MeshingJobState& other ) const
-      { return this->Job.id() < other.Job.id(); }
+    bool operator<(const MeshingJobState& other) const { return this->Job.id() < other.Job.id(); }
 
-    bool operator ==(const MeshingJobState& other) const
-      { return this->Job.id() == other.Job.id(); }
+    bool operator==(const MeshingJobState& other) const { return this->Job.id() == other.Job.id(); }
 
-    bool operator !=(const MeshingJobState& other) const
-      { return !(this->operator ==(other)); }
+    bool operator!=(const MeshingJobState& other) const { return !(this->operator==(other)); }
 
     remus::proto::Job Job;
     remus::proto::JobStatus Status;
@@ -67,27 +70,27 @@ class CMBAPPCOMMON_EXPORT qtCMBMeshingMonitor : public QObject
 
   Q_OBJECT
 public:
-
   //we need this object to be kept around, as
   //once a server is launched this is the only reference to
   //the server, so if we want to properly kill the server this is needs
   //to be deleted properly
   struct LocalMeshServer
+  {
+    LocalMeshServer()
+      : Created(false)
+      , Connection()
+      , LocalServerProxy(NULL)
     {
-    LocalMeshServer():
-      Created(false),
-      Connection(),
-      LocalServerProxy(NULL)
-    {}
+    }
 
     bool Created;
     remus::client::ServerConnection Connection;
     vtkSMProxy* LocalServerProxy;
-    };
+  };
 
   //Connect to the given remus server, while also
   //creating a server side class that does the same
-  qtCMBMeshingMonitor(const remus::client::ServerConnection& conn );
+  qtCMBMeshingMonitor(const remus::client::ServerConnection& conn);
   qtCMBMeshingMonitor(const LocalMeshServer& localProcessHandle);
   ~qtCMBMeshingMonitor() override;
 
@@ -139,7 +142,7 @@ private:
 
   //proxy to the servers connetion to the remus server, use this to send
   //heavy server side data to the remus server
-  vtkSMProxy *MeshingServerProxy;
+  vtkSMProxy* MeshingServerProxy;
 
   //Simple timer used to determine how often we poll the remus server
   //for the status of all the active jobs

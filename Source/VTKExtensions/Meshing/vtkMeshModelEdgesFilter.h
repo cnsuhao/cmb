@@ -40,15 +40,15 @@
 #ifndef __vtkMeshModelEdgesFilter_h
 #define __vtkMeshModelEdgesFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBMESHING_EXPORT vtkMeshModelEdgesFilter : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkMeshModelEdgesFilter *New();
-  vtkTypeMacro(vtkMeshModelEdgesFilter,vtkPolyDataAlgorithm);
+  static vtkMeshModelEdgesFilter* New();
+  vtkTypeMacro(vtkMeshModelEdgesFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -64,40 +64,39 @@ public:
   vtkSetMacro(UseLengthAlongEdge, bool);
   vtkGetMacro(UseLengthAlongEdge, bool);
 
-//BTX
+  //BTX
 protected:
   vtkMeshModelEdgesFilter();
   ~vtkMeshModelEdgesFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void MeshPolyLine(vtkIdType npts, vtkIdType *pts, vtkPoints *inputPoints,
-    double startTargetSegmentLength, double endTargetSegmentLength,
-    vtkPoints *outputPoints, vtkIdList *outputPtIds);
-  double ComputeEdgeLength(vtkPoints *inputPoints, vtkIdType npts, vtkIdType *pts);
+  void MeshPolyLine(vtkIdType npts, vtkIdType* pts, vtkPoints* inputPoints,
+    double startTargetSegmentLength, double endTargetSegmentLength, vtkPoints* outputPoints,
+    vtkIdList* outputPtIds);
+  double ComputeEdgeLength(vtkPoints* inputPoints, vtkIdType npts, vtkIdType* pts);
   double ComputeSegmentLength(double s1, double s2, double l, double L, double factor);
 
   vtkIdType FindRequiredPointOnEdge(double currentPt[3], double segmentLength,
-    vtkPoints *inputPoints, vtkPoints *outputPoints, vtkIdType *pts,
-    vtkIdType firstIndex, vtkIdType afterLastIndex, vtkIdType searchDirection,
-    vtkIdType finalPointId, vtkIdType &nextPtId);
-  vtkIdType ComputeRequiredPointAlongLine(vtkPoints *points, double *pt0,
-    double *pt1, double t);
+    vtkPoints* inputPoints, vtkPoints* outputPoints, vtkIdType* pts, vtkIdType firstIndex,
+    vtkIdType afterLastIndex, vtkIdType searchDirection, vtkIdType finalPointId,
+    vtkIdType& nextPtId);
+  vtkIdType ComputeRequiredPointAlongLine(vtkPoints* points, double* pt0, double* pt1, double t);
 
 private:
-  vtkMeshModelEdgesFilter(const vtkMeshModelEdgesFilter&);  // Not implemented.
-  void operator=(const vtkMeshModelEdgesFilter&);  // Not implemented.
+  vtkMeshModelEdgesFilter(const vtkMeshModelEdgesFilter&); // Not implemented.
+  void operator=(const vtkMeshModelEdgesFilter&);          // Not implemented.
 
-  vtkIdType EstimateNumberOfOutputPoints(vtkPolyData *input,
-    vtkDoubleArray *targetSegmentLengthArray);
+  vtkIdType EstimateNumberOfOutputPoints(
+    vtkPolyData* input, vtkDoubleArray* targetSegmentLengthArray);
 
-  char *TargetSegmentLengthCellArrayName;
+  char* TargetSegmentLengthCellArrayName;
   //vtkPoints *TemporaryPoints;
-  vtkIdList *MeshPtIdsFromStart;
-  vtkIdList *MeshPtIdsFromEnd;
+  vtkIdList* MeshPtIdsFromStart;
+  vtkIdList* MeshPtIdsFromEnd;
   bool UseLengthAlongEdge;
 
-//ETX
+  //ETX
 };
 
 #endif

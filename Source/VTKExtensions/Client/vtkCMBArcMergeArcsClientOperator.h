@@ -13,13 +13,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcMergeArcsClientOperator_h
 #define __vtkCMBArcMergeArcsClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -32,11 +31,11 @@ public:
 
   //Description:
   // Returns the arc id of the merged arc
-  vtkGetMacro(ArcId,vtkIdType);
+  vtkGetMacro(ArcId, vtkIdType);
 
   //Description:
   // Returns the arc that needs to be deleted after the merge
-  vtkGetMacro(ArcIdToDelete,vtkIdType);
+  vtkGetMacro(ArcIdToDelete, vtkIdType);
 
   // Description:
   // Merge the two arcs together
@@ -51,7 +50,7 @@ protected:
 
 private:
   vtkCMBArcMergeArcsClientOperator(const vtkCMBArcMergeArcsClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcMergeArcsClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcMergeArcsClientOperator&);                   // Not implemented
 };
 
 #endif

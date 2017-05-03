@@ -22,8 +22,8 @@
 #define _qtCMBTableWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QTableWidget>
 #include "cmbSystemConfig.h"
+#include <QTableWidget>
 
 class QKeyEvent;
 
@@ -33,14 +33,10 @@ class CMBAPPCOMMON_EXPORT qtCMBTableWidget : public QTableWidget
   Q_OBJECT
 
 public:
-
   qtCMBTableWidget(QWidget* p = NULL);
   ~qtCMBTableWidget() override;
 
-  QModelIndexList getSelectedIndexes() const
-    {
-    return this->selectedIndexes();
-    }
+  QModelIndexList getSelectedIndexes() const { return this->selectedIndexes(); }
 public slots:
 
 signals:
@@ -48,7 +44,6 @@ signals:
 
 protected slots:
   void keyPressEvent(QKeyEvent*) override;
-
 };
 
 #endif // !_qtCMBTableWidget_h

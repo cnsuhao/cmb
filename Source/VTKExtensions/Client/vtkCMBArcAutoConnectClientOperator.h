@@ -13,13 +13,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcAutoConnectClientOperator_h
 #define __vtkCMBArcAutoConnectClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBCLIENT_EXPORT vtkCMBArcAutoConnectClientOperator : public vtkSMSourceProxy
 {
@@ -30,7 +29,7 @@ public:
 
   //Description:
   // Returns the arc id of the newly created arc
-  vtkGetMacro(ArcId,vtkIdType);
+  vtkGetMacro(ArcId, vtkIdType);
 
   // Description:
   // Connect the two arcs with the provided id on the server
@@ -43,7 +42,7 @@ protected:
 
 private:
   vtkCMBArcAutoConnectClientOperator(const vtkCMBArcAutoConnectClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcAutoConnectClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcAutoConnectClientOperator&);                     // Not implemented
 };
 
 #endif

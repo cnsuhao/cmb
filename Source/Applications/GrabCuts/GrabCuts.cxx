@@ -16,7 +16,7 @@ VTK_MODULE_INIT(vtkInteractionStyle)
 
 int main(int argc, char** argv)
 {
-  QApplication app( argc, argv );
+  QApplication app(argc, argv);
 
   vtkCMBGrabCutUI gui;
   gui.show();

@@ -15,19 +15,19 @@
 #define __pqCMBModifierArcManager_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
-#include <QMap>
-#include <QList>
-#include <QPointer>
-#include <QGridLayout>
-#include <QDialog>
-#include <vector>
-#include <fstream>
-#include "qtCMBArcWidgetManager.h"
 #include "cmbSystemConfig.h"
-#include "pqGeneralTransferFunctionWidget.h"
-#include "pqCMBSceneObjectBase.h"
 #include "pqCMBModifierArc.h"
+#include "pqCMBSceneObjectBase.h"
+#include "pqGeneralTransferFunctionWidget.h"
+#include "qtCMBArcWidgetManager.h"
+#include <QDialog>
+#include <QGridLayout>
+#include <QList>
+#include <QMap>
+#include <QObject>
+#include <QPointer>
+#include <fstream>
+#include <vector>
 #include <vtkBoundingBox.h>
 
 class QTableWidget;
@@ -55,26 +55,22 @@ class CMBAPPCOMMON_EXPORT pqCMBModifierArcManager : public QObject
 
 public:
   friend class vtkPointSelectedCallback;
-  pqCMBModifierArcManager(QLayout *layout,
-                          pqServer *server,
-                          pqRenderView *renderer);
+  pqCMBModifierArcManager(QLayout* layout, pqServer* server, pqRenderView* renderer);
   ~pqCMBModifierArcManager() override;
 
-  QTableWidget *getWidget() const { return this->TableWidget;}
-  qtCMBArcWidgetManager* arcWidgetManager() const {return this->ArcWidgetManager;}
+  QTableWidget* getWidget() const { return this->TableWidget; }
+  qtCMBArcWidgetManager* arcWidgetManager() const { return this->ArcWidgetManager; }
 
-  void AddLinePiece(pqCMBModifierArc *dataObj, int visible=1);
-  void AddFunction(cmbProfileFunction * fun);
+  void AddLinePiece(pqCMBModifierArc* dataObj, int visible = 1);
+  void AddFunction(cmbProfileFunction* fun);
 
   std::vector<int> getCurrentOrder(QString, int pindx);
 
   bool remove(int i, bool all = true);
 
-  void setSourceType(pqCMBSceneObjectBase::enumObjectType st)
-  { this->SourceType = st; }
+  void setSourceType(pqCMBSceneObjectBase::enumObjectType st) { this->SourceType = st; }
 
-  pqCMBSceneObjectBase::enumObjectType getSourceType() const
-  { return this->SourceType; }
+  pqCMBSceneObjectBase::enumObjectType getSourceType() const { return this->SourceType; }
 
   void setUseNormal(bool un);
 
@@ -123,37 +119,39 @@ signals:
   void modifyingArcDone();
 
 protected:
-  QTableWidget * TableWidget;
+  QTableWidget* TableWidget;
   std::vector<pqCMBModifierArc*> ArcLines;
-  pqCMBModifierArc * CurrentModifierArc;
+  pqCMBModifierArc* CurrentModifierArc;
   struct DataSource
   {
   public:
     DataSource(vtkBoundingBox b = vtkBoundingBox(), vtkSMSourceProxy* sm = NULL)
-    :box(b), source(sm)
-    {}
+      : box(b)
+      , source(sm)
+    {
+    }
     vtkBoundingBox box;
     vtkSMSourceProxy* source;
   };
-  QMap< QString, QMap<int, DataSource> > ServerProxies;
-  QMap< QString, QMap<int, int> > ServerRows;
-  std::vector< QMap< QString, QMap<int, bool> > > ArcLinesApply;
+  QMap<QString, QMap<int, DataSource> > ServerProxies;
+  QMap<QString, QMap<int, int> > ServerRows;
+  std::vector<QMap<QString, QMap<int, bool> > > ArcLinesApply;
   qtCMBArcWidgetManager* ArcWidgetManager;
   QGridLayout* functionLayout;
   qtCMBManualFunctionWidget* ManualFunctionWidget;
   qtCMBProfileWedgeFunctionWidget* WedgeFunctionWidget;
-  cmbProfileFunction * selectedFunction;
+  cmbProfileFunction* selectedFunction;
   pqCMBSceneObjectBase::enumObjectType SourceType;
-  pqRenderView * view;
-  pqServer * server;
+  pqRenderView* view;
+  pqServer* server;
   bool addPointMode;
 
   bool useNormal;
 
   void initialize();
-  void setRow(int row, pqCMBModifierArc * line);
+  void setRow(int row, pqCMBModifierArc* line);
 
-  QDialog * Dialog;
+  QDialog* Dialog;
 
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
 
@@ -174,7 +172,7 @@ protected:
 
   int addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp, bool select = false);
 
-  pqCMBModifierArcManagerInternal * Internal;
+  pqCMBModifierArcManagerInternal* Internal;
 
 protected slots:
   void updateLineFunctions();

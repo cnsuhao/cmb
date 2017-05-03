@@ -10,11 +10,11 @@
 #ifndef __pqGeneralTransferFunctionWidget_h
 #define __pqGeneralTransferFunctionWidget_h
 
-#include <QWidget>
-#include "pqComponentsModule.h"
-#include "vtkType.h"
 #include "cmbSystemConfig.h"
+#include "pqComponentsModule.h"
 #include "vtkCMBClientModule.h"
+#include "vtkType.h"
+#include <QWidget>
 
 class vtkScalarsToColors;
 class vtkPiecewiseFunction;
@@ -25,8 +25,9 @@ class VTKCMBCLIENT_EXPORT pqGeneralTransferFunctionWidget : public QWidget
 {
   Q_OBJECT
   typedef QWidget Superclass;
+
 public:
-  pqGeneralTransferFunctionWidget(QWidget* parent=0);
+  pqGeneralTransferFunctionWidget(QWidget* parent = 0);
   ~pqGeneralTransferFunctionWidget() override;
 
   /// Clears the functions

@@ -15,19 +15,19 @@
 #define __qtCMBTINStitcherDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QDialog>
 #include "cmbSystemConfig.h"
+#include <QDialog>
 
 namespace Ui
 {
-  class qtCMBTINStitcherDialog;
+class qtCMBTINStitcherDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBTINStitcherDialog : public QDialog
 {
   Q_OBJECT
 public:
-  qtCMBTINStitcherDialog(QWidget *parent = NULL, Qt::WindowFlags flags= 0);
+  qtCMBTINStitcherDialog(QWidget* parent = NULL, Qt::WindowFlags flags = 0);
   ~qtCMBTINStitcherDialog() override;
 
   // minimum angle for use inside Triangle
@@ -56,7 +56,6 @@ protected slots:
   void allowPointInsertionChanged();
 
 protected:
-  Ui::qtCMBTINStitcherDialog *InternalWidget;
-
+  Ui::qtCMBTINStitcherDialog* InternalWidget;
 };
 #endif

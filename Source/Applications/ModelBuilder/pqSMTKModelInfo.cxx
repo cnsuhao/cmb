@@ -31,7 +31,6 @@
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 
-
 /// Get whether the model has an analysis mesh.
 /// For different modelers, meshing could have happened on the submodels
 /// of the model, and the parent model was set with the property, but
@@ -40,7 +39,7 @@
 bool pqSMTKModelInfo::hasAnalysisMesh() const
 {
   return this->MeshInfos.size() > 0;
-/*
+  /*
   smtk::common::UUID uid = this->Info->GetModelUUID();
   if(this->Session->manager()->hasIntegerProperty(uid, SMTK_MESH_GEN_PROP))
     {
@@ -72,9 +71,8 @@ bool pqSMTKModelInfo::hasAnalysisMesh() const
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKModelInfo::init(
-  pqPipelineSource* modelsource, pqPipelineSource* repsource, pqDataRepresentation* rep,
-  const std::string& filename, smtk::model::ManagerPtr mgr)
+void pqSMTKModelInfo::init(pqPipelineSource* modelsource, pqPipelineSource* repsource,
+  pqDataRepresentation* rep, const std::string& filename, smtk::model::ManagerPtr mgr)
 {
   this->ModelSource = modelsource;
   this->RepSource = repsource;
@@ -83,7 +81,7 @@ void pqSMTKModelInfo::init(
   this->Info = vtkSmartPointer<vtkPVSMTKModelInformation>::New();
 
   // create block selection source proxy
-  vtkSMSessionProxyManager *proxyManager =
+  vtkSMSessionProxyManager* proxyManager =
     vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
 
   this->BlockSelectionSource.TakeReference(
@@ -92,26 +90,21 @@ void pqSMTKModelInfo::init(
   this->CompositeDataIdSelectionSource.TakeReference(
     proxyManager->NewProxy("sources", "CompositeDataIDSelectionSource"));
 
-
-  this->EntityLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  this->EntityLUT.TakeReference(proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
   vtkSMPropertyHelper(this->EntityLUT, "IndexedLookup", true).Set(1);
-  this->GroupLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  this->GroupLUT.TakeReference(proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
   vtkSMPropertyHelper(this->GroupLUT, "IndexedLookup", true).Set(1);
-  this->VolumeLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  this->VolumeLUT.TakeReference(proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
   vtkSMPropertyHelper(this->VolumeLUT, "IndexedLookup", true).Set(1);
-  this->AttributeLUT.TakeReference(
-    proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
+  this->AttributeLUT.TakeReference(proxyManager->NewProxy("lookup_tables", "PVLookupTable"));
   vtkSMPropertyHelper(this->AttributeLUT, "IndexedLookup", true).Set(1);
 
   this->ColorMode = "Entity";
   this->updateBlockInfo(mgr);
-  smtk::model::Model modelEntity(mgr,this->Info->GetModelUUID());
+  smtk::model::Model modelEntity(mgr, this->Info->GetModelUUID());
   if (modelEntity.isValid())
     this->SessionId = modelEntity.session().entity();
-/*
+  /*
   vtkSMProxy* scalarBarProxy =
     proxyManager->NewProxy("representations", "ScalarBarWidgetRepresentation");
   scalarBarProxy->SetPrototype(true);
@@ -136,36 +129,34 @@ void pqSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
   std::map<smtk::common::UUID, unsigned int>::const_iterator it =
     this->Info->GetUUID2BlockIdMap().begin();
 
-  for(; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
-    {
+  for (; it != this->Info->GetUUID2BlockIdMap().end(); ++it)
+  {
     smtk::model::EntityRef ent(mgr, it->first);
     int visible = 1;
     if (ent.hasIntegerProperties())
-      {
+    {
       const smtk::model::IntegerData& iprops(ent.integerProperties());
       smtk::model::IntegerData::const_iterator pit;
-      if (
-        (pit = iprops.find("visible")) != iprops.end() &&
-        pit->second.size() > 0 &&
+      if ((pit = iprops.find("visible")) != iprops.end() && pit->second.size() > 0 &&
         pit->second[0] == 0)
         visible = 0;
-      }
+    }
     invis_ids.push_back(it->second); // block id
-    invis_ids.push_back(visible); // visibility
+    invis_ids.push_back(visible);    // visibility
 
     mgr->setIntegerProperty(it->first, "block_index", it->second);
-    }
+  }
 
-  if(invis_ids.size() > 1)
-    {
+  if (invis_ids.size() > 1)
+  {
     // update vtk property
-    vtkSMProxy *proxy = this->Representation->getProxy();
+    vtkSMProxy* proxy = this->Representation->getProxy();
     vtkSMPropertyHelper prop(proxy, "BlockVisibility");
     prop.SetNumberOfElements(0);
     proxy->UpdateVTKObjects();
     prop.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
     proxy->UpdateVTKObjects();
-    }
+  }
 }
 
 std::size_t pqSMTKModelInfo::numberOfTessellatedEntities() const

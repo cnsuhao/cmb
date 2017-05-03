@@ -38,78 +38,78 @@ vtkCMBContourGroupFilter::~vtkCMBContourGroupFilter()
 //----------------------------------------------------------------------------
 int vtkCMBContourGroupFilter::IsActiveGroupValid()
 {
-  if ( this->ActiveGroupIdx < 0)
-    {
+  if (this->ActiveGroupIdx < 0)
+  {
     return 0;
-    }
+  }
   return 1;
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetGroupInvert(int val)
 {
-  if(this->IsActiveGroupValid() &&
+  if (this->IsActiveGroupValid() &&
     (this->GroupInvert.find(this->ActiveGroupIdx) == this->GroupInvert.end() ||
-    this->GroupInvert[this->ActiveGroupIdx] != val))
-    {
+        this->GroupInvert[this->ActiveGroupIdx] != val))
+  {
     this->GroupInvert[this->ActiveGroupIdx] = val;
     this->Modified();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::AddContour(vtkAlgorithm* contour)
 {
-  if(this->IsActiveGroupValid())
-    {
+  if (this->IsActiveGroupValid())
+  {
     PolygonInfo* cfInfo = new PolygonInfo();
     cfInfo->Polygon = contour;
     this->Polygons[this->ActiveGroupIdx].push_back(cfInfo);
     if (this->Polygons[this->ActiveGroupIdx].size() == 1)
-      {
+    {
       this->GroupInvert[this->ActiveGroupIdx] = 0;
-      }
-    this->Modified();
     }
+    this->Modified();
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::RemoveContour(vtkAlgorithm* contour)
 {
-  if(contour && this->IsActiveGroupValid())
-    {
+  if (contour && this->IsActiveGroupValid())
+  {
     bool removed = false;
-    for(std::vector<PolygonInfo*>::iterator itRemove =
-      this->Polygons[this->ActiveGroupIdx].begin();
-      itRemove !=this->Polygons[this->ActiveGroupIdx].end(); itRemove++)
+    for (std::vector<PolygonInfo*>::iterator itRemove =
+           this->Polygons[this->ActiveGroupIdx].begin();
+         itRemove != this->Polygons[this->ActiveGroupIdx].end(); itRemove++)
+    {
+      if ((*itRemove)->Polygon == contour)
       {
-      if((*itRemove)->Polygon == contour)
-        {
         delete *itRemove;
         this->Polygons[this->ActiveGroupIdx].erase(itRemove);
         removed = true;
         break;
-        }
-      }
-    if(removed)
-      {
-      this->Modified();
       }
     }
+    if (removed)
+    {
+      this->Modified();
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::RemoveAllContours()
 {
-  for(std::map<int, std::vector<PolygonInfo*> >::iterator it=this->Polygons.begin();
-    it != this->Polygons.end(); it++)
+  for (std::map<int, std::vector<PolygonInfo*> >::iterator it = this->Polygons.begin();
+       it != this->Polygons.end(); it++)
+  {
+    for (std::vector<PolygonInfo*>::iterator itRemove = it->second.begin();
+         itRemove != it->second.end(); itRemove++)
     {
-    for(std::vector<PolygonInfo*>::iterator itRemove =
-      it->second.begin(); itRemove !=it->second.end(); itRemove++)
-      {
       delete *itRemove;
-      }
     }
+  }
   this->Polygons.clear();
   this->Modified();
 }
@@ -117,75 +117,72 @@ void vtkCMBContourGroupFilter::RemoveAllContours()
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetContourProjectionNormal(int idx, int val)
 {
-  if(this->IsActiveGroupValid())
+  if (this->IsActiveGroupValid())
+  {
+    if (idx >= 0 && idx < static_cast<int>(this->Polygons[this->ActiveGroupIdx].size()))
     {
-    if(idx>=0 && idx<static_cast<int>(this->Polygons[this->ActiveGroupIdx].size()))
+      if (this->Polygons[this->ActiveGroupIdx][idx]->ProjectionNormal != val)
       {
-      if(this->Polygons[this->ActiveGroupIdx][idx]->ProjectionNormal != val)
-        {
         this->Polygons[this->ActiveGroupIdx][idx]->ProjectionNormal = val;
-        }
-      this->Modified();
       }
+      this->Modified();
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetContourProjectionPosition(int idx, double val)
 {
-  if(this->IsActiveGroupValid())
+  if (this->IsActiveGroupValid())
+  {
+    if (idx >= 0 && idx < static_cast<int>(this->Polygons[this->ActiveGroupIdx].size()))
     {
-    if(idx>=0 && idx<static_cast<int>(this->Polygons[this->ActiveGroupIdx].size()))
+      if (this->Polygons[this->ActiveGroupIdx][idx]->ProjectionPosition != val)
       {
-      if(this->Polygons[this->ActiveGroupIdx][idx]->ProjectionPosition != val)
-        {
         this->Polygons[this->ActiveGroupIdx][idx]->ProjectionPosition = val;
-        }
-      this->Modified();
       }
+      this->Modified();
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
-int vtkCMBContourGroupFilter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector ** /*inputVector*/,
-  vtkInformationVector *outputVector)
+int vtkCMBContourGroupFilter::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {
   vtkInformation* info = outputVector->GetInformationObject(0);
-  vtkMultiBlockDataSet* output = vtkMultiBlockDataSet::SafeDownCast(
-    info->Get(vtkDataObject::DATA_OBJECT()));
+  vtkMultiBlockDataSet* output =
+    vtkMultiBlockDataSet::SafeDownCast(info->Get(vtkDataObject::DATA_OBJECT()));
   if (!output)
-    {
+  {
     return 0;
-    }
+  }
   unsigned int numGroups = static_cast<unsigned int>(this->Polygons.size());
   output->SetNumberOfBlocks(numGroups);
-  std::map<int, std::vector<PolygonInfo*> >::iterator itMap=this->Polygons.begin();
-  for(unsigned int idx=0;
-    idx<numGroups && itMap != this->Polygons.end(); itMap++, idx++)
-    {
-    vtkAppendPolyData *append = vtkAppendPolyData::New();
+  std::map<int, std::vector<PolygonInfo*> >::iterator itMap = this->Polygons.begin();
+  for (unsigned int idx = 0; idx < numGroups && itMap != this->Polygons.end(); itMap++, idx++)
+  {
+    vtkAppendPolyData* append = vtkAppendPolyData::New();
     vtkIntArray* projNormalArray = vtkIntArray::New();
     projNormalArray->SetName("ProjectionNormal");
     vtkIntArray* invertGroupArray = vtkIntArray::New();
     invertGroupArray->SetName("GroupInvert");
     vtkDoubleArray* projPosArray = vtkDoubleArray::New();
     projPosArray->SetName("ProjectionPosition");
-    for(std::vector<PolygonInfo*>::iterator itF =
-      itMap->second.begin(); itF !=itMap->second.end(); itF++)
+    for (std::vector<PolygonInfo*>::iterator itF = itMap->second.begin();
+         itF != itMap->second.end(); itF++)
+    {
+      if ((*itF)->Polygon == NULL)
       {
-      if((*itF)->Polygon==NULL)
-        {
         continue;
-        }
+      }
       projNormalArray->InsertNextValue((*itF)->ProjectionNormal);
       projPosArray->InsertNextValue((*itF)->ProjectionPosition);
       append->AddInputConnection((*itF)->Polygon->GetOutputPort());
-      }
-    int invertgroup =
-      (this->GroupInvert.find(itMap->first)==this->GroupInvert.end())
-      ? 0 : this->GroupInvert[itMap->first];
+    }
+    int invertgroup = (this->GroupInvert.find(itMap->first) == this->GroupInvert.end())
+      ? 0
+      : this->GroupInvert[itMap->first];
     invertGroupArray->InsertNextValue(invertgroup);
 
     append->Update();
@@ -200,14 +197,13 @@ int vtkCMBContourGroupFilter::RequestData(
     invertGroupArray->Delete();
     append->Delete();
     blockPoly->Delete();
-    }
+  }
 
   return 1;
 }
 
 //-----------------------------------------------------------------------------
-int vtkCMBContourGroupFilter::FillInputPortInformation(
-  int, vtkInformation *info)
+int vtkCMBContourGroupFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
@@ -219,5 +215,5 @@ void vtkCMBContourGroupFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "ActiveGroupIdx: " << this->ActiveGroupIdx << "\n";
   os << indent << "NumberOfContourGroups: " << this->Polygons.size() << "\n";
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

@@ -14,13 +14,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcSnapClientOperator_h
 #define __vtkCMBArcSnapClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -47,7 +46,7 @@ protected:
 
 private:
   vtkCMBArcSnapClientOperator(const vtkCMBArcSnapClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcSnapClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcSnapClientOperator&);              // Not implemented
 };
 
 #endif

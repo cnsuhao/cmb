@@ -15,21 +15,19 @@
 
 #include "ui_qtDEMExporter.h"
 
-int pqDEMExportDialog::exportToDem(QWidget *parent, pqServer *server,
-                                   double * min, double * max,
-                                   int * outRastSize, double * spacing,
-                                   int* zone, bool * isnorth, double * scale)
+int pqDEMExportDialog::exportToDem(QWidget* parent, pqServer* server, double* min, double* max,
+  int* outRastSize, double* spacing, int* zone, bool* isnorth, double* scale)
 {
-  pqDEMExportDialog dialog(parent,server, min, max, spacing, *zone, *isnorth, *scale);
-  int status =  dialog.exec();
-  if(status)
+  pqDEMExportDialog dialog(parent, server, min, max, spacing, *zone, *isnorth, *scale);
+  int status = dialog.exec();
+  if (status)
   {
     outRastSize[0] = dialog.width;
     outRastSize[1] = dialog.height;
     *zone = dialog.ExportDialog->Zone->value();
     *isnorth = dialog.ExportDialog->IsNorth->isChecked();
     *scale = dialog.ExportDialog->Scale->value();
-    if(dialog.ExportDialog->DifferentFromSpacing->isChecked())
+    if (dialog.ExportDialog->DifferentFromSpacing->isChecked())
     {
       spacing[0] = dialog.ExportDialog->SearchRadius->value();
       spacing[1] = dialog.ExportDialog->SearchRadius->value();
@@ -53,28 +51,30 @@ void pqDEMExportDialog::cancel()
   this->Status = 0;
 }
 
-pqDEMExportDialog::pqDEMExportDialog(QWidget *parent, pqServer *server,
-                                     double *min, double * max,
-                                     double * spacing, int zone, bool isnorth, double scale)
-: Status(-1), Server(server), dist_w(max[0]-min[0]), dist_h(max[1]-min[1])
+pqDEMExportDialog::pqDEMExportDialog(QWidget* parent, pqServer* server, double* min, double* max,
+  double* spacing, int zone, bool isnorth, double scale)
+  : Status(-1)
+  , Server(server)
+  , dist_w(max[0] - min[0])
+  , dist_h(max[1] - min[1])
 {
   this->MainDialog = new QDialog(parent);
   this->ExportDialog = new Ui::qtDEMExporter;
   this->ExportDialog->setupUi(MainDialog);
-  this->width = dist_w/spacing[0];
+  this->width = dist_w / spacing[0];
   this->height = dist_h / spacing[1];
 
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
-  QObject::connect(this->ExportDialog->SpacingX, SIGNAL(valueChanged(double)),
-                   this, SLOT(valueChanged()));
-  QObject::connect(this->ExportDialog->SpacingY, SIGNAL(valueChanged(double)),
-                   this, SLOT(valueChanged()));
+  QObject::connect(
+    this->ExportDialog->SpacingX, SIGNAL(valueChanged(double)), this, SLOT(valueChanged()));
+  QObject::connect(
+    this->ExportDialog->SpacingY, SIGNAL(valueChanged(double)), this, SLOT(valueChanged()));
   QObject::connect(this->ExportDialog->DifferentFromSpacing, SIGNAL(toggled(bool)),
-                   this->ExportDialog->SearchRadius, SLOT(setEnabled(bool)));
+    this->ExportDialog->SearchRadius, SLOT(setEnabled(bool)));
 
   this->ExportDialog->SearchRadius->setEnabled(false);
-  this->ExportDialog->SearchRadius->setValue((spacing[0]+spacing[1])*0.5);
+  this->ExportDialog->SearchRadius->setValue((spacing[0] + spacing[1]) * 0.5);
 
   this->ExportDialog->SpacingX->setValue(spacing[0]);
   this->ExportDialog->SpacingY->setValue(spacing[1]);
@@ -82,7 +82,6 @@ pqDEMExportDialog::pqDEMExportDialog(QWidget *parent, pqServer *server,
 
   this->ExportDialog->Zone->setValue(zone);
   this->ExportDialog->IsNorth->setChecked(isnorth);
-
 }
 
 pqDEMExportDialog::~pqDEMExportDialog()
@@ -110,8 +109,8 @@ void pqDEMExportDialog::valueChanged()
   //compute the width and height and display them
   this->width = dist_w / this->ExportDialog->SpacingX->value();
   this->height = dist_h / this->ExportDialog->SpacingY->value();
-  QString str = "The Raster Size: (" + QString::number(this->width)
-                + "x" + QString::number(this->height) + ")";
+  QString str =
+    "The Raster Size: (" + QString::number(this->width) + "x" + QString::number(this->height) + ")";
 
   this->ExportDialog->RasterSize->setText(str);
 }

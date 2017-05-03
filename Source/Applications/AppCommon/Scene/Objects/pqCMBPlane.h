@@ -11,33 +11,28 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBPlane_h
 #define __pqCMBPlane_h
 
-#include "pqCMBTexturedObject.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBTexturedObject.h"
 
-
-class  CMBAPPCOMMON_EXPORT pqCMBPlane : public pqCMBTexturedObject
+class CMBAPPCOMMON_EXPORT pqCMBPlane : public pqCMBTexturedObject
 {
 public:
   pqCMBPlane();
-  pqCMBPlane(double point1[3], double point2[3],
-              pqServer *server, pqRenderView *view,
-              bool updateRep=true);
-  pqCMBPlane(pqPipelineSource*source,
-              pqRenderView *view, pqServer *server);
+  pqCMBPlane(double point1[3], double point2[3], pqServer* server, pqRenderView* view,
+    bool updateRep = true);
+  pqCMBPlane(pqPipelineSource* source, pqRenderView* view, pqServer* server);
 
   ~pqCMBPlane() override;
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
   pqCMBSceneObjectBase::enumObjectType getType() const override;
   int getPlaneInfo(double p1[3], double p2[3]) const;
   void setPlaneInfo(double p1[3], double p2[3]);
 
 protected:
-
 };
 
 #endif /* __pqCMBPlane_h */

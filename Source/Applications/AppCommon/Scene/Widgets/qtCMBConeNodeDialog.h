@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBConeNodeDialog_h
 #define __qtCMBConeNodeDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
@@ -28,7 +27,7 @@ class pqPipelineSource;
 
 namespace Ui
 {
-  class  qtCMBConicalSourceDialog;
+class qtCMBConicalSourceDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBConeNodeDialog : public QObject
@@ -36,20 +35,20 @@ class CMBAPPCOMMON_EXPORT qtCMBConeNodeDialog : public QObject
   Q_OBJECT
 
 public:
-  static int manageCone(pqCMBSceneNode *node);
+  static int manageCone(pqCMBSceneNode* node);
 
 protected slots:
   void accept();
   void cancel();
 
 protected:
-  qtCMBConeNodeDialog(pqCMBSceneNode *n);
+  qtCMBConeNodeDialog(pqCMBSceneNode* n);
   ~qtCMBConeNodeDialog() override;
   int exec();
   int Status;
-  Ui::qtCMBConicalSourceDialog *ConeDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
+  Ui::qtCMBConicalSourceDialog* ConeDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
 };
 
 #endif /* __qtCMBConeNodeDialog_h */

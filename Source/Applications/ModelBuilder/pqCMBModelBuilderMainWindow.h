@@ -14,13 +14,13 @@
 #ifndef __pqCMBModelBuilderMainWindow_h
 #define __pqCMBModelBuilderMainWindow_h
 
+#include "cmbSystemConfig.h"
 #include "pqCMBCommonMainWindow.h"
-#include "qtCMBPanelsManager.h" // for qtCMBPanelsManager::PanelType
+#include "qtCMBPanelsManager.h"                    // for qtCMBPanelsManager::PanelType
+#include "smtk/PublicPointerDefs.h"                // for smtk item pointers
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
-#include "smtk/PublicPointerDefs.h" // for smtk item pointers
 #include <QVariant>
 #include <vtkType.h>
-#include "cmbSystemConfig.h"
 
 class pqPipelineSource;
 class pqCMBModelBuilderMainWindowCore;
@@ -41,7 +41,7 @@ public:
 
   // TODO: When CMB have multiple views, call pqView->widget()->
   // installEventViewer to each of them to override PV mouse bindings
-  bool eventFilter(QObject *watched, QEvent *event) override;
+  bool eventFilter(QObject* watched, QEvent* event) override;
 
 public slots:
   // Description:
@@ -61,8 +61,8 @@ public slots:
 
   // Description:
   // Texture related slots
-  void addTextureFileName(const char *filename);
-  const QStringList &getTextureFileNames();
+  void addTextureFileName(const char* filename);
+  const QStringList& getTextureFileNames();
 
   void toggleSessionCentricMenus(bool sessionCentric);
 
@@ -84,12 +84,9 @@ protected slots:
   void onCreateNewSession();
   void onCreateNewModel(const QString& sessionType);
   void onRequestMeshSelection();
-  void onRequestMeshCellSelection(
-    const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
-  void onRequestMeshEdgePointSelection(
-    const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
-  void onMeshSelectionItemCreated(
-  smtk::extension::qtMeshSelectionItem* meshItem,
+  void onRequestMeshCellSelection(const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
+  void onRequestMeshEdgePointSelection(const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
+  void onMeshSelectionItemCreated(smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
 
   // Description:
@@ -109,7 +106,7 @@ protected slots:
   // Slots for Tree widgets related buttons
   void updateSelectionUI(bool disable);
 
- // Description:
+  // Description:
   // Signals when selection actions are invoked.
   void onSurfaceRubberBandSelect(bool);
 
@@ -162,28 +159,26 @@ protected:
 
   // clear existing UI panels and reset the types to default
   void resetUIPanels();
-  QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType,
-    bool recreate=false);
+  QDockWidget* initUIPanel(qtCMBPanelsManager::PanelType enType, bool recreate = false);
   pqCMBProxyInformationWidget* getInfoWidget();
 
   // override base class, because ModelBuilder is providing its own color editor
-  QDockWidget* initPVColorEditorDock() override {return NULL;}
+  QDockWidget* initPVColorEditorDock() override { return NULL; }
   // ModelBuilder is not using the InspectorPanel provided from base class
   void initInspectorDock() override;
   pqSearchBox* createSearchBox();
 
   // Prevent window-close with unsaved models
-  void closeEvent (QCloseEvent *event);
+  void closeEvent(QCloseEvent* event);
 
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
-  void operator=(const pqCMBModelBuilderMainWindow&); // Not implemented.
+  void operator=(const pqCMBModelBuilderMainWindow&);              // Not implemented.
 
   pqCMBModelBuilderMainWindowCore* getThisCore();
 
   class vtkInternal;
   vtkInternal* Internal;
-
 };
 
 #endif

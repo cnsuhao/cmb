@@ -11,17 +11,16 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBSceneSurfaceMesherDialog_h
 #define __qtCMBSceneSurfaceMesherDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QDialog>
 #include "cmbSystemConfig.h"
+#include <QDialog>
 
 namespace Ui
 {
-  class qtCMBSceneSurfaceMesherDialog;
+class qtCMBSceneSurfaceMesherDialog;
 };
 
 class pqCMBSceneTree;
@@ -30,16 +29,17 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneSurfaceMesherDialog : public QDialog
 {
   Q_OBJECT
 public:
-  qtCMBSceneSurfaceMesherDialog(pqCMBSceneTree *tree, QWidget *parent = NULL, Qt::WindowFlags flags= 0);
+  qtCMBSceneSurfaceMesherDialog(
+    pqCMBSceneTree* tree, QWidget* parent = NULL, Qt::WindowFlags flags = 0);
   ~qtCMBSceneSurfaceMesherDialog() override;
 
-  void insertSurfaceName(int i, const char *vname);
+  void insertSurfaceName(int i, const char* vname);
   void removeAllSurfaceNames();
-  void setSelectedSurfaceNames(QList<int> &currentIndices);
-  void getSelectedSurfaceNames(QStringList &selectedNames) const;
+  void setSelectedSurfaceNames(QList<int>& currentIndices);
+  void getSelectedSurfaceNames(QStringList& selectedNames) const;
   int getNumberOfSurfaceNames() const;
 
-  void insertVOIName(int i, const char *vname);
+  void insertVOIName(int i, const char* vname);
   void removeVOIName(int i);
   void removeAllVOINames();
   QString getVOIName(int i) const;
@@ -53,13 +53,10 @@ public:
 
 private slots:
   void surfaceSelectionChanged();
+
 protected:
-  Ui::qtCMBSceneSurfaceMesherDialog *InternalWidget;
-  pqCMBSceneTree *Tree;
-
+  Ui::qtCMBSceneSurfaceMesherDialog* InternalWidget;
+  pqCMBSceneTree* Tree;
 };
-
-
-
 
 #endif /* __qtCMBSceneSurfaceMesherDialog_h */

@@ -14,9 +14,9 @@
 #ifndef __DEMRasterWriter_h
 #define __DEMRasterWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "cmbSystemConfig.h"
 #include <map>
 
 class vtkPolyData;
@@ -27,8 +27,8 @@ class vtkPolyData;
 class VTKCMBIO_EXPORT vtkDEMRasterWriter : public vtkWriter
 {
 public:
-  static vtkDEMRasterWriter *New();
-  vtkTypeMacro(vtkDEMRasterWriter,vtkWriter);
+  static vtkDEMRasterWriter* New();
+  vtkTypeMacro(vtkDEMRasterWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -38,7 +38,7 @@ public:
 
   // Description:
   // Add an input to this writer
-  void AddInputData(vtkDataObject *input) {this->AddInputData(0, input);}
+  void AddInputData(vtkDataObject* input) { this->AddInputData(0, input); }
   void AddInputData(int, vtkDataObject*);
 
   // Description:
@@ -62,8 +62,8 @@ public:
   // Description:
   // Unlike vtkWriter which assumes data per port - this Writer can have multiple connections
   // on Port 0
-  vtkDataObject *GetInputFromPort0(int connection);
-  vtkDataObject *GetInputFromPort0() { return this->GetInputFromPort0( 0 ); };
+  vtkDataObject* GetInputFromPort0(int connection);
+  vtkDataObject* GetInputFromPort0() { return this->GetInputFromPort0(0); };
   //ETX
 
   //BTX
@@ -86,14 +86,13 @@ protected:
   char* FileName;
   bool WriteAsSinglePiece;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
-  void createOutputFile(std::string fname, vtkPolyData *inputPoly);
-
+  void createOutputFile(std::string fname, vtkPolyData* inputPoly);
 
 private:
-  vtkDEMRasterWriter(const vtkDEMRasterWriter&);  // Not implemented.
-  void operator=(const vtkDEMRasterWriter&);  // Not implemented.
+  vtkDEMRasterWriter(const vtkDEMRasterWriter&); // Not implemented.
+  void operator=(const vtkDEMRasterWriter&);     // Not implemented.
 
   //ETX
 };

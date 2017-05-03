@@ -13,36 +13,35 @@
 #ifndef __vtkSceneGenV2ContourWriter_h
 #define __vtkSceneGenV2ContourWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBIO_EXPORT vtkSceneGenV2ContourWriter : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkSceneGenV2ContourWriter *New();
-  vtkTypeMacro(vtkSceneGenV2ContourWriter,vtkPolyDataAlgorithm);
+  static vtkSceneGenV2ContourWriter* New();
+  vtkTypeMacro(vtkSceneGenV2ContourWriter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkGetStringMacro(FileName);
   vtkSetStringMacro(FileName);
 
-  void Write()
-  {} //Work is done in the rquest data,  This is to make paraview happy
+  void Write() {} //Work is done in the rquest data,  This is to make paraview happy
 
 protected:
   vtkSceneGenV2ContourWriter();
   ~vtkSceneGenV2ContourWriter() override;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
-  int RequestData(vtkInformation* request,
-                                 vtkInformationVector** inputVector,
-                                 vtkInformationVector* outputVector) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector) override;
 
   char* FileName;
+
 private:
-  vtkSceneGenV2ContourWriter(const vtkSceneGenV2ContourWriter&);  // Not implemented.
-  void operator=(const vtkSceneGenV2ContourWriter&);  // Not implemented.
+  vtkSceneGenV2ContourWriter(const vtkSceneGenV2ContourWriter&); // Not implemented.
+  void operator=(const vtkSceneGenV2ContourWriter&);             // Not implemented.
 };
 
 #endif

@@ -15,9 +15,9 @@
 #ifndef __vtkPVLASOutputBlockInformation_h
 #define __vtkPVLASOutputBlockInformation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 #include <string>
 
 class vtkTransform;
@@ -46,7 +46,7 @@ public:
   vtkGetMacro(NumberOfPointsInClassification, vtkIdType);
   vtkGetVector6Macro(Bounds, double);
   vtkGetMacro(Classification, unsigned char);
-  const char *GetClassificationName() { return this->ClassificationName.c_str(); }
+  const char* GetClassificationName() { return this->ClassificationName.c_str(); }
 
   //BTX
 protected:
@@ -54,16 +54,15 @@ protected:
   ~vtkPVLASOutputBlockInformation() override;
 
   // Data information collected from remote processes.
-  vtkIdType      NumberOfPoints;
-  vtkIdType      NumberOfPointsInClassification;
+  vtkIdType NumberOfPoints;
+  vtkIdType NumberOfPointsInClassification;
   std::string ClassificationName;
-  unsigned char  Classification;
-  double         Bounds[6];
+  unsigned char Classification;
+  double Bounds[6];
 
 private:
-
   vtkPVLASOutputBlockInformation(const vtkPVLASOutputBlockInformation&); // Not implemented
-  void operator=(const vtkPVLASOutputBlockInformation&); // Not implemented
+  void operator=(const vtkPVLASOutputBlockInformation&);                 // Not implemented
   //ETX
 };
 

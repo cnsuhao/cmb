@@ -11,16 +11,14 @@
 #include "qtCMBSceneBuilderPanelWidget.h"
 #include "ui_qtCMBSceneBuilderPanel.h"
 
-class qtCMBSceneBuilderPanelWidgetInternal :
-  public Ui::qtCMBSceneBuilderPanel
+class qtCMBSceneBuilderPanelWidgetInternal : public Ui::qtCMBSceneBuilderPanel
 {
 public:
-
 };
 
 //-----------------------------------------------------------------------------
-qtCMBSceneBuilderPanelWidget::qtCMBSceneBuilderPanelWidget(
-  QWidget* _p): QWidget(_p)
+qtCMBSceneBuilderPanelWidget::qtCMBSceneBuilderPanelWidget(QWidget* _p)
+  : QWidget(_p)
 {
   this->Internal = new qtCMBSceneBuilderPanelWidgetInternal;
   this->Internal->setupUi(this);
@@ -39,14 +37,13 @@ Ui::qtCMBSceneBuilderPanel* qtCMBSceneBuilderPanelWidget::getGUIPanel()
 }
 
 //----------------------------------------------------------------------------
-void qtCMBSceneBuilderPanelWidget::focusOnSceneTab( )
+void qtCMBSceneBuilderPanelWidget::focusOnSceneTab()
 {
   this->Internal->tabWidget->setCurrentIndex(0);
 }
 
-
 //----------------------------------------------------------------------------
-void qtCMBSceneBuilderPanelWidget::focusOnDisplayTab( )
+void qtCMBSceneBuilderPanelWidget::focusOnDisplayTab()
 {
   this->Internal->tabWidget->setCurrentIndex(1);
 }

@@ -11,20 +11,20 @@
 
 #include "vtkClientServerStream.h"
 #include "vtkObjectFactory.h"
-#include "vtkSMProxy.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
+#include "vtkSMProxy.h"
 
-#include "vtkContourWidget.h"
-#include "vtkCMBArcProvider.h"
-#include "vtkCMBArcManager.h"
-#include "vtkCMBArc.h"
 #include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
+#include "vtkCMBArc.h"
+#include "vtkCMBArcManager.h"
+#include "vtkCMBArcProvider.h"
+#include "vtkContourWidget.h"
 
 vtkStandardNewMacro(vtkCMBArcEditClientOperator);
 
 //---------------------------------------------------------------------------
-vtkCMBArcEditClientOperator::vtkCMBArcEditClientOperator():
-  ArcIsClosed(false)
+vtkCMBArcEditClientOperator::vtkCMBArcEditClientOperator()
+  : ArcIsClosed(false)
 {
 }
 
@@ -34,30 +34,26 @@ vtkCMBArcEditClientOperator::~vtkCMBArcEditClientOperator()
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
-                        vtkSMNewWidgetRepresentationProxy *widgetProxy)
+bool vtkCMBArcEditClientOperator::Operate(
+  vtkSMProxy* sourceProxy, vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
   if (!sourceProxy || !widgetProxy)
-    {
+  {
     return false;
-    }
+  }
 
   bool closed = this->ArcIsClosed;
   this->ArcIsClosed = false;
 
-
-  vtkCMBArcProvider *provider = vtkCMBArcProvider::SafeDownCast(
-      sourceProxy->GetClientSideObject());
-  if(!provider)
-    {
+  vtkCMBArcProvider* provider = vtkCMBArcProvider::SafeDownCast(sourceProxy->GetClientSideObject());
+  if (!provider)
+  {
     return false;
-    }
+  }
 
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
-    widgetProxy->GetWidget());
-  vtkSMTKArcRepresentation *widgetRep =
-    vtkSMTKArcRepresentation::SafeDownCast(
-    widget->GetRepresentation());
+  vtkContourWidget* widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
+  vtkSMTKArcRepresentation* widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
 
   //reset the widget
   widgetRep->SetLoggingEnabled(0);
@@ -69,27 +65,27 @@ bool vtkCMBArcEditClientOperator::Operate(vtkSMProxy *sourceProxy,
   widget->SetEnabled(true);
   widgetRep->VisibilityOn();
   //set the arc to have the shape of the provider
-  widget->Initialize(provider->GetOutput(),1);
+  widget->Initialize(provider->GetOutput(), 1);
   widgetRep->SetClosedLoop(closed);
 
   //we now have to set the end nodes on the widget
   //this will always be the first and last
   widgetRep->SetNthNodeSelected(0);
   if (!closed)
-    {
-    widgetRep->SetNthNodeSelected(widgetRep->GetNumberOfNodes()-1);
-    }
+  {
+    widgetRep->SetNthNodeSelected(widgetRep->GetNumberOfNodes() - 1);
+  }
 
   int canEdit = 1;
   if (!closed)
-    {
+  {
     //now set if the arc can only have modify mode
     //the is done by checking if the seond end node is used
     //by anything, if so it can't be edited or points can be inserted
     //ignore arcs that are closed
-    vtkCMBArc *arc = vtkCMBArcManager::GetInstance()->GetArc(provider->GetArcId());
+    vtkCMBArc* arc = vtkCMBArcManager::GetInstance()->GetArc(provider->GetArcId());
     canEdit = arc->GetNumberOfConnectedArcs(1) == 0 ? 1 : 0;
-    }
+  }
   widgetRep->SetCanEdit(canEdit);
 
   //reenable logging so that we can find out if the end nodes have changed

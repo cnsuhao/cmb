@@ -17,8 +17,8 @@
 #define __pqCMBEnumPropertyWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
 class pqCMBEnumPropertyWidgetInternal;
 class pqDataRepresentation;
@@ -28,7 +28,7 @@ class CMBAPPCOMMON_EXPORT pqCMBEnumPropertyWidget : public QWidget
   Q_OBJECT
 
 public:
-  pqCMBEnumPropertyWidget(QWidget* parent=0);
+  pqCMBEnumPropertyWidget(QWidget* parent = 0);
   ~pqCMBEnumPropertyWidget() override;
 
   // Description:

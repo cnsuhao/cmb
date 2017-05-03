@@ -12,14 +12,12 @@
 // extracts a single cell from a data set
 // and creates a polydata with only that cell
 
-
 #ifndef __vtkCMBExtractCellFromDataSet_h
 #define __vtkCMBExtractCellFromDataSet_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
-
 
 class VTKCMBGRAPHICS_EXPORT vtkCMBExtractCellFromDataSet : public vtkDataSetAlgorithm
 {
@@ -31,26 +29,22 @@ public:
   vtkSetMacro(CellIndex, int);
   vtkGetMacro(CellIndex, int);
 
-//BTX
+  //BTX
 protected:
   vtkCMBExtractCellFromDataSet();
-  ~vtkCMBExtractCellFromDataSet() override {};
+  ~vtkCMBExtractCellFromDataSet() override{};
 
   /// Implementation of the algorithm.
-  int RequestData(vtkInformation *,
-                          vtkInformationVector **,
-                          vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
+  int CellIndex;
 
-        int CellIndex;
 private:
   vtkCMBExtractCellFromDataSet(const vtkCMBExtractCellFromDataSet&); // Not implemented.
-  void operator=(const vtkCMBExtractCellFromDataSet&); // Not implemented.
+  void operator=(const vtkCMBExtractCellFromDataSet&);               // Not implemented.
 
   int BlockIndex;
-//ETX
+  //ETX
 };
 
 #endif
-
-

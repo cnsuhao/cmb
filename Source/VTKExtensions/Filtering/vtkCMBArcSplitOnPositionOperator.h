@@ -16,37 +16,34 @@
 #ifndef __vtkCMBArcSplitOnPositionOperator_h
 #define __vtkCMBArcSplitOnPositionOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkCMBArcSplitOnPositionOperator : public vtkObject
 {
 public:
-  static vtkCMBArcSplitOnPositionOperator * New();
-  vtkTypeMacro(vtkCMBArcSplitOnPositionOperator,vtkObject);
+  static vtkCMBArcSplitOnPositionOperator* New();
+  vtkTypeMacro(vtkCMBArcSplitOnPositionOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Tolerance to consider the split position equal to a
   //point on the Arc. Default is 1.0e-05
-  vtkSetMacro(PositionTolerance,double);
-  vtkGetMacro(PositionTolerance,double);
+  vtkSetMacro(PositionTolerance, double);
+  vtkGetMacro(PositionTolerance, double);
 
   void SetSplitPosition(double x, double y, double z);
-  void SetSplitPosition(double pos[3])
-    {
-    this->SetSplitPosition(pos[0],pos[1],pos[2]);
-    }
-  vtkGetVector3Macro(SplitPosition,double);
+  void SetSplitPosition(double pos[3]) { this->SetSplitPosition(pos[0], pos[1], pos[2]); }
+  vtkGetVector3Macro(SplitPosition, double);
 
   bool Operate(vtkIdType arcId);
 
   //Description:
   //If the Split work this is the ArcId for the newly
   //created arc
-  vtkGetMacro(CreatedArcId,vtkIdType);
+  vtkGetMacro(CreatedArcId, vtkIdType);
 
 protected:
   vtkCMBArcSplitOnPositionOperator();
@@ -57,10 +54,11 @@ protected:
   bool ValidPosition;
 
   vtkIdType CreatedArcId;
+
 private:
-  vtkCMBArcSplitOnPositionOperator(const vtkCMBArcSplitOnPositionOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcSplitOnPositionOperator&);  // Not implemented.
-//ETX
+  vtkCMBArcSplitOnPositionOperator(const vtkCMBArcSplitOnPositionOperator&); // Not implemented.
+  void operator=(const vtkCMBArcSplitOnPositionOperator&);                   // Not implemented.
+  //ETX
 };
 
 #endif

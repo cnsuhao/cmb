@@ -12,8 +12,8 @@
 
 #include "ModelBridgeClientModule.h"
 
-#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 
 #include <map>
 #include <string>
@@ -30,11 +30,11 @@ class MODELBRIDGECLIENT_EXPORT vtkPVSMTKModelSource : public vtkModelMultiBlockS
 public:
   static vtkPVSMTKModelSource* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  vtkTypeMacro(vtkPVSMTKModelSource,vtkModelMultiBlockSource);
+  vtkTypeMacro(vtkPVSMTKModelSource, vtkModelMultiBlockSource);
 
   // Description:
   // Set model manager wrapper
-  void SetModelManagerWrapper(vtkModelManagerWrapper *modelManager);
+  void SetModelManagerWrapper(vtkModelManagerWrapper* modelManager);
   vtkGetObjectMacro(ModelManagerWrapper, vtkModelManagerWrapper);
 
   // Description:
@@ -45,26 +45,22 @@ public:
 
   // Description:
   // Forwarded to vtkModelMultiBlockSource
-  virtual void SetShowAnalysisMesh(int val)
-  { this->SetShowAnalysisTessellation(val); }
+  virtual void SetShowAnalysisMesh(int val) { this->SetShowAnalysisTessellation(val); }
 
-  void MarkDirty() {this->Dirty();}
+  void MarkDirty() { this->Dirty(); }
 protected:
   vtkPVSMTKModelSource();
   ~vtkPVSMTKModelSource() override;
 
   int RequestData(
-    vtkInformation* request,
-    vtkInformationVector** inInfo,
-    vtkInformationVector* outInfo) override;
+    vtkInformation* request, vtkInformationVector** inInfo, vtkInformationVector* outInfo) override;
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;
 
 private:
-
   vtkPVSMTKModelSource(const vtkPVSMTKModelSource&); // Not implemented.
-  void operator = (const vtkPVSMTKModelSource&); // Not implemented.
+  void operator=(const vtkPVSMTKModelSource&);       // Not implemented.
 };
 
 #endif // __vtkPVSMTKModelSource_h

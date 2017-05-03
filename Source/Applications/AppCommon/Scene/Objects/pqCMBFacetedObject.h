@@ -11,52 +11,41 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBFacetedObject_h
 #define __pqCMBFacetedObject_h
 
-#include "pqCMBTexturedObject.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBTexturedObject.h"
 
-class  CMBAPPCOMMON_EXPORT pqCMBFacetedObject : public pqCMBTexturedObject
+class CMBAPPCOMMON_EXPORT pqCMBFacetedObject : public pqCMBTexturedObject
 {
 public:
-
   pqCMBFacetedObject();
-  pqCMBFacetedObject(pqPipelineSource *source,
-                         pqRenderView *view,
-                         pqServer *server,
-                         const char *filename);
-  pqCMBFacetedObject(const char *filename,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
-  pqCMBFacetedObject(pqPipelineSource *source,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
+  pqCMBFacetedObject(
+    pqPipelineSource* source, pqRenderView* view, pqServer* server, const char* filename);
+  pqCMBFacetedObject(
+    const char* filename, pqServer* server, pqRenderView* view, bool updateRep = true);
+  pqCMBFacetedObject(
+    pqPipelineSource* source, pqServer* server, pqRenderView* view, bool updateRep = true);
 
   ~pqCMBFacetedObject() override;
 
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
 
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true) override;
+  pqPipelineSource* getTransformedSource(pqServer* server) const;
 
-  pqPipelineSource * getTransformedSource(pqServer *server) const;
-
-  void setFileName(const char *type)
-    {this->FileName = type;}
+  void setFileName(const char* type) { this->FileName = type; }
   enumObjectType getType() const override;
-  std::string getFileName() const
-    {return this->FileName;}
-  void setSurfaceType(enumSurfaceType objtype)
-    {this->SurfaceType = objtype;}
-  enumSurfaceType getSurfaceType() const
-  {return this->SurfaceType;}
+  std::string getFileName() const { return this->FileName; }
+  void setSurfaceType(enumSurfaceType objtype) { this->SurfaceType = objtype; }
+  enumSurfaceType getSurfaceType() const { return this->SurfaceType; }
   std::string getSurfaceTypeAsString() const;
   // Duplicate the pipeline source of the object
-  pqPipelineSource *duplicatePipelineSource(pqServer *server);
+  pqPipelineSource* duplicatePipelineSource(pqServer* server);
 
 protected:
-  void prepFacetedObject(pqServer *server, pqRenderView *view);
+  void prepFacetedObject(pqServer* server, pqRenderView* view);
 
   enumSurfaceType SurfaceType;
   std::string FileName;

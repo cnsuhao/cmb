@@ -15,9 +15,9 @@
 #ifndef __vtkPVMultiBlockRootObjectInfo_h
 #define __vtkPVMultiBlockRootObjectInfo_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 #include <string>
 
 class vtkStringArray;
@@ -51,7 +51,7 @@ public:
   virtual const char* GetBCNameWithId(int);
 
   void GetMaterialColorWithId(int, float* rgba);
-  void GetShellColorWithId(int,float* rgba);
+  void GetShellColorWithId(int, float* rgba);
   void GetModelFaceColorWithId(int, float* rgba);
   void GetBCColorWithId(int, float* rgba);
   void GetModelFaceIds(vtkIdList*);
@@ -65,26 +65,23 @@ protected:
 
   // Data information collected from remote processes.
 
-  vtkStringArray    *MaterialNames;
-  vtkStringArray    *ShellNames;
-  vtkStringArray    *FaceNames;
-  vtkStringArray    *BCNames;
+  vtkStringArray* MaterialNames;
+  vtkStringArray* ShellNames;
+  vtkStringArray* FaceNames;
+  vtkStringArray* BCNames;
 
-  vtkFloatArray    *ShellColors;
-  vtkFloatArray    *MaterialColors;
-  vtkFloatArray    *ModelFaceColors;
-  vtkFloatArray    *BCColors;
-  vtkDoubleArray   *ShellTranslationPoints;
+  vtkFloatArray* ShellColors;
+  vtkFloatArray* MaterialColors;
+  vtkFloatArray* ModelFaceColors;
+  vtkFloatArray* BCColors;
+  vtkDoubleArray* ShellTranslationPoints;
 
-  virtual const char* GetNameArrayValue(
-    vtkStringArray* nameArray, int id);
-  virtual void GetColorArrayValue(
-    vtkFloatArray* colorArray, int id, float *rgba);
+  virtual const char* GetNameArrayValue(vtkStringArray* nameArray, int id);
+  virtual void GetColorArrayValue(vtkFloatArray* colorArray, int id, float* rgba);
 
 private:
-
   vtkPVMultiBlockRootObjectInfo(const vtkPVMultiBlockRootObjectInfo&); // Not implemented
-  void operator=(const vtkPVMultiBlockRootObjectInfo&); // Not implemented
+  void operator=(const vtkPVMultiBlockRootObjectInfo&);                // Not implemented
   //ETX
 };
 

@@ -11,8 +11,8 @@
 #ifndef _pqSMTKInfoPanel_h
 #define _pqSMTKInfoPanel_h
 
-#include <QWidget>
 #include <QPointer>
+#include <QWidget>
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
@@ -44,9 +44,8 @@ public:
   /**
   * constructor
   */
-  pqSMTKInfoPanel(QPointer<pqCMBModelManager> mmgr,
-                  smtk::extension::qtSelectionManager* smgr,
-                  QWidget* p = 0);
+  pqSMTKInfoPanel(
+    QPointer<pqCMBModelManager> mmgr, smtk::extension::qtSelectionManager* smgr, QWidget* p = 0);
   /**
   * destructor
   */
@@ -59,7 +58,7 @@ public:
 
   QPointer<pqCMBModelManager> modelManager();
 
-  void updateModel( QPointer<pqCMBModelManager> mmgr);
+  void updateModel(QPointer<pqCMBModelManager> mmgr);
 
 public slots:
   /**
@@ -75,8 +74,7 @@ public slots:
 
 protected slots:
   void onCurrentItemChanged(QTreeWidgetItem* item);
-  void onSelectionChanged(const smtk::model::EntityRefs&,
-                          const smtk::mesh::MeshSets&);
+  void onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&);
 
 private:
   /**

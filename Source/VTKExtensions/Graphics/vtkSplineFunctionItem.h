@@ -19,12 +19,12 @@ class vtkPiecewiseFunction;
 class vtkKochanekSpline;
 
 /// vtkSplineFunctionItem internall uses vtkPlot::Color, white by default
-class VTKCMBGRAPHICS_EXPORT vtkSplineFunctionItem: public vtkScalarsToColorsItem
+class VTKCMBGRAPHICS_EXPORT vtkSplineFunctionItem : public vtkScalarsToColorsItem
 {
 public:
   static vtkSplineFunctionItem* New();
   vtkTypeMacro(vtkSplineFunctionItem, vtkScalarsToColorsItem);
-  void PrintSelf(ostream &os, vtkIndent indent) override;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   void SetSplineFunction(vtkPiecewiseFunction* t);
   vtkGetObjectMacro(PiecewiseFunction, vtkPiecewiseFunction);
@@ -37,10 +37,7 @@ public:
     this->Modified();
   }
 
-  void RefreshTexture()
-  {
-    ComputeTexture();
-  }
+  void RefreshTexture() { ComputeTexture(); }
 
 protected:
   vtkSplineFunctionItem();
@@ -55,13 +52,13 @@ protected:
   void ComputeTexture() override;
 
   vtkSmartPointer<vtkKochanekSpline> SplineFunction;
-  vtkPiecewiseFunction *PiecewiseFunction;
+  vtkPiecewiseFunction* PiecewiseFunction;
   double Controls[3];
   bool DrawAsSpline;
 
 private:
-  vtkSplineFunctionItem(const vtkSplineFunctionItem &); // Not implemented.
-  void operator=(const vtkSplineFunctionItem &); // Not implemented.
+  vtkSplineFunctionItem(const vtkSplineFunctionItem&); // Not implemented.
+  void operator=(const vtkSplineFunctionItem&);        // Not implemented.
 };
 
 #endif

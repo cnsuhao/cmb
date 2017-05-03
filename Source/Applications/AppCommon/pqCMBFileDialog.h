@@ -14,8 +14,8 @@
 #define _pqCMBFileDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QStringList>
 #include <QDialog>
+#include <QStringList>
 
 class QModelIndex;
 class QPoint;
@@ -62,13 +62,11 @@ class QShowEvent;
   \sa pqFileDialogModel
 */
 
-class CMBAPPCOMMON_EXPORT pqCMBFileDialog :
-  public QDialog
+class CMBAPPCOMMON_EXPORT pqCMBFileDialog : public QDialog
 {
   typedef QDialog Superclass;
   Q_OBJECT
 public:
-
   /// choose mode for selecting file/folder.
   /// AnyFile: The name of a file, whether it exists or not.
   ///   Typically used by "Save As..."
@@ -79,17 +77,20 @@ public:
   ///   Typically used by "Open..." when you want multiple file selection
   ///   This mode allows the user to select multiples files, and multiple time series groups at the same time.
   /// Directory: The name of a directory.
-  enum FileMode { AnyFile, ExistingFile, ExistingFiles, Directory };
+  enum FileMode
+  {
+    AnyFile,
+    ExistingFile,
+    ExistingFiles,
+    Directory
+  };
 
   /// Creates a file dialog with the specified server
   /// if the server is NULL, files are browsed locally
   /// the title, and start directory may be specified
   /// the filter is a string of semi-colon separated filters
-  pqCMBFileDialog(pqServer*,
-    QWidget* Parent,
-    const QString& Title = QString(),
-    const QString& Directory = QString(),
-    const QString& Filter = QString());
+  pqCMBFileDialog(pqServer*, QWidget* Parent, const QString& Title = QString(),
+    const QString& Directory = QString(), const QString& Filter = QString());
   ~pqCMBFileDialog() override;
 
   /// set the file mode
@@ -99,7 +100,7 @@ public:
   void setRecentlyUsedExtension(const QString& fileExtension);
 
   /// Returns the group of files for the given index
-  QStringList getSelectedFiles(int index=0);
+  QStringList getSelectedFiles(int index = 0);
 
   /// Returns all the file groups
   QList<QStringList> getAllSelectedFiles();
@@ -111,45 +112,43 @@ public:
   bool selectFile(const QString&);
 
   /// set if we show hidden files and holders
-  void setShowHidden( const bool& hidden);
+  void setShowHidden(const bool& hidden);
 
   ///returns the state of the show hidden flag
   bool getShowHidden();
 
   /// static method similar to QFileDialog::getSaveFileName(...) to make it
   /// easier to get a file name to save a file as.
-  static QString getSaveFileName(
-    pqServer* server, QWidget* parentWdg,
-    const QString& title = QString(),
-    const QString& directory = QString(),
+  static QString getSaveFileName(pqServer* server, QWidget* parentWdg,
+    const QString& title = QString(), const QString& directory = QString(),
     const QString& filter = QString());
 public slots:
   void setMetadata(QStringList const& meta);
 signals:
   /// Signal emitted when the user has chosen a set of files
-  void filesSelected(const QList<QStringList> &);
+  void filesSelected(const QList<QStringList>&);
 
   /// Signal emitted when the user has chosen a set of files
   /// NOTE:
   /// The mode has to be not ExistingFiles for this signal to be emitted!
   /// This signal is deprecated and should not be used anymore. Instead
   /// use the fileSelected(const QList<QStringList> &)
-  void filesSelected(const QStringList &);
+  void filesSelected(const QStringList&);
 
   /// signal emitted when user has chosen a set of files and accepted the
   /// dialog.  This signal includes only the path and file string as is
   /// This is to support test recording
   void fileAccepted(const QString&);
 
-  void currentSelectedFilesChanged(const QStringList& );
+  void currentSelectedFilesChanged(const QStringList&);
 
 protected:
   bool acceptExistingFiles();
-  bool acceptDefault(const bool &checkForGrouping);
+  bool acceptDefault(const bool& checkForGrouping);
 
-  QStringList buildFileGroup(const QString &filename);
+  QStringList buildFileGroup(const QString& filename);
 
-  void showEvent( QShowEvent *showEvent ) override;
+  void showEvent(QShowEvent* showEvent) override;
 
 private slots:
   void onModelReset();
@@ -166,17 +165,17 @@ private slots:
 
   void onActivateFavorite(const QModelIndex&);
   void onActivateRecent(const QModelIndex&);
-  void onDoubleClickFile( const QModelIndex& );
+  void onDoubleClickFile(const QModelIndex&);
 
   void onTextEdited(const QString&);
 
-  void onShowHiddenFiles( const bool &hide );
+  void onShowHiddenFiles(const bool& hide);
 
   // Called when the user changes the file selection.
   void fileSelectionChanged();
 
   // Called when the user right-clicks in the file qtreeview
-  void onContextMenuRequested(const QPoint &pos);
+  void onContextMenuRequested(const QPoint& pos);
 
   // Called when the user requests to create a new directory in the cwd
   void onCreateNewFolder();
@@ -195,9 +194,8 @@ private:
   pqImplementation* const Implementation;
 
   //returns if true if files are loaded
-  bool acceptInternal(const QStringList& selected_files, const bool &doubleclicked);
+  bool acceptInternal(const QStringList& selected_files, const bool& doubleclicked);
   QString fixFileExtension(const QString& filename, const QString& filter);
 };
 
 #endif // !_pqCMBFileDialog_h
-

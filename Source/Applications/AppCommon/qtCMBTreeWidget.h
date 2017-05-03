@@ -22,8 +22,8 @@
 #define _qtCMBTreeWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QTreeWidget>
 #include "cmbSystemConfig.h"
+#include <QTreeWidget>
 
 class QDropEvent;
 class QMouseEvent;
@@ -34,7 +34,6 @@ class CMBAPPCOMMON_EXPORT qtCMBTreeWidget : public QTreeWidget
   Q_OBJECT
 
 public:
-
   qtCMBTreeWidget(QWidget* p = NULL);
   ~qtCMBTreeWidget() override;
 
@@ -80,17 +79,16 @@ protected:
   // Description:
   // Support for customized drag-n-drop events
   Qt::DropActions supportedDropActions() const override;
-  void dragEnterEvent( QDragEnterEvent * event ) override;
-  void dragMoveEvent( QDragMoveEvent * event ) override;
-  void startDrag ( Qt::DropActions supportedActions ) override;
+  void dragEnterEvent(QDragEnterEvent* event) override;
+  void dragMoveEvent(QDragMoveEvent* event) override;
+  void startDrag(Qt::DropActions supportedActions) override;
 
-  void mouseReleaseEvent( QMouseEvent * ) override;
+  void mouseReleaseEvent(QMouseEvent*) override;
 
 private slots:
   void updateCheckStateInternal();
 
 protected:
-
   // Description:
   // Customize drop-event
   void dropEvent(QDropEvent* event) override;
@@ -98,8 +96,7 @@ protected:
   // Description:
   // Move the cursor in the way described by cursorAction,
   // using the information provided by the button modifiers.
-  QModelIndex moveCursor(CursorAction cursorAction,
-    Qt::KeyboardModifiers modifiers) override;
+  QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
 
   // Description:
   // ivars

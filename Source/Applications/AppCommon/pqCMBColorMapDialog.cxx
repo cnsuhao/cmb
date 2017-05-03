@@ -9,8 +9,8 @@
 //=========================================================================
 #include "pqCMBColorMapDialog.h"
 
-#include "pqProxyWidget.h"
 #include "pqDataRepresentation.h"
+#include "pqProxyWidget.h"
 #include "vtkSMPVRepresentationProxy.h"
 #include "vtkSMPropertyHelper.h"
 
@@ -28,21 +28,19 @@ pqCMBColorMapDialog::pqCMBColorMapDialog(pqDataRepresentation* repr, QWidget* p)
 
   QVBoxLayout* layout = new QVBoxLayout(this->MainDialog);
   if (repr && vtkSMPVRepresentationProxy::GetUsingScalarColoring(repr->getProxy()))
-    {
+  {
     vtkSMProxy* ctf = vtkSMPropertyHelper(repr->getProxy(), "LookupTable", true).GetAsProxy();
     this->ColorEditor = new pqProxyWidget(ctf, this->MainDialog);
     this->ColorEditor->setObjectName("cmbColorEditor");
     this->ColorEditor->setApplyChangesImmediately(true);
     this->ColorEditor->filterWidgets();
     layout->addWidget(this->ColorEditor);
-    }
+  }
 
-  QDialogButtonBox* buttonBox=new QDialogButtonBox(
-    this->MainDialog);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(this->MainDialog);
   buttonBox->setStandardButtons(QDialogButtonBox::Ok);
   layout->addWidget(buttonBox);
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-
 }
 
 //-----------------------------------------------------------------------------

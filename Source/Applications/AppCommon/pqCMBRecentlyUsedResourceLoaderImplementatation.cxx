@@ -12,31 +12,33 @@
 
 #include "pqCMBCommonMainWindowCore.h"
 
+#include "pqInterfaceTracker.h"
 #include <pqApplicationCore.h>
 #include <pqRecentlyUsedResourcesList.h>
 #include <pqServer.h>
 #include <pqServerResource.h>
 #include <pqStandardRecentlyUsedResourceLoaderImplementation.h>
-#include "pqInterfaceTracker.h"
 
 //-----------------------------------------------------------------------------
-pqCMBRecentlyUsedResourceLoaderImplementatation::
-    pqCMBRecentlyUsedResourceLoaderImplementatation(
-        pqCMBCommonMainWindowCore *parentObject)
-    : Superclass(pqApplicationCore::instance()->interfaceTracker()),
-      Impl(new pqStandardRecentlyUsedResourceLoaderImplementation()),
-      Core(parentObject) {}
+pqCMBRecentlyUsedResourceLoaderImplementatation::pqCMBRecentlyUsedResourceLoaderImplementatation(
+  pqCMBCommonMainWindowCore* parentObject)
+  : Superclass(pqApplicationCore::instance()->interfaceTracker())
+  , Impl(new pqStandardRecentlyUsedResourceLoaderImplementation())
+  , Core(parentObject)
+{
+}
 
 //-----------------------------------------------------------------------------
-pqCMBRecentlyUsedResourceLoaderImplementatation::
-    ~pqCMBRecentlyUsedResourceLoaderImplementatation() {
+pqCMBRecentlyUsedResourceLoaderImplementatation::~pqCMBRecentlyUsedResourceLoaderImplementatation()
+{
   delete this->Impl;
 }
 
 //-----------------------------------------------------------------------------
-bool pqCMBRecentlyUsedResourceLoaderImplementatation::canLoad(
-    const pqServerResource &resource) {
-  if (resource.hasData("CMB_MODEL_FILE")) {
+bool pqCMBRecentlyUsedResourceLoaderImplementatation::canLoad(const pqServerResource& resource)
+{
+  if (resource.hasData("CMB_MODEL_FILE"))
+  {
     return true;
   }
   return this->Impl->canLoad(resource);
@@ -44,8 +46,10 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::canLoad(
 
 //-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::load(
-    const pqServerResource &resource, pqServer *server) {
-  if (resource.hasData("CMB_MODEL_FILE")) {
+  const pqServerResource& resource, pqServer* server)
+{
+  if (resource.hasData("CMB_MODEL_FILE"))
+  {
     return this->loadModel(resource, server);
   }
 
@@ -53,9 +57,10 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::load(
 }
 
 //-----------------------------------------------------------------------------
-QIcon pqCMBRecentlyUsedResourceLoaderImplementatation::icon(
-    const pqServerResource &resource) {
-  if (resource.hasData("CMB_MODEL_FILE")) {
+QIcon pqCMBRecentlyUsedResourceLoaderImplementatation::icon(const pqServerResource& resource)
+{
+  if (resource.hasData("CMB_MODEL_FILE"))
+  {
     // FIXME: use a better icon.
     return QIcon(":/pqWidgets/Icons/pqMultiBlockData16.png");
   }
@@ -64,37 +69,37 @@ QIcon pqCMBRecentlyUsedResourceLoaderImplementatation::icon(
 }
 
 //-----------------------------------------------------------------------------
-QString pqCMBRecentlyUsedResourceLoaderImplementatation::label(
-    const pqServerResource &resource) {
-  if (resource.hasData("CMB_MODEL_FILE")) {
+QString pqCMBRecentlyUsedResourceLoaderImplementatation::label(const pqServerResource& resource)
+{
+  if (resource.hasData("CMB_MODEL_FILE"))
+  {
     return resource.path();
   }
   return this->Impl->label(resource);
 }
 
 //-----------------------------------------------------------------------------
-bool pqCMBRecentlyUsedResourceLoaderImplementatation::
-    addDataFilesToRecentResources(pqServer *server, const QStringList &files,
-                                  const QString &smgroup,
-                                  const QString &smname) {
-  return pqStandardRecentlyUsedResourceLoaderImplementation::
-      addDataFilesToRecentResources(server, files, smgroup, smname);
+bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFilesToRecentResources(
+  pqServer* server, const QStringList& files, const QString& smgroup, const QString& smname)
+{
+  return pqStandardRecentlyUsedResourceLoaderImplementation::addDataFilesToRecentResources(
+    server, files, smgroup, smname);
 }
 
 //-----------------------------------------------------------------------------
-bool pqCMBRecentlyUsedResourceLoaderImplementatation::
-    addDataFileToRecentResources(pqServer *server, const QString &file,
-                                 const QString &smgroup,
-                                 const QString &smname) {
+bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFileToRecentResources(
+  pqServer* server, const QString& file, const QString& smgroup, const QString& smname)
+{
   QStringList files;
   files << file;
-  return pqCMBRecentlyUsedResourceLoaderImplementatation::
-      addDataFilesToRecentResources(server, files, smgroup, smname);
+  return pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFilesToRecentResources(
+    server, files, smgroup, smname);
 }
 
 //-----------------------------------------------------------------------------
-bool pqCMBRecentlyUsedResourceLoaderImplementatation::
-    addModelFileToRecentResources(pqServer *server, const QString &filename) {
+bool pqCMBRecentlyUsedResourceLoaderImplementatation::addModelFileToRecentResources(
+  pqServer* server, const QString& filename)
+{
   pqServerResource resource = server->getResource();
   resource.setPath(filename);
   resource.addData("CMB_MODEL_FILE", "1");
@@ -102,7 +107,7 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::
   resource.addData("modelmanager", "pqCMBModelManager");
   resource.addData("readoperator", "read");
 
-  pqApplicationCore *core = pqApplicationCore::instance();
+  pqApplicationCore* core = pqApplicationCore::instance();
   core->recentlyUsedResources().add(resource);
   core->recentlyUsedResources().save(*core->settings());
   return true;
@@ -110,11 +115,13 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::
 
 //-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::loadModel(
-    const pqServerResource &resource, pqServer *server) {
+  const pqServerResource& resource, pqServer* server)
+{
   (void)server;
   QString readerGroup = resource.data("modelmanager");
   QString readerName = resource.data("readoperator");
-  if ((!readerName.isEmpty() && !readerGroup.isEmpty()) && this->Core) {
+  if ((!readerName.isEmpty() && !readerGroup.isEmpty()) && this->Core)
+  {
     QStringList files;
     files << resource.path();
     this->Core->onFileOpen(files);

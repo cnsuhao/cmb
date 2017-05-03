@@ -21,9 +21,9 @@
 #ifndef __vtkMultiLayerTINStitcher_h
 #define __vtkMultiLayerTINStitcher_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkPolyData;
 class vtkUnstructuredGrid;
@@ -31,14 +31,14 @@ class vtkUnstructuredGrid;
 class VTKCMBMESHING_EXPORT vtkMultiLayerTINStitcher : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  vtkTypeMacro(vtkMultiLayerTINStitcher,vtkMultiBlockDataSetAlgorithm);
+  vtkTypeMacro(vtkMultiLayerTINStitcher, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
-  static vtkMultiLayerTINStitcher *New();
+  static vtkMultiLayerTINStitcher* New();
 
   // Description:
   // Set 2nd input input to the filter (required)
-  void AddInputData(vtkPolyData *input);
-  void AddInputData(vtkUnstructuredGrid *input);
+  void AddInputData(vtkPolyData* input);
+  void AddInputData(vtkUnstructuredGrid* input);
 
   // Description:
   // Indicate the minimum target angle to pass to Triangle if Type 2 TIN
@@ -85,18 +85,18 @@ protected:
   ~vtkMultiLayerTINStitcher();
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+  virtual int FillInputPortInformation(int, vtkInformation*);
 
-  bool   UseQuads;
+  bool UseQuads;
   double MinimumAngle;
   bool AllowInteriorPointInsertion;
   double Tolerance;
   int UserSpecifiedTINType;
 
 private:
-  vtkMultiLayerTINStitcher(const vtkMultiLayerTINStitcher&);  // Not implemented.
-  void operator=(const vtkMultiLayerTINStitcher&);  // Not implemented.
+  vtkMultiLayerTINStitcher(const vtkMultiLayerTINStitcher&); // Not implemented.
+  void operator=(const vtkMultiLayerTINStitcher&);           // Not implemented.
 };
 
 #endif

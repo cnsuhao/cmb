@@ -14,17 +14,17 @@
 #ifndef __vtkCMBProgramManager_h
 #define __vtkCMBProgramManager_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
+#include "vtkCMBProjectManager.h"
 #include "vtkObject.h"
 #include "vtkStdString.h"
-#include "vtkCMBProjectManager.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBGENERAL_EXPORT vtkCMBProgramManager : public vtkObject
 {
 public:
   static vtkCMBProgramManager* New();
-  vtkTypeMacro(vtkCMBProgramManager,vtkObject);
+  vtkTypeMacro(vtkCMBProgramManager, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //BTX
@@ -37,12 +37,10 @@ public:
   //Get program name
   vtkStdString const& GetProgramName() const;
 
-
   //Description:
   //Get a string the represents the program version
   vtkStdString const& GetProgramVersion() const;
   //ETX
-
 
   //Description:
   //Get the major version number
@@ -58,10 +56,9 @@ protected:
 
   friend class vtkCMBProjectManager;
 
-
   void SetProgram(vtkCMBProjectManager::PROGRAM program);
-  void SetDirectoryPath(const vtkStdString &path);
-  void SetProgramVersion(const int &major, const int &minor);
+  void SetDirectoryPath(const vtkStdString& path);
+  void SetProgramVersion(const int& major, const int& minor);
 
   vtkCMBProjectManager::PROGRAM Program;
   int VersionMajor;
@@ -71,10 +68,9 @@ protected:
   vtkStdString DirectoryPath;
   vtkStdString ProgramVersion;
 
-
 private:
-  vtkCMBProgramManager(const vtkCMBProgramManager&);  // Not implemented.
-  void operator=(const vtkCMBProgramManager&);  // Not implemented.
+  vtkCMBProgramManager(const vtkCMBProgramManager&); // Not implemented.
+  void operator=(const vtkCMBProgramManager&);       // Not implemented.
 };
 
 #endif

@@ -15,9 +15,9 @@
 #ifndef __vtkOmicronMeshInputFilter_h
 #define __vtkOmicronMeshInputFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkMultiBlockDataSet;
 
@@ -32,7 +32,7 @@ public:
   // Set the input to this writer.
   void SetInputData(vtkMultiBlockDataSet* dataSet);
 
-//BTX
+  //BTX
 protected:
   vtkOmicronMeshInputFilter();
   ~vtkOmicronMeshInputFilter() override;
@@ -42,15 +42,13 @@ protected:
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  int RequestData(vtkInformation*,
-                          vtkInformationVector**,
-                          vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkOmicronMeshInputFilter(const vtkOmicronMeshInputFilter&); // Not implemented.
-  void operator=(const vtkOmicronMeshInputFilter&); // Not implemented.
+  void operator=(const vtkOmicronMeshInputFilter&);            // Not implemented.
 
-//ETX
+  //ETX
 };
 
 #endif

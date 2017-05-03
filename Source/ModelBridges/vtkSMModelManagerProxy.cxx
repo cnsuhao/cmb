@@ -14,19 +14,19 @@
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/StringItem.h"
 
+#include "smtk/io/LoadJSON.h"
+#include "smtk/io/SaveJSON.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
 #include "smtk/model/RemoteOperator.h"
-#include "smtk/io/LoadJSON.h"
-#include "smtk/io/SaveJSON.h"
 
 #include "cJSON.h"
 
-#include "vtkObjectFactory.h"
+#include "cmbForwardingSession.h"
 #include "vtkClientServerStream.h"
+#include "vtkObjectFactory.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMSession.h"
-#include "cmbForwardingSession.h"
 #include <vtksys/SystemTools.hxx>
 
 using smtk::common::UUID;
@@ -35,7 +35,7 @@ using namespace smtk::model;
 using namespace smtk::io;
 
 #if defined(_MSC_VER)
-#pragma warning(disable:4503)
+#pragma warning(disable : 4503)
 #endif
 
 vtkStandardNewMacro(vtkSMModelManagerProxy);
@@ -56,7 +56,7 @@ vtkSMModelManagerProxy::~vtkSMModelManagerProxy()
 void vtkSMModelManagerProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  os << indent << "ModelMgr: " << this->m_modelMgr.get() << "\n"; // m_modelMgr
+  os << indent << "ModelMgr: " << this->m_modelMgr.get() << "\n";     // m_modelMgr
   os << indent << "ServerSession: " << this->m_serverSession << "\n"; // m_serverSession
 }
 
@@ -65,71 +65,61 @@ std::vector<std::string> vtkSMModelManagerProxy::sessionNames(bool forceFetch)
 {
   std::vector<std::string> resultVec;
   if (this->m_remoteSessionNames.empty() || forceFetch)
-    {
+  {
     this->m_remoteSessionNames.clear();
     // Do not report our session names. Report those available on the server.
     std::string reqStr = "{\"jsonrpc\":\"2.0\", \"method\":\"search-session-types\", \"id\":\"1\"}";
     cJSON* result = this->jsonRPCRequest(reqStr);
     cJSON* sarr;
-    if (
-      !result ||
-      result->type != cJSON_Object ||
-      !(sarr = cJSON_GetObjectItem(result, "result")) ||
-      sarr->type != cJSON_Array)
-      {
+    if (!result || result->type != cJSON_Object ||
+      !(sarr = cJSON_GetObjectItem(result, "result")) || sarr->type != cJSON_Array)
+    {
       // TODO: See if result has "error" key and report it.
       if (result)
         cJSON_Delete(result);
       return std::vector<std::string>();
-      }
+    }
 
     smtk::io::LoadJSON::getStringArrayFromJSON(sarr, resultVec);
     cJSON_Delete(result);
-    this->m_remoteSessionNames = std::set<std::string>(
-      resultVec .begin(), resultVec.end());
-    }
+    this->m_remoteSessionNames = std::set<std::string>(resultVec.begin(), resultVec.end());
+  }
   else
-    {
+  {
     resultVec = std::vector<std::string>(
       this->m_remoteSessionNames.begin(), this->m_remoteSessionNames.end());
-    }
+  }
 
   return resultVec;
 }
 
-bool vtkSMModelManagerProxy::validSession(
-  const smtk::common::UUID& sessionId)
+bool vtkSMModelManagerProxy::validSession(const smtk::common::UUID& sessionId)
 {
   return m_remoteSessionIds.find(sessionId) != m_remoteSessionIds.end();
 }
 
 smtk::common::UUID vtkSMModelManagerProxy::beginSession(
-  const std::string& sessionName,
-  const smtk::common::UUID& newSessionId,
-  bool createNew)
+  const std::string& sessionName, const smtk::common::UUID& newSessionId, bool createNew)
 {
   if (this->m_remoteSessionNames.find(sessionName) == this->m_remoteSessionNames.end())
-    {
+  {
     return smtk::common::UUID::null();
-    }
+  }
 
-  if(!createNew)
-    {
+  if (!createNew)
+  {
     // if there is already a session created, use that session.
-    std::map<smtk::common::UUID,std::string>::iterator it;
-    for (
-      it = this->m_remoteSessionIds.begin();
-      it != this->m_remoteSessionIds.end();
-      ++it)
-      {
-      if(( !newSessionId.isNull() && newSessionId == it->first ) ||
-         ( newSessionId.isNull() && it->second == sessionName ))
+    std::map<smtk::common::UUID, std::string>::iterator it;
+    for (it = this->m_remoteSessionIds.begin(); it != this->m_remoteSessionIds.end(); ++it)
+    {
+      if ((!newSessionId.isNull() && newSessionId == it->first) ||
+        (newSessionId.isNull() && it->second == sessionName))
         return it->first;
-      }
     }
+  }
 
   std::string sessionParams = sessionName;
-  if(!newSessionId.isNull())
+  if (!newSessionId.isNull())
     sessionParams += ("\", \"session-id\":\"" + newSessionId.toString());
   //FIXME: Sanitize sessionName!
   std::string reqStr =
@@ -148,37 +138,30 @@ smtk::common::UUID vtkSMModelManagerProxy::beginSession(
     // Does the result Object have a field named "result" (req'd by JSON-RPC)?
     !(sessionObj = cJSON_GetObjectItem(result, "result")) ||
     // Is the "result" field an Object with a child that is also an object?
-    sessionObj->type != cJSON_Object ||
-    !(sessionIdObj = sessionObj->child) ||
+    sessionObj->type != cJSON_Object || !(sessionIdObj = sessionObj->child) ||
     sessionIdObj->type != cJSON_Object ||
     // Does the first child have a valid name? (This is the session ID)
-    !sessionIdObj->string ||
-    !sessionIdObj->string[0] ||
+    !sessionIdObj->string || !sessionIdObj->string[0] ||
     // Does the first child have fields "name" and "ops" of type String and Array?
-    !(nameObj = cJSON_GetObjectItem(sessionIdObj, "name")) ||
-    nameObj->type != cJSON_String ||
-    !nameObj->valuestring ||
-    !nameObj->valuestring[0] ||
-    !(opsObj = cJSON_GetObjectItem(sessionIdObj, "ops")) ||
-    opsObj->type != cJSON_String ||
-    !opsObj->valuestring ||
-    !opsObj->valuestring[0]
-    )
-      {
-      // TODO: See if result has "error" key and report it.
-      if (result)
-        cJSON_Delete(result);
-      return smtk::common::UUID::null();
-      }
+    !(nameObj = cJSON_GetObjectItem(sessionIdObj, "name")) || nameObj->type != cJSON_String ||
+    !nameObj->valuestring || !nameObj->valuestring[0] ||
+    !(opsObj = cJSON_GetObjectItem(sessionIdObj, "ops")) || opsObj->type != cJSON_String ||
+    !opsObj->valuestring || !opsObj->valuestring[0])
+  {
+    // TODO: See if result has "error" key and report it.
+    if (result)
+      cJSON_Delete(result);
+    return smtk::common::UUID::null();
+  }
 
   // OK, construct a special "forwarding" session locally.
   cmbForwardingSession::Ptr session = cmbForwardingSession::create();
   session->setProxy(this);
   // The LoadJSON registers this session with the model manager.
   if (LoadJSON::ofRemoteSession(sessionIdObj, session, this->m_modelMgr))
-    {
+  {
     // Failure.
-    }
+  }
   //this->m_modelMgr->registerSession(session);
 
   cJSON_Delete(result);
@@ -190,8 +173,7 @@ smtk::common::UUID vtkSMModelManagerProxy::beginSession(
 
 bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
 {
-  std::map<smtk::common::UUID,std::string>::iterator it =
-    this->m_remoteSessionIds.find(sessionId);
+  std::map<smtk::common::UUID, std::string>::iterator it = this->m_remoteSessionIds.find(sessionId);
   if (it == this->m_remoteSessionIds.end())
     return false;
 
@@ -213,230 +195,209 @@ bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
   return true;
 }
 
-smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(
-  const std::string& sessionName)
+smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(const std::string& sessionName)
 {
-  if(this->m_sessionFileTypes.find(sessionName) != this->m_sessionFileTypes.end())
+  if (this->m_sessionFileTypes.find(sessionName) != this->m_sessionFileTypes.end())
     return this->m_sessionFileTypes[sessionName];
 
   smtk::model::StringData retFileTypes;
   smtk::model::StringList bnames;
 
-  if(sessionName.empty())
-    {
+  if (sessionName.empty())
+  {
     // no session name is given, fetch all available session
     bnames = this->sessionNames();
-    }
+  }
   else
-    {
+  {
     bnames.push_back(sessionName);
-    }
+  }
 
   for (smtk::model::StringList::iterator it = bnames.begin(); it != bnames.end(); ++it)
-    {
+  {
     if (this->GetDebug())
-      {
+    {
       std::cout << "Find Session      " << *it << "\n";
-      }
-    std::string reqStr =
-      "{\"jsonrpc\":\"2.0\", \"method\":\"session-filetypes\", "
-      "\"params\":{ \"session-name\":\"" + *it + "\"}, "
-      "\"id\":\"1\"}";
+    }
+    std::string reqStr = "{\"jsonrpc\":\"2.0\", \"method\":\"session-filetypes\", "
+                         "\"params\":{ \"session-name\":\"" +
+      *it + "\"}, "
+            "\"id\":\"1\"}";
 
     cJSON* resObj;
     cJSON* result = this->jsonRPCRequest(reqStr);
-//    std::cout << "result File types: " << cJSON_Print(result) <<std::endl;
-    if (
-      !result ||
-      result->type != cJSON_Object ||
-      !(resObj = cJSON_GetObjectItem(result, "result")) ||
-      resObj->type != cJSON_Object)
-      {
+    //    std::cout << "result File types: " << cJSON_Print(result) <<std::endl;
+    if (!result || result->type != cJSON_Object ||
+      !(resObj = cJSON_GetObjectItem(result, "result")) || resObj->type != cJSON_Object)
+    {
       // TODO: See if result has "error" key and report it.
       if (result)
         cJSON_Delete(result);
       continue;
-      }
+    }
 
     smtk::model::StringData brFileTypes;
     for (cJSON* sarr = resObj->child; sarr; sarr = sarr->next)
-      {
+    {
       if (sarr->type == cJSON_Array)
-        {
+      {
         smtk::model::StringList bftypes;
         smtk::io::LoadJSON::getStringArrayFromJSON(sarr, bftypes);
         retFileTypes[sarr->string].insert(
           retFileTypes[sarr->string].end(), bftypes.begin(), bftypes.end());
         brFileTypes[sarr->string].insert(
           brFileTypes[sarr->string].end(), bftypes.begin(), bftypes.end());
-        }
       }
+    }
 
-    if(brFileTypes.size())
-      {
+    if (brFileTypes.size())
+    {
       this->m_sessionFileTypes[*it] = brFileTypes;
-      }
+    }
 
     if (result)
       cJSON_Delete(result);
-
-    }
+  }
 
   return retFileTypes;
 }
 
 void vtkSMModelManagerProxy::initFileOperator(
-  smtk::model::OperatorPtr fileOp,
-  const std::string& fileName,
-  const std::string& engineName)
+  smtk::model::OperatorPtr fileOp, const std::string& fileName, const std::string& engineName)
 {
-  if(!fileOp->ensureSpecification())
+  if (!fileOp->ensureSpecification())
     return;
   fileOp->specification()->findFile("filename")->setValue(fileName);
   smtk::attribute::StringItem::Ptr enginetypeItem =
     fileOp->specification()->findString("enginetype");
   if (enginetypeItem)
-    {
+  {
     enginetypeItem->setValue(engineName);
-    }
+  }
 }
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
-  const std::string& fileName,
-  smtk::model::SessionPtr session,
-  const std::string& engineName)
+  const std::string& fileName, smtk::model::SessionPtr session, const std::string& engineName)
 {
-  std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(fileName);
-  if( lastExt == ".smtk" )
-    {
+  std::string lastExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  if (lastExt == ".smtk")
+  {
     OperatorPtr smtkImportOp = session->op("load smtk model");
     // Not all session should have an ImportOperator
     if (smtkImportOp)
-      {
+    {
       this->initFileOperator(smtkImportOp, fileName, engineName);
       return smtkImportOp;
-      }
     }
+  }
 
   OperatorPtr readOp = session->op("read");
   // Assuming all session should have a ReadOperator
   if (!readOp)
-    {
-    std::cerr
-      << "Could not create read operator for session"
-      << " \"" << session->name() << "\""
-      << " (" << session->sessionId() << ")\n";
+  {
+    std::cerr << "Could not create read operator for session"
+              << " \"" << session->name() << "\""
+              << " (" << session->sessionId() << ")\n";
     return smtk::model::OperatorPtr();
-    }
+  }
 
   this->initFileOperator(readOp, fileName, engineName);
-  if (readOp->specification() && readOp->ableToOperate() )
-    {
+  if (readOp->specification() && readOp->ableToOperate())
+  {
     return readOp;
-    }
+  }
   else
-    {
+  {
     std::cout << "No specs for Read Op or Read Op can not operate with the file: "
               << fileName.c_str() << "\n";
-    }
+  }
   // try "import" if there is one
   OperatorPtr importOp = session->op("import");
   // Not all session should have an ImportOperator
   if (importOp)
-    {
+  {
     this->initFileOperator(importOp, fileName, engineName);
     return importOp;
-    }
+  }
   else
-    {
-    std::cout
-      << "Could not create import operator for session"
-      << " \"" << session->name() << "\""
-      << " (" << session->sessionId() << ")\n";
-    }
+  {
+    std::cout << "Could not create import operator for session"
+              << " \"" << session->name() << "\""
+              << " (" << session->sessionId() << ")\n";
+  }
 
   return smtk::model::OperatorPtr();
 }
 
 smtk::model::OperatorPtr vtkSMModelManagerProxy::newFileOperator(
-  const std::string& fileName,
-  const std::string& sessionName,
-  const std::string& engineName)
+  const std::string& fileName, const std::string& sessionName, const std::string& engineName)
 {
   std::string actualSessionName = sessionName, actualEngineName = engineName;
   if (sessionName.empty())
-    {
+  {
     std::set<std::string>::const_iterator bnit;
-    for (
-      bnit = this->m_remoteSessionNames.begin();
-      bnit != this->m_remoteSessionNames.end() && actualSessionName.empty();
-      ++bnit)
-      {
+    for (bnit = this->m_remoteSessionNames.begin();
+         bnit != this->m_remoteSessionNames.end() && actualSessionName.empty(); ++bnit)
+    {
       smtk::model::StringData fileTypesForSession = this->supportedFileTypes(*bnit);
       smtk::model::PropertyNameWithStrings typeIt;
-      for(typeIt = fileTypesForSession.begin(); typeIt != fileTypesForSession.end(); ++typeIt)
-        {
+      for (typeIt = fileTypesForSession.begin(); typeIt != fileTypesForSession.end(); ++typeIt)
+      {
         std::vector<std::string>::const_iterator fit;
         for (fit = typeIt->second.begin(); fit != typeIt->second.end(); ++fit)
-          {
+        {
           std::string::size_type fEnd;
           std::string::size_type eEnd = (*fit).find(' ');
           std::string ext(*fit, 0, eEnd);
           std::cout << "Looking for \"" << ext << "\"\n";
           if ((fEnd = fileName.rfind(ext)) && (fileName.size() - fEnd == eEnd))
-            { // matching substring is indeed at end of fileName
+          { // matching substring is indeed at end of fileName
             actualSessionName = *bnit;
             actualEngineName = typeIt->first;
             std::cout << "Found session type " << actualSessionName << " for " << fileName << "\n";
             break;
-            }
           }
         }
       }
     }
+  }
 
-  std::map<smtk::common::UUID,std::string>::iterator it;
+  std::map<smtk::common::UUID, std::string>::iterator it;
   SessionPtr session;
-  for (
-    it = this->m_remoteSessionIds.begin();
-    it != this->m_remoteSessionIds.end();
-    ++it)
-    {
+  for (it = this->m_remoteSessionIds.begin(); it != this->m_remoteSessionIds.end(); ++it)
+  {
     SessionPtr tsession = SessionRef(this->m_modelMgr, it->first).session();
     //if (tsession && tsession->name() == actualSessionName)
     if (tsession && it->second == actualSessionName)
-      {
+    {
       session = tsession;
-//      std::cout << "Found session " << session->sessionId() << " (" << actualSessionName << ")\n";
+      //      std::cout << "Found session " << session->sessionId() << " (" << actualSessionName << ")\n";
       break;
-      }
     }
+  }
   if (!session)
-    { // No existing session of that type. Create a new remote session.
+  { // No existing session of that type. Create a new remote session.
     smtk::common::UUID sessionId = this->beginSession(actualSessionName);
-//    std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
+    //    std::cout << "started sessionID: " << sessionId.toString() <<std::endl;
 
     session = SessionRef(this->m_modelMgr, sessionId).session();
-    }
+  }
   if (!session)
-    {
+  {
     std::cerr << "Could not find or create session of type \"" << actualSessionName << "\"\n";
     return OperatorPtr();
-    }
+  }
 
-//  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
-//  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
+  //  std::string ext = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  //  std::string opName = (ext == ".vtk" || ext == ".exo") ? "import" : "read";
   OperatorPtr fileOp = this->newFileOperator(fileName, session, actualEngineName);
   return fileOp;
 }
 
-smtk::model::OperatorPtr vtkSMModelManagerProxy::smtkFileOperator(
-  const std::string& fileName)
+smtk::model::OperatorPtr vtkSMModelManagerProxy::smtkFileOperator(const std::string& fileName)
 {
-  std::string lastExt =
-    vtksys::SystemTools::GetFilenameLastExtension(fileName);
-  if( lastExt != ".smtk")
+  std::string lastExt = vtksys::SystemTools::GetFilenameLastExtension(fileName);
+  if (lastExt != ".smtk")
     return OperatorPtr();
 
   // This is a json/smtk model file, we will look for native model file,
@@ -445,47 +406,36 @@ smtk::model::OperatorPtr vtkSMModelManagerProxy::smtkFileOperator(
   if (!file.good())
     return OperatorPtr();
 
-  std::string data(
-    (std::istreambuf_iterator<char>(file)),
-    (std::istreambuf_iterator<char>()));
+  std::string data((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 
   if (data.empty())
     return OperatorPtr();
 
   cJSON* root = cJSON_Parse(data.c_str());
-  if(!root)
+  if (!root)
     return OperatorPtr();
   cJSON* sessNode = root->child;
   cJSON* typeObj;
   cJSON* nameObj;
-  if (
-    !sessNode ||
-    sessNode->type != cJSON_Object ||
+  if (!sessNode || sessNode->type != cJSON_Object ||
     // Does the sessNode have a valid session ID?
-    !sessNode->string ||
-    !sessNode->string[0] ||
+    !sessNode->string || !sessNode->string[0] ||
     // Does the node have fields "type" and "name" of type String?
-    !(typeObj = cJSON_GetObjectItem(sessNode, "type")) ||
-    typeObj->type != cJSON_String ||
-    !typeObj->valuestring ||
-    !typeObj->valuestring[0] ||
+    !(typeObj = cJSON_GetObjectItem(sessNode, "type")) || typeObj->type != cJSON_String ||
+    !typeObj->valuestring || !typeObj->valuestring[0] ||
     strcmp(typeObj->valuestring, "session") || // must be session type
-    !(nameObj = cJSON_GetObjectItem(sessNode, "name")) ||
-    nameObj->type != cJSON_String ||
-    !nameObj->valuestring ||
-    !nameObj->valuestring[0]
-    )
+    !(nameObj = cJSON_GetObjectItem(sessNode, "name")) || nameObj->type != cJSON_String ||
+    !nameObj->valuestring || !nameObj->valuestring[0])
     return OperatorPtr();
 
   smtk::common::UUID fileSessionId(sessNode->string);
-  smtk::common::UUID sessionId = this->beginSession(nameObj->valuestring,
-                                                    fileSessionId);
+  smtk::common::UUID sessionId = this->beginSession(nameObj->valuestring, fileSessionId);
   SessionPtr session = SessionRef(this->m_modelMgr, sessionId).session();
   if (!session)
-    {
+  {
     std::cerr << "Could not find or create session of type \"" << nameObj->valuestring << "\"\n";
     return OperatorPtr();
-    }
+  }
 
   OperatorPtr fileOp = this->newFileOperator(fileName, session, std::string());
   return fileOp;
@@ -503,10 +453,8 @@ smtk::model::ManagerPtr vtkSMModelManagerProxy::modelManager()
   return this->m_modelMgr;
 }
 
-cJSON* vtkSMModelManagerProxy::requestJSONOp(
-  smtk::model::RemoteOperatorPtr op,
-  const std::string& strMethod,
-  const smtk::common::UUID& fwdSessionId)
+cJSON* vtkSMModelManagerProxy::requestJSONOp(smtk::model::RemoteOperatorPtr op,
+  const std::string& strMethod, const smtk::common::UUID& fwdSessionId)
 {
   if (!op)
     return NULL;
@@ -523,16 +471,15 @@ cJSON* vtkSMModelManagerProxy::requestJSONOp(
   cJSON_AddItemToObject(par, "sessionId", cJSON_CreateString(fwdSessionId.toString().c_str()));
 
   vtkSMProxy* opHelperProxy = NULL;
-  smtk::attribute::IntItem::Ptr opProxyIdItem =
-    op->specification()->findInt("HelperGlobalID");
-  if(opProxyIdItem && opProxyIdItem->value() > 0)
-    {
-    opHelperProxy = vtkSMProxy::SafeDownCast(
-      this->GetSession()->GetRemoteObject(opProxyIdItem->value()));
-    }
+  smtk::attribute::IntItem::Ptr opProxyIdItem = op->specification()->findInt("HelperGlobalID");
+  if (opProxyIdItem && opProxyIdItem->value() > 0)
+  {
+    opHelperProxy =
+      vtkSMProxy::SafeDownCast(this->GetSession()->GetRemoteObject(opProxyIdItem->value()));
+  }
 
   cJSON* resp = this->jsonRPCRequest(req, opHelperProxy);
-  if(req)
+  if (req)
     cJSON_Delete(req);
   return resp;
 }
@@ -547,7 +494,7 @@ cJSON* vtkSMModelManagerProxy::jsonRPCRequest(cJSON* req, vtkSMProxy* opHelperPr
 
 cJSON* vtkSMModelManagerProxy::jsonRPCRequest(const std::string& req, vtkSMProxy* opHelperProxy)
 {
-  if(req.empty())
+  if (req.empty())
     return NULL;
 
   this->jsonRPCNotification(req, opHelperProxy);
@@ -570,7 +517,7 @@ void vtkSMModelManagerProxy::jsonRPCNotification(cJSON* note, vtkSMProxy* opHelp
 
 void vtkSMModelManagerProxy::jsonRPCNotification(const std::string& note, vtkSMProxy* opHelperProxy)
 {
-  if(note.empty())
+  if (note.empty())
     return;
 
   // Check if there is a geometryHelper(for example vtkSMTKOperator) proxy in "params",
@@ -580,36 +527,28 @@ void vtkSMModelManagerProxy::jsonRPCNotification(const std::string& note, vtkSMP
   vtkClientServerStream stream;
   // calls "ProcessJSONRequest" function on object this->GetId() (which gets turned
   // into a pointer on the server)
-  if(opHelperProxy)
-    {
-    stream  << vtkClientServerStream::Invoke
-            << VTKOBJECT(this)
-            << "ProcessJSONRequest"
-            << VTKOBJECT(opHelperProxy)
-            << vtkClientServerStream::End;
-    }
+  if (opHelperProxy)
+  {
+    stream << vtkClientServerStream::Invoke << VTKOBJECT(this) << "ProcessJSONRequest"
+           << VTKOBJECT(opHelperProxy) << vtkClientServerStream::End;
+  }
   else
-    {
-    stream  << vtkClientServerStream::Invoke
-            << VTKOBJECT(this)
-            << "ProcessJSONRequest"
-            << vtkClientServerStream::End;
-    }
+  {
+    stream << vtkClientServerStream::Invoke << VTKOBJECT(this) << "ProcessJSONRequest"
+           << vtkClientServerStream::End;
+  }
   this->ExecuteStream(stream);
 }
 
 void vtkSMModelManagerProxy::fetchWholeModel()
 {
-  cJSON* response = this->jsonRPCRequest(
-    "{\"jsonrpc\":\"2.0\", \"id\":\"1\", \"method\":\"fetch-model\"}");
+  cJSON* response =
+    this->jsonRPCRequest("{\"jsonrpc\":\"2.0\", \"id\":\"1\", \"method\":\"fetch-model\"}");
   cJSON* model;
   cJSON* topo;
-//  std::cout << " ----- \n\n\n" << cJSON_Print(response) << "\n ----- \n\n\n";
-  if (
-    response &&
-    (model = cJSON_GetObjectItem(response, "result")) &&
-    model->type == cJSON_Object &&
-    (topo = cJSON_GetObjectItem(model, "topo")))
+  //  std::cout << " ----- \n\n\n" << cJSON_Print(response) << "\n ----- \n\n\n";
+  if (response && (model = cJSON_GetObjectItem(response, "result")) &&
+    model->type == cJSON_Object && (topo = cJSON_GetObjectItem(model, "topo")))
     LoadJSON::ofManager(topo, this->m_modelMgr);
   cJSON_Delete(response);
 }
@@ -617,20 +556,16 @@ void vtkSMModelManagerProxy::fetchWholeModel()
 void vtkSMModelManagerProxy::endSessions()
 {
   while (!this->m_remoteSessionIds.empty())
-    this->endSession(
-      this->m_remoteSessionIds.begin()->first);
+    this->endSession(this->m_remoteSessionIds.begin()->first);
 }
 
 void vtkSMModelManagerProxy::connectProxyToManager(vtkSMProxy* sourceProxy)
 {
-  if(!sourceProxy)
+  if (!sourceProxy)
     return;
 
   vtkClientServerStream stream;
-  stream  << vtkClientServerStream::Invoke
-          << VTKOBJECT(this)
-          << "SetModelManagerToSource"
-          << VTKOBJECT(sourceProxy)
-          << vtkClientServerStream::End;
+  stream << vtkClientServerStream::Invoke << VTKOBJECT(this) << "SetModelManagerToSource"
+         << VTKOBJECT(sourceProxy) << vtkClientServerStream::End;
   this->ExecuteStream(stream);
 }

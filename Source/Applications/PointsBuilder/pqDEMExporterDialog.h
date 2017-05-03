@@ -11,14 +11,13 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqDEMExportDialog_h
 #define __pqDEMExportDialog_h
 
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class QDialog;
 class pqPipelineSource;
@@ -26,7 +25,7 @@ class pqServer;
 
 namespace Ui
 {
-  class  qtDEMExporter;
+class qtDEMExporter;
 };
 
 class pqDEMExportDialog : public QObject
@@ -34,10 +33,8 @@ class pqDEMExportDialog : public QObject
   Q_OBJECT
 
 public:
-  static int exportToDem(QWidget *parent, pqServer *server,
-                         double * min, double * max,
-                         int * outRastSize, double * spacing,
-                         int* zone, bool * isnorth, double * scale);
+  static int exportToDem(QWidget* parent, pqServer* server, double* min, double* max,
+    int* outRastSize, double* spacing, int* zone, bool* isnorth, double* scale);
 
 protected slots:
   void accept();
@@ -45,15 +42,15 @@ protected slots:
   void valueChanged();
 
 protected:
-  pqDEMExportDialog(QWidget *parent, pqServer *server, double *min, double * max,
-                    double * spacing, int zone, bool isnorth, double scale);
+  pqDEMExportDialog(QWidget* parent, pqServer* server, double* min, double* max, double* spacing,
+    int zone, bool isnorth, double scale);
   ~pqDEMExportDialog() override;
   int exec();
   int Status;
-  Ui::qtDEMExporter *ExportDialog;
-  QDialog *MainDialog;
+  Ui::qtDEMExporter* ExportDialog;
+  QDialog* MainDialog;
   QString FileName;
-  pqServer *Server;
+  pqServer* Server;
   int width, height;
   double dist_w, dist_h;
 };

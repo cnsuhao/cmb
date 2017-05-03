@@ -17,16 +17,15 @@
 #ifndef __vtkCMBPt123ElementVelocityConversionWriter_h
 #define __vtkCMBPt123ElementVelocityConversionWriter_h
 
-#include "vtkCMBIOModule.h" // For export macro
-#include "vtkWriter.h"
 #include "cmbSystemConfig.h"
 #include "string"
+#include "vtkCMBIOModule.h" // For export macro
+#include "vtkWriter.h"
 class vtkDataArray;
 
 class VTKCMBIO_EXPORT vtkCMBPt123ElementVelocityConversionWriter : public vtkWriter
 {
 public:
-
   static vtkCMBPt123ElementVelocityConversionWriter* New();
   vtkTypeMacro(vtkCMBPt123ElementVelocityConversionWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -40,7 +39,6 @@ public:
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
 
-
   // Description:
   // Turn on/off the use of scientific notation for writing floating point values.
   vtkBooleanMacro(UseScientificNotation, bool);
@@ -52,7 +50,7 @@ public:
   vtkSetMacro(FloatPrecision, int);
   vtkGetMacro(FloatPrecision, int);
 
-//BTX
+  //BTX
 protected:
   vtkCMBPt123ElementVelocityConversionWriter();
   ~vtkCMBPt123ElementVelocityConversionWriter() override;
@@ -68,13 +66,15 @@ protected:
   char* FileName;
   bool UseScientificNotation;
   int FloatPrecision;
-  vtkDataArray *MyData;
+  vtkDataArray* MyData;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
-  vtkCMBPt123ElementVelocityConversionWriter(const vtkCMBPt123ElementVelocityConversionWriter&); // Not implemented.
+  vtkCMBPt123ElementVelocityConversionWriter(
+    const vtkCMBPt123ElementVelocityConversionWriter&);              // Not implemented.
   void operator=(const vtkCMBPt123ElementVelocityConversionWriter&); // Not implemented.
-//ETX
+  //ETX
 };
 
 #endif

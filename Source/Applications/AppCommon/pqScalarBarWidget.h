@@ -16,9 +16,9 @@
 #define _qtScalarBarWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
-#include <QColor>
 #include "cmbSystemConfig.h"
+#include <QColor>
+#include <QObject>
 
 class pqDataRepresentation;
 class QDialog;
@@ -32,15 +32,14 @@ public:
   ~pqScalarBarWidget() override;
 
 public:
-
-  void setIndexedColors( const QList<QColor>& colors );
-  void setAnnotations(
-    const QList<QVariant>& annotations );
+  void setIndexedColors(const QList<QColor>& colors);
+  void setAnnotations(const QList<QVariant>& annotations);
   void setVisible(bool visible);
 
   void setTitle(const QString& title);
   void setPositionToLeft();
   void setPositionToRight();
+
 protected:
   void init();
 

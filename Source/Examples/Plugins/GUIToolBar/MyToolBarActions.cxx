@@ -11,8 +11,8 @@
 #include "MyToolBarActions.h"
 
 #include <QApplication>
-#include <QStyle>
 #include <QMessageBox>
+#include <QStyle>
 
 MyToolBarActions::MyToolBarActions(QObject* p)
   : QActionGroup(p)

@@ -34,12 +34,11 @@ void vtkQtCMBConnectComboBox::showPopup()
 //----------------------------------------------------------------------------
 void vtkQtCMBConnectComboBox::setVTKConnectObject(vtkObject* obj, unsigned long evt)
 {
-  if(obj)
-    {
+  if (obj)
+  {
     this->VTKUserEventConnect->Disconnect();
-    this->VTKUserEventConnect->Connect(obj, evt,
-      this, SLOT(onVTKEventInvoked()));
-    }
+    this->VTKUserEventConnect->Connect(obj, evt, this, SLOT(onVTKEventInvoked()));
+  }
 }
 
 //----------------------------------------------------------------------------

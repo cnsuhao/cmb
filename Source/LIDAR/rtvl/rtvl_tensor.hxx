@@ -5,8 +5,10 @@
 #ifndef rtvl_tensor_hxx
 #define rtvl_tensor_hxx
 
-template <class T, unsigned int n> class vnl_vector_fixed;
-template <class T, unsigned int nr, unsigned int nc> class vnl_matrix_fixed;
+template <class T, unsigned int n>
+class vnl_vector_fixed;
+template <class T, unsigned int nr, unsigned int nc>
+class vnl_matrix_fixed;
 
 #include <vnl/vnl_vector_fixed.h>
 
@@ -38,30 +40,26 @@ public:
   /** Adjust the tensor towards a ball to move to the next scale.  */
   void next_scale(double scale_multiplier, double max_saliency);
 
-  double lambda(unsigned int d) const
-    { return this->lambda_[d]; }
+  double lambda(unsigned int d) const { return this->lambda_[d]; }
 
-  double saliency(unsigned int d) const
-    { return this->lambda_[d] - this->lambda_[d+1]; }
+  double saliency(unsigned int d) const { return this->lambda_[d] - this->lambda_[d + 1]; }
 
   typedef vnl_vector_fixed<double, N> basis_type[N];
-  basis_type const& basis() const
-    { return this->basis_; }
-  vnl_vector_fixed<double, N> const& basis(unsigned int d) const
-    { return this->basis_[d]; }
+  basis_type const& basis() const { return this->basis_; }
+  vnl_vector_fixed<double, N> const& basis(unsigned int d) const { return this->basis_[d]; }
 
 private:
   basis_type basis_;
-  double lambda_[N+1];
+  double lambda_[N + 1];
 
 private:
   friend class rgtl_serialize_access;
   template <class Serializer>
   void serialize(Serializer& sr)
-    {
-    sr & basis_;
-    sr & lambda_;
-    }
+  {
+    sr& basis_;
+    sr& lambda_;
+  }
 };
 
 #endif

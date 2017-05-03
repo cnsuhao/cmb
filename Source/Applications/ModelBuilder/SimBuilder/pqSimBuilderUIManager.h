@@ -14,14 +14,14 @@
 #ifndef __pqSimBuilderUIManager_h
 #define __pqSimBuilderUIManager_h
 
-#include <QObject>
-#include "smtk/extension/qt/qtUIManager.h"
+#include "cmbSystemConfig.h"
 #include "smtk/extension/qt/qtAttribute.h"
 #include "smtk/extension/qt/qtFileItem.h"
-#include "cmbSystemConfig.h"
+#include "smtk/extension/qt/qtUIManager.h"
+#include <QObject>
 
-#include <QMap>
 #include <QList>
+#include <QMap>
 #include <QPointer>
 
 class pqServer;
@@ -35,34 +35,27 @@ class pqSMTKModelPanel;
 class pqSimBuilderUIManager : public QObject
 {
 
-Q_OBJECT
+  Q_OBJECT
 
 public:
   pqSimBuilderUIManager(QObject* parent = NULL);
   ~pqSimBuilderUIManager() override;
-  smtk::attribute::SystemPtr attributeSystem() const
-    {return this->m_AttSystem;}
-  smtk::extension::qtUIManager* attributeUIManager() const
-    {return this->m_attUIManager;}
+  smtk::attribute::SystemPtr attributeSystem() const { return this->m_AttSystem; }
+  smtk::extension::qtUIManager* attributeUIManager() const { return this->m_attUIManager; }
 
-  void setServer(pqServer* s)
-  { this->ActiveServer = s; }
-  pqServer *server()
-  { return this->ActiveServer; }
-  void setRenderView(pqRenderView* view)
-  { this->RenderView = view; }
+  void setServer(pqServer* s) { this->ActiveServer = s; }
+  pqServer* server() { return this->ActiveServer; }
+  void setRenderView(pqRenderView* view) { this->RenderView = view; }
 
-  pqRenderView *renderView()
-  { return this->RenderView; }
+  pqRenderView* renderView() { return this->RenderView; }
 
   smtk::extension::qtBaseView* topView();
-  void setSMTKView( smtk::common::ViewPtr topView, QWidget* parentWidget);
+  void setSMTKView(smtk::common::ViewPtr topView, QWidget* parentWidget);
   smtk::model::ManagerPtr attModelManager() const;
   void setModelManager(smtk::model::ManagerPtr);
   void setModelPanel(pqSMTKModelPanel*);
 
-  void getAttributeDefinitions(
-           QMap<QString, QList<smtk::attribute::DefinitionPtr> > &attDefMap);
+  void getAttributeDefinitions(QMap<QString, QList<smtk::attribute::DefinitionPtr> >& attDefMap);
 
 signals:
   void numOfAttriubtesChanged();
@@ -73,10 +66,8 @@ protected slots:
   void onFileItemCreated(smtk::extension::qtFileItem*);
   void onLaunchFileBrowser();
   void createFunctionWithExpression(
-    QString& expression, double initVal,
-    double deltaVal, int numVals);
-  void onModelEntityItemCreated(
-  smtk::extension::qtModelEntityItem* entItem);
+    QString& expression, double initVal, double deltaVal, int numVals);
+  void onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem);
   void onRequestEntityAssociation();
   void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
 
@@ -89,8 +80,7 @@ protected:
 
 private:
   static pqSimBuilderUIManager* Instance;
-  pqSimBuilderUIManagerInternals *Internals;
-
+  pqSimBuilderUIManagerInternals* Internals;
 };
 
 #endif

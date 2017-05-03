@@ -13,10 +13,10 @@
 #ifndef __vtkCMBPolygonFromArcsOperator_h
 #define __vtkCMBPolygonFromArcsOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 #include <set>
 
 class vtkCMBArc;
@@ -27,8 +27,8 @@ class vtkCMBArcManager;
 class VTKCMBMESHING_EXPORT vtkCMBPolygonFromArcsOperator : public vtkObject
 {
 public:
-  static vtkCMBPolygonFromArcsOperator *New();
-  vtkTypeMacro(vtkCMBPolygonFromArcsOperator,vtkObject);
+  static vtkCMBPolygonFromArcsOperator* New();
+  vtkTypeMacro(vtkCMBPolygonFromArcsOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
@@ -71,9 +71,8 @@ protected:
   InternalLoops* Loops;
 
 private:
-
-  vtkCMBPolygonFromArcsOperator(const vtkCMBPolygonFromArcsOperator&);  // Not implemented.
-  void operator=(const vtkCMBPolygonFromArcsOperator&);  // Not implemented.
+  vtkCMBPolygonFromArcsOperator(const vtkCMBPolygonFromArcsOperator&); // Not implemented.
+  void operator=(const vtkCMBPolygonFromArcsOperator&);                // Not implemented.
 };
 
 #endif

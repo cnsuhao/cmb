@@ -14,11 +14,11 @@
 #ifndef __pqCMBLIDARContourTree_h
 #define __pqCMBLIDARContourTree_h
 
-#include <QObject>
 #include <QAbstractItemView>
+#include <QObject>
 
-#include "qtCMBTreeWidget.h"
 #include "cmbSystemConfig.h"
+#include "qtCMBTreeWidget.h"
 
 class QTreeWidgetItem;
 class QDropEvent;
@@ -29,7 +29,7 @@ class QAction;
 class qtArcWidget;
 class pqCMBArcTreeItem;
 
-class pqCMBLIDARContourTree :  public QObject
+class pqCMBLIDARContourTree : public QObject
 {
   Q_OBJECT
 
@@ -39,11 +39,11 @@ public:
 
   // enum for different column types
   enum enumColumns
-    {
-    UseFilterCol  = 0,
-    NameCol       = 1,
-    InvertCol     = 2
-    };
+  {
+    UseFilterCol = 0,
+    NameCol = 1,
+    InvertCol = 2
+  };
 
   // Description:
   // Convenient methods related to selection on tree widgets
@@ -51,9 +51,13 @@ public:
   QList<QTreeWidgetItem*> getSelectedItems() const;
   void selectItem(QTreeWidgetItem* item);
   void setSelectionMode(QAbstractItemView::SelectionMode mode)
-  {this->TreeWidget->setSelectionMode(mode);}
+  {
+    this->TreeWidget->setSelectionMode(mode);
+  }
   QAbstractItemView::SelectionMode selectionMode() const
-  {return this->TreeWidget->selectionMode();}
+  {
+    return this->TreeWidget->selectionMode();
+  }
   qtArcWidget* getItemObject(QTreeWidgetItem* treeItem);
 
   // Description:
@@ -90,8 +94,7 @@ signals:
   void dragStarted(pqCMBLIDARContourTree*);
   void selectionChanged(QTreeWidgetItem*);
   void itemChanged(QList<QTreeWidgetItem*>, int, int);
-  void onItemsDropped(QTreeWidgetItem*toNode, int fromGroup,
-    QList<QTreeWidgetItem*> newChildren);
+  void onItemsDropped(QTreeWidgetItem* toNode, int fromGroup, QList<QTreeWidgetItem*> newChildren);
   void itemRemoved(QList<qtArcWidget*>);
 
 protected slots:
@@ -105,31 +108,23 @@ protected slots:
   virtual void onItemChanged(QTreeWidgetItem*, int);
 
 protected:
-
   // Description:
   // Create and Initialize the internal tree widget.
   virtual void createWidget(QWidget* parent);
 
   // Description:
   // Methods to create a tree node on the tree widget
-  QTreeWidgetItem* createContourNode(
-    QTreeWidgetItem* parentNode,
-    qtArcWidget* contourObj, Qt::ItemFlags commFlags,
-    const QString& text, int itemid, int type=0,
-    bool setApplyContour=false, bool invert=true);
+  QTreeWidgetItem* createContourNode(QTreeWidgetItem* parentNode, qtArcWidget* contourObj,
+    Qt::ItemFlags commFlags, const QString& text, int itemid, int type = 0,
+    bool setApplyContour = false, bool invert = true);
   QTreeWidgetItem* addNewTreeNodeOnRoot();
-  QTreeWidgetItem* createContourNode(
-    QTreeWidgetItem* parentNode,
-    qtArcWidget* contourObj, Qt::ItemFlags commFlags, int type=0,
-    bool setApplyContour=false, bool invert=true);
-  void moveContourItemsToNode(
-    QTreeWidgetItem* copytoNode, QList<QTreeWidgetItem*> selItems);
-  void addUniqueChildren(
-    QTreeWidgetItem* copyItem, QList<QTreeWidgetItem*> &newChildren);
+  QTreeWidgetItem* createContourNode(QTreeWidgetItem* parentNode, qtArcWidget* contourObj,
+    Qt::ItemFlags commFlags, int type = 0, bool setApplyContour = false, bool invert = true);
+  void moveContourItemsToNode(QTreeWidgetItem* copytoNode, QList<QTreeWidgetItem*> selItems);
+  void addUniqueChildren(QTreeWidgetItem* copyItem, QList<QTreeWidgetItem*>& newChildren);
   // Description:
   // Some internal convenient methods.
   virtual void customizeTreeWidget();
-
 };
 
 #endif /* __pqCMBLIDARContourTree_h */

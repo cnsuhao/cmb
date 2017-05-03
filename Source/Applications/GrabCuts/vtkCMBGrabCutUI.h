@@ -45,15 +45,14 @@ public slots:
   void setTransparency(int t);
   void setDrawMode(int m);
   void setAlgorithm(int a);
-  void setFGFilterSize(const QString & f);
-  void setBGFilterSize(const QString & b);
+  void setFGFilterSize(const QString& f);
+  void setBGFilterSize(const QString& b);
 
 private:
-
   class Internal;
-  Internal *internal;
+  Internal* internal;
   // Designer form
-  Ui_grabCuts *ui;
+  Ui_grabCuts* ui;
 };
 
 #endif

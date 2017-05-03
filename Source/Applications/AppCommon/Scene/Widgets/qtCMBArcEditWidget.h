@@ -11,15 +11,14 @@
 #ifndef __qtCMBArcEditWidget_h
 #define __qtCMBArcEditWidget_h
 
-
-#include <QWidget>
-#include <QAction> //needed for ArcPointPicker
-#include <QStringBuilder> //needed for more efficient string concatenating
-#include "vtkType.h"
-#include "vtkCommand.h"
 #include "cmbSystemConfig.h"
-#include "vtkPropPicker.h"
+#include "vtkCommand.h"
 #include "vtkProp.h"
+#include "vtkPropPicker.h"
+#include "vtkType.h"
+#include <QAction>        //needed for ArcPointPicker
+#include <QStringBuilder> //needed for more efficient string concatenating
+#include <QWidget>
 
 class pqOutputPort;
 class pqRenderView;
@@ -29,35 +28,37 @@ class qtArcWidget;
 class qtCMBArcWidgetManager;
 class qtCMBArcEditWidget;
 
-namespace Ui {
+namespace Ui
+{
 class qtCMBArcEditWidget;
 
 struct PickInfo
 {
   bool IsValid;
   double pointLocation[3];
-  pqOutputPort *port;
+  pqOutputPort* port;
   vtkIdType PointId;
 
-  PickInfo():IsValid(false), PointId(-1){}
+  PickInfo()
+    : IsValid(false)
+    , PointId(-1)
+  {
+  }
 
   QString text() const
-    {
-    return QString("Id: ") %
-      QString::number(PointId) %
-      QString("; Position: ") %
-      QString::number(pointLocation[0]) % ", "
-      % QString::number(pointLocation[1]) % ", "
-      % QString::number(pointLocation[2]);
-    }
+  {
+    return QString("Id: ") % QString::number(PointId) % QString("; Position: ") %
+      QString::number(pointLocation[0]) % ", " % QString::number(pointLocation[1]) % ", " %
+      QString::number(pointLocation[2]);
+  }
 };
 
 class ArcPointPicker : public QAction
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-  ArcPointPicker(QObject * parent);
+  ArcPointPicker(QObject* parent);
   ~ArcPointPicker() override;
 signals:
   //called by the selector when a valid selection is finished.
@@ -66,7 +67,7 @@ signals:
   void triggered(bool);
 
 public slots:
-  void doPick(pqRenderView *view, pqCMBArc *arc, PickInfo &info);
+  void doPick(pqRenderView* view, pqCMBArc* arc, PickInfo& info);
 
 protected slots:
   //saves the information returned from the selection.
@@ -75,13 +76,11 @@ protected slots:
   void onPickingFinished();
 
 private:
-
   PickInfo* Info;
   pqCMBArc* Arc;
   pqRenderView* View;
   pqRenderViewSelectionReaction* Selecter;
 };
-
 }
 
 class vtkPointSelectedCallback;
@@ -89,20 +88,19 @@ class pqCmbModifierArcManager;
 
 class qtCMBArcEditWidget : public QWidget
 {
-Q_OBJECT
+  Q_OBJECT
 
 public:
   friend class vtkPointSelectedCallback;
   friend class qtCMBArcWidgetManager;
   friend class pqCmbModifierArcManager;
 
-  explicit qtCMBArcEditWidget(QWidget *parent = 0);
+  explicit qtCMBArcEditWidget(QWidget* parent = 0);
   ~qtCMBArcEditWidget() override;
 
-  virtual void setView(pqRenderView* view) { this->View=view; }
+  virtual void setView(pqRenderView* view) { this->View = view; }
   virtual void setArc(pqCMBArc* arc);
-  virtual void setArcManager(qtCMBArcWidgetManager* arcManager)
-    {this->ArcManager = arcManager;}
+  virtual void setArcManager(qtCMBArcWidgetManager* arcManager) { this->ArcManager = arcManager; }
   // is the sub-arc valid
   bool isSubArcValid();
   // if the whole arc is selected, the original contour widget panel
@@ -179,8 +177,8 @@ private:
   pqInternals* Internals;
 
   Ui::ArcPointPicker Picker;
-  pqRenderView *View;
-  pqCMBArc *Arc;
+  pqRenderView* View;
+  pqCMBArc* Arc;
   qtArcWidget* SubWidget;
   qtCMBArcWidgetManager* ArcManager;
 

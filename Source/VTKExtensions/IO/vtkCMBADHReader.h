@@ -14,8 +14,8 @@
 #ifndef _vtkCMBADHReader_h_
 #define _vtkCMBADHReader_h_
 
-#include "vtkCMBIOModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBIOModule.h" // For export macro
 #include <vtkFloatArray.h>
 #include <vtkPointSetAlgorithm.h>
 #include <vtkSmartPointer.h>
@@ -24,70 +24,67 @@ class ADHTemporalData;
 
 class VTKCMBIO_EXPORT vtkCMBADHReader : public vtkPointSetAlgorithm
 {
-  public:
-    static vtkCMBADHReader *New();
-    vtkTypeMacro(vtkCMBADHReader,vtkPointSetAlgorithm );
+public:
+  static vtkCMBADHReader* New();
+  vtkTypeMacro(vtkCMBADHReader, vtkPointSetAlgorithm);
 
-    // Description:
-    // Name of the file to be read.
-    vtkSetStringMacro(FileName);
-    vtkGetStringMacro(FileName);
+  // Description:
+  // Name of the file to be read.
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
 
-    // Description:
-    // Prefix string to be prepended to filename to name the data array.
-    vtkSetStringMacro(Prefix);
-    vtkGetStringMacro(Prefix);
+  // Description:
+  // Prefix string to be prepended to filename to name the data array.
+  vtkSetStringMacro(Prefix);
+  vtkGetStringMacro(Prefix);
 
-    // Description:
-    // Suffix string to be prepended to filename to name the data array.
-    vtkSetStringMacro(Suffix);
-    vtkGetStringMacro(Suffix);
+  // Description:
+  // Suffix string to be prepended to filename to name the data array.
+  vtkSetStringMacro(Suffix);
+  vtkGetStringMacro(Suffix);
 
-    vtkSetClampMacro(CacheSize,int,1,VTK_INT_MAX);
-    vtkSetMacro(PrimaryDataSet,int);
-  protected:
-    vtkCMBADHReader();
-    ~vtkCMBADHReader() override;
+  vtkSetClampMacro(CacheSize, int, 1, VTK_INT_MAX);
+  vtkSetMacro(PrimaryDataSet, int);
 
-    int ReadTemporalData();
+protected:
+  vtkCMBADHReader();
+  ~vtkCMBADHReader() override;
 
-    //This is here because of a bug in vtkPointSetAlgorithm
-    //It can be removed whenever the ExecuteInformation function in
-    //vtkPointSetAlgorithm is changed to RequestInformation
-    int ExecuteInformation(vtkInformation*,
-        vtkInformationVector**,
-        vtkInformationVector*) override;
-    int RequestInformation(vtkInformation *,
-        vtkInformationVector **,
-        vtkInformationVector *);
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int ReadTemporalData();
 
-    char *FileName;
-    char *OldFileName;
-    char *Suffix;
-    char *OldSuffix;
-    char *Prefix;
-    char *OldPrefix;
-    vtkSetStringMacro(OldFileName);
-    vtkSetStringMacro(OldSuffix);
-    vtkSetStringMacro(OldPrefix);
+  //This is here because of a bug in vtkPointSetAlgorithm
+  //It can be removed whenever the ExecuteInformation function in
+  //vtkPointSetAlgorithm is changed to RequestInformation
+  int ExecuteInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-    double TimeValue; //Which time value we are on
-    int DataSet; //Which dataset currently in use by the program. Not set by user
-    int PrimaryDataSet; //Which dataset we use for time values. Set by user
-    int CacheSize; //Tells how many ADHTemporalDatas can be stored at the same time
+  char* FileName;
+  char* OldFileName;
+  char* Suffix;
+  char* OldSuffix;
+  char* Prefix;
+  char* OldPrefix;
+  vtkSetStringMacro(OldFileName);
+  vtkSetStringMacro(OldSuffix);
+  vtkSetStringMacro(OldPrefix);
 
-    int GetNumberOfTimeSteps();
-    double* GetTimeStepRange();
+  double TimeValue;   //Which time value we are on
+  int DataSet;        //Which dataset currently in use by the program. Not set by user
+  int PrimaryDataSet; //Which dataset we use for time values. Set by user
+  int CacheSize;      //Tells how many ADHTemporalDatas can be stored at the same time
 
-    //BTX
-    std::vector<ADHTemporalData*> DataSets;
-    //ETX
+  int GetNumberOfTimeSteps();
+  double* GetTimeStepRange();
 
-  private:
-    int ScanFile();
-    vtkCMBADHReader(const vtkCMBADHReader&);  // Not implemented.
-    void operator=(const vtkCMBADHReader&);  // Not implemented.
+  //BTX
+  std::vector<ADHTemporalData*> DataSets;
+  //ETX
+
+private:
+  int ScanFile();
+  vtkCMBADHReader(const vtkCMBADHReader&); // Not implemented.
+  void operator=(const vtkCMBADHReader&);  // Not implemented.
 };
 
 #endif

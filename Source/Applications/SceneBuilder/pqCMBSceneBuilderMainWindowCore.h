@@ -11,8 +11,8 @@
 #ifndef _pqCMBSceneBuilderMainWindowCore_h
 #define _pqCMBSceneBuilderMainWindowCore_h
 
-#include "pqCMBCommonMainWindowCore.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBCommonMainWindowCore.h"
 #include "pqCMBSceneObjectBase.h"
 
 class vtkDiscreteModelWrapper;
@@ -26,7 +26,7 @@ class QWidget;
 class pqCMBGlyphObject;
 class vtkHydroModelPolySource;
 
-class pqCMBSceneBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
+class pqCMBSceneBuilderMainWindowCore : public pqCMBCommonMainWindowCore
 {
   typedef pqCMBCommonMainWindowCore Superclass;
   Q_OBJECT
@@ -35,7 +35,7 @@ public:
   pqCMBSceneBuilderMainWindowCore(QWidget* parent);
   ~pqCMBSceneBuilderMainWindowCore() override;
 
-  void setpqCMBSceneTree(pqCMBSceneTree * tree);
+  void setpqCMBSceneTree(pqCMBSceneTree* tree);
 
   int getNumberOfSelectedLeafNode();
 
@@ -47,7 +47,7 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  void onServerCreationFinished(pqServer *server) override;
+  void onServerCreationFinished(pqServer* server) override;
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
@@ -78,9 +78,9 @@ public slots:
   void exportSelectedPolygons();
   void exportCMBFile();
   void rejectMesh();
-  void addOmicronModelFaceData( vtkPolyData *outputPD );
-  bool clientTransformSource(pqPipelineSource* serverSource,
-    vtkHydroModelPolySource* clientSource, vtkTransform* transform);
+  void addOmicronModelFaceData(vtkPolyData* outputPD);
+  bool clientTransformSource(
+    pqPipelineSource* serverSource, vtkHydroModelPolySource* clientSource, vtkTransform* transform);
 
   // Description:
   // Saves the data (geometry + region and material IDs) in a file.
@@ -90,14 +90,14 @@ public slots:
   void onRubberBandSelect(bool);
   void onPreviewAccepted() override;
   void onPreviewRejected() override;
-  void selectGlyph(QList<pqCMBGlyphObject*> &glyphList);
+  void selectGlyph(QList<pqCMBGlyphObject*>& glyphList);
 
   // Description:
   // Update the selected nodes.
-  void updateSelection(const QList<pqCMBSceneNode*> *unselected,
-                      const QList<pqCMBSceneNode*> *newlySelected);
-  void selectNode(pqCMBSceneNode *node, bool updateBox = true);
-  void unselectNode(pqCMBSceneNode *node, bool updateBox = true);
+  void updateSelection(
+    const QList<pqCMBSceneNode*>* unselected, const QList<pqCMBSceneNode*>* newlySelected);
+  void selectNode(pqCMBSceneNode* node, bool updateBox = true);
+  void unselectNode(pqCMBSceneNode* node, bool updateBox = true);
 
   // Description:
   // Determines how selection is visualized
@@ -138,27 +138,22 @@ private slots:
 
   // Description:
   // Load a solid file.
-  void processSceneInfo(const QString& filename,
-                       pqPipelineSource* source);
-  void processOSDLInfo(const QString& filename,
-                       pqPipelineSource* source);
-  void processMapInfo(const QString& filename,
-                       pqPipelineSource* source);
-  void processScene(const QString& filename,
-                    pqPipelineSource* source);
+  void processSceneInfo(const QString& filename, pqPipelineSource* source);
+  void processOSDLInfo(const QString& filename, pqPipelineSource* source);
+  void processMapInfo(const QString& filename, pqPipelineSource* source);
+  void processScene(const QString& filename, pqPipelineSource* source);
   //void closeData();
   void newScene();
 
-  void createSurfaceMesh( );
+  void createSurfaceMesh();
   int setupSurfaceMesherDialog();
 
   void arcDeformData(pqCMBSceneObjectBase::enumObjectType dt);
   void applyArcToSurface();
   int setupModifierDialog(pqCMBSceneObjectBase::enumObjectType dt);
 
-  void createOmicronInput(QString *filename, double volumeConstraint);
-  bool exportSolidsCMBModel(QList<pqOutputPort*>& inputs,
-    const QString& cmbFileName, bool is2D);
+  void createOmicronInput(QString* filename, double volumeConstraint);
+  bool exportSolidsCMBModel(QList<pqOutputPort*>& inputs, const QString& cmbFileName, bool is2D);
 
   // Description:
   // Save the model.
@@ -168,46 +163,40 @@ private slots:
 
   void checkForChooseMesher(int mesherIndex);
   int selectSurfaceMesher();
-  int setupModelMesherDialog();  // returns 0 if not setup
+  int setupModelMesherDialog(); // returns 0 if not setup
   void previewMesherOutput();
 
   // Preps a selected pqCMBSceneObjectBase
-  void prepSelectedObject(pqCMBSceneObjectBase *obj);
+  void prepSelectedObject(pqCMBSceneObjectBase* obj);
 
   void RemoveBoxWidgetPropertyLinks();
 
   void updateBoxInteraction();
-  void updateBoxInteractionForGlyph(
-    double sdelta[3], double odelta[3], double tdelta[3]);
+  void updateBoxInteractionForGlyph(double sdelta[3], double odelta[3], double tdelta[3]);
 
 private:
-  void AddLineSegmentObjectsToModel(vtkDiscreteModelWrapper* wrapper,
-    bool voiPresent);
+  void AddLineSegmentObjectsToModel(vtkDiscreteModelWrapper* wrapper, bool voiPresent);
   bool AddContourObjectsToModel(vtkDiscreteModelWrapper* wrapper);
   void updateWidgetPanel(pqCMBSceneObjectBase*);
   void clearColorNode();
   double computeVolumeContraint(double volumeFactor);
   double getMinVOIBounds();
   void setupBoxWidget();
-  void CreatTransPipelineMesh(const QStringList &selectedNames,
-                              vtkBoundingBox & bbox,
-                              QList<pqPipelineSource*> &transformFilters,
-                              pqCMBSceneObjectBase::enumObjectType dt);
+  void CreatTransPipelineMesh(const QStringList& selectedNames, vtkBoundingBox& bbox,
+    QList<pqPipelineSource*>& transformFilters, pqCMBSceneObjectBase::enumObjectType dt);
 
   class vtkInternal;
   vtkInternal* const Internal;
   int SelectionMode;
-  pqCMBSceneTree *Tree;
-  vtkTransform *SelectedTransform;
+  pqCMBSceneTree* Tree;
+  vtkTransform* SelectedTransform;
   // The Leaf nodes that are currently selected
-  QList <pqCMBSceneNode *> SelectedLeaves;
+  QList<pqCMBSceneNode*> SelectedLeaves;
   // Node used for color information
-  pqCMBSceneNode *ColorNode;
+  pqCMBSceneNode* ColorNode;
   double BoxTranslation[3], BoxScale[3], BoxOrientation[3];
   bool PreviewMeshOutput;
   QPointer<pqPipelineSource> TINStitcher;
-
 };
-
 
 #endif // !_pqCMBSceneBuilderMainWindowCore_h

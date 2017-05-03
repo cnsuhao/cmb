@@ -13,12 +13,12 @@
 
 #include "qtCMBNewSceneUnitsDialog.h"
 
-#include "ui_qtNewSceneUnits.h"
 #include "pqCMBSceneObjectBase.h"
+#include "ui_qtNewSceneUnits.h"
 
 //-----------------------------------------------------------------------------
-bool qtCMBNewSceneUnitsDialog::getUnits(cmbSceneUnits::Enum initialUnits,
-                                           cmbSceneUnits::Enum &newUnits)
+bool qtCMBNewSceneUnitsDialog::getUnits(
+  cmbSceneUnits::Enum initialUnits, cmbSceneUnits::Enum& newUnits)
 {
   qtCMBNewSceneUnitsDialog dialog(initialUnits);
   return dialog.exec(newUnits);
@@ -35,7 +35,7 @@ qtCMBNewSceneUnitsDialog::qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initialUn
   this->NewUnitsDialog->setupUi(MainDialog);
 
   switch (initialUnits)
-    {
+  {
     case cmbSceneUnits::inches:
       this->NewUnitsDialog->INButton->setChecked(true);
       break;
@@ -56,7 +56,7 @@ qtCMBNewSceneUnitsDialog::qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initialUn
       break;
     default:
       this->NewUnitsDialog->UnknownButton->setChecked(true);
-    }
+  }
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
@@ -65,16 +65,16 @@ qtCMBNewSceneUnitsDialog::qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initialUn
 qtCMBNewSceneUnitsDialog::~qtCMBNewSceneUnitsDialog()
 {
   if (this->NewUnitsDialog)
-    {
+  {
     delete NewUnitsDialog;
-    }
+  }
   if (this->MainDialog)
-    {
+  {
     delete MainDialog;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
-bool qtCMBNewSceneUnitsDialog::exec(cmbSceneUnits::Enum &newUnits)
+bool qtCMBNewSceneUnitsDialog::exec(cmbSceneUnits::Enum& newUnits)
 {
   this->MainDialog->setModal(true);
   this->MainDialog->show();
@@ -86,29 +86,29 @@ bool qtCMBNewSceneUnitsDialog::exec(cmbSceneUnits::Enum &newUnits)
 void qtCMBNewSceneUnitsDialog::accept()
 {
   if (this->NewUnitsDialog->INButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::inches;
-    }
+  }
   else if (this->NewUnitsDialog->FTButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::feet;
-    }
+  }
   else if (this->NewUnitsDialog->MMButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::mm;
-    }
+  }
   else if (this->NewUnitsDialog->CMButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::cm;
-    }
+  }
   else if (this->NewUnitsDialog->MButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::m;
-    }
+  }
   else if (this->NewUnitsDialog->KMButton->isChecked())
-    {
+  {
     this->NewUnits = cmbSceneUnits::km;
-    }
+  }
   this->Status = true;
 }
 //-----------------------------------------------------------------------------

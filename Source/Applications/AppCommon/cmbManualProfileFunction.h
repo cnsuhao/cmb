@@ -21,7 +21,7 @@ public:
   friend class cmbManualProfileFunction;
   cmbManualProfileFunctionParameters();
   ~cmbManualProfileFunctionParameters() override;
-  cmbProfileFunctionParameters * clone() override;
+  cmbProfileFunctionParameters* clone() override;
 
   double getDistanceRange(pqCMBModifierArc::RangeLable i);
   double getDepthRange(pqCMBModifierArc::RangeLable i);
@@ -43,13 +43,12 @@ public:
   cmbManualProfileFunction();
   ~cmbManualProfileFunction() override;
   cmbProfileFunction::FunctionType getType() const override;
-  virtual vtkPiecewiseFunction * getDisplacementProfile() const;
-  virtual vtkPiecewiseFunction * getWeightingFunction() const;
-  cmbProfileFunction * clone(std::string const& name) const override;
-  void sendDataToProxy(int arc_ID, int pointID,
-                               vtkBoundingBox bbox,
-                               vtkSMSourceProxy* source) const override;
-  virtual cmbProfileFunctionParameters * getParameters() const;
+  virtual vtkPiecewiseFunction* getDisplacementProfile() const;
+  virtual vtkPiecewiseFunction* getWeightingFunction() const;
+  cmbProfileFunction* clone(std::string const& name) const override;
+  void sendDataToProxy(
+    int arc_ID, int pointID, vtkBoundingBox bbox, vtkSMSourceProxy* source) const override;
+  virtual cmbProfileFunctionParameters* getParameters() const;
 
   bool isSymmetric() const;
   bool isRelative() const;
@@ -70,13 +69,14 @@ public:
   void setDepthRange(double min, double max);
 
 protected:
-  bool readData(std::ifstream & in, int version) override;
-  bool writeData(std::ofstream & out) const override;
-private:
-  vtkPiecewiseFunction * DisplacementProfile;
-  vtkPiecewiseFunction * WeightingFunction;
+  bool readData(std::ifstream& in, int version) override;
+  bool writeData(std::ofstream& out) const override;
 
-  cmbManualProfileFunctionParameters * parameters;
+private:
+  vtkPiecewiseFunction* DisplacementProfile;
+  vtkPiecewiseFunction* WeightingFunction;
+
+  cmbManualProfileFunctionParameters* parameters;
 
   cmbManualProfileFunction(cmbManualProfileFunction const* other);
 

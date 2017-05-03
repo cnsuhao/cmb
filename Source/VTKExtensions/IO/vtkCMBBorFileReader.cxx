@@ -8,23 +8,23 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBBorFileReader.h"
+#include "vtkIntArray.h"
+#include "vtkPoints.h"
+#include "vtkStringArray.h"
+#include "vtkTriangleFilter.h"
+#include "vtkTubeFilter.h"
+#include <string>
 #include <vtkCellArray.h>
 #include <vtkCellData.h>
 #include <vtkDoubleArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
-#include "vtkIntArray.h"
 #include <vtkMultiBlockDataSet.h>
 #include <vtkNew.h>
-#include <vtkPolyData.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
-#include "vtkPoints.h"
-#include "vtkStringArray.h"
-#include "vtkTriangleFilter.h"
-#include "vtkTubeFilter.h"
+#include <vtkPolyData.h>
 #include <vtksys/SystemTools.hxx>
-#include <string>
 
 #include <fstream>
 
@@ -33,14 +33,13 @@
 //for file dumping in debug mode
 //#define WRITE_BOREHOLE_FILES
 
-
 class XContact
 {
 public:
   XContact()
   {
-  this->matId=this->hguId=this->horzId=-1;
-  this->xyz[0]=this->xyz[1]=this->xyz[2]=0.0;
+    this->matId = this->hguId = this->horzId = -1;
+    this->xyz[0] = this->xyz[1] = this->xyz[2] = 0.0;
   }
   double xyz[3];
   int matId;
@@ -50,33 +49,33 @@ public:
 class BorHoleInfo
 {
 public:
-  BorHoleInfo(){}
+  BorHoleInfo() {}
 
   std::string Name;
   std::string GUID;
-  std::vector< XContact> CSContacts;
+  std::vector<XContact> CSContacts;
   bool InitPoly(vtkPolyData* outPoly)
-    {
+  {
     int npts = static_cast<int>(this->CSContacts.size());
     // it has to have at least two points
-    if(npts<=1)
-      {
+    if (npts <= 1)
+    {
       return false;
-      }
+    }
     vtkNew<vtkPolyData> bhPoly;
     // Cell Arrays
     vtkNew<vtkIntArray> matArray;
     matArray->SetName("mat");
     matArray->SetNumberOfComponents(1);
-    matArray->SetNumberOfTuples(npts-1);
+    matArray->SetNumberOfTuples(npts - 1);
     vtkNew<vtkIntArray> hguArray;
     hguArray->SetName("hgu");
     hguArray->SetNumberOfComponents(1);
-    hguArray->SetNumberOfTuples(npts-1);
+    hguArray->SetNumberOfTuples(npts - 1);
     vtkNew<vtkIntArray> horzArray;
     horzArray->SetName("horz");
     horzArray->SetNumberOfComponents(1);
-    horzArray->SetNumberOfTuples(npts-1);
+    horzArray->SetNumberOfTuples(npts - 1);
     // cell and point data
     vtkNew<vtkPoints> points;
     vtkNew<vtkCellArray> lines;
@@ -84,23 +83,21 @@ public:
     vtkNew<vtkIdList> linepts;
     // Warning: this first horz should not be zero,
     // otherwise the color map will be wrong.
-    int lastNoneZeroHor=this->CSContacts[0].horzId;
-    for (int i=0; i < npts-1; ++i)
-      {
-      id0 = points->InsertNextPoint(
-        this->CSContacts[i].xyz);
-      id1 = points->InsertNextPoint(
-        this->CSContacts[i+1].xyz);
+    int lastNoneZeroHor = this->CSContacts[0].horzId;
+    for (int i = 0; i < npts - 1; ++i)
+    {
+      id0 = points->InsertNextPoint(this->CSContacts[i].xyz);
+      id1 = points->InsertNextPoint(this->CSContacts[i + 1].xyz);
       linepts->Reset();
       linepts->InsertNextId(id0);
       linepts->InsertNextId(id1);
       lines->InsertNextCell(linepts.GetPointer());
       matArray->SetValue(i, this->CSContacts[i].matId);
       hguArray->SetValue(i, this->CSContacts[i].hguId);
-      lastNoneZeroHor = this->CSContacts[i].horzId==0 ?
-        lastNoneZeroHor : this->CSContacts[i].horzId;
+      lastNoneZeroHor =
+        this->CSContacts[i].horzId == 0 ? lastNoneZeroHor : this->CSContacts[i].horzId;
       horzArray->SetValue(i, lastNoneZeroHor);
-      }
+    }
     bhPoly->SetPoints(points.GetPointer());
     bhPoly->SetLines(lines.GetPointer());
     bhPoly->GetCellData()->AddArray(matArray.GetPointer());
@@ -113,8 +110,7 @@ public:
     outPoly->GetFieldData()->AddArray(nameArray.GetPointer());
 
     return true;
-    }
-
+  }
 };
 struct CSLocation
 {
@@ -130,7 +126,7 @@ struct CSNode
 struct CSArc
 {
 public:
-  CSArc(){this->ReverseNodeDirection=0;}
+  CSArc() { this->ReverseNodeDirection = 0; }
   int ReverseNodeDirection;
   int Node1_Id;
   int Node2_Id;
@@ -150,38 +146,36 @@ struct CSPolygon
 class BorCrossSection
 {
 public:
-  BorCrossSection(){}
-  bool InitPoly(vtkPolyData* csPoly,
-    BorHoleInfo& BH1, BorHoleInfo& BH2)
-    {
+  BorCrossSection() {}
+  bool InitPoly(vtkPolyData* csPoly, BorHoleInfo& BH1, BorHoleInfo& BH2)
+  {
     int ncells = static_cast<int>(this->Polygons.size());
     // it has to have at least two points
-    if(ncells<1)
-      {
+    if (ncells < 1)
+    {
       return false;
-      }
+    }
     vtkNew<vtkPolyData> tmpPolyData;
-    double x0=BH1.CSContacts[0].xyz[0];
-    double y0=BH1.CSContacts[0].xyz[1];
-    double xDis=BH2.CSContacts[0].xyz[0]-x0;
-    double yDis=BH2.CSContacts[0].xyz[1]-y0;
+    double x0 = BH1.CSContacts[0].xyz[0];
+    double y0 = BH1.CSContacts[0].xyz[1];
+    double xDis = BH2.CSContacts[0].xyz[0] - x0;
+    double yDis = BH2.CSContacts[0].xyz[1] - y0;
     // cell and point data
     vtkNew<vtkPoints> points;
     vtkNew<vtkCellArray> polys;
     vtkNew<vtkCellArray> lines;
     vtkNew<vtkCellArray> verts;
     std::vector<int> polyMatIds;
-    int minMatID=VTK_INT_MAX;
-    std::map<int, CSPolygon>::iterator csit=
-      this->Polygons.begin();
+    int minMatID = VTK_INT_MAX;
+    std::map<int, CSPolygon>::iterator csit = this->Polygons.begin();
     vtkIdType pid;
     double pointpos[3];
-    for(; csit!=this->Polygons.end(); ++csit)
-      {
+    for (; csit != this->Polygons.end(); ++csit)
+    {
       std::vector<int> orderedArcs;
       this->GetOrderedPolygonArcs(csit->second, orderedArcs);
-      if(orderedArcs.size()>0)
-        {
+      if (orderedArcs.size() > 0)
+      {
         //******Polygon Cells********
         // vtkPolygon is a concrete implementation of vtkCell to represent a 2D
         // n-sided polygon. The polygons cannot have any internal holes, and cannot
@@ -194,72 +188,66 @@ public:
         // Points are ordered counter-clockwise
         int arcId = orderedArcs[0];
         int nodeId;
-        for(int v=0; v<static_cast<int>(this->Arcs[arcId].Vertices.size()); v++)
-          {
-          pid=this->InsertVTKNextPoint(points.GetPointer(),
-            this->Arcs[arcId].Vertices[v].positions,
-            pointpos, x0, y0, xDis, yDis);
+        for (int v = 0; v < static_cast<int>(this->Arcs[arcId].Vertices.size()); v++)
+        {
+          pid = this->InsertVTKNextPoint(points.GetPointer(),
+            this->Arcs[arcId].Vertices[v].positions, pointpos, x0, y0, xDis, yDis);
           cellPts->InsertNextId(pid);
           verts->InsertNextCell(1, &pid);
-        //          matArray->InsertNextValue(csit->second.MatId);
-          }
+          //          matArray->InsertNextValue(csit->second.MatId);
+        }
         nodeId = this->Arcs[arcId].Node2_Id;
-        pid=this->InsertVTKNextPoint(points.GetPointer(),
-          this->Nodes[nodeId].Location.positions,
+        pid = this->InsertVTKNextPoint(points.GetPointer(), this->Nodes[nodeId].Location.positions,
           pointpos, x0, y0, xDis, yDis);
         cellPts->InsertNextId(pid);
         verts->InsertNextCell(1, &pid);
         //         matArray->InsertNextValue(csit->second.MatId);
 
         // The other arcs after the first arc, Counter-Clockwise
-        for(int i=1; i<static_cast<int>(orderedArcs.size()); i++)
-          {
+        for (int i = 1; i < static_cast<int>(orderedArcs.size()); i++)
+        {
           arcId = orderedArcs[i];
-          if(this->Arcs[arcId].ReverseNodeDirection)
+          if (this->Arcs[arcId].ReverseNodeDirection)
+          {
+            for (int v = static_cast<int>(this->Arcs[arcId].Vertices.size() - 1); v >= 0; v--)
             {
-            for(int v=static_cast<int>(this->Arcs[arcId].Vertices.size()-1); v>=0; v--)
-              {
-              pid=this->InsertVTKNextPoint(points.GetPointer(),
-                this->Arcs[arcId].Vertices[v].positions,
-                pointpos, x0, y0, xDis, yDis);
+              pid = this->InsertVTKNextPoint(points.GetPointer(),
+                this->Arcs[arcId].Vertices[v].positions, pointpos, x0, y0, xDis, yDis);
               cellPts->InsertNextId(pid);
               verts->InsertNextCell(1, &pid);
               //matArray->InsertNextValue(0);
-              }
+            }
             nodeId = this->Arcs[arcId].Node1_Id;
-            }
+          }
           else
+          {
+            for (size_t v = 0; v < this->Arcs[arcId].Vertices.size(); v++)
             {
-            for(size_t v=0; v<this->Arcs[arcId].Vertices.size(); v++)
-              {
-              pid=this->InsertVTKNextPoint(points.GetPointer(),
-                this->Arcs[arcId].Vertices[v].positions,
-                pointpos, x0, y0, xDis, yDis);
+              pid = this->InsertVTKNextPoint(points.GetPointer(),
+                this->Arcs[arcId].Vertices[v].positions, pointpos, x0, y0, xDis, yDis);
               cellPts->InsertNextId(pid);
               verts->InsertNextCell(1, &pid);
               //matArray->InsertNextValue(0);
-              }
-            nodeId = this->Arcs[arcId].Node2_Id;
             }
-          pid=this->InsertVTKNextPoint(points.GetPointer(),
-            this->Nodes[nodeId].Location.positions,
-            pointpos, x0, y0, xDis, yDis);
+            nodeId = this->Arcs[arcId].Node2_Id;
+          }
+          pid = this->InsertVTKNextPoint(points.GetPointer(),
+            this->Nodes[nodeId].Location.positions, pointpos, x0, y0, xDis, yDis);
           cellPts->InsertNextId(pid);
           verts->InsertNextCell(1, &pid);
           //matArray->InsertNextValue(0);
-          }
+        }
 
         polys->InsertNextCell(cellPts.GetPointer());
         polyMatIds.push_back(csit->second.MatId);
-        minMatID = csit->second.MatId<minMatID ?
-          csit->second.MatId : minMatID;
+        minMatID = csit->second.MatId < minMatID ? csit->second.MatId : minMatID;
         //matArray->InsertNextValue(csit->second.MatId);
         //******Line Cells******** //
         lines->InsertNextCell(cellPts.GetPointer());
         //matArray->InsertNextValue(0);
         //break;
-        }
       }
+    }
 
     tmpPolyData->SetPoints(points.GetPointer());
     tmpPolyData->SetPolys(polys.GetPointer());
@@ -272,20 +260,20 @@ public:
     vtkIdType numCells = tmpPolyData->GetNumberOfCells();
     matArray->SetNumberOfTuples(numCells);
     matArray->FillComponent(0, static_cast<double>(minMatID));
-    vtkIdType numOfNonPolys = lines->GetNumberOfCells()+verts->GetNumberOfCells();
-    std::vector<int>::iterator matIt =polyMatIds.begin();
+    vtkIdType numOfNonPolys = lines->GetNumberOfCells() + verts->GetNumberOfCells();
+    std::vector<int>::iterator matIt = polyMatIds.begin();
     csit = this->Polygons.begin();
-    for(vtkIdType cellId=numOfNonPolys; cellId<numCells; ++cellId,++matIt)
+    for (vtkIdType cellId = numOfNonPolys; cellId < numCells; ++cellId, ++matIt)
+    {
+      if (matIt == polyMatIds.end())
       {
-      if(matIt==polyMatIds.end())
-        {
         break;
-        }
-      matArray->SetValue(cellId, *matIt);
       }
+      matArray->SetValue(cellId, *matIt);
+    }
     tmpPolyData->GetCellData()->AddArray(matArray.GetPointer());
     vtkNew<vtkTriangleFilter> triangulateF;
-    triangulateF->SetInputData( tmpPolyData.GetPointer() );
+    triangulateF->SetInputData(tmpPolyData.GetPointer());
     triangulateF->SetPassLines(1);
     triangulateF->SetPassVerts(1);
     triangulateF->Update();
@@ -297,51 +285,49 @@ public:
     csPoly->GetFieldData()->AddArray(nameArray.GetPointer());
 
     return true;
-    }
+  }
   // <int arcId> orderedArc
-  void GetOrderedPolygonArcs(CSPolygon& polygon,
-    std::vector<int>& orderedArcs)
+  void GetOrderedPolygonArcs(CSPolygon& polygon, std::vector<int>& orderedArcs)
+  {
+    if (polygon.ArcIds.size() <= 0)
     {
-    if(polygon.ArcIds.size()<=0)
-    {
-    return;
+      return;
     }
     int firstArc = polygon.ArcIds[0];
     orderedArcs.push_back(firstArc);
     std::vector<int> tempArcIds(polygon.ArcIds);
-    std::vector<int>::iterator tmpit=tempArcIds.begin();
+    std::vector<int>::iterator tmpit = tempArcIds.begin();
     tempArcIds.erase(tmpit);
-    int node1Id=this->Arcs[firstArc].Node1_Id;
-    int nextId=this->Arcs[firstArc].Node2_Id;
-    while(nextId != node1Id && tempArcIds.size()>0)
+    int node1Id = this->Arcs[firstArc].Node1_Id;
+    int nextId = this->Arcs[firstArc].Node2_Id;
+    while (nextId != node1Id && tempArcIds.size() > 0)
+    {
+      for (tmpit = tempArcIds.begin(); tmpit != tempArcIds.end(); ++tmpit)
       {
-      for(tmpit=tempArcIds.begin(); tmpit!=tempArcIds.end(); ++tmpit)
-        {
         int next1Id = this->Arcs[*tmpit].Node1_Id;
         int next2Id = this->Arcs[*tmpit].Node2_Id;
         // find the id for next arc
-        if(next1Id==nextId || next2Id==nextId)
-          {
-          this->Arcs[*tmpit].ReverseNodeDirection = (next1Id==nextId) ? 0 : 1;
+        if (next1Id == nextId || next2Id == nextId)
+        {
+          this->Arcs[*tmpit].ReverseNodeDirection = (next1Id == nextId) ? 0 : 1;
           orderedArcs.push_back(*tmpit);
-          nextId = (next1Id==nextId) ? next2Id : next1Id;
+          nextId = (next1Id == nextId) ? next2Id : next1Id;
           tempArcIds.erase(tmpit);
           break;
-          }
         }
       }
     }
-  vtkIdType InsertVTKNextPoint(vtkPoints* points,
-    double* origPts, double* newptsPos,
-    double x0, double y0, double xDistance, double yDistance)
-    {
+  }
+  vtkIdType InsertVTKNextPoint(vtkPoints* points, double* origPts, double* newptsPos, double x0,
+    double y0, double xDistance, double yDistance)
+  {
     // origPts[2] is always 0 and should be ignored
     // according to file format document
-    newptsPos[0] = x0 + xDistance*origPts[0]; // relative
-    newptsPos[1] = y0 + yDistance*origPts[0];
+    newptsPos[0] = x0 + xDistance * origPts[0]; // relative
+    newptsPos[1] = y0 + yDistance * origPts[0];
     newptsPos[2] = origPts[1]; // elevation
     return points->InsertNextPoint(newptsPos);
-    }
+  }
   std::string BorHole1_GUID;
   std::string BorHole2_GUID;
   std::string Name;
@@ -359,256 +345,254 @@ vtkCMBBorFileReader::vtkCMBBorFileReader()
 {
   this->FileName = 0;
   this->SetNumberOfInputPorts(0);
-  this->BHDisplayWidth=0;
-  this->BHNumSampleDatasets=0;
-  this->NumberOfBoreholes=0;
-  this->NumberOfCrossSections=0;
+  this->BHDisplayWidth = 0;
+  this->BHNumSampleDatasets = 0;
+  this->NumberOfBoreholes = 0;
+  this->NumberOfCrossSections = 0;
 }
 // -----------------------------------------------------------------------------
 vtkCMBBorFileReader::~vtkCMBBorFileReader()
 {
-  this->SetFileName( 0 );
+  this->SetFileName(0);
   this->CrossSections.clear();
   this->BoreHoles.clear();
 }
 // -----------------------------------------------------------------------------
-void vtkCMBBorFileReader::PrintSelf( ostream& os, vtkIndent indent )
+void vtkCMBBorFileReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf( os, indent );
-  os << indent << "FileName: " << ( this->FileName ? this->FileName : "(null)" ) << endl;
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "FileName: " << (this->FileName ? this->FileName : "(null)") << endl;
 }
 
 // -----------------------------------------------------------------------------
 int vtkCMBBorFileReader::ReadBorFile(const char* filename)
 {
   ifstream supStream(filename);
-  if(!supStream)
-    {
+  if (!supStream)
+  {
     vtkErrorMacro("Unable to open file: " << filename);
     return 0;
-    }
+  }
   std::string line, cardType;
   int numContacts;
   while (!supStream.eof())
-    {
+  {
     // Read in the BHOLE
     supStream >> cardType;
     if (cardType == "BHOLE")
-      {
+    {
       supStream.ignore(80, '\n'); // Skip rest of line
       supStream >> line >> this->BHDisplayWidth;
       supStream.ignore(80, '\n'); // Skip rest of line
       supStream >> line >> this->BHNumSampleDatasets;
       supStream.ignore(80, '\n'); // Skip rest of line
       while (!supStream.eof() && cardType != "XSECT")
-        {
+      {
         supStream >> cardType;
-        if(cardType == "BEGH")
-          {
+        if (cardType == "BEGH")
+        {
           BorHoleInfo borehole;
           supStream.ignore(80, '\n'); // Skip rest of line
-          getline(supStream,line);
+          getline(supStream, line);
           //Find name and Remove quotation marks
-          std::string::size_type qIdx=line.find('\"')+1;
-          line =line.substr(qIdx,line.rfind('\"')-qIdx);
-          borehole.Name=line;
+          std::string::size_type qIdx = line.find('\"') + 1;
+          line = line.substr(qIdx, line.rfind('\"') - qIdx);
+          borehole.Name = line;
           //supStream >> line >> borehole.Name;
           //supStream.ignore(80, '\n'); // Skip rest of line
           supStream >> line >> borehole.GUID;
           supStream.ignore(80, '\n'); // Skip rest of line
           supStream >> line >> numContacts;
           supStream.ignore(80, '\n'); // Skip rest of line
-          for(int i=0; i<numContacts; i++)
-            {
+          for (int i = 0; i < numContacts; i++)
+          {
             XContact xbc;
-            supStream >>xbc.xyz[0]>>xbc.xyz[1]>>xbc.xyz[2]>>xbc.matId>>xbc.hguId>>xbc.horzId;
+            supStream >> xbc.xyz[0] >> xbc.xyz[1] >> xbc.xyz[2] >> xbc.matId >> xbc.hguId >>
+              xbc.horzId;
             supStream.ignore(80, '\n'); // Skip rest of line
             borehole.CSContacts.push_back(xbc);
-            }
-          this->BoreHoles.insert(std::make_pair(borehole.GUID, borehole));
-          supStream >> cardType; // "ENDH"
-          supStream.ignore(80, '\n'); // Skip rest of line
           }
+          this->BoreHoles.insert(std::make_pair(borehole.GUID, borehole));
+          supStream >> cardType;      // "ENDH"
+          supStream.ignore(80, '\n'); // Skip rest of line
         }
-      } // end cardType == "BHOLE"
+      }
+    } // end cardType == "BHOLE"
     if (cardType == "XSECT")
-      {
+    {
       supStream.ignore(80, '\n'); // Skip rest of line
       while (!supStream.eof())
-        {
+      {
         cardType.clear();
         supStream >> cardType;
         supStream.ignore(80, '\n'); // Skip rest of line
-        if(cardType == "BEGX")
-          {
+        if (cardType == "BEGX")
+        {
           BorCrossSection crosssection;
-          supStream >> line; //BHOLE
+          supStream >> line;          //BHOLE
           supStream.ignore(80, '\n'); // Skip rest of line
           supStream >> line >> crosssection.BorHole1_GUID >> crosssection.BorHole2_GUID;
           supStream.ignore(80, '\n'); // Skip rest of line
-          supStream >> line; //BEGCOV
+          supStream >> line;          //BEGCOV
           supStream.ignore(80, '\n'); // Skip rest of line
 
-          getline(supStream,line);
+          getline(supStream, line);
           //Find name and Remove quotation marks
-          std::string::size_type qIdx=line.find('\"')+1;
-          line=line.substr(qIdx,line.rfind('\"')-qIdx);
-          crosssection.Name=line;
+          std::string::size_type qIdx = line.find('\"') + 1;
+          line = line.substr(qIdx, line.rfind('\"') - qIdx);
+          crosssection.Name = line;
 
           //supStream >> line >> crosssection.Name;
           //supStream.ignore(80, '\n'); // Skip rest of line
-          if(crosssection.Name=="new coverage")
-            {
-            crosssection.Name=
-              this->BoreHoles[crosssection.BorHole1_GUID].Name
-              + "-" +
+          if (crosssection.Name == "new coverage")
+          {
+            crosssection.Name = this->BoreHoles[crosssection.BorHole1_GUID].Name + "-" +
               this->BoreHoles[crosssection.BorHole2_GUID].Name;
-            }
+          }
           supStream >> line >> crosssection.elevation;
           supStream.ignore(80, '\n'); // Skip rest of line
           std::string xcard;
           supStream >> xcard;
-          while(xcard=="NODE" && !supStream.eof())
-            {
+          while (xcard == "NODE" && !supStream.eof())
+          {
             supStream.ignore(80, '\n'); // Skip rest of line
             CSNode csnode;
-            supStream >> line >> csnode.Location.positions[0]
-                      >> csnode.Location.positions[1]
-                      >> csnode.Location.positions[2];
+            supStream >> line >> csnode.Location.positions[0] >> csnode.Location.positions[1] >>
+              csnode.Location.positions[2];
             supStream.ignore(80, '\n'); // Skip rest of line
             supStream >> line >> csnode.Id;
             supStream.ignore(80, '\n'); // Skip rest of line
             supStream >> line >> csnode.BedLayerMat >> csnode.BedLayerBoundary;
             supStream.ignore(80, '\n'); // Skip rest of line
-            supStream >> line; //END
+            supStream >> line;          //END
             supStream.ignore(80, '\n'); // Skip rest of line
             xcard.clear();
             supStream >> xcard;
             crosssection.Nodes.insert(std::make_pair(csnode.Id, csnode));
-            } //end xcard=="NODE"
-          while(xcard=="ARC" && !supStream.eof())
-            {
+          } //end xcard=="NODE"
+          while (xcard == "ARC" && !supStream.eof())
+          {
             supStream.ignore(80, '\n'); // Skip rest of line
             CSArc csarc;
-            supStream >> line>> csarc.Id;
+            supStream >> line >> csarc.Id;
             supStream.ignore(80, '\n'); // Skip rest of line
             supStream >> line >> csarc.Node1_Id >> csarc.Node2_Id;
             supStream.ignore(80, '\n'); // Skip rest of line
-            int val1=0;
+            int val1 = 0;
             supStream >> line;
-            if(line == "ARCVERTICES")
-              {
+            if (line == "ARCVERTICES")
+            {
               supStream >> val1;
               supStream.ignore(80, '\n'); // Skip rest of line
-              for(int i=0; i<val1; i++)
-                {
+              for (int i = 0; i < val1; i++)
+              {
                 CSLocation vert;
-                supStream >> vert.positions[0]>>vert.positions[1]>>vert.positions[2];
+                supStream >> vert.positions[0] >> vert.positions[1] >> vert.positions[2];
                 csarc.Vertices.push_back(vert);
                 supStream.ignore(80, '\n'); // Skip rest of line
-                }
+              }
               supStream >> line >> csarc.BedLayerMat >> csarc.BedLayerBoundary;
-              }
-            else if(line == "BELAYERS")
-              {
+            }
+            else if (line == "BELAYERS")
+            {
               supStream >> csarc.BedLayerMat >> csarc.BedLayerBoundary;
-              }
+            }
 
             supStream.ignore(80, '\n'); // Skip rest of line
-            supStream >> line; //END
+            supStream >> line;          //END
             supStream.ignore(80, '\n'); // Skip rest of line
             xcard.clear();
             supStream >> xcard;
             crosssection.Arcs.insert(std::make_pair(csarc.Id, csarc));
-            }//end xcard=="ARC"
-          while(xcard=="POLYGON" && !supStream.eof())
-            {
+          } //end xcard=="ARC"
+          while (xcard == "POLYGON" && !supStream.eof())
+          {
             supStream.ignore(80, '\n'); // Skip rest of line
             CSPolygon cspoly;
-            int intValue=0;
+            int intValue = 0;
             supStream >> line >> intValue;
             supStream.ignore(80, '\n'); // Skip rest of line
             int arcId;
-            for(int i=0; i<intValue; i++)
-              {
+            for (int i = 0; i < intValue; i++)
+            {
               supStream >> arcId;
               cspoly.ArcIds.push_back(arcId);
               supStream.ignore(80, '\n'); // Skip rest of line
-              }
+            }
             // figure out if there are HARCS card
             supStream >> line >> intValue;
             supStream.ignore(80, '\n'); // Skip rest of line
-            if(line == "HARCS")
+            if (line == "HARCS")
+            {
+              for (int i = 0; i < intValue; i++)
               {
-              for(int i=0; i<intValue; i++)
-                {
                 supStream >> arcId;
                 cspoly.HArcIds.push_back(arcId);
                 supStream.ignore(80, '\n'); // Skip rest of line
-                }
+              }
               supStream >> line >> cspoly.Id;
               supStream.ignore(80, '\n'); // Skip rest of line
-              }
-            else if(line == "ID")// it is the "ID" line
-              {
+            }
+            else if (line == "ID") // it is the "ID" line
+            {
               cspoly.Id = intValue;
               supStream >> line >> cspoly.MatId;
               supStream.ignore(80, '\n'); // Skip rest of line
-              }
-            supStream >> line; //END
+            }
+            supStream >> line;          //END
             supStream.ignore(80, '\n'); // Skip rest of line
             xcard.clear();
             supStream >> xcard;
             crosssection.Polygons.insert(std::make_pair(cspoly.Id, cspoly));
-            }// end xcard=="POLYGON"
+          } // end xcard=="POLYGON"
           this->CrossSections.push_back(crosssection);
-          }// end cardType == "BEGX"
-        }// while(!eof)
-      } // end cardType == "XSECT"
-    }// while(!eof)
+        } // end cardType == "BEGX"
+      }   // while(!eof)
+    }     // end cardType == "XSECT"
+  }       // while(!eof)
   supStream.close();
   return 1;
 }
 
 // -----------------------------------------------------------------------------
-int vtkCMBBorFileReader::RequestData(
-    vtkInformation* /*request*/, vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector )
+int vtkCMBBorFileReader::RequestData(vtkInformation* /*request*/,
+  vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {
   // get the info object
   this->UpdateProgress(0);
-  if ( ! this->FileName )
-    {
+  if (!this->FileName)
+  {
     return 0;
-    }
+  }
   vtkMultiBlockDataSet* output = vtkMultiBlockDataSet::SafeDownCast(
-      outputVector->GetInformationObject( 0 )->Get(vtkDataObject::DATA_OBJECT()));
-  if ( ! output )
-    {
+    outputVector->GetInformationObject(0)->Get(vtkDataObject::DATA_OBJECT()));
+  if (!output)
+  {
     return 0;
-    }
-  this->NumberOfBoreholes=0;
-  this->NumberOfCrossSections=0;
+  }
+  this->NumberOfBoreholes = 0;
+  this->NumberOfCrossSections = 0;
 
-  if(!this->ReadBorFile(this->FileName))
-    {
+  if (!this->ReadBorFile(this->FileName))
+  {
     return 0;
-    }
-  if(!this->ProcessBorFileInfo(output))
-    {
+  }
+  if (!this->ProcessBorFileInfo(output))
+  {
     return 0;
-    }
+  }
 
-  return 1 ;
+  return 1;
 }
 // -----------------------------------------------------------------------------
-int vtkCMBBorFileReader::RequestInformation(
-    vtkInformation* /*request*/, vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/ )
+int vtkCMBBorFileReader::RequestInformation(vtkInformation* /*request*/,
+  vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/)
 {
   if (!this->FileName)
-    {
+  {
     vtkErrorMacro("FileName has to be specified!");
     return 0;
-    }
+  }
   return 1;
 }
 // -----------------------------------------------------------------------------
@@ -618,57 +602,49 @@ int vtkCMBBorFileReader::ProcessBorFileInfo(vtkMultiBlockDataSet* output)
   vtkNew<vtkMultiBlockDataSet> BoreholeRootBlock;
   vtkNew<vtkMultiBlockDataSet> CrossRootBlock;
   // process borehole info
-  BoreholeRootBlock->SetNumberOfBlocks(
-    static_cast<unsigned int>(this->BoreHoles.size()));
-  std::map<std::string, BorHoleInfo>::iterator bhit=
-    this->BoreHoles.begin();
-  for(int bix=0; bhit!=this->BoreHoles.end(); ++bhit, ++bix)
-    {
+  BoreholeRootBlock->SetNumberOfBlocks(static_cast<unsigned int>(this->BoreHoles.size()));
+  std::map<std::string, BorHoleInfo>::iterator bhit = this->BoreHoles.begin();
+  for (int bix = 0; bhit != this->BoreHoles.end(); ++bhit, ++bix)
+  {
     vtkNew<vtkPolyData> bhPoly;
-    if(bhit->second.InitPoly(bhPoly.GetPointer()))
-      {
-      BoreholeRootBlock->SetBlock(bix,bhPoly.GetPointer());
+    if (bhit->second.InitPoly(bhPoly.GetPointer()))
+    {
+      BoreholeRootBlock->SetBlock(bix, bhPoly.GetPointer());
 
 #ifdef WRITE_BOREHOLE_FILES
       vtkNew<vtkXMLPolyDataWriter> Writer;
       Writer->SetInputData(0, bhPoly.GetPointer());
       char outputFileName[256];
-      sprintf(outputFileName, "%s-%d.vtp",
-        "C:/Users/Temp/testBoreHole", bix);
+      sprintf(outputFileName, "%s-%d.vtp", "C:/Users/Temp/testBoreHole", bix);
       Writer->SetFileName(outputFileName);
       //Writer->SetDataMode( this->DataMode );
       Writer->Write();
 #endif
-      }
     }
+  }
   // process cross sections
-  CrossRootBlock->SetNumberOfBlocks(
-    static_cast<unsigned int>( this->CrossSections.size() ));
-  std::vector<BorCrossSection>::iterator csit=
-    this->CrossSections.begin();
-  for(int cix=0; csit!=this->CrossSections.end(); ++csit, ++cix)
-    {
+  CrossRootBlock->SetNumberOfBlocks(static_cast<unsigned int>(this->CrossSections.size()));
+  std::vector<BorCrossSection>::iterator csit = this->CrossSections.begin();
+  for (int cix = 0; csit != this->CrossSections.end(); ++csit, ++cix)
+  {
     vtkNew<vtkPolyData> csPoly;
-    if(csit->InitPoly(csPoly.GetPointer(),
-      this->BoreHoles[csit->BorHole1_GUID],
-      this->BoreHoles[csit->BorHole2_GUID]))
-      {
-      CrossRootBlock->SetBlock(cix,csPoly.GetPointer());
+    if (csit->InitPoly(csPoly.GetPointer(), this->BoreHoles[csit->BorHole1_GUID],
+          this->BoreHoles[csit->BorHole2_GUID]))
+    {
+      CrossRootBlock->SetBlock(cix, csPoly.GetPointer());
 #ifdef WRITE_BOREHOLE_FILES
       vtkNew<vtkXMLPolyDataWriter> Writer;
       Writer->SetInputData(0, csPoly.GetPointer());
       char outputFileName[256];
-      sprintf(outputFileName, "%s-%d.vtp",
-        "C:/Users/Temp/testCrossSection", cix);
+      sprintf(outputFileName, "%s-%d.vtp", "C:/Users/Temp/testCrossSection", cix);
       Writer->SetFileName(outputFileName);
       //Writer->SetDataMode( this->DataMode );
       Writer->Write();
 #endif
-
-      }
     }
-  this->NumberOfBoreholes=BoreholeRootBlock->GetNumberOfBlocks();
-  this->NumberOfCrossSections= CrossRootBlock->GetNumberOfBlocks();
+  }
+  this->NumberOfBoreholes = BoreholeRootBlock->GetNumberOfBlocks();
+  this->NumberOfCrossSections = CrossRootBlock->GetNumberOfBlocks();
   output->SetBlock(0, BoreholeRootBlock.GetPointer());
   output->SetBlock(1, CrossRootBlock.GetPointer());
   return 1;

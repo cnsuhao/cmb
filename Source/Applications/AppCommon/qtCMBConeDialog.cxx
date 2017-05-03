@@ -21,12 +21,12 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 //-----------------------------------------------------------------------------
-qtCMBConeDialog::qtCMBConeDialog(
-  pqPipelineSource* coneSource, pqRenderView* view) :
-  Status(0), ConeSourcePanel(0)
+qtCMBConeDialog::qtCMBConeDialog(pqPipelineSource* coneSource, pqRenderView* view)
+  : Status(0)
+  , ConeSourcePanel(0)
 {
-  if(coneSource)
-    {
+  if (coneSource)
+  {
     this->MainDialog = new QDialog();
     QVBoxLayout* layout = new QVBoxLayout(this->MainDialog);
     this->ConeSourcePanel = new pqProxyWidget(coneSource->getProxy(), this->MainDialog);
@@ -34,27 +34,25 @@ qtCMBConeDialog::qtCMBConeDialog(
     this->ConeSourcePanel->setObjectName("ConeSourcePanel");
     layout->addWidget(ConeSourcePanel);
     this->ConeSourcePanel->setView(view);
-    QDialogButtonBox* buttonBox=new QDialogButtonBox(
-      this->MainDialog);
-    buttonBox->setStandardButtons(
-      QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(this->MainDialog);
+    buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
     QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 qtCMBConeDialog::~qtCMBConeDialog()
 {
-  if(this->ConeSourcePanel)
-    {
+  if (this->ConeSourcePanel)
+  {
     delete this->ConeSourcePanel;
-    }
+  }
   if (this->MainDialog)
-    {
+  {
     delete MainDialog;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 int qtCMBConeDialog::exec()
@@ -68,8 +66,7 @@ int qtCMBConeDialog::exec()
 void qtCMBConeDialog::accept()
 {
   this->MainDialog->hide();
-  vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(
-    this->ConeSourcePanel->proxy());
+  vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(this->ConeSourcePanel->proxy());
   smSource->MarkModified(NULL);
   smSource->UpdateVTKObjects();
   smSource->UpdatePipeline();

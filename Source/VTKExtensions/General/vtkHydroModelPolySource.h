@@ -14,32 +14,32 @@
 #ifndef __vtkHydroModelPolySource_h
 #define __vtkHydroModelPolySource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBGENERAL_EXPORT vtkHydroModelPolySource : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkHydroModelPolySource *New();
-  vtkTypeMacro(vtkHydroModelPolySource,vtkPolyDataAlgorithm);
+  static vtkHydroModelPolySource* New();
+  vtkTypeMacro(vtkHydroModelPolySource, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
-  void CopyData(vtkPolyData *source);
+  void CopyData(vtkPolyData* source);
   vtkGetObjectMacro(Source, vtkPolyData);
 
 protected:
   vtkHydroModelPolySource();
   ~vtkHydroModelPolySource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkPolyData *Source;
+  vtkPolyData* Source;
 
 private:
-  vtkHydroModelPolySource(const vtkHydroModelPolySource&);  // Not implemented.
-  void operator=(const vtkHydroModelPolySource&);  // Not implemented.
+  vtkHydroModelPolySource(const vtkHydroModelPolySource&); // Not implemented.
+  void operator=(const vtkHydroModelPolySource&);          // Not implemented.
 };
 
 #endif

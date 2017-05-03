@@ -13,35 +13,35 @@
 
 #include "qtCMBVOIDialog.h"
 
-#include "ui_qtDefineVOI.h"
-#include "pqCMBVOI.h"
-#include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
+#include "pqCMBSceneTree.h"
+#include "pqCMBVOI.h"
+#include "ui_qtDefineVOI.h"
 
-#include <QLineEdit>
 #include <QDoubleValidator>
+#include <QLineEdit>
 
 //-----------------------------------------------------------------------------
-int qtCMBVOIDialog::manageVOI(pqCMBSceneNode *node)
+int qtCMBVOIDialog::manageVOI(pqCMBSceneNode* node)
 {
-  if (node->isTypeNode() ||
-      (node->getDataObject()->getType() != pqCMBSceneObjectBase::VOI))
-    {
+  if (node->isTypeNode() || (node->getDataObject()->getType() != pqCMBSceneObjectBase::VOI))
+  {
     return 0;
-    }
+  }
 
   qtCMBVOIDialog editor(node);
   return editor.exec();
 }
 
 //-----------------------------------------------------------------------------
-qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode *n) :
-  Status(-1), Node(n)
+qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode* n)
+  : Status(-1)
+  , Node(n)
 {
-  pqCMBVOI *object = dynamic_cast<pqCMBVOI*>(n->getDataObject());
+  pqCMBVOI* object = dynamic_cast<pqCMBVOI*>(n->getDataObject());
 
   this->MainDialog = new QDialog();
-  QDoubleValidator *validator = new QDoubleValidator(this->MainDialog);
+  QDoubleValidator* validator = new QDoubleValidator(this->MainDialog);
   this->VOIDialog = new Ui::qtDefineVOI;
   this->VOIDialog->setupUi(MainDialog);
 
@@ -62,7 +62,7 @@ qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode *n) :
   this->VOIDialog->Y2->setText(QString::number(p2[1]));
   this->VOIDialog->Z2->setValidator(validator);
   this->VOIDialog->Z2->setText(QString::number(p2[2]));
-   //
+  //
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
@@ -71,13 +71,13 @@ qtCMBVOIDialog::qtCMBVOIDialog(pqCMBSceneNode *n) :
 qtCMBVOIDialog::~qtCMBVOIDialog()
 {
   if (this->VOIDialog)
-    {
+  {
     delete VOIDialog;
-    }
+  }
   if (this->MainDialog)
-    {
+  {
     delete MainDialog;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 int qtCMBVOIDialog::exec()
@@ -105,15 +105,15 @@ void qtCMBVOIDialog::accept()
   double a;
   // Make sure p1 is the min pnt and p2 is the max
   for (i = 0; i < 3; i++)
-    {
+  {
     if (p1[i] > p2[i])
-      {
+    {
       a = p1[i];
       p1[i] = p2[i];
       p2[i] = a;
-      }
     }
-  pqCMBVOI *object = dynamic_cast<pqCMBVOI*>(this->Node->getDataObject());
+  }
+  pqCMBVOI* object = dynamic_cast<pqCMBVOI*>(this->Node->getDataObject());
   object->setVOI(p1, p2);
 }
 //-----------------------------------------------------------------------------
@@ -121,6 +121,5 @@ void qtCMBVOIDialog::cancel()
 {
   this->Status = 0;
 }
-
 
 //-----------------------------------------------------------------------------

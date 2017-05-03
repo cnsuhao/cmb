@@ -11,18 +11,17 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBUserTypeDialog_h
 #define __qtCMBUserTypeDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
 #include "cmbSystemConfig.h"
+#include <QObject>
 class QDialog;
 class pqCMBSceneNode;
 namespace Ui
 {
-  class qtObjectTypeDialog;
+class qtObjectTypeDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBUserTypeDialog : public QObject
@@ -30,7 +29,7 @@ class CMBAPPCOMMON_EXPORT qtCMBUserTypeDialog : public QObject
   Q_OBJECT
 
 public:
-  static void updateUserType(pqCMBSceneNode *node);
+  static void updateUserType(pqCMBSceneNode* node);
 
 protected slots:
   void accept();
@@ -38,13 +37,13 @@ protected slots:
   void changeObjectType();
 
 protected:
-  qtCMBUserTypeDialog(pqCMBSceneNode *node);
+  qtCMBUserTypeDialog(pqCMBSceneNode* node);
   ~qtCMBUserTypeDialog() override;
   void exec();
 
-  Ui::qtObjectTypeDialog *TypeDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
+  Ui::qtObjectTypeDialog* TypeDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
 };
 
 #endif /* __qtCMBUserTypeDialog_h */

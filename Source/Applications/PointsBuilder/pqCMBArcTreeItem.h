@@ -14,30 +14,25 @@
 #ifndef __pqCMBArcTreeItem_h
 #define __pqCMBArcTreeItem_h
 
-#include <QTreeWidgetItem>
 #include "cmbSystemConfig.h"
+#include <QTreeWidgetItem>
 class qtArcWidget;
 
-class  pqCMBArcTreeItem : public QTreeWidgetItem
+class pqCMBArcTreeItem : public QTreeWidgetItem
 {
 public:
-  pqCMBArcTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType=0);
+  pqCMBArcTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType = 0);
   ~pqCMBArcTreeItem() override;
 
   // Description:
   // Get/Set the model entity object
-  virtual qtArcWidget* getArcObject()
-    {return this->ArcObject;}
+  virtual qtArcWidget* getArcObject() { return this->ArcObject; }
   virtual void setArcObject(qtArcWidget* entity);
-  bool isGroupType()
-    {return (this->type() !=0 );}
-  int itemId()
-    {return this->ItemId;}
-  void setItemId(int id)
-    { this->ItemId = id; }
+  bool isGroupType() { return (this->type() != 0); }
+  int itemId() { return this->ItemId; }
+  void setItemId(int id) { this->ItemId = id; }
 
 protected:
-
   virtual void init();
   int ItemId;
   qtArcWidget* ArcObject;

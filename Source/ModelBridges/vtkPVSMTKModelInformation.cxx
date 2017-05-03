@@ -9,13 +9,13 @@
 //=========================================================================
 #include "vtkPVSMTKModelInformation.h"
 
+#include "vtkAlgorithm.h"
+#include "vtkAlgorithmOutput.h"
 #include "vtkClientServerStream.h"
+#include "vtkCompositeDataIterator.h"
 #include "vtkDataObject.h"
 #include "vtkDataSet.h"
 #include "vtkObjectFactory.h"
-#include "vtkAlgorithmOutput.h"
-#include "vtkAlgorithm.h"
-#include "vtkCompositeDataIterator.h"
 
 #include "vtkPVSMTKModelSource.h"
 
@@ -33,7 +33,7 @@ vtkPVSMTKModelInformation::~vtkPVSMTKModelInformation()
 }
 
 //----------------------------------------------------------------------------
-void vtkPVSMTKModelInformation::PrintSelf(ostream &os, vtkIndent indent)
+void vtkPVSMTKModelInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
@@ -42,41 +42,39 @@ void vtkPVSMTKModelInformation::PrintSelf(ostream &os, vtkIndent indent)
 void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 {
   this->UUID2BlockIdMap.clear();
-  vtkPVSMTKModelSource *modelsource = vtkPVSMTKModelSource::SafeDownCast( obj );
+  vtkPVSMTKModelSource* modelsource = vtkPVSMTKModelSource::SafeDownCast(obj);
 
   if (!modelsource)
-    {
+  {
     vtkErrorMacro("Object is not a vtkPVSMTKModelSource!");
     return;
-    }
+  }
 
   modelsource->GetUUID2BlockIdMap(this->UUID2BlockIdMap);
   this->BlockId2UUIDMap.clear();
-  std::map<smtk::common::UUID, unsigned int>::iterator it =
-    this->UUID2BlockIdMap.begin();
-  for(; it != this->UUID2BlockIdMap.end(); ++it)
-    {
+  std::map<smtk::common::UUID, unsigned int>::iterator it = this->UUID2BlockIdMap.begin();
+  for (; it != this->UUID2BlockIdMap.end(); ++it)
+  {
     this->BlockId2UUIDMap[it->second] = it->first;
-    }
+  }
   this->m_ModelUUID = smtk::common::UUID(modelsource->GetModelEntityID());
 }
 
 //----------------------------------------------------------------------------
-bool vtkPVSMTKModelInformation::GetBlockId(
-  const smtk::common::UUID& uuid, unsigned int &bid)
+bool vtkPVSMTKModelInformation::GetBlockId(const smtk::common::UUID& uuid, unsigned int& bid)
 {
-  if(this->UUID2BlockIdMap.find(uuid) != this->UUID2BlockIdMap.end())
-    {
+  if (this->UUID2BlockIdMap.find(uuid) != this->UUID2BlockIdMap.end())
+  {
     bid = this->UUID2BlockIdMap[uuid];
     return true;
-    }
+  }
   return false;
 }
 //----------------------------------------------------------------------------
-const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelUUID()
+const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelUUID()
 {
   return this->m_ModelUUID;
-/*
+  /*
   if(this->BlockId2UUIDMap.find(bid) != this->BlockId2UUIDMap.end())
     {
     return this->BlockId2UUIDMap[bid];
@@ -86,11 +84,10 @@ const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelUUID()
 }
 
 //----------------------------------------------------------------------------
-const smtk::common::UUID&  vtkPVSMTKModelInformation::GetModelEntityId(
-  unsigned int bid)
+const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelEntityId(unsigned int bid)
 {
   return this->BlockId2UUIDMap[bid];
-/*
+  /*
   if(this->BlockId2UUIDMap.find(bid) != this->BlockId2UUIDMap.end())
     {
     return this->BlockId2UUIDMap[bid];
@@ -115,10 +112,9 @@ smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
 //----------------------------------------------------------------------------
 void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
 {
-  vtkPVSMTKModelInformation *modelInfo =
-    vtkPVSMTKModelInformation::SafeDownCast(info);
+  vtkPVSMTKModelInformation* modelInfo = vtkPVSMTKModelInformation::SafeDownCast(info);
   if (modelInfo)
-    {
+  {
     this->UUID2BlockIdMap.clear();
     this->UUID2BlockIdMap.insert(
       modelInfo->UUID2BlockIdMap.begin(), modelInfo->UUID2BlockIdMap.end());
@@ -126,5 +122,5 @@ void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
     this->BlockId2UUIDMap.insert(
       modelInfo->BlockId2UUIDMap.begin(), modelInfo->BlockId2UUIDMap.end());
     this->m_ModelUUID = modelInfo->m_ModelUUID;
-    }
+  }
 }

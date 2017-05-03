@@ -15,9 +15,9 @@
 #ifndef __vtkPVModelVertexObjectInformation_h
 #define __vtkPVModelVertexObjectInformation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 #include <string>
 
 class VTKCMBCLIENT_EXPORT vtkPVModelVertexObjectInformation : public vtkPVInformation
@@ -49,13 +49,13 @@ protected:
   ~vtkPVModelVertexObjectInformation() override;
 
   // Data information collected from remote processes.
-  double         Location[3];
+  double Location[3];
   int IsInfoValid;
   vtkIdType PointId;
 
 private:
   vtkPVModelVertexObjectInformation(const vtkPVModelVertexObjectInformation&); // Not implemented
-  void operator=(const vtkPVModelVertexObjectInformation&); // Not implemented
+  void operator=(const vtkPVModelVertexObjectInformation&);                    // Not implemented
   //ETX
 };
 

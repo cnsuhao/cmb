@@ -11,35 +11,32 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBBoreHole_h
 #define __pqCMBBoreHole_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 #include <QPointer>
 
-class  CMBAPPCOMMON_EXPORT pqCMBBoreHole : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBBoreHole : public pqCMBSceneObjectBase
 {
 public:
   pqCMBBoreHole();
-  pqCMBBoreHole(pqPipelineSource*source,
-              pqRenderView *view, pqServer *server);
+  pqCMBBoreHole(pqPipelineSource* source, pqRenderView* view, pqServer* server);
 
   ~pqCMBBoreHole() override;
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
   pqCMBSceneObjectBase::enumObjectType getType() const override;
   virtual void setTubeRadius(double);
   /// Returns the Bounds of the data. - Returns the output of the TubeFilter
   void getDataBounds(double bounds[6]) const override;
-  pqPipelineSource * getSelectionSource() const override;
-  void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
-  vtkSMSourceProxy *getSelectionInput() const override;
+  pqPipelineSource* getSelectionSource() const override;
+  void setSelectionInput(vtkSMSourceProxy* selectionInput) override;
+  vtkSMSourceProxy* getSelectionInput() const override;
 
 protected:
   QPointer<pqPipelineSource> TubeFilter;
-
 };
 
 #endif /* __pqCMBBoreHole_h */

@@ -32,24 +32,23 @@
 #ifndef __vtkRegisterPlanarTextureMap_h
 #define __vtkRegisterPlanarTextureMap_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkRegisterPlanarTextureMap : public vtkDataSetAlgorithm
 {
 public:
-  vtkTypeMacro(vtkRegisterPlanarTextureMap,vtkDataSetAlgorithm);
+  vtkTypeMacro(vtkRegisterPlanarTextureMap, vtkDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with identity mapping with clipping off.
-  static vtkRegisterPlanarTextureMap *New();
+  static vtkRegisterPlanarTextureMap* New();
 
   // Description:
   // Define Registration based on 2 points
-  int SetTwoPointRegistration(double xy1[2], double st1[2],
-                             double xy2[2], double st2[2]);
+  int SetTwoPointRegistration(double xy1[2], double st1[2], double xy2[2], double st2[2]);
   // Description:
   // Define Registration based on 2 points - format is x1 y1 s1 t1 x2 y2 s2 t2
   int SetTwoPointRegistration(double info[8]);
@@ -60,9 +59,8 @@ public:
 
   // Description:
   // Define Registration based on 3 points
-  int SetThreePointRegistration(double xy1[2], double st1[2],
-                            double xy2[2], double st2[2],
-                            double xy3[2], double st3[2]);
+  int SetThreePointRegistration(
+    double xy1[2], double st1[2], double xy2[2], double st2[2], double xy3[2], double st3[2]);
   // Description:
   // Define Registration based on 3 points - format is x1 y1 s1 t1 x2 y2 s2 t2
   // x3 y3 s3 t3
@@ -77,49 +75,48 @@ public:
 
   // Description:
   // Specify x-coordinate range for texture coordinate pair.
-  vtkSetVector2Macro(XRange,double);
-  vtkGetVectorMacro(XRange,double,2);
+  vtkSetVector2Macro(XRange, double);
+  vtkGetVectorMacro(XRange, double, 2);
 
   // Description:
   // Specify y-coordinate range for texture s-t coordinate pair.
-  vtkSetVector2Macro(YRange,double);
-  vtkGetVectorMacro(YRange,double,2);
+  vtkSetVector2Macro(YRange, double);
+  vtkGetVectorMacro(YRange, double, 2);
 
   // Description:
   // Specify s-coordinate range for texture s-t coordinate pair.
-  vtkSetVector2Macro(SRange,double);
-  vtkGetVectorMacro(SRange,double,2);
+  vtkSetVector2Macro(SRange, double);
+  vtkGetVectorMacro(SRange, double, 2);
 
   // Description:
   // Specify t-coordinate range for texture s-t coordinate pair.
-  vtkSetVector2Macro(TRange,double);
-  vtkGetVectorMacro(TRange,double,2);
+  vtkSetVector2Macro(TRange, double);
+  vtkGetVectorMacro(TRange, double, 2);
 
   // Description:
   // Turn on/off texture clipping.
-  vtkSetMacro(ClipXY,int);
-  vtkGetMacro(ClipXY,int);
-  vtkBooleanMacro(ClipXY,int);
+  vtkSetMacro(ClipXY, int);
+  vtkGetMacro(ClipXY, int);
+  vtkBooleanMacro(ClipXY, int);
 
   // Description:
   // Turn on/off the filter's ability of generating texture coordinates.
   // This is on by default
-  vtkSetMacro(GenerateCoordinates,int);
-  vtkGetMacro(GenerateCoordinates,int);
-  vtkBooleanMacro(GenerateCoordinates,int);
+  vtkSetMacro(GenerateCoordinates, int);
+  vtkGetMacro(GenerateCoordinates, int);
+  vtkBooleanMacro(GenerateCoordinates, int);
 
   // Description:
   // Static method to compute the texture coordinate for a point in same
   // manner as is done in the RequestData member fn.
-  static void ComputeTextureCoordinate(double pt[2],
-    double sRange[2], double tRange[2], double sMap[3], double tMap[3],
-    double *tCoords);
+  static void ComputeTextureCoordinate(double pt[2], double sRange[2], double tRange[2],
+    double sMap[3], double tMap[3], double* tCoords);
 
 protected:
   vtkRegisterPlanarTextureMap();
-  ~vtkRegisterPlanarTextureMap() override {};
+  ~vtkRegisterPlanarTextureMap() override{};
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   double SMap[3];
   double TMap[3];
@@ -134,8 +131,8 @@ protected:
   int GenerateCoordinates;
 
 private:
-  vtkRegisterPlanarTextureMap(const vtkRegisterPlanarTextureMap&);  // Not implemented.
-  void operator=(const vtkRegisterPlanarTextureMap&);  // Not implemented.
+  vtkRegisterPlanarTextureMap(const vtkRegisterPlanarTextureMap&); // Not implemented.
+  void operator=(const vtkRegisterPlanarTextureMap&);              // Not implemented.
 };
 
 #endif

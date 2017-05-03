@@ -11,45 +11,35 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBUniformGrid_h
 #define __pqCMBUniformGrid_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
-class  CMBAPPCOMMON_EXPORT pqCMBUniformGrid : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBUniformGrid : public pqCMBSceneObjectBase
 {
 public:
-
   pqCMBUniformGrid();
-  pqCMBUniformGrid(pqPipelineSource *source,
-                      pqRenderView *view,
-                      pqServer *server,
-                      const char *filename,
-                      bool updateRep=true);
-  pqCMBUniformGrid(const char *filename,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
-  pqCMBUniformGrid(pqPipelineSource *source,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
+  pqCMBUniformGrid(pqPipelineSource* source, pqRenderView* view, pqServer* server,
+    const char* filename, bool updateRep = true);
+  pqCMBUniformGrid(
+    const char* filename, pqServer* server, pqRenderView* view, bool updateRep = true);
+  pqCMBUniformGrid(
+    pqPipelineSource* source, pqServer* server, pqRenderView* view, bool updateRep = true);
 
   ~pqCMBUniformGrid() override;
 
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
 
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true) override;
-
-  void setFileName(const char *type)
-    {this->FileName = type;}
+  void setFileName(const char* type) { this->FileName = type; }
   enumObjectType getType() const override;
-  std::string getFileName() const
-    {return this->FileName;}
+  std::string getFileName() const { return this->FileName; }
 
   void getDimensions(vtkIdType dims[2]);
 
-  static bool isRawDEM(const QString &filename);
+  static bool isRawDEM(const QString& filename);
   bool isRawDEM() const;
   void setReadGroupOfFiles(bool mode);
   bool getReadGroupOfFiles() const;
@@ -68,11 +58,10 @@ public:
   vtkIdType getNumberOfPolygons() override;
   void updatePolyDataStats() override;
 
-  pqPipelineSource* getImageSource()
-  { return ImageSource; }
+  pqPipelineSource* getImageSource() { return ImageSource; }
 
 protected:
-  void prepGridObject(pqServer *server, pqRenderView *view, bool updateRep, bool transferColor);
+  void prepGridObject(pqServer* server, pqRenderView* view, bool updateRep, bool transferColor);
 
   pqPipelineSource* ImageSource;
 

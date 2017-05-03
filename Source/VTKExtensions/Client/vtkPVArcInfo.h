@@ -14,9 +14,9 @@
 #ifndef __vtkPVArcInfo_h
 #define __vtkPVArcInfo_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 class vtkDoubleArray;
 class vtkIdTypeArray;
 
@@ -30,11 +30,11 @@ public:
   //Description:
   //Tell the gather to only fill if the arc is a closed loop
   //Note: This is the default
-  void SetGatherLoopInfoOnly(){GatherLoopInfoOnly=true;}
+  void SetGatherLoopInfoOnly() { GatherLoopInfoOnly = true; }
 
   //Description:
   //Gather all information for the arc
-  void SetGatherAllInfo(){GatherLoopInfoOnly=false;}
+  void SetGatherAllInfo() { GatherLoopInfoOnly = false; }
 
   // Description:
   // Transfer information about a single object into this object.
@@ -47,11 +47,11 @@ public:
 
   //Description:
   //Returns if the this arc is a closed loop
-  bool IsClosedLoop(){return ClosedLoop;}
+  bool IsClosedLoop() { return ClosedLoop; }
 
   //Description:
   //Returns the total number of points which is end nodes + internal points
-  vtkIdType GetNumberOfPoints(){return NumberOfPoints;};
+  vtkIdType GetNumberOfPoints() { return NumberOfPoints; };
 
   //Description:
   //Returns the position of the end node at a given position
@@ -62,19 +62,18 @@ public:
   bool GetPointLocation(vtkIdType index, double pos[3]);
   bool GetPointLocationById(vtkIdType ptID, double pos[3]);
 
-  bool GetPointID(vtkIdType index, vtkIdType & id);
+  bool GetPointID(vtkIdType index, vtkIdType& id);
 
   //Description:
   //Returns the location of all the points in the arc
-  vtkGetObjectMacro(PointLocations,vtkDoubleArray);
+  vtkGetObjectMacro(PointLocations, vtkDoubleArray);
 
   //Description
   //Returns the ids of the end nodes
-  vtkGetObjectMacro(EndNodeIds,vtkIdTypeArray)
+  vtkGetObjectMacro(EndNodeIds, vtkIdTypeArray)
 
-  //BTX
-protected:
-  vtkPVArcInfo();
+    //BTX
+    protected : vtkPVArcInfo();
   ~vtkPVArcInfo() override;
 
   void GatherLoopInfo();
@@ -85,15 +84,14 @@ protected:
   vtkIdType ArcId;
 
   vtkIdType NumberOfPoints;
-  double *EndNodePos;
+  double* EndNodePos;
   vtkDoubleArray* PointLocations;
   vtkIdTypeArray* PointIds;
 
   vtkIdTypeArray* EndNodeIds;
 
 private:
-
-  vtkPVArcInfo(const vtkPVArcInfo&); // Not implemented
+  vtkPVArcInfo(const vtkPVArcInfo&);   // Not implemented
   void operator=(const vtkPVArcInfo&); // Not implemented
   //ETX
 };

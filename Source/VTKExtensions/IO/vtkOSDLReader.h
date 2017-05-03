@@ -14,9 +14,9 @@
 #ifndef __SceneGenReader_h
 #define __SceneGenReader_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkMultiBlockDataSet;
 class vtkDataSet;
@@ -24,8 +24,8 @@ class vtkDataSet;
 class VTKCMBIO_EXPORT vtkOSDLReader : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkOSDLReader *New();
-  vtkTypeMacro(vtkOSDLReader,vtkMultiBlockDataSetAlgorithm);
+  static vtkOSDLReader* New();
+  vtkTypeMacro(vtkOSDLReader, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -37,19 +37,15 @@ protected:
   vtkOSDLReader();
   ~vtkOSDLReader() override;
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *,
-                  vtkInformationVector **,
-                  vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void AppendBlocks( vtkMultiBlockDataSet *output, vtkDataObject *dataObject );
-  char *FileName;
+  void AppendBlocks(vtkMultiBlockDataSet* output, vtkDataObject* dataObject);
+  char* FileName;
 
 private:
   vtkOSDLReader(const vtkOSDLReader&);  // Not implemented.
-  void operator=(const vtkOSDLReader&);  // Not implemented.
+  void operator=(const vtkOSDLReader&); // Not implemented.
 };
 
 #endif

@@ -16,10 +16,13 @@
 #ifndef __qtCMBSceneBuilderPanelWidget_h
 #define __qtCMBSceneBuilderPanelWidget_h
 
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
-namespace Ui { class qtCMBSceneBuilderPanel; }
+namespace Ui
+{
+class qtCMBSceneBuilderPanel;
+}
 
 class qtCMBSceneBuilderPanelWidgetInternal;
 
@@ -28,7 +31,7 @@ class qtCMBSceneBuilderPanelWidget : public QWidget
   Q_OBJECT
 
 public:
-  qtCMBSceneBuilderPanelWidget(QWidget* parent=0);
+  qtCMBSceneBuilderPanelWidget(QWidget* parent = 0);
   ~qtCMBSceneBuilderPanelWidget() override;
 
   Ui::qtCMBSceneBuilderPanel* getGUIPanel();
@@ -43,6 +46,5 @@ private slots:
 
 private:
   qtCMBSceneBuilderPanelWidgetInternal* Internal;
-
 };
 #endif

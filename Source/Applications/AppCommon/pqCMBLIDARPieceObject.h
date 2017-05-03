@@ -15,10 +15,10 @@
 #define __pqCMBLIDARPieceObject_h
 
 #include "cmbAppCommonExport.h"
-#include <QPointer>
-#include "vtkBoundingBox.h"
-#include <string>
 #include "cmbSystemConfig.h"
+#include "vtkBoundingBox.h"
+#include <QPointer>
+#include <string>
 
 class pqPipelineSource;
 class pqDataRepresentation;
@@ -28,111 +28,99 @@ class vtkTransform;
 class vtkSMProxy;
 class vtkSMSourceProxy;
 
-class  CMBAPPCOMMON_EXPORT pqCMBLIDARPieceObject
+class CMBAPPCOMMON_EXPORT pqCMBLIDARPieceObject
 {
 public:
   pqCMBLIDARPieceObject();
   virtual ~pqCMBLIDARPieceObject();
 
-  void setSource(pqPipelineSource *source);
-  pqPipelineSource * getSource() const;
+  void setSource(pqPipelineSource* source);
+  pqPipelineSource* getSource() const;
 
-  void setThresholdSource(pqPipelineSource *thresholdSource);
-  pqPipelineSource * getThresholdSource() const;
-  void setContourSource(pqPipelineSource *thresholdSource);
-  pqPipelineSource * getContourSource() const;
-  pqPipelineSource * getDiggerSource() const;
-  pqPipelineSource * getElevationSource() const;
+  void setThresholdSource(pqPipelineSource* thresholdSource);
+  pqPipelineSource* getThresholdSource() const;
+  void setContourSource(pqPipelineSource* thresholdSource);
+  pqPipelineSource* getContourSource() const;
+  pqPipelineSource* getDiggerSource() const;
+  pqPipelineSource* getElevationSource() const;
 
-  void setRepresentation(pqDataRepresentation *rep);
-  pqDataRepresentation * getRepresentation() const;
+  void setRepresentation(pqDataRepresentation* rep);
+  pqDataRepresentation* getRepresentation() const;
 
-  void setFileName(const char *filename)
-    {this->FileName = filename;}
-  std::string getFileName() const
-    {return this->FileName;}
+  void setFileName(const char* filename) { this->FileName = filename; }
+  std::string getFileName() const { return this->FileName; }
 
-  void setPieceName(const char *name)
-    {this->PieceName = name;}
-  std::string getPieceName() const
-    {return this->PieceName;}
+  void setPieceName(const char* name) { this->PieceName = name; }
+  std::string getPieceName() const { return this->PieceName; }
 
   //void setVisibility(bool mode);
   void updateRepresentation();
 
-  void setElevationFilterLowPoint(double *lowPoint);
-  void setElevationFilterHighPoint(double *lowPoint);
+  void setElevationFilterLowPoint(double* lowPoint);
+  void setElevationFilterHighPoint(double* lowPoint);
   void useElevationFilter(bool useElevation);
 
   void setPieceIndex(int pieceIdx);
-  int getPieceIndex() { return this->PieceIndex;}
-  int getDisplayOnRatio() {return this->DisplayOnRatio;}
+  int getPieceIndex() { return this->PieceIndex; }
+  int getDisplayOnRatio() { return this->DisplayOnRatio; }
   void setDisplayOnRatio(int ratio);
-  int getSaveOnRatio() {return this->SaveOnRatio;}
+  int getSaveOnRatio() { return this->SaveOnRatio; }
   void setSaveOnRatio(int ratio);
-  int getNumberOfPoints() { return this->TotalNumberOfPiecePoints;}
-  void setNumberOfPoints(int numPts)
-    { this->TotalNumberOfPiecePoints = numPts;}
+  int getNumberOfPoints() { return this->TotalNumberOfPiecePoints; }
+  void setNumberOfPoints(int numPts) { this->TotalNumberOfPiecePoints = numPts; }
   //int getFileOffset() {return this->FileOffset;}
   //void setFileOffset(int offset)
   //  { this->FileOffset = offset;}
   void setLODMode(int mode, bool updateRep);
 
-  int getReadOnRatio() {return this->ReadOnRatio;}
+  int getReadOnRatio() { return this->ReadOnRatio; }
   void setReadOnRatio(int ratio);
 
-  int getNumberOfReadPoints()
-    { return this->NumberOfReadPoints; }
-  void setNumberOfReadPoints(int numPoints)
-    { this->NumberOfReadPoints = numPoints; }
+  int getNumberOfReadPoints() { return this->NumberOfReadPoints; }
+  void setNumberOfReadPoints(int numPoints) { this->NumberOfReadPoints = numPoints; }
 
   //QTableWidgetItem* getWidget()
   //{ return this->Widget;}
   //void setWidget(QTableWidgetItem* widget)
   //{ this->Widget = Widget; }
 
-  static pqCMBLIDARPieceObject *createObject(pqPipelineSource *source,
-                                            double *bounds,
-                                            pqServer *server, pqRenderView *view,
-                                            bool updateRep = true);
+  static pqCMBLIDARPieceObject* createObject(pqPipelineSource* source, double* bounds,
+    pqServer* server, pqRenderView* view, bool updateRep = true);
 
   void zoomOnObject();
   void getBounds(double bounds[6]) const;
-  int getVisibility()
-    { return this->Visibility; }
+  int getVisibility() { return this->Visibility; }
   void setVisibility(int visible);
-  int getHighlight()
-    { return this->Highlight; }
-  void setHighlight( int highlight);
+  int getHighlight() { return this->Highlight; }
+  void setHighlight(int highlight);
   void setSelectionInput(vtkSMSourceProxy* selInput);
 
-  void setClipBounds(double xMin, double xMax, double yMin, double yMax,
-    double zMin, double zMax)
-    { this->ClippingBounds.SetBounds(xMin, xMax, yMin, yMax, zMin, zMax); }
-  void setClipBounds(double bounds[6])
-    { this->ClippingBounds.SetBounds(bounds); }
-  bool areClippingBoundsEqual(vtkBoundingBox &bbox)
-    { return bbox == this->ClippingBounds; }
+  void setClipBounds(double xMin, double xMax, double yMin, double yMax, double zMin, double zMax)
+  {
+    this->ClippingBounds.SetBounds(xMin, xMax, yMin, yMax, zMin, zMax);
+  }
+  void setClipBounds(double bounds[6]) { this->ClippingBounds.SetBounds(bounds); }
+  bool areClippingBoundsEqual(vtkBoundingBox& bbox) { return bbox == this->ClippingBounds; }
   bool isClipTransformationUnchanged();
   bool isThresholdTransformationUnchanged();
 
-  bool getClipState()
-    { return this->ClipState; }
-  void setClipState(bool clipState)
-    { this->ClipState = clipState; }
+  bool getClipState() { return this->ClipState; }
+  void setClipState(bool clipState) { this->ClipState = clipState; }
 
-  bool isObjectUpToDate(bool clipEnabled, vtkBoundingBox &clipBBox);
-  bool isClipUpToDate(bool clipEnabled, vtkBoundingBox &clipBBox);
+  bool isObjectUpToDate(bool clipEnabled, vtkBoundingBox& clipBBox);
+  bool isClipUpToDate(bool clipEnabled, vtkBoundingBox& clipBBox);
 
   void setNumberOfDisplayPointsEstimate(int numPoints)
-    { this->NumberOfDisplayPointsEstimate = numPoints; }
-  int getNumberOfDisplayPointsEstimate()
-    { return this->NumberOfDisplayPointsEstimate; }
+  {
+    this->NumberOfDisplayPointsEstimate = numPoints;
+  }
+  int getNumberOfDisplayPointsEstimate() { return this->NumberOfDisplayPointsEstimate; }
 
   void setNumberOfSavePointsEstimate(int numPoints)
-    { this->NumberOfSavePointsEstimate = numPoints; }
-  int getNumberOfSavePointsEstimate()
-    { return this->NumberOfSavePointsEstimate; }
+  {
+    this->NumberOfSavePointsEstimate = numPoints;
+  }
+  int getNumberOfSavePointsEstimate() { return this->NumberOfSavePointsEstimate; }
 
   void getPosition(double pos[3]) const;
   void setPosition(double pos[3], bool updateRep = true);
@@ -154,7 +142,7 @@ public:
   void saveThresholdOrigin();
 
   bool isPieceTransformed();
-  void getTransform(vtkTransform *transform) const;
+  void getTransform(vtkTransform* transform) const;
 
   void updateThresholdUseFilter(int idx, int useFilter);
   void updatePolygonUseFilter(int idx, int useFilter);
@@ -163,8 +151,8 @@ public:
 
   void updateGroupInvert(int groupIdx, int invert);
 
-  void resetWithNoThresholds(bool update=true);
-  void resetWithNoContours(bool update=true);
+  void resetWithNoThresholds(bool update = true);
+  void resetWithNoContours(bool update = true);
 
   void addThreshold();
   void addContour(vtkSMProxy* implicitLoop);
@@ -177,10 +165,8 @@ public:
   void setActiveContourGroup(int);
 
 protected:
-
   void init();
-  void updateProxyProperty(pqPipelineSource*, const char* name,
-    int idx, int val);
+  void updateProxyProperty(pqPipelineSource*, const char* name, int idx, int val);
 
   QPointer<pqPipelineSource> Source;
   QPointer<pqPipelineSource> ContourSource;

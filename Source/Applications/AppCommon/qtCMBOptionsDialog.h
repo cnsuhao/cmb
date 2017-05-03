@@ -19,7 +19,6 @@ class qtCMBOptionsDialogForm;
 class qtCMBOptionsPage;
 class QString;
 
-
 /// \class qtCMBOptionsDialog
 /// \brief
 ///   The qtCMBOptionsDialog class is a generic options dialog.
@@ -32,7 +31,7 @@ class CMBAPPCOMMON_EXPORT qtCMBOptionsDialog : public QDialog
   Q_OBJECT
 
 public:
-  qtCMBOptionsDialog(QWidget *parent=0);
+  qtCMBOptionsDialog(QWidget* parent = 0);
   ~qtCMBOptionsDialog() override;
 
   /// \brief
@@ -54,7 +53,7 @@ public:
   ///
   /// \param path The name hierarchy for the options page.
   /// \param options The options page.
-  void addOptions(const QString &path, qtCMBOptionsPage *options);
+  void addOptions(const QString& path, qtCMBOptionsPage* options);
 
   /// \brief
   ///   Adds a container to the options dialog.
@@ -63,7 +62,7 @@ public:
   /// selection tree.
   ///
   /// \param options The options container to add.
-  void addOptions(qtCMBOptionsContainer *options);
+  void addOptions(qtCMBOptionsContainer* options);
 
   /// \brief
   ///   Removes the options page from the options dialog.
@@ -72,7 +71,7 @@ public:
   /// is an options container, all the names are removed.
   ///
   /// \param options The options page/container to remove.
-  void removeOptions(qtCMBOptionsPage *options);
+  void removeOptions(qtCMBOptionsPage* options);
 
 public slots:
   /// when OK button is clicked
@@ -81,7 +80,7 @@ public slots:
   /// \brief
   ///   Sets the current options page.
   /// \param path The name of the options page to show.
-  void setCurrentPage(const QString &path);
+  void setCurrentPage(const QString& path);
 
   /// Calls each page to apply any changes.
   void applyChanges();
@@ -106,7 +105,7 @@ private slots:
   void enableButtons();
 
 private:
-  qtCMBOptionsDialogForm *Form; /// Stores the form and class data.
+  qtCMBOptionsDialogForm* Form; /// Stores the form and class data.
 };
 
 #endif

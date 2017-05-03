@@ -12,17 +12,17 @@
 #define _pqCMBCommonMainWindowCore_h
 
 #include "cmbAppCommonExport.h"
-#include "pqVariableType.h"
-#include "pqRenderViewBase.h"
-#include "qtCMBProjectServerManager.h"
 #include "cmbSystemConfig.h"
+#include "pqRenderViewBase.h"
+#include "pqVariableType.h"
+#include "qtCMBProjectServerManager.h"
 
 #include <vtkIOStream.h>
 
-#include <QObject>
-#include <QWidget>
-#include <QPointer>
 #include <QList>
+#include <QObject>
+#include <QPointer>
+#include <QWidget>
 
 #include <string>
 
@@ -70,13 +70,15 @@ class QStatusBar;
 class QToolBar;
 class QWidget;
 
-namespace smtk{
-  namespace extension{
-    class qtSelectionManager;
-  }
+namespace smtk
+{
+namespace extension
+{
+class qtSelectionManager;
+}
 }
 
-class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindowCore :  public QObject
+class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindowCore : public QObject
 {
   Q_OBJECT
 
@@ -106,18 +108,15 @@ public:
   /// Setup a progress bar, attaching it to the given status bar
   virtual void setupProgressBar(QStatusBar* parent);
 
-  virtual void setupAppearanceEditor (QWidget *aFrame);
-  virtual void setAppearanceEditor (pqCMBDisplayProxyEditor *displayEditor);
-  pqCMBDisplayProxyEditor *getAppearanceEditor();
-  QWidget *getAppearanceEditorContainer();
+  virtual void setupAppearanceEditor(QWidget* aFrame);
+  virtual void setAppearanceEditor(pqCMBDisplayProxyEditor* displayEditor);
+  pqCMBDisplayProxyEditor* getAppearanceEditor();
+  QWidget* getAppearanceEditorContainer();
 
   /** Compares the contents of the window with the given reference image,
   returns true iff they "match" within some tolerance */
   virtual bool compareView(
-    const QString& ReferenceImage,
-    double Threshold,
-    ostream& Output,
-    const QString& TempDirectory);
+    const QString& ReferenceImage, double Threshold, ostream& Output, const QString& TempDirectory);
 
   /// Call this once all of your slots/signals are connected, to
   /// set the initial state of GUI components
@@ -164,11 +163,11 @@ public:
   pqCMBPreviewDialog* previewDialog();
 
   // return source of appended inputs; caller resposibility to destroy
-  pqPipelineSource *getAppendedSource(QList<pqOutputPort*> &inputs);
+  pqPipelineSource* getAppendedSource(QList<pqOutputPort*>& inputs);
 
   //Returns the enum of this program, so we can get information
   //from the project manager
-  qtCMBProjectServerManager::PROGRAM getProgramKey(){return ProgramKey;}
+  qtCMBProjectServerManager::PROGRAM getProgramKey() { return ProgramKey; }
 
   // Description:
   // Create a arc widget, and also return the orthoplane it is on.
@@ -217,13 +216,13 @@ signals:
 public slots:
 
   /// Called when a new server is connected.
-  virtual void onServerCreationFinished(pqServer *server);
+  virtual void onServerCreationFinished(pqServer* server);
 
   /// Creates a builtin connection, if no connection
   /// currently exists.
   void makeDefaultConnectionIfNoneExists();
 
-  virtual void onFileOpen(const QStringList& /*files*/){}
+  virtual void onFileOpen(const QStringList& /*files*/) {}
 
   virtual void onToolsManageLinks();
   virtual void onSaveScreenshot();
@@ -237,9 +236,8 @@ public slots:
 
   // Camera slots.
   void resetCamera();
-  void getCameraInfo(double focalPt[3], double position[3],
-    double viewDirection[3], double &distance, double viewUp[3],
-    double &parallelScale);
+  void getCameraInfo(double focalPt[3], double position[3], double viewDirection[3],
+    double& distance, double viewUp[3], double& parallelScale);
   void linkCenterWithFocalPoint(bool);
   void updateFocalPointWithCenter();
 
@@ -260,8 +258,7 @@ public slots:
   void enableCameraInteractionModeChanges(bool);
 
   static void getViewCameraInfo(pqRenderView* view, double focalPt[3], double position[3],
-    double viewDirection[3], double &distance, double viewUp[3],
-    double &parallelScale);
+    double viewDirection[3], double& distance, double viewUp[3], double& parallelScale);
 
   void resetViewDirectionPosX();
   void resetViewDirectionNegX();
@@ -270,8 +267,7 @@ public slots:
   void resetViewDirectionPosZ();
   void resetViewDirectionNegZ();
   void resetViewDirection(
-    double look_x, double look_y, double look_z,
-    double up_x, double up_y, double up_z);
+    double look_x, double look_y, double look_z, double up_x, double up_y, double up_z);
   void updateCameraPositionDueToModeChange();
 
   // This option is used for testing. Sets the maximum size for
@@ -307,14 +303,13 @@ public slots:
 
   // Description:
   // Closes the currently opened solid.
-  virtual void onRemovingServer(pqServer*)
-    {this->onCloseData();}
-  virtual void onCloseData(){}
+  virtual void onRemovingServer(pqServer*) { this->onCloseData(); }
+  virtual void onCloseData() {}
 
   // Description:
   // Saves the data (geometry + region and material IDs) in a file.
-  virtual void onSaveData(){}
-  virtual void onSaveAsData(){}
+  virtual void onSaveData() {}
+  virtual void onSaveAsData() {}
 
   //virtual void onRubberBandSelect(bool) {}
 
@@ -331,7 +326,7 @@ public slots:
   void updateMousePositionText();
 
   // Zoom onto the selected object
-  virtual void zoomOnSelection(){}
+  virtual void zoomOnSelection() {}
 
   virtual void onPreviewAccepted() {}
   virtual void onPreviewRejected() {}
@@ -341,8 +336,10 @@ public slots:
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
-  virtual void onReaderCreated(pqPipelineSource* vtkNotUsed(reader),
-                               const QString& vtkNotUsed(filename)) {}
+  virtual void onReaderCreated(
+    pqPipelineSource* vtkNotUsed(reader), const QString& vtkNotUsed(filename))
+  {
+  }
 
   /// This method is called once after the application event loop
   /// begins. This is where we process certain command line options
@@ -379,14 +376,12 @@ public slots:
   QPointer<qtCMBMeshingMonitor> meshServiceMonitor();
 
   virtual void closeData();
-  virtual void saveData(const QString& vtkNotUsed(filename)){}
+  virtual void saveData(const QString& vtkNotUsed(filename)) {}
   virtual void showStatusMessage(const QString& strMessage);
 
-  bool getExistingFileName(const QString filters,
-                           const QString title,
-                           QString &selectedFile);
+  bool getExistingFileName(const QString filters, const QString title, QString& selectedFile);
 
-  pqServerManagerModelItem *getActiveObject() const;
+  pqServerManagerModelItem* getActiveObject() const;
 
   virtual void initProjectManager();
 
@@ -401,22 +396,17 @@ protected slots:
 
 protected:
   virtual void updateViewPositions();
-  void updateContourLoop(
-    vtkSMProxy* implicitLoop, qtArcWidget* arcWidget);
-  bool getContourNormal(double normal[3],
-    qtArcWidget* arcWidget);
-  bool getContourProjectionNormal(int &projNormal,
-    qtArcWidget* arcWidget);
-  bool getContourProjectionPosition(double &position,
-    qtArcWidget* arcWidget);
+  void updateContourLoop(vtkSMProxy* implicitLoop, qtArcWidget* arcWidget);
+  bool getContourNormal(double normal[3], qtArcWidget* arcWidget);
+  bool getContourProjectionNormal(int& projNormal, qtArcWidget* arcWidget);
+  bool getContourProjectionPosition(double& position, qtArcWidget* arcWidget);
   qtArcWidget* createDefaultArcWidget();
-  void setArcPlane(qtArcWidget* arcWidget,
-    int orthoPlane, double projpos);
+  void setArcPlane(qtArcWidget* arcWidget, int orthoPlane, double projpos);
 
-  virtual void buildDefaultBehaviors(QObject *parent_widget);
+  virtual void buildDefaultBehaviors(QObject* parent_widget);
 
   //Subclass this method to alter the default behavior
-  virtual void buildRenderWindowContextMenuBehavior(QObject *parent_widget);
+  virtual void buildRenderWindowContextMenuBehavior(QObject* parent_widget);
 
   /// Event filter callback.
   bool eventFilter(QObject* caller, QEvent* e) override;
@@ -425,7 +415,6 @@ protected:
   smtk::extension::qtSelectionManager* qtSelectionMgr;
 
 private:
-
   class vtkInternal;
   vtkInternal* const Internal;
 
@@ -433,8 +422,6 @@ private:
   // but simply sets up the environment so when Python is initialized, it can
   // find ParaView modules. This does nothing is not build with Python support.
   bool InitializePythonEnvironment();
-
 };
-
 
 #endif // !_pqCMBCommonMainWindowCore_h

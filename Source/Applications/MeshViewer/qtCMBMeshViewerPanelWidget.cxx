@@ -10,27 +10,26 @@
 
 #include "qtCMBMeshViewerPanelWidget.h"
 #include "ui_qtMeshViewerPanel.h"
-#include <QMenu>
 #include <QButtonGroup>
+#include <QMenu>
 
-class qtCMBMeshViewerPanelWidgetInternal :
-  public Ui::qtMeshViewerPanel
+class qtCMBMeshViewerPanelWidgetInternal : public Ui::qtMeshViewerPanel
 {
 public:
   QIcon* IconVisible;
   QIcon* IconInvisible;
   QIcon* IconActive;
   QIcon* IconInactive;
-  QMenu *ContextMenu;
-  QAction *DeleteAction;
-  QAction *ActiveInputAction;
-  QAction *ExportSubsetAction;
+  QMenu* ContextMenu;
+  QAction* DeleteAction;
+  QAction* ActiveInputAction;
+  QAction* ExportSubsetAction;
   QButtonGroup* RadioGroup;
 };
 
 //-----------------------------------------------------------------------------
-qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(
-  QWidget* _p): QWidget(_p)
+qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(QWidget* _p)
+  : QWidget(_p)
 {
   this->Internal = new qtCMBMeshViewerPanelWidgetInternal;
   this->Internal->setupUi(this);
@@ -43,27 +42,22 @@ qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(
   this->Internal->IconActive = new QIcon(pixa);
   this->Internal->IconInactive = new QIcon();
   this->Internal->treeInputs->setContextMenuPolicy(Qt::CustomContextMenu);
-  QObject::connect(this->Internal->treeInputs,
-    SIGNAL(customContextMenuRequested(const QPoint &)),
-    this, SLOT(showContextMenu(const QPoint &)));
+  QObject::connect(this->Internal->treeInputs, SIGNAL(customContextMenuRequested(const QPoint&)),
+    this, SLOT(showContextMenu(const QPoint&)));
 
   // Set up Context Menu Structure
   this->Internal->ContextMenu = new QMenu(this->Internal->treeInputs);
   this->Internal->ContextMenu->setTitle("Filters Input");
   this->Internal->ActiveInputAction = new QAction(this->Internal->ContextMenu);
-  this->Internal->ActiveInputAction->setObjectName(
-    QString::fromUtf8("action_activeinput"));
-  this->Internal->ActiveInputAction->setText(
-    QString::fromUtf8("Set As Active"));
+  this->Internal->ActiveInputAction->setObjectName(QString::fromUtf8("action_activeinput"));
+  this->Internal->ActiveInputAction->setText(QString::fromUtf8("Set As Active"));
   this->Internal->ActiveInputAction->setEnabled(0);
   this->Internal->DeleteAction = new QAction(this->Internal->ContextMenu);
-  this->Internal->DeleteAction->setObjectName(
-    QString::fromUtf8("action_deleteinput"));
+  this->Internal->DeleteAction->setObjectName(QString::fromUtf8("action_deleteinput"));
   this->Internal->DeleteAction->setText(QString::fromUtf8("Delete"));
   this->Internal->DeleteAction->setEnabled(0);
   this->Internal->ExportSubsetAction = new QAction(this->Internal->ContextMenu);
-  this->Internal->ExportSubsetAction->setObjectName(
-    QString::fromUtf8("action_exportsubset"));
+  this->Internal->ExportSubsetAction->setObjectName(QString::fromUtf8("action_exportsubset"));
   this->Internal->ExportSubsetAction->setText(QString::fromUtf8("Save Selected As..."));
   this->Internal->ExportSubsetAction->setEnabled(0);
   this->Internal->ContextMenu->addAction(this->Internal->ActiveInputAction);
@@ -72,14 +66,11 @@ qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(
   this->Internal->ContextMenu->insertSeparator(this->Internal->DeleteAction);
 
   this->Internal->RadioGroup = new QButtonGroup(this->Internal->tab_Selection);
-  this->Internal->RadioGroup->addButton(
-    this->Internal->radioButtonShowHistogram);
-  this->Internal->RadioGroup->addButton(
-    this->Internal->radioButtonShowSpreadsheet);
+  this->Internal->RadioGroup->addButton(this->Internal->radioButtonShowHistogram);
+  this->Internal->RadioGroup->addButton(this->Internal->radioButtonShowSpreadsheet);
 
   // Setup the material id line edit widget to use a validator
-  this->Internal->MaterialIdEntry->
-    setValidator(new QIntValidator(this->Internal->MaterialIdEntry));
+  this->Internal->MaterialIdEntry->setValidator(new QIntValidator(this->Internal->MaterialIdEntry));
 }
 
 //-----------------------------------------------------------------------------
@@ -99,7 +90,7 @@ qtCMBMeshViewerPanelWidget::~qtCMBMeshViewerPanelWidget()
 //-----------------------------------------------------------------------------
 QIcon* qtCMBMeshViewerPanelWidget::iconVisible()
 {
-return this->Internal->IconVisible;
+  return this->Internal->IconVisible;
 }
 //-----------------------------------------------------------------------------
 QIcon* qtCMBMeshViewerPanelWidget::iconInvisible()
@@ -129,7 +120,7 @@ QAction* qtCMBMeshViewerPanelWidget::deleteInputAction()
 //-----------------------------------------------------------------------------
 QAction* qtCMBMeshViewerPanelWidget::activeInputAction()
 {
- return this->Internal->ActiveInputAction;
+  return this->Internal->ActiveInputAction;
 }
 //-----------------------------------------------------------------------------
 QAction* qtCMBMeshViewerPanelWidget::exportSubsetAction()
@@ -137,8 +128,7 @@ QAction* qtCMBMeshViewerPanelWidget::exportSubsetAction()
   return this->Internal->ExportSubsetAction;
 }
 //-----------------------------------------------------------------------------
-void qtCMBMeshViewerPanelWidget::showContextMenu(const QPoint &p)
+void qtCMBMeshViewerPanelWidget::showContextMenu(const QPoint& p)
 {
-  this->Internal->ContextMenu->popup(
-    this->Internal->treeInputs->mapToGlobal(p));
+  this->Internal->ContextMenu->popup(this->Internal->treeInputs->mapToGlobal(p));
 }

@@ -15,7 +15,7 @@
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkPVSMTKMeshSource);
-vtkCxxSetObjectMacro(vtkPVSMTKMeshSource,ModelManagerWrapper,vtkModelManagerWrapper);
+vtkCxxSetObjectMacro(vtkPVSMTKMeshSource, ModelManagerWrapper, vtkModelManagerWrapper);
 
 vtkPVSMTKMeshSource::vtkPVSMTKMeshSource()
 {
@@ -55,15 +55,13 @@ char* vtkPVSMTKMeshSource::GetMeshCollectionID()
 }
 
 int vtkPVSMTKMeshSource::RequestData(
-  vtkInformation* request,
-  vtkInformationVector** inInfo,
-  vtkInformationVector* outInfo)
+  vtkInformation* request, vtkInformationVector** inInfo, vtkInformationVector* outInfo)
 {
   if (!this->ModelManagerWrapper)
-    {
+  {
     vtkErrorMacro("No input model manager wrapper!");
     return 0;
-    }
+  }
   this->SetModelManager(this->ModelManagerWrapper->GetModelManager());
   return this->Superclass::RequestData(request, inInfo, outInfo);
 }

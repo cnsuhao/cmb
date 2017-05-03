@@ -15,14 +15,14 @@
 #ifndef __vtkCMBArcManager_h
 #define __vtkCMBArcManager_h
 
-#include "vtkCMBGeneralModule.h" // For export macro
 #include "cmbSystemConfig.h"
 #include "vtkCMBArc.h"
+#include "vtkCMBGeneralModule.h" // For export macro
 #include <map>
 #include <set>
 
-#include "vtkObject.h"
 #include "vtkBoundingBox.h" //needed to determine when to rebuild locator
+#include "vtkObject.h"
 
 class vtkCMBArc;
 class vtkCMBArcEndNode;
@@ -40,10 +40,11 @@ public:
 
 class VTKCMBGENERAL_EXPORT vtkCMBArcManager : public vtkObject
 {
-friend class vtkCMBArc;
+  friend class vtkCMBArc;
+
 public:
-// Methods from vtkObject
-  vtkTypeMacro(vtkCMBArcManager,vtkObject);
+  // Methods from vtkObject
+  vtkTypeMacro(vtkCMBArcManager, vtkObject);
   // Description:
   // Print ObjectFactor to stream.
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -69,7 +70,7 @@ public:
   // Description:
   // Supply a user defined output window. Call ->Delete() on the supplied
   // instance after setting it.
-  static void SetInstance(vtkCMBArcManager *instance);
+  static void SetInstance(vtkCMBArcManager* instance);
 
   // use this as a way of memory management when the
   // program exits the SmartPointer will be deleted which
@@ -78,7 +79,7 @@ public:
 
   //Description:
   //Get the Snap Radius
-  vtkGetMacro(SnapRadius,double);
+  vtkGetMacro(SnapRadius, double);
 
   //Description:
   //Set the Snap Radius
@@ -86,8 +87,8 @@ public:
 
   //Description:
   //Enable the use of snapping when creating and moving end nodes
-  vtkSetMacro(UseSnapping,bool);
-  vtkGetMacro(UseSnapping,bool);
+  vtkSetMacro(UseSnapping, bool);
+  vtkGetMacro(UseSnapping, bool);
 
   //Description:
   //Get the number of arcs
@@ -110,16 +111,16 @@ public:
   //Description:
   //Returns the if the arc end node is being managed by the
   //arc manager.
-  bool IsManagedEndNode(vtkCMBArcEndNode *endNode) const;
+  bool IsManagedEndNode(vtkCMBArcEndNode* endNode) const;
 
   //Description:
   //Returns the number of arcs that use the passed in endnode.
   //Returns -1 if endNode isn't managed by this arc manager
-  int GetNumberOfArcs(vtkCMBArcEndNode *endNode) const;
+  int GetNumberOfArcs(vtkCMBArcEndNode* endNode) const;
 
   //Description:
   //Get the set of connected arcs for the passed in endNode
-  std::set<vtkCMBArc*> GetConnectedArcs(vtkCMBArcEndNode *endNode);
+  std::set<vtkCMBArc*> GetConnectedArcs(vtkCMBArcEndNode* endNode);
 
   //Description:
   //Get the set of connected arcs for the passed in arc. Does not
@@ -146,25 +147,24 @@ protected:
   //Returns the merged endnode. NULL if the nodes aren't managed by the arc manager
   //Note: This method will invalidate any EndNode pointers you currently have,
   //so after calling this method you will need to reget the end nodes for all arcs.
-  vtkCMBArcEndNode* MergeEndNodes(vtkCMBArcEndNode* endNode1, vtkCMBArcEndNode *endNode2);
-
+  vtkCMBArcEndNode* MergeEndNodes(vtkCMBArcEndNode* endNode1, vtkCMBArcEndNode* endNode2);
 
   //Description:
   //moves the passed in end node to the position also passed in.
   //Since this can cause endNodes to be merged you have to use the
   //end node that is returned.
-  vtkCMBArcEndNode* MoveEndNode(vtkCMBArcEndNode *endNode, vtkCMBArc::Point const& point);
+  vtkCMBArcEndNode* MoveEndNode(vtkCMBArcEndNode* endNode, vtkCMBArc::Point const& point);
 
   //Description:
   //Removes the passed in arc end node with the associated arc
   //Note: If this removes all arcs from using an end node
   //it will delete the end node.
   //Returns: True if the endNode can be removed for the arc.
-  bool RemoveEndNode(vtkCMBArcEndNode *en, vtkCMBArc *arc);
+  bool RemoveEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc);
 
   //Description:
   //Connects the passed in arc end node with the associated arc
-  bool AddEndNode(vtkCMBArcEndNode *en, vtkCMBArc *arc);
+  bool AddEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc);
 
   //Description:
   //Register the passed in arc as an arc that this manager will control
@@ -189,11 +189,11 @@ protected:
 
   //Description:
   //For a given id from the vtkPoints return the related end node.
-  vtkCMBArcEndNode* EndNodeFromPointId(const vtkIdType &pointId);
+  vtkCMBArcEndNode* EndNodeFromPointId(const vtkIdType& pointId);
 
   //Description:
   //For a given id from the vtkPoints return the related end node.
-  void AddEndNodeToLocator(vtkCMBArcEndNode *en);
+  void AddEndNodeToLocator(vtkCMBArcEndNode* en);
 
   //Description:
   //Build up the point set and the point locator for the current end nodes
@@ -203,14 +203,13 @@ protected:
   //Destroy the current point locator
   void LocatorModified();
 
-  vtkIncrementalOctreePointLocator *PointLocator;
+  vtkIncrementalOctreePointLocator* PointLocator;
   vtkBoundingBox LocatorBounds;
 
   typedef std::set<vtkCMBArc*> vtkCMBArcSet;
-  typedef std::map<vtkIdType,vtkCMBArc*> vtkCMBArcMap;
-  typedef std::map<vtkIdType,vtkCMBArcEndNode*> vtkPointIdsToEndNodeMap;
-  typedef std::map<vtkCMBArcEndNode*,vtkCMBArcSet> vtkCmbEndNodesToArcMap;
-
+  typedef std::map<vtkIdType, vtkCMBArc*> vtkCMBArcMap;
+  typedef std::map<vtkIdType, vtkCMBArcEndNode*> vtkPointIdsToEndNodeMap;
+  typedef std::map<vtkCMBArcEndNode*, vtkCMBArcSet> vtkCmbEndNodesToArcMap;
 
   //valid arcs
   vtkCMBArcMap Arcs;
@@ -232,8 +231,8 @@ protected:
 
 private:
   static vtkCMBArcManager* Instance;
-  vtkCMBArcManager(const vtkCMBArcManager&);  // Not implemented.
-  void operator=(const vtkCMBArcManager&);  // Not implemented.
+  vtkCMBArcManager(const vtkCMBArcManager&); // Not implemented.
+  void operator=(const vtkCMBArcManager&);   // Not implemented.
 };
 
 #endif

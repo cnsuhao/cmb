@@ -11,9 +11,9 @@
 #ifndef _qtSceneBuilderOptions_h
 #define _qtSceneBuilderOptions_h
 
+#include "cmbSystemConfig.h"
 #include "qtCMBOptionsContainer.h"
 #include <QColor>
-#include "cmbSystemConfig.h"
 
 /// options container for pages of scene builder options
 class qtSceneBuilderOptions : public qtCMBOptionsContainer
@@ -24,11 +24,11 @@ public:
   // Get the global instace for the qtSceneBuilderOptions.
   static qtSceneBuilderOptions* instance();
 
-  qtSceneBuilderOptions(QWidget *parent=0);
+  qtSceneBuilderOptions(QWidget* parent = 0);
   ~qtSceneBuilderOptions() override;
 
   // set the current page
-  void setPage(const QString &page) override;
+  void setPage(const QString& page) override;
   // return a list of strings for pages we have
   QStringList getPageList() override;
 
@@ -41,7 +41,7 @@ public:
   bool isApplyUsed() const override { return true; }
 
   /// Get the options
-  QColor        initialNewObjectColor();
+  QColor initialNewObjectColor();
 
 private:
   class pqInternal;

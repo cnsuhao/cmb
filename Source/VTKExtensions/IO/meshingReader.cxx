@@ -7,14 +7,14 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkPolyDataNormals.h"
 #include "vtkPassArrays.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkXMLPolyDataWriter.h"
 
-#include "vtkNew.h"
 #include "smtk/extension/vtk/meshing/vtkDiscoverRegions.h"
 #include "smtk/extension/vtk/meshing/vtkPolylineTriangulator.h"
 #include "smtk/extension/vtk/reader/vtkPolyFileReader.h"
+#include "vtkNew.h"
 
 int main(int argc, char* argv[])
 {
@@ -34,28 +34,28 @@ int main(int argc, char* argv[])
   wri->Write();
 
   if (rdr->GetOutput(1)->GetNumberOfPoints())
-    {
+  {
     wri->SetInputConnection(rdr->GetOutputPort(1));
     wri->SetFileName("facetHolePoints.vtp");
     wri->SetDataModeToAscii();
     wri->Write();
-    }
+  }
 
   if (rdr->GetOutput(2)->GetNumberOfPoints())
-    {
+  {
     wri->SetInputConnection(rdr->GetOutputPort(2));
     wri->SetFileName("volumeHolePoints.vtp");
     wri->SetDataModeToAscii();
     wri->Write();
-    }
+  }
 
   if (rdr->GetOutput(3)->GetNumberOfPoints())
-    {
+  {
     wri->SetInputConnection(rdr->GetOutputPort(3));
     wri->SetFileName("regionGroupPoints.vtp");
     wri->SetDataModeToAscii();
     wri->Write();
-    }
+  }
 
   // Now triangulate the polyline strips using Triangle
   tmp->SetInputConnection(0, rdr->GetOutputPort(0)); // polygonal loops

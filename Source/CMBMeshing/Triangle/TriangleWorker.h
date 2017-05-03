@@ -16,11 +16,11 @@
 
 #include <set>
 
+#include "cmbSystemConfig.h"
+#include <remus/proto/JobResult.h>
 #include <remus/worker/Job.h>
 #include <remus/worker/ServerConnection.h>
 #include <remus/worker/Worker.h>
-#include <remus/proto/JobResult.h>
-#include "cmbSystemConfig.h"
 
 // for Triangle
 #ifndef ANSI_DECLARATORS
@@ -31,12 +31,11 @@
 #ifndef REAL
 #ifdef SINGLE
 #define REAL float
-#else                           /* not SINGLE */
+#else /* not SINGLE */
 #define REAL double
-#endif                          /* not SINGLE */
+#endif /* not SINGLE */
 #endif
-extern "C"
-{
+extern "C" {
 #include "triangle.h"
 }
 //undef triangle defines
@@ -71,11 +70,7 @@ struct triangleParameters
   triangleParameters(remus::worker::Job& job);
   ~triangleParameters();
 
-  bool valid() const
-    {
-    return this->NumberOfPoints >= 3 && this->NumberOfSegments >= 3;
-    }
-
+  bool valid() const { return this->NumberOfPoints >= 3 && this->NumberOfSegments >= 3; }
 
   //pass in the results by reference to avoid a copy when sending to
   //the server
@@ -93,9 +88,7 @@ public:
   void meshJob();
 
 protected:
-
-  bool buildTriangleArguments(const triangleParameters& params,
-                              std::string& options) const;
+  bool buildTriangleArguments(const triangleParameters& params, std::string& options) const;
 
   void jobFailed(const remus::worker::Job& job);
 };

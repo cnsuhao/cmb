@@ -11,8 +11,8 @@
 #ifndef _pqCMBModelBuilderOptions_h
 #define _pqCMBModelBuilderOptions_h
 
-#include "qtCMBOptionsContainer.h"
 #include "cmbSystemConfig.h"
+#include "qtCMBOptionsContainer.h"
 
 /// options container for pages of model builder and sim builder options
 class pqCMBModelBuilderOptions : public qtCMBOptionsContainer
@@ -23,11 +23,11 @@ public:
   // Get the global instace for the pqCMBModelBuilderOptions.
   static pqCMBModelBuilderOptions* instance();
 
-  pqCMBModelBuilderOptions(QWidget *parent=0);
+  pqCMBModelBuilderOptions(QWidget* parent = 0);
   ~pqCMBModelBuilderOptions() override;
 
   // set the current page
-  void setPage(const QString &page) override;
+  void setPage(const QString& page) override;
   // return a list of strings for pages we have
   QStringList getPageList() override;
 

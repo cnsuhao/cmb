@@ -10,11 +10,11 @@
 #ifndef __qtCMBContextMenuBehavior_h
 #define __qtCMBContextMenuBehavior_h
 
+#include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QPoint> // needed for QPoint.
 #include <QPointer>
-#include "cmbAppCommonExport.h"
-#include "cmbSystemConfig.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -31,8 +31,9 @@ class CMBAPPCOMMON_EXPORT qtCMBContextMenuBehavior : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
+
 public:
-  qtCMBContextMenuBehavior(QObject* parent=0);
+  qtCMBContextMenuBehavior(QObject* parent = 0);
   ~qtCMBContextMenuBehavior() override;
 
 protected slots:
@@ -59,9 +60,9 @@ protected:
   QMenu* Menu;
   QPoint Position;
   QPointer<pqDataRepresentation> PickedRepresentation;
+
 private:
   Q_DISABLE_COPY(qtCMBContextMenuBehavior)
-
 };
 
 #endif

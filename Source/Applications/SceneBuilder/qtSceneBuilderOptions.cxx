@@ -9,8 +9,8 @@
 //=========================================================================
 
 #include "qtSceneBuilderOptions.h"
-#include "ui_qtSceneBuilderOptions.h"
 #include "pqCMBAppCommonConfig.h" // for safe including of vtkPVConfig
+#include "ui_qtSceneBuilderOptions.h"
 
 #include "pqActiveObjects.h"
 #include "pqAnimationScene.h"
@@ -26,23 +26,21 @@
 #include "pqServerManagerModel.h"
 #include "pqSetName.h"
 #include "pqSettings.h"
-#include "vtkProcessModule.h"
 #include "vtkPVProxyDefinitionIterator.h"
+#include "vtkProcessModule.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyDefinitionManager.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMSessionProxyManager.h"
 
-#include <QMenu>
-#include <QDoubleValidator>
 #include <QDir>
+#include <QDoubleValidator>
+#include <QMenu>
 #include <QTemporaryFile>
 
-class qtSceneBuilderOptions::pqInternal
-  : public Ui::qtSceneBuilderOptions
+class qtSceneBuilderOptions::pqInternal : public Ui::qtSceneBuilderOptions
 {
 public:
-
 };
 
 //-----------------------------------------------------------------------------
@@ -55,7 +53,7 @@ qtSceneBuilderOptions* qtSceneBuilderOptions::instance()
 }
 
 //----------------------------------------------------------------------------
-qtSceneBuilderOptions::qtSceneBuilderOptions(QWidget *widgetParent)
+qtSceneBuilderOptions::qtSceneBuilderOptions(QWidget* widgetParent)
   : qtCMBOptionsContainer(widgetParent)
 {
   // Only 1 qtSceneBuilderOptions instance can be created.
@@ -70,8 +68,7 @@ qtSceneBuilderOptions::qtSceneBuilderOptions(QWidget *widgetParent)
 
   // enable the apply button when things are changed
   QObject::connect(this->Internal->InitialSceneObjectColor,
-    SIGNAL(chosenColorChanged(const QColor&)),
-    this, SIGNAL(changesAvailable()));
+    SIGNAL(chosenColorChanged(const QColor&)), this, SIGNAL(changesAvailable()));
 }
 
 //-----------------------------------------------------------------------------
@@ -81,17 +78,17 @@ qtSceneBuilderOptions::~qtSceneBuilderOptions()
 }
 
 //-----------------------------------------------------------------------------
-void qtSceneBuilderOptions::setPage(const QString &page)
+void qtSceneBuilderOptions::setPage(const QString& page)
 {
   int count = this->Internal->stackedWidget->count();
-  for(int i=0; i<count; i++)
+  for (int i = 0; i < count; i++)
+  {
+    if (this->Internal->stackedWidget->widget(i)->objectName() == page)
     {
-    if(this->Internal->stackedWidget->widget(i)->objectName() == page)
-      {
       this->Internal->stackedWidget->setCurrentIndex(i);
       break;
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -100,10 +97,10 @@ QStringList qtSceneBuilderOptions::getPageList()
   QStringList pages;
 
   int count = this->Internal->stackedWidget->count();
-  for(int i=0; i<count; i++)
-    {
+  for (int i = 0; i < count; i++)
+  {
     pages << this->Internal->stackedWidget->widget(i)->objectName();
-    }
+  }
   return pages;
 }
 
@@ -112,8 +109,7 @@ void qtSceneBuilderOptions::applyChanges()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
   settings->setValue(
-    "SceneBuilder/InitialSceneObjectColor",
-    this->Internal->InitialSceneObjectColor->chosenColor());
+    "SceneBuilder/InitialSceneObjectColor", this->Internal->InitialSceneObjectColor->chosenColor());
 }
 
 //-----------------------------------------------------------------------------
@@ -126,6 +122,6 @@ void qtSceneBuilderOptions::resetChanges()
 QColor qtSceneBuilderOptions::initialNewObjectColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
-  return settings->value("SceneBuilder/InitialSceneObjectColor",
-                         QColor::fromRgbF(1, 1, 1)).value<QColor>();
+  return settings->value("SceneBuilder/InitialSceneObjectColor", QColor::fromRgbF(1, 1, 1))
+    .value<QColor>();
 }

@@ -14,8 +14,8 @@
 #ifndef __pqModelTreeViewEventTranslator_h
 #define __pqModelTreeViewEventTranslator_h
 
-#include "pqTreeViewEventTranslator.h"
 #include "cmbSystemConfig.h"
+#include "pqTreeViewEventTranslator.h"
 #include <QPoint>
 
 /**\brief Translates low-level Qt events into high-level cmb events that can be recorded as test cases.
@@ -32,7 +32,7 @@ class pqModelTreeViewEventTranslator : public pqTreeViewEventTranslator
   Q_OBJECT
 
 public:
-  pqModelTreeViewEventTranslator(QObject* p=0);
+  pqModelTreeViewEventTranslator(QObject* p = 0);
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
   using pqTreeViewEventTranslator::translateEvent;
 

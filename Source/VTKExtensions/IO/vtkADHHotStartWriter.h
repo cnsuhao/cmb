@@ -16,10 +16,10 @@
 #ifndef __vtkADHHotStartWriter_h
 #define __vtkADHHotStartWriter_h
 
+#include "cmbSystemConfig.h"
+#include "string"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "string"
-#include "cmbSystemConfig.h"
 
 //BTX
 struct vtkADHHotStartWriterInternal;
@@ -28,7 +28,6 @@ struct vtkADHHotStartWriterInternal;
 class VTKCMBIO_EXPORT vtkADHHotStartWriter : public vtkWriter
 {
 public:
-
   static vtkADHHotStartWriter* New();
   vtkTypeMacro(vtkADHHotStartWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -43,7 +42,7 @@ public:
   void AddInputPointArrayToProcess(const char* name);
   void ClearInputPointArrayToProcess();
 
-//BTX
+  //BTX
 protected:
   vtkADHHotStartWriter();
   ~vtkADHHotStartWriter() override;
@@ -59,17 +58,16 @@ protected:
   bool WriteArray(ostream& fp, vtkDataArray* darray);
   bool WriteArrayFooter(ostream& fp);
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
-
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   char* FileName;
 
 private:
-  vtkADHHotStartWriter(const vtkADHHotStartWriter&);  // Not implemented.
-  void operator=(const vtkADHHotStartWriter&);    // Not implemented.
+  vtkADHHotStartWriter(const vtkADHHotStartWriter&); // Not implemented.
+  void operator=(const vtkADHHotStartWriter&);       // Not implemented.
 
   vtkADHHotStartWriterInternal* Implementation;
-//ETX
+  //ETX
 };
 
 #endif // __vtkADHHotStartWriter_h

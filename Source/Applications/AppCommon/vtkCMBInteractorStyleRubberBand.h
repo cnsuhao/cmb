@@ -19,13 +19,13 @@
 #define __vtkCMBInteractorStyleRubberBand_h
 
 #include "cmbAppCommonExport.h"
-#include "vtkInteractorStyleRubberBandPick.h"
 #include "cmbSystemConfig.h"
+#include "vtkInteractorStyleRubberBandPick.h"
 
 class CMBAPPCOMMON_EXPORT vtkCMBInteractorStyleRubberBand : public vtkInteractorStyleRubberBandPick
 {
 public:
-  static vtkCMBInteractorStyleRubberBand *New();
+  static vtkCMBInteractorStyleRubberBand* New();
   vtkTypeMacro(vtkCMBInteractorStyleRubberBand, vtkInteractorStyleRubberBandPick);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -40,8 +40,8 @@ protected:
   ~vtkCMBInteractorStyleRubberBand() override;
 
 private:
-  vtkCMBInteractorStyleRubberBand(const vtkCMBInteractorStyleRubberBand&);  // Not implemented
-  void operator=(const vtkCMBInteractorStyleRubberBand&);  // Not implemented
+  vtkCMBInteractorStyleRubberBand(const vtkCMBInteractorStyleRubberBand&); // Not implemented
+  void operator=(const vtkCMBInteractorStyleRubberBand&);                  // Not implemented
 };
 
 #endif

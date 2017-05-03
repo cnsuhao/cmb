@@ -14,13 +14,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcCreateClientOperator_h
 #define __vtkCMBArcCreateClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -33,17 +32,17 @@ public:
 
   //Description:
   // Returns the arc id of the newly created arc
-  vtkGetMacro(ArcId,vtkIdType);
+  vtkGetMacro(ArcId, vtkIdType);
 
   // Description:
   // Copies data from a widget proxy to a vtkCMBArc
-  virtual bool Create(vtkSMNewWidgetRepresentationProxy *widgetProxy);
+  virtual bool Create(vtkSMNewWidgetRepresentationProxy* widgetProxy);
 
   // Description:
   // Copies data from a source proxy to a vtkCMBArc
   // This is generally used to copy from some reader / filter
   // that generates polydata output
-  virtual bool Create( vtkSMSourceProxy *sourceProxy);
+  virtual bool Create(vtkSMSourceProxy* sourceProxy);
 
 protected:
   vtkCMBArcCreateClientOperator();
@@ -52,7 +51,7 @@ protected:
 
 private:
   vtkCMBArcCreateClientOperator(const vtkCMBArcCreateClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcCreateClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcCreateClientOperator&);                // Not implemented
 };
 
 #endif

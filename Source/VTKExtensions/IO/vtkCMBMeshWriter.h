@@ -19,10 +19,10 @@
 #ifndef __vtkCMBMeshWriter_h
 #define __vtkCMBMeshWriter_h
 
+#include "cmbSystemConfig.h"
+#include "string"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "string"
-#include "cmbSystemConfig.h"
 
 //BTX
 struct vtkCMBMeshWriterInternals;
@@ -33,10 +33,21 @@ class VTKCMBIO_EXPORT vtkCMBMeshWriter : public vtkWriter
 {
 public:
   //BTX
-  enum vtkCMBMeshDimension { MESH1D = 1, MESH2D = 2, MESH3D = 3 };
+  enum vtkCMBMeshDimension
+  {
+    MESH1D = 1,
+    MESH2D = 2,
+    MESH3D = 3
+  };
   // Make sure to update vtkCMBMeshFormatStrings in vtkCMBMeshWriter.cxx
-  enum vtkCMBMeshFormat { ADH = 0, PT123 = 1, WASH123D = 2, XMS = 3,
-    NUMBER_OF_FORMATS = 4 };
+  enum vtkCMBMeshFormat
+  {
+    ADH = 0,
+    PT123 = 1,
+    WASH123D = 2,
+    XMS = 3,
+    NUMBER_OF_FORMATS = 4
+  };
   //ETX
 
   static vtkCMBMeshWriter* New();
@@ -85,7 +96,7 @@ public:
   vtkSetMacro(FloatPrecision, int);
   vtkGetMacro(FloatPrecision, int);
 
-//BTX
+  //BTX
 protected:
   vtkCMBMeshWriter();
   ~vtkCMBMeshWriter() override;
@@ -109,13 +120,14 @@ protected:
   int FloatPrecision;
   int MeshDimension;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
   vtkCMBMeshWriter(const vtkCMBMeshWriter&); // Not implemented.
-  void operator=(const vtkCMBMeshWriter&); // Not implemented.
+  void operator=(const vtkCMBMeshWriter&);   // Not implemented.
 
   vtkCMBMeshWriterInternals* Internals;
-//ETX
+  //ETX
 };
 
 #endif

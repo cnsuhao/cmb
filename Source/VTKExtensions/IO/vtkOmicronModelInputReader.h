@@ -21,9 +21,9 @@
 #ifndef __OmicronModelInputReader_h
 #define __OmicronModelInputReader_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkMultiBlockDataSet;
 class vtkPolyData;
@@ -31,8 +31,8 @@ class vtkPolyData;
 class VTKCMBIO_EXPORT vtkOmicronModelInputReader : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkOmicronModelInputReader *New();
-  vtkTypeMacro(vtkOmicronModelInputReader,vtkMultiBlockDataSetAlgorithm);
+  static vtkOmicronModelInputReader* New();
+  vtkTypeMacro(vtkOmicronModelInputReader, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -51,23 +51,20 @@ protected:
   vtkOmicronModelInputReader();
   ~vtkOmicronModelInputReader() override;
 
-  char *FileName;
+  char* FileName;
   bool LoadGeometry;
 
-  vtkPolyData* AddBlock(vtkMultiBlockDataSet *output, const char *fileName,
-    double translation[3], double rotation[3], double scale, double color[3],
-    const char *additionalIdentifier=0);
-  int AddROIBlock(vtkMultiBlockDataSet *output, double (*boundaryCoordinates)[2],
-    vtkPolyData *surface, double translation[3], double bottom);
+  vtkPolyData* AddBlock(vtkMultiBlockDataSet* output, const char* fileName, double translation[3],
+    double rotation[3], double scale, double color[3], const char* additionalIdentifier = 0);
+  int AddROIBlock(vtkMultiBlockDataSet* output, double (*boundaryCoordinates)[2],
+    vtkPolyData* surface, double translation[3], double bottom);
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkOmicronModelInputReader(const vtkOmicronModelInputReader&);  // Not implemented.
-  void operator=(const vtkOmicronModelInputReader&);  // Not implemented.
+  vtkOmicronModelInputReader(const vtkOmicronModelInputReader&); // Not implemented.
+  void operator=(const vtkOmicronModelInputReader&);             // Not implemented.
   //ETX
 };
 

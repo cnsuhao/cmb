@@ -13,13 +13,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcGrowClientOperator_h
 #define __vtkCMBArcGrowClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 #include <list>
 
 class vtkIdTypeArray;
@@ -33,7 +32,7 @@ public:
 
   //Description:
   //If the grow works this these are the arc ids of the grow
-  vtkGetObjectMacro(GrownArcIds,vtkIdTypeArray);
+  vtkGetObjectMacro(GrownArcIds, vtkIdTypeArray);
 
   // Description:
   // Grow
@@ -47,7 +46,7 @@ protected:
 
 private:
   vtkCMBArcGrowClientOperator(const vtkCMBArcGrowClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcGrowClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcGrowClientOperator&);              // Not implemented
 };
 
 #endif

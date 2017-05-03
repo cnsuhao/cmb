@@ -13,22 +13,21 @@
 
 #include "qtCMBAboutDialog.h"
 
-#include "ui_qtAboutDialog.h"
 #include "pqCMBAppCommonConfig.h"
+#include "ui_qtAboutDialog.h"
 
 #include <QHeaderView>
 #include <QPixmap>
 #include <sstream>
 
 //-----------------------------------------------------------------------------
-qtCMBAboutDialog::qtCMBAboutDialog(QWidget* Parent) :
-  QDialog(Parent),
-  Ui(new Ui::qtAboutDialog())
+qtCMBAboutDialog::qtCMBAboutDialog(QWidget* Parent)
+  : QDialog(Parent)
+  , Ui(new Ui::qtAboutDialog())
 {
   this->Ui->setupUi(this);
   this->setObjectName("qtCMBAboutDialog");
-  this->setVersionText(
-    QString("<html><b>Version: <i>%1</i></b></html>").arg(CMB_VERSION_FULL));
+  this->setVersionText(QString("<html><b>Version: <i>%1</i></b></html>").arg(CMB_VERSION_FULL));
 }
 
 void qtCMBAboutDialog::setVersionText(const QString& versionText)
@@ -37,7 +36,7 @@ void qtCMBAboutDialog::setVersionText(const QString& versionText)
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBAboutDialog::setPixmap(const QPixmap& pixMap )
+void qtCMBAboutDialog::setPixmap(const QPixmap& pixMap)
 {
   this->Ui->label->setPixmap(pixMap);
 }

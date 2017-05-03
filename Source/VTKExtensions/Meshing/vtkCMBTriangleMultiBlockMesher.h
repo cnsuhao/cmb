@@ -29,71 +29,70 @@
 #ifndef __vtkCMBTriangleMultiBlockMesher_h
 #define __vtkCMBTriangleMultiBlockMesher_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
-#include <map>
 #include <limits>
+#include <map>
 
 class VTKCMBMESHING_EXPORT vtkCMBTriangleMultiBlockMesher : public vtkMultiBlockDataSetAlgorithm
 {
 
-  public:
-    static vtkCMBTriangleMultiBlockMesher *New();
-    vtkTypeMacro(vtkCMBTriangleMultiBlockMesher,vtkMultiBlockDataSetAlgorithm );
-    void PrintSelf(ostream& os, vtkIndent indent) override;
+public:
+  static vtkCMBTriangleMultiBlockMesher* New();
+  vtkTypeMacro(vtkCMBTriangleMultiBlockMesher, vtkMultiBlockDataSetAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  //For info on properties see vtkCMBTriangleMesher.h
+  vtkSetMacro(UseUniqueAreas, bool);
+  vtkGetMacro(UseUniqueAreas, bool);
+  vtkSetMacro(PreserveBoundaries, bool); //allows triangle to insert points on boundaries
+  vtkGetMacro(PreserveBoundaries, bool);
+  vtkSetMacro(PreserveEdges, bool); //Adds VTK_LINES with arcIds preserved
+  vtkGetMacro(PreserveEdges, bool);
+  vtkSetMacro(MaxArea, double);
+  vtkGetMacro(MaxArea, double);
+  vtkGetMacro(ComputedMaxArea, double);
+  enum MaxAreaModeOptions
+  {
+    NoMaxArea,
+    AbsoluteArea,
+    RelativeToBounds,
+    RelativeToBoundsAndSegments
+  };
+  vtkSetClampMacro(MaxAreaMode, int, 0, 3);
+  vtkGetMacro(MaxAreaMode, int);
+  vtkSetMacro(VerboseOutput, bool);
+  vtkGetMacro(VerboseOutput, bool);
+  vtkBooleanMacro(VerboseOutput, bool);
+  vtkSetMacro(UseMinAngle, bool);
+  vtkGetMacro(UseMinAngle, bool);
+  vtkSetClampMacro(MinAngle, double, 0, VTK_DOUBLE_MAX);
+  vtkGetMacro(MinAngle, double);
 
-    //For info on properties see vtkCMBTriangleMesher.h
-    vtkSetMacro(UseUniqueAreas,bool);
-    vtkGetMacro(UseUniqueAreas,bool);
-    vtkSetMacro(PreserveBoundaries,bool); //allows triangle to insert points on boundaries
-    vtkGetMacro(PreserveBoundaries,bool);
-    vtkSetMacro(PreserveEdges,bool); //Adds VTK_LINES with arcIds preserved
-    vtkGetMacro(PreserveEdges,bool);
-    vtkSetMacro(MaxArea, double);
-    vtkGetMacro(MaxArea, double);
-    vtkGetMacro(ComputedMaxArea,double);
-    enum MaxAreaModeOptions
-      {
-      NoMaxArea,
-      AbsoluteArea,
-      RelativeToBounds,
-      RelativeToBoundsAndSegments
-      };
-    vtkSetClampMacro(MaxAreaMode, int , 0 , 3);
-    vtkGetMacro(MaxAreaMode,int);
-    vtkSetMacro(VerboseOutput,bool);
-    vtkGetMacro(VerboseOutput,bool);
-    vtkBooleanMacro(VerboseOutput,bool);
-    vtkSetMacro(UseMinAngle,bool);
-    vtkGetMacro(UseMinAngle,bool);
-    vtkSetClampMacro(MinAngle,double,0,VTK_DOUBLE_MAX);
-    vtkGetMacro(MinAngle,double);
+protected:
+  vtkCMBTriangleMultiBlockMesher();
+  ~vtkCMBTriangleMultiBlockMesher() override;
 
+  bool UseOldMesher;
+  double MinAngle;
+  bool UseMinAngle;
+  bool PreserveBoundaries;
+  bool PreserveEdges;
+  double MaxArea;
+  double ComputedMaxArea;
+  int MaxAreaMode;
+  bool UseUniqueAreas;
 
-  protected:
-    vtkCMBTriangleMultiBlockMesher();
-    ~vtkCMBTriangleMultiBlockMesher() override;
+  //Used to configure triangle's 'V' flag
+  bool VerboseOutput;
 
-    bool UseOldMesher;
-    double MinAngle;
-    bool UseMinAngle;
-    bool PreserveBoundaries;
-    bool PreserveEdges;
-    double MaxArea;
-    double ComputedMaxArea;
-    int MaxAreaMode;
-    bool UseUniqueAreas;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
-    //Used to configure triangle's 'V' flag
-    bool VerboseOutput;
-
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-    int FillInputPortInformation(int port, vtkInformation* info) override;
-  private:
-    vtkCMBTriangleMultiBlockMesher(const vtkCMBTriangleMultiBlockMesher&);  // Not implemented.
-    void operator=(const vtkCMBTriangleMultiBlockMesher&);  // Not implemented.
+private:
+  vtkCMBTriangleMultiBlockMesher(const vtkCMBTriangleMultiBlockMesher&); // Not implemented.
+  void operator=(const vtkCMBTriangleMultiBlockMesher&);                 // Not implemented.
 };
 
 #endif

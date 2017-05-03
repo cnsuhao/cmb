@@ -20,9 +20,9 @@
 #ifndef __vtkCMBSphericalPointSource_h
 #define __vtkCMBSphericalPointSource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkCellLocator;
 class vtkPoints;
@@ -31,39 +31,35 @@ class vtkIdTypeArray;
 class VTKCMBGENERAL_EXPORT vtkCMBSphericalPointSource : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCMBSphericalPointSource,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkCMBSphericalPointSource, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with default position at (0,0,0), a radius of 0, phi Resolution = 3, and theta and r Resolutions = 1
-  static vtkCMBSphericalPointSource *New();
+  static vtkCMBSphericalPointSource* New();
 
   // Description:
   // Set the radius of the sphere.
   // The default is 0
-  vtkSetClampMacro(Radius,double,0.0,VTK_DOUBLE_MAX)
-  vtkGetMacro(Radius,double);
+  vtkSetClampMacro(Radius, double, 0.0, VTK_DOUBLE_MAX) vtkGetMacro(Radius, double);
 
   // Description:
   // Set the number of samples in R.
-  vtkSetClampMacro(RResolution,int, 1,VTK_INT_MAX)
-  vtkGetMacro(RResolution,int);
+  vtkSetClampMacro(RResolution, int, 1, VTK_INT_MAX) vtkGetMacro(RResolution, int);
 
   // Description:
   // Set the number of samples in Theta.
-  vtkSetClampMacro(ThetaResolution,int, 1,VTK_INT_MAX)
-  vtkGetMacro(ThetaResolution,int);
+  vtkSetClampMacro(ThetaResolution, int, 1, VTK_INT_MAX) vtkGetMacro(ThetaResolution, int);
 
   // Description:
   // Set the number of samples in Phi.
-  vtkSetClampMacro(PhiResolution,int, 3,VTK_INT_MAX)
-  vtkGetMacro(PhiResolution,int);
+  vtkSetClampMacro(PhiResolution, int, 3, VTK_INT_MAX) vtkGetMacro(PhiResolution, int);
 
   // Description:
   // Set the center of the sphere.
   // The default is 0,0,0.
-  vtkSetVector3Macro(Center,double);
-  vtkGetVectorMacro(Center,double,3);
+  vtkSetVector3Macro(Center, double);
+  vtkGetVectorMacro(Center, double, 3);
 
   //Description:
   // Indicate if Phi should be ignored which will result in a Disc of Points.
@@ -76,18 +72,17 @@ protected:
   vtkCMBSphericalPointSource();
   ~vtkCMBSphericalPointSource() override {}
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   double Radius;
   double Center[3];
   double RResolution;
   double ThetaResolution;
   double PhiResolution;
   bool IgnorePhi;
+
 private:
-  vtkCMBSphericalPointSource(const vtkCMBSphericalPointSource&);  // Not implemented.
-  void operator=(const vtkCMBSphericalPointSource&);  // Not implemented.
+  vtkCMBSphericalPointSource(const vtkCMBSphericalPointSource&); // Not implemented.
+  void operator=(const vtkCMBSphericalPointSource&);             // Not implemented.
 };
 
 #endif
-
-

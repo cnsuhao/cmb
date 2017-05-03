@@ -10,39 +10,39 @@
 
 #include "pqCMBTabWidgetTranslator.h"
 
-#include <QTabBar>
 #include <QEvent>
 #include <QString>
+#include <QTabBar>
 
 pqCMBTabWidgetTranslator::pqCMBTabWidgetTranslator(QObject* p)
-  : pqWidgetEventTranslator(p),
-  CurrentObject(0)
+  : pqWidgetEventTranslator(p)
+  , CurrentObject(0)
 {
 }
 
 bool pqCMBTabWidgetTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
 {
   QTabBar* const object = qobject_cast<QTabBar*>(Object);
-  if(!object)
+  if (!object)
     return false;
 
-  switch(Event->type())
-    {
+  switch (Event->type())
+  {
     case QEvent::Enter:
-      if(this->CurrentObject != Object)
+      if (this->CurrentObject != Object)
+      {
+        if (this->CurrentObject)
         {
-        if(this->CurrentObject)
-          {
           disconnect(this->CurrentObject, 0, this, 0);
-          }
+        }
 
         this->CurrentObject = object;
         connect(object, SIGNAL(currentChanged(int)), this, SLOT(indexChanged(int)));
-        }
+      }
       break;
     default:
       break;
-    }
+  }
 
   return true;
 }
@@ -51,12 +51,12 @@ void pqCMBTabWidgetTranslator::indexChanged(int which)
 {
   QString text = this->CurrentObject->tabText(which);
   if (text.isEmpty())
-    { // If tab text is empty, use index instead
+  { // If tab text is empty, use index instead
     int index = this->CurrentObject->currentIndex();
     emit recordEvent(this->CurrentObject, "set_tab", QString::number(index));
-    }
+  }
   else
-    {
+  {
     emit recordEvent(this->CurrentObject, "set_tab_with_text", text);
-    }
+  }
 }

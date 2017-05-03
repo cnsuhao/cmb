@@ -15,9 +15,9 @@
 #ifndef __vtkPVSceneGenObjectInformation_h
 #define __vtkPVSceneGenObjectInformation_h
 
-#include "vtkPVInformation.h"
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkPVInformation.h"
 #include <string>
 
 class vtkTransform;
@@ -48,9 +48,9 @@ public:
   vtkGetVector3Macro(Scale, double);
   vtkGetVector3Macro(Color, double);
   vtkGetMacro(NumberOfPoints, int);
-  const char *GetObjectType() { return this->ObjectType.c_str(); }
-  const char *GetObjectName() { return this->ObjectName.c_str(); }
-  const char *GetObjectFileName() { return this->ObjectFileName.c_str(); }
+  const char* GetObjectType() { return this->ObjectType.c_str(); }
+  const char* GetObjectName() { return this->ObjectName.c_str(); }
+  const char* GetObjectFileName() { return this->ObjectFileName.c_str(); }
 
   // Description:
   // Does the object have "Color" PointData?
@@ -62,21 +62,20 @@ protected:
   ~vtkPVSceneGenObjectInformation() override;
 
   // Data information collected from remote processes.
-  vtkTransform  *Transform;
-  double         Translation[3];
-  double         Orientation[3];
-  double         Scale[3];
-  double         Color[3];
-  int            NumberOfPoints;
-  bool           HasColorPointData;
+  vtkTransform* Transform;
+  double Translation[3];
+  double Orientation[3];
+  double Scale[3];
+  double Color[3];
+  int NumberOfPoints;
+  bool HasColorPointData;
   std::string ObjectType;
   std::string ObjectName;
   std::string ObjectFileName;
 
 private:
-
   vtkPVSceneGenObjectInformation(const vtkPVSceneGenObjectInformation&); // Not implemented
-  void operator=(const vtkPVSceneGenObjectInformation&); // Not implemented
+  void operator=(const vtkPVSceneGenObjectInformation&);                 // Not implemented
   //ETX
 };
 

@@ -31,7 +31,8 @@ public:
 protected:
   cmbForwardingSession();
 
-  virtual smtk::model::SessionInfoBits transcribeInternal(const smtk::model::EntityRef& entity, smtk::model::SessionInfoBits flags, int depth = -1) override;
+  virtual smtk::model::SessionInfoBits transcribeInternal(const smtk::model::EntityRef& entity,
+    smtk::model::SessionInfoBits flags, int depth = -1) override;
   bool ableToOperateDelegate(smtk::model::RemoteOperatorPtr op) override;
   smtk::model::OperatorResult operateDelegate(smtk::model::RemoteOperatorPtr op) override;
 
@@ -39,7 +40,7 @@ protected:
 
 private:
   cmbForwardingSession(const cmbForwardingSession&); // Not implemented.
-  void operator = (const cmbForwardingSession&); // Not implemented.
+  void operator=(const cmbForwardingSession&);       // Not implemented.
 };
 
 #endif // __cmbForwardingSession_h

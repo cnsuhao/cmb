@@ -10,14 +10,14 @@
 
 #include "vtkCMBArcDeleteOperator.h"
 
-#include "vtkCMBArcManager.h"
 #include "vtkCMBArc.h"
+#include "vtkCMBArcManager.h"
 
 #include "vtkCellArray.h"
 #include "vtkIdTypeArray.h"
+#include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkCMBArcDeleteOperator);
 
@@ -30,7 +30,6 @@ vtkCMBArcDeleteOperator::vtkCMBArcDeleteOperator()
 //----------------------------------------------------------------------------
 vtkCMBArcDeleteOperator::~vtkCMBArcDeleteOperator()
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -39,35 +38,35 @@ bool vtkCMBArcDeleteOperator::Operate(vtkIdType arcId)
   int deleteMode = this->DeleteMode;
   this->DeleteMode = 0; //set to default
 
-  vtkCMBArc *toDelete = vtkCMBArcManager::GetInstance()->GetArc(arcId);
+  vtkCMBArc* toDelete = vtkCMBArcManager::GetInstance()->GetArc(arcId);
   if (!toDelete)
-    {
+  {
     //use case is the arc is marked for deletion and we now need to really
     //delete or unmark for deletion
     toDelete = vtkCMBArcManager::GetInstance()->GetArcReadyForDeletion(arcId);
     if (!toDelete)
-      {
+    {
       return false;
-      }
     }
+  }
 
   if (deleteMode == 0 || deleteMode > 2)
-    {
+  {
     toDelete->Delete();
-    }
-  else if(deleteMode == 1)
-    {
+  }
+  else if (deleteMode == 1)
+  {
     toDelete->MarkedForDeletion();
-    }
-  else if(deleteMode == 2)
-    {
+  }
+  else if (deleteMode == 2)
+  {
     toDelete->UnMarkedForDeletion();
-    }
+  }
   return true;
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBArcDeleteOperator::PrintSelf(ostream& os, vtkIndent indent)
-  {
-  this->Superclass::PrintSelf(os,indent);
+{
+  this->Superclass::PrintSelf(os, indent);
 }

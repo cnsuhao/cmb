@@ -9,10 +9,10 @@
 //=========================================================================
 #include "vtkHydroModelMultiBlockSource.h"
 
-#include "vtkMultiBlockDataSet.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkInstantiator.h"
+#include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkHydroModelMultiBlockSource);
@@ -31,9 +31,9 @@ vtkHydroModelMultiBlockSource::~vtkHydroModelMultiBlockSource()
 }
 
 //-----------------------------------------------------------------------------
-void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet *source)
+void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet* source)
 {
-  this->Source->ShallowCopy( source );
+  this->Source->ShallowCopy(source);
 
   //for(unsigned int ui=0; ui<source->GetNumberOfBlocks(); ui++)
   //  {
@@ -50,24 +50,22 @@ void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet *source)
 }
 
 //-----------------------------------------------------------------------------
-int vtkHydroModelMultiBlockSource::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+int vtkHydroModelMultiBlockSource::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
   // get the ouptut
-  vtkMultiBlockDataSet *output = vtkMultiBlockDataSet::SafeDownCast(
+  vtkMultiBlockDataSet* output = vtkMultiBlockDataSet::SafeDownCast(
     outputVector->GetInformationObject(0)->Get(vtkDataObject::DATA_OBJECT()));
 
   // now move the input through to the output
-  output->ShallowCopy( this->Source );
+  output->ShallowCopy(this->Source);
   return 1;
 }
 
 //-----------------------------------------------------------------------------
 void vtkHydroModelMultiBlockSource::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Source: " << this->Source << "\n";
 }

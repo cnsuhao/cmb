@@ -19,9 +19,9 @@
 #ifndef __vtkDiscreteLookupTable_h
 #define __vtkDiscreteLookupTable_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkDiscretizableColorTransferFunction.h"
-#include "cmbSystemConfig.h"
 
 class vtkLookupTable;
 class vtkColorTransferFunction;
@@ -40,11 +40,10 @@ public:
   // non-discretized one.
   void Build() override;
 
-  static vtkIdType GetNextIndex(
-    vtkIdType i, vtkUnsignedCharArray *avail);
-  static void CalcRGB(double llimit, double ulimit, double &r, double &g, double &b);
-  static void CreateLookupTable(vtkLookupTable *lut, double llimit, double ulimit);
-  static void CreateLookupTable(vtkLookupTable *lut);
+  static vtkIdType GetNextIndex(vtkIdType i, vtkUnsignedCharArray* avail);
+  static void CalcRGB(double llimit, double ulimit, double& r, double& g, double& b);
+  static void CreateLookupTable(vtkLookupTable* lut, double llimit, double ulimit);
+  static void CreateLookupTable(vtkLookupTable* lut);
 
 protected:
   vtkDiscreteLookupTable();
@@ -52,10 +51,10 @@ protected:
 
   double ValueMin;
   double ValueMax;
+
 private:
   vtkDiscreteLookupTable(const vtkDiscreteLookupTable&); // Not implemented.
-  void operator=(const vtkDiscreteLookupTable&); // Not implemented.
+  void operator=(const vtkDiscreteLookupTable&);         // Not implemented.
 };
 
 #endif
-

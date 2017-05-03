@@ -12,8 +12,8 @@
 
 #include "ModelBridgeClientModule.h"
 
-#include "smtk/extension/vtk/source/vtkMeshMultiBlockSource.h"
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/extension/vtk/source/vtkMeshMultiBlockSource.h"
 
 #include <map>
 #include <string>
@@ -30,11 +30,11 @@ class MODELBRIDGECLIENT_EXPORT vtkPVSMTKMeshSource : public vtkMeshMultiBlockSou
 public:
   static vtkPVSMTKMeshSource* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  vtkTypeMacro(vtkPVSMTKMeshSource,vtkMeshMultiBlockSource);
+  vtkTypeMacro(vtkPVSMTKMeshSource, vtkMeshMultiBlockSource);
 
   // Description:
   // Set model manager wrapper
-  void SetModelManagerWrapper(vtkModelManagerWrapper *modelManager);
+  void SetModelManagerWrapper(vtkModelManagerWrapper* modelManager);
   vtkGetObjectMacro(ModelManagerWrapper, vtkModelManagerWrapper);
 
   // Description:
@@ -50,23 +50,20 @@ public:
   void SetMeshCollectionID(const char*) override;
   char* GetMeshCollectionID() override;
 
-  void MarkDirty() {this->Dirty();}
+  void MarkDirty() { this->Dirty(); }
 protected:
   vtkPVSMTKMeshSource();
   ~vtkPVSMTKMeshSource() override;
 
   int RequestData(
-    vtkInformation* request,
-    vtkInformationVector** inInfo,
-    vtkInformationVector* outInfo) override;
+    vtkInformation* request, vtkInformationVector** inInfo, vtkInformationVector* outInfo) override;
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;
 
 private:
-
   vtkPVSMTKMeshSource(const vtkPVSMTKMeshSource&); // Not implemented.
-  void operator = (const vtkPVSMTKMeshSource&); // Not implemented.
+  void operator=(const vtkPVSMTKMeshSource&);      // Not implemented.
 };
 
 #endif // __vtkPVSMTKModelSource_h

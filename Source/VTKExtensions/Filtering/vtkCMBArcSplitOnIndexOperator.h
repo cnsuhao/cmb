@@ -16,15 +16,15 @@
 #ifndef __vtkCMBArcSplitOnIndexOperator_h
 #define __vtkCMBArcSplitOnIndexOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 class VTKCMBFILTERING_EXPORT vtkCMBArcSplitOnIndexOperator : public vtkObject
 {
 public:
-  static vtkCMBArcSplitOnIndexOperator * New();
-  vtkTypeMacro(vtkCMBArcSplitOnIndexOperator,vtkObject);
+  static vtkCMBArcSplitOnIndexOperator* New();
+  vtkTypeMacro(vtkCMBArcSplitOnIndexOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
@@ -32,8 +32,8 @@ public:
   //split on the first non end node point. If the value
   //is greater than the number of non end node points the spit
   //will fail.
-  vtkSetMacro(Index,int);
-  vtkGetMacro(Index,int);
+  vtkSetMacro(Index, int);
+  vtkGetMacro(Index, int);
 
   //Description:
   //Split on arc with given Id
@@ -42,7 +42,7 @@ public:
   //Description:
   //If the Split work this is the ArcId for the newly
   //created arc
-  vtkGetMacro(CreatedArcId,vtkIdType);
+  vtkGetMacro(CreatedArcId, vtkIdType);
 
 protected:
   vtkCMBArcSplitOnIndexOperator();
@@ -50,10 +50,11 @@ protected:
 
   int Index;
   vtkIdType CreatedArcId;
+
 private:
-  vtkCMBArcSplitOnIndexOperator(const vtkCMBArcSplitOnIndexOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcSplitOnIndexOperator&);  // Not implemented.
-//ETX
+  vtkCMBArcSplitOnIndexOperator(const vtkCMBArcSplitOnIndexOperator&); // Not implemented.
+  void operator=(const vtkCMBArcSplitOnIndexOperator&);                // Not implemented.
+  //ETX
 };
 
 #endif

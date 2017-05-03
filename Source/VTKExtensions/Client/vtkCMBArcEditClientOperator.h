@@ -15,13 +15,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy
 
-
 #ifndef __vtkCMBArcEditClientOperator_h
 #define __vtkCMBArcEditClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkSMProxy;
 class vtkSMNewWidgetRepresentationProxy;
@@ -35,14 +34,13 @@ public:
 
   // Description:
   // Copy the proxy poly data into the widget representation
-  virtual bool Operate(vtkSMProxy *sourceProxy,
-              vtkSMNewWidgetRepresentationProxy *widgetProxy);
+  virtual bool Operate(vtkSMProxy* sourceProxy, vtkSMNewWidgetRepresentationProxy* widgetProxy);
 
   //Description:
   //Set if the arc is a closed loop, this is needed
   //to properly setup the state of the widget.
   //Default is false
-  vtkSetMacro(ArcIsClosed,bool);
+  vtkSetMacro(ArcIsClosed, bool);
 
 protected:
   vtkCMBArcEditClientOperator();
@@ -51,7 +49,7 @@ protected:
 
 private:
   vtkCMBArcEditClientOperator(const vtkCMBArcEditClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcEditClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcEditClientOperator&);              // Not implemented
 };
 
 #endif

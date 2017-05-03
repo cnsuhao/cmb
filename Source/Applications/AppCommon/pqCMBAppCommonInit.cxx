@@ -10,7 +10,7 @@
 
 #include "pqCMBAppCommonInit.h"
 #include "pqComponentsInit.h"
-#include <QObject>  // for Q_INIT_RESOURCE
+#include <QObject> // for Q_INIT_RESOURCE
 
 void pqCMBAppCommonInit()
 {
@@ -23,5 +23,4 @@ void pqCMBAppCommonInit()
   Q_INIT_RESOURCE(cmbAppCommon);
 
 #endif
-
 }

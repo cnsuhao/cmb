@@ -11,13 +11,12 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBConeDialog_h
 #define __qtCMBConeDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
 #include "cmbSystemConfig.h"
+#include <QObject>
 
 class pqProxyWidget;
 class QDialog;
@@ -29,8 +28,7 @@ class CMBAPPCOMMON_EXPORT qtCMBConeDialog : public QObject
   Q_OBJECT
 
 public:
-  qtCMBConeDialog(pqPipelineSource* coneSource,
-    pqRenderView* view);
+  qtCMBConeDialog(pqPipelineSource* coneSource, pqRenderView* view);
   ~qtCMBConeDialog() override;
 
   int exec();
@@ -41,7 +39,7 @@ protected slots:
 
 protected:
   int Status;
-  QDialog *MainDialog;
+  QDialog* MainDialog;
   pqProxyWidget* ConeSourcePanel;
 };
 

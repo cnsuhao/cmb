@@ -11,16 +11,14 @@
 #include "qtCMBLIDARPanelWidget.h"
 #include "ui_qtLIDARPanel.h"
 
-class qtCMBLIDARPanelWidgetInternal :
-  public Ui::qtLIDARPanel
+class qtCMBLIDARPanelWidgetInternal : public Ui::qtLIDARPanel
 {
 public:
-
 };
 
 //-----------------------------------------------------------------------------
-qtCMBLIDARPanelWidget::qtCMBLIDARPanelWidget(
-  QWidget* _p): QWidget(_p)
+qtCMBLIDARPanelWidget::qtCMBLIDARPanelWidget(QWidget* _p)
+  : QWidget(_p)
 {
   this->Internal = new qtCMBLIDARPanelWidgetInternal;
   this->Internal->setupUi(this);

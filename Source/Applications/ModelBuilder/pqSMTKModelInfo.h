@@ -15,15 +15,15 @@
 
 #include <QObject>
 
+#include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
 #include "vtkSmartPointer.h"
-#include "cmbSystemConfig.h"
 
-#include <QPointer>
-#include <vector>
-#include <map>
-#include "smtk/common/UUID.h"
 #include "pqSMTKMeshInfo.h"
+#include "smtk/common/UUID.h"
+#include <QPointer>
+#include <map>
+#include <vector>
 
 class vtkPVSMTKModelInformation;
 class vtkSMModelManagerProxy;
@@ -33,54 +33,52 @@ class pqPipelineSource;
 
 class smtkAuxGeoInfo
 {
-  public:
-    smtkAuxGeoInfo(){}
-    QPointer<pqPipelineSource> AuxGeoSource;
-    QPointer<pqPipelineSource> ImageSource;
-    QPointer<pqDataRepresentation> Representation;
-    std::string URL;
-    smtk::common::UUIDs RelatedAuxes;
+public:
+  smtkAuxGeoInfo() {}
+  QPointer<pqPipelineSource> AuxGeoSource;
+  QPointer<pqPipelineSource> ImageSource;
+  QPointer<pqDataRepresentation> Representation;
+  std::string URL;
+  smtk::common::UUIDs RelatedAuxes;
 };
 
 //The object to keep smtk model related info:
 // pqSource, pvModelInfo, smSelectionSource
-class pqSMTKModelInfo: public QObject
+class pqSMTKModelInfo : public QObject
 {
   Q_OBJECT
 
-  public:
-    pqSMTKModelInfo(){
-      this->ShowMesh = false;
-    }
-    pqSMTKModelInfo(const pqSMTKModelInfo& other);
-    void init(pqPipelineSource* modelSource, pqPipelineSource* repSource,
-      pqDataRepresentation*, const std::string& filename, smtk::model::ManagerPtr);
-    void updateBlockInfo(smtk::model::ManagerPtr mgr);
-    bool hasAnalysisMesh() const;
+public:
+  pqSMTKModelInfo() { this->ShowMesh = false; }
+  pqSMTKModelInfo(const pqSMTKModelInfo& other);
+  void init(pqPipelineSource* modelSource, pqPipelineSource* repSource, pqDataRepresentation*,
+    const std::string& filename, smtk::model::ManagerPtr);
+  void updateBlockInfo(smtk::model::ManagerPtr mgr);
+  bool hasAnalysisMesh() const;
 
-    std::size_t numberOfTessellatedEntities() const;
+  std::size_t numberOfTessellatedEntities() const;
 
-    vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
-    vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
-    vtkSmartPointer<vtkSMProxy> EntityLUT;
-    vtkSmartPointer<vtkSMProxy> GroupLUT;
-    vtkSmartPointer<vtkSMProxy> VolumeLUT;
-    vtkSmartPointer<vtkSMProxy> AttributeLUT;
-    QString ColorMode;
-    bool ShowMesh;
+  vtkSmartPointer<vtkSMProxy> BlockSelectionSource;
+  vtkSmartPointer<vtkSMProxy> CompositeDataIdSelectionSource;
+  vtkSmartPointer<vtkSMProxy> EntityLUT;
+  vtkSmartPointer<vtkSMProxy> GroupLUT;
+  vtkSmartPointer<vtkSMProxy> VolumeLUT;
+  vtkSmartPointer<vtkSMProxy> AttributeLUT;
+  QString ColorMode;
+  bool ShowMesh;
 
-    vtkSmartPointer<vtkPVSMTKModelInformation> Info;
-    QPointer<pqPipelineSource> ModelSource;
-    QPointer<pqPipelineSource> RepSource;
-    QPointer<pqDataRepresentation> Representation;
-    std::string FileName;
-    smtk::common::UUID SessionId;
-    std::vector<std::string> ent_annotations;
-    std::vector<std::string> vol_annotations;
-    std::vector<std::string> grp_annotations;
+  vtkSmartPointer<vtkPVSMTKModelInformation> Info;
+  QPointer<pqPipelineSource> ModelSource;
+  QPointer<pqPipelineSource> RepSource;
+  QPointer<pqDataRepresentation> Representation;
+  std::string FileName;
+  smtk::common::UUID SessionId;
+  std::vector<std::string> ent_annotations;
+  std::vector<std::string> vol_annotations;
+  std::vector<std::string> grp_annotations;
 
-    // Information for related meshes <collectionId, meshinfo>
-    std::map<smtk::common::UUID, pqSMTKMeshInfo> MeshInfos;
+  // Information for related meshes <collectionId, meshinfo>
+  std::map<smtk::common::UUID, pqSMTKMeshInfo> MeshInfos;
 };
 
 #endif

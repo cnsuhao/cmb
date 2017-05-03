@@ -15,26 +15,26 @@
 #ifndef __vtkIdentifyNonManifoldPts_h
 #define __vtkIdentifyNonManifoldPts_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkIdentifyNonManifoldPts : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkIdentifyNonManifoldPts *New();
-  vtkTypeMacro(vtkIdentifyNonManifoldPts,vtkPolyDataAlgorithm);
+  static vtkIdentifyNonManifoldPts* New();
+  vtkTypeMacro(vtkIdentifyNonManifoldPts, vtkPolyDataAlgorithm);
 
-//BTX
+  //BTX
 protected:
-  vtkIdentifyNonManifoldPts() {};
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  vtkIdentifyNonManifoldPts(){};
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkIdentifyNonManifoldPts(const vtkIdentifyNonManifoldPts&);  // Not implemented.
-  void operator=(const vtkIdentifyNonManifoldPts&);  // Not implemented.
+  vtkIdentifyNonManifoldPts(const vtkIdentifyNonManifoldPts&); // Not implemented.
+  void operator=(const vtkIdentifyNonManifoldPts&);            // Not implemented.
 
-//ETX
+  //ETX
 };
 
 #endif

@@ -31,11 +31,9 @@ public:
   ~pqCMBDisplayProxyEditor() override;
 
 public:
-
   // Description:
   // get the display whose properties.
-  virtual pqDataRepresentation* displayRepresentation()
-  { return this->m_rep; }
+  virtual pqDataRepresentation* displayRepresentation() { return this->m_rep; }
 
 protected:
   QPointer<pqDataRepresentation> m_rep;

@@ -13,13 +13,13 @@
 
 #include "pqCheckableComboPopupEventPlayer.h"
 
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
 #include <QtDebug>
 
+#include "pqEventDispatcher.h"
 #include "smtk/common/UUID.h"
 #include "smtk/extension/qt/qtCheckItemComboBox.h"
-#include "pqEventDispatcher.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // pqCheckableComboPopupEventPlayer
@@ -29,28 +29,29 @@ pqCheckableComboPopupEventPlayer::pqCheckableComboPopupEventPlayer(QObject* p)
 {
 }
 
-bool pqCheckableComboPopupEventPlayer::playEvent(QObject* Object, const QString& command,
- const QString& /* arguments*/, bool& /*Error*/)
+bool pqCheckableComboPopupEventPlayer::playEvent(
+  QObject* Object, const QString& command, const QString& /* arguments*/, bool& /*Error*/)
 {
-  smtk::extension::qtCheckItemComboBox* const object = qobject_cast<smtk::extension::qtCheckItemComboBox*>(Object);
-  if(!object)
-    {
+  smtk::extension::qtCheckItemComboBox* const object =
+    qobject_cast<smtk::extension::qtCheckItemComboBox*>(Object);
+  if (!object)
+  {
     return false;
-    }
-  bool played = ( command == "showPopup" || command == "hidePopup" );
-  if ( command == "showPopup" )
-    {
+  }
+  bool played = (command == "showPopup" || command == "hidePopup");
+  if (command == "showPopup")
+  {
     object->showPopup();
-    }
-  else if ( command == "hidePopup" )
-    {
+  }
+  else if (command == "hidePopup")
+  {
     object->hidePopup();
-    }
+  }
 
-  if(played)
-    {
+  if (played)
+  {
     pqEventDispatcher::processEventsAndWait(1);
-    }
+  }
 
   return played;
 }

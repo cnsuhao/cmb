@@ -14,18 +14,18 @@
 #ifndef __vtkCMBDEMExportDataExtractor_h
 #define __vtkCMBDEMExportDataExtractor_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkSmartPointer.h"
-#include "cmbSystemConfig.h"
 
 #include <string>
 
 class VTKCMBGENERAL_EXPORT vtkCMBDEMExportDataExtractor : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCMBDEMExportDataExtractor *New();
+  static vtkCMBDEMExportDataExtractor* New();
   vtkTypeMacro(vtkCMBDEMExportDataExtractor, vtkPolyDataAlgorithm);
 
   vtkCMBDEMExportDataExtractor();
@@ -33,10 +33,7 @@ public:
 
   // Description:
   // Return proj4 spatial reference.
-  const char*  GetProjectionString() const
-  {
-    return NULL;
-  }
+  const char* GetProjectionString() const { return NULL; }
 
   vtkGetVector2Macro(Min, double);
   vtkGetVector2Macro(Max, double);
@@ -48,15 +45,12 @@ public:
   vtkGetMacro(Scale, double);
 
 protected:
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector) override;
 
-  int RequestData(vtkInformation* request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector) override;
-
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 protected:
-
   int Zone;
   bool IsNorth;
 
@@ -66,7 +60,7 @@ protected:
   double Scale;
 
 private:
-  vtkCMBDEMExportDataExtractor(const vtkCMBDEMExportDataExtractor&); // Not implemented.
+  vtkCMBDEMExportDataExtractor(const vtkCMBDEMExportDataExtractor&);            // Not implemented.
   vtkCMBDEMExportDataExtractor& operator=(const vtkCMBDEMExportDataExtractor&); // Not implemented.
 };
 #endif

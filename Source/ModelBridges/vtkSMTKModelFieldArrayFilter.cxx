@@ -23,18 +23,18 @@
 #include "vtkStringArray.h"
 
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/io/AttributeReader.h"
-#include "smtk/io/Logger.h"
 #include "smtk/attribute/Attribute.h"
 #include "smtk/attribute/Definition.h"
-#include "smtk/attribute/Item.h"
-#include "smtk/attribute/ItemDefinition.h"
-#include "smtk/attribute/System.h"
 #include "smtk/attribute/DoubleItem.h"
 #include "smtk/attribute/IntItem.h"
+#include "smtk/attribute/Item.h"
+#include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
+#include "smtk/attribute/System.h"
 #include "smtk/common/UUID.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
+#include "smtk/io/AttributeReader.h"
+#include "smtk/io/Logger.h"
 #include "smtk/model/AttributeAssignments.h"
 #include "smtk/model/EntityRef.h"
 #include "smtk/model/Group.h"
@@ -42,7 +42,7 @@
 #include "smtk/model/Manager.h"
 
 vtkStandardNewMacro(vtkSMTKModelFieldArrayFilter);
-vtkCxxSetObjectMacro(vtkSMTKModelFieldArrayFilter,ModelManagerWrapper,vtkModelManagerWrapper);
+vtkCxxSetObjectMacro(vtkSMTKModelFieldArrayFilter, ModelManagerWrapper, vtkModelManagerWrapper);
 
 vtkSMTKModelFieldArrayFilter::vtkSMTKModelFieldArrayFilter()
 {
@@ -66,15 +66,16 @@ void vtkSMTKModelFieldArrayFilter::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "ModelManagerWrapper: " << this->ModelManagerWrapper << "\n";
-  os << indent << "AttributeDefinitionType: " <<
-    (this->AttributeDefinitionType ? this->AttributeDefinitionType : "null") << "\n";
-  os << indent << "AttributeItemName: " <<
-    (this->AttributeItemName ? this->AttributeItemName : "null") << "\n";
-  os << indent << "AttributeSystemContents: " <<
-    (this->AttributeSystemContents ? this->AttributeSystemContents : "null") << "\n";
+  os << indent << "AttributeDefinitionType: "
+     << (this->AttributeDefinitionType ? this->AttributeDefinitionType : "null") << "\n";
+  os << indent
+     << "AttributeItemName: " << (this->AttributeItemName ? this->AttributeItemName : "null")
+     << "\n";
+  os << indent << "AttributeSystemContents: "
+     << (this->AttributeSystemContents ? this->AttributeSystemContents : "null") << "\n";
 }
 
-int vtkSMTKModelFieldArrayFilter::FillInputPortInformation(int, vtkInformation *info)
+int vtkSMTKModelFieldArrayFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
@@ -91,192 +92,174 @@ int vtkSMTKModelFieldArrayFilter::FillInputPortInformation(int, vtkInformation *
 /// Mapping from UUID to block id
 /// Field data arrays
 static void internal_AddBlockGroupInfo(
-  vtkDataObject* objBlock,
-  const smtk::model::ManagerPtr& modelMan)
+  vtkDataObject* objBlock, const smtk::model::ManagerPtr& modelMan)
 {
-  if(!objBlock)
+  if (!objBlock)
     return;
   vtkStringArray* uuidArray = vtkStringArray::SafeDownCast(
-    objBlock->GetFieldData()->GetAbstractArray(
-    vtkModelMultiBlockSource::GetEntityTagName()));
-  if(!uuidArray)
+    objBlock->GetFieldData()->GetAbstractArray(vtkModelMultiBlockSource::GetEntityTagName()));
+  if (!uuidArray)
     return;
   std::string entid = uuidArray->GetValue(0);
   smtk::model::EntityRef entityref(modelMan, entid);
   // Add group UUID to fieldData
   vtkStringArray* groupArray = vtkStringArray::SafeDownCast(
-    objBlock->GetFieldData()->GetAbstractArray(
-    vtkModelMultiBlockSource::GetGroupTagName()));
+    objBlock->GetFieldData()->GetAbstractArray(vtkModelMultiBlockSource::GetGroupTagName()));
   bool newArray = false;
-  if(!groupArray)
-    {
+  if (!groupArray)
+  {
     groupArray = vtkStringArray::New();
     newArray = true;
-    }
+  }
   groupArray->SetNumberOfComponents(1);
   groupArray->SetNumberOfTuples(1);
   smtk::model::Groups relatedGrps = entityref.containingGroups();
   int na = static_cast<int>(relatedGrps.size());
-  groupArray->SetValue(0, (na > 0) ?
-                       relatedGrps[0].entity().toString() :
-                       "no group");
-  if(newArray)
-    {
+  groupArray->SetValue(0, (na > 0) ? relatedGrps[0].entity().toString() : "no group");
+  if (newArray)
+  {
     groupArray->SetName(vtkModelMultiBlockSource::GetGroupTagName());
     objBlock->GetFieldData()->AddArray(groupArray);
     groupArray->Delete();
-    }
+  }
 }
 
 void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
-                           const smtk::model::ManagerPtr& vtkNotUsed(modelMan),
-                           const smtk::attribute::SystemPtr& attsys,
-                           const char*  attDefType,
-                           const char*  attItemName)
+  const smtk::model::ManagerPtr& vtkNotUsed(modelMan), const smtk::attribute::SystemPtr& attsys,
+  const char* attDefType, const char* attItemName)
 {
-  if(!objBlock)
+  if (!objBlock)
     return;
   std::string arrayname = attDefType;
-  if(attItemName && attItemName[0] != '\0')
+  if (attItemName && attItemName[0] != '\0')
     arrayname.append(" (").append(attItemName).append(")");
 
-  vtkStringArray* fieldAttArray = vtkStringArray::SafeDownCast(
-    objBlock->GetFieldData()->GetAbstractArray(arrayname.c_str()));
+  vtkStringArray* fieldAttArray =
+    vtkStringArray::SafeDownCast(objBlock->GetFieldData()->GetAbstractArray(arrayname.c_str()));
   std::vector<smtk::attribute::AttributePtr> atts;
   attsys->findAttributes(attDefType, atts);
   bool newArray = false;
-  if(!fieldAttArray)
-    {
+  if (!fieldAttArray)
+  {
     fieldAttArray = vtkStringArray::New();
     newArray = true;
-    }
+  }
   fieldAttArray->SetNumberOfComponents(1);
   fieldAttArray->SetNumberOfTuples(1);
   vtkStringArray* uuidArray = vtkStringArray::SafeDownCast(
-    objBlock->GetFieldData()->GetAbstractArray(
-    vtkModelMultiBlockSource::GetEntityTagName()));
+    objBlock->GetFieldData()->GetAbstractArray(vtkModelMultiBlockSource::GetEntityTagName()));
 
-  if(atts.size() == 0 || !uuidArray)
-    {
+  if (atts.size() == 0 || !uuidArray)
+  {
     fieldAttArray->SetValue(0, "no attribute");
-    if(newArray)
-      {
+    if (newArray)
+    {
       fieldAttArray->SetName(arrayname.c_str());
       objBlock->GetFieldData()->AddArray(fieldAttArray);
       fieldAttArray->Delete();
-      }
-    return;
     }
+    return;
+  }
 
   std::string entid = uuidArray->GetValue(0);
   std::string strValEntry;
   std::vector<smtk::attribute::AttributePtr>::const_iterator ait;
-  for(ait = atts.begin(); ait != atts.end(); ++ait)
-    {
+  for (ait = atts.begin(); ait != atts.end(); ++ait)
+  {
     smtk::common::UUIDs associatedEntities = (*ait)->associatedModelEntityIds();
-    if(std::find(associatedEntities.begin(), associatedEntities.end(),
-       entid) != associatedEntities.end())
-      {
+    if (std::find(associatedEntities.begin(), associatedEntities.end(), entid) !=
+      associatedEntities.end())
+    {
       // this entity is associated with an attribute
       std::string valuestr;
       smtk::attribute::ItemPtr attitem;
       // Figure out which variant of the item to use, if it exists
-      if(attItemName && attItemName[0] != '\0' && (attitem = (*ait)->find(attItemName)))
+      if (attItemName && attItemName[0] != '\0' && (attitem = (*ait)->find(attItemName)))
+      {
+        if (attitem->type() == smtk::attribute::Item::DOUBLE)
         {
-        if(attitem->type() == smtk::attribute::Item::DOUBLE)
-          {
           valuestr =
             smtk::dynamic_pointer_cast<smtk::attribute::DoubleItem>(attitem)->valueAsString();
-          }
+        }
         else if (attitem->type() == smtk::attribute::Item::INT)
-          {
-          valuestr =
-            smtk::dynamic_pointer_cast<smtk::attribute::IntItem>(attitem)->valueAsString();
-          }    
+        {
+          valuestr = smtk::dynamic_pointer_cast<smtk::attribute::IntItem>(attitem)->valueAsString();
+        }
         else if (attitem->type() == smtk::attribute::Item::STRING)
-          {
+        {
           valuestr =
             smtk::dynamic_pointer_cast<smtk::attribute::StringItem>(attitem)->valueAsString();
-          }
         }
+      }
       // if find an attribute, stop
       strValEntry = !valuestr.empty() ? valuestr : (*ait)->name();
       break;
-      }
     }
+  }
 
   // if there is no valid attribute, add "no attribute".
-  fieldAttArray->SetValue(0, strValEntry.empty() ?
-                      "no attribute" : strValEntry.c_str());
+  fieldAttArray->SetValue(0, strValEntry.empty() ? "no attribute" : strValEntry.c_str());
 
-  if(newArray)
-    {
+  if (newArray)
+  {
     fieldAttArray->SetName(arrayname.c_str());
     objBlock->GetFieldData()->AddArray(fieldAttArray);
     fieldAttArray->Delete();
-    }
+  }
 }
 
 int vtkSMTKModelFieldArrayFilter::RequestData(
-  vtkInformation* vtkNotUsed(request),
-  vtkInformationVector** inInfo,
-  vtkInformationVector* outInfo)
+  vtkInformation* vtkNotUsed(request), vtkInformationVector** inInfo, vtkInformationVector* outInfo)
 {
   // get the info and input data
   vtkMultiBlockDataSet* input = vtkMultiBlockDataSet::GetData(inInfo[0], 0);
   vtkMultiBlockDataSet* output = vtkMultiBlockDataSet::GetData(outInfo, 0);
   if (!input || !output)
-    {
+  {
     vtkErrorMacro("No input or output dataset");
     return 0;
-    }
+  }
 
-  if (!this->ModelManagerWrapper ||
-      !this->ModelManagerWrapper->GetModelManager())
-    {
+  if (!this->ModelManagerWrapper || !this->ModelManagerWrapper->GetModelManager())
+  {
     vtkErrorMacro("No input model manager!");
     return 0;
-    }
+  }
 
   output->ShallowCopy(input);
   smtk::model::ManagerPtr modelMan = this->ModelManagerWrapper->GetModelManager();
-  if(this->GetAddGroupArray())
-    {
+  if (this->GetAddGroupArray())
+  {
     vtkCompositeDataIterator* iter = output->NewIterator();
     for (iter->InitTraversal(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
-      {
-      internal_AddBlockGroupInfo(iter->GetCurrentDataObject(), modelMan);
-      }
-    iter->Delete();
-    }
-
-  if(this->AttributeDefinitionType == NULL ||
-     this->AttributeSystemContents == NULL)
     {
-    return 1;
+      internal_AddBlockGroupInfo(iter->GetCurrentDataObject(), modelMan);
     }
-//  smtk::attribute::System* attsys = modelMan->attributeSystem();
+    iter->Delete();
+  }
+
+  if (this->AttributeDefinitionType == NULL || this->AttributeSystemContents == NULL)
+  {
+    return 1;
+  }
+  //  smtk::attribute::System* attsys = modelMan->attributeSystem();
 
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
   smtk::attribute::SystemPtr attsys = smtk::attribute::System::create();
   bool hasErrors = attributeReader.readContents(attsys, this->GetAttributeSystemContents(), logger);
-  if(hasErrors)
-    {
+  if (hasErrors)
+  {
     std::cerr << logger.convertToString() << std::endl;
     return 0;
-    }
+  }
 
   vtkCompositeDataIterator* aiter = output->NewIterator();
   for (aiter->InitTraversal(); !aiter->IsDoneWithTraversal(); aiter->GoToNextItem())
-    {
-    internal_addBlockAttributeFieldData(
-      aiter->GetCurrentDataObject(),
-      modelMan,
-      attsys,
-      this->AttributeDefinitionType,
-      this->AttributeItemName);
-    }
+  {
+    internal_addBlockAttributeFieldData(aiter->GetCurrentDataObject(), modelMan, attsys,
+      this->AttributeDefinitionType, this->AttributeItemName);
+  }
   aiter->Delete();
 
   return 1;

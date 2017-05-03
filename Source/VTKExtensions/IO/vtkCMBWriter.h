@@ -15,17 +15,17 @@
 #ifndef __vtkCMBWriter_h
 #define __vtkCMBWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdList;
 
 class VTKCMBIO_EXPORT vtkCMBWriter : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkCMBWriter *New();
-  vtkTypeMacro(vtkCMBWriter,vtkMultiBlockDataSetAlgorithm);
+  static vtkCMBWriter* New();
+  vtkTypeMacro(vtkCMBWriter, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(FileName);
@@ -45,12 +45,11 @@ protected:
 
   char* FileName;
   bool BinaryOutput;
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                          vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkCMBWriter(const vtkCMBWriter&);  // Not implemented.
-  void operator=(const vtkCMBWriter&);  // Not implemented.
+  vtkCMBWriter(const vtkCMBWriter&);   // Not implemented.
+  void operator=(const vtkCMBWriter&); // Not implemented.
 };
 
 #endif

@@ -18,16 +18,16 @@
 #ifndef __qtCMBColorDialog_h
 #define __qtCMBColorDialog_h
 
-#include <QColor>
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
+#include <QColor>
 
 class QWidget;
 
-class  CMBAPPCOMMON_EXPORT qtCMBColorDialog
+class CMBAPPCOMMON_EXPORT qtCMBColorDialog
 {
 public:
-  static QColor getColor ( const QColor & initial = Qt::white, QWidget * parent = 0 );
+  static QColor getColor(const QColor& initial = Qt::white, QWidget* parent = 0);
 };
 
 #endif /* qtCMBColorDialog_h */

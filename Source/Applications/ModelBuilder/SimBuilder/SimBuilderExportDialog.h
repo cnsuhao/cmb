@@ -12,7 +12,6 @@
 // Dialog is customized by input smtk::attribute::System
 // .SECTION Caveats
 
-
 #ifndef __SimBuilderExportDialog_h
 #define __SimBuilderExportDialog_h
 
@@ -21,9 +20,9 @@
 
 #include "smtk/PublicPointerDefs.h"
 
-#include <string>
 #include <QObject>
 #include <QPointer>
+#include <string>
 
 #include <set>
 #include <string>
@@ -42,9 +41,8 @@ public:
   SimBuilderExportDialog();
   ~SimBuilderExportDialog() override;
 
-  QWidget *contentWidget() const
-  { return this->ContentWidget; }
-  smtk::attribute::SystemPtr exportAttSystem(bool baseline=false) const;
+  QWidget* contentWidget() const { return this->ContentWidget; }
+  smtk::attribute::SystemPtr exportAttSystem(bool baseline = false) const;
   void setExportAttSystem(smtk::attribute::SystemPtr system);
   void setSimAttSystem(smtk::attribute::SystemPtr system);
 
@@ -58,31 +56,25 @@ protected slots:
 
 protected:
   std::string findPythonScriptPath(
-    smtk::attribute::FileItemPtr fileItem,
-    bool warnIfMissing = false) const;
-  std::string findPythonScriptPath(
-    const std::string& name,
-    bool warnIfMissing = false) const;
+    smtk::attribute::FileItemPtr fileItem, bool warnIfMissing = false) const;
+  std::string findPythonScriptPath(const std::string& name, bool warnIfMissing = false) const;
   void updatePanel();
   void updateAnalysisTypesWidget();
   smtk::attribute::FileItemDefinitionPtr getPythonScriptDef(
-    const smtk::attribute::SystemPtr attributeSystem,
-    bool warnIfMissing=false) const;
-  smtk::attribute::FileItemPtr
-    getPythonScriptItem(bool warnIfMissing=false) const;
-  std::string getPythonScriptPath(smtk::attribute::FileItemPtr fileItem,
-    bool warnIfMissing=false) const;
-  smtk::attribute::ItemPtr getExportSpecItem(const std::string& name,
-    bool warnIfMissing=false) const;
+    const smtk::attribute::SystemPtr attributeSystem, bool warnIfMissing = false) const;
+  smtk::attribute::FileItemPtr getPythonScriptItem(bool warnIfMissing = false) const;
+  std::string getPythonScriptPath(
+    smtk::attribute::FileItemPtr fileItem, bool warnIfMissing = false) const;
+  smtk::attribute::ItemPtr getExportSpecItem(
+    const std::string& name, bool warnIfMissing = false) const;
 
 private:
-
   int Status;
-  QDialog *MainDialog;
-  QFrame *AnalysisTypesContainer;
-  QFrame *AnalysisTypesWidget;
-  QWidget *ContentWidget;
-  QButtonGroup *AnalysisButtonGroup;
+  QDialog* MainDialog;
+  QFrame* AnalysisTypesContainer;
+  QFrame* AnalysisTypesWidget;
+  QWidget* ContentWidget;
+  QButtonGroup* AnalysisButtonGroup;
   QPointer<pqServer> ActiveServer;
   smtk::attribute::SystemPtr SimAttSystem;
   smtk::attribute::SystemPtr ExportAttSystem;

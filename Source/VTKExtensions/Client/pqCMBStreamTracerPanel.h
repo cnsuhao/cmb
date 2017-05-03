@@ -9,8 +9,8 @@
 //=========================================================================
 // .NAME pqCMBStreamTracerPanel - Custom object panel for vtkCMBStreamTracer
 // .SECTION Description
-#include "pqPropertyWidget.h"
 #include "cmbSystemConfig.h"
+#include "pqPropertyWidget.h"
 
 class QFrame;
 
@@ -19,7 +19,7 @@ class pqCMBStreamTracerPanel : public pqPropertyWidget
   typedef pqPropertyWidget Superclass;
   Q_OBJECT
 public:
-  pqCMBStreamTracerPanel(vtkSMProxy* pxy, vtkSMPropertyGroup*, QWidget* p=0);
+  pqCMBStreamTracerPanel(vtkSMProxy* pxy, vtkSMPropertyGroup*, QWidget* p = 0);
 
 public slots:
   /// accept the changes made to the properties
@@ -33,8 +33,7 @@ protected slots:
   void onTestLocationChanged();
 
 protected:
-  void SendDouble3Vector(const char *func,
-    int index, double *data);
+  void SendDouble3Vector(const char* func, int index, double* data);
 
 private:
   QFrame* TestLocationsFrame;

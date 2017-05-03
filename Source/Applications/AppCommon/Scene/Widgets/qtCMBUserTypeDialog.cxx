@@ -13,25 +13,25 @@
 
 #include "qtCMBUserTypeDialog.h"
 
-#include "ui_qtObjectTypeDialog.h"
-#include "pqCMBSceneObjectBase.h"
-#include <QInputDialog>
-#include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
+#include "pqCMBSceneObjectBase.h"
+#include "pqCMBSceneTree.h"
+#include "ui_qtObjectTypeDialog.h"
+#include <QInputDialog>
 
 //-----------------------------------------------------------------------------
-void qtCMBUserTypeDialog::updateUserType(pqCMBSceneNode *node)
+void qtCMBUserTypeDialog::updateUserType(pqCMBSceneNode* node)
 {
   if ((!node) || node->isTypeNode())
-    {
+  {
     return;
-    }
+  }
   qtCMBUserTypeDialog dialog(node);
   dialog.exec();
 }
 
 //-----------------------------------------------------------------------------
-qtCMBUserTypeDialog::qtCMBUserTypeDialog(pqCMBSceneNode *node)
+qtCMBUserTypeDialog::qtCMBUserTypeDialog(pqCMBSceneNode* node)
 {
   this->Node = node;
   this->MainDialog = new QDialog();
@@ -39,31 +39,28 @@ qtCMBUserTypeDialog::qtCMBUserTypeDialog(pqCMBSceneNode *node)
   this->TypeDialog = new Ui::qtObjectTypeDialog();
   this->TypeDialog->setupUi(this->MainDialog);
 
-  this->TypeDialog->ObjectTypes->
-    addItems(this->Node->getTree()->getUserDefinedObjectTypes());
+  this->TypeDialog->ObjectTypes->addItems(this->Node->getTree()->getUserDefinedObjectTypes());
   this->TypeDialog->ObjectTypes->addItem("Specify New Type");
-  int index = this->Node->getTree()->
-    getUserDefinedObjectTypes().indexOf(this->Node->
-                                        getDataObject()->
-                                        getUserDefinedType().c_str());
+  int index = this->Node->getTree()->getUserDefinedObjectTypes().indexOf(
+    this->Node->getDataObject()->getUserDefinedType().c_str());
   this->TypeDialog->ObjectTypes->setCurrentIndex(index);
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
-  QObject::connect(this->TypeDialog->ObjectTypes, SIGNAL(currentIndexChanged(int)),
-                   this, SLOT(changeObjectType()));
+  QObject::connect(this->TypeDialog->ObjectTypes, SIGNAL(currentIndexChanged(int)), this,
+    SLOT(changeObjectType()));
 }
 
 //-----------------------------------------------------------------------------
 qtCMBUserTypeDialog::~qtCMBUserTypeDialog()
 {
   if (this->TypeDialog)
-    {
+  {
     delete TypeDialog;
-    }
+  }
   if (this->MainDialog)
-    {
+  {
     delete MainDialog;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::exec()
@@ -75,8 +72,8 @@ void qtCMBUserTypeDialog::exec()
 //-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::accept()
 {
-  this->Node->getDataObject()->
-    setUserDefinedType(this->TypeDialog->ObjectTypes->currentText().toLatin1());
+  this->Node->getDataObject()->setUserDefinedType(
+    this->TypeDialog->ObjectTypes->currentText().toLatin1());
 }
 //-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::cancel()
@@ -86,40 +83,34 @@ void qtCMBUserTypeDialog::cancel()
 //-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::changeObjectType()
 {
-  if (this->TypeDialog->ObjectTypes->currentIndex() ==
-      (this->TypeDialog->ObjectTypes->count()-1))
-    {
+  if (this->TypeDialog->ObjectTypes->currentIndex() == (this->TypeDialog->ObjectTypes->count() - 1))
+  {
     // User has asked to add a new type
     this->TypeDialog->ObjectTypes->blockSignals(true);
-    QString newType = QInputDialog::getText(this->MainDialog,
-                                            "SceneBuilder - New Object Type",
-                                            "Enter New Object Type:");
+    QString newType = QInputDialog::getText(
+      this->MainDialog, "SceneBuilder - New Object Type", "Enter New Object Type:");
     int index;
     if (!newType.isEmpty())
-      {
+    {
       // See if the type is already in list
-      index = this->Node->getTree()->
-        getUserDefinedObjectTypes().indexOf(newType);
+      index = this->Node->getTree()->getUserDefinedObjectTypes().indexOf(newType);
       if (index == -1)
-        {
-        this->Node->getTree()->addUserDefinedType(newType.toLatin1());
-        index = this->Node->getTree()->
-          getUserDefinedObjectTypes().indexOf(newType);
-        this->TypeDialog->ObjectTypes->insertItem(index, newType);
-        }
-      this->TypeDialog->ObjectTypes->setCurrentIndex(index);
-      }
-    else
       {
-      // Set the type to be the original name
-      index = this->Node->getTree()->
-        getUserDefinedObjectTypes().indexOf(this->Node->
-                                            getDataObject()->
-                                            getUserDefinedType().c_str());
-      this->TypeDialog->ObjectTypes->setCurrentIndex(index);
+        this->Node->getTree()->addUserDefinedType(newType.toLatin1());
+        index = this->Node->getTree()->getUserDefinedObjectTypes().indexOf(newType);
+        this->TypeDialog->ObjectTypes->insertItem(index, newType);
       }
-    this->TypeDialog->ObjectTypes->blockSignals(false);
+      this->TypeDialog->ObjectTypes->setCurrentIndex(index);
     }
+    else
+    {
+      // Set the type to be the original name
+      index = this->Node->getTree()->getUserDefinedObjectTypes().indexOf(
+        this->Node->getDataObject()->getUserDefinedType().c_str());
+      this->TypeDialog->ObjectTypes->setCurrentIndex(index);
+    }
+    this->TypeDialog->ObjectTypes->blockSignals(false);
+  }
 }
 
 //-----------------------------------------------------------------------------

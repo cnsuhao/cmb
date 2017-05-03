@@ -16,8 +16,8 @@
 
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
-#include <string>
 #include <QStringList>
+#include <string>
 
 class pqCMBSceneTree;
 class CMBAPPCOMMON_EXPORT pqCMBSceneReader
@@ -26,43 +26,35 @@ public:
   pqCMBSceneReader();
   virtual ~pqCMBSceneReader();
 
-  void setTree(pqCMBSceneTree *tree)
-    {this->Tree = tree;}
+  void setTree(pqCMBSceneTree* tree) { this->Tree = tree; }
 
-  pqCMBSceneTree *getTree() const
-    {return this->Tree;}
+  pqCMBSceneTree* getTree() const { return this->Tree; }
 
-  std::string getStatusMessage() const
-    {return this->Status;}
+  std::string getStatusMessage() const { return this->Status; }
 
-  void setFileName(const char *name)
-    { this->FileName = name;}
-  std::string getFileName() const
-    {return this->FileName;}
+  void setFileName(const char* name) { this->FileName = name; }
+  std::string getFileName() const { return this->FileName; }
 
-  void setUseBoundsConstraint(int val)
-  { this->UseBoundsConstraint = val; }
-  void setFilterObjectByType(int val)
-  { this->FilterObjectByType = val; }
+  void setUseBoundsConstraint(int val) { this->UseBoundsConstraint = val; }
+  void setFilterObjectByType(int val) { this->FilterObjectByType = val; }
   void setBoundsConstraint(double bounds[6])
+  {
+    for (int i = 0; i < 6; i++)
     {
-    for(int i=0; i<6; i++)
-      {
       this->BoundsConstraint[i] = bounds[i];
-      }
     }
+  }
   void setFilterObjectTypes(QStringList& objTypes)
-    {
+  {
     this->FilterObjectTypes.clear();
     this->FilterObjectTypes << objTypes;
-    }
+  }
 
-  int getUserDefinedObjectTypes(
-    const char *data, QStringList& objTypes);
-  int process(const char *data);
+  int getUserDefinedObjectTypes(const char* data, QStringList& objTypes);
+  int process(const char* data);
 
 protected:
-  pqCMBSceneTree *Tree;
+  pqCMBSceneTree* Tree;
   std::string Status;
   std::string FileName;
 

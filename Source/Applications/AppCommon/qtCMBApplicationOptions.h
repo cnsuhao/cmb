@@ -12,8 +12,8 @@
 #define _qtCMBApplicationOptions_h
 
 #include "cmbAppCommonExport.h"
-#include "qtCMBOptionsContainer.h"
 #include "cmbSystemConfig.h"
+#include "qtCMBOptionsContainer.h"
 
 class pqSettings;
 
@@ -26,11 +26,11 @@ public:
   // Get the global instance for the qtCMBApplicationOptions.
   static qtCMBApplicationOptions* instance();
 
-  qtCMBApplicationOptions(QWidget *parent=0);
+  qtCMBApplicationOptions(QWidget* parent = 0);
   ~qtCMBApplicationOptions() override;
 
   // set the current page
-  void setPage(const QString &page) override;
+  void setPage(const QString& page) override;
   // return a list of strings for pages we have
   QStringList getPageList() override;
 
@@ -49,11 +49,11 @@ public:
   int maxNumberOfCloudPoints();
   std::string defaultMeshStorageDirectory();
   std::string defaultTempScratchDirectory();
-  std::string defaultRepresentationType(){ return "Surface"; }
+  std::string defaultRepresentationType() { return "Surface"; }
   void loadGlobalPropertiesFromSettings();
   void loadBuiltinColorPresets();
 
- signals:
+signals:
   void defaultMaxNumberOfPointsChanged();
 
 protected slots:
@@ -66,7 +66,6 @@ private:
   class pqInternal;
   pqInternal* Internal;
   static qtCMBApplicationOptions* Instance;
-
 };
 
 #endif

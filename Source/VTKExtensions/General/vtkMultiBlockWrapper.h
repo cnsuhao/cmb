@@ -18,10 +18,10 @@
 #ifndef __MultiBlockWrapper_h
 #define __MultiBlockWrapper_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkObject.h"
 #include "vtkSetGet.h"
-#include "cmbSystemConfig.h"
 
 class vtkMultiBlockDataSet;
 class vtkPolyData;
@@ -37,8 +37,8 @@ class vtkInformationIntegerKey;
 class VTKCMBGENERAL_EXPORT vtkMultiBlockWrapper : public vtkObject
 {
 public:
-  static vtkMultiBlockWrapper *New();
-  vtkTypeMacro(vtkMultiBlockWrapper,vtkObject);
+  static vtkMultiBlockWrapper* New();
+  vtkTypeMacro(vtkMultiBlockWrapper, vtkObject);
 
   // Description:
   // Functions get string names used to store cell/field data.
@@ -119,8 +119,8 @@ public:
   // Description:
   // Creates a new model face from a set of cell ids (specified on the
   // master polydata). Returns the system id of created face.
-  int CreateModelFace(int shellId, int materialId, float* rgba,
-                      vtkIdList* cellIds, vtkIdList* BCSIds, int modelFaceUse1);
+  int CreateModelFace(int shellId, int materialId, float* rgba, vtkIdList* cellIds,
+    vtkIdList* BCSIds, int modelFaceUse1);
 
   // Description:
   // Creates a new model face from an existing model face.  All of the
@@ -165,19 +165,17 @@ public:
 
   // Description:
   // Given an object's system Id, return its user id and user name.
-  void GetMaterialUserData(int materialId, int& materialUserId,
-                           const char*& materialUserName);
-  void GetBCSUserData(int BCSId, int& BCSUserId,
-                      const char*& BCSUserName);
+  void GetMaterialUserData(int materialId, int& materialUserId, const char*& materialUserName);
+  void GetBCSUserData(int BCSId, int& BCSUserId, const char*& BCSUserName);
   // Description:
   // Given an model face's system Id, return its user name. Currently
   // a model face does not have a user Id.
-  const char*  GetModelFaceUserName(int modelFaceId);
+  const char* GetModelFaceUserName(int modelFaceId);
 
   // Description:
   // Given an shell's system Id, return its user name. Currently
   // a shell does not have a user Id.
-  const char*  GetShellUserName(int shellId);
+  const char* GetShellUserName(int shellId);
 
   // Description:
   // Given a model face id, it resets the id list and fills it in with
@@ -219,8 +217,6 @@ public:
   // Change the user color of a shell.
   void ChangeUserColorOfShell(int shellId, float* userRGBA);
 
-
-
   // Description:
   // Change the user name of a BCS.
   void ChangeUserNameOfBCS(int BCSId, const char* userName);
@@ -245,8 +241,7 @@ public:
   // Functions to add a new BCS given a list of model face ids
   // to apply the BCS over. The function returns the system
   // specified BCS id (-1 for failure).
-  int AddBCS(int BCSUserId, const char* BCSUserName,
-             float* colors, vtkIdList* modelFaceIds);
+  int AddBCS(int BCSUserId, const char* BCSUserName, float* colors, vtkIdList* modelFaceIds);
   // Description:
   // Functions to delete a BCS given its system name/ID.
   void DeleteBCS(const char* name);
@@ -256,8 +251,7 @@ public:
   // Functions to add a new material with given user data.  The
   // return value is the system id of the created material (-1
   // is returned to indicate failure).
-  int AddMaterial(int MaterialUserId, const char* MaterialUserName,
-                  float* colors);
+  int AddMaterial(int MaterialUserId, const char* MaterialUserName, float* colors);
   // Description:
   // Functions to delete a material given its system name/ID.
   // Note that no shell can be consist of the deleted material.
@@ -265,16 +259,14 @@ public:
 
   // Description:
   // Creates a shell with necessary information.
-  int AddShell(const char* UserName, float* RGBA, int materialId,
-    double* TranslationPoint);
+  int AddShell(const char* UserName, float* RGBA, int materialId, double* TranslationPoint);
 
   // Description:
   // Function to add/remove a BCS from a model face.  The model face id
   // is the first argument and the BCS id/name is the second argument.
   void AddBCSToModelFace(int modelFaceId, const char* BCSName);
   void AddBCSToModelFace(int modelFaceId, int BCSId);
-  void RemoveBCSFromModelFace(int modelFaceId,
-                              const char* BCSName);
+  void RemoveBCSFromModelFace(int modelFaceId, const char* BCSName);
   void RemoveBCSFromModelFace(int modelFaceId, int BCSSsytemId);
 
   // Description:
@@ -319,8 +311,8 @@ public:
   // Description:
   // Create node group with given point Ids and model face Ids
   // Return 1 on success; 0 on failure.
-  int CreateNodalGroup(vtkIntArray* ptIds, vtkIntArray* modelFaceIds,
-    float* rgba, int isLoadingFile);
+  int CreateNodalGroup(
+    vtkIntArray* ptIds, vtkIntArray* modelFaceIds, float* rgba, int isLoadingFile);
 
   // Description:
   // Remove a nodal group given its id, and update related info.
@@ -343,16 +335,14 @@ public:
   // Functions to add a new BCS given a list of nodal group ids
   // to apply the BCS over. The function returns the system
   // specified BCS id (-1 for failure).
-  int AddNodalBCS(int BCSUserId, const char* BCSUserName,
-             float* colors, vtkIdList* ngIds);
+  int AddNodalBCS(int BCSUserId, const char* BCSUserName, float* colors, vtkIdList* ngIds);
 
   // Description:
   // Function to add/remove a BCS from a nodal group.  The nodal group id
   // is the first argument and the BCS id/name is the second argument.
   void AddBCSToNodalGroup(int NodalGroupId, const char* BCSName);
   void AddBCSToNodalGroup(int NodalGroupId, int BCSId);
-  void RemoveBCSFromNodalGroup(int NodalGroupId,
-                              const char* BCSName);
+  void RemoveBCSFromNodalGroup(int NodalGroupId, const char* BCSName);
   void RemoveBCSFromNodalGroup(int NodalGroupId, int BCSSsytemId);
 
   // Description:
@@ -397,10 +387,8 @@ protected:
   // The calling function must free the passed in character array.
   void CreateBCSNameFromId(int BCSId, char** name);
 
-  void AddBCSToModelFace(int modelFaceId, int BCSId,
-                         const char* BCSName);
-  void RemoveBCSFromModelFace(int modelFaceId, int BCSId,
-                              const char* BCSName);
+  void AddBCSToModelFace(int modelFaceId, int BCSId, const char* BCSName);
+  void RemoveBCSFromModelFace(int modelFaceId, int BCSId, const char* BCSName);
   void RemoveModelFaceFromBCSs(int modelFaceId);
   void RemoveModelFaceDataInfo(int modelFaceId);
 
@@ -409,8 +397,8 @@ protected:
   // cells in cellIds, must belong to the same existing model face.
   // The vtkArray contains all of the model face BCSTag field array
   // data. Returns the system id of the created face.
-  int CreateModelFace(float* rgba, vtkIdList* cellIds, int modelFaceUseId1,
-                      vtkIntArray* array, int isLoadingFile=0);
+  int CreateModelFace(float* rgba, vtkIdList* cellIds, int modelFaceUseId1, vtkIntArray* array,
+    int isLoadingFile = 0);
 
   // Description:
   // Set the model face system id of the given cell id.  Note that
@@ -435,17 +423,17 @@ protected:
   // Functions to perform shallow/deep copy when needed for model face or
   // nodal group vtkPolyDatas in vtkMultiBlock and
   // replace shallow copied data with deep copied data.
-  vtkDataObject* PerformNeededShallowCopy(vtkDataObject*,
-    unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet);
-  vtkDataObject* PerformNeededDeepCopy(vtkDataObject*,
-    unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet);
+  vtkDataObject* PerformNeededShallowCopy(
+    vtkDataObject*, unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet);
+  vtkDataObject* PerformNeededDeepCopy(
+    vtkDataObject*, unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet);
 
   vtkMultiBlockDataSet* mb;
   bool needToRemoveDeletedCells;
 
 private:
-  vtkMultiBlockWrapper(const vtkMultiBlockWrapper&);  // Not implemented.
-  void operator=(const vtkMultiBlockWrapper&);  // Not implemented.
+  vtkMultiBlockWrapper(const vtkMultiBlockWrapper&); // Not implemented.
+  void operator=(const vtkMultiBlockWrapper&);       // Not implemented.
 };
 
 #endif

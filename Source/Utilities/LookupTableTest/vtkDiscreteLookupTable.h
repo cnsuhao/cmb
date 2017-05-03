@@ -19,8 +19,8 @@
 #ifndef __vtkDiscreteLookupTable_h
 #define __vtkDiscreteLookupTable_h
 
-#include "vtkPVLookupTable.h"
 #include "cmbSystemConfig.h"
+#include "vtkPVLookupTable.h"
 
 class vtkLookupTable;
 class vtkColorTransferFunction;
@@ -61,10 +61,10 @@ protected:
   double SaturationMax;
   double ValueMin;
   double ValueMax;
+
 private:
   vtkDiscreteLookupTable(const vtkDiscreteLookupTable&); // Not implemented.
-  void operator=(const vtkDiscreteLookupTable&); // Not implemented.
+  void operator=(const vtkDiscreteLookupTable&);         // Not implemented.
 };
 
 #endif
-

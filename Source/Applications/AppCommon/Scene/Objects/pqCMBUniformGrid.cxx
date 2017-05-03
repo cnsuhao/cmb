@@ -8,73 +8,65 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-
-
 #include "pqCMBUniformGrid.h"
-
 
 #include "pqApplicationCore.h"
 #include "pqDataRepresentation.h"
-#include "pqPipelineRepresentation.h"
+#include "pqDataRepresentation.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputPort.h"
-#include "pqDataRepresentation.h"
+#include "pqPipelineRepresentation.h"
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
 #include "pqSMAdaptor.h"
 #include "pqServer.h"
 
 #include "vtkGeometryRepresentation.h"
-#include <vtkProcessModule.h>
+#include "vtkImageData.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVLASOutputBlockInformation.h"
 #include "vtkPVSceneGenObjectInformation.h"
+#include "vtkSMNewWidgetRepresentationProxy.h"
+#include "vtkSMProxyManager.h"
+#include "vtkSMRepresentationProxy.h"
+#include <QFileInfo>
+#include <QVariant>
+#include <vtkProcessModule.h>
 #include <vtkSMDataSourceProxy.h>
 #include <vtkSMDoubleVectorProperty.h>
-#include <vtkSMIntVectorProperty.h>
 #include <vtkSMIdTypeVectorProperty.h>
-#include "vtkSMNewWidgetRepresentationProxy.h"
+#include <vtkSMIntVectorProperty.h>
 #include <vtkSMPropertyHelper.h>
-#include "vtkSMRepresentationProxy.h"
 #include <vtkSMProxyProperty.h>
 #include <vtkSMRenderViewProxy.h>
 #include <vtkSMRepresentationProxy.h>
 #include <vtkSMSourceProxy.h>
 #include <vtkTransform.h>
 #include <vtkXMLDataSetWriter.h>
-#include "vtkSMProxyManager.h"
-#include "vtkImageData.h"
-#include <QFileInfo>
-#include <QVariant>
 
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
 //-----------------------------------------------------------------------------
-pqCMBUniformGrid::pqCMBUniformGrid() : pqCMBSceneObjectBase()
+pqCMBUniformGrid::pqCMBUniformGrid()
+  : pqCMBSceneObjectBase()
 {
   HasInvalidValue = false;
 }
 //-----------------------------------------------------------------------------
-pqCMBUniformGrid::pqCMBUniformGrid(pqPipelineSource *source,
-                                         pqRenderView *view,
-                                         pqServer *server,
-                                         const char *filename,
-                                         bool updateRep)
+pqCMBUniformGrid::pqCMBUniformGrid(pqPipelineSource* source, pqRenderView* view, pqServer* server,
+  const char* filename, bool updateRep)
   : pqCMBSceneObjectBase(source)
 {
   this->FileName = filename;
   QFileInfo finfo(filename);
-  this->prepGridObject(server, view, updateRep,
-                       finfo.completeSuffix().toLower() != "tif");
+  this->prepGridObject(server, view, updateRep, finfo.completeSuffix().toLower() != "tif");
   HasInvalidValue = false;
 }
 
 //-----------------------------------------------------------------------------
-pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
-                                             pqServer *server,
-                                             pqRenderView *view,
-                                             bool updateRep)
+pqCMBUniformGrid::pqCMBUniformGrid(
+  const char* filename, pqServer* server, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
@@ -85,20 +77,20 @@ pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
   pqPipelineSource* source;
   QFileInfo finfo(filename);
   if (this->isRawDEM(filename))
-      {
-      source =  builder->createReader("sources", "RawDEMReader", files, server);
-      vtkSMPropertyHelper(source->getProxy(), "OutputImageData").Set(1);
-      }
-  else if(finfo.completeSuffix().toLower() == "dem" || finfo.completeSuffix().toLower() == "tif")
-      {
-      //TEST_DEM_TO_MESH(filename);
-      source =  builder->createReader("sources", "GDALRasterReader", files, server);
-      HasInvalidValue = true;
-      }
+  {
+    source = builder->createReader("sources", "RawDEMReader", files, server);
+    vtkSMPropertyHelper(source->getProxy(), "OutputImageData").Set(1);
+  }
+  else if (finfo.completeSuffix().toLower() == "dem" || finfo.completeSuffix().toLower() == "tif")
+  {
+    //TEST_DEM_TO_MESH(filename);
+    source = builder->createReader("sources", "GDALRasterReader", files, server);
+    HasInvalidValue = true;
+  }
   else
-      {
-      source =  builder->createReader("sources", "XMLImageDataReader", files, server);
-      }
+  {
+    source = builder->createReader("sources", "XMLImageDataReader", files, server);
+  }
   pqPipelineSource* mesh = builder->createFilter("filters", "cmbStructedToMesh", source);
   vtkSMPropertyHelper(mesh->getProxy(), "UseScalerForZ").Set(0);
   builder->blockSignals(false);
@@ -109,44 +101,39 @@ pqCMBUniformGrid::pqCMBUniformGrid(const char *filename,
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBUniformGrid::prepGridObject(pqServer *server,
-                                      pqRenderView *view,
-                                      bool updateRep,
-                                      bool transferColor)
+void pqCMBUniformGrid::prepGridObject(
+  pqServer* server, pqRenderView* view, bool updateRep, bool transferColor)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
   // this->Representation =
   //   builder->createDataRepresentation(
   //   this->Source->getOutputPort(0), view, "UniformGridRepresentation");
-  this->setRepresentation(
-      builder->createDataRepresentation(
-        this->Source->getOutputPort(0), view));
+  this->setRepresentation(builder->createDataRepresentation(this->Source->getOutputPort(0), view));
   // If there is an elevation field on the points then use it.
   RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
-    this->getRepresentation()->getProxy(),
-    "Elevation", vtkDataObject::POINT);
+    this->getRepresentation()->getProxy(), "Elevation", vtkDataObject::POINT);
 
   // use CMB Elevation 2 Color Table
-  if(transferColor)
-    {
-    vtkSMProxy* lut = builder->createProxy("lookup_tables", "PVLookupTable",
-                                         server, "transfer_functions");
+  if (transferColor)
+  {
+    vtkSMProxy* lut =
+      builder->createProxy("lookup_tables", "PVLookupTable", server, "transfer_functions");
     vtkSMTransferFunctionProxy::ApplyPreset(lut, "CMB Elevation Map 2", false);
     lut->UpdateVTKObjects();
     pqSMAdaptor::setProxyProperty(
       this->getRepresentation()->getProxy()->GetProperty("LookupTable"), lut);
     vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "SelectionVisibility").Set(0);
-    }
+  }
   else
-    {
+  {
     vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "MapScalars").Set(0);
-    }
+  }
   this->Source->getProxy()->UpdateVTKObjects();
   if (updateRep)
-      {
-      this->getRepresentation()->getProxy()->UpdateVTKObjects();
-      }
+  {
+    this->getRepresentation()->getProxy()->UpdateVTKObjects();
+  }
 }
 //-----------------------------------------------------------------------------
 pqCMBUniformGrid::~pqCMBUniformGrid()
@@ -164,39 +151,35 @@ pqCMBUniformGrid::enumObjectType pqCMBUniformGrid::getType() const
   return pqCMBSceneObjectBase::UniformGrid;
 }
 //-----------------------------------------------------------------------------
-pqCMBSceneObjectBase *pqCMBUniformGrid::duplicate(pqServer *server,
-                                               pqRenderView *view,
-                                               bool updateRep)
+pqCMBSceneObjectBase* pqCMBUniformGrid::duplicate(
+  pqServer* server, pqRenderView* view, bool updateRep)
 {
-  pqCMBUniformGrid *dup = new pqCMBUniformGrid(this->FileName.c_str(),
-                                                     server, view, false);
+  pqCMBUniformGrid* dup = new pqCMBUniformGrid(this->FileName.c_str(), server, view, false);
   if (this->isRawDEM())
-    {
-      dup->setOnRatio(this->getOnRatio());
-      vtkIdType re[2], ce[2];
-      this->getExtents(re, ce);
-      dup->setExtents(re,ce);
-      dup->setReadGroupOfFiles(this->getReadGroupOfFiles());
-    }
+  {
+    dup->setOnRatio(this->getOnRatio());
+    vtkIdType re[2], ce[2];
+    this->getExtents(re, ce);
+    dup->setExtents(re, ce);
+    dup->setReadGroupOfFiles(this->getReadGroupOfFiles());
+  }
   if (updateRep)
-    {
+  {
     dup->getRepresentation()->getProxy()->UpdateVTKObjects();
-    }
+  }
 
   return dup;
 }
 
-
 //-----------------------------------------------------------------------------
-bool pqCMBUniformGrid::isRawDEM(const QString &filename)
+bool pqCMBUniformGrid::isRawDEM(const QString& filename)
 {
   QFileInfo finfo(filename);
-  if (finfo.completeSuffix().toLower() == "flt" ||
-    finfo.completeSuffix().toLower() == "ftw" ||
+  if (finfo.completeSuffix().toLower() == "flt" || finfo.completeSuffix().toLower() == "ftw" ||
     finfo.completeSuffix().toLower() == "hdr")
-    {
+  {
     return true;
-    }
+  }
   return false;
 }
 
@@ -246,19 +229,15 @@ int pqCMBUniformGrid::getOnRatio() const
 //-----------------------------------------------------------------------------
 void pqCMBUniformGrid::setExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2])
 {
-  vtkSMPropertyHelper(this->ImageSource->getProxy(),
-                      "RowReadExtents").Set(rowExtents, 2);
-  vtkSMPropertyHelper(this->ImageSource->getProxy(),
-                      "ColumnReadExtents").Set(columnExtents, 2);
+  vtkSMPropertyHelper(this->ImageSource->getProxy(), "RowReadExtents").Set(rowExtents, 2);
+  vtkSMPropertyHelper(this->ImageSource->getProxy(), "ColumnReadExtents").Set(columnExtents, 2);
   this->Source->getProxy()->UpdateVTKObjects();
 }
 //-----------------------------------------------------------------------------
 void pqCMBUniformGrid::getExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2]) const
 {
-  vtkSMPropertyHelper(this->ImageSource->getProxy(),
-                      "RowReadExtents").Get(rowExtents, 2);
-  vtkSMPropertyHelper(this->ImageSource->getProxy(),
-                      "ColumnReadExtents").Get(columnExtents, 2);
+  vtkSMPropertyHelper(this->ImageSource->getProxy(), "RowReadExtents").Get(rowExtents, 2);
+  vtkSMPropertyHelper(this->ImageSource->getProxy(), "ColumnReadExtents").Get(columnExtents, 2);
 }
 //-----------------------------------------------------------------------------
 void pqCMBUniformGrid::getAreaStats(double* areaStats)
@@ -267,13 +246,13 @@ void pqCMBUniformGrid::getAreaStats(double* areaStats)
   double n = static_cast<double>(this->getNumberOfPoints());
   double a = this->getSurfaceArea();
   if (n != 0.0)
-    {
+  {
     areaStats[0] = areaStats[1] = areaStats[2] = a / n;
-    }
+  }
   else
-    {
+  {
     areaStats[0] = areaStats[1] = areaStats[2] = 0.0;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 void pqCMBUniformGrid::getGeometryBounds(double* geoBounds) const
@@ -296,13 +275,13 @@ double pqCMBUniformGrid::getSurfaceArea()
 //-----------------------------------------------------------------------------
 vtkIdType pqCMBUniformGrid::getNumberOfPoints()
 {
-  vtkPVDataInformation *imageInfo = this->Source->getOutputPort(0)->getDataInformation();
+  vtkPVDataInformation* imageInfo = this->Source->getOutputPort(0)->getDataInformation();
   return imageInfo->GetNumberOfPoints();
 }
 //-----------------------------------------------------------------------------
 vtkIdType pqCMBUniformGrid::getNumberOfPolygons()
 {
-  vtkPVDataInformation *imageInfo = this->Source->getOutputPort(0)->getDataInformation();
+  vtkPVDataInformation* imageInfo = this->Source->getOutputPort(0)->getDataInformation();
   return imageInfo->GetNumberOfCells();
 }
 //-----------------------------------------------------------------------------

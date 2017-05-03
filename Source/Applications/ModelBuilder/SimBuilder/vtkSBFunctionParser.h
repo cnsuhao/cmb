@@ -10,9 +10,9 @@
 #ifndef __vtkSBFunctionParser_h
 #define __vtkSBFunctionParser_h
 
+#include "cmbSystemConfig.h"
 #include <vtkObject.h>
 #include <vtkTimeStamp.h>
-#include "cmbSystemConfig.h"
 
 // STL includes.
 #include <string> // STL required.
@@ -23,7 +23,6 @@ class vtkDoubleArray;
 class vtkSBFunctionParser : public vtkObject
 {
 public:
-
   // Description:
   // Macro to determine if a class is same class or a subclass of same class.
   vtkTypeMacro(vtkSBFunctionParser, vtkObject);
@@ -34,8 +33,8 @@ public:
 
   // Description:
   // Print default values of the member variables.
-  void PrintSelf(ostream &os, vtkIndent indent) override;
-\
+  void PrintSelf(ostream& os, vtkIndent indent) override;
+
   // Description:
   // Set / Get the function. This could be a vector funtion or scalar function.
   // Such as sin(X) or sin(X)*iHat + cos(X)*jHat + tan(X)*kHat.
@@ -68,7 +67,7 @@ public:
 
   // Description:
   // Query if the function has valid syntax.
-  void CheckExpression(int &pos, std::string &error);
+  void CheckExpression(int& pos, std::string& error);
 
   // Description:
   // Return the result of the evaluation of the function. This could
@@ -77,9 +76,7 @@ public:
   // Else it will have 2 components, input and output.
   vtkDoubleArray* GetResult();
 
-
 protected:
-
   // Description:
   // Constructor / Destructor.
   vtkSBFunctionParser();
@@ -89,27 +86,25 @@ protected:
   void Initialize();
 
 private:
-
   const std::string IndependentVariableName;
 
-  std::string    Function;
+  std::string Function;
 
-  bool              IsVectorResult;
-  double            InitialValue;
-  double            Delta;
-  int               NumberOfValues;
+  bool IsVectorResult;
+  double InitialValue;
+  double Delta;
+  int NumberOfValues;
 
-  char*             Help;
-  vtkDoubleArray*   Result;
+  char* Help;
+  vtkDoubleArray* Result;
 
   class vtkInternal;
-  vtkInternal*      Implementation;
+  vtkInternal* Implementation;
 
-  vtkTimeStamp      CheckMTime;
+  vtkTimeStamp CheckMTime;
 
   vtkSBFunctionParser(const vtkSBFunctionParser&); // Not implemented.
-  void operator =(const vtkSBFunctionParser&);     // Not implemented.
+  void operator=(const vtkSBFunctionParser&);      // Not implemented.
 };
-
 
 #endif // __vtkSBFunctionParser_h

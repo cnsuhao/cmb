@@ -13,13 +13,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcDeleteClientOperator_h
 #define __vtkCMBArcDeleteClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -48,17 +47,18 @@ protected:
   vtkCMBArcDeleteClientOperator();
   ~vtkCMBArcDeleteClientOperator() override;
 
-  enum Mode{
+  enum Mode
+  {
     Delete_Mode = 0,
     Mark_Mode = 1,
     UnMark_Mode = 2
-    };
+  };
 
   virtual bool Operate(const vtkIdType& arcId, vtkCMBArcDeleteClientOperator::Mode mode);
 
 private:
   vtkCMBArcDeleteClientOperator(const vtkCMBArcDeleteClientOperator&); // Not implemented
-  void operator=(const vtkCMBArcDeleteClientOperator&); // Not implemented
+  void operator=(const vtkCMBArcDeleteClientOperator&);                // Not implemented
 };
 
 #endif

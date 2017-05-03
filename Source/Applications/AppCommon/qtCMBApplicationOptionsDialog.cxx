@@ -10,8 +10,8 @@
 #include "qtCMBApplicationOptionsDialog.h"
 
 //-----------------------------------------------------------------------------
-qtCMBApplicationOptionsDialog::qtCMBApplicationOptionsDialog(
-  QWidget* p) : qtCMBOptionsDialog(p)
+qtCMBApplicationOptionsDialog::qtCMBApplicationOptionsDialog(QWidget* p)
+  : qtCMBOptionsDialog(p)
 {
   this->setWindowTitle("Application Settings");
   this->setApplyNeeded(true);

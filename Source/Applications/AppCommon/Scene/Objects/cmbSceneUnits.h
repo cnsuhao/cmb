@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __cmbSceneUnits_h
 #define __cmbSceneUnits_h
 
 #include "cmbAppCommonExport.h"
-#include <string>
 #include "cmbSystemConfig.h"
+#include <string>
 
-class  CMBAPPCOMMON_EXPORT cmbSceneUnits
+class CMBAPPCOMMON_EXPORT cmbSceneUnits
 {
 public:
   enum Enum
@@ -34,11 +33,8 @@ public:
   };
 
   static const double ConvertFromTo[7][7];
-  static Enum convertFromString(const char *unit);
+  static Enum convertFromString(const char* unit);
   static std::string convertToString(Enum unit);
 };
-
-
-
 
 #endif /* __cmbSceneUnits_h */

@@ -14,9 +14,9 @@
 #ifndef __vtkMergeFacesFiter_h
 #define __vtkMergeFacesFiter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdList;
 
@@ -51,7 +51,7 @@ public:
 
   //vtkIdType GetNewFaceId(vtkIdType oldId);
 
-//BTX
+  //BTX
 protected:
   vtkMergeFacesFilter();
   ~vtkMergeFacesFilter() override;
@@ -63,21 +63,16 @@ protected:
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  int RequestData(vtkInformation*,
-                          vtkInformationVector**,
-                          vtkInformationVector*) override;
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
   vtkMergeFacesFilter(const vtkMergeFacesFilter&); // Not implemented.
-  void operator=(const vtkMergeFacesFilter&); // Not implemented.
-
+  void operator=(const vtkMergeFacesFilter&);      // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;
-//ETX
+  //ETX
 };
 
 #endif
-
-

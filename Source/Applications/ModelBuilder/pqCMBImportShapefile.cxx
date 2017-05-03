@@ -20,7 +20,8 @@ public:
   pqServer* ActiveServer;
 };
 
-pqCMBImportShapefile::pqCMBImportShapefile(pqServer* activeServer, QWidget* parent, Qt::WindowFlags f)
+pqCMBImportShapefile::pqCMBImportShapefile(
+  pqServer* activeServer, QWidget* parent, Qt::WindowFlags f)
   : QDialog(parent, f)
 {
   this->Internal = new pqInternal;
@@ -42,15 +43,10 @@ pqCMBImportShapefile::pqCMBImportShapefile(pqServer* activeServer, QWidget* pare
   this->Internal->marginStyleGroup->setId(
     this->Internal->radioManualMargin, vtkCMBGeometry2DReader::ABSOLUTE_MARGIN);
 
-  QObject::connect(
-    this->Internal->buttonBox, SIGNAL(accepted()),
-    this, SLOT(accept()));
-  QObject::connect(
-    this->Internal->buttonBox, SIGNAL(rejected()),
-    this, SLOT(reject()));
-  QObject::connect(
-    this->Internal->buttonCustomBoundaryFileChooser, SIGNAL(clicked()),
-    this, SLOT(chooseCustomBoundaryFile()));
+  QObject::connect(this->Internal->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  QObject::connect(this->Internal->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  QObject::connect(this->Internal->buttonCustomBoundaryFileChooser, SIGNAL(clicked()), this,
+    SLOT(chooseCustomBoundaryFile()));
 }
 
 pqCMBImportShapefile::~pqCMBImportShapefile()
@@ -71,18 +67,18 @@ int pqCMBImportShapefile::marginStyle()
 QString pqCMBImportShapefile::marginSpecification()
 {
   switch (this->boundaryStyle())
-    {
-  case vtkCMBGeometry2DReader::ABSOLUTE_BOUNDS:
-    return this->Internal->textManualBounds->text();
-  case vtkCMBGeometry2DReader::ABSOLUTE_MARGIN:
-    switch (this->marginStyle())
-      {
+  {
+    case vtkCMBGeometry2DReader::ABSOLUTE_BOUNDS:
+      return this->Internal->textManualBounds->text();
     case vtkCMBGeometry2DReader::ABSOLUTE_MARGIN:
-      return this->Internal->textManualMargin->text();
-    case vtkCMBGeometry2DReader::RELATIVE_MARGIN:
-      return this->Internal->textMarginFraction->text();
+      switch (this->marginStyle())
+      {
+        case vtkCMBGeometry2DReader::ABSOLUTE_MARGIN:
+          return this->Internal->textManualMargin->text();
+        case vtkCMBGeometry2DReader::RELATIVE_MARGIN:
+          return this->Internal->textMarginFraction->text();
       }
-    }
+  }
   return "NaN";
 }
 
@@ -96,23 +92,22 @@ void pqCMBImportShapefile::chooseCustomBoundaryFile()
   QString filters = "Shapefile (*.shp)";
 
   pqFileDialog file_dialog(
-    this->Internal->ActiveServer,
-    this, tr("Boundary Shapefile:"), QString(), filters);
+    this->Internal->ActiveServer, this, tr("Boundary Shapefile:"), QString(), filters);
 
   //file_dialog->setAttribute(Qt::WA_DeleteOnClose);
   file_dialog.setObjectName("CustomBoundaryFileDialog");
   file_dialog.setFileMode(pqFileDialog::ExistingFile);
   file_dialog.setWindowModality(Qt::WindowModal);
   if (file_dialog.exec() == QDialog::Accepted)
-    {
+  {
     //each string list holds a list of files that represent a file-series
     QStringList files = file_dialog.getSelectedFiles();
     if (!files.empty())
-      { // Take only the first file selected.
+    { // Take only the first file selected.
       this->setCustomBoundaryFile(files[0]);
       this->Internal->buttonBox->button(QDialogButtonBox::Ok)->setFocus();
-      }
     }
+  }
 }
 
 void pqCMBImportShapefile::setCustomBoundaryFile(const QString& fname)

@@ -17,34 +17,31 @@
 #define __vtkPythonExporter_h
 
 #include "ModelBridgeClientModule.h"
-#include <vector> // for callback method for SMTK Model
-#include <utility> // for pair in callback method for SMTK model
-#include "vtkObject.h"
-#include "smtk/attribute/System.h"
 #include "smtk/PublicPointerDefs.h"
+#include "smtk/attribute/System.h"
+#include "vtkObject.h"
+#include <utility> // for pair in callback method for SMTK model
+#include <vector>  // for callback method for SMTK Model
 
 class vtkModelManagerWrapper;
 
 class MODELBRIDGECLIENT_EXPORT vtkPythonExporter : public vtkObject
 {
 public:
-  static vtkPythonExporter * New();
-  vtkTypeMacro(vtkPythonExporter,vtkObject);
+  static vtkPythonExporter* New();
+  vtkTypeMacro(vtkPythonExporter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // This method is for standard paraview client-server apps
-  virtual void Operate(vtkModelManagerWrapper *modelMgrWrapper,
-                       const char* smtkContents);
+  virtual void Operate(vtkModelManagerWrapper* modelMgrWrapper, const char* smtkContents);
 
   // This method is for *legacy* paraview client-server apps
-  virtual void Operate(vtkModelManagerWrapper *modelMgrWrapper,
-                       const char* smtkContents,
-                       const char* exportContents);
+  virtual void Operate(
+    vtkModelManagerWrapper* modelMgrWrapper, const char* smtkContents, const char* exportContents);
 
   // This method is for standalone & test apps
-  virtual void Operate(smtk::model::ManagerPtr mgr,
-                       smtk::attribute::SystemPtr simulationAttributes,
-                       smtk::attribute::SystemPtr exportAttributes);
+  virtual void Operate(smtk::model::ManagerPtr mgr, smtk::attribute::SystemPtr simulationAttributes,
+    smtk::attribute::SystemPtr exportAttributes);
 
   // Description:
   // Returns success (1) or failue (0) for Operation.
@@ -66,7 +63,7 @@ public:
 
   // Description:
   // Set model manager wrapper
-  void SetModelManagerWrapper(vtkModelManagerWrapper *modelManager);
+  void SetModelManagerWrapper(vtkModelManagerWrapper* modelManager);
   vtkGetObjectMacro(ModelManagerWrapper, vtkModelManagerWrapper);
 
 protected:
@@ -77,13 +74,13 @@ protected:
   // Check to see if everything is properly set for the operator.
   virtual bool AbleToOperate(vtkModelManagerWrapper* modelWrapper);
 
-  char *Script;
-  char *PythonPath;
-  char *PythonExecutable;
+  char* Script;
+  char* PythonPath;
+  char* PythonExecutable;
 
 private:
-  vtkPythonExporter(const vtkPythonExporter&);  // Not implemented.
-  void operator=(const vtkPythonExporter&);  // Not implemented.
+  vtkPythonExporter(const vtkPythonExporter&); // Not implemented.
+  void operator=(const vtkPythonExporter&);    // Not implemented.
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;

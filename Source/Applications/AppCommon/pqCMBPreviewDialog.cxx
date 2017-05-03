@@ -11,16 +11,17 @@
 #include "ui_qtPreviewDialog.h"
 
 #include "pqCMBEnumPropertyWidget.h"
-#include "pqRenderView.h"
 #include "pqDataRepresentation.h"
+#include "pqRenderView.h"
 
 #include <QFrame>
 #include <QVBoxLayout>
 #include <pqSetName.h>
 
 //-----------------------------------------------------------------------------
-pqCMBPreviewDialog::pqCMBPreviewDialog(QWidget* Parent) :
-  QDialog(Parent), Ui(new Ui::qtPreviewDialog())
+pqCMBPreviewDialog::pqCMBPreviewDialog(QWidget* Parent)
+  : QDialog(Parent)
+  , Ui(new Ui::qtPreviewDialog())
 {
   this->Ui->setupUi(this);
   this->setObjectName("pqCMBPreviewDialog");
@@ -32,51 +33,50 @@ pqCMBPreviewDialog::pqCMBPreviewDialog(QWidget* Parent) :
 pqCMBPreviewDialog::~pqCMBPreviewDialog()
 {
   delete this->Ui;
-  if(this->RepresentationWidget)
-    {
+  if (this->RepresentationWidget)
+  {
     delete this->RepresentationWidget;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBPreviewDialog::enableErrorView(bool state)
 {
   if (state)
-    {
+  {
     this->Ui->OkButton->hide();
     this->Ui->CancelButton->setText("Close");
-    }
+  }
   else
-    {
+  {
     this->Ui->OkButton->show();
     this->Ui->CancelButton->setText("Reject");
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 void pqCMBPreviewDialog::setRepresentationAndView(
   pqDataRepresentation* dataRep, pqRenderView* renderView)
+{
+  if (!dataRep || !renderView)
   {
-  if(!dataRep || !renderView)
-    {
     return;
-    }
-  if(this->RepresentationWidget)
-    {
+  }
+  if (this->RepresentationWidget)
+  {
     delete this->RepresentationWidget;
     this->RepresentationWidget = NULL;
-    }
+  }
 
-  this->RepresentationWidget =
-    new pqCMBEnumPropertyWidget(this->Ui->toolbarFrame)
+  this->RepresentationWidget = new pqCMBEnumPropertyWidget(this->Ui->toolbarFrame)
     << pqSetName("previewRepresentation");
   this->RepresentationWidget->setPropertyName("Representation");
   this->RepresentationWidget->setLabelText("Change representation style");
   this->RepresentationWidget->setRepresentation(dataRep);
 
-  if(this->Ui->toolbarFrame->layout())
-    {
+  if (this->Ui->toolbarFrame->layout())
+  {
     delete this->Ui->toolbarFrame->layout();
-    }
+  }
   QVBoxLayout* toollayout = new QVBoxLayout(this->Ui->toolbarFrame);
   toollayout->setMargin(0);
   toollayout->addWidget(this->RepresentationWidget);
@@ -86,10 +86,10 @@ void pqCMBPreviewDialog::setRepresentationAndView(
   //if(repWidget)
   //  {
   //  }
-  if(this->Ui->RenderViewFrame->layout())
-    {
+  if (this->Ui->RenderViewFrame->layout())
+  {
     delete this->Ui->RenderViewFrame->layout();
-    }
+  }
 
   QVBoxLayout* vboxlayout = new QVBoxLayout(this->Ui->RenderViewFrame);
   vboxlayout->setMargin(0);

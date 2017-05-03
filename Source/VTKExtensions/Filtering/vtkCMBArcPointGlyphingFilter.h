@@ -10,19 +10,19 @@
 #ifndef __vtkCMBArcPointGlyphingFilter_h
 #define __vtkCMBArcPointGlyphingFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 #include <set>
 
 class VTKCMBFILTERING_EXPORT vtkCMBArcPointGlyphingFilter : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCMBArcPointGlyphingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkCMBArcPointGlyphingFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  static vtkCMBArcPointGlyphingFilter *New();
+  static vtkCMBArcPointGlyphingFilter* New();
 
   void clearVisible();
   void setVisible(int);
@@ -32,15 +32,17 @@ protected:
   vtkCMBArcPointGlyphingFilter();
   ~vtkCMBArcPointGlyphingFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   std::set<int> visible;
   double scale;
 
 private:
-  vtkCMBArcPointGlyphingFilter(const vtkCMBArcPointGlyphingFilter&):vtkPolyDataAlgorithm()
-  {}  // Not implemented.
-  void operator=(const vtkCMBArcPointGlyphingFilter&){}  // Not implemented.
+  vtkCMBArcPointGlyphingFilter(const vtkCMBArcPointGlyphingFilter&)
+    : vtkPolyDataAlgorithm()
+  {
+  }                                                      // Not implemented.
+  void operator=(const vtkCMBArcPointGlyphingFilter&) {} // Not implemented.
 };
 
 #endif

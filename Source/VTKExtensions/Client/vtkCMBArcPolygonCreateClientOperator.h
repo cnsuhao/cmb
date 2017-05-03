@@ -15,9 +15,9 @@
 #ifndef __vtkCMBArcPolygonCreateClientOperator_h
 #define __vtkCMBArcPolygonCreateClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 #include <list>
 
 class vtkIdTypeArray;
@@ -31,7 +31,7 @@ public:
 
   //Description:
   // Returns the arc ids of the newly created polygon
-  vtkGetObjectMacro(ArcIds,vtkIdTypeArray);
+  vtkGetObjectMacro(ArcIds, vtkIdTypeArray);
 
   //Description:
   // Add an arc to the collection of arcs to make the polygon from
@@ -39,8 +39,7 @@ public:
 
   // Description:
   // Copies data from a widget proxy to a vtkCMBArc
-  virtual bool Create(double minAngle, double edgeLegth,
-    vtkSMProxy *providerProxy);
+  virtual bool Create(double minAngle, double edgeLegth, vtkSMProxy* providerProxy);
 
 protected:
   vtkCMBArcPolygonCreateClientOperator();
@@ -49,7 +48,8 @@ protected:
   std::list<vtkIdType> InputArcIds;
 
 private:
-  vtkCMBArcPolygonCreateClientOperator(const vtkCMBArcPolygonCreateClientOperator&); // Not implemented
+  vtkCMBArcPolygonCreateClientOperator(
+    const vtkCMBArcPolygonCreateClientOperator&);              // Not implemented
   void operator=(const vtkCMBArcPolygonCreateClientOperator&); // Not implemented
 };
 

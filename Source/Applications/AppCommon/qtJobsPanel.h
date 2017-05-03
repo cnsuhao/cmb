@@ -19,21 +19,21 @@ class qtJobsPanel : public QDockWidget
 {
   Q_OBJECT
 
- public:
+public:
   qtJobsPanel(QWidget* parent);
   virtual ~qtJobsPanel();
 
- signals:
-   void resultDownloaded(const QString &path);
+signals:
+  void resultDownloaded(const QString& path);
 
- public slots:
+public slots:
 
- protected slots:
+protected slots:
   void authenticateHPC();
 
- private:
+private:
   class qtJobsPanelInternal;
   qtJobsPanelInternal* Internal;
 };
 
-#endif  // __CmbJobsPanels_h
+#endif // __CmbJobsPanels_h

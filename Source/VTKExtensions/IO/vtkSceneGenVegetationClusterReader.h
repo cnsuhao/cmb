@@ -14,12 +14,12 @@
 #ifndef __SceneGenVegetationClusterReader_h
 #define __SceneGenVegetationClusterReader_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 class vtkMultiBlockDataSet;
 class vtkPolyData;
@@ -27,8 +27,8 @@ class vtkPolyData;
 class VTKCMBIO_EXPORT vtkSceneGenVegetationClusterReader : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkSceneGenVegetationClusterReader *New();
-  vtkTypeMacro(vtkSceneGenVegetationClusterReader,vtkMultiBlockDataSetAlgorithm);
+  static vtkSceneGenVegetationClusterReader* New();
+  vtkTypeMacro(vtkSceneGenVegetationClusterReader, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -42,7 +42,7 @@ protected:
   vtkSceneGenVegetationClusterReader();
   ~vtkSceneGenVegetationClusterReader() override;
 
-  char *FileName;
+  char* FileName;
   std::string NodeFile;
   std::string EnsightNodeFile;
   std::string MetFile;
@@ -55,36 +55,34 @@ protected:
   std::vector<std::string> EnsightStomatal;
 
   struct VegetationModel
-    {
+  {
     VegetationModel()
-      {
+    {
       this->LeafSize = -1;
       this->Material = -1;
       this->Dataset = 0;
       this->Plants = 0;
       this->Scale = 0.0;
-      }
+    }
     std::string FileName;
     double LeafSize;
     long Material;
-    vtkPolyData *Dataset;
-    vtkPolyData *Plants;
+    vtkPolyData* Dataset;
+    vtkPolyData* Plants;
     double Scale;
-    };
+  };
   std::map<std::string, VegetationModel> Models;
 
   void ClearModel();
 
-  int AddBlock(vtkMultiBlockDataSet *output, VegetationModel &model, double color[3]);
+  int AddBlock(vtkMultiBlockDataSet* output, VegetationModel& model, double color[3]);
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkSceneGenVegetationClusterReader(const vtkSceneGenVegetationClusterReader&);  // Not implemented.
-  void operator=(const vtkSceneGenVegetationClusterReader&);  // Not implemented.
+  vtkSceneGenVegetationClusterReader(const vtkSceneGenVegetationClusterReader&); // Not implemented.
+  void operator=(const vtkSceneGenVegetationClusterReader&);                     // Not implemented.
 
   //ETX
 };

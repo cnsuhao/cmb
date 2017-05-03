@@ -16,10 +16,9 @@
 #ifndef __vtkTriangulateConcavePolysFilter_h
 #define __vtkTriangulateConcavePolysFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
-
 
 class VTKCMBIO_EXPORT vtkTriangulateConcavePolysFilter : public vtkPolyDataAlgorithm
 {
@@ -29,28 +28,24 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Tests whether the cell is concave
-  static bool IsPolygonConcave(vtkPoints *points, vtkIdType npts, vtkIdType *pts);
+  static bool IsPolygonConcave(vtkPoints* points, vtkIdType npts, vtkIdType* pts);
 
-//BTX
+  //BTX
 protected:
-  vtkTriangulateConcavePolysFilter() {};
-  ~vtkTriangulateConcavePolysFilter() override {};
+  vtkTriangulateConcavePolysFilter(){};
+  ~vtkTriangulateConcavePolysFilter() override{};
 
   // Description:
   // This is called within ProcessRequest when a request asks the algorithm
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  int RequestData(vtkInformation*,
-                          vtkInformationVector**,
-                          vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkTriangulateConcavePolysFilter(const vtkTriangulateConcavePolysFilter&); // Not implemented.
-  void operator=(const vtkTriangulateConcavePolysFilter&); // Not implemented.
-//ETX
+  void operator=(const vtkTriangulateConcavePolysFilter&);                   // Not implemented.
+  //ETX
 };
 
 #endif
-
-

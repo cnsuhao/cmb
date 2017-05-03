@@ -69,12 +69,11 @@ public:
 
 //-----------------------------------------------------------------------------
 pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
-                                 smtk::extension::qtSelectionManager* sManager,
-                                 QWidget* p)
-  : QWidget(p),
-    ModelManager(modelManager),
-    OutputPort(NULL),
-    SelectionManager(sManager)
+  smtk::extension::qtSelectionManager* sManager, QWidget* p)
+  : QWidget(p)
+  , ModelManager(modelManager)
+  , OutputPort(NULL)
+  , SelectionManager(sManager)
 {
   this->VTKConnect = vtkEventQtSlotConnect::New();
   this->Ui = new pqUi(this);
@@ -88,11 +87,9 @@ pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager,
     SLOT(setOutputPort(pqOutputPort*)));
 
   QObject::connect(this->SelectionManager,
-    SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&,
-                                 const smtk::mesh::MeshSets&,
-                                 const smtk::model::DescriptivePhrases&)),
-                   this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&,
-                                                 const smtk::mesh::MeshSets&)));
+    SIGNAL(broadcastToRenderView(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+      const smtk::model::DescriptivePhrases&)),
+    this, SLOT(onSelectionChanged(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -533,22 +530,23 @@ class MeshAggregate : public smtk::mesh::MeshForEach
 {
   smtk::mesh::MeshSet Meshes;
   bool Valid;
+
 public:
   //--------------------------------------------------------------------------
-  MeshAggregate(const smtk::mesh::CollectionPtr& collection) :
-    smtk::mesh::MeshForEach(),
-    Meshes(collection, smtk::mesh::Handle()),
-    Valid(collection && collection->isValid())
-    {
-    }
+  MeshAggregate(const smtk::mesh::CollectionPtr& collection)
+    : smtk::mesh::MeshForEach()
+    , Meshes(collection, smtk::mesh::Handle())
+    , Valid(collection && collection->isValid())
+  {
+  }
 
   //--------------------------------------------------------------------------
   void forMesh(smtk::mesh::MeshSet& mesh)
   {
     if (this->Valid)
-      {
+    {
       this->Valid &= this->Meshes.append(mesh);
-      }
+    }
   }
 
   smtk::mesh::MeshSet mesh() { return this->Meshes; }
@@ -557,8 +555,8 @@ public:
 }
 
 //-----------------------------------------------------------------------------
-void pqSMTKInfoPanel::onSelectionChanged(const smtk::model::EntityRefs& erefs,
-                                         const smtk::mesh::MeshSets& meshes)
+void pqSMTKInfoPanel::onSelectionChanged(
+  const smtk::model::EntityRefs& erefs, const smtk::mesh::MeshSets& meshes)
 {
   (void)erefs;
 
@@ -567,29 +565,28 @@ void pqSMTKInfoPanel::onSelectionChanged(const smtk::model::EntityRefs& erefs,
   this->Ui->entityNumberOfPoints->setText(tr("NA"));
 
   if (!meshes.empty())
-    {
+  {
     MeshAggregate aggregate(meshes.begin()->collection());
     for (const auto& mesh : meshes)
-      {
+    {
       smtk::mesh::for_each(mesh, aggregate);
-      }
+    }
 
     if (aggregate.valid())
-      {
-      std::size_t highestDimension =
-        (!aggregate.mesh().cells(smtk::mesh::Dims3).is_empty() ? 3 :
-         !aggregate.mesh().cells(smtk::mesh::Dims2).is_empty() ? 2 :
-         !aggregate.mesh().cells(smtk::mesh::Dims1).is_empty() ? 1 : 0);
-      QString descriptionByDimension =
-        QString("%1-Dimensional Mesh").arg(highestDimension);
-      this->Ui->entityType->
-        setText(tr(descriptionByDimension.toStdString().c_str()));
+    {
+      std::size_t highestDimension = (!aggregate.mesh().cells(smtk::mesh::Dims3).is_empty()
+          ? 3
+          : !aggregate.mesh().cells(smtk::mesh::Dims2).is_empty()
+            ? 2
+            : !aggregate.mesh().cells(smtk::mesh::Dims1).is_empty() ? 1 : 0);
+      QString descriptionByDimension = QString("%1-Dimensional Mesh").arg(highestDimension);
+      this->Ui->entityType->setText(tr(descriptionByDimension.toStdString().c_str()));
 
       QString numCells = QString("%1").arg(aggregate.mesh().cells().size());
       this->Ui->entityNumberOfCells->setText(numCells);
 
       QString numPoints = QString("%1").arg(aggregate.mesh().points().size());
       this->Ui->entityNumberOfPoints->setText(numPoints);
-      }
     }
+  }
 }

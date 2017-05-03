@@ -11,8 +11,8 @@
 #define __pqCMBProcessWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
 class QLabel;
 class QToolButton;
@@ -22,17 +22,11 @@ class CMBAPPCOMMON_EXPORT pqCMBProcessWidget : public QWidget
 {
   Q_OBJECT
 public:
-  pqCMBProcessWidget(QWidget* parent=0);
+  pqCMBProcessWidget(QWidget* parent = 0);
   ~pqCMBProcessWidget() override;
 
-  QToolButton* getAbortButton() const
-    {
-    return this->AbortButton;
-    }
-  QToolButton* getOutputButton() const
-    {
-    return this->OutputButton;
-    }
+  QToolButton* getAbortButton() const { return this->AbortButton; }
+  QToolButton* getOutputButton() const { return this->OutputButton; }
 
   void appendToOutput(const QString& message);
 
@@ -54,11 +48,11 @@ protected:
   QLabel* Message;
   QToolButton* AbortButton;
   QToolButton* OutputButton;
-  pqOutputWindow *OutputWindow;
+  pqOutputWindow* OutputWindow;
 
 private:
   pqCMBProcessWidget(const pqCMBProcessWidget&); // Not implemented.
-  void operator=(const pqCMBProcessWidget&); // Not implemented.
+  void operator=(const pqCMBProcessWidget&);     // Not implemented.
 };
 
 #endif

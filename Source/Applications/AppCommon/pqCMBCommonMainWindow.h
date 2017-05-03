@@ -15,10 +15,10 @@
 #define __pqCMBCommonMainWindow_h
 
 #include "cmbAppCommonExport.h"
-#include <QMainWindow>
-#include <QList>
-#include <vtkIOStream.h>
 #include "cmbSystemConfig.h"
+#include <QList>
+#include <QMainWindow>
+#include <vtkIOStream.h>
 
 class pqOutputPort;
 class pqCMBCommonMainWindowCore;
@@ -30,8 +30,17 @@ class pqCMBColorMapWidget;
 class vtkSMProxy;
 class QDockWidget;
 
-namespace Ui { class qtCMBMainWindow; }
-namespace smtk {namespace io { class Logger; }}
+namespace Ui
+{
+class qtCMBMainWindow;
+}
+namespace smtk
+{
+namespace io
+{
+class Logger;
+}
+}
 
 class CMBAPPCOMMON_EXPORT pqCMBCommonMainWindow : public QMainWindow
 {
@@ -40,11 +49,12 @@ public:
   pqCMBCommonMainWindow();
   ~pqCMBCommonMainWindow() override;
 
-  virtual bool compareView(const QString& ReferenceImage, double Threshold, ostream& Output, const QString& TempDirectory);
+  virtual bool compareView(
+    const QString& ReferenceImage, double Threshold, ostream& Output, const QString& TempDirectory);
   void addControlPanel(QWidget* panel);
   Ui::qtCMBMainWindow* getMainDialog();
 
-  QList<pqOutputPort*> &getLastSelectionPorts();
+  QList<pqOutputPort*>& getLastSelectionPorts();
   void appendDatasetNameToTitle(const QString& strTitle);
   pqCMBLoadDataReaction* loadDataReaction();
 
@@ -75,8 +85,8 @@ protected slots:
 
   // Description:
   // open About dialog
-  virtual void onHelpAbout(){}
-  virtual void onHelpHelp(){}
+  virtual void onHelpAbout() {}
+  virtual void onHelpHelp() {}
   virtual void showHelpPage(const QString& url);
 
   /**\brief Called when the user asks the application to exit.
@@ -104,7 +114,7 @@ protected slots:
   // Description:
   // Called when starting and external process (to disable starting another)
   // and when completing an external process (to reenable)
-  virtual void onEnableExternalProcesses(bool /*state*/){}
+  virtual void onEnableExternalProcesses(bool /*state*/) {}
 
   virtual void onEnableMenuItems(bool state);
 
@@ -113,8 +123,8 @@ protected slots:
   virtual void onRecordTest();
   virtual void onRecordTestStopped();
 
-  virtual void loadMultiFilesStart(){}
-  virtual void loadMultiFilesStop(){}
+  virtual void loadMultiFilesStart() {}
+  virtual void loadMultiFilesStop() {}
 
   // Description:
   // Reaction to changing the camera interaction mode to either 2D or 3D
@@ -123,13 +133,14 @@ protected slots:
   // Description:
   // Reaction to locking and unlocking the camera interaction mode.
   void onEnableCameraInteractionModeChanges(bool);
+
 protected:
   // Description:
   // Updates the enable state of various menus.
   virtual void updateEnableState(bool data_loaded);
 
   virtual void clearGUI();
-  virtual void updateSelection(){}
+  virtual void updateSelection() {}
 
   // Description
   // Initializes the application.
@@ -137,18 +148,17 @@ protected:
 
   void initProjectManager();
   virtual QDockWidget* initPVColorEditorDock();
-  virtual void initInspectorDock() ;
+  virtual void initInspectorDock();
 
   pqCMBCommonMainWindowCore* MainWindowCore;
 
-  QShortcut *SelectionShortcut;
-  QShortcut *ResetCameraShortcut;
+  QShortcut* SelectionShortcut;
+  QShortcut* ResetCameraShortcut;
   bool m_isExiting;
 
 private:
   pqCMBCommonMainWindow(const pqCMBCommonMainWindow&); // Not implemented.
-  void operator=(const pqCMBCommonMainWindow&); // Not implemented.
-
+  void operator=(const pqCMBCommonMainWindow&);        // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;

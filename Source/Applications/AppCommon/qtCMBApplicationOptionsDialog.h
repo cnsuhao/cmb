@@ -11,10 +11,9 @@
 #ifndef _qtCMBApplicationOptionsDialog_h
 #define _qtCMBApplicationOptionsDialog_h
 
-
 #include "cmbAppCommonExport.h"
-#include "qtCMBOptionsDialog.h"
 #include "cmbSystemConfig.h"
+#include "qtCMBOptionsDialog.h"
 
 /// qtCMBApplicationOptionsDialog dialog class that allows editing of application
 /// wide settings.
@@ -22,7 +21,7 @@ class CMBAPPCOMMON_EXPORT qtCMBApplicationOptionsDialog : public qtCMBOptionsDia
 {
   Q_OBJECT
 public:
-  qtCMBApplicationOptionsDialog(QWidget *parent=0);
+  qtCMBApplicationOptionsDialog(QWidget* parent = 0);
 
 protected slots:
 

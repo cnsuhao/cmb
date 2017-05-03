@@ -14,13 +14,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkCMBArcFindPickPointOperator_h
 #define __vtkCMBArcFindPickPointOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 class vtkSMOutputPort;
 
 class VTKCMBCLIENT_EXPORT vtkCMBArcFindPickPointOperator : public vtkSMSourceProxy
@@ -32,7 +31,7 @@ public:
 
   // Description:
   // convert the multi point selection to the middle point of the selection.
-  virtual bool Operate(const vtkIdType& arcId, vtkSMOutputPort *selectionPort);
+  virtual bool Operate(const vtkIdType& arcId, vtkSMOutputPort* selectionPort);
 
 protected:
   vtkCMBArcFindPickPointOperator();
@@ -41,7 +40,7 @@ protected:
 
 private:
   vtkCMBArcFindPickPointOperator(const vtkCMBArcFindPickPointOperator&); // Not implemented
-  void operator=(const vtkCMBArcFindPickPointOperator&); // Not implemented
+  void operator=(const vtkCMBArcFindPickPointOperator&);                 // Not implemented
 };
 
 #endif

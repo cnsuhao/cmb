@@ -16,10 +16,10 @@
 #define __vtkPVSMTKModelInformation_h
 
 #include "ModelBridgeClientModule.h"
-#include "vtkPVInformation.h"
-#include <string>
-#include <map>
 #include "smtk/common/UUID.h"
+#include "vtkPVInformation.h"
+#include <map>
+#include <string>
 
 class MODELBRIDGECLIENT_EXPORT vtkPVSMTKModelInformation : public vtkPVInformation
 {
@@ -36,24 +36,26 @@ public:
   // Merge another information object. Calls AddInformation(info, 0).
   void AddInformation(vtkPVInformation* info) override;
 
-  void CopyToStream(vtkClientServerStream*) override{;}
-  void CopyFromStream(const vtkClientServerStream*) override{;}
+  void CopyToStream(vtkClientServerStream*) override { ; }
+  void CopyFromStream(const vtkClientServerStream*) override { ; }
 
   // Description:
   // return the blockid given a entity UUID.
   // Caution: This will be slow if there are many blocks in the model
   virtual bool GetBlockId(const smtk::common::UUID& uuid, unsigned int& bid);
   // return the modelentityID given a blockid.
-  // Caution: There is no valid check for this for performance reason  
-  virtual const smtk::common::UUID&  GetModelEntityId(unsigned int bid);
+  // Caution: There is no valid check for this for performance reason
+  virtual const smtk::common::UUID& GetModelEntityId(unsigned int bid);
 
-  virtual const smtk::common::UUID&  GetModelUUID();
+  virtual const smtk::common::UUID& GetModelUUID();
 
   // Description:
   // return UUIDs to BlockId map for all blocks
   // virtual smtk::common::UUIDs GetBlockUUIDs() const;
   const std::map<smtk::common::UUID, unsigned int>& GetUUID2BlockIdMap() const
-  { return this->UUID2BlockIdMap; }
+  {
+    return this->UUID2BlockIdMap;
+  }
 
 protected:
   vtkPVSMTKModelInformation();
@@ -64,12 +66,10 @@ protected:
   smtk::common::UUID m_ModelUUID;
 
 private:
-
   vtkPVSMTKModelInformation(const vtkPVSMTKModelInformation&); // Not implemented
-  void operator=(const vtkPVSMTKModelInformation&); // Not implemented
-  
-//  smtk::common::UUID m_dummyID;
+  void operator=(const vtkPVSMTKModelInformation&);            // Not implemented
 
+  //  smtk::common::UUID m_dummyID;
 };
 
 #endif

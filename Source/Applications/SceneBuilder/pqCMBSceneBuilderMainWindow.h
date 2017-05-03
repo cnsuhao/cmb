@@ -14,10 +14,10 @@
 #ifndef __pqCMBSceneBuilderMainWindow_h
 #define __pqCMBSceneBuilderMainWindow_h
 
-#include "pqCMBCommonMainWindow.h"
-#include <QVariant>
-#include <QTreeWidgetItem>
 #include "cmbSystemConfig.h"
+#include "pqCMBCommonMainWindow.h"
+#include <QTreeWidgetItem>
+#include <QVariant>
 
 class pqOutputPort;
 class vtkDataSet;
@@ -54,11 +54,11 @@ protected slots:
   void onHelpHelp() override;
 
   // For processing selections via the Scene Tree's nodes
-  void onSceneNodeSelected(const QList<pqCMBSceneNode *> *unselected,
-                           const QList<pqCMBSceneNode *> *newlySelected);
+  void onSceneNodeSelected(
+    const QList<pqCMBSceneNode*>* unselected, const QList<pqCMBSceneNode*>* newlySelected);
 
   // For processing name changes via the Scene Tree's nodes
-  void onSceneNodeNameChanged(pqCMBSceneNode *node);
+  void onSceneNodeNameChanged(pqCMBSceneNode* node);
 
   // Description:
   // Called when starting and external process (to disable starting another)
@@ -87,15 +87,11 @@ protected:
 
 private:
   pqCMBSceneBuilderMainWindow(const pqCMBSceneBuilderMainWindow&); // Not implemented.
-  void operator=(const pqCMBSceneBuilderMainWindow&); // Not implemented.
+  void operator=(const pqCMBSceneBuilderMainWindow&);              // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;
-  pqCMBSceneTree *Tree;
-
+  pqCMBSceneTree* Tree;
 };
 
 #endif
-
-
-

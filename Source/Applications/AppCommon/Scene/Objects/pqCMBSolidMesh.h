@@ -11,46 +11,35 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBSolidMesh_h
 #define __pqCMBSolidMesh_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
-class  CMBAPPCOMMON_EXPORT pqCMBSolidMesh : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBSolidMesh : public pqCMBSceneObjectBase
 {
 public:
-
   pqCMBSolidMesh();
-  pqCMBSolidMesh(pqPipelineSource *source,
-                         pqRenderView *view,
-                         pqServer *server,
-                         const char *filename);
-  pqCMBSolidMesh(const char *filename,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
-  pqCMBSolidMesh(pqPipelineSource *source,
-                 pqServer *server, pqRenderView *view,
-                 bool updateRep = true);
+  pqCMBSolidMesh(
+    pqPipelineSource* source, pqRenderView* view, pqServer* server, const char* filename);
+  pqCMBSolidMesh(const char* filename, pqServer* server, pqRenderView* view, bool updateRep = true);
+  pqCMBSolidMesh(
+    pqPipelineSource* source, pqServer* server, pqRenderView* view, bool updateRep = true);
 
   ~pqCMBSolidMesh() override;
 
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
 
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true) override;
+  pqPipelineSource* getTransformedSource(pqServer* server) const;
 
-  pqPipelineSource * getTransformedSource(pqServer *server) const;
-
-  void setFileName(const char *type)
-    {this->FileName = type;}
+  void setFileName(const char* type) { this->FileName = type; }
   enumObjectType getType() const override;
-  std::string getFileName() const
-    {return this->FileName;}
+  std::string getFileName() const { return this->FileName; }
 
 protected:
-  void prepSolidMesh(pqServer *server,
-    pqRenderView *view,bool updateRep);
+  void prepSolidMesh(pqServer* server, pqRenderView* view, bool updateRep);
 
   std::string FileName;
 };

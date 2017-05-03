@@ -16,10 +16,13 @@
 #ifndef __qtCMBLIDARPanelWidget_h
 #define __qtCMBLIDARPanelWidget_h
 
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
-namespace Ui { class qtLIDARPanel; }
+namespace Ui
+{
+class qtLIDARPanel;
+}
 
 class qtCMBLIDARPanelWidgetInternal;
 
@@ -28,7 +31,7 @@ class qtCMBLIDARPanelWidget : public QWidget
   Q_OBJECT
 
 public:
-  qtCMBLIDARPanelWidget(QWidget* parent=0);
+  qtCMBLIDARPanelWidget(QWidget* parent = 0);
   ~qtCMBLIDARPanelWidget() override;
 
   Ui::qtLIDARPanel* getGUIPanel();
@@ -41,6 +44,5 @@ private slots:
 
 private:
   qtCMBLIDARPanelWidgetInternal* Internal;
-
 };
 #endif

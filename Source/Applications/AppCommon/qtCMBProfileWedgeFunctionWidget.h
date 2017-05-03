@@ -11,8 +11,8 @@
 #ifndef qtCMBProfilePointFunctionModifier_h_
 #define qtCMBProfilePointFunctionModifier_h_
 
-#include <QWidget>
 #include <QPointer>
+#include <QWidget>
 #include <vector>
 
 #include "pqCMBModifierArc.h"
@@ -22,11 +22,11 @@ class Ui_qtCMBProfileWedgeFunction;
 class cmbProfileWedgeFunction;
 class cmbProfileWedgeFunctionParameters;
 
-class qtCMBProfileWedgeFunctionWidget: public QWidget
+class qtCMBProfileWedgeFunctionWidget : public QWidget
 {
   Q_OBJECT
 public:
-  qtCMBProfileWedgeFunctionWidget(QWidget * parent, cmbProfileWedgeFunction * function);
+  qtCMBProfileWedgeFunctionWidget(QWidget* parent, cmbProfileWedgeFunction* function);
   ~qtCMBProfileWedgeFunctionWidget() override;
   void setRelative(bool);
 protected slots:
@@ -39,9 +39,10 @@ protected slots:
   void setMode(int);
   void weightSplineBox(bool);
   void render();
+
 protected:
-  Ui_qtCMBProfileWedgeFunction * UI;
-  cmbProfileWedgeFunction * function;
+  Ui_qtCMBProfileWedgeFunction* UI;
+  cmbProfileWedgeFunction* function;
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
 
   void setUp();

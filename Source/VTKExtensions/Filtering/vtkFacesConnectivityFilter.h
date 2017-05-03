@@ -14,9 +14,9 @@
 #ifndef __vtkFacesConnectivityFilter_h
 #define __vtkFacesConnectivityFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 #include <map>
 
 class vtkIntArray;
@@ -38,13 +38,13 @@ public:
   // Specify the angle that defines a sharp edge. If the difference in
   // angle across neighboring polygons is greater than this value, the
   // shared edge is considered "sharp".
-  vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
-  vtkGetMacro(FeatureAngle,double);
+  vtkSetClampMacro(FeatureAngle, double, 0.0, 180.0);
+  vtkGetMacro(FeatureAngle, double);
 
   // Description:
   // Specify the face Id that will be splitted.
-  vtkSetMacro(FaceID,int);
-  vtkGetMacro(FaceID,int);
+  vtkSetMacro(FaceID, int);
+  vtkGetMacro(FaceID, int);
 
   // Description:
   // Convenience method to specify the selection connection (2nd input
@@ -58,7 +58,7 @@ public:
   // Obtain the number of connected faces.
   // int GetNumberOfExtractedFaces();
 
-//BTX
+  //BTX
 protected:
   vtkFacesConnectivityFilter();
   ~vtkFacesConnectivityFilter() override;
@@ -73,17 +73,15 @@ protected:
   //                        vtkInformationVector*);
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
   vtkFacesConnectivityFilter(const vtkFacesConnectivityFilter&); // Not implemented.
-  void operator=(const vtkFacesConnectivityFilter&); // Not implemented.
+  void operator=(const vtkFacesConnectivityFilter&);             // Not implemented.
 
-  void UpdateFaceIDArray(
-    int maxFaceId, vtkIdTypeArray* newRegionArray,
-    vtkIntArray* selCellIndices,
-    std::map<vtkIdType, vtkIdList*> & faceList);
+  void UpdateFaceIDArray(int maxFaceId, vtkIdTypeArray* newRegionArray, vtkIntArray* selCellIndices,
+    std::map<vtkIdType, vtkIdList*>& faceList);
 
   double FeatureAngle;
   int FaceID;
@@ -91,9 +89,7 @@ private:
 
   class vtkInternal;
   vtkInternal* Internal;
-//ETX
+  //ETX
 };
 
 #endif
-
-

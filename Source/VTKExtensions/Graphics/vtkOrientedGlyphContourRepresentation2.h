@@ -20,9 +20,9 @@
 #ifndef __vtkOrientedGlyphContourRepresentation2_h
 #define __vtkOrientedGlyphContourRepresentation2_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkOrientedGlyphContourRepresentation.h"
-#include "cmbSystemConfig.h"
 
 class vtkProperty;
 class vtkActor;
@@ -31,16 +31,17 @@ class vtkPolyData;
 class vtkGlyph3D;
 class vtkPoints;
 
-class VTKCMBGRAPHICS_EXPORT vtkOrientedGlyphContourRepresentation2 : public vtkOrientedGlyphContourRepresentation
+class VTKCMBGRAPHICS_EXPORT vtkOrientedGlyphContourRepresentation2
+  : public vtkOrientedGlyphContourRepresentation
 {
 public:
   // Description:
   // Instantiate this class.
-  static vtkOrientedGlyphContourRepresentation2 *New();
+  static vtkOrientedGlyphContourRepresentation2* New();
 
   // Description:
   // Standard methods for instances of this class.
-  vtkTypeMacro(vtkOrientedGlyphContourRepresentation2,vtkOrientedGlyphContourRepresentation);
+  vtkTypeMacro(vtkOrientedGlyphContourRepresentation2, vtkOrientedGlyphContourRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -49,9 +50,9 @@ public:
   // was modifed. If used remember to turn off during construction
   // of the initial points
   // Default is to set it to false.
-  vtkSetMacro( LoggingEnabled, int );
-  vtkGetMacro( LoggingEnabled, int );
-  vtkBooleanMacro( LoggingEnabled, int );
+  vtkSetMacro(LoggingEnabled, int);
+  vtkGetMacro(LoggingEnabled, int);
+  vtkBooleanMacro(LoggingEnabled, int);
 
   //overloaded for logging purposes
   int DeleteNthNode(int n) override;
@@ -61,7 +62,7 @@ public:
 
   // Description:
   // Get the points in this contour as a vtkPolyData.
-  vtkPolyData * GetContourRepresentationAsPolyData() override;
+  vtkPolyData* GetContourRepresentationAsPolyData() override;
 
   //Description:
   // Get the flags for a given point
@@ -72,7 +73,7 @@ public:
   // Description:
   // Methods to make this class behave as a vtkProp. Using openGL
   // to do AlwaysOnTop.
-  int RenderOpaqueGeometry(vtkViewport *viewport) override;
+  int RenderOpaqueGeometry(vtkViewport* viewport) override;
 
 protected:
   vtkOrientedGlyphContourRepresentation2();
@@ -91,21 +92,20 @@ protected:
   //Note: While this method will only render the first line cell in the polydata
   //it will compute if the contour is closed based on this first cell number of points
   //versus the number of points in the polydata. So don't have any extra points
-  void Initialize( vtkPolyData * ) override;
+  void Initialize(vtkPolyData*) override;
 
   //support logging of point changes
   int LoggingEnabled;
 
   class vtkInternalMap;
-  vtkInternalMap *ModifiedPointMap;
-
+  vtkInternalMap* ModifiedPointMap;
 
   void UpdatePropertyMap(int index, int flags);
 
-
 private:
-  vtkOrientedGlyphContourRepresentation2(const vtkOrientedGlyphContourRepresentation2&);  //Not implemented
-  void operator=(const vtkOrientedGlyphContourRepresentation2&);  //Not implemented
+  vtkOrientedGlyphContourRepresentation2(
+    const vtkOrientedGlyphContourRepresentation2&);              //Not implemented
+  void operator=(const vtkOrientedGlyphContourRepresentation2&); //Not implemented
 };
 
 #endif

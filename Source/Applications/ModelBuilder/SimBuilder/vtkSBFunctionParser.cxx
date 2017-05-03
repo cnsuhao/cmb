@@ -14,8 +14,8 @@
 #include <vtkObjectFactory.h>
 #include <vtkSmartPointer.h>
 
-#include <map>
 #include <algorithm>
+#include <map>
 #include <sstream> // STL required.
 
 vtkStandardNewMacro(vtkSBFunctionParser);
@@ -25,11 +25,11 @@ class vtkSBFunctionParser::vtkInternal
 {
 public:
   vtkInternal()
-    {
+  {
     this->Parser = vtkSmartPointer<vtkFunctionParser>::New();
 
     this->DefineConstants();
-    }
+  }
 
   void DefineConstants();
 
@@ -45,16 +45,15 @@ void vtkSBFunctionParser::vtkInternal::DefineConstants()
 }
 
 //-----------------------------------------------------------------------------
-vtkSBFunctionParser::vtkSBFunctionParser() :
-  IndependentVariableName
-                  ("X"),
-  Function        (""),
-  IsVectorResult  (false),
-  InitialValue    (0.0),
-  Delta           (0.0),
-  NumberOfValues  (-1),
-  Help            (0),
-  Result          (0)
+vtkSBFunctionParser::vtkSBFunctionParser()
+  : IndependentVariableName("X")
+  , Function("")
+  , IsVectorResult(false)
+  , InitialValue(0.0)
+  , Delta(0.0)
+  , NumberOfValues(-1)
+  , Help(0)
+  , Result(0)
 {
   this->Implementation = new vtkInternal();
 
@@ -64,33 +63,33 @@ vtkSBFunctionParser::vtkSBFunctionParser() :
 //-----------------------------------------------------------------------------
 vtkSBFunctionParser::~vtkSBFunctionParser()
 {
-  if(this->Help)
-    {
-    delete [] this->Help;
+  if (this->Help)
+  {
+    delete[] this->Help;
     this->Help = 0;
-    }
-  if(this->Result)
-    {
+  }
+  if (this->Result)
+  {
     this->Result->Delete();
     this->Result = 0;
-    }
+  }
 
-  if(this->Implementation)
-    {
+  if (this->Implementation)
+  {
     delete this->Implementation;
     this->Implementation = 0;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
-void vtkSBFunctionParser::PrintSelf(ostream &os, vtkIndent indent)
+void vtkSBFunctionParser::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "Function: " <<  this->Function << "\n";
-  os << indent << "InitialValue: " <<  this->InitialValue << "\n";
-  os << indent << "Delta: " <<  this->Delta << "\n";
-  os << indent << "NumberOfValues: " <<  this->NumberOfValues << "\n";
+  os << indent << "Function: " << this->Function << "\n";
+  os << indent << "InitialValue: " << this->InitialValue << "\n";
+  os << indent << "Delta: " << this->Delta << "\n";
+  os << indent << "NumberOfValues: " << this->NumberOfValues << "\n";
   os << indent << "Help: " << (this->Help ? this->Help : "NULL") << "\n";
 }
 
@@ -110,8 +109,8 @@ std::string vtkSBFunctionParser::GetFunction()
 //-----------------------------------------------------------------------------
 const char* vtkSBFunctionParser::GetHelp()
 {
-  if(!this->Help)
-    {
+  if (!this->Help)
+  {
     std::stringstream ss;
     ss << "Example Function: f(X) = cos(X).\n";
     ss << "(Note: Use capital X as variable!)\n";
@@ -128,35 +127,35 @@ const char* vtkSBFunctionParser::GetHelp()
     ss << "  sign sin sinh sqrt tan tanh\n";
     this->Help = new char[ss.str().length() + 1];
     strcpy(this->Help, ss.str().c_str());
-    }
+  }
 
   return this->Help;
 }
 
 //-----------------------------------------------------------------------------
-void vtkSBFunctionParser::CheckExpression(int &pos, std::string &error)
+void vtkSBFunctionParser::CheckExpression(int& pos, std::string& error)
 {
-  if(this->Function.empty())
-    {
+  if (this->Function.empty())
+  {
     error = std::string("Function is not set yet. First set the function.");
     return;
-    }
+  }
 
   // Initialize only once.
-  if(this->GetMTime() > this->CheckMTime.GetMTime())
-    {
+  if (this->GetMTime() > this->CheckMTime.GetMTime())
+  {
     this->Initialize();
-    }
+  }
 
   // We still have to the check expression here as we are not storing
   // error and error position.
   char* parseError;
   this->Implementation->Parser->CheckExpression(pos, &parseError);
 
-  if(parseError)
-    {
+  if (parseError)
+  {
     error = std::string(parseError);
-    }
+  }
 
   // Now we update the modified time.
   this->CheckMTime.Modified();
@@ -170,44 +169,43 @@ vtkDoubleArray* vtkSBFunctionParser::GetResult()
 
   this->CheckExpression(pos, err);
 
-  if(!err.empty() || (pos != -1))
-    {
+  if (!err.empty() || (pos != -1))
+  {
     return 0;
-    }
+  }
 
   this->Result = vtkDoubleArray::New();
 
   this->IsVectorResult = this->Implementation->Parser->IsVectorResult() != 0;
-  if(this->IsVectorResult)
-    {
+  if (this->IsVectorResult)
+  {
     this->Result->SetNumberOfComponents(4);
-    }
+  }
   else
-    {
+  {
     this->Result->SetNumberOfComponents(2);
-    }
+  }
 
   double indepVar = this->InitialValue;
-  for(int i=0; i < this->NumberOfValues; ++i)
-    {
+  for (int i = 0; i < this->NumberOfValues; ++i)
+  {
     // Since we know that we first set the independent variable
     // its index is 0. Since other method is not very efficient
     // where we set scalar value using name of independent variable.
     this->Implementation->Parser->SetScalarVariableValue(0, indepVar);
 
-    if(this->IsVectorResult)
-      {
+    if (this->IsVectorResult)
+    {
       double* result = this->Implementation->Parser->GetVectorResult();
       this->Result->InsertNextTuple4(indepVar, result[0], result[1], result[2]);
-      }
+    }
     else
-      {
-      this->Result->InsertNextTuple2(
-        indepVar, this->Implementation->Parser->GetScalarResult());
-      }
+    {
+      this->Result->InsertNextTuple2(indepVar, this->Implementation->Parser->GetScalarResult());
+    }
 
     indepVar += this->Delta;
-    }
+  }
 
   return this->Result;
 }
@@ -221,11 +219,9 @@ void vtkSBFunctionParser::Initialize()
 
   std::map<std::string, double>::const_iterator itr;
 
-  for(itr = this->Implementation->Constants.begin();
-      itr != this->Implementation->Constants.end();
-      ++itr)
-    {
-    this->Implementation->Parser->SetScalarVariableValue(
-      itr->first.c_str(), itr->second);
-    }
+  for (itr = this->Implementation->Constants.begin(); itr != this->Implementation->Constants.end();
+       ++itr)
+  {
+    this->Implementation->Parser->SetScalarVariableValue(itr->first.c_str(), itr->second);
+  }
 }

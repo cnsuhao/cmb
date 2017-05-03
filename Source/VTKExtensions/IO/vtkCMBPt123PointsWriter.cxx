@@ -11,12 +11,12 @@
 
 #include "vtkCellArray.h"
 #include "vtkCompositeDataIterator.h"
-#include "vtkIdTypeArray.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkInformation.h"
 #include "vtkCompositeDataSet.h"
-#include "vtkObjectFactory.h"
 #include "vtkDataSet.h"
+#include "vtkDataSetAttributes.h"
+#include "vtkIdTypeArray.h"
+#include "vtkInformation.h"
+#include "vtkObjectFactory.h"
 
 #include <vtksys/SystemTools.hxx>
 
@@ -28,9 +28,8 @@ vtkCMBPt123PointsWriter::vtkCMBPt123PointsWriter()
 {
   this->FileName = 0;
   this->Header = 0;
-  this->SetInputArrayToProcess(0, 0, 0,
-    vtkDataObject::FIELD_ASSOCIATION_POINTS,
-    vtkDataSetAttributes::SCALARS);
+  this->SetInputArrayToProcess(
+    0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::SCALARS);
   this->MyData = 0;
   this->MyGeom = 0;
   this->UseScientificNotation = true;
@@ -54,18 +53,18 @@ void vtkCMBPt123PointsWriter::SetInputData(vtkDataObject* ug)
 ostream* vtkCMBPt123PointsWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
-    {
+  {
     vtkErrorMacro("FileName has to be specified.");
     return 0;
-    }
+  }
 
   ostream* fp = new ofstream(this->FileName, ios::out);
   if (fp->fail())
-    {
-    vtkErrorMacro(<< "Unable to open file: "<< this->FileName);
+  {
+    vtkErrorMacro(<< "Unable to open file: " << this->FileName);
     delete fp;
     return 0;
-    }
+  }
   return fp;
 }
 
@@ -73,10 +72,10 @@ ostream* vtkCMBPt123PointsWriter::OpenFile()
 void vtkCMBPt123PointsWriter::CloseFile(ostream* fp)
 {
   if (fp)
-    {
+  {
     delete fp;
     fp = 0;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -85,46 +84,42 @@ void vtkCMBPt123PointsWriter::WriteData()
   vtkDataObject* input = this->GetInput();
   vtkCompositeDataSet* mds = vtkCompositeDataSet::SafeDownCast(input);
   if (mds)
-    {
+  {
     vtkCompositeDataIterator* iter = mds->NewIterator();
     iter->InitTraversal();
     while (!iter->IsDoneWithTraversal())
-      {
+    {
       this->MyGeom = vtkDataSet::SafeDownCast(iter->GetCurrentDataObject());
       if (this->MyGeom)
-        {
+      {
         break;
-        }
       }
+    }
     iter->Delete();
-    }
+  }
   else
-    {
+  {
     this->MyGeom = vtkDataSet::SafeDownCast(input);
-    }
+  }
 
   if (!this->MyGeom)
-    {
+  {
     vtkErrorMacro("vtkDataSet input is required.");
     return;
-    }
+  }
 
   //Get the data array to be processed
-  this->MyData =
-    vtkIdTypeArray::SafeDownCast(this->GetInputArrayToProcess(0, this->MyGeom));
+  this->MyData = vtkIdTypeArray::SafeDownCast(this->GetInputArrayToProcess(0, this->MyGeom));
   if (!this->MyData)
-    {
+  {
     vtkErrorMacro("Could not find Classification Array to be processed.");
     return;
-    }
+  }
   ostream* file = this->OpenFile();
-  if (!file ||
-      !this->WriteHeader(*file) ||
-      !this->WritePoints(*file) ||
-      !this->WriteFooter(*file))
-    {
+  if (!file || !this->WriteHeader(*file) || !this->WritePoints(*file) || !this->WriteFooter(*file))
+  {
     vtkErrorMacro("Write failed");
-    }
+  }
   this->CloseFile(file);
   this->MyData = 0;
   this->MyGeom = 0;
@@ -134,11 +129,10 @@ void vtkCMBPt123PointsWriter::WriteData()
 bool vtkCMBPt123PointsWriter::WriteHeader(ostream& fp)
 {
   if (this->Header && (this->Header[0] != '\0'))
-    {
+  {
     fp << this->Header << endl;
-    }
-  fp << this->MyGeom->GetNumberOfPoints() << " ! NPT"
-     << endl;
+  }
+  fp << this->MyGeom->GetNumberOfPoints() << " ! NPT" << endl;
   return true;
 }
 
@@ -152,11 +146,11 @@ bool vtkCMBPt123PointsWriter::WritePoints(ostream& fp)
   fp.setf(UseScientificNotation ? ios::scientific : ios::fixed, ios::floatfield);
 
   for (i = 0; i < n; i++)
-    {
+  {
     this->MyGeom->GetPoint(i, v);
     //Convert the node ID to one-based
     fp << this->MyData->GetValue(i) + 1 << " " << v[0] << " " << v[1] << " " << v[2] << endl;
-    }
+  }
   return true;
 }
 
@@ -168,8 +162,7 @@ bool vtkCMBPt123PointsWriter::WriteFooter(ostream& fp)
 }
 
 //----------------------------------------------------------------------------
-int vtkCMBPt123PointsWriter::FillInputPortInformation(int,
-  vtkInformation *info)
+int vtkCMBPt123PointsWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
@@ -183,4 +176,3 @@ void vtkCMBPt123PointsWriter::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "UseScientificNotation = " << this->UseScientificNotation << endl;
   this->Superclass::PrintSelf(os, indent);
 }
-

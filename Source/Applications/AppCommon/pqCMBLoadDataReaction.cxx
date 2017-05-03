@@ -38,13 +38,14 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-pqCMBLoadDataReaction::pqCMBLoadDataReaction(QAction* parentObject,
-  bool multiFiles) : Superclass(parentObject), m_MultiFiles(multiFiles)
+pqCMBLoadDataReaction::pqCMBLoadDataReaction(QAction* parentObject, bool multiFiles)
+  : Superclass(parentObject)
+  , m_MultiFiles(multiFiles)
 {
   this->Internals = new cmbInternals;
   pqActiveObjects* activeObjects = &pqActiveObjects::instance();
-  QObject::connect(activeObjects, SIGNAL(serverChanged(pqServer*)),
-    this, SLOT(updateEnableState()));
+  QObject::connect(
+    activeObjects, SIGNAL(serverChanged(pqServer*)), this, SLOT(updateEnableState()));
   this->updateEnableState();
 }
 
@@ -57,10 +58,10 @@ pqCMBLoadDataReaction::~pqCMBLoadDataReaction()
 //-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::addSpecialExtensions(const QStringList& exts)
 {
-  foreach(QString ext, exts)
-    {
+  foreach (QString ext, exts)
+  {
     this->Internals->CMBSpecialExtensions << ext;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -77,13 +78,11 @@ void pqCMBLoadDataReaction::setPluginIOBehavior(pqPluginIOBehavior* pluginBhv)
   this->m_pluginBehavior = pluginBhv;
 }
 //-----------------------------------------------------------------------------
-QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(
-  bool& cancelled, QStringList& files)
+QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(bool& cancelled, QStringList& files)
 {
-  return pqCMBLoadDataReaction::loadData(cancelled, files,
-    this->m_fileTypes, this->m_programDir,
-    this->m_pluginBehavior, this->Internals->CMBSpecialExtensions,
-    this->m_MultiFiles, this->m_ReaderExtensionMap, this);
+  return pqCMBLoadDataReaction::loadData(cancelled, files, this->m_fileTypes, this->m_programDir,
+    this->m_pluginBehavior, this->Internals->CMBSpecialExtensions, this->m_MultiFiles,
+    this->m_ReaderExtensionMap, this);
 }
 
 //-----------------------------------------------------------------------------
@@ -91,119 +90,114 @@ void pqCMBLoadDataReaction::onTriggered()
 {
   bool cancelled = true;
   QStringList files;
-  if(this->loadData(cancelled, files).size() == 0 && !cancelled
-     && files.size() > 0)
-    {
+  if (this->loadData(cancelled, files).size() == 0 && !cancelled && files.size() > 0)
+  {
     // if the files are not handled here does not have proper readers,
     // fire a signal, so that applications have a chance to handle it.
     emit this->filesSelected(files);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 bool pqCMBLoadDataReaction::isSpecialExtension(const QStringList& files)
 {
-  return this->isSpecialExtension(
-    files, this->Internals->CMBSpecialExtensions);
+  return this->isSpecialExtension(files, this->Internals->CMBSpecialExtensions);
 }
 
 //-----------------------------------------------------------------------------
-bool pqCMBLoadDataReaction::isSpecialExtension(const QStringList& files,
-    const QStringList& specialExts)
+bool pqCMBLoadDataReaction::isSpecialExtension(
+  const QStringList& files, const QStringList& specialExts)
 {
-  if(files.size() == 0 || specialExts.size() == 0)
-    {
+  if (files.size() == 0 || specialExts.size() == 0)
+  {
     return false;
-    }
-  foreach(QString file, files)
-    {
+  }
+  foreach (QString file, files)
+  {
     QFileInfo finfo(file);
     QString s = finfo.completeSuffix().toLower();
-    foreach(QString filetype, specialExts)
-      {
+    foreach (QString filetype, specialExts)
+    {
       int idx = filetype.indexOf('(');
-      QString specialExt = filetype.mid(idx + 1, filetype.indexOf(')') - idx -1);
-      if(specialExt.contains(s, Qt::CaseInsensitive))
-        {
+      QString specialExt = filetype.mid(idx + 1, filetype.indexOf(')') - idx - 1);
+      if (specialExt.contains(s, Qt::CaseInsensitive))
+      {
         return true;
-        }
       }
     }
+  }
   return false;
 }
 
 //-----------------------------------------------------------------------------
-QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData( bool& cancelled,
-  QStringList& selfiles, const QString& fileTypes,
-  const QString& pgmDir, pqPluginIOBehavior* pluginBhv,
+QList<pqPipelineSource*> pqCMBLoadDataReaction::loadData(bool& cancelled, QStringList& selfiles,
+  const QString& fileTypes, const QString& pgmDir, pqPluginIOBehavior* pluginBhv,
   const QStringList& specialExts, bool multiFiles,
-  const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap,
-  pqCMBLoadDataReaction * reaction)
+  const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap, pqCMBLoadDataReaction* reaction)
 {
   pqServer* server = pqActiveObjects::instance().activeServer();
-  QString filters = pluginBhv ?
-    pluginBhv->supportedFileTypes(server->session()) : "";
+  QString filters = pluginBhv ? pluginBhv->supportedFileTypes(server->session()) : "";
   filters = filters.isEmpty() ? fileTypes : (filters + ";;" + fileTypes);
   // Added in special extensions that come in form bridge plugins, etc
-  foreach(QString filetype, specialExts)
-    {
+  foreach (QString filetype, specialExts)
+  {
     filters += ";;";
     filters += filetype;
-    }
-  pqCMBFileDialog fileDialog(server, pqCoreUtilities::mainWidget(),
-                             tr("Open File:"), pgmDir, filters);
-  if(reaction != NULL)
+  }
+  pqCMBFileDialog fileDialog(
+    server, pqCoreUtilities::mainWidget(), tr("Open File:"), pgmDir, filters);
+  if (reaction != NULL)
   {
-    connect(&fileDialog, SIGNAL(currentSelectedFilesChanged(QStringList const& )),
-            reaction, SLOT(getFileHeader( QStringList const&)));
-    connect(reaction, SIGNAL(fileheaders( QStringList const&)),
-            &fileDialog, SLOT(setMetadata(QStringList const& )));
+    connect(&fileDialog, SIGNAL(currentSelectedFilesChanged(QStringList const&)), reaction,
+      SLOT(getFileHeader(QStringList const&)));
+    connect(reaction, SIGNAL(fileheaders(QStringList const&)), &fileDialog,
+      SLOT(setMetadata(QStringList const&)));
   }
   fileDialog.setObjectName("FileOpenDialog");
-  fileDialog.setFileMode(multiFiles ? pqCMBFileDialog::ExistingFiles :
-                                      pqCMBFileDialog::ExistingFile);
+  fileDialog.setFileMode(
+    multiFiles ? pqCMBFileDialog::ExistingFiles : pqCMBFileDialog::ExistingFile);
   cancelled = true;
 
   QList<pqPipelineSource*> sources;
   if (fileDialog.exec() == QDialog::Accepted)
-    {
+  {
     cancelled = false;
     QList<QStringList> files = fileDialog.getAllSelectedFiles();
-    if(reaction && files.size() != 0)
-      {
+    if (reaction && files.size() != 0)
+    {
       reaction->sendMultiFileLoad();
-      }
+    }
     QStringList file;
-    foreach(file,files)
-      {
+    foreach (file, files)
+    {
       selfiles = file; // only get the last file
-      pqPipelineSource* source = pqCMBLoadDataReaction::openFiles(
-        file, specialExts, readerExtensionMap);
-      if(source)
-        {
-        sources << source;
-        }
-      }
-    if(reaction && files.size() != 0)
+      pqPipelineSource* source =
+        pqCMBLoadDataReaction::openFiles(file, specialExts, readerExtensionMap);
+      if (source)
       {
-      reaction->sendDoneMultiFileLoad();
+        sources << source;
       }
     }
+    if (reaction && files.size() != 0)
+    {
+      reaction->sendDoneMultiFileLoad();
+    }
+  }
   return sources;
 }
 
 void pqCMBLoadDataReaction::getFileHeader(QStringList const& files)
 {
   QStringList headers;
-  foreach(QString f, files)
+  foreach (QString f, files)
   {
     QFileInfo fi(f);
     std::string fs = f.toStdString();
-    if(fi.isFile())
+    if (fi.isFile())
     {
-      if(fi.suffix().toLower() == "las")
+      if (fi.suffix().toLower() == "las")
       {
-        vtkLASReader * l = vtkLASReader::New();
+        vtkLASReader* l = vtkLASReader::New();
         l->SetFileName(fs.c_str());
         std::string s = l->GetHeaderInfo();
         headers.append(s.c_str());
@@ -220,32 +214,30 @@ void pqCMBLoadDataReaction::getFileHeader(QStringList const& files)
 
 //-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBLoadDataReaction::openFiles(const QStringList& files,
-  const QStringList& specialExts,
-  const pqCMBLoadDataReaction::FileExtMap &readerExtensionMap)
+  const QStringList& specialExts, const pqCMBLoadDataReaction::FileExtMap& readerExtensionMap)
 {
-  if(pqCMBLoadDataReaction::isSpecialExtension(files, specialExts))
-    {
-//    emit pqApplicationCore::instance()->getObjectBuilder()->readerCreated(
-//      NULL, files[0]);
+  if (pqCMBLoadDataReaction::isSpecialExtension(files, specialExts))
+  {
+    //    emit pqApplicationCore::instance()->getObjectBuilder()->readerCreated(
+    //      NULL, files[0]);
     return NULL;
-    }
-  foreach(QString file, files)
-    {
+  }
+  foreach (QString file, files)
+  {
     QFileInfo finfo(file);
     QString s = finfo.completeSuffix().toLower();
-    if(readerExtensionMap.keys().contains(s))
-      {
-      return pqCMBLoadDataReaction::openFile(files,
-        readerExtensionMap[s].first,
-        readerExtensionMap[s].second);
-      }
+    if (readerExtensionMap.keys().contains(s))
+    {
+      return pqCMBLoadDataReaction::openFile(
+        files, readerExtensionMap[s].first, readerExtensionMap[s].second);
     }
+  }
 
   pqServer* server = pqActiveObjects::instance().activeServer();
-  if(files.size() > 0 && server)
-    {
+  if (files.size() > 0 && server)
+  {
     return pqLoadDataReaction::loadData(files);
-    }
+  }
   return NULL;
 }
 
@@ -253,44 +245,38 @@ pqPipelineSource* pqCMBLoadDataReaction::openFiles(const QStringList& files,
 pqPipelineSource* pqCMBLoadDataReaction::openFile(
   const QStringList& files, const QString& group, const QString& readername)
 {
-  pqObjectBuilder* builder =
-    pqApplicationCore::instance()->getObjectBuilder();
+  pqObjectBuilder* builder = pqApplicationCore::instance()->getObjectBuilder();
   pqServer* server = pqActiveObjects::instance().activeServer();
-  pqPipelineSource* reader = builder->createReader(group,
-    readername, files, server);
+  pqPipelineSource* reader = builder->createReader(group, readername, files, server);
   if (reader)
-    {
+  {
     // For now, just using ParaView's code. One can add support for new types
     // of recent-files items as needed, by creating a subclass of
     // pqRecentlyUsedResourceLoaderInterface, and registering that with the
     // pqInterfaceTracker.
-    pqCMBRecentlyUsedResourceLoaderImplementatation::
-        addDataFilesToRecentResources(server, files,
-                                      reader->getProxy()->GetXMLGroup(),
-                                      reader->getProxy()->GetXMLName());
-    }
+    pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFilesToRecentResources(
+      server, files, reader->getProxy()->GetXMLGroup(), reader->getProxy()->GetXMLName());
+  }
   return reader;
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBLoadDataReaction::addReaderExtensionMap(
-  const pqCMBLoadDataReaction::FileExtMap &readerMap)
+  const pqCMBLoadDataReaction::FileExtMap& readerMap)
 {
   QMapIterator<QString, QPair<QString, QString> > it(readerMap);
-  while(it.hasNext())
-    {
+  while (it.hasNext())
+  {
     it.next();
-    this->addReaderExtensionMap(
-      it.key(), it.value().first, it.value().second);
-    }
+    this->addReaderExtensionMap(it.key(), it.value().first, it.value().second);
+  }
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBLoadDataReaction::addReaderExtensionMap(const QString &fileext,
-  const QString &readergroup, const QString &readername)
+void pqCMBLoadDataReaction::addReaderExtensionMap(
+  const QString& fileext, const QString& readergroup, const QString& readername)
 {
-  m_ReaderExtensionMap.insert(fileext, QPair<QString, QString>(
-                              readergroup, readername));
+  m_ReaderExtensionMap.insert(fileext, QPair<QString, QString>(readergroup, readername));
 }
 
 void pqCMBLoadDataReaction::sendMultiFileLoad()

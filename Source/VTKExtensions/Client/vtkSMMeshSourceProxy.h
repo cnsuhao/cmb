@@ -18,13 +18,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy
 
-
 #ifndef __vtkSMMeshSourceProxy_h
 #define __vtkSMMeshSourceProxy_h
 
-#include "vtkSMDataSourceProxy.h"
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkSMDataSourceProxy.h"
 
 class VTKCMBCLIENT_EXPORT vtkSMMeshSourceProxy : public vtkSMDataSourceProxy
 {
@@ -36,17 +35,17 @@ public:
   // Description:
   // Modify the mesh according to the transformed moved input proxy
   // Return true on success; false on failure.
-  bool MovePoints(vtkSMProxy *movedProxy, vtkSMProxy* transformProxy);
+  bool MovePoints(vtkSMProxy* movedProxy, vtkSMProxy* transformProxy);
 
-//BTX
+  //BTX
 protected:
   vtkSMMeshSourceProxy();
   ~vtkSMMeshSourceProxy() override;
 
 private:
   vtkSMMeshSourceProxy(const vtkSMMeshSourceProxy&); // Not implemented
-  void operator=(const vtkSMMeshSourceProxy&); // Not implemented
-//ETX
+  void operator=(const vtkSMMeshSourceProxy&);       // Not implemented
+  //ETX
 };
 
 #endif

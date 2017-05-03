@@ -18,34 +18,32 @@
 class VTKCMBFILTERING_EXPORT vtkCMBWatershedFilter : public vtkImageAlgorithm
 {
 public:
-  static vtkCMBWatershedFilter *New();
-  vtkTypeMacro(vtkCMBWatershedFilter,vtkImageAlgorithm);
+  static vtkCMBWatershedFilter* New();
+  vtkTypeMacro(vtkCMBWatershedFilter, vtkImageAlgorithm);
 
-  vtkSetMacro(ForegroundValue,int);
-  vtkGetMacro(ForegroundValue,int);
+  vtkSetMacro(ForegroundValue, int);
+  vtkGetMacro(ForegroundValue, int);
 
-  vtkSetMacro(BackgroundValue,int);
-  vtkGetMacro(BackgroundValue,int);
+  vtkSetMacro(BackgroundValue, int);
+  vtkGetMacro(BackgroundValue, int);
 
-  vtkSetMacro(UnlabeledValue,int);
-  vtkGetMacro(UnlabeledValue,int);
+  vtkSetMacro(UnlabeledValue, int);
+  vtkGetMacro(UnlabeledValue, int);
 
 protected:
-
   int ForegroundValue;
   int BackgroundValue;
   int UnlabeledValue;
 
   vtkCMBWatershedFilter();
 
-  int FillOutputPortInformation(int port, vtkInformation *info) override;
+  int FillOutputPortInformation(int port, vtkInformation* info) override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkCMBWatershedFilter(const vtkCMBWatershedFilter&);  // Not implemented.
-  void operator=(const vtkCMBWatershedFilter&);  // Not implemented.
+  vtkCMBWatershedFilter(const vtkCMBWatershedFilter&); // Not implemented.
+  void operator=(const vtkCMBWatershedFilter&);        // Not implemented.
 };
 
 #endif

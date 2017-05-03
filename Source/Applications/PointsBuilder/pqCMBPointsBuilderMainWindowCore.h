@@ -11,18 +11,18 @@
 #ifndef _pqCMBPointsBuilderMainWindowCore_h
 #define _pqCMBPointsBuilderMainWindowCore_h
 
+#include "cmbSystemConfig.h"
 #include "pqCMBCommonMainWindowCore.h"
 #include "pqVariableType.h"
-#include "cmbSystemConfig.h"
 
 #include <vtkIOStream.h>
 
-#include <QObject>
-#include <QWidget>
-#include <QPointer>
 #include <QList>
-#include <string>
+#include <QObject>
+#include <QPointer>
+#include <QWidget>
 #include <list>
+#include <string>
 
 #include "pqCMBModifierArc.h"
 
@@ -51,7 +51,7 @@ class pqCMBLIDARTerrainExtractionManager;
 class qtArcWidget;
 class pqCMBLoadDataReaction;
 
-class pqCMBPointsBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
+class pqCMBPointsBuilderMainWindowCore : public pqCMBCommonMainWindowCore
 {
   typedef pqCMBCommonMainWindowCore Superclass;
   Q_OBJECT
@@ -68,9 +68,8 @@ public:
   QWidget* getControlPanel();
   void updateSelection(pqOutputPort* selPort);
   void setupProgressBar(QStatusBar*) override;
-  pqCMBLIDARTerrainExtractionManager *getTerrainExtractionManager();
-  pqCMBLIDARReaderManager *getReaderManager()
-    { return this->ReaderManager; }
+  pqCMBLIDARTerrainExtractionManager* getTerrainExtractionManager();
+  pqCMBLIDARReaderManager* getReaderManager() { return this->ReaderManager; }
 
   void startMultiFileRead();
   void endMultiFileRead();
@@ -83,7 +82,7 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  void onServerCreationFinished(pqServer *server) override;
+  void onServerCreationFinished(pqServer* server) override;
 
   virtual void onOpenMoreFiles(pqCMBLoadDataReaction*);
 
@@ -92,7 +91,7 @@ public slots:
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
   void onReaderForFilesCreated(pqPipelineSource*, const QStringList&);
- 
+
   // Resets the center of rotation to the center of the active
   // source in the active view.
   void resetCenterOfRotationToCenterOfCurrentData() override;
@@ -162,10 +161,9 @@ private slots:
   void onRenderRequested();
   void onThresholdSelectionChanged();
   void onThresholdItemChanged(QTableWidgetItem*);
-  void onPolygonItemChanged(QList<QTreeWidgetItem*>, int , int);
+  void onPolygonItemChanged(QList<QTreeWidgetItem*>, int, int);
   void onPolygonTableSelectionChanged(QTreeWidgetItem*);
-  void onPolygonTreeItemsDropped(QTreeWidgetItem* toGroup,
-    int fromGroup, QList<QTreeWidgetItem*> );
+  void onPolygonTreeItemsDropped(QTreeWidgetItem* toGroup, int fromGroup, QList<QTreeWidgetItem*>);
   void onPolygonItemRemoved(QList<qtArcWidget*>);
 
   void onUpdateContours();
@@ -177,8 +175,8 @@ private slots:
   void onModifierArcWidgetFinish();
   //slot for dealing with changes to preferences
   void onDefaultMaxNumberOfTargetPointsChanged();
-private:
 
+private:
   void saveContour(const char* filename);
   void loadContour(const char* filename);
   void clearCurrentLIDARData();
@@ -198,42 +196,37 @@ private:
   int calculateOnRatioForPiece(int onRatio, int numberOfPointsInPiece);
   int getMinimumNumberOfPointsPerPiece();
 
-  int onSavePieces(int onRatio, bool askMultiOutput=true);
+  int onSavePieces(int onRatio, bool askMultiOutput = true);
 
   void unselectCheckBoxes();
 
   bool generateAndValidateOutFileNames(
-    QList<pqCMBLIDARPieceObject*> pieces,
-    const QString& filename, QList<QString>& outFiles);
-  bool ExportDem(QList<pqPipelineSource*> pieces,
-                 const QString& writerName, const QString& fileName);
-  bool WritePiece(pqPipelineSource* source, const QString& writerName,
-    const QString& fileName);
-  bool WritePieces(QList<pqPipelineSource*> pieces,
-    const QString& writerName, const QString& fileName, bool writeAsSinglePiece);
+    QList<pqCMBLIDARPieceObject*> pieces, const QString& filename, QList<QString>& outFiles);
+  bool ExportDem(
+    QList<pqPipelineSource*> pieces, const QString& writerName, const QString& fileName);
+  bool WritePiece(pqPipelineSource* source, const QString& writerName, const QString& fileName);
+  bool WritePieces(QList<pqPipelineSource*> pieces, const QString& writerName,
+    const QString& fileName, bool writeAsSinglePiece);
   bool WriteFile(const QString& fileName);
 
   void hideDisplayPanelPartialComponents();
-  void updatePieceRepresentations(QList<pqCMBLIDARPieceObject*> pieces,
-    bool forceRead = false);
+  void updatePieceRepresentations(QList<pqCMBLIDARPieceObject*> pieces, bool forceRead = false);
   void enableButtons(bool enabled);
-  void updateLoadAndUpdateButtons(bool shouldUpdateFocus = true,
-    bool focusOnTableIfRowIsSelected = false);
+  void updateLoadAndUpdateButtons(
+    bool shouldUpdateFocus = true, bool focusOnTableIfRowIsSelected = false);
   void updateFocus(bool focusOnTableIfRowIsSelected = false);
   void updateZoomAndClearState();
   void updatePointTotals();
 
-  pqCMBLIDARPieceTable *getLIDARPieceTable();
-  bool savePieces(
-    QList<pqCMBLIDARPieceObject*> pieces, const QString& filename,
-    bool saveAsSinglePiece, bool loadAsDisplayed,
-    bool multiOutput = false);
+  pqCMBLIDARPieceTable* getLIDARPieceTable();
+  bool savePieces(QList<pqCMBLIDARPieceObject*> pieces, const QString& filename,
+    bool saveAsSinglePiece, bool loadAsDisplayed, bool multiOutput = false);
 
-  void updateContourSource(vtkSMSourceProxy* contourSource,
-    vtkSMSourceProxy* currentContours, bool forceUpdate);
-  void updateThresholdSource(vtkSMSourceProxy* thresholdSource,
-    vtkSMSourceProxy* currentThresholds, bool forceUpdate);
-  bool updateThresholdTransform(pqCMBLIDARPieceObject *dataObj);
+  void updateContourSource(
+    vtkSMSourceProxy* contourSource, vtkSMSourceProxy* currentContours, bool forceUpdate);
+  void updateThresholdSource(
+    vtkSMSourceProxy* thresholdSource, vtkSMSourceProxy* currentThresholds, bool forceUpdate);
+  bool updateThresholdTransform(pqCMBLIDARPieceObject* dataObj);
 
   void initThresholdTable();
   void initPolygonsTree();
@@ -244,18 +237,15 @@ private:
   void clearContourFilters();
   pqCMBArcTreeItem* getContourGroupNodeWithId(int id);
   int getContourGroupIdWithNode(QTreeWidgetItem* node);
-  int getContourGroupIdWithContour(
-    qtArcWidget* contourWidget);
-  QTreeWidgetItem* addContourNode(qtArcWidget* contourW,
-    int orthoPlane);
+  int getContourGroupIdWithContour(qtArcWidget* contourWidget);
+  QTreeWidgetItem* addContourNode(qtArcWidget* contourW, int orthoPlane);
   class vtkInternal;
   vtkInternal* const Internal;
-  pqCMBLIDARReaderManager *ReaderManager;
-  pqCMBLIDARTerrainExtractionManager *TerrainExtractionManager;
+  pqCMBLIDARReaderManager* ReaderManager;
+  pqCMBLIDARTerrainExtractionManager* TerrainExtractionManager;
 
-  std::vector<pqCMBModifierArc *> pqCMBModifierArcs;
-  qtArcWidget* createArcWidget( int normal, double position );
+  std::vector<pqCMBModifierArc*> pqCMBModifierArcs;
+  qtArcWidget* createArcWidget(int normal, double position);
 };
-
 
 #endif // !_pqCMBPointsBuilderMainWindowCore_h

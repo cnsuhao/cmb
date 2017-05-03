@@ -16,10 +16,10 @@
 #define __vtkPVSMTKMeshInformation_h
 
 #include "ModelBridgeClientModule.h"
-#include "vtkPVInformation.h"
-#include <string>
-#include <map>
 #include "smtk/mesh/MeshSet.h"
+#include "vtkPVInformation.h"
+#include <map>
+#include <string>
 
 class MODELBRIDGECLIENT_EXPORT vtkPVSMTKMeshInformation : public vtkPVInformation
 {
@@ -36,24 +36,26 @@ public:
   // Merge another information object. Calls AddInformation(info, 0).
   void AddInformation(vtkPVInformation* info) override;
 
-  void CopyToStream(vtkClientServerStream*) override{;}
-  void CopyFromStream(const vtkClientServerStream*) override{;}
+  void CopyToStream(vtkClientServerStream*) override { ; }
+  void CopyFromStream(const vtkClientServerStream*) override { ; }
 
   // Description:
   // return the blockid given a meshet.
   // Caution: This will be slow if there are many blocks in the mesh
   virtual bool GetBlockId(const smtk::mesh::MeshSet& mesh, unsigned int& bid);
   // return the meshset given a blockid.
-  // Caution: There is no valid check for this for performance reason  
-  virtual const smtk::mesh::MeshSet&  GetMeshSet(unsigned int bid);
+  // Caution: There is no valid check for this for performance reason
+  virtual const smtk::mesh::MeshSet& GetMeshSet(unsigned int bid);
 
-  virtual const smtk::common::UUID&  GetModelUUID();
-  virtual const smtk::common::UUID&  GetMeshCollectionID();
+  virtual const smtk::common::UUID& GetModelUUID();
+  virtual const smtk::common::UUID& GetMeshCollectionID();
 
   // Description:
   // return Mesh to BlockId map for all blocks
   const std::map<smtk::mesh::MeshSet, unsigned int>& GetMesh2BlockIdMap() const
-  { return this->Mesh2BlockIdMap; }
+  {
+    return this->Mesh2BlockIdMap;
+  }
 
 protected:
   vtkPVSMTKMeshInformation();
@@ -65,10 +67,8 @@ protected:
   smtk::common::UUID m_MeshCollectionId;
 
 private:
-
   vtkPVSMTKMeshInformation(const vtkPVSMTKMeshInformation&); // Not implemented
-  void operator=(const vtkPVSMTKMeshInformation&); // Not implemented
-
+  void operator=(const vtkPVSMTKMeshInformation&);           // Not implemented
 };
 
 #endif

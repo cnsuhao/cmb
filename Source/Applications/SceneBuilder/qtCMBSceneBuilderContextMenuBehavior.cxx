@@ -14,30 +14,28 @@
 #include "pqPipelineRepresentation.h"
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
+#include "pqSMAdaptor.h"
 #include "pqServerManagerModel.h"
 #include "pqSetName.h"
-#include "pqSMAdaptor.h"
 #include "vtkSMProxy.h"
 
 #include "pqCMBSceneNode.h"
 #include "pqCMBSceneTree.h"
+#include <QAction>
+#include <QMenu>
+#include <QMouseEvent>
+#include <QRegExp>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QWidget>
-#include <QMenu>
-#include <QAction>
-#include <QMouseEvent>
-#include <QRegExp>
 
 //-----------------------------------------------------------------------------
-qtCMBSceneBuilderContextMenuBehavior::qtCMBSceneBuilderContextMenuBehavior(pqCMBSceneTree *tree,
-                                                   QObject* parentObject):
-Superclass(parentObject)
+qtCMBSceneBuilderContextMenuBehavior::qtCMBSceneBuilderContextMenuBehavior(
+  pqCMBSceneTree* tree, QObject* parentObject)
+  : Superclass(parentObject)
 {
-  QObject::connect(
-    pqApplicationCore::instance()->getServerManagerModel(),
-    SIGNAL(viewAdded(pqView*)),
-    this, SLOT(onViewAdded(pqView*)));
+  QObject::connect(pqApplicationCore::instance()->getServerManagerModel(),
+    SIGNAL(viewAdded(pqView*)), this, SLOT(onViewAdded(pqView*)));
   this->Tree = tree;
 }
 
@@ -51,38 +49,37 @@ qtCMBSceneBuilderContextMenuBehavior::~qtCMBSceneBuilderContextMenuBehavior()
 void qtCMBSceneBuilderContextMenuBehavior::onViewAdded(pqView* view)
 {
   if (view && view->getProxy()->IsA("vtkSMRenderViewProxy"))
-    {
+  {
     // add a link view menu
     view->widget()->installEventFilter(this);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 bool qtCMBSceneBuilderContextMenuBehavior::eventFilter(QObject* caller, QEvent* e)
 {
   if (e->type() == QEvent::MouseButtonPress)
-    {
+  {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
     if (me->button() & Qt::RightButton)
-      {
-      this->Position = me->pos();
-      }
-    }
-  else if (e->type() == QEvent::MouseButtonRelease)
     {
+      this->Position = me->pos();
+    }
+  }
+  else if (e->type() == QEvent::MouseButtonRelease)
+  {
     QMouseEvent* me = static_cast<QMouseEvent*>(e);
     if (me->button() & Qt::RightButton && !this->Position.isNull())
-      {
+    {
       QPoint newPos = static_cast<QMouseEvent*>(e)->pos();
       QPoint delta = newPos - this->Position;
       QWidget* senderWidget = qobject_cast<QWidget*>(caller);
       if (delta.manhattanLength() < 3 && senderWidget != NULL)
-        {
-        pqRenderView* view = qobject_cast<pqRenderView*>(
-          pqActiveObjects::instance().activeView());
+      {
+        pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
         if (view)
-          {
-          int pos[2] = { newPos.x(), newPos.y() } ;
+        {
+          int pos[2] = { newPos.x(), newPos.y() };
           // we need to flip Y.
           int height = senderWidget->size().height();
           pos[1] = height - pos[1];
@@ -90,14 +87,14 @@ bool qtCMBSceneBuilderContextMenuBehavior::eventFilter(QObject* caller, QEvent* 
 
           this->PickedRepresentation = picked_repr;
           if (picked_repr)
-            {
+          {
             this->buildMenu(senderWidget->mapToGlobal(newPos));
-            }
           }
         }
-      this->Position = QPoint();
       }
+      this->Position = QPoint();
     }
+  }
 
   return Superclass::eventFilter(caller, e);
 }
@@ -109,25 +106,25 @@ void qtCMBSceneBuilderContextMenuBehavior::buildMenu(QPoint position)
     qobject_cast<pqPipelineRepresentation*>(this->PickedRepresentation);
 
   if (!pipelineRepr)
-    {
+  {
     return;
-    }
+  }
 
-  pqPipelineSource *source = pipelineRepr->getInput();
+  pqPipelineSource* source = pipelineRepr->getInput();
   if (!source)
-    {
+  {
     return;
-    }
-  pqCMBSceneNode *node = this->Tree->findNode(source);
+  }
+  pqCMBSceneNode* node = this->Tree->findNode(source);
   if (!node)
-    {
+  {
     return;
-    }
+  }
 
   if (!this->Tree)
-    {
+  {
     return;
-    }
+  }
 
   //remove the current selection
   this->Tree->clearSelection();

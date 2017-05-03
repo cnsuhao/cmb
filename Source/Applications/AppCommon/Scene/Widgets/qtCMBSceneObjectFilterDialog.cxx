@@ -13,13 +13,13 @@
 
 #include "qtCMBSceneObjectFilterDialog.h"
 
-#include "ui_qtCMBSceneObjectFilterDialog.h"
-#include "pqCMBSceneObjectBase.h"
-#include <QMessageBox>
-#include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
-#include <QDoubleValidator>
+#include "pqCMBSceneObjectBase.h"
+#include "pqCMBSceneTree.h"
+#include "ui_qtCMBSceneObjectFilterDialog.h"
 #include "vtkBoundingBox.h"
+#include <QDoubleValidator>
+#include <QMessageBox>
 
 //-----------------------------------------------------------------------------
 qtCMBSceneObjectFilterDialog::qtCMBSceneObjectFilterDialog(QWidget* /*parent*/)
@@ -27,45 +27,40 @@ qtCMBSceneObjectFilterDialog::qtCMBSceneObjectFilterDialog(QWidget* /*parent*/)
   this->FilterDialog = new Ui::qtqtCMBSceneObjectFilterDialog();
   this->FilterDialog->setupUi(this);
 
-  this->BoundsValidator = new QDoubleValidator(
-    this->FilterDialog->groupBox_Bounds);
+  this->BoundsValidator = new QDoubleValidator(this->FilterDialog->groupBox_Bounds);
   this->FilterDialog->X1->setValidator(this->BoundsValidator);
   this->FilterDialog->X2->setValidator(this->BoundsValidator);
   this->FilterDialog->Y1->setValidator(this->BoundsValidator);
   this->FilterDialog->Y2->setValidator(this->BoundsValidator);
   this->FilterDialog->Z1->setValidator(this->BoundsValidator);
   this->FilterDialog->Z2->setValidator(this->BoundsValidator);
-
 }
 
 //-----------------------------------------------------------------------------
 qtCMBSceneObjectFilterDialog::~qtCMBSceneObjectFilterDialog()
 {
   if (this->FilterDialog)
-    {
+  {
     delete FilterDialog;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBSceneObjectFilterDialog::accept()
 {
-  if(this->FilterDialog->listObjectTypes->selectedItems().count()==0)
-    {
-    QMessageBox::warning(this,
-      "No Object Types Selected!",
-      "At least one object type has to be selected!");
+  if (this->FilterDialog->listObjectTypes->selectedItems().count() == 0)
+  {
+    QMessageBox::warning(
+      this, "No Object Types Selected!", "At least one object type has to be selected!");
     return;
-    }
+  }
   double bounds[6];
   this->getBounds(bounds);
-  if(this->getUseBoundsConstraint() && !vtkBoundingBox::IsValid(bounds))
-    {
-    QMessageBox::warning(this,
-      "Bounds are not valid!",
-      "The Bounds have to set properly!");
+  if (this->getUseBoundsConstraint() && !vtkBoundingBox::IsValid(bounds))
+  {
+    QMessageBox::warning(this, "Bounds are not valid!", "The Bounds have to set properly!");
     return;
-    }
+  }
   this->Superclass::accept();
 }
 
@@ -99,12 +94,11 @@ void qtCMBSceneObjectFilterDialog::setObjectTypes(QStringList& objTypes)
 void qtCMBSceneObjectFilterDialog::getSelectedObjectTypes(QStringList& objTypes)
 {
   objTypes.clear();
-  QList<QListWidgetItem*> idxs = this->FilterDialog->
-    listObjectTypes->selectedItems();
+  QList<QListWidgetItem*> idxs = this->FilterDialog->listObjectTypes->selectedItems();
   for (int i = 0; i < idxs.count(); i++)
-    {
+  {
     objTypes.append(idxs.value(i)->text());
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

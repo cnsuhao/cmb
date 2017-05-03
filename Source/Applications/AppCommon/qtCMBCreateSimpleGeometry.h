@@ -14,11 +14,14 @@
 #define _qtCMBCreateSimpleGeometry_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QDialog>
 #include <vector>
-#include "cmbSystemConfig.h"
 
-namespace Ui { class qtCMBCreateSimpleGeometry; }
+namespace Ui
+{
+class qtCMBCreateSimpleGeometry;
+}
 
 class QPixmap;
 

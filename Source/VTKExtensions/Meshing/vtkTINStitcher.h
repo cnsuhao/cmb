@@ -25,9 +25,9 @@
 #ifndef __vtkTINStitcher_h
 #define __vtkTINStitcher_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkPointSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 #include <vector>
 
 class vtkCellArray;
@@ -38,14 +38,14 @@ struct triangulateio; // for Triangle
 class VTKCMBMESHING_EXPORT vtkTINStitcher : public vtkPointSetAlgorithm
 {
 public:
-  vtkTypeMacro(vtkTINStitcher,vtkPointSetAlgorithm);
+  vtkTypeMacro(vtkTINStitcher, vtkPointSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
-  static vtkTINStitcher *New();
+  static vtkTINStitcher* New();
 
   // Description:
   // Set 2nd input input to the filter (required)
-  void Set2ndInputData(vtkUnstructuredGrid *input);
-  void Set2ndInputData(vtkPolyData *input);
+  void Set2ndInputData(vtkUnstructuredGrid* input);
+  void Set2ndInputData(vtkPolyData* input);
   void Set2ndInputConnection(vtkAlgorithmOutput* algOutput);
 
   // Description:
@@ -98,15 +98,15 @@ protected:
   ~vtkTINStitcher();
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int FillInputPortInformation(int, vtkInformation *);
-  virtual int FillOutputPortInformation(int, vtkInformation *);
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+  virtual int FillInputPortInformation(int, vtkInformation*);
+  virtual int FillOutputPortInformation(int, vtkInformation*);
 
 private:
-  vtkTINStitcher(const vtkTINStitcher&);  // Not implemented.
-  void operator=(const vtkTINStitcher&);  // Not implemented.
+  vtkTINStitcher(const vtkTINStitcher&); // Not implemented.
+  void operator=(const vtkTINStitcher&); // Not implemented.
 
-  bool   UseQuads;
+  bool UseQuads;
   double MinimumAngle;
   bool AllowInteriorPointInsertion;
   double Tolerance;
@@ -116,55 +116,51 @@ private:
   double MaxDistance;
   double MaxDistance2;
 
-  vtkCellArray *LoopLines;
+  vtkCellArray* LoopLines;
 #ifndef __WRAP__
-  vtkIdTypeArray *(LoopCorners[2]);
+  vtkIdTypeArray*(LoopCorners[2]);
 #endif
-  vtkPolyData *AppendedPolyData;
-  vtkPolyData *PreppedStitchingInput;
+  vtkPolyData* AppendedPolyData;
+  vtkPolyData* PreppedStitchingInput;
   vtkIdType LoopNPts[2];
 #ifndef __WRAP__
-  vtkIdType *(LoopPts[2]);
+  vtkIdType*(LoopPts[2]);
 #endif
 
   bool AreInputsOK();
 
   int PrepInputsForStitching();
 
-  void FindPolyLineCorners(vtkPolyData *input, vtkIdType npts,
-    vtkIdType *pts, vtkIdTypeArray *corners, double maxDistance2);
+  void FindPolyLineCorners(vtkPolyData* input, vtkIdType npts, vtkIdType* pts,
+    vtkIdTypeArray* corners, double maxDistance2);
 
   int SetupToStitchAsType1();
   int SetupToStitchUsingAutoDetect(double maxDistance, double maxDistance2);
 
-  int ReorderPolyLine(vtkCellArray *newLines, vtkIdTypeArray *corners,
-    vtkIdType npts, vtkIdType *pts, vtkIdType startCorner);
-
+  int ReorderPolyLine(vtkCellArray* newLines, vtkIdTypeArray* corners, vtkIdType npts,
+    vtkIdType* pts, vtkIdType startCorner);
 
   void MapLoopLinesToAppendedData();
 
-  void CreateQuadStitching(vtkPolyData *outputPD);
+  void CreateQuadStitching(vtkPolyData* outputPD);
 
-  void CreateTriStitching(vtkPolyData *outputPD);
+  void CreateTriStitching(vtkPolyData* outputPD);
 
-  void ProcessSegmentWithTriangle(vtkPolyData *outputPD,
-    vtkIdType startCornerIndex, vtkIdTypeArray *side0ExtraPoints,
-    vtkIdTypeArray *side1ExtraPoints);
+  void ProcessSegmentWithTriangle(vtkPolyData* outputPD, vtkIdType startCornerIndex,
+    vtkIdTypeArray* side0ExtraPoints, vtkIdTypeArray* side1ExtraPoints);
 
-  void SetupPointsForTriangle(triangulateio &input,
-    vtkTransform *ptTransform, vtkPolyData *outputPD, vtkIdType startCornerIndex,
-    vtkIdTypeArray *sidePoints0, vtkIdTypeArray *sidePoints1,
-    int &numberOfPointsInLoop0Segment, int &numberOfPointsInLoop1Segment,
-    bool &loop0HasGreaterZ, std::vector<vtkIdType> &triangleToPD);
+  void SetupPointsForTriangle(triangulateio& input, vtkTransform* ptTransform,
+    vtkPolyData* outputPD, vtkIdType startCornerIndex, vtkIdTypeArray* sidePoints0,
+    vtkIdTypeArray* sidePoints1, int& numberOfPointsInLoop0Segment,
+    int& numberOfPointsInLoop1Segment, bool& loop0HasGreaterZ,
+    std::vector<vtkIdType>& triangleToPD);
 
-  void SetupSegmentsForTriangle(triangulateio &input,
-    int numberOfPointsInLoop0Segment, int numberOfPointsInLoop1Segment,
-    vtkIdTypeArray *sidePoints0, vtkIdTypeArray *sidePoints1);
+  void SetupSegmentsForTriangle(triangulateio& input, int numberOfPointsInLoop0Segment,
+    int numberOfPointsInLoop1Segment, vtkIdTypeArray* sidePoints0, vtkIdTypeArray* sidePoints1);
 
-  void SetupSidePoints(double *pointList, int inputNumberOfPoints,
-    int outputNumberOfPoints, double *startPt, double *endPt,
-    std::vector<vtkIdType> &triangleToPD, vtkIdTypeArray *sidePoints,
-    bool fillDescending);
+  void SetupSidePoints(double* pointList, int inputNumberOfPoints, int outputNumberOfPoints,
+    double* startPt, double* endPt, std::vector<vtkIdType>& triangleToPD,
+    vtkIdTypeArray* sidePoints, bool fillDescending);
 
   //ETX
 };

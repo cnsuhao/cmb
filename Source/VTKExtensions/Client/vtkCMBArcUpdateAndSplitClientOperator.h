@@ -20,13 +20,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkCMBArcUpdateOperator vtkCMBArcSplitOnIndexOperator
 
-
 #ifndef __vtkCMBArcUpdateAndSplitClientOperator_h
 #define __vtkCMBArcUpdateAndSplitClientOperator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkSMSourceProxy.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdTypeArray;
 class vtkSMTKArcRepresentation;
@@ -42,26 +41,26 @@ public:
 
   // Description:
   // Update
-  virtual bool Operate( vtkIdType arcId, vtkSMNewWidgetRepresentationProxy *widgetProxy);
+  virtual bool Operate(vtkIdType arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy);
 
-  vtkGetObjectMacro(CreatedArcs,vtkIdTypeArray);
+  vtkGetObjectMacro(CreatedArcs, vtkIdTypeArray);
+
 protected:
   vtkCMBArcUpdateAndSplitClientOperator();
   ~vtkCMBArcUpdateAndSplitClientOperator() override;
 
-  bool FindArcsInWidgetOutput(vtkSMTKArcRepresentation *widgetRep);
-  bool UpdateOperation(const vtkIdType& arcId,
-                       vtkSMNewWidgetRepresentationProxy *widgetProxy,
-                       vtkSMTKArcRepresentation *widgetRep);
-  bool SplitOperation(const vtkIdType& arcId,
-                      vtkSMTKArcRepresentation *widgetRep);
+  bool FindArcsInWidgetOutput(vtkSMTKArcRepresentation* widgetRep);
+  bool UpdateOperation(const vtkIdType& arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy,
+    vtkSMTKArcRepresentation* widgetRep);
+  bool SplitOperation(const vtkIdType& arcId, vtkSMTKArcRepresentation* widgetRep);
 
   vtkIdTypeArray* CreatedArcs;
   class InternalInfo;
-  InternalInfo *Info;
+  InternalInfo* Info;
 
 private:
-  vtkCMBArcUpdateAndSplitClientOperator(const vtkCMBArcUpdateAndSplitClientOperator&); // Not implemented
+  vtkCMBArcUpdateAndSplitClientOperator(
+    const vtkCMBArcUpdateAndSplitClientOperator&);              // Not implemented
   void operator=(const vtkCMBArcUpdateAndSplitClientOperator&); // Not implemented
 };
 

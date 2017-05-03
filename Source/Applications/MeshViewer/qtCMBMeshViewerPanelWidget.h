@@ -16,13 +16,16 @@
 #ifndef __qtCMBMeshViewerPanelWidget_h
 #define __qtCMBMeshViewerPanelWidget_h
 
-#include <QWidget>
-#include <QPoint>
 #include "cmbSystemConfig.h"
+#include <QPoint>
+#include <QWidget>
 class QIcon;
 class QAction;
 
-namespace Ui { class qtMeshViewerPanel; }
+namespace Ui
+{
+class qtMeshViewerPanel;
+}
 
 class qtCMBMeshViewerPanelWidgetInternal;
 
@@ -31,7 +34,7 @@ class qtCMBMeshViewerPanelWidget : public QWidget
   Q_OBJECT
 
 public:
-  qtCMBMeshViewerPanelWidget(QWidget* parent=0);
+  qtCMBMeshViewerPanelWidget(QWidget* parent = 0);
   ~qtCMBMeshViewerPanelWidget() override;
 
   Ui::qtMeshViewerPanel* getGUIPanel();
@@ -47,11 +50,10 @@ public:
 signals:
 
 public slots:
-  void showContextMenu(const QPoint &);
+  void showContextMenu(const QPoint&);
 private slots:
 
 private:
   qtCMBMeshViewerPanelWidgetInternal* Internal;
-
 };
 #endif

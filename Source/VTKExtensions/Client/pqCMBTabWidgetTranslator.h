@@ -22,13 +22,12 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class VTKCMBCLIENT_EXPORT pqCMBTabWidgetTranslator :
-  public pqWidgetEventTranslator
+class VTKCMBCLIENT_EXPORT pqCMBTabWidgetTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
 
 public:
-  pqCMBTabWidgetTranslator(QObject* p=0);
+  pqCMBTabWidgetTranslator(QObject* p = 0);
 
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
@@ -40,7 +39,6 @@ private:
   pqCMBTabWidgetTranslator& operator=(const pqCMBTabWidgetTranslator&);
 
   QPointer<QTabBar> CurrentObject;
-
 };
 
 #endif // !_pqCMBTabWidgetTranslator_h

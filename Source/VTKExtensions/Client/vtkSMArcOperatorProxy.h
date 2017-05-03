@@ -14,9 +14,9 @@
 #ifndef __vtkSMArcOperatorProxy_h
 #define __vtkSMArcOperatorProxy_h
 
-#include "vtkSMProxy.h"
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkSMProxy.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 class vtkSMOutputPort;
@@ -68,7 +68,7 @@ protected:
 
 private:
   vtkSMArcOperatorProxy(const vtkSMArcOperatorProxy&); // Not implemented
-  void operator=(const vtkSMArcOperatorProxy&); // Not implemented
+  void operator=(const vtkSMArcOperatorProxy&);        // Not implemented
 };
 
 #endif

@@ -10,19 +10,19 @@
 #ifndef __pqCMBModifierArc_h
 #define __pqCMBModifierArc_h
 
-#include <QObject>
 #include <QAbstractItemView>
+#include <QObject>
 #include <fstream>
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 
-#include "vtkDataObject.h"
 #include "vtkBoundingBox.h"
+#include "vtkDataObject.h"
 
 #include "cmbAppCommonExport.h"
-#include "cmbSystemConfig.h"
 #include "cmbProfileFunction.h"
+#include "cmbSystemConfig.h"
 
 class qtCMBArcEditWidget;
 class qtCMBArcWidgetManager;
@@ -31,7 +31,7 @@ class pqPipelineSource;
 class vtkPiecewiseFunction;
 class vtkSMSourceProxy;
 
-class CMBAPPCOMMON_EXPORT pqCMBModifierArc :  public QObject
+class CMBAPPCOMMON_EXPORT pqCMBModifierArc : public QObject
 {
   Q_OBJECT
 
@@ -39,15 +39,22 @@ private:
   struct profileFunctionWrapper;
 
 public:
-  enum FunctionMode{Single = 0, EndPoints = 1, PointAssignment = 2};
+  enum FunctionMode
+  {
+    Single = 0,
+    EndPoints = 1,
+    PointAssignment = 2
+  };
   struct pointFunctionWrapper
   {
     friend class pqCMBModifierArc;
+
   private:
     profileFunctionWrapper const* function;
     vtkIdType ptId;
     vtkIdType pointIndex;
     void setFunction(profileFunctionWrapper const* f);
+
   public:
     pointFunctionWrapper(pointFunctionWrapper const& other);
     void operator=(pointFunctionWrapper const& other);
@@ -58,53 +65,55 @@ public:
     vtkIdType getPointId() const;
     vtkIdType getPointIndex() const;
   };
-  enum RangeLable{ MIN = 0, MAX = 1};
+  enum RangeLable
+  {
+    MIN = 0,
+    MAX = 1
+  };
   pqCMBModifierArc();
-  pqCMBModifierArc(vtkSMSourceProxy *proxy);
+  pqCMBModifierArc(vtkSMSourceProxy* proxy);
   ~pqCMBModifierArc() override;
 
-  pqCMBArc * GetCmbArc()
-  { return CmbArc; }
+  pqCMBArc* GetCmbArc() { return CmbArc; }
 
-  void setId(int i)
-  { Id = i; }
+  void setId(int i) { Id = i; }
 
   int getId() const { return Id; }
 
   void setVisablity(bool vis);
 
-  void writeFunction(std::ofstream & f);
-  void readFunction(std::ifstream & f, bool import_functions = false);
+  void writeFunction(std::ofstream& f);
+  void readFunction(std::ifstream& f, bool import_functions = false);
 
-  void write(std::ofstream & f);
-  void read(std::ifstream & f, bool import_functions = false);
+  void write(std::ofstream& f);
+  void read(std::ifstream& f, bool import_functions = false);
 
-  bool updateLabel(std::string str, cmbProfileFunction * fun);
+  bool updateLabel(std::string str, cmbProfileFunction* fun);
 
-  cmbProfileFunction * getStartFun()
+  cmbProfileFunction* getStartFun()
   {
-    return const_cast<cmbProfileFunction *>(startFunction->getFunction());
+    return const_cast<cmbProfileFunction*>(startFunction->getFunction());
   }
-  cmbProfileFunction * getEndFun()
+  cmbProfileFunction* getEndFun()
   {
-    return const_cast<cmbProfileFunction *>(endFunction->getFunction());
+    return const_cast<cmbProfileFunction*>(endFunction->getFunction());
   }
   bool setStartFun(std::string const& name);
   bool setEndFun(std::string const& name);
 
-  void getFunctions(std::vector<cmbProfileFunction*> & funs) const;
+  void getFunctions(std::vector<cmbProfileFunction*>& funs) const;
 
-  cmbProfileFunction * createFunction();
+  cmbProfileFunction* createFunction();
 
   bool deleteFunction(std::string const& name);
 
-  cmbProfileFunction * setFunction(std::string const& name, cmbProfileFunction::FunctionType mode);
+  cmbProfileFunction* setFunction(std::string const& name, cmbProfileFunction::FunctionType mode);
 
-  cmbProfileFunction * cloneFunction(std::string const& name);
+  cmbProfileFunction* cloneFunction(std::string const& name);
 
-  pointFunctionWrapper * getPointFunction(vtkIdType i);
-  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
-                                                                   cmbProfileFunction * fun);
+  pointFunctionWrapper* getPointFunction(vtkIdType i);
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(
+    vtkIdType i, cmbProfileFunction* fun);
   void removeFunctionAtPoint(vtkIdType i);
   bool pointHasFunction(vtkIdType i) const;
 
@@ -121,7 +130,7 @@ public slots:
   void switchToNotEditable();
   void switchToEditable();
   void removeFromServer(vtkSMSourceProxy* source);
-  bool setCMBArc(pqCMBArc *);
+  bool setCMBArc(pqCMBArc*);
   void setRelative(bool b);
 
 signals:
@@ -133,20 +142,20 @@ signals:
 
 protected:
   //Varable for the path
-  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(vtkIdType i,
-                                                                   profileFunctionWrapper * fun);
-  pqCMBArc * CmbArc;
-  std::map<vtkIdType, pointFunctionWrapper *> pointsFunctions;
+  pqCMBModifierArc::pointFunctionWrapper const* addFunctionAtPoint(
+    vtkIdType i, profileFunctionWrapper* fun);
+  pqCMBArc* CmbArc;
+  std::map<vtkIdType, pointFunctionWrapper*> pointsFunctions;
   bool IsExternalArc;
 
   FunctionMode functionMode;
 
-  std::map<std::string, profileFunctionWrapper * > functions;
-  pointFunctionWrapper * startFunction;
-  pointFunctionWrapper * endFunction;
-  
+  std::map<std::string, profileFunctionWrapper*> functions;
+  pointFunctionWrapper* startFunction;
+  pointFunctionWrapper* endFunction;
+
   int Id;
-  
+
   bool IsVisible;
 
   bool IsRelative;

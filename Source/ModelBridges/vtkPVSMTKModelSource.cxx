@@ -15,7 +15,7 @@
 #include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkPVSMTKModelSource);
-vtkCxxSetObjectMacro(vtkPVSMTKModelSource,ModelManagerWrapper,vtkModelManagerWrapper);
+vtkCxxSetObjectMacro(vtkPVSMTKModelSource, ModelManagerWrapper, vtkModelManagerWrapper);
 
 vtkPVSMTKModelSource::vtkPVSMTKModelSource()
 {
@@ -45,15 +45,13 @@ char* vtkPVSMTKModelSource::GetModelEntityID()
 }
 
 int vtkPVSMTKModelSource::RequestData(
-  vtkInformation* request,
-  vtkInformationVector** inInfo,
-  vtkInformationVector* outInfo)
+  vtkInformation* request, vtkInformationVector** inInfo, vtkInformationVector* outInfo)
 {
   if (!this->ModelManagerWrapper)
-    {
+  {
     vtkErrorMacro("No input model manager wrapper!");
     return 0;
-    }
+  }
   this->SetModelManager(this->ModelManagerWrapper->GetModelManager());
   return this->Superclass::RequestData(request, inInfo, outInfo);
 }

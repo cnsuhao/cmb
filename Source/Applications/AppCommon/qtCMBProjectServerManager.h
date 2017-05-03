@@ -12,10 +12,10 @@
 #define __qtCMBProjectServerManager_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QScopedPointer>
 #include <QString>
-#include "cmbSystemConfig.h"
 
 class vtkSMProxy;
 
@@ -24,18 +24,18 @@ class CMBAPPCOMMON_EXPORT qtCMBProjectServerManager : public QObject
   friend class qtCMBProjectManager;
   Q_OBJECT
 public:
-  qtCMBProjectServerManager( );
+  qtCMBProjectServerManager();
   qtCMBProjectServerManager(QString const& path);
   ~qtCMBProjectServerManager() override;
 
   enum PROGRAM
   {
-  PointsBuilder = 0,
-  SceneBuilder,
-  ModelBuilder,
-  SimulationBuilder,
-  GeologyBuilder,
-  NUM_PROGRAMS
+    PointsBuilder = 0,
+    SceneBuilder,
+    ModelBuilder,
+    SimulationBuilder,
+    GeologyBuilder,
+    NUM_PROGRAMS
   };
 
   bool isOpen() const;
@@ -45,7 +45,6 @@ public:
   QString const& programDirectory(qtCMBProjectServerManager::PROGRAM const& program) const;
   QString const& programName(qtCMBProjectServerManager::PROGRAM const& program) const;
   QRegExp const& programFileRegExp(qtCMBProjectServerManager::PROGRAM const& program) const;
-
 
   //ToDo: This needs to be done on the server, instead of the client
   bool programDirectoryHasFiles(qtCMBProjectServerManager::PROGRAM const& program) const;
@@ -61,8 +60,9 @@ signals:
 protected:
   void initSignalsSlots();
 
-  QString getDefaultDirectoryForProgram(qtCMBProjectServerManager::PROGRAM const &program);
-  void SetProgramDirectory(qtCMBProjectServerManager::PROGRAM const &program, QString const& directory);
+  QString getDefaultDirectoryForProgram(qtCMBProjectServerManager::PROGRAM const& program);
+  void SetProgramDirectory(
+    qtCMBProjectServerManager::PROGRAM const& program, QString const& directory);
 
   void serverOpenProject(QString const& project);
   void serverSaveProjectAs(QString const& project);
@@ -78,7 +78,6 @@ protected:
 
   void pullFromServer();
 
-
 private:
   //active project info
   struct ProjectDetails;
@@ -86,7 +85,7 @@ private:
 
   //active server project manager
   struct ScopedPointerVTKDeleter;
-  QScopedPointer<vtkSMProxy, ScopedPointerVTKDeleter > ProjectManagerProxy;
+  QScopedPointer<vtkSMProxy, ScopedPointerVTKDeleter> ProjectManagerProxy;
 
   Q_DISABLE_COPY(qtCMBProjectServerManager)
 };

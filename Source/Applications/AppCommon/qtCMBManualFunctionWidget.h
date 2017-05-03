@@ -11,20 +11,19 @@
 #ifndef qtCMBManualFunctionWidget_h_
 #define qtCMBManualFunctionWidget_h_
 
-#include <QWidget>
-#include <QPointer>
 #include "pqGeneralTransferFunctionWidget.h"
+#include <QPointer>
+#include <QWidget>
 
 class Ui_qtCMBManualFunctionWidget;
 class cmbManualProfileFunction;
 class QGridLayout;
 
-class qtCMBManualFunctionWidget: public QWidget
+class qtCMBManualFunctionWidget : public QWidget
 {
   Q_OBJECT
 public:
-  qtCMBManualFunctionWidget(cmbManualProfileFunction * fun,
-                            QWidget * parent);
+  qtCMBManualFunctionWidget(cmbManualProfileFunction* fun, QWidget* parent);
   ~qtCMBManualFunctionWidget() override;
 
 public slots:
@@ -39,9 +38,10 @@ public slots:
 
 signals:
   void changeDisplacementFunctionType(bool);
+
 protected:
-  Ui_qtCMBManualFunctionWidget * Ui;
-  cmbManualProfileFunction * function;
+  Ui_qtCMBManualFunctionWidget* Ui;
+  cmbManualProfileFunction* function;
   QPointer<pqGeneralTransferFunctionWidget> DisplacementProfile;
   QPointer<pqGeneralTransferFunctionWidget> WeightingFunction;
 };

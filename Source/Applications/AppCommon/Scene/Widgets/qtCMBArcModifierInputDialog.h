@@ -11,18 +11,17 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBArcModifierInputDialog_h
 #define __qtCMBArcModifierInputDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QDialog>
 #include "cmbSystemConfig.h"
 #include "pqCMBSceneObjectBase.h"
+#include <QDialog>
 
 namespace Ui
 {
-  class qtCMBArcModifierInputDialog;
+class qtCMBArcModifierInputDialog;
 };
 
 class pqCMBSceneTree;
@@ -31,19 +30,20 @@ class CMBAPPCOMMON_EXPORT qtCMBArcModifierInputDialog : public QDialog
 {
   Q_OBJECT
 public:
-  qtCMBArcModifierInputDialog(pqCMBSceneTree *tree, QWidget *parent = NULL, Qt::WindowFlags flags= 0);
+  qtCMBArcModifierInputDialog(
+    pqCMBSceneTree* tree, QWidget* parent = NULL, Qt::WindowFlags flags = 0);
   ~qtCMBArcModifierInputDialog() override;
 
-  void insertSourceName(int i, const char *vname);
+  void insertSourceName(int i, const char* vname);
   void removeAllSourceNames();
-  void setSelectedSourceNames(QList<int> &currentIndices);
-  void getSelectedSourceNames(QStringList &selectedNames) const;
+  void setSelectedSourceNames(QList<int>& currentIndices);
+  void getSelectedSourceNames(QStringList& selectedNames) const;
   int getNumberOfSourceNames() const;
 
-  void insertArcName(int i, const char *vname);
+  void insertArcName(int i, const char* vname);
   void removeAllArcNames();
-  void setSelectedArcNames(QList<int> &currentIndices);
-  void getSelectedArcNames(QStringList &selectedNames) const;
+  void setSelectedArcNames(QList<int>& currentIndices);
+  void getSelectedArcNames(QStringList& selectedNames) const;
   int getNumberOfArcNames() const;
 
   void setUseNormal(bool);
@@ -61,9 +61,8 @@ signals:
   void selectedSourceChanged(int);
 
 protected:
-  Ui::qtCMBArcModifierInputDialog *InternalWidget;
-  pqCMBSceneTree *Tree;
-
+  Ui::qtCMBArcModifierInputDialog* InternalWidget;
+  pqCMBSceneTree* Tree;
 };
 
 #endif /* __qtCMBSceneMesherDialog_h */

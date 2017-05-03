@@ -10,15 +10,15 @@
 
 #include "qtCMBTableWidget.h"
 
-#include <QKeyEvent>
 #include <QHeaderView>
+#include <QKeyEvent>
 
 //-----------------------------------------------------------------------------
 qtCMBTableWidget::qtCMBTableWidget(QWidget* p)
   : QTableWidget(p)
 {
   //we want the table to always fill the frame
-  this->horizontalHeader()->setStretchLastSection( true );
+  this->horizontalHeader()->setStretchLastSection(true);
 }
 
 //-----------------------------------------------------------------------------

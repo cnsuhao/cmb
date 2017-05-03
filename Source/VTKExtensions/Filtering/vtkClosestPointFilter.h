@@ -14,9 +14,9 @@
 #ifndef __ClosestPointFilter_h
 #define __ClosestPointFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkCellLocator;
 class vtkTransform;
@@ -25,8 +25,8 @@ class vtkAbstractTransform;
 class VTKCMBFILTERING_EXPORT vtkClosestPointFilter : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkClosestPointFilter *New();
-  vtkTypeMacro(vtkClosestPointFilter,vtkPolyDataAlgorithm);
+  static vtkClosestPointFilter* New();
+  vtkTypeMacro(vtkClosestPointFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -34,23 +34,19 @@ public:
   // modify the filter
   void SetTestPoint(double x, double y, double z)
   {
-    vtkDebugMacro(<< this->GetClassName() << " (" << this
-                  << "): setting TestPoint to (" << x << "," << y << ","
-                  << z << ")");
-    if ((this->TestPoint[0] != x)||(this->TestPoint[1] != y)||
-        (this->TestPoint[2] != z) || (!this->PointMode))
-      {
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TestPoint to (" << x << ","
+                  << y << "," << z << ")");
+    if ((this->TestPoint[0] != x) || (this->TestPoint[1] != y) || (this->TestPoint[2] != z) ||
+      (!this->PointMode))
+    {
       this->TestPoint[0] = x;
       this->TestPoint[1] = y;
       this->TestPoint[2] = z;
       this->Modified();
-      }
+    }
     this->PointMode = true;
   };
-  void SetTestPoint (double _arg[3])
-  {
-  this->SetTestPoint (_arg[0], _arg[1], _arg[2]);
-  }
+  void SetTestPoint(double _arg[3]) { this->SetTestPoint(_arg[0], _arg[1], _arg[2]); }
 
   vtkGetVector3Macro(TestPoint, double);
 
@@ -58,15 +54,12 @@ public:
   // Get/Set the Test Line
   void SetTestLine(double x1, double y1, double z1, double x2, double y2, double z2)
   {
-    vtkDebugMacro(<< this->GetClassName() << " (" << this
-                  << "): setting TestLine to (("
-                  << x1 << "," << y1 << "," << z1 << ") ("
-                  << x2 << "," << y2 << "," << z2 << "))");
-    if ((this->TestLine[0] != x1)||(this->TestLine[1] != y1)||
-        (this->TestLine[2] != z1) ||
-        (this->TestLine[3] != x2)||(this->TestLine[4] != y2)||
-        (this->TestLine[5] != z2)  || this->PointMode)
-      {
+    vtkDebugMacro(<< this->GetClassName() << " (" << this << "): setting TestLine to ((" << x1
+                  << "," << y1 << "," << z1 << ") (" << x2 << "," << y2 << "," << z2 << "))");
+    if ((this->TestLine[0] != x1) || (this->TestLine[1] != y1) || (this->TestLine[2] != z1) ||
+      (this->TestLine[3] != x2) || (this->TestLine[4] != y2) || (this->TestLine[5] != z2) ||
+      this->PointMode)
+    {
       this->TestLine[0] = x1;
       this->TestLine[1] = y1;
       this->TestLine[2] = z1;
@@ -74,13 +67,13 @@ public:
       this->TestLine[4] = y2;
       this->TestLine[5] = z2;
       this->Modified();
-      }
+    }
     this->PointMode = false;
   };
 
-  void SetTestLine (double _arg[6])
+  void SetTestLine(double _arg[6])
   {
-    this->SetTestLine (_arg[0], _arg[1], _arg[2], _arg[3], _arg[4], _arg[5]);
+    this->SetTestLine(_arg[0], _arg[1], _arg[2], _arg[3], _arg[4], _arg[5]);
   }
 
   vtkGetVector6Macro(TestLine, double);
@@ -116,16 +109,15 @@ protected:
   double ClosestPoint[3];
   double Scale[3];
   bool PointMode;
-  vtkTransform *Transform;
-  vtkAbstractTransform *TransformInverse;
-  vtkCellLocator *Locator;
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *) override;
-  vtkTimeStamp BuildTime;  // time at which the transform was built
+  vtkTransform* Transform;
+  vtkAbstractTransform* TransformInverse;
+  vtkCellLocator* Locator;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  vtkTimeStamp BuildTime; // time at which the transform was built
 
 private:
-  vtkClosestPointFilter(const vtkClosestPointFilter&);  // Not implemented.
-  void operator=(const vtkClosestPointFilter&);  // Not implemented.
+  vtkClosestPointFilter(const vtkClosestPointFilter&); // Not implemented.
+  void operator=(const vtkClosestPointFilter&);        // Not implemented.
 
   //ETX
 };

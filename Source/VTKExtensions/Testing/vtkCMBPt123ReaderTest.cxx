@@ -7,35 +7,35 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+#include "vtkCMBPt123Reader.h"
 #include "vtkActor.h"
 #include "vtkCamera.h"
+#include "vtkDataSetMapper.h"
 #include "vtkExtractLeafBlock.h"
-#include "vtkPolyDataMapper.h"
+#include "vtkGeometryFilter.h"
+#include "vtkMultiBlockDataSet.h"
+#include "vtkNew.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
-#include "vtkDataSetMapper.h"
-#include "vtkNew.h"
+#include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkCMBPt123Reader.h"
-#include "vtkGeometryFilter.h"
-#include "vtkMultiBlockDataSet.h"
+#include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTesting.h"
-#include "vtkSmartPointer.h"
+#include "vtkUnstructuredGrid.h"
 
 int main(int argc, char** argv)
 {
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data was not specified.";
     return 1;
-    }
+  }
 
   vtkNew<vtkCMBPt123Reader> reader;
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   // Extract the Grid
   reader->Update();
   vtkSmartPointer<vtkUnstructuredGrid> grid =
-      vtkUnstructuredGrid::SafeDownCast(reader->GetOutput()->GetBlock(0));
+    vtkUnstructuredGrid::SafeDownCast(reader->GetOutput()->GetBlock(0));
   vtkNew<vtkGeometryFilter> geoFilter;
   geoFilter->SetInputData(grid);
   vtkNew<vtkPolyDataMapper> pdm;
@@ -84,9 +84,9 @@ int main(int argc, char** argv)
   renderer->AddActor(actor2.GetPointer());
   renderer->AddActor(actor3.GetPointer());
   renderer->ResetCamera();
-  renderer->SetBackground(.1,.1,.1);
+  renderer->SetBackground(.1, .1, .1);
 
-  renWin->SetSize(600,600);
+  renWin->SetSize(600, 600);
   iren->Initialize();
   renWin->Render();
 
@@ -99,15 +99,15 @@ int main(int argc, char** argv)
 
   int retVal = vtkTesting::FAILED;
   if (testHelper->IsFlagSpecified("-V"))
-    {
+  {
     testHelper->SetRenderWindow(renWin.GetPointer());
     retVal = testHelper->RegressionTest(10);
-    }
+  }
 
   if (testHelper->IsInteractiveModeSpecified())
-    {
+  {
     iren->Start();
-    }
+  }
 
   return (retVal == vtkTesting::PASSED) ? 0 : 1;
 }

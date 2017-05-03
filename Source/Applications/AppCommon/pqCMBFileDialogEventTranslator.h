@@ -13,9 +13,9 @@
 #ifndef _pqCMBFileDialogEventTranslator_h
 #define _pqCMBFileDialogEventTranslator_h
 
-#include <pqWidgetEventTranslator.h>
 #include "cmbAppCommonExport.h"
 #include <QPointer>
+#include <pqWidgetEventTranslator.h>
 
 class pqCMBFileDialog;
 
@@ -25,14 +25,13 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventTranslator :
-  public pqWidgetEventTranslator
+class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
-  
+
 public:
-  pqCMBFileDialogEventTranslator(QObject* p=0);
-  
+  pqCMBFileDialogEventTranslator(QObject* p = 0);
+
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 private:
@@ -47,4 +46,3 @@ private slots:
 };
 
 #endif // !_pqCMBFileDialogEventTranslator_h
-

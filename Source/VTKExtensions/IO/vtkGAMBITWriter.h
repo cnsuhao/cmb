@@ -20,9 +20,9 @@
 #ifndef __vtkGAMBITWriter_h
 #define __vtkGAMBITWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "cmbSystemConfig.h"
 class vtkUnstructuredGrid;
 class vtkPolyData;
 class vtkDataSet;
@@ -41,16 +41,16 @@ public:
   // Get/Set the filename.
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
-//BTX
+  //BTX
 protected:
   enum GAMBITCellType
   {
-    EDGE    = 1,
-    QUAD    = 2,
-    TRI     = 3,
-    BRICK   = 4,
-    PRISM   = 5,
-    TETRA   = 6,
+    EDGE = 1,
+    QUAD = 2,
+    TRI = 3,
+    BRICK = 4,
+    PRISM = 5,
+    TETRA = 6,
     PYRAMID = 7
   };
 
@@ -71,11 +71,12 @@ protected:
   vtkUnstructuredGrid* InputGrid;
   vtkPolyData* InputPoly;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
   vtkGAMBITWriter(const vtkGAMBITWriter&); // Not implemented.
-  void operator=(const vtkGAMBITWriter&); // Not implemented.
-//ETX
+  void operator=(const vtkGAMBITWriter&);  // Not implemented.
+  //ETX
 };
 
 #endif

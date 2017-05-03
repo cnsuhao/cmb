@@ -14,17 +14,17 @@
 #ifndef __vtkCMBProjectManagerWriter_h
 #define __vtkCMBProjectManagerWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
+#include "vtkCMBProjectManager.h"
 #include "vtkObject.h"
 #include "vtkStdString.h"
-#include "vtkCMBProjectManager.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBIO_EXPORT vtkCMBProjectManagerWriter : public vtkObject
 {
 public:
   static vtkCMBProjectManagerWriter* New();
-  vtkTypeMacro(vtkCMBProjectManagerWriter,vtkObject);
+  vtkTypeMacro(vtkCMBProjectManagerWriter, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -39,9 +39,10 @@ protected:
   ~vtkCMBProjectManagerWriter() override;
 
   char* ProjectFileName;
+
 private:
-  vtkCMBProjectManagerWriter(const vtkCMBProjectManagerWriter&);  // Not implemented.
-  void operator=(const vtkCMBProjectManagerWriter&);  // Not implemented.
+  vtkCMBProjectManagerWriter(const vtkCMBProjectManagerWriter&); // Not implemented.
+  void operator=(const vtkCMBProjectManagerWriter&);             // Not implemented.
 };
 
 #endif

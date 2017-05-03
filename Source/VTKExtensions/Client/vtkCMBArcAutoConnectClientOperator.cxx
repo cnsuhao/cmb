@@ -9,7 +9,6 @@
 //=========================================================================
 #include "vtkCMBArcAutoConnectClientOperator.h"
 
-
 #include "vtkObjectFactory.h"
 #include "vtkSMArcOperatorProxy.h"
 #include "vtkSMPropertyHelper.h"
@@ -18,8 +17,8 @@
 vtkStandardNewMacro(vtkCMBArcAutoConnectClientOperator);
 
 //---------------------------------------------------------------------------
-vtkCMBArcAutoConnectClientOperator::vtkCMBArcAutoConnectClientOperator():
-  ArcId(-1)
+vtkCMBArcAutoConnectClientOperator::vtkCMBArcAutoConnectClientOperator()
+  : ArcId(-1)
 {
 }
 
@@ -33,15 +32,15 @@ bool vtkCMBArcAutoConnectClientOperator::Operate(
   const vtkIdType& firstArcId, const vtkIdType& secondArcId)
 {
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
-  vtkSMArcOperatorProxy *proxy = vtkSMArcOperatorProxy::SafeDownCast(
-        manager->NewProxy("CmbArcGroup","AutoConnectOperator"));
-  bool valid = proxy->Operate(firstArcId,secondArcId);
+  vtkSMArcOperatorProxy* proxy =
+    vtkSMArcOperatorProxy::SafeDownCast(manager->NewProxy("CmbArcGroup", "AutoConnectOperator"));
+  bool valid = proxy->Operate(firstArcId, secondArcId);
   if (valid)
-    {
-    vtkSMPropertyHelper helper(proxy,"CreatedArcId");
+  {
+    vtkSMPropertyHelper helper(proxy, "CreatedArcId");
     helper.UpdateValueFromServer();
     this->ArcId = helper.GetAsIdType();
-    }
+  }
   proxy->Delete();
   return true;
 }

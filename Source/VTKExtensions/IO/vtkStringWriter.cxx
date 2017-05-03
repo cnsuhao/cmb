@@ -9,14 +9,14 @@
 //=========================================================================
 #include "vtkStringWriter.h"
 
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
-#include "vtkErrorCode.h"
 
 #
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkStringWriter);
@@ -37,36 +37,32 @@ vtkStringWriter::~vtkStringWriter()
 }
 
 //----------------------------------------------------------------------------
-int vtkStringWriter::RequestInformation(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *vtkNotUsed(outputVector))
+int vtkStringWriter::RequestInformation(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
   return 1;
 }
 
 //-----------------------------------------------------------------------------
-int vtkStringWriter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *vtkNotUsed(outputVector))
+int vtkStringWriter::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
-  if ( this->FileName == NULL || this->Text == NULL )
-    {
+  if (this->FileName == NULL || this->Text == NULL)
+  {
     return 0;
-    }
+  }
 
   // make the directory if necessary
   std::string filePath = vtksys::SystemTools::GetFilenamePath(this->FileName);
-  if(filePath.empty() == false &&
-     vtksys::SystemTools::FileExists(filePath.c_str(), false) == false)
+  if (filePath.empty() == false &&
+    vtksys::SystemTools::FileExists(filePath.c_str(), false) == false)
+  {
+    if (vtksys::SystemTools::MakeDirectory(filePath.c_str()) == false)
     {
-    if(vtksys::SystemTools::MakeDirectory(filePath.c_str()) == false)
-      {
-      vtkErrorMacro(<<"Could not create directory " << filePath);
+      vtkErrorMacro(<< "Could not create directory " << filePath);
       return 0;
-      }
     }
+  }
 
   std::ofstream out(this->FileName);
   out.write(this->Text, strlen(this->Text));
@@ -78,9 +74,7 @@ int vtkStringWriter::RequestData(
 //-----------------------------------------------------------------------------
 void vtkStringWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "File Name: "
-     << (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
-

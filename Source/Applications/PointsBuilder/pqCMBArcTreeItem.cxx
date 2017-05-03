@@ -10,9 +10,8 @@
 #include "pqCMBArcTreeItem.h"
 
 //-----------------------------------------------------------------------------
-pqCMBArcTreeItem::pqCMBArcTreeItem(QTreeWidgetItem* pNode,
-  int itemId, int nodeType)
-: QTreeWidgetItem(pNode, nodeType)
+pqCMBArcTreeItem::pqCMBArcTreeItem(QTreeWidgetItem* pNode, int itemId, int nodeType)
+  : QTreeWidgetItem(pNode, nodeType)
 {
   this->ItemId = itemId;
   this->init();
@@ -20,14 +19,13 @@ pqCMBArcTreeItem::pqCMBArcTreeItem(QTreeWidgetItem* pNode,
 //-----------------------------------------------------------------------------
 pqCMBArcTreeItem::~pqCMBArcTreeItem()
 {
-// the model face object is kept in the model,
-// and the model will take care of them.
+  // the model face object is kept in the model,
+  // and the model will take care of them.
 
-  if(this->ArcObject &&
-    static_cast<qtArcWidget*>(this->ArcObject)==NULL)
-    {
+  if (this->ArcObject && static_cast<qtArcWidget*>(this->ArcObject) == NULL)
+  {
     this->ArcObject = NULL;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -11,14 +11,13 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBLIDARSaveDialog_h
 #define __pqCMBLIDARSaveDialog_h
 
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class QDialog;
 class pqPipelineSource;
@@ -26,7 +25,7 @@ class pqServer;
 
 namespace Ui
 {
-  class  qtSaveScatterData;
+class qtSaveScatterData;
 };
 
 class pqCMBLIDARSaveDialog : public QObject
@@ -34,27 +33,26 @@ class pqCMBLIDARSaveDialog : public QObject
   Q_OBJECT
 
 public:
-  static int getFile(QWidget *parent, pqServer *server, bool enableSavePieces,
-                     QString *name, bool *saveAsSinglePiece,
-                     bool *loadAsDisplayed);
+  static int getFile(QWidget* parent, pqServer* server, bool enableSavePieces, QString* name,
+    bool* saveAsSinglePiece, bool* loadAsDisplayed);
 
 protected slots:
   void accept();
   void cancel();
   void displayFileBrowser();
-  void filesSelected(const QStringList &files);
+  void filesSelected(const QStringList& files);
 
 protected:
-  pqCMBLIDARSaveDialog(QWidget *parent, pqServer *server, bool enableSavePieces);
+  pqCMBLIDARSaveDialog(QWidget* parent, pqServer* server, bool enableSavePieces);
   ~pqCMBLIDARSaveDialog() override;
   int exec();
   int Status;
-  Ui::qtSaveScatterData *SaveDialog;
-  QDialog *MainDialog;
+  Ui::qtSaveScatterData* SaveDialog;
+  QDialog* MainDialog;
   bool SaveAsSinglePiece;
   bool SaveAsDisplayed;
   QString FileName;
-  pqServer *Server;
+  pqServer* Server;
 };
 
 #endif /* __pqCMBLIDARSaveDialog_h */

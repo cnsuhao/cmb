@@ -16,9 +16,9 @@
 #ifndef __vtkCMBLargeTextureSurfaceRepresentation_h
 #define __vtkCMBLargeTextureSurfaceRepresentation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkGeometryRepresentationWithFaces.h"
-#include "cmbSystemConfig.h"
 
 class vtkPolyDataMapper;
 class vtkPVLODActor;
@@ -26,8 +26,8 @@ class vtkImageTextureCrop;
 class vtkInformationRequestKey;
 class vtkInformation;
 
-class VTKCMBGRAPHICS_EXPORT vtkCMBLargeTextureSurfaceRepresentation :
-  public vtkGeometryRepresentationWithFaces
+class VTKCMBGRAPHICS_EXPORT vtkCMBLargeTextureSurfaceRepresentation
+  : public vtkGeometryRepresentationWithFaces
 {
 public:
   static vtkCMBLargeTextureSurfaceRepresentation* New();
@@ -39,12 +39,12 @@ public:
   // typically called by the vtkView to request meta-data from the
   // representations or ask them to perform certain tasks e.g.
   // PrepareForRendering.
-  int ProcessViewRequest(vtkInformationRequestKey* request_type,
-    vtkInformation* inInfo, vtkInformation* outInfo) override;
+  int ProcessViewRequest(vtkInformationRequestKey* request_type, vtkInformation* inInfo,
+    vtkInformation* outInfo) override;
 
   void RemoveLargeTextureInput();
 
-//BTX
+  //BTX
 protected:
   vtkCMBLargeTextureSurfaceRepresentation();
   ~vtkCMBLargeTextureSurfaceRepresentation() override;
@@ -57,18 +57,17 @@ protected:
 
   // Description:
   // Overriding to connect in the vtkImageTextureCrop filter
-  int RequestData(vtkInformation*,
-    vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkImageTextureCrop *LODTextureCrop;
-  vtkImageTextureCrop *TextureCrop;
-  vtkTexture *LargeTexture;
+  vtkImageTextureCrop* LODTextureCrop;
+  vtkImageTextureCrop* TextureCrop;
+  vtkTexture* LargeTexture;
 
 private:
-  vtkCMBLargeTextureSurfaceRepresentation(const vtkCMBLargeTextureSurfaceRepresentation&); // Not implemented
+  vtkCMBLargeTextureSurfaceRepresentation(
+    const vtkCMBLargeTextureSurfaceRepresentation&);              // Not implemented
   void operator=(const vtkCMBLargeTextureSurfaceRepresentation&); // Not implemented
-//ETX
+  //ETX
 };
 
 #endif
-

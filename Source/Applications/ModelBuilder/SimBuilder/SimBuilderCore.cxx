@@ -10,22 +10,22 @@
 
 #include "SimBuilderCore.h"
 
-#include "qtSimBuilderUIPanel.h"
-#include "SimBuilderExportDialog.h"
 #include "DefaultExportTemplate.h"
+#include "SimBuilderExportDialog.h"
+#include "qtSimBuilderUIPanel.h"
 
 #include "pqApplicationCore.h"
+#include "pqFileDialog.h"
+#include "pqFileDialogModel.h"
 #include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
-#include "pqServer.h"
-#include "pqFileDialog.h"
-#include "pqFileDialogModel.h"
 #include "pqSMAdaptor.h"
+#include "pqServer.h"
 
-#include "vtkSMSourceProxy.h"
 #include "vtkPVSceneGenFileInformation.h"
 #include "vtkProcessModule.h"
+#include "vtkSMSourceProxy.h"
 
 #include "vtkNew.h"
 #include "vtkXMLDataElement.h"
@@ -35,28 +35,28 @@
 #include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
 
 #include "smtk/common/ResourceSet.h"
-#include "smtk/io/Logger.h"
+#include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
+#include "smtk/io/Logger.h"
 #include "smtk/io/ResourceSetReader.h"
 #include "smtk/io/ResourceSetWriter.h"
-#include "smtk/extension/qt/qtUIManager.h"
 
 #include "pqSimBuilderUIManager.h"
 
-#include "vtkSMProxyManager.h"
 #include "vtkClientServerStream.h"
-#include "vtkSMSession.h"
 #include "vtkSMIntVectorProperty.h"
-#include "vtkSMProxyProperty.h"
 #include "vtkSMModelManagerProxy.h"
+#include "vtkSMProxyManager.h"
+#include "vtkSMProxyProperty.h"
+#include "vtkSMSession.h"
 
+#include <QAbstractButton>
+#include <QApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QLayout>
 #include <QMessageBox>
-#include <QApplication>
-#include <QAbstractButton>
 #include <QPushButton>
 
 //----------------------------------------------------------------------------
@@ -86,59 +86,58 @@ void SimBuilderCore::Initialize()
   this->LoadingScenario = false;
   this->ScenarioEntitiesCreated = false;
   this->CurrentSimFile = "";
-  if(this->m_attUIManager)
-    {
+  if (this->m_attUIManager)
+  {
     this->m_attUIManager->disconnect();
     delete this->m_attUIManager;
     this->m_attUIManager = NULL;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
 int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
 {
   QString filters;
-  if(isScenario)
-    {
-    filters= "SimBuilder Scenario Files (*.sbt *.sbs *.sbi *.crf);;";
-    }
-  else if(templateOnly)
-    {
-    filters= "SimBuilder Template Files (*crf);;"
-             "SimBuilder Legacy Files (*sbt);;";
-    }
+  if (isScenario)
+  {
+    filters = "SimBuilder Scenario Files (*.sbt *.sbs *.sbi *.crf);;";
+  }
+  else if (templateOnly)
+  {
+    filters = "SimBuilder Template Files (*crf);;"
+              "SimBuilder Legacy Files (*sbt);;";
+  }
   else
-    {
-    filters= "SimBuilder Instance Files (*crf);;"
-             "SimBuilder Legacy Files (*sbi);;";
-    }
-  filters +=  "All Files (*)";
-  QString startDir = pqCMBModelBuilderOptions::instance()->
-    defaultSimBuilderTemplateDirectory().c_str();
-  pqFileDialog file_dialog(this->ActiveServer,
-    NULL, tr("Open File:"), startDir, filters);
+  {
+    filters = "SimBuilder Instance Files (*crf);;"
+              "SimBuilder Legacy Files (*sbi);;";
+  }
+  filters += "All Files (*)";
+  QString startDir =
+    pqCMBModelBuilderOptions::instance()->defaultSimBuilderTemplateDirectory().c_str();
+  pqFileDialog file_dialog(this->ActiveServer, NULL, tr("Open File:"), startDir, filters);
 
   //file_dialog.setAttribute(Qt::WA_DeleteOnClose);
   file_dialog.setObjectName("FileOpenDialog");
   file_dialog.setFileMode(pqFileDialog::ExistingFile);
   if (file_dialog.exec() == QDialog::Accepted)
-    {
+  {
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
-      {
+    {
       return this->LoadSimulation(files[0].toLatin1().constData());
-      }
     }
+  }
   return 0;
 }
 
 //----------------------------------------------------------------------------
-int SimBuilderCore::LoadSimulation(const char *filename)
+int SimBuilderCore::LoadSimulation(const char* filename)
 {
   if (!filename)
-    {
+  {
     return 0;
-    }
+  }
 
   QFileInfo finfo(filename);
   pqFileDialogModel model(this->ActiveServer);
@@ -148,44 +147,41 @@ int SimBuilderCore::LoadSimulation(const char *filename)
   pqObjectBuilder* builder = core->getObjectBuilder();
   QString lastExt = finfo.suffix().toLower();
 
-  if(lastExt== "crf")
-    {
+  if (lastExt == "crf")
+  {
     return this->LoadResources(filename);
-    }
+  }
 
-  if(model.fileExists(filename, fullpath) &&
-    ( lastExt== "sbt" || lastExt== "sbs" || lastExt== "sbi" ||
-    finfo.completeSuffix().toLower() == "simb.xml")) // for backward compatibility
-    {
-//    this->LoadTemplateOnly = templateOnly;
-//    this->LoadingScenario = isScenario;
+  if (model.fileExists(filename, fullpath) &&
+    (lastExt == "sbt" || lastExt == "sbs" || lastExt == "sbi" ||
+        finfo.completeSuffix().toLower() == "simb.xml")) // for backward compatibility
+  {
+    //    this->LoadTemplateOnly = templateOnly;
+    //    this->LoadingScenario = isScenario;
     // Load the file and set up the pipeline to display the dataset.
     QStringList files;
     files << filename;
-    reader = builder->createReader("sources", "StringReader",
-      files, this->ActiveServer);
-    }
-  if(!reader)
-    {
+    reader = builder->createReader("sources", "StringReader", files, this->ActiveServer);
+  }
+  if (!reader)
+  {
     return 0;
-    }
+  }
   else
-    {
+  {
     // Add this to the list of recent server resources ...
-    pqCMBRecentlyUsedResourceLoaderImplementatation::
-        addDataFileToRecentResources(reader->getServer(), filename,
-                                     reader->getProxy()->GetXMLGroup(),
-                                     reader->getProxy()->GetXMLName());
-    }
+    pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFileToRecentResources(
+      reader->getServer(), filename, reader->getProxy()->GetXMLGroup(),
+      reader->getProxy()->GetXMLName());
+  }
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
-                                   pqCMBSceneTree* /*sceneTree*/)
+int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*sceneTree*/)
 {
   // force read
-  vtkSMSourceProxy::SafeDownCast( reader->getProxy() )->UpdatePipeline();
+  vtkSMSourceProxy::SafeDownCast(reader->getProxy())->UpdatePipeline();
   vtkNew<vtkPVSceneGenFileInformation> info;
   reader->getProxy()->GatherInformation(info.GetPointer());
   QFileInfo finfo(info->GetFileName());
@@ -193,42 +189,42 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
 
   // Resource file handled separately
   if (lastExt == "crf")
-    {
+  {
     return this->LoadResources(reader, NULL);
-    }
+  }
 
-  if(lastExt!= "sbt" && lastExt!= "sbs" && lastExt!= "sbi" &&
+  if (lastExt != "sbt" && lastExt != "sbs" && lastExt != "sbi" &&
     finfo.completeSuffix().toLower() != "simb.xml")
-    {
+  {
     return 0;
-    }
-  if(finfo.completeSuffix().toLower() == "simb.xml") // for backward compatibility
-    {
-    QMessageBox::warning(NULL, "SimBuilder Open File!",
-      tr("This is an older version of SimBuilder file.\n") +
-      tr("Please rename the file properly with one of the following extensions:\n") +
-      tr(".sbt (for Template), .sbi (for Instance), .sbs (for Scenario)"));
+  }
+  if (finfo.completeSuffix().toLower() == "simb.xml") // for backward compatibility
+  {
+    QMessageBox::warning(
+      NULL, "SimBuilder Open File!", tr("This is an older version of SimBuilder file.\n") +
+        tr("Please rename the file properly with one of the following extensions:\n") +
+        tr(".sbt (for Template), .sbi (for Instance), .sbs (for Scenario)"));
     return 0;
-    }
+  }
 
-  if(finfo.suffix().toLower() == "sbt")
-    {
+  if (finfo.suffix().toLower() == "sbt")
+  {
     this->LoadTemplateOnly = true;
-    }
-  else if(finfo.suffix().toLower() == "sbs")
-    {
+  }
+  else if (finfo.suffix().toLower() == "sbs")
+  {
     this->LoadingScenario = true;
-    }
-  else if(finfo.suffix().toLower() == "sbi")
-    {
+  }
+  else if (finfo.suffix().toLower() == "sbi")
+  {
     // loading an instance file.
-    }
+  }
   else
-    {
+  {
     return 0;
-    }
-#include "smtk/io/Logger.h"
+  }
 #include "smtk/io/AttributeReader.h"
+#include "smtk/io/Logger.h"
 
   // We need to get the file contents from server, then load it into attributes
   smtk::io::AttributeReader xmlr;
@@ -237,30 +233,30 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
   searchPaths.push_back(dirPath);
   xmlr.setSearchPaths(searchPaths);
   smtk::io::Logger logger;
-  bool errStatus = xmlr.readContents(this->uiManager()->attributeSystem(),
-    info->GetFileContents(), logger);
+  bool errStatus =
+    xmlr.readContents(this->uiManager()->attributeSystem(), info->GetFileContents(), logger);
 
-  if(errStatus)
-    {
-    vtkGenericWarningMacro("Problems reading " <<  info->GetFileName()
-                           << ". The information is: " << logger.convertToString());
-    }
+  if (errStatus)
+  {
+    vtkGenericWarningMacro("Problems reading "
+      << info->GetFileName() << ". The information is: " << logger.convertToString());
+  }
 
   // Lets get the toplevel view
   smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
   if (!topView)
-    {
-    vtkGenericWarningMacro("There is no TopLevel View in  " <<  info->GetFileName());
+  {
+    vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());
     return 0;
-    }
+  }
 
   //parse element, create GUI components
-  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget());
-  if(!this->uiManager()->topView())
-    {
+  this->uiManager()->setSMTKView(topView, this->GetUIPanel()->panelWidget());
+  if (!this->uiManager()->topView())
+  {
     return 0;
-    }
-/*
+  }
+  /*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
   if(this->LoadingScenario || (this->CMBModel && !this->CMBModel->hasGeometryEntity()))
@@ -287,13 +283,12 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
 */
 
   // Update export dialog
-  this->ExportDialog->setSimAttSystem(
-    this->uiManager()->attributeSystem());
+  this->ExportDialog->setSimAttSystem(this->uiManager()->attributeSystem());
   this->setDefaultExportTemplate();
 
   this->IsSimModelLoaded = true;
   this->CurrentSimFile = info->GetFileName();
-/*
+  /*
   this->CurrentSimFile = xmlr.GetFileName();
   this->CurrentTemplateFile = xmlr.GetTemplateFileName();
   this->SimFileVersion = xmlr.GetVersionNumber();
@@ -306,43 +301,41 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader,
 int SimBuilderCore::SaveSimulation(bool writeScenario)
 {
   QString filters;
-  if(writeScenario)
-    {
+  if (writeScenario)
+  {
     filters = "SimBuilder Scenario Files (*.sbs);;";
-    }
+  }
   else
-    {
+  {
     filters = "SimBuilder Instance Files (*.crf *.sbi);;"
               "SimBuilder Resource Files (*.crf);;"
               "SimBuilder Legacy Files (*.sbi);;";
-    }
+  }
   filters += "All files (*)";
-  pqFileDialog file_dialog(
-                           this->ActiveServer,
-                           NULL, tr("Save Simulation:"), QString(), filters);
+  pqFileDialog file_dialog(this->ActiveServer, NULL, tr("Save Simulation:"), QString(), filters);
   file_dialog.setObjectName("FileSaveDialog");
   file_dialog.setFileMode(pqFileDialog::AnyFile);
   if (file_dialog.exec() == QDialog::Accepted)
-    {
+  {
     QStringList files = file_dialog.getSelectedFiles();
     if (files.size() > 0)
-      {
+    {
       return this->SaveSimulation(files[0].toLatin1().constData(), writeScenario);
-      }
     }
+  }
   return 0;
 }
 
 //----------------------------------------------------------------------------
-int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
+int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
 {
   // Currently, we can't write out the Template File only, and the writing
   // for Instance File is the same as writing for Scenario file.
 
   if (!filename)
-    {
+  {
     return 0;
-    }
+  }
 
   std::string filecontents;
   smtk::io::Logger logger;
@@ -350,73 +343,67 @@ int SimBuilderCore::SaveSimulation(const char *filename, bool /*writeScenario*/)
 
   QFileInfo finfo(filename);
   if ("crf" == finfo.suffix().toLower())
-    {
+  {
     // Initialize ResourceSet
     smtk::common::ResourceSet resources;
-    smtk::attribute::SystemPtr simSystem =
-      this->uiManager()->attributeSystem();
-    resources.addResource(simSystem, "simbuilder", "",
-      smtk::common::ResourceSet::INSTANCE);
+    smtk::attribute::SystemPtr simSystem = this->uiManager()->attributeSystem();
+    resources.addResource(simSystem, "simbuilder", "", smtk::common::ResourceSet::INSTANCE);
     smtk::attribute::SystemPtr expSystem =
-      this->ExportDialog->exportAttSystem(true);  // use baseline atts
-    resources.addResource(expSystem, "export", "",
-      smtk::common::ResourceSet::TEMPLATE);
+      this->ExportDialog->exportAttSystem(true); // use baseline atts
+    resources.addResource(expSystem, "export", "", smtk::common::ResourceSet::TEMPLATE);
 
     // Serialize ResourceSet
     smtk::io::ResourceSetWriter resourceWriter;
     errStatus = resourceWriter.writeString(filecontents, resources, logger);
-    }
+  }
   else
-    {
+  {
     // SimBuilderWriter xmlw;
     smtk::io::AttributeWriter xmlw;
-    errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(),
-      filecontents, logger);
-    }
+    errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(), filecontents, logger);
+  }
 
-  if(errStatus)
-    {
-    QMessageBox::warning(this->GetUIPanel(),
-                         "Problem saving SimBuilder file!",
-                         logger.convertToString().c_str());
+  if (errStatus)
+  {
+    QMessageBox::warning(
+      this->GetUIPanel(), "Problem saving SimBuilder file!", logger.convertToString().c_str());
     std::cerr << logger.convertToString() << std::endl;
     return 0;
-    }
+  }
 
   //push the data to the server
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
-  pqPipelineSource *serverWriter = builder->createSource("sources", "StringWriter",
-    core->getActiveServer());
+  pqPipelineSource* serverWriter =
+    builder->createSource("sources", "StringWriter", core->getActiveServer());
 
   if (!serverWriter)
-    {
-    QMessageBox::warning(this->GetUIPanel(),
-      "Problem saving SimBuilder file!",
-      "Unable to create a vtkStringWriter");
+  {
+    QMessageBox::warning(
+      this->GetUIPanel(), "Problem saving SimBuilder file!", "Unable to create a vtkStringWriter");
     std::cerr << "Unable to create a vtkStringWriter" << std::endl;
     return 0;
-    }
-  vtkSMSourceProxy *proxy = vtkSMSourceProxy::SafeDownCast(serverWriter->getProxy());
+  }
+  vtkSMSourceProxy* proxy = vtkSMSourceProxy::SafeDownCast(serverWriter->getProxy());
   pqSMAdaptor::setElementProperty(proxy->GetProperty("FileName"), filename);
   pqSMAdaptor::setElementProperty(proxy->GetProperty("Text"), filecontents.c_str());
   proxy->UpdateVTKObjects();
   proxy->UpdatePipeline();
 
   //now that we are done writing, destroy the proxy
-  builder->destroy( serverWriter );
+  builder->destroy(serverWriter);
   proxy = NULL;
 
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int SimBuilderCore::LoadResources(const char *filename)
+int SimBuilderCore::LoadResources(const char* filename)
 {
   if (!filename)
-    {
+  {
     return 0;
-    }
+  }
 
   QFileInfo finfo(filename);
   pqFileDialogModel model(this->ActiveServer);
@@ -425,44 +412,41 @@ int SimBuilderCore::LoadResources(const char *filename)
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
   QString lastExt = finfo.suffix().toLower();
-  if(model.fileExists(filename, fullpath) && (lastExt == "crf"))
-    {
+  if (model.fileExists(filename, fullpath) && (lastExt == "crf"))
+  {
     QStringList files;
     files << filename;
-    reader = builder->createReader("sources", "StringReader",
-      files, this->ActiveServer);
-    }
-  if(!reader)
-    {
+    reader = builder->createReader("sources", "StringReader", files, this->ActiveServer);
+  }
+  if (!reader)
+  {
     return 0;
-    }
+  }
   else
-    {
+  {
     // Add this to the list of recent server resources ...
-    pqCMBRecentlyUsedResourceLoaderImplementatation::
-        addDataFileToRecentResources(reader->getServer(), filename,
-                                     reader->getProxy()->GetXMLGroup(),
-                                     reader->getProxy()->GetXMLName());
-    }
+    pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFileToRecentResources(
+      reader->getServer(), filename, reader->getProxy()->GetXMLGroup(),
+      reader->getProxy()->GetXMLName());
+  }
 
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int SimBuilderCore::LoadResources(pqPipelineSource* reader,
-                                  pqCMBSceneTree* /*sceneTree*/)
+int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sceneTree*/)
 {
   // force read
-  vtkSMSourceProxy::SafeDownCast( reader->getProxy() )->UpdatePipeline();
+  vtkSMSourceProxy::SafeDownCast(reader->getProxy())->UpdatePipeline();
   vtkNew<vtkPVSceneGenFileInformation> info;
   reader->getProxy()->GatherInformation(info.GetPointer());
   QFileInfo finfo(info->GetFileName());
   QString lastExt = finfo.suffix().toLower();
 
-  if(lastExt != "crf")
-    {
+  if (lastExt != "crf")
+  {
     return 0;
-    }
+  }
 
   // Instantiate and initialize ResourceSet
   smtk::common::ResourceSet resources;
@@ -477,32 +461,30 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
 
   // Read input
   smtk::io::Logger logger;
-  bool hasErrors = resourceReader.readString(info->GetFileContents(), resources,
-                                             logger, true, &resourceMap);
+  bool hasErrors =
+    resourceReader.readString(info->GetFileContents(), resources, logger, true, &resourceMap);
   if (hasErrors)
-    {
-    std::cerr << "Resource Reader error\n"
-              << logger.convertToString()
-              << std::endl;
+  {
+    std::cerr << "Resource Reader error\n" << logger.convertToString() << std::endl;
 
     qDebug("Error loading resource file.");
     return 0;
-    }
+  }
 
   // Lets get the toplevel view
   smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
   if (!topView)
-    {
-    vtkGenericWarningMacro("There is no TopLevel View in  " <<  info->GetFileName());
+  {
+    vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());
     return 0;
-    }
-  
+  }
+
   // Create GUI components
-  this->uiManager()->setSMTKView(topView,this->GetUIPanel()->panelWidget());
-  if(!this->uiManager()->topView())
-    {
+  this->uiManager()->setSMTKView(topView, this->GetUIPanel()->panelWidget());
+  if (!this->uiManager()->topView())
+  {
     return 0;
-    }
+  }
 
   //unsigned numResources =  resources.numberOfResources();
   //std::cout << "Number of resources loaded: " << numResources << std::endl;
@@ -512,38 +494,35 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
   smtk::common::ResourceSet::ResourceRole simRole;
   smtk::common::ResourceSet::ResourceState simState;
   std::string simLink;
-  if (resources.resourceInfo("simbuilder", simType, simRole,
-                             simState, simLink))
-    {
-    this->ExportDialog->setSimAttSystem(
-      this->uiManager()->attributeSystem());
+  if (resources.resourceInfo("simbuilder", simType, simRole, simState, simLink))
+  {
+    this->ExportDialog->setSimAttSystem(this->uiManager()->attributeSystem());
     this->IsSimModelLoaded = true;
     this->CurrentSimFile = info->GetFileName();
-    }
+  }
 
   // Check if export resource loaded, and if not, load default template
   smtk::common::Resource::Type exportType;
   smtk::common::ResourceSet::ResourceRole exportRole;
   smtk::common::ResourceSet::ResourceState exportState;
   std::string exportLink;
-  if (resources.resourceInfo("export", exportType, exportRole,
-                             exportState, exportLink))
-    {
+  if (resources.resourceInfo("export", exportType, exportRole, exportState, exportLink))
+  {
     smtk::common::ResourcePtr expResource;
     resources.get("export", expResource);
     smtk::attribute::SystemPtr expSystem =
       smtk::dynamic_pointer_cast<smtk::attribute::System>(expResource);
     this->ExportDialog->setExportAttSystem(expSystem);
-    }
+  }
   else
-    {
+  {
     hasErrors = this->setDefaultExportTemplate();
     if (hasErrors)
-      {
+    {
       return 0;
-      }
     }
-/*
+  }
+  /*
   vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
   bool ignoreModel = false;
   if(this->LoadingScenario || (this->CMBModel && !this->CMBModel->hasGeometryEntity()))
@@ -555,9 +534,9 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader,
     this->CMBModel ? this->CMBModel->getModelWrapper() : NULL);
 */
   if (this->IsSimModelLoaded)
-    {
+  {
     emit this->newSimFileLoaded(info->GetFileName());
-    }
+  }
   return 1;
 }
 
@@ -569,16 +548,13 @@ bool SimBuilderCore::setDefaultExportTemplate()
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
   smtk::attribute::SystemPtr system = smtk::attribute::System::create();
-  bool hasErrors = attributeReader.readContents(system,
-    defaultExportTemplateString, logger);
+  bool hasErrors = attributeReader.readContents(system, defaultExportTemplateString, logger);
   if (hasErrors)
-    {
+  {
     std::cerr << "Error loading default export resource:\n"
-              << logger.convertToString()
-              << std::endl;
-    QMessageBox::warning(this->GetUIPanel(),
-                         "ERROR", "Error loading default export template");
-    }
+              << logger.convertToString() << std::endl;
+    QMessageBox::warning(this->GetUIPanel(), "ERROR", "Error loading default export template");
+  }
   this->ExportDialog->setExportAttSystem(system);
   smtkDebugMacro(logger, "Initialized ExportPanel to default template");
   return hasErrors;
@@ -588,22 +564,23 @@ bool SimBuilderCore::setDefaultExportTemplate()
 qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
 {
   if (!this->UIPanel)
-    {
+  {
     this->UIPanel = new qtSimBuilderUIPanel();
     this->UIPanel->initialize();
-    }
+  }
   return this->UIPanel;
 }
 
 //----------------------------------------------------------------------------
-pqSimBuilderUIManager*  SimBuilderCore::uiManager()
+pqSimBuilderUIManager* SimBuilderCore::uiManager()
 {
-  if(!this->m_attUIManager)
-    {
+  if (!this->m_attUIManager)
+  {
     this->m_attUIManager = new pqSimBuilderUIManager(this);
-    }
+  }
 
-  return this->m_attUIManager;;
+  return this->m_attUIManager;
+  ;
 }
 
 //----------------------------------------------------------------------------
@@ -615,23 +592,23 @@ void SimBuilderCore::updateSimBuilder(pqCMBSceneTree* /*sceneTree*/)
 //----------------------------------------------------------------------------
 void SimBuilderCore::updateSimulationModel()
 {
-  if(this->uiManager()->topView() && this->isSimModelLoaded())// && this->CMBModel)
+  if (this->uiManager()->topView() && this->isSimModelLoaded()) // && this->CMBModel)
+  {
+    if (this->isLoadingScenario())
     {
-    if(this->isLoadingScenario())
-      {
       this->updateCMBModelWithScenario();
-      }
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearCMBModel()
 {
-  if(this->isSimModelLoaded() && this->uiManager()->topView())
-    {
-//    this->uiManager()->clearModelItems();
+  if (this->isSimModelLoaded() && this->uiManager()->topView())
+  {
+    //    this->uiManager()->clearModelItems();
     this->ScenarioEntitiesCreated = false;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -642,24 +619,24 @@ void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 //----------------------------------------------------------------------------
 void SimBuilderCore::clearSimulationModel()
 {
-  if(this->m_attUIManager)
-    {
+  if (this->m_attUIManager)
+  {
     this->m_attUIManager->disconnect();
     delete this->m_attUIManager;
     this->m_attUIManager = NULL;
-    }
-  if(this->UIPanel)
-    {
+  }
+  if (this->UIPanel)
+  {
     this->UIPanel->initialize();
-//    delete this->UIPanel;
-//    this->UIPanel = NULL;
-    }
+    //    delete this->UIPanel;
+    //    this->UIPanel = NULL;
+  }
 }
 
 //----------------------------------------------------------------------------
 void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
 {
-/*
+  /*
   // Check if there is an unsaved mesh
   bool hasMesh = this->MeshManager->hasMesh();
   bool isCurrent = this->MeshManager->analysisMeshIsCurrent();
@@ -683,111 +660,95 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
 */
   smtk::attribute::SystemPtr attSystem = this->uiManager()->attributeSystem();
   if (!attSystem)
-    {
-    QMessageBox::warning(NULL, "Export Warning!",
-      "Cannot export - no attribute system available!");
+  {
+    QMessageBox::warning(NULL, "Export Warning!", "Cannot export - no attribute system available!");
     return;
-    }
+  }
 
-  smtk::attribute::SystemPtr expSystem =
-    this->ExportDialog->exportAttSystem();
+  smtk::attribute::SystemPtr expSystem = this->ExportDialog->exportAttSystem();
   if (!expSystem)
-    {
-    QMessageBox::warning(NULL, "Export Warning!",
-      "Cannot export - no *export* system available!");
+  {
+    QMessageBox::warning(NULL, "Export Warning!", "Cannot export - no *export* system available!");
     return;
-    }
+  }
 
   int status = this->ExportDialog->exec();
   //std::cout << "status " << status << std::endl;
 
   if (status)
-    {
+  {
     std::string script = this->ExportDialog->getPythonScript();
     if (script == "")
-      {
-      QMessageBox::warning(NULL, "Export Error",
-        "No python script specified.");
+    {
+      QMessageBox::warning(NULL, "Export Error", "No python script specified.");
       return;
-      }
+    }
 
     // Set up proxy to server
     vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
 
-    vtkSmartPointer<vtkSMProxy> exportProxy(
-      manager->NewProxy("ModelBridge", "PythonExporter"));
-    if(!exportProxy)
-      {
-      QMessageBox::warning(NULL, "Failure to create PythonExporter",
-        "Unable to create PythonExporter proxy.");
+    vtkSmartPointer<vtkSMProxy> exportProxy(manager->NewProxy("ModelBridge", "PythonExporter"));
+    if (!exportProxy)
+    {
+      QMessageBox::warning(
+        NULL, "Failure to create PythonExporter", "Unable to create PythonExporter proxy.");
       return;
-      }
+    }
 
     std::string simContents;
     smtk::io::AttributeWriter xmlw;
     smtk::io::Logger logger;
     bool errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(), simContents, logger);
-    if(errStatus)
-      {
-      QMessageBox::warning(NULL,
-                           "Problem saving SimBuilder file!",
-                           logger.convertToString().c_str());
+    if (errStatus)
+    {
+      QMessageBox::warning(
+        NULL, "Problem saving SimBuilder file!", logger.convertToString().c_str());
       std::cerr << logger.convertToString() << std::endl;
       return;
-      }
+    }
 
     std::string exportContents;
     errStatus = xmlw.writeContents(this->ExportDialog->exportAttSystem(), exportContents, logger);
-    if(errStatus)
-      {
-      QMessageBox::warning(NULL,
-                           "Problem saving SimBuilder file!",
-                           logger.convertToString().c_str());
+    if (errStatus)
+    {
+      QMessageBox::warning(
+        NULL, "Problem saving SimBuilder file!", logger.convertToString().c_str());
       std::cerr << logger.convertToString() << std::endl;
       return;
-      }
+    }
 
-    pqSMAdaptor::setElementProperty(exportProxy->GetProperty("Script"),
-                                    script.c_str());
+    pqSMAdaptor::setElementProperty(exportProxy->GetProperty("Script"), script.c_str());
     vtkSMProxyProperty* smwrapper =
-      vtkSMProxyProperty::SafeDownCast(
-      exportProxy->GetProperty("ModelManagerWrapper"));
+      vtkSMProxyProperty::SafeDownCast(exportProxy->GetProperty("ModelManagerWrapper"));
     smwrapper->RemoveAllProxies();
     smwrapper->AddProxy(mmproxy);
-//    vtkSMPropertyHelper(exportProxy, "ModelEntityID").Set(
-//      model.entity().toString().c_str());
+    //    vtkSMPropertyHelper(exportProxy, "ModelEntityID").Set(
+    //      model.entity().toString().c_str());
 
     exportProxy->UpdateVTKObjects();
     vtkClientServerStream stream;
-    stream  << vtkClientServerStream::Invoke
-            << VTKOBJECT(exportProxy) << "Operate"
-            << VTKOBJECT(mmproxy)
-            << simContents
-            << exportContents
-            << vtkClientServerStream::End;
+    stream << vtkClientServerStream::Invoke << VTKOBJECT(exportProxy) << "Operate"
+           << VTKOBJECT(mmproxy) << simContents << exportContents << vtkClientServerStream::End;
 
     mmproxy->GetSession()->ExecuteStream(mmproxy->GetLocation(), stream);
 
     // check to see if the operation succeeded on the server
     vtkSMIntVectorProperty* operateSucceeded =
-      vtkSMIntVectorProperty::SafeDownCast(
-        exportProxy->GetProperty("OperateSucceeded"));
+      vtkSMIntVectorProperty::SafeDownCast(exportProxy->GetProperty("OperateSucceeded"));
     exportProxy->UpdatePropertyInformation();
 
-    if(operateSucceeded->GetElement(0))
-      {
+    if (operateSucceeded->GetElement(0))
+    {
       exportProxy->UpdatePropertyInformation();
-      }
+    }
     else
-      {
-      QMessageBox::warning(NULL, "Failure of server operator",
-        "Server side Export failed.");
-      }
+    {
+      QMessageBox::warning(NULL, "Failure of server operator", "Server side Export failed.");
+    }
 
     exportProxy->Delete();
     exportProxy = 0;
-
-    }
+  }
 
   return;
 }

@@ -9,9 +9,8 @@
 //=========================================================================
 #include "vtkCMBArcSnapClientOperator.h"
 
-
-#include "vtkObjectFactory.h"
 #include "vtkCMBArcManager.h"
+#include "vtkObjectFactory.h"
 
 vtkStandardNewMacro(vtkCMBArcSnapClientOperator);
 
@@ -26,20 +25,20 @@ vtkCMBArcSnapClientOperator::~vtkCMBArcSnapClientOperator()
 }
 
 //----------------------------------------------------------------------------
-double vtkCMBArcSnapClientOperator::GetCurrentRadius( )
+double vtkCMBArcSnapClientOperator::GetCurrentRadius()
 {
-  vtkCMBArcManager *manager = vtkCMBArcManager::GetInstance();
+  vtkCMBArcManager* manager = vtkCMBArcManager::GetInstance();
   if (manager->GetUseSnapping())
-    {
+  {
     return manager->GetSnapRadius();
-    }
+  }
   return 0.0;
 }
 
 //----------------------------------------------------------------------------
 bool vtkCMBArcSnapClientOperator::Operate(const double& radius)
 {
-  vtkCMBArcManager *manager = vtkCMBArcManager::GetInstance();
+  vtkCMBArcManager* manager = vtkCMBArcManager::GetInstance();
   double r = radius <= 0.0 ? 0.0 : radius;
   manager->SetSnapRadius(r);
   manager->SetUseSnapping(r != 0.0);

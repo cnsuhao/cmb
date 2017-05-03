@@ -35,50 +35,43 @@ vtkCMBProjectManagerWriter::~vtkCMBProjectManagerWriter()
 void vtkCMBProjectManagerWriter::WriteProjectFile()
 {
   if (!this->ProjectFileName)
-    {
+  {
     return;
-    }
+  }
 
   std::stringstream buffer;
-  vtkCMBProjectManager *projectManager = vtkCMBProjectManager::GetInstance();
+  vtkCMBProjectManager* projectManager = vtkCMBProjectManager::GetInstance();
 
-  vtkSmartPointer<vtkXMLDataElement> projectFile =
-    vtkSmartPointer<vtkXMLDataElement>::New();
-   projectFile->SetName("Project");
+  vtkSmartPointer<vtkXMLDataElement> projectFile = vtkSmartPointer<vtkXMLDataElement>::New();
+  projectFile->SetName("Project");
 
-  projectFile->SetIntAttribute("VersionMajor",
-                  projectManager->GetVersionMajor());
-  projectFile->SetIntAttribute("VersionMinor",
-                  projectManager->GetVersionMinor());
+  projectFile->SetIntAttribute("VersionMajor", projectManager->GetVersionMajor());
+  projectFile->SetIntAttribute("VersionMinor", projectManager->GetVersionMinor());
 
-
-  for ( int i=0; i < vtkCMBProjectManager::NUM_PROGRAMS; ++i)
-    {
+  for (int i = 0; i < vtkCMBProjectManager::NUM_PROGRAMS; ++i)
+  {
     //add the data element for each program if it exists
     projectManager->SetActiveProgram(i);
     const char* directory = projectManager->GetActiveProgramDirectory();
-    if (!directory )
-      {
+    if (!directory)
+    {
       continue;
-      }
+    }
     //write out this program entry
-    vtkSmartPointer<vtkXMLDataElement> program =
-        vtkSmartPointer<vtkXMLDataElement>::New();
+    vtkSmartPointer<vtkXMLDataElement> program = vtkSmartPointer<vtkXMLDataElement>::New();
     program->SetName("Program");
-    program->SetAttribute("Name",vtkCMBProjectManager::GetProgramName(
-                          vtkCMBProjectManager::PROGRAM(i)));
+    program->SetAttribute(
+      "Name", vtkCMBProjectManager::GetProgramName(vtkCMBProjectManager::PROGRAM(i)));
 
-    vtkSmartPointer<vtkXMLDataElement> directoryPath =
-        vtkSmartPointer<vtkXMLDataElement>::New();
+    vtkSmartPointer<vtkXMLDataElement> directoryPath = vtkSmartPointer<vtkXMLDataElement>::New();
     directoryPath->SetName("Directory");
-    directoryPath->SetAttribute("Path",directory);
+    directoryPath->SetAttribute("Path", directory);
     program->AddNestedElement(directoryPath);
     projectFile->AddNestedElement(program);
-    }
+  }
 
   vtkIndent indent;
-  vtkXMLUtilities::WriteElementToFile(
-    projectFile, this->GetProjectFileName(), &indent);
+  vtkXMLUtilities::WriteElementToFile(projectFile, this->GetProjectFileName(), &indent);
   return;
 }
 
@@ -86,6 +79,6 @@ void vtkCMBProjectManagerWriter::WriteProjectFile()
 void vtkCMBProjectManagerWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
-  os << indent << "ProjectFileName: " <<
-    (this->ProjectFileName ? this->ProjectFileName : "(none)") << "\n";
+  os << indent << "ProjectFileName: " << (this->ProjectFileName ? this->ProjectFileName : "(none)")
+     << "\n";
 }

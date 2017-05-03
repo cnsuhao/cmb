@@ -15,9 +15,9 @@
 #define __qtCMBGenerateContoursDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QDialog>
 #include <QDoubleValidator>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBUniformGrid;
@@ -32,15 +32,15 @@ class QProgressDialog;
 
 namespace Ui
 {
-  class qtCMBGenerateContoursDialog;
+class qtCMBGenerateContoursDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBGenerateContoursDialog : public QDialog
 {
   Q_OBJECT
 public:
-  qtCMBGenerateContoursDialog(pqCMBSceneNode *parentNode,
-    QWidget *parent = NULL, Qt::WindowFlags flags= 0);
+  qtCMBGenerateContoursDialog(
+    pqCMBSceneNode* parentNode, QWidget* parent = NULL, Qt::WindowFlags flags = 0);
   ~qtCMBGenerateContoursDialog() override;
 
   int exec();
@@ -58,25 +58,25 @@ protected:
   void setupProgressBar(QWidget* progressWidget);
   void disableWhileProcessing();
 
-  Ui::qtCMBGenerateContoursDialog *InternalWidget;
+  Ui::qtCMBGenerateContoursDialog* InternalWidget;
 
-  QDialog *MainDialog;
-  pqCMBSceneNode *ParentNode;
+  QDialog* MainDialog;
+  pqCMBSceneNode* ParentNode;
   pqCMBEnumPropertyWidget* RepresentationWidget;
-  pqRenderView *RenderView;
-  pqCMBUniformGrid *Grid;
-  pqDataRepresentation *ContourRepresentation;
-  pqPipelineSource *ContourSource;
-  pqPipelineSource *CleanPolyLines;
+  pqRenderView* RenderView;
+  pqCMBUniformGrid* Grid;
+  pqDataRepresentation* ContourRepresentation;
+  pqPipelineSource* ContourSource;
+  pqPipelineSource* CleanPolyLines;
   QString ProgressMessage;
   QString ImageNodeName;
-  qtCMBProgressWidget *ProgressWidget;
+  qtCMBProgressWidget* ProgressWidget;
   bool ProgressMessagesMustMatch;
   double ContourValue;
   double MinimumLineLength;
   bool UseRelativeLineLength;
-  QDoubleValidator *ContourValidator;
-  QProgressDialog *Progress;
+  QDoubleValidator* ContourValidator;
+  QProgressDialog* Progress;
 };
 
 //need a sublcass validator, since QDoubleValidator is really shitty
@@ -84,8 +84,8 @@ class CMBAPPCOMMON_EXPORT InternalDoubleValidator : public QDoubleValidator
 {
   Q_OBJECT
 public:
-    InternalDoubleValidator(QObject * parent);
-    void fixup(QString &input) const override;
+  InternalDoubleValidator(QObject* parent);
+  void fixup(QString& input) const override;
 };
 
 #endif
