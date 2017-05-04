@@ -14,17 +14,14 @@
 
 vtkStandardNewMacro(vtkCMBArcSnapClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcSnapClientOperator::vtkCMBArcSnapClientOperator()
 {
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcSnapClientOperator::~vtkCMBArcSnapClientOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 double vtkCMBArcSnapClientOperator::GetCurrentRadius()
 {
   vtkCMBArcManager* manager = vtkCMBArcManager::GetInstance();
@@ -35,7 +32,6 @@ double vtkCMBArcSnapClientOperator::GetCurrentRadius()
   return 0.0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcSnapClientOperator::Operate(const double& radius)
 {
   vtkCMBArcManager* manager = vtkCMBArcManager::GetInstance();
@@ -45,7 +41,6 @@ bool vtkCMBArcSnapClientOperator::Operate(const double& radius)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcSnapClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

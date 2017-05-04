@@ -37,18 +37,15 @@ public:
 };
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcSplitOnIndexOperator::vtkCMBArcSplitOnIndexOperator()
 {
   this->Index = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcSplitOnIndexOperator::~vtkCMBArcSplitOnIndexOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
 {
   //we have to reset the CreatedArcId everytime we split
@@ -125,7 +122,6 @@ bool vtkCMBArcSplitOnIndexOperator::Operate(vtkIdType arcId)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcSplitOnIndexOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

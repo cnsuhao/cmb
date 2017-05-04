@@ -22,7 +22,6 @@
 
 vtkStandardNewMacro(vtkTriangulateConcavePolysFilter);
 
-//-----------------------------------------------------------------------------
 int vtkTriangulateConcavePolysFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -163,7 +162,6 @@ int vtkTriangulateConcavePolysFilter::RequestData(vtkInformation* vtkNotUsed(req
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 bool vtkTriangulateConcavePolysFilter::IsPolygonConcave(
   vtkPoints* points, vtkIdType npts, vtkIdType* pts)
 {
@@ -200,7 +198,6 @@ bool vtkTriangulateConcavePolysFilter::IsPolygonConcave(
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTriangulateConcavePolysFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

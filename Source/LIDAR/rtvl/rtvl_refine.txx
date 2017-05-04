@@ -35,7 +35,6 @@
 template <unsigned int N>
 class rtvl_refine_quadtree;
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 class rtvl_refine_level
 {
@@ -82,7 +81,6 @@ public:
   bool tensor_initialized;
 };
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 class rtvl_refine_quadtree
 {
@@ -145,7 +143,6 @@ public:
   vcl_vector<rtvl_refine_level<N>*> levels;
 };
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::init(int depth, double* quad_bounds)
 {
@@ -163,7 +160,6 @@ void rtvl_refine_quadtree<N>::init(int depth, double* quad_bounds)
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::build_quad(vcl_list<rtvl_refine_quadtree<N>*>& quad_stack)
 {
@@ -207,7 +203,6 @@ void rtvl_refine_quadtree<N>::build_quad(vcl_list<rtvl_refine_quadtree<N>*>& qua
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::initialize_points(int depth, unsigned int i, unsigned int j,
   double scale, vcl_vector<unsigned int> indices, rgtl_object_array_points<N>& points)
@@ -238,7 +233,6 @@ void rtvl_refine_quadtree<N>::initialize_points(int depth, unsigned int i, unsig
   this->levels.push_back(level);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::add_selections_for_next_level(double scale, double scale_multiplier,
   int processLevel, vcl_vector<rtvl_refine_level<N>*>& levels_subset)
@@ -293,7 +287,6 @@ void rtvl_refine_quadtree<N>::add_selections_for_next_level(double scale, double
   this->levels.push_back(next_level);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_refine_quadtree<N>* rtvl_refine_quadtree<N>::find_quad_with_level(int level)
 {
@@ -313,7 +306,6 @@ rtvl_refine_quadtree<N>* rtvl_refine_quadtree<N>::find_quad_with_level(int level
   return this->child[0].find_quad_with_level(level);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_refine_quadtree<N>* rtvl_refine_quadtree<N>::get_quad(
   unsigned int depth, unsigned int i, unsigned int j)
@@ -327,7 +319,6 @@ rtvl_refine_quadtree<N>* rtvl_refine_quadtree<N>::get_quad(
   return this->child[((i & mask) ? 1 : 0) + ((j & mask) ? 2 : 0)].get_quad(depth, i, j);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 unsigned int rtvl_refine_quadtree<N>::get_number_of_points(int level)
 {
@@ -359,7 +350,6 @@ unsigned int rtvl_refine_quadtree<N>::get_number_of_points(int level)
   return sum;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::gather_levels(
   int level, vcl_vector<rtvl_refine_level<N>*>& levels_vector)
@@ -392,7 +382,6 @@ void rtvl_refine_quadtree<N>::gather_levels(
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_quadtree<N>::gather_levels_within_bounds(
   int level, vcl_vector<rtvl_refine_level<N>*>& levels_vector, double required_bounds[4])
@@ -431,7 +420,6 @@ void rtvl_refine_quadtree<N>::gather_levels_within_bounds(
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 unsigned int rtvl_refine_quadtree<N>::gather_points(int level, double padLength,
   vcl_vector<rtvl_refine_level<N>*>& levels_vector, rgtl_object_array_points<N>& points,
@@ -528,7 +516,6 @@ unsigned int rtvl_refine_quadtree<N>::gather_points(int level, double padLength,
   return total_points;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 bool rtvl_refine_quadtree<N>::within_bounds(double required_bounds[4])
 {
@@ -558,7 +545,6 @@ bool rtvl_refine_quadtree<N>::within_bounds(double required_bounds[4])
   return true;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 class rtvl_refine_internal
 {
@@ -612,7 +598,6 @@ private:
   bool is_last_level;
 };
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_refine_internal<N>::rtvl_refine_internal(rtvl_refine<N>* e)
   : external(e)
@@ -625,7 +610,6 @@ rtvl_refine_internal<N>::rtvl_refine_internal(rtvl_refine<N>* e)
   current_scale = -1;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::init(unsigned int num_points, double* points_in, double* bounds_in)
 {
@@ -640,7 +624,6 @@ void rtvl_refine_internal<N>::init(unsigned int num_points, double* points_in, d
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::build_tree()
 {
@@ -698,7 +681,6 @@ void rtvl_refine_internal<N>::build_tree()
   delete[] treePoints;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 unsigned int rtvl_refine_internal<N>::estimate_refine_levels()
 {
@@ -723,7 +705,6 @@ unsigned int rtvl_refine_internal<N>::estimate_refine_levels()
   return number_of_levels;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::set_mask_size(double f)
 {
@@ -738,14 +719,12 @@ void rtvl_refine_internal<N>::set_mask_size(double f)
   this->mask_size = f;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::set_scale(double scale)
 {
   this->current_scale = scale;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::next_scale()
 {
@@ -754,14 +733,12 @@ void rtvl_refine_internal<N>::next_scale()
   this->current_level++;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_refine_internal<N>::get_current_scale() const
 {
   return this->current_scale;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::setup_level()
 {
@@ -774,7 +751,6 @@ void rtvl_refine_internal<N>::setup_level()
   //  objects.reset(new rgtl_octree_objects<N>(level->points, bounds, 10));  RSB!!!
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::select_scale()
 {
@@ -815,7 +791,6 @@ void rtvl_refine_internal<N>::select_scale()
   this->current_scale = distances[nth];
 }
 
-//----------------------------------------------------------------------------
 // min_number_of_chunks 1, 4, 16, 64, 128...
 template <unsigned int N>
 int rtvl_refine_internal<N>::initialize_refine_level(
@@ -922,7 +897,6 @@ int rtvl_refine_internal<N>::initialize_refine_level(
   // results for select_samples of the block boundary
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 int rtvl_refine_internal<N>::refine_next_block(const char* base_filename)
 {
@@ -1020,7 +994,6 @@ int rtvl_refine_internal<N>::refine_next_block(const char* base_filename)
   return output_counter;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::refine_block(rgtl_object_array_points<N>& blockPoints,
   rtvl_refine_level<N>**(&pointsLevels), double refine_bounds[4])
@@ -1079,7 +1052,6 @@ void rtvl_refine_internal<N>::refine_block(rgtl_object_array_points<N>& blockPoi
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::select_block_samples(vcl_vector<rtvl_refine_level<N>*>& levels_vector,
   rgtl_object_array_points<N>& blockPoints, rtvl_refine_level<N>**(&pointsLevels),
@@ -1214,7 +1186,6 @@ void rtvl_refine_internal<N>::select_block_samples(vcl_vector<rtvl_refine_level<
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 bool rtvl_refine_internal<N>::last_level()
 {
@@ -1233,7 +1204,6 @@ bool rtvl_refine_internal<N>::last_level()
   return maxLength <= (6.0 * this->current_scale);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine_internal<N>::extract_tokens(
   int level, double* bounds_in, rtvl_tokens<N>& out) const
@@ -1338,7 +1308,6 @@ void rtvl_refine_internal<N>::extract_tokens(
   }
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_refine_internal<N>::get_level_scale(int level)
 {
@@ -1349,7 +1318,6 @@ double rtvl_refine_internal<N>::get_level_scale(int level)
   return 0;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_refine<N>::rtvl_refine(unsigned int num_points, double* points, double* bounds)
   : internal_(0)
@@ -1359,21 +1327,18 @@ rtvl_refine<N>::rtvl_refine(unsigned int num_points, double* points, double* bou
   this->internal_ = internal.release();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_refine<N>::~rtvl_refine()
 {
   delete this->internal_;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine<N>::set_mask_size(double f)
 {
   this->internal_->set_mask_size(f);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_refine<N>::compute_scale() const
 {
@@ -1389,7 +1354,6 @@ double rtvl_refine<N>::compute_scale() const
   return this->internal_->get_current_scale();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine<N>::set_scale(double scale)
 {
@@ -1401,14 +1365,12 @@ void rtvl_refine<N>::set_scale(double scale)
   this->internal_->set_scale(scale);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine<N>::build_tree()
 {
   this->internal_->build_tree();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 int rtvl_refine<N>::initialize_refine_level(
   unsigned int memory_limit, int requested_min_depth) const
@@ -1416,42 +1378,36 @@ int rtvl_refine<N>::initialize_refine_level(
   return this->internal_->initialize_refine_level(memory_limit, requested_min_depth);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 int rtvl_refine<N>::refine_next_block(const char* base_filename)
 {
   return this->internal_->refine_next_block(base_filename);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_refine<N>::get_tokens(int level, double* bounds, rtvl_tokens<N>& tokens) const
 {
   this->internal_->extract_tokens(level, bounds, tokens);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_refine<N>::get_level_scale(int level)
 {
   return this->internal_->get_level_scale(level);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 unsigned int rtvl_refine<N>::get_vote_count() const
 {
   return this->internal_->get_vote_count();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 unsigned int rtvl_refine<N>::estimate_refine_levels()
 {
   return this->internal_->estimate_refine_levels();
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 bool rtvl_refine<N>::next_scale()
 {
@@ -1460,7 +1416,6 @@ bool rtvl_refine<N>::next_scale()
   return !last_level; // return  wether NOT last scale
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_REFINE_INSTANTIATE(N)                                                                 \
   template class rtvl_refine_internal<N>;                                                          \
   template class rtvl_refine<N>

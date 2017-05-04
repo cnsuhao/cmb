@@ -25,19 +25,16 @@
 
 vtkStandardNewMacro(vtkCMBArcPickPointOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcPickPointOperator::vtkCMBArcPickPointOperator()
 {
   this->ArcId = -1;
   this->PickedPointId = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcPickPointOperator::~vtkCMBArcPickPointOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcPickPointOperator::Operate(vtkPVExtractSelection* source)
 {
   if (source == NULL || this->ArcId < 0)
@@ -84,7 +81,6 @@ bool vtkCMBArcPickPointOperator::Operate(vtkPVExtractSelection* source)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPickPointOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

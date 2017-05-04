@@ -23,7 +23,6 @@
 
 vtkStandardNewMacro(vtkRegisterPlanarTextureMap);
 
-//-----------------------------------------------------------------------------
 // Construct with s,t range=(0,1) and automatic plane generation turned on.
 vtkRegisterPlanarTextureMap::vtkRegisterPlanarTextureMap()
 {
@@ -50,13 +49,11 @@ vtkRegisterPlanarTextureMap::vtkRegisterPlanarTextureMap()
   this->RegisterSTPoints[1][1] = 0.0;
 }
 
-//-----------------------------------------------------------------------------
 int vtkRegisterPlanarTextureMap::SetTwoPointRegistration(double info[8])
 {
   return this->SetTwoPointRegistration(info, &(info[2]), &(info[4]), &(info[6]));
 }
 
-//-----------------------------------------------------------------------------
 void vtkRegisterPlanarTextureMap::GetTwoPointRegistration(double info[8])
 {
   int i, j;
@@ -69,7 +66,6 @@ void vtkRegisterPlanarTextureMap::GetTwoPointRegistration(double info[8])
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkRegisterPlanarTextureMap::GetThreePointRegistration(double info[12])
 {
   int i, j;
@@ -82,7 +78,6 @@ void vtkRegisterPlanarTextureMap::GetThreePointRegistration(double info[12])
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkRegisterPlanarTextureMap::SetTwoPointRegistration(
   double xy1[2], double st1[2], double xy2[2], double st2[2])
 {
@@ -133,14 +128,12 @@ int vtkRegisterPlanarTextureMap::SetTwoPointRegistration(
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 int vtkRegisterPlanarTextureMap::SetThreePointRegistration(double info[12])
 {
   return this->SetThreePointRegistration(
     info, &(info[2]), &(info[4]), &(info[6]), &(info[8]), &(info[10]));
 }
 
-//-----------------------------------------------------------------------------
 int vtkRegisterPlanarTextureMap::SetThreePointRegistration(
   double xy1[2], double st1[2], double xy2[2], double st2[2], double xy3[2], double st3[2])
 {
@@ -254,7 +247,6 @@ int vtkRegisterPlanarTextureMap::SetThreePointRegistration(
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 int vtkRegisterPlanarTextureMap::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -366,7 +358,6 @@ int vtkRegisterPlanarTextureMap::RequestData(vtkInformation* vtkNotUsed(request)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkRegisterPlanarTextureMap::ComputeTextureCoordinate(
   double pt[2], double sRange[2], double tRange[2], double sMap[3], double tMap[3], double* tCoords)
 {
@@ -376,7 +367,6 @@ void vtkRegisterPlanarTextureMap::ComputeTextureCoordinate(
     ((tMap[0] * pt[0]) + (tMap[1] * pt[1]) + tMap[2] - tRange[0]) / (tRange[1] - tRange[0]);
 }
 
-//-----------------------------------------------------------------------------
 void vtkRegisterPlanarTextureMap::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -409,4 +399,3 @@ void vtkRegisterPlanarTextureMap::PrintSelf(ostream& os, vtkIndent indent)
   os << indent
      << "Generate Texture Coordinates: " << (this->GenerateCoordinates ? "On\n" : "Off\n");
 }
-//-----------------------------------------------------------------------------

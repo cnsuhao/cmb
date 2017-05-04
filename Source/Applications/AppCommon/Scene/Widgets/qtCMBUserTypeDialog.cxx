@@ -19,7 +19,6 @@
 #include "ui_qtObjectTypeDialog.h"
 #include <QInputDialog>
 
-//-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::updateUserType(pqCMBSceneNode* node)
 {
   if ((!node) || node->isTypeNode())
@@ -30,7 +29,6 @@ void qtCMBUserTypeDialog::updateUserType(pqCMBSceneNode* node)
   dialog.exec();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBUserTypeDialog::qtCMBUserTypeDialog(pqCMBSceneNode* node)
 {
   this->Node = node;
@@ -50,7 +48,6 @@ qtCMBUserTypeDialog::qtCMBUserTypeDialog(pqCMBSceneNode* node)
     SLOT(changeObjectType()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBUserTypeDialog::~qtCMBUserTypeDialog()
 {
   if (this->TypeDialog)
@@ -62,25 +59,24 @@ qtCMBUserTypeDialog::~qtCMBUserTypeDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBUserTypeDialog::exec()
 {
   this->MainDialog->setModal(true);
   this->MainDialog->show();
   this->MainDialog->exec();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBUserTypeDialog::accept()
 {
   this->Node->getDataObject()->setUserDefinedType(
     this->TypeDialog->ObjectTypes->currentText().toLatin1());
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBUserTypeDialog::cancel()
 {
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBUserTypeDialog::changeObjectType()
 {
   if (this->TypeDialog->ObjectTypes->currentIndex() == (this->TypeDialog->ObjectTypes->count() - 1))
@@ -112,5 +108,3 @@ void qtCMBUserTypeDialog::changeObjectType()
     this->TypeDialog->ObjectTypes->blockSignals(false);
   }
 }
-
-//-----------------------------------------------------------------------------

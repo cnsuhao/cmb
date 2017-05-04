@@ -267,7 +267,6 @@ public:
     this->Modified();
   };
 
-  //---------------Get Properties--------------------//
   bool GetInvert()
   {
     if (ActiveFilterIndex < 0 || ActiveFilterIndex >= static_cast<int>(FilterList.size()))

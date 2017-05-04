@@ -53,7 +53,7 @@ vtkCMBICMReader::vtkCMBICMReader()
   this->vectors = NULL;
   this->HexCells = NULL;
 }
-//-----------------------------------------------------------------------------
+
 vtkCMBICMReader::~vtkCMBICMReader()
 {
   this->SetFileName(0);
@@ -77,7 +77,7 @@ vtkCMBICMReader::~vtkCMBICMReader()
     this->NumberOfTimeSteps = 0;
   }
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* vtkNotUsed(outputVector))
 {
   //Help the user get the full path to the temporal data
@@ -166,7 +166,7 @@ int vtkCMBICMReader::ReadTemporalData(vtkInformationVector* vtkNotUsed(outputVec
   file.close();
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBICMReader::ReadGeometryData(vtkInformationVector* vtkNotUsed(outputVector))
 {
   std::string fileNameStr = this->FileName;
@@ -277,7 +277,7 @@ int vtkCMBICMReader::ReadGeometryData(vtkInformationVector* vtkNotUsed(outputVec
   file.close();
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBICMReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -378,14 +378,14 @@ int vtkCMBICMReader::RequestData(vtkInformation* vtkNotUsed(request),
   output->GetCellData()->SetScalars(this->CellData[this->TimeStep]);
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBICMReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
-//----------------------------------------------------------------------------
+
 int vtkCMBICMReader::RequestInformation(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {

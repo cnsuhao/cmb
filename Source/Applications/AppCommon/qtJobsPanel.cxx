@@ -19,7 +19,6 @@
 #include <QString>
 #include <QVBoxLayout>
 
-//-----------------------------------------------------------------------------
 class qtJobsPanel::qtJobsPanelInternal
 {
 public:
@@ -34,7 +33,6 @@ public:
   cumulus::CumulusWidget* CumulusWidget;
 };
 
-//-----------------------------------------------------------------------------
 qtJobsPanel::qtJobsPanelInternal::qtJobsPanelInternal()
   : MainWidget(0)
   , MainLayout(0)
@@ -44,7 +42,6 @@ qtJobsPanel::qtJobsPanelInternal::qtJobsPanelInternal()
 {
 }
 
-//-----------------------------------------------------------------------------
 qtJobsPanel::qtJobsPanel(QWidget* parent)
   : QDockWidget(parent)
 {
@@ -79,13 +76,11 @@ qtJobsPanel::qtJobsPanel(QWidget* parent)
   this->setObjectName("Jobs Panel");
 }
 
-//-----------------------------------------------------------------------------
 qtJobsPanel::~qtJobsPanel()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void qtJobsPanel::authenticateHPC()
 {
   // Check for SSL

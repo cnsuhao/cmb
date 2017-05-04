@@ -37,7 +37,6 @@
 
 vtkStandardNewMacro(vtkCMBImplicitPlaneRepresentation);
 
-//----------------------------------------------------------------------------
 vtkCMBImplicitPlaneRepresentation::vtkCMBImplicitPlaneRepresentation()
 {
   this->NormalFixed = 1;
@@ -49,12 +48,10 @@ vtkCMBImplicitPlaneRepresentation::vtkCMBImplicitPlaneRepresentation()
   this->EdgesActor->SetVisibility(0);
 }
 
-//----------------------------------------------------------------------------
 vtkCMBImplicitPlaneRepresentation::~vtkCMBImplicitPlaneRepresentation()
 {
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBImplicitPlaneRepresentation::ComputeInteractionState(int X, int Y, int modify)
 {
   if (!this->NormalFixed)
@@ -92,7 +89,6 @@ int vtkCMBImplicitPlaneRepresentation::ComputeInteractionState(int X, int Y, int
   return this->InteractionState;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBImplicitPlaneRepresentation::WidgetInteraction(double e[2])
 {
   if (!this->NormalFixed)
@@ -130,7 +126,6 @@ void vtkCMBImplicitPlaneRepresentation::WidgetInteraction(double e[2])
   this->LastEventPosition[2] = 0.0;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBImplicitPlaneRepresentation::TranslateAlongNormal(double* p1, double* p2)
 {
   //Get the motion vector
@@ -165,7 +160,6 @@ void vtkCMBImplicitPlaneRepresentation::TranslateAlongNormal(double* p1, double*
   this->BuildRepresentation();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBImplicitPlaneRepresentation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

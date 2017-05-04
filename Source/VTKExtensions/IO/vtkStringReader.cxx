@@ -21,20 +21,17 @@
 
 vtkStandardNewMacro(vtkStringReader);
 
-//-----------------------------------------------------------------------------
 vtkStringReader::vtkStringReader()
 {
   this->FileName = 0;
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkStringReader::~vtkStringReader()
 {
   this->SetFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 int vtkStringReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -58,7 +55,6 @@ int vtkStringReader::RequestData(vtkInformation* vtkNotUsed(request),
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkStringReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -66,7 +62,6 @@ void vtkStringReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkStringReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

@@ -27,7 +27,6 @@
 
 vtkStandardNewMacro(vtkCMBGlyphPointSource);
 
-//-----------------------------------------------------------------------------
 vtkCMBGlyphPointSource::vtkCMBGlyphPointSource()
 {
   vtkPointData* pdata;
@@ -85,7 +84,6 @@ vtkCMBGlyphPointSource::vtkCMBGlyphPointSource()
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBGlyphPointSource::~vtkCMBGlyphPointSource()
 {
   this->Source = NULL;
@@ -99,7 +97,6 @@ vtkCMBGlyphPointSource::~vtkCMBGlyphPointSource()
   this->Transform = NULL;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBGlyphPointSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -111,7 +108,6 @@ int vtkCMBGlyphPointSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -126,7 +122,7 @@ void vtkCMBGlyphPointSource::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Default Color: " << this->DefaultColor[0] << ", " << this->DefaultColor[1]
      << ", " << this->DefaultColor[2] << ", " << this->DefaultColor[3] << "\n";
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType vtkCMBGlyphPointSource::InsertNextPoint(double x, double y, double z)
 {
   vtkIdType id = this->Points->InsertNextPoint(x, y, z);
@@ -144,7 +140,7 @@ vtkIdType vtkCMBGlyphPointSource::InsertNextPoint(double x, double y, double z)
   this->Modified();
   return id;
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType vtkCMBGlyphPointSource::InsertNextPoint(double x, double y, double z, double r, double g,
   double b, double a, double sx, double sy, double sz, double ox, double oy, double oz, int vis)
 {
@@ -163,25 +159,25 @@ vtkIdType vtkCMBGlyphPointSource::InsertNextPoint(double x, double y, double z, 
   this->Modified();
   return id;
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::SetScale(vtkIdType index, double sx, double sy, double sz)
 {
   this->Scaling->SetTuple3(index, sx, sy, sz);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::SetOrientation(vtkIdType index, double ox, double oy, double oz)
 {
   this->Orientation->SetTuple3(index, ox, oy, oz);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::SetVisibility(vtkIdType index, int flag)
 {
   this->Visibility->SetValue(index, flag);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::SetColor(vtkIdType index, double r, double g, double b, double a)
 {
   this->Color->SetTuple4(
@@ -190,7 +186,7 @@ void vtkCMBGlyphPointSource::SetColor(vtkIdType index, double r, double g, doubl
   this->Color->Modified();
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::UnsetColor(vtkIdType index)
 {
   this->Color->SetTuple4(index, (255.0 * this->DefaultColor[0]) + 0.5,
@@ -199,7 +195,7 @@ void vtkCMBGlyphPointSource::UnsetColor(vtkIdType index)
   this->SelectionMask->SetValue(index, 0);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::SetDefaultColor(double r, double g, double b, double a)
 {
   this->DefaultColor[0] = r;
@@ -223,7 +219,6 @@ void vtkCMBGlyphPointSource::SetDefaultColor(double r, double g, double b, doubl
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::ApplyTransform(double* odelta, double* pdelta, double* sdelta)
 {
 
@@ -252,7 +247,6 @@ void vtkCMBGlyphPointSource::ApplyTransform(double* odelta, double* pdelta, doub
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::ApplyTransform(
   vtkIdType i, double* odelta, double* pdelta, double* sdelta)
 {
@@ -278,7 +272,6 @@ void vtkCMBGlyphPointSource::ApplyTransform(
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::ResetColorsToDefault()
 {
   unsigned char rb = (255.0 * this->DefaultColor[0]) + 0.5;
@@ -298,34 +291,33 @@ void vtkCMBGlyphPointSource::ResetColorsToDefault()
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBGlyphPointSource::SetPoint(vtkIdType index, double x, double y, double z)
 {
   this->Points->SetPoint(index, x, y, z);
   this->Points->GetBounds(this->GlyphSourceBounds);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::GetPoint(vtkIdType index, double* p)
 {
   this->Points->GetPoint(index, p);
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::GetScale(vtkIdType index, double* s)
 {
   this->Scaling->GetTypedTuple(index, s);
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::GetOrientation(vtkIdType index, double* o)
 {
   this->Orientation->GetTypedTuple(index, o);
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBGlyphPointSource::GetVisibility(vtkIdType index)
 {
   return this->Visibility->GetValue(index);
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::GetColor(vtkIdType index, double* color)
 {
   unsigned char v[4];
@@ -335,7 +327,7 @@ void vtkCMBGlyphPointSource::GetColor(vtkIdType index, double* color)
   color[2] = static_cast<double>(v[2]) / 255.0;
   color[3] = static_cast<double>(v[3]) / 255.0;
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::ReadFromFile(const char* fname)
 {
   int index;
@@ -353,7 +345,7 @@ void vtkCMBGlyphPointSource::ReadFromFile(const char* fname)
   this->SelectionMask = vtkBitArray::SafeDownCast(pdata->GetArray("UniqueColor", index));
   reader->Delete();
 }
-//-----------------------------------------------------------------------------
+
 void vtkCMBGlyphPointSource::WriteToFile(const char* fname)
 {
   vtkNew<vtkPolyDataWriter> writer;
@@ -375,7 +367,7 @@ void vtkCMBGlyphPointSource::WriteToFile(const char* fname)
   this->Color->DeepCopy(tmpColorArray.GetPointer());
   this->SelectionMask->DeepCopy(tmpMaskArray.GetPointer());
 }
-//-----------------------------------------------------------------------------
+
 double* vtkCMBGlyphPointSource::GetBounds(vtkIdType index)
 {
   // Create a transformation based on the glyph instance
@@ -446,4 +438,3 @@ double* vtkCMBGlyphPointSource::GetBounds(vtkIdType index)
   bbox.GetBounds(this->TempData);
   return this->TempData;
 }
-//-----------------------------------------------------------------------------

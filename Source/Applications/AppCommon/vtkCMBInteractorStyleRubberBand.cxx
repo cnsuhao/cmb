@@ -16,17 +16,14 @@
 
 vtkStandardNewMacro(vtkCMBInteractorStyleRubberBand);
 
-//--------------------------------------------------------------------------
 vtkCMBInteractorStyleRubberBand::vtkCMBInteractorStyleRubberBand()
 {
 }
 
-//--------------------------------------------------------------------------
 vtkCMBInteractorStyleRubberBand::~vtkCMBInteractorStyleRubberBand()
 {
 }
 
-//--------------------------------------------------------------------------
 void vtkCMBInteractorStyleRubberBand::OnLeftButtonDown()
 {
   // If shift key is down, just rotate
@@ -48,7 +45,6 @@ void vtkCMBInteractorStyleRubberBand::OnLeftButtonDown()
   this->Superclass::OnLeftButtonDown();
 }
 
-//--------------------------------------------------------------------------
 void vtkCMBInteractorStyleRubberBand::OnMouseMove()
 {
   // If shift key is down, just rotate
@@ -66,7 +62,6 @@ void vtkCMBInteractorStyleRubberBand::OnMouseMove()
   this->Superclass::OnMouseMove();
 }
 
-//--------------------------------------------------------------------------
 void vtkCMBInteractorStyleRubberBand::OnLeftButtonUp()
 {
   // If shift key is down, just rotate
@@ -81,7 +76,6 @@ void vtkCMBInteractorStyleRubberBand::OnLeftButtonUp()
   this->Superclass::OnLeftButtonUp();
 }
 
-//--------------------------------------------------------------------------
 void vtkCMBInteractorStyleRubberBand::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

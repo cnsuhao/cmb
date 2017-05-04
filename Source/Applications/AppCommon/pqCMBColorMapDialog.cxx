@@ -18,7 +18,6 @@
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 
-//-----------------------------------------------------------------------------
 /// constructor
 pqCMBColorMapDialog::pqCMBColorMapDialog(pqDataRepresentation* repr, QWidget* p)
   : Status(0)
@@ -43,7 +42,6 @@ pqCMBColorMapDialog::pqCMBColorMapDialog(pqDataRepresentation* repr, QWidget* p)
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 }
 
-//-----------------------------------------------------------------------------
 /// destructor
 pqCMBColorMapDialog::~pqCMBColorMapDialog()
 {
@@ -51,7 +49,6 @@ pqCMBColorMapDialog::~pqCMBColorMapDialog()
   delete this->MainDialog;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBColorMapDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -59,7 +56,7 @@ int pqCMBColorMapDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBColorMapDialog::accept()
 {
   this->MainDialog->hide();

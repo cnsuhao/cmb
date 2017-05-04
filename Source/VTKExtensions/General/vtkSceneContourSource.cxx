@@ -47,7 +47,6 @@ vtkIdType vtkSceneContourSource::NextId = 0;
 
 vtkStandardNewMacro(vtkSceneContourSource);
 
-//-----------------------------------------------------------------------------
 vtkSceneContourSource::vtkSceneContourSource()
   : Id(NextId++)
 {
@@ -67,7 +66,6 @@ vtkSceneContourSource::vtkSceneContourSource()
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkSceneContourSource::~vtkSceneContourSource()
 {
   if (this->Source)
@@ -94,7 +92,6 @@ vtkSceneContourSource::~vtkSceneContourSource()
   this->Collection = NULL;
 }
 
-//-----------------------------------------------------------------------------
 vtkPolyData* vtkSceneContourSource::GetWidgetOutput()
 {
 
@@ -138,7 +135,6 @@ vtkPolyData* vtkSceneContourSource::GetWidgetOutput()
   return output;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::CopyData(vtkPolyData* source)
 {
   if (!source)
@@ -185,7 +181,6 @@ void vtkSceneContourSource::CopyData(vtkPolyData* source)
 #endif
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::InitSourceData(vtkPolyData* source)
 {
 
@@ -250,7 +245,6 @@ void vtkSceneContourSource::InitSourceData(vtkPolyData* source)
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::EditSourceData(vtkPolyData* source)
 {
   vtkMergePoints* pointLocator = this->Collection->GetPointLocator();
@@ -373,7 +367,6 @@ void vtkSceneContourSource::EditSourceData(vtkPolyData* source)
   this->Modified(); //has to be called for the output to regenerated
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::UpdateSelectedNodes(vtkPolyData* source)
 {
   //we need to keep the collection end nodes in sync
@@ -464,7 +457,6 @@ void vtkSceneContourSource::UpdateSelectedNodes(vtkPolyData* source)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::RegenerateEndNodes()
 {
   //we regenerate the end nodes each time
@@ -537,7 +529,6 @@ void vtkSceneContourSource::RegenerateEndNodes()
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkSceneContourSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -583,7 +574,6 @@ int vtkSceneContourSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::MarkedForDeletion()
 {
   if (!this->EndNodes)
@@ -599,7 +589,6 @@ void vtkSceneContourSource::MarkedForDeletion()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::UnMarkedForDeletion()
 {
   if (!this->EndNodes)
@@ -615,7 +604,6 @@ void vtkSceneContourSource::UnMarkedForDeletion()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSceneContourSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

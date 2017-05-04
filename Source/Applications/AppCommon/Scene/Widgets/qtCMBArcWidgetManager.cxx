@@ -44,7 +44,6 @@
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSourceProxy.h"
 
-//-----------------------------------------------------------------------------
 qtCMBArcWidgetManager::qtCMBArcWidgetManager(pqServer* server, pqRenderView* view)
 {
   //server and view need to be set before we call createContourWidget
@@ -58,7 +57,6 @@ qtCMBArcWidgetManager::qtCMBArcWidgetManager(pqServer* server, pqRenderView* vie
   this->ActiveWidget = NULL;
 }
 
-//-----------------------------------------------------------------------------
 qtCMBArcWidgetManager::~qtCMBArcWidgetManager()
 {
   this->Server = NULL;
@@ -83,7 +81,6 @@ qtCMBArcWidgetManager::~qtCMBArcWidgetManager()
   this->View = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::setActiveNode(pqCMBSceneNode* node)
 {
   this->Node = node;
@@ -94,7 +91,6 @@ void qtCMBArcWidgetManager::setActiveArc(pqCMBArc* arc)
   this->Arc = arc;
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBArcWidgetManager::hasActiveNode()
 {
   return (this->Node != NULL);
@@ -110,7 +106,6 @@ bool qtCMBArcWidgetManager::isActive()
   return this->hasActiveNode() || this->hasActiveArc();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* qtCMBArcWidgetManager::getActiveNode()
 {
   return this->Node;
@@ -125,7 +120,6 @@ pqCMBArc* qtCMBArcWidgetManager::getActiveArc()
   return this->Arc;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArc* qtCMBArcWidgetManager::createpqCMBArc()
 {
   //update the node to have everything but the actual contour data
@@ -137,7 +131,6 @@ pqCMBArc* qtCMBArcWidgetManager::createpqCMBArc()
   return obj;
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBArcWidgetManager::create()
 {
   emit this->Busy();
@@ -189,7 +182,6 @@ int qtCMBArcWidgetManager::create()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBArcWidgetManager::edit()
 {
   emit this->Busy();
@@ -227,7 +219,6 @@ int qtCMBArcWidgetManager::edit()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::updateArcNode()
 {
   if (!this->Node && !this->Arc)
@@ -291,7 +282,6 @@ void qtCMBArcWidgetManager::updateArcNode()
   emit this->Ready();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::editingFinished()
 {
   if (this->EditWidget && this->ActiveWidget == this->EditWidget)
@@ -305,7 +295,6 @@ void qtCMBArcWidgetManager::editingFinished()
   emit this->Finish();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::updateModifiedArc(
   qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID)
 {
@@ -369,14 +358,12 @@ void qtCMBArcWidgetManager::updateModifiedArc(
   }
 }
 
-//-----------------------------------------------------------------------------
 qtArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(int& normal, double& planePos)
 {
   this->getDefaultArcPlane(normal, planePos);
   return this->createContourWidget(normal, planePos);
 }
 
-//-----------------------------------------------------------------------------
 qtArcWidget* qtCMBArcWidgetManager::createContourWidget(int normal, double position)
 {
   qtArcWidget* widget = new qtArcWidget(nullptr);
@@ -401,7 +388,6 @@ qtArcWidget* qtCMBArcWidgetManager::createContourWidget(int normal, double posit
   return widget;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(const int& normal, const double& position,
   const int& closedLoop, vtkDoubleArray* nodePositions, vtkIdTypeArray* SelIndices)
 {
@@ -455,7 +441,6 @@ pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(const int& normal, const 
   return obj;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::getDefaultArcPlane(int& orthoPlane, double& projpos)
 {
   double focalPt[3], position[3], viewUp[3], viewDirection[3];
@@ -479,7 +464,6 @@ void qtCMBArcWidgetManager::getDefaultArcPlane(int& orthoPlane, double& projpos)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::resetArcPlane(int normal, double planePos)
 {
   vtkSMProxyProperty* proxyProp =
@@ -494,7 +478,6 @@ void qtCMBArcWidgetManager::resetArcPlane(int normal, double planePos)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::modifyArc(vtkIdType startPID, vtkIdType endPID, int opType)
 {
   if ((!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
@@ -562,19 +545,16 @@ void qtCMBArcWidgetManager::modifyArc(vtkIdType startPID, vtkIdType endPID, int 
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::straightenArc(vtkIdType startPID, vtkIdType endPID)
 {
   this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpSTRAIGHTEN);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::collapseSubArc(vtkIdType startPID, vtkIdType endPID)
 {
   this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpCOLLAPSE);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::makeArc(vtkIdType startPID, vtkIdType endPID)
 {
   this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpMAKEARC);

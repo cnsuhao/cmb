@@ -56,14 +56,12 @@ class vtkOrientedGlyphContourRepresentation2::vtkInternalMap : public vtkInterna
 {
 };
 
-//----------------------------------------------------------------------
 vtkOrientedGlyphContourRepresentation2::vtkOrientedGlyphContourRepresentation2()
 {
   this->LoggingEnabled = false;
   this->ModifiedPointMap = new vtkOrientedGlyphContourRepresentation2::vtkInternalMap();
 }
 
-//----------------------------------------------------------------------
 vtkOrientedGlyphContourRepresentation2::~vtkOrientedGlyphContourRepresentation2()
 {
   if (this->ModifiedPointMap)
@@ -72,7 +70,6 @@ vtkOrientedGlyphContourRepresentation2::~vtkOrientedGlyphContourRepresentation2(
   }
 }
 
-//----------------------------------------------------------------------
 int vtkOrientedGlyphContourRepresentation2::DeleteNthNode(int n)
 {
   int good = this->Superclass::DeleteNthNode(n);
@@ -83,7 +80,6 @@ int vtkOrientedGlyphContourRepresentation2::DeleteNthNode(int n)
   return good;
 }
 
-//----------------------------------------------------------------------
 int vtkOrientedGlyphContourRepresentation2::SetNthNodeSelected(int n)
 {
   if (n < 0 || static_cast<unsigned int>(n) >= this->Internal->Nodes.size())
@@ -101,14 +97,12 @@ int vtkOrientedGlyphContourRepresentation2::SetNthNodeSelected(int n)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkOrientedGlyphContourRepresentation2::UpdateLines(int index)
 {
   this->UpdatePropertyMap(index, Point_Modified);
   this->Superclass::UpdateLines(index);
 }
 
-//----------------------------------------------------------------------
 int vtkOrientedGlyphContourRepresentation2::AddNodeOnContour(int X, int Y)
 {
   int idx;
@@ -161,7 +155,7 @@ int vtkOrientedGlyphContourRepresentation2::AddNodeOnContour(int X, int Y)
 
   return 1;
 }
-//----------------------------------------------------------------------
+
 void vtkOrientedGlyphContourRepresentation2::UpdatePropertyMap(int index, int flags)
 {
   if (this->GetLoggingEnabled() == 1)
@@ -198,7 +192,6 @@ vtkPolyData* vtkOrientedGlyphContourRepresentation2::GetContourRepresentationAsP
   return Lines;
 }
 
-//-----------------------------------------------------------------------------
 int vtkOrientedGlyphContourRepresentation2::GetNodeModifiedFlags(int n)
 {
   int flag = 0;
@@ -211,7 +204,6 @@ int vtkOrientedGlyphContourRepresentation2::GetNodeModifiedFlags(int n)
   return flag;
 }
 
-//----------------------------------------------------------------------
 void vtkOrientedGlyphContourRepresentation2::Initialize(vtkPolyData* pd)
 {
   vtkPoints* points = pd->GetPoints();
@@ -318,7 +310,6 @@ void vtkOrientedGlyphContourRepresentation2::Initialize(vtkPolyData* pd)
   this->VisibilityOn();
 }
 
-//-----------------------------------------------------------------------------
 int vtkOrientedGlyphContourRepresentation2::RenderOpaqueGeometry(vtkViewport* viewport)
 {
   // Since we know RenderOpaqueGeometry gets called first, will do the
@@ -344,7 +335,6 @@ int vtkOrientedGlyphContourRepresentation2::RenderOpaqueGeometry(vtkViewport* vi
   return count;
 }
 
-//-----------------------------------------------------------------------------
 void vtkOrientedGlyphContourRepresentation2::PrintSelf(ostream& os, vtkIndent indent)
 {
   //Superclass typedef defined in vtkTypeMacro() found in vtkSetGet.h

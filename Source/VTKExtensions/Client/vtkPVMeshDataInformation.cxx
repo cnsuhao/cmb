@@ -21,14 +21,12 @@
 
 vtkStandardNewMacro(vtkPVMeshDataInformation);
 
-//----------------------------------------------------------------------------
 vtkPVMeshDataInformation::vtkPVMeshDataInformation()
 {
   this->CellTypes = NULL;
   this->RegionArray = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkPVMeshDataInformation::~vtkPVMeshDataInformation()
 {
   if (this->CellTypes)
@@ -41,7 +39,6 @@ vtkPVMeshDataInformation::~vtkPVMeshDataInformation()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMeshDataInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -49,7 +46,6 @@ void vtkPVMeshDataInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "RegionArray: " << this->RegionArray << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMeshDataInformation::CopyFromObject(vtkObject* obj)
 {
   vtkDataSet* dataObject = vtkDataSet::SafeDownCast(obj);
@@ -96,7 +92,6 @@ void vtkPVMeshDataInformation::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVMeshDataInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVMeshDataInformation* CellTypesInfo = vtkPVMeshDataInformation::SafeDownCast(info);

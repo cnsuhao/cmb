@@ -22,19 +22,16 @@
 
 vtkStandardNewMacro(vtkCMBArcMergeArcsOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcMergeArcsOperator::vtkCMBArcMergeArcsOperator()
 {
   this->CreatedArcId = -1;
   this->ArcIdToDelete = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcMergeArcsOperator::~vtkCMBArcMergeArcsOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcMergeArcsOperator::Operate(vtkIdType firstId, vtkIdType secondId)
 {
   this->CreatedArcId = -1;
@@ -148,7 +145,6 @@ bool vtkCMBArcMergeArcsOperator::Operate(vtkIdType firstId, vtkIdType secondId)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcMergeArcsOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

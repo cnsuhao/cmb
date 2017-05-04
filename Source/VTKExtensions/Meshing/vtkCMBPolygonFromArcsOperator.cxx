@@ -72,13 +72,11 @@ protected:
   vtkCMBArcManager* SubSetManager;
 };
 
-//-----------------------------------------------------------------------------
 bool vertices_comp(const TarjanVertex* first, const TarjanVertex* second)
 {
   return first->Angle < second->Angle;
 }
 
-//-----------------------------------------------------------------------------
 TarjanVertex::TarjanVertex(vtkCMBArc* arc)
   : Index(-1)
   , LoopUses(0)
@@ -88,13 +86,11 @@ TarjanVertex::TarjanVertex(vtkCMBArc* arc)
   this->Arc = arc;
 }
 
-//-----------------------------------------------------------------------------
 TarjanVertex::~TarjanVertex()
 {
   this->Arc = NULL;
 }
 
-//-----------------------------------------------------------------------------
 InternalTarjan::InternalTarjan(std::set<vtkCMBArc*> input)
   : Index(0)
   , Stack()
@@ -111,7 +107,6 @@ InternalTarjan::InternalTarjan(std::set<vtkCMBArc*> input)
   }
 }
 
-//-----------------------------------------------------------------------------
 InternalTarjan::~InternalTarjan()
 {
   IdToVertexMap::iterator it;
@@ -129,7 +124,6 @@ InternalTarjan::~InternalTarjan()
   }
 }
 
-//-----------------------------------------------------------------------------
 void InternalTarjan::find()
 {
   this->Index = 0;
@@ -169,7 +163,6 @@ void InternalTarjan::find()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool InternalTarjan::findconnections(TarjanVertex* v)
 {
 
@@ -209,7 +202,6 @@ bool InternalTarjan::findconnections(TarjanVertex* v)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 void InternalTarjan::getVertices(TarjanVertex* v, VertexVector& otherVerts) const
 {
   //We are using a modified Tarjan strongly connected algorithm
@@ -272,13 +264,11 @@ void InternalTarjan::getVertices(TarjanVertex* v, VertexVector& otherVerts) cons
   std::sort(otherVerts.begin(), otherVerts.end(), vertices_comp);
 }
 
-//-----------------------------------------------------------------------------
 void InternalTarjan::addLoop(VertexVector& loop)
 {
   this->Loops.push_back(loop);
 }
 
-//-----------------------------------------------------------------------------
 //this is used for sorting loops to determine the outer loop
 struct polygonInfo
 {
@@ -286,7 +276,6 @@ struct polygonInfo
   vtkIdTypeArray* Ids;
 };
 
-//-----------------------------------------------------------------------------
 //return true if box i contains box j
 bool boundingBoxCompare(const polygonInfo& i, const polygonInfo& j)
 {
@@ -294,7 +283,6 @@ bool boundingBoxCompare(const polygonInfo& i, const polygonInfo& j)
 }
 }
 
-//-----------------------------------------------------------------------------
 class vtkCMBPolygonFromArcsOperator::InternalLoops
 {
 public:
@@ -318,7 +306,7 @@ public:
 };
 
 vtkStandardNewMacro(vtkCMBPolygonFromArcsOperator);
-//-----------------------------------------------------------------------------
+
 vtkCMBPolygonFromArcsOperator::vtkCMBPolygonFromArcsOperator()
   : ArcsToUse(ArcSet())
   , ArcIdsToUse(ArcIdSet())
@@ -326,7 +314,6 @@ vtkCMBPolygonFromArcsOperator::vtkCMBPolygonFromArcsOperator()
   this->Loops = new vtkCMBPolygonFromArcsOperator::InternalLoops();
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBPolygonFromArcsOperator::~vtkCMBPolygonFromArcsOperator()
 {
   if (this->Loops)
@@ -335,13 +322,11 @@ vtkCMBPolygonFromArcsOperator::~vtkCMBPolygonFromArcsOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPolygonFromArcsOperator::AddArcId(vtkIdType arcId)
 {
   this->ArcIdsToUse.insert(arcId);
 }
 
-//----------------------------------------------------------------------------
 vtkIdTypeArray* vtkCMBPolygonFromArcsOperator::GetOuterLoop()
 {
   if (this->Loops)
@@ -351,7 +336,6 @@ vtkIdTypeArray* vtkCMBPolygonFromArcsOperator::GetOuterLoop()
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkCMBPolygonFromArcsOperator::GetNumberOfInnerLoops()
 {
   if (this->Loops)
@@ -361,7 +345,6 @@ vtkIdType vtkCMBPolygonFromArcsOperator::GetNumberOfInnerLoops()
   return 0;
 }
 
-//----------------------------------------------------------------------------
 vtkIdTypeArray* vtkCMBPolygonFromArcsOperator::GetInnerLoop(const vtkIdType& index)
 {
   if (this->Loops)
@@ -376,7 +359,6 @@ vtkIdTypeArray* vtkCMBPolygonFromArcsOperator::GetInnerLoop(const vtkIdType& ind
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPolygonFromArcsOperator::Operate()
 {
 
@@ -413,7 +395,6 @@ bool vtkCMBPolygonFromArcsOperator::Operate()
   return this->Loops->OuterLoop != NULL;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPolygonFromArcsOperator::BuildArcsToUse()
 {
   vtkCMBArcManager* arcManager = vtkCMBArcManager::GetInstance();
@@ -427,7 +408,6 @@ void vtkCMBPolygonFromArcsOperator::BuildArcsToUse()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPolygonFromArcsOperator::BuildLoops()
 {
   //we are using Tarjan algorithm to find strongly connected components
@@ -497,7 +477,6 @@ void vtkCMBPolygonFromArcsOperator::BuildLoops()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPolygonFromArcsOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

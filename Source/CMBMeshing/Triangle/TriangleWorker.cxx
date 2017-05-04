@@ -19,7 +19,7 @@
 
 namespace
 {
-//----------------------------------------------------------------------------
+
 template <typename T>
 bool AllocFromStream(std::stringstream& buffer, T*& dest, int numElements)
 {
@@ -45,7 +45,6 @@ bool AllocFromStream(std::stringstream& buffer, T*& dest, int numElements)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 template <typename T>
 bool WriteToStream(std::stringstream& buffer, T* src, int numElements)
 {
@@ -82,7 +81,6 @@ void release_triangle_data(triangulateio* data)
 }
 }
 
-//----------------------------------------------------------------------------
 triangleParameters::triangleParameters(remus::worker::Job& job)
 {
   const remus::proto::JobContent& content = job.submission().find("data")->second;
@@ -137,7 +135,6 @@ triangleParameters::triangleParameters(remus::worker::Job& job)
   this->in.numberoftriangleattributes = this->NumberOfRegions > 0;
 }
 
-//----------------------------------------------------------------------------
 triangleParameters::~triangleParameters()
 {
   //not only do we share information between the meshing_data and the
@@ -184,7 +181,6 @@ triangleParameters::~triangleParameters()
   release_triangle_data(&this->out);
 }
 
-//----------------------------------------------------------------------------
 remus::proto::JobResult triangleParameters::results(const remus::worker::Job& job)
 {
   std::stringstream buffer;
@@ -210,7 +206,6 @@ remus::proto::JobResult triangleParameters::results(const remus::worker::Job& jo
   return remus::proto::make_JobResult(job.id(), buffer.str());
 }
 
-//----------------------------------------------------------------------------
 TriangleWorker::TriangleWorker(remus::worker::ServerConnection const& connection)
   : remus::worker::Worker(
       remus::proto::make_JobRequirements(
@@ -219,12 +214,11 @@ TriangleWorker::TriangleWorker(remus::worker::ServerConnection const& connection
       connection)
 {
 }
-//----------------------------------------------------------------------------
+
 TriangleWorker::~TriangleWorker()
 {
 }
 
-//----------------------------------------------------------------------------
 bool TriangleWorker::buildTriangleArguments(
   const triangleParameters& params, std::string& options) const
 {
@@ -270,7 +264,6 @@ bool TriangleWorker::buildTriangleArguments(
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void TriangleWorker::meshJob()
 {
   remus::worker::Job job = this->getJob();
@@ -303,7 +296,6 @@ void TriangleWorker::meshJob()
   return;
 }
 
-//----------------------------------------------------------------------------
 void TriangleWorker::jobFailed(const remus::worker::Job& job)
 {
   remus::proto::JobStatus status(job.id(), remus::FAILED);

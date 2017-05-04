@@ -23,7 +23,7 @@
 #define SEPARATOR "  "
 
 vtkStandardNewMacro(vtkCMBPtsWriter);
-//----------------------------------------------------------------------------
+
 vtkCMBPtsWriter::vtkCMBPtsWriter()
 {
   this->FileName = 0;
@@ -36,20 +36,17 @@ vtkCMBPtsWriter::vtkCMBPtsWriter()
   this->FloatPrecision = 6;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBPtsWriter::~vtkCMBPtsWriter()
 {
   this->SetFileName(0);
   this->SetHeader(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPtsWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkCMBPtsWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -68,7 +65,6 @@ ostream* vtkCMBPtsWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPtsWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -78,7 +74,6 @@ void vtkCMBPtsWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPtsWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -121,7 +116,6 @@ void vtkCMBPtsWriter::WriteData()
   this->MyGeom = 0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPtsWriter::WriteHeader(ostream& fp)
 {
   if (this->Header && (this->Header[0] != '\0'))
@@ -132,7 +126,6 @@ bool vtkCMBPtsWriter::WriteHeader(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPtsWriter::WritePoints(ostream& fp)
 {
   vtkIdType i, n = this->MyGeom->GetNumberOfPoints();
@@ -149,20 +142,17 @@ bool vtkCMBPtsWriter::WritePoints(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPtsWriter::WriteFooter(ostream& /*fp*/)
 {
   return true;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPtsWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPtsWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "FileName = " << this->FileName << endl;

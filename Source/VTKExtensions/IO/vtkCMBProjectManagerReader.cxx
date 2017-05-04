@@ -20,19 +20,16 @@
 
 vtkStandardNewMacro(vtkCMBProjectManagerReader);
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManagerReader::vtkCMBProjectManagerReader()
 {
   this->ProjectFileName = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProjectManagerReader::~vtkCMBProjectManagerReader()
 {
   this->SetProjectFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManagerReader::ReadProjectFile()
 {
   if (!this->ProjectFileName)
@@ -104,7 +101,6 @@ void vtkCMBProjectManagerReader::ReadProjectFile()
   return;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProjectManagerReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

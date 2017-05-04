@@ -23,18 +23,15 @@
 
 vtkStandardNewMacro(vtkCMBArcAutoConnectOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcAutoConnectOperator::vtkCMBArcAutoConnectOperator()
 {
   this->CreatedArcId = -1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcAutoConnectOperator::~vtkCMBArcAutoConnectOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId, vtkIdType secondId)
 {
   this->CreatedArcId = -1;
@@ -144,7 +141,6 @@ bool vtkCMBArcAutoConnectOperator::Operate(vtkIdType firstId, vtkIdType secondId
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcAutoConnectOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

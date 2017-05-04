@@ -32,7 +32,6 @@ enum FileWritingStatus
 
 vtkStandardNewMacro(vtkLIDARPtsWriter);
 
-//-----------------------------------------------------------------------------
 vtkLIDARPtsWriter::vtkLIDARPtsWriter()
 {
   this->FileName = NULL;
@@ -40,13 +39,11 @@ vtkLIDARPtsWriter::vtkLIDARPtsWriter()
   this->WriteAsSinglePiece = false;
 }
 
-//-----------------------------------------------------------------------------
 vtkLIDARPtsWriter::~vtkLIDARPtsWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkLIDARPtsWriter::WriteData()
 {
   ofstream* outfile = this->OpenOutputFile();
@@ -66,7 +63,6 @@ void vtkLIDARPtsWriter::WriteData()
   this->CloseFile(outfile);
 }
 
-//----------------------------------------------------------------------------
 int vtkLIDARPtsWriter::WriteFile(ofstream& ofp)
 {
   int numInputs = this->GetNumberOfInputConnections(0);
@@ -109,7 +105,6 @@ int vtkLIDARPtsWriter::WriteFile(ofstream& ofp)
   return returnValue;
 }
 
-//----------------------------------------------------------------------------
 int vtkLIDARPtsWriter::ComputeRequiredAxisPrecision(double min, double max)
 {
   double maxComponent = fabs(min) > max ? fabs(min) : max;
@@ -139,7 +134,6 @@ int vtkLIDARPtsWriter::ComputeRequiredAxisPrecision(double min, double max)
   return minPrecision;
 }
 
-//----------------------------------------------------------------------------
 int vtkLIDARPtsWriter::WritePoints(ofstream& ofp, vtkPolyData* inputPoly)
 {
   vtkDataArray* scalars =
@@ -219,7 +213,6 @@ int vtkLIDARPtsWriter::WritePoints(ofstream& ofp, vtkPolyData* inputPoly)
   return WRITE_OK;
 }
 
-//----------------------------------------------------------------------------
 ofstream* vtkLIDARPtsWriter::OpenOutputFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -249,13 +242,11 @@ ofstream* vtkLIDARPtsWriter::OpenOutputFile()
   return fptr;
 }
 
-//----------------------------------------------------------------------------
 void vtkLIDARPtsWriter::CloseFile(ios* fp)
 {
   delete fp;
 }
 
-//----------------------------------------------------------------------------
 bool vtkLIDARPtsWriter::IsBinaryType(const char* filename)
 {
   std::string fileNameStr = filename;
@@ -267,7 +258,6 @@ bool vtkLIDARPtsWriter::IsBinaryType(const char* filename)
   return false;
 }
 
-//----------------------------------------------------------------------------
 void vtkLIDARPtsWriter::AddInputData(int index, vtkDataObject* input)
 {
   if (input)
@@ -276,7 +266,6 @@ void vtkLIDARPtsWriter::AddInputData(int index, vtkDataObject* input)
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkLIDARPtsWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
@@ -284,7 +273,6 @@ int vtkLIDARPtsWriter::FillInputPortInformation(int, vtkInformation* info)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkLIDARPtsWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -292,7 +280,7 @@ void vtkLIDARPtsWriter::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
   os << indent << "Write As Single Piece: " << (this->WriteAsSinglePiece ? "On" : "Off") << "\n";
 }
-//----------------------------------------------------------------------------
+
 vtkDataObject* vtkLIDARPtsWriter::GetInputFromPort0(int connection)
 {
   return this->GetExecutive()->GetInputData(0, connection);

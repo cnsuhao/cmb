@@ -21,7 +21,7 @@
 #define TABLE_CIRCLE_DEGREE 800
 
 vtkStandardNewMacro(vtkDiscreteLookupTable);
-//-----------------------------------------------------------------------------
+
 vtkDiscreteLookupTable::vtkDiscreteLookupTable()
 {
   this->Discretize = 1;
@@ -31,12 +31,10 @@ vtkDiscreteLookupTable::vtkDiscreteLookupTable()
   this->ValueMin = 0.2;
 }
 
-//-----------------------------------------------------------------------------
 vtkDiscreteLookupTable::~vtkDiscreteLookupTable()
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::Build()
 {
   // skip the vtkDiscretizableColorTransferFunction::Build()
@@ -59,7 +57,6 @@ void vtkDiscreteLookupTable::Build()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::CalcRGB(double llimit, double ulimit, double& r, double& g, double& b)
 {
   double l;
@@ -77,7 +74,6 @@ void vtkDiscreteLookupTable::CalcRGB(double llimit, double ulimit, double& r, do
   }
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkDiscreteLookupTable::GetNextIndex(vtkIdType i, vtkUnsignedCharArray* avail)
 {
   if (!avail->GetValue(i))
@@ -111,7 +107,6 @@ vtkIdType vtkDiscreteLookupTable::GetNextIndex(vtkIdType i, vtkUnsignedCharArray
   return i;
 }
 
-//----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::CreateLookupTable(vtkLookupTable* lut, double llimit, double ulimit)
 {
   vtkIdType n = lut->GetNumberOfTableValues();
@@ -126,7 +121,6 @@ void vtkDiscreteLookupTable::CreateLookupTable(vtkLookupTable* lut, double llimi
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::CreateLookupTable(vtkLookupTable* lut)
 {
   vtkIdType n = lut->GetNumberOfTableValues();
@@ -179,7 +173,6 @@ void vtkDiscreteLookupTable::CreateLookupTable(vtkLookupTable* lut)
   avail->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkDiscreteLookupTable::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

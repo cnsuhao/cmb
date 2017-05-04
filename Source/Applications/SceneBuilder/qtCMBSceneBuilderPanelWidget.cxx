@@ -16,7 +16,6 @@ class qtCMBSceneBuilderPanelWidgetInternal : public Ui::qtCMBSceneBuilderPanel
 public:
 };
 
-//-----------------------------------------------------------------------------
 qtCMBSceneBuilderPanelWidget::qtCMBSceneBuilderPanelWidget(QWidget* _p)
   : QWidget(_p)
 {
@@ -24,25 +23,21 @@ qtCMBSceneBuilderPanelWidget::qtCMBSceneBuilderPanelWidget(QWidget* _p)
   this->Internal->setupUi(this);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneBuilderPanelWidget::~qtCMBSceneBuilderPanelWidget()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 Ui::qtCMBSceneBuilderPanel* qtCMBSceneBuilderPanelWidget::getGUIPanel()
 {
   return this->Internal;
 }
 
-//----------------------------------------------------------------------------
 void qtCMBSceneBuilderPanelWidget::focusOnSceneTab()
 {
   this->Internal->tabWidget->setCurrentIndex(0);
 }
 
-//----------------------------------------------------------------------------
 void qtCMBSceneBuilderPanelWidget::focusOnDisplayTab()
 {
   this->Internal->tabWidget->setCurrentIndex(1);

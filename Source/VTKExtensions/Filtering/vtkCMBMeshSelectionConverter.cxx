@@ -28,18 +28,15 @@
 
 vtkStandardNewMacro(vtkCMBMeshSelectionConverter);
 
-//----------------------------------------------------------------------------
 vtkCMBMeshSelectionConverter::vtkCMBMeshSelectionConverter()
 {
   this->SetNumberOfInputPorts(3);
 }
 
-//----------------------------------------------------------------------------
 vtkCMBMeshSelectionConverter::~vtkCMBMeshSelectionConverter()
 {
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshSelectionConverter::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -60,7 +57,6 @@ int vtkCMBMeshSelectionConverter::FillInputPortInformation(int port, vtkInformat
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshSelectionConverter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -139,7 +135,6 @@ int vtkCMBMeshSelectionConverter::RequestData(vtkInformation* vtkNotUsed(request
   return res;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBMeshSelectionConverter::CreateSelectionLists(vtkSelectionNode* selNode,
   vtkIdTypeArray* outSelectionList, int fieldType, vtkUnstructuredGrid* meshInput)
 {
@@ -221,7 +216,6 @@ int vtkCMBMeshSelectionConverter::CreateSelectionLists(vtkSelectionNode* selNode
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshSelectionConverter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

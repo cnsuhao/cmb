@@ -20,7 +20,6 @@
 
 vtkStandardNewMacro(vtkSBFunctionParser);
 
-//-----------------------------------------------------------------------------
 class vtkSBFunctionParser::vtkInternal
 {
 public:
@@ -38,13 +37,11 @@ public:
   std::map<std::string, double> Constants;
 };
 
-//-----------------------------------------------------------------------------
 void vtkSBFunctionParser::vtkInternal::DefineConstants()
 {
   this->Constants["PI"] = 3.1415926535;
 }
 
-//-----------------------------------------------------------------------------
 vtkSBFunctionParser::vtkSBFunctionParser()
   : IndependentVariableName("X")
   , Function("")
@@ -60,7 +57,6 @@ vtkSBFunctionParser::vtkSBFunctionParser()
   this->CheckMTime.Modified();
 }
 
-//-----------------------------------------------------------------------------
 vtkSBFunctionParser::~vtkSBFunctionParser()
 {
   if (this->Help)
@@ -81,7 +77,6 @@ vtkSBFunctionParser::~vtkSBFunctionParser()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkSBFunctionParser::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -93,20 +88,17 @@ void vtkSBFunctionParser::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Help: " << (this->Help ? this->Help : "NULL") << "\n";
 }
 
-//-----------------------------------------------------------------------------
 void vtkSBFunctionParser::SetFunction(std::string function)
 {
   this->Function = function;
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 std::string vtkSBFunctionParser::GetFunction()
 {
   return this->Function;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkSBFunctionParser::GetHelp()
 {
   if (!this->Help)
@@ -132,7 +124,6 @@ const char* vtkSBFunctionParser::GetHelp()
   return this->Help;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSBFunctionParser::CheckExpression(int& pos, std::string& error)
 {
   if (this->Function.empty())
@@ -161,7 +152,6 @@ void vtkSBFunctionParser::CheckExpression(int& pos, std::string& error)
   this->CheckMTime.Modified();
 }
 
-//-----------------------------------------------------------------------------
 vtkDoubleArray* vtkSBFunctionParser::GetResult()
 {
   int pos;
@@ -210,7 +200,6 @@ vtkDoubleArray* vtkSBFunctionParser::GetResult()
   return this->Result;
 }
 
-//-----------------------------------------------------------------------------
 void vtkSBFunctionParser::Initialize()
 {
   this->Implementation->Parser->SetFunction(this->Function.c_str());

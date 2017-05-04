@@ -57,14 +57,12 @@ public:
 
 vtkStandardNewMacro(vtkCMBArcUpdateAndSplitClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcUpdateAndSplitClientOperator::vtkCMBArcUpdateAndSplitClientOperator()
 {
   this->CreatedArcs = NULL;
   this->Info = new vtkCMBArcUpdateAndSplitClientOperator::InternalInfo();
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcUpdateAndSplitClientOperator::~vtkCMBArcUpdateAndSplitClientOperator()
 {
   if (this->CreatedArcs)
@@ -78,7 +76,6 @@ vtkCMBArcUpdateAndSplitClientOperator::~vtkCMBArcUpdateAndSplitClientOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::Operate(
   vtkIdType arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
@@ -121,7 +118,6 @@ bool vtkCMBArcUpdateAndSplitClientOperator::Operate(
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::FindArcsInWidgetOutput(
   vtkSMTKArcRepresentation* widgetRep)
 {
@@ -149,7 +145,6 @@ bool vtkCMBArcUpdateAndSplitClientOperator::FindArcsInWidgetOutput(
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::UpdateOperation(const vtkIdType& arcId,
   vtkSMNewWidgetRepresentationProxy* widgetProxy, vtkSMTKArcRepresentation* widgetRep)
 {
@@ -201,7 +196,6 @@ bool vtkCMBArcUpdateAndSplitClientOperator::UpdateOperation(const vtkIdType& arc
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateAndSplitClientOperator::SplitOperation(
   const vtkIdType& arcId, vtkSMTKArcRepresentation* /*widgetRep*/)
 {
@@ -243,7 +237,6 @@ bool vtkCMBArcUpdateAndSplitClientOperator::SplitOperation(
   return splitValid;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcUpdateAndSplitClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

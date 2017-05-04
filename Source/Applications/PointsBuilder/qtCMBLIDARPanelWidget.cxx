@@ -16,7 +16,6 @@ class qtCMBLIDARPanelWidgetInternal : public Ui::qtLIDARPanel
 public:
 };
 
-//-----------------------------------------------------------------------------
 qtCMBLIDARPanelWidget::qtCMBLIDARPanelWidget(QWidget* _p)
   : QWidget(_p)
 {
@@ -24,13 +23,11 @@ qtCMBLIDARPanelWidget::qtCMBLIDARPanelWidget(QWidget* _p)
   this->Internal->setupUi(this);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBLIDARPanelWidget::~qtCMBLIDARPanelWidget()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 Ui::qtLIDARPanel* qtCMBLIDARPanelWidget::getGUIPanel()
 {
   return this->Internal;

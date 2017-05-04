@@ -26,7 +26,6 @@
 
 vtkStandardNewMacro(vtkClosestPointFilter);
 
-//-----------------------------------------------------------------------------
 vtkClosestPointFilter::vtkClosestPointFilter()
 {
   this->Translation[0] = this->Translation[1] = this->Translation[2] = 0.0;
@@ -41,14 +40,12 @@ vtkClosestPointFilter::vtkClosestPointFilter()
   this->TransformInverse = NULL;
 }
 
-//-----------------------------------------------------------------------------
 vtkClosestPointFilter::~vtkClosestPointFilter()
 {
   this->Locator->Delete();
   this->Transform->Delete();
 }
 
-//-----------------------------------------------------------------------------
 int vtkClosestPointFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -108,7 +105,6 @@ int vtkClosestPointFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkClosestPointFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -136,5 +132,3 @@ void vtkClosestPointFilter::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Scale: (" << this->Scale[0] << ", " << this->Scale[1] << ", " << this->Scale[2]
      << ")\n";
 }
-
-//----------------------------------------------------------------------------

@@ -28,24 +28,20 @@
 
 vtkStandardNewMacro(vtkOmicronMeshInputFilter);
 
-//----------------------------------------------------------------------------
 vtkOmicronMeshInputFilter::vtkOmicronMeshInputFilter()
 {
   this->SetNumberOfInputPorts(1);
 }
 
-//----------------------------------------------------------------------------
 vtkOmicronMeshInputFilter::~vtkOmicronMeshInputFilter()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkOmicronMeshInputFilter::SetInputData(vtkMultiBlockDataSet* dataSet)
 {
   this->Superclass::SetInputData(dataSet);
 }
 
-//----------------------------------------------------------------------------
 int vtkOmicronMeshInputFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -177,7 +173,6 @@ int vtkOmicronMeshInputFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkOmicronMeshInputFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

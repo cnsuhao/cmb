@@ -46,7 +46,7 @@ vtkStandardNewMacro(vtkCMBSceneGenPolygon);
 
 namespace
 {
-//-----------------------------------------------------------------------------
+
 class InternalPolygonDetection
 {
 public:
@@ -73,27 +73,23 @@ protected:
   std::map<vtkIdType, int> VisitedNodes;
 };
 
-//-----------------------------------------------------------------------------
 InternalPolygonDetection::InternalPolygonDetection(vtkPolyData* arcs)
 {
   this->Arcs = arcs;
   this->Arcs->BuildLinks();
 }
 
-//-----------------------------------------------------------------------------
 InternalPolygonDetection::~InternalPolygonDetection()
 {
   this->Arcs = NULL;
 }
 
-//----------------------------------------------------------------------------
 bool InternalPolygonDetection::FindOuterLoop(
   vtkIdType& startingCellId, std::deque<vtkIdType>& outerLoop)
 {
   return this->FindLoop(startingCellId, outerLoop, true);
 }
 
-//----------------------------------------------------------------------------
 bool InternalPolygonDetection::FindLoop(
   vtkIdType& startingCellId, std::deque<vtkIdType>& loop, const bool& outerLoopSearch)
 {
@@ -177,7 +173,6 @@ bool InternalPolygonDetection::FindLoop(
   return loop.size() > 3;
 }
 
-//----------------------------------------------------------------------------
 bool InternalPolygonDetection::FindInnerLoop(
   const std::deque<vtkIdType>& outerLoop, std::vector<std::deque<vtkIdType> >& innerLoops)
 {
@@ -319,7 +314,6 @@ bool InternalPolygonDetection::FindInnerLoop(
   return innerLoops.size() > 0;
 }
 
-//----------------------------------------------------------------------------
 //return codes are:
 // 0 - found no next cell, and none of the points were a dead end
 // 1 - found the next cell
@@ -357,7 +351,6 @@ int InternalPolygonDetection::FindNextCellToTraverse(
   return 0;
 }
 
-//----------------------------------------------------------------------------
 void InternalPolygonDetection::FindConnectedCells(
   vtkIdType& currentCellId, std::set<vtkIdType>& connectedCells)
 {
@@ -383,18 +376,15 @@ void InternalPolygonDetection::FindConnectedCells(
 }
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBSceneGenPolygon::vtkCMBSceneGenPolygon()
 {
   this->SetNumberOfInputPorts(1);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBSceneGenPolygon::~vtkCMBSceneGenPolygon()
 {
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSceneGenPolygon::FillInputPortInformation(int /*port*/, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
@@ -402,7 +392,6 @@ int vtkCMBSceneGenPolygon::FillInputPortInformation(int /*port*/, vtkInformation
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSceneGenPolygon::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -463,7 +452,6 @@ int vtkCMBSceneGenPolygon::RequestData(vtkInformation* /*request*/,
   return 1;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSceneGenPolygon::PrepForMeshing(vtkInformationVector* input, vtkPolyData* mesh)
 {
   this->AppendArcSets(input, mesh);
@@ -471,7 +459,6 @@ bool vtkCMBSceneGenPolygon::PrepForMeshing(vtkInformationVector* input, vtkPolyD
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSceneGenPolygon::AppendArcSets(vtkInformationVector* input, vtkPolyData* mesh)
 {
   int numInputs = input->GetNumberOfInformationObjects();
@@ -519,7 +506,6 @@ void vtkCMBSceneGenPolygon::AppendArcSets(vtkInformationVector* input, vtkPolyDa
   mesh->SetStrips(NULL);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSceneGenPolygon::DeterminePolygon(vtkPolyData* mesh)
 {
   typedef vtkCMBPrepareForTriangleMesher vtkPrepareForMesher;
@@ -588,7 +574,6 @@ bool vtkCMBSceneGenPolygon::DeterminePolygon(vtkPolyData* mesh)
   return outerLoopFound;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSceneGenPolygon::FindStartingCellForMesh(
   vtkCellLocator* locator, vtkGenericCell* cell, vtkIdType& cellId, double bounds[6])
 
@@ -601,7 +586,6 @@ bool vtkCMBSceneGenPolygon::FindStartingCellForMesh(
   return (cell != NULL);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSceneGenPolygon::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

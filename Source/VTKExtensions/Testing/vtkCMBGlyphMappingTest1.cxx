@@ -25,7 +25,6 @@
 #include "vtkTesting.h"
 #include <string>
 
-//----------------------------------------------------------------------------
 // Tests the GlyphPoint Source InsertNextPoint that sets all properties
 int main(int argc, char* argv[])
 {

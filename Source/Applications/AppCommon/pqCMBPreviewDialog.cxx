@@ -18,7 +18,6 @@
 #include <QVBoxLayout>
 #include <pqSetName.h>
 
-//-----------------------------------------------------------------------------
 pqCMBPreviewDialog::pqCMBPreviewDialog(QWidget* Parent)
   : QDialog(Parent)
   , Ui(new Ui::qtPreviewDialog())
@@ -29,7 +28,6 @@ pqCMBPreviewDialog::pqCMBPreviewDialog(QWidget* Parent)
   this->RepresentationWidget = NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPreviewDialog::~pqCMBPreviewDialog()
 {
   delete this->Ui;
@@ -39,7 +37,6 @@ pqCMBPreviewDialog::~pqCMBPreviewDialog()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPreviewDialog::enableErrorView(bool state)
 {
   if (state)
@@ -53,7 +50,7 @@ void pqCMBPreviewDialog::enableErrorView(bool state)
     this->Ui->CancelButton->setText("Reject");
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPreviewDialog::setRepresentationAndView(
   pqDataRepresentation* dataRep, pqRenderView* renderView)
 {

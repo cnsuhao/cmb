@@ -42,13 +42,12 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
-//-----------------------------------------------------------------------------
 pqCMBGlyphObject::pqCMBGlyphObject()
   : pqCMBSceneObjectBase()
 {
   this->SurfaceType = pqCMBSceneObjectBase::Other;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBGlyphObject::pqCMBGlyphObject(pqPipelineSource* glyphSource, pqRenderView* view,
   pqServer* server, const char* glyphFilename, const char* pointsFilename, bool updateRep)
 {
@@ -66,7 +65,6 @@ pqCMBGlyphObject::pqCMBGlyphObject(pqPipelineSource* glyphSource, pqRenderView* 
   this->initialize(view, server, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBGlyphObject::pqCMBGlyphObject(pqPipelineSource* glyphSource, pqRenderView* view,
   pqServer* server, const char* glyphFilename, bool updateRep)
 {
@@ -82,7 +80,6 @@ pqCMBGlyphObject::pqCMBGlyphObject(pqPipelineSource* glyphSource, pqRenderView* 
   this->initialize(view, server, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBGlyphObject::pqCMBGlyphObject(
   const char* glyphFilename, pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -100,7 +97,6 @@ pqCMBGlyphObject::pqCMBGlyphObject(
   this->initialize(view, server, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBGlyphObject::pqCMBGlyphObject(const char* glyphFilename, const char* pointsFilename,
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -121,7 +117,6 @@ pqCMBGlyphObject::pqCMBGlyphObject(const char* glyphFilename, const char* points
   this->initialize(view, server, updateRep);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBGlyphObject::~pqCMBGlyphObject()
 {
   if (this->GlyphSource)
@@ -133,7 +128,6 @@ pqCMBGlyphObject::~pqCMBGlyphObject()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::initialize(pqRenderView* view, pqServer* /*server*/, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -166,18 +160,17 @@ void pqCMBGlyphObject::initialize(pqRenderView* view, pqServer* /*server*/, bool
     repProxy->UpdateVTKObjects();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBGlyphObject::clearSelectedPointsColor()
 {
   this->SourceProxy->ResetColorsToDefault();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBGlyphObject::enumObjectType pqCMBGlyphObject::getType() const
 {
   return pqCMBSceneObjectBase::Glyph;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBGlyphObject::duplicateGlyphPipelineSource(pqServer* server)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -189,7 +182,7 @@ pqPipelineSource* pqCMBGlyphObject::duplicateGlyphPipelineSource(pqServer* serve
     ->CopyData(vtkSMSourceProxy::SafeDownCast(this->GlyphSource->getProxy()));
   return pdSource;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBGlyphObject::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -227,19 +220,16 @@ pqCMBSceneObjectBase* pqCMBGlyphObject::duplicate(
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::insertNextPoint(double* p)
 {
   this->SourceProxy->InsertNextPoint(p);
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType pqCMBGlyphObject::getNumberOfPoints()
 {
   return const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->GetNumberOfPoints();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::getAveragePoint(double* pa)
 {
   int i, n = this->getNumberOfPoints();
@@ -262,43 +252,36 @@ void pqCMBGlyphObject::getAveragePoint(double* pa)
   pa[2] /= n;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::getPoint(vtkIdType i, double* p) const
 {
   const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->GetPoint(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::setPoint(vtkIdType i, double* p)
 {
   this->SourceProxy->SetPoint(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::getScale(vtkIdType i, double* p) const
 {
   const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->GetScale(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::setScale(vtkIdType i, double* p)
 {
   const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->SetScale(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::getOrientation(vtkIdType i, double* p) const
 {
   const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->GetOrientation(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::setOrientation(vtkIdType i, double* p)
 {
   const_cast<vtkSMCMBGlyphPointSourceProxy*>(this->SourceProxy)->SetOrientation(i, p);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::writePointsFile() const
 {
   if (this->PointsFileName != "")
@@ -307,24 +290,22 @@ void pqCMBGlyphObject::writePointsFile() const
       ->WriteToFile(this->PointsFileName.c_str());
   }
 }
-//-----------------------------------------------------------------------------
+
 std::string pqCMBGlyphObject::getSurfaceTypeAsString() const
 {
   return this->convertSurfaceTypeToString(this->SurfaceType);
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBGlyphObject::getGlyphSource() const
 {
   return this->GlyphSource;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBGlyphObject::getColor(double color[4]) const
 {
   this->SourceProxy->GetDefaultColor(color);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBGlyphObject::setColor(double color[4], bool updateRep)
 {
   this->SourceProxy->SetDefaultColor(color);
@@ -334,14 +315,14 @@ void pqCMBGlyphObject::setColor(double color[4], bool updateRep)
     this->getRepresentation()->getProxy()->UpdateVTKObjects();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBGlyphObject::applyTransform(
   double scaleDelta[3], double orientationDelta[3], double translationDelta[3])
 {
   this->SourceProxy->ApplyTransform(orientationDelta, translationDelta, scaleDelta);
   this->getRepresentation()->getProxy()->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBGlyphObject::copyAttributes(pqCMBSceneObjectBase* obj)
 {
   double ori[3], scale[3], trans[3], color[4];
@@ -353,4 +334,3 @@ void pqCMBGlyphObject::copyAttributes(pqCMBSceneObjectBase* obj)
   this->setColor(color);
   this->getRepresentation()->getProxy()->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------

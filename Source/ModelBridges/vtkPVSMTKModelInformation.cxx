@@ -21,24 +21,20 @@
 
 vtkStandardNewMacro(vtkPVSMTKModelInformation);
 
-//----------------------------------------------------------------------------
 vtkPVSMTKModelInformation::vtkPVSMTKModelInformation()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkPVSMTKModelInformation::~vtkPVSMTKModelInformation()
 {
   this->UUID2BlockIdMap.clear();
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSMTKModelInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 {
   this->UUID2BlockIdMap.clear();
@@ -60,7 +56,6 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
   this->m_ModelUUID = smtk::common::UUID(modelsource->GetModelEntityID());
 }
 
-//----------------------------------------------------------------------------
 bool vtkPVSMTKModelInformation::GetBlockId(const smtk::common::UUID& uuid, unsigned int& bid)
 {
   if (this->UUID2BlockIdMap.find(uuid) != this->UUID2BlockIdMap.end())
@@ -70,7 +65,7 @@ bool vtkPVSMTKModelInformation::GetBlockId(const smtk::common::UUID& uuid, unsig
   }
   return false;
 }
-//----------------------------------------------------------------------------
+
 const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelUUID()
 {
   return this->m_ModelUUID;
@@ -83,7 +78,6 @@ const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelUUID()
 */
 }
 
-//----------------------------------------------------------------------------
 const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelEntityId(unsigned int bid)
 {
   return this->BlockId2UUIDMap[bid];
@@ -96,7 +90,7 @@ const smtk::common::UUID& vtkPVSMTKModelInformation::GetModelEntityId(unsigned i
 */
 }
 /*
-//----------------------------------------------------------------------------
+
 smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
 {
   smtk::common::UUIDs uids;
@@ -109,7 +103,7 @@ smtk::common::UUIDs vtkPVSMTKModelInformation::GetBlockUUIDs() const
   return uids;
 }
 */
-//----------------------------------------------------------------------------
+
 void vtkPVSMTKModelInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVSMTKModelInformation* modelInfo = vtkPVSMTKModelInformation::SafeDownCast(info);

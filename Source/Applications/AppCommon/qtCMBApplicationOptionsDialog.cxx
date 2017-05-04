@@ -9,7 +9,6 @@
 //=========================================================================
 #include "qtCMBApplicationOptionsDialog.h"
 
-//-----------------------------------------------------------------------------
 qtCMBApplicationOptionsDialog::qtCMBApplicationOptionsDialog(QWidget* p)
   : qtCMBOptionsDialog(p)
 {

@@ -17,26 +17,24 @@
 vtkStandardNewMacro(vtkPointThresholdFilter);
 vtkCxxSetObjectMacro(vtkPointThresholdFilter, Transform, vtkTransform);
 
-//--------------------------------------------------------------------
 vtkPointThresholdFilter::vtkPointThresholdFilter()
 {
   this->ActiveFilterIndex = -1;
   this->Transform = 0;
   this->TransformOutputData = false;
 }
-//--------------------------------------------------------------------
+
 vtkPointThresholdFilter::~vtkPointThresholdFilter()
 {
   FilterList.clear();
   this->SetTransform(static_cast<vtkTransform*>(0));
 }
-//--------------------------------------------------------------------
+
 void vtkPointThresholdFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//-----------------------------------------------------------------------------
 void vtkPointThresholdFilter::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -45,7 +43,6 @@ void vtkPointThresholdFilter::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//--------------------------------------------------------------------
 int vtkPointThresholdFilter::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {

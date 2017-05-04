@@ -41,7 +41,6 @@
 
 #include "vtkNew.h"
 
-//-----------------------------------------------------------------------------
 pqCMBPoints::pqCMBPoints()
   : pqCMBTexturedObject()
 {
@@ -53,7 +52,7 @@ pqCMBPoints::pqCMBPoints()
   this->PieceTotalNumberOfPoints = -1;
   this->UserDefinedType = "Points";
 }
-//-----------------------------------------------------------------------------
+
 pqCMBPoints::pqCMBPoints(
   pqPipelineSource* source, pqRenderView* view, pqServer* server, const char* filename)
   : pqCMBTexturedObject(source, view, server)
@@ -70,7 +69,6 @@ pqCMBPoints::pqCMBPoints(
   this->UserDefinedType = "Points";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPoints::pqCMBPoints(
   pqPipelineSource* source, pqRenderView* view, pqServer* server, bool updateRep)
   : pqCMBTexturedObject(source, view, server)
@@ -91,7 +89,6 @@ pqCMBPoints::pqCMBPoints(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPoints::pqCMBPoints(
   const char* filename, pqServer* server, pqRenderView* view, int maxNumberOfPoints, bool updateRep)
 {
@@ -132,7 +129,6 @@ pqCMBPoints::pqCMBPoints(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPoints::pqCMBPoints(pqServer* server, pqRenderView* view, pqPipelineSource* source,
   int pieceIndex, int onRatio, bool doublePrecision)
 {
@@ -190,24 +186,20 @@ pqCMBPoints::pqCMBPoints(pqServer* server, pqRenderView* view, pqPipelineSource*
   this->UserDefinedType = "Points";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPoints::~pqCMBPoints()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPoints::setReaderSource(pqPipelineSource* source)
 {
   this->ReaderSource = source;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBPoints::getReaderSource() const
 {
   return this->ReaderSource;
 }
 
-//-----------------------------------------------------------------------------
 pqPipelineSource* pqCMBPoints::getTransformedSource(pqServer* server) const
 {
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
@@ -253,7 +245,6 @@ pqPipelineSource* pqCMBPoints::getTransformedSource(pqServer* server) const
   return this->Source;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase* pqCMBPoints::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -284,7 +275,6 @@ pqCMBSceneObjectBase* pqCMBPoints::duplicate(pqServer* server, pqRenderView* vie
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPoints::initialize(
   pqPipelineSource* source, pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -298,7 +288,6 @@ void pqCMBPoints::initialize(
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPoints::isPointsFile(const char* filename)
 {
   QFileInfo finfo(filename);
@@ -309,14 +298,14 @@ bool pqCMBPoints::isPointsFile(const char* filename)
   }
   return false;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPoints::setInitialSurfaceTranslation(double translation[3])
 {
   this->InitialSurfaceTranslation[0] = translation[0];
   this->InitialSurfaceTranslation[1] = translation[1];
   this->InitialSurfaceTranslation[2] = translation[2];
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPoints::getInitialSurfaceTranslation(double translation[3]) const
 {
   translation[0] = this->InitialSurfaceTranslation[0];
@@ -324,9 +313,7 @@ void pqCMBPoints::getInitialSurfaceTranslation(double translation[3]) const
   translation[2] = this->InitialSurfaceTranslation[2];
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBPoints::getType() const
 {
   return pqCMBSceneObjectBase::Points;
 }
-//-----------------------------------------------------------------------------

@@ -16,7 +16,6 @@
 #include "pqCMBSceneObjectBase.h"
 #include "ui_qtNewSceneUnits.h"
 
-//-----------------------------------------------------------------------------
 bool qtCMBNewSceneUnitsDialog::getUnits(
   cmbSceneUnits::Enum initialUnits, cmbSceneUnits::Enum& newUnits)
 {
@@ -24,7 +23,6 @@ bool qtCMBNewSceneUnitsDialog::getUnits(
   return dialog.exec(newUnits);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBNewSceneUnitsDialog::qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initialUnits)
 {
   this->NewUnits = cmbSceneUnits::Unknown;
@@ -61,7 +59,6 @@ qtCMBNewSceneUnitsDialog::qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initialUn
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBNewSceneUnitsDialog::~qtCMBNewSceneUnitsDialog()
 {
   if (this->NewUnitsDialog)
@@ -73,7 +70,7 @@ qtCMBNewSceneUnitsDialog::~qtCMBNewSceneUnitsDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 bool qtCMBNewSceneUnitsDialog::exec(cmbSceneUnits::Enum& newUnits)
 {
   this->MainDialog->setModal(true);
@@ -82,7 +79,7 @@ bool qtCMBNewSceneUnitsDialog::exec(cmbSceneUnits::Enum& newUnits)
   newUnits = this->NewUnits;
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBNewSceneUnitsDialog::accept()
 {
   if (this->NewUnitsDialog->INButton->isChecked())
@@ -111,9 +108,7 @@ void qtCMBNewSceneUnitsDialog::accept()
   }
   this->Status = true;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBNewSceneUnitsDialog::cancel()
 {
 }
-
-//-----------------------------------------------------------------------------

@@ -10,7 +10,6 @@
 #include <vnl/vnl_matrix_fixed.h>
 #include <vnl/vnl_vector_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_tensor_d<N>::rtvl_tensor_d(
   vnl_matrix_fixed<double, N, N> const& tensor, vnl_matrix_fixed<double, N, N> const (&tensor_d)[N])
@@ -19,7 +18,6 @@ rtvl_tensor_d<N>::rtvl_tensor_d(
 {
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_tensor_d<N>::saliency_d(unsigned int d, vnl_vector_fixed<double, N>& dsal) const
 {
@@ -32,7 +30,6 @@ void rtvl_tensor_d<N>::saliency_d(unsigned int d, vnl_vector_fixed<double, N>& d
   }
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_TENSOR_D_INSTANTIATE(N) template class rtvl_tensor_d<N>
 
 #endif

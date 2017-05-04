@@ -15,7 +15,6 @@
 #include "pqSMAdaptor.h"
 #include "ui_qtFilterDialog.h"
 
-//-----------------------------------------------------------------------------
 qtCMBLIDARFilterDialog::qtCMBLIDARFilterDialog(QWidget* parent)
   : QDialog(parent)
 {
@@ -106,7 +105,7 @@ qtCMBLIDARFilterDialog::qtCMBLIDARFilterDialog(QWidget* parent)
     this->InternalWidget->previewCheckBox, SIGNAL(stateChanged(int)), this, SLOT(OnOk()));
   this->setModal(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::blockAllChildrenSignals(bool block)
 {
   this->InternalWidget->minX->blockSignals(block);
@@ -144,12 +143,12 @@ void qtCMBLIDARFilterDialog::blockAllChildrenSignals(bool block)
   this->InternalWidget->invert->blockSignals(block);
   this->InternalWidget->previewCheckBox->blockSignals(block);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::OnOk()
 {
   emit OkPressed();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::DialogChanged()
 {
   if (this->InternalWidget->previewCheckBox->isChecked())
@@ -157,7 +156,7 @@ void qtCMBLIDARFilterDialog::DialogChanged()
     emit OkPressed();
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::UpdateThresholdSource(vtkSMSourceProxy* thresholdSource)
 {
 
@@ -228,7 +227,7 @@ void qtCMBLIDARFilterDialog::UpdateThresholdSource(vtkSMSourceProxy* thresholdSo
   thresholdSource->InvokeCommand("SetMaxY");
   thresholdSource->InvokeCommand("SetMaxZ");
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::UpdateFilterDialog(vtkSMSourceProxy* thresholdSource)
 {
   if (!thresholdSource)
@@ -288,47 +287,46 @@ void qtCMBLIDARFilterDialog::UpdateFilterDialog(vtkSMSourceProxy* thresholdSourc
     pqSMAdaptor::getElementProperty(thresholdSource->GetProperty("GetInvert")).toBool());
   this->blockAllChildrenSignals(false);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMinX()
 {
   this->InternalWidget->useMinX->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMinY()
 {
   this->InternalWidget->useMinY->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMinZ()
 {
   this->InternalWidget->useMinZ->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMaxX()
 {
   this->InternalWidget->useMaxX->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMaxY()
 {
   this->InternalWidget->useMaxY->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMaxZ()
 {
   this->InternalWidget->useMaxZ->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMinRGB()
 {
   this->InternalWidget->useMinRGB->setChecked(true);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBLIDARFilterDialog::CheckUseMaxRGB()
 {
   this->InternalWidget->useMaxRGB->setChecked(true);
 }
-//-----------------------------------------------------------------------------
 
 qtCMBLIDARFilterDialog::~qtCMBLIDARFilterDialog()
 {

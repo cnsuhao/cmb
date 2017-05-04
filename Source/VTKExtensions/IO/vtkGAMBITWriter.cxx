@@ -22,7 +22,7 @@
 #include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkGAMBITWriter);
-//----------------------------------------------------------------------------
+
 vtkGAMBITWriter::vtkGAMBITWriter()
 {
   this->FileName = 0;
@@ -32,19 +32,16 @@ vtkGAMBITWriter::vtkGAMBITWriter()
   this->InputPoly = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkGAMBITWriter::~vtkGAMBITWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkGAMBITWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkGAMBITWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -63,13 +60,11 @@ ostream* vtkGAMBITWriter::OpenFile()
   return fptr;
 }
 
-//----------------------------------------------------------------------------
 void vtkGAMBITWriter::CloseFile(ostream* fp)
 {
   delete fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkGAMBITWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -121,7 +116,6 @@ void vtkGAMBITWriter::WriteData()
   this->InputPoly = 0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkGAMBITWriter::WriteHeader(ostream& fp)
 {
   fp << setw(20) << "CONTROL INFO"
@@ -150,7 +144,6 @@ bool vtkGAMBITWriter::WriteHeader(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 inline void vtkWriteCell(ostream& fp, int id, int elemType, vtkIdType npts, vtkIdType* ptIds)
 {
   // Only 7 points can go on one line.  In the case of the Hex we need to put the 8th
@@ -170,7 +163,6 @@ inline void vtkWriteCell(ostream& fp, int id, int elemType, vtkIdType npts, vtkI
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkGAMBITWriter::WriteCells(ostream& fp)
 {
 
@@ -293,7 +285,6 @@ bool vtkGAMBITWriter::WriteCells(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkGAMBITWriter::WriteGroups(ostream& fp)
 {
 
@@ -338,7 +329,6 @@ bool vtkGAMBITWriter::WriteGroups(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkGAMBITWriter::WritePoints(ostream& fp)
 {
   fp << setw(20) << "NODAL COORDINATES"
@@ -366,14 +356,12 @@ bool vtkGAMBITWriter::WritePoints(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 int vtkGAMBITWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkGAMBITWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

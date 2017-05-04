@@ -54,7 +54,6 @@ void Free_triangluateio(struct triangulateio*);
 
 vtkStandardNewMacro(vtkTINStitcher);
 
-//-----------------------------------------------------------------------------
 vtkTINStitcher::vtkTINStitcher()
 {
   this->TINType = -1;
@@ -77,7 +76,6 @@ vtkTINStitcher::vtkTINStitcher()
   this->UserSpecifiedTINType = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkTINStitcher::~vtkTINStitcher()
 {
   this->LoopLines->Delete();
@@ -87,31 +85,26 @@ vtkTINStitcher::~vtkTINStitcher()
   this->PreppedStitchingInput->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::Set2ndInputData(vtkUnstructuredGrid* input)
 {
   this->SetInputData(1, input);
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::Set2ndInputData(vtkPolyData* input)
 {
   this->SetInputData(1, input);
 }
 
-//----------------------------------------------------------------------------
 void vtkTINStitcher::Set2ndInputConnection(vtkAlgorithmOutput* algOutput)
 {
   this->SetInputConnection(1, algOutput);
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::GetTINType()
 {
   return this->TINType;
 }
 
-//-----------------------------------------------------------------------------
 bool vtkTINStitcher::AreInputsOK()
 {
   if (this->GetTotalNumberOfInputConnections() != 2)
@@ -133,7 +126,6 @@ bool vtkTINStitcher::AreInputsOK()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/)
 {
@@ -250,7 +242,6 @@ int vtkTINStitcher::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::PrepInputsForStitching()
 {
   // if one or both inputs are not vtkPolyData, convert to vtkPolyData,
@@ -367,7 +358,6 @@ int vtkTINStitcher::PrepInputsForStitching()
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::SetupToStitchAsType1()
 {
   double pt0[3], pt1[3];
@@ -465,7 +455,6 @@ int vtkTINStitcher::SetupToStitchAsType1()
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::SetupToStitchUsingAutoDetect(double /*maxDistance*/, double maxDistance2)
 {
   // figure out the endPts of the line segments
@@ -588,7 +577,6 @@ int vtkTINStitcher::SetupToStitchUsingAutoDetect(double /*maxDistance*/, double 
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::FindPolyLineCorners(
   vtkPolyData* input, vtkIdType npts, vtkIdType* pts, vtkIdTypeArray* corners, double maxDistance2)
 {
@@ -628,7 +616,6 @@ void vtkTINStitcher::FindPolyLineCorners(
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkTINStitcher::ReorderPolyLine(vtkCellArray* newLines, vtkIdTypeArray* corners, vtkIdType npts,
   vtkIdType* pts, vtkIdType startCorner)
 {
@@ -680,7 +667,6 @@ int vtkTINStitcher::ReorderPolyLine(vtkCellArray* newLines, vtkIdTypeArray* corn
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::MapLoopLinesToAppendedData()
 {
   // IMPORTANT - "map" the LoopLines to pull from the full set of points
@@ -698,7 +684,6 @@ void vtkTINStitcher::MapLoopLinesToAppendedData()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::CreateQuadStitching(vtkPolyData* outputPD)
 {
   for (int i = 0; i < this->LoopNPts[0] - 1; i++)
@@ -709,7 +694,6 @@ void vtkTINStitcher::CreateQuadStitching(vtkPolyData* outputPD)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::CreateTriStitching(vtkPolyData* outputPD)
 {
   // Creates triangle pointing in opposite directions, so will need to fix the
@@ -726,7 +710,6 @@ void vtkTINStitcher::CreateTriStitching(vtkPolyData* outputPD)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::ProcessSegmentWithTriangle(vtkPolyData* outputPD, vtkIdType startCornerIndex,
   vtkIdTypeArray* sidePoints0, vtkIdTypeArray* sidePoints1)
 {
@@ -837,7 +820,6 @@ void vtkTINStitcher::ProcessSegmentWithTriangle(vtkPolyData* outputPD, vtkIdType
   Free_triangluateio(&output);
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::SetupPointsForTriangle(triangulateio& input, vtkTransform* ptTransform,
   vtkPolyData* outputPD, vtkIdType startCornerIndex, vtkIdTypeArray* sidePoints0,
   vtkIdTypeArray* sidePoints1, int& numberOfPointsInLoop0Segment, int& numberOfPointsInLoop1Segment,
@@ -965,7 +947,6 @@ void vtkTINStitcher::SetupPointsForTriangle(triangulateio& input, vtkTransform* 
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::SetupSegmentsForTriangle(triangulateio& input,
   int numberOfPointsInLoop0Segment, int numberOfPointsInLoop1Segment, vtkIdTypeArray* sidePoints0,
   vtkIdTypeArray* sidePoints1)
@@ -1042,7 +1023,6 @@ void vtkTINStitcher::SetupSegmentsForTriangle(triangulateio& input,
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::SetupSidePoints(double* pointList, int inputNumberOfPoints,
   int outputNumberOfPoints, double* startPt, double* endPt, std::vector<vtkIdType>& triangleToPD,
   vtkIdTypeArray* sidePoints, bool fillDescending)
@@ -1087,7 +1067,6 @@ void vtkTINStitcher::SetupSidePoints(double* pointList, int inputNumberOfPoints,
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkTINStitcher::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (!this->Superclass::FillInputPortInformation(port, info))
@@ -1101,7 +1080,6 @@ int vtkTINStitcher::FillInputPortInformation(int port, vtkInformation* info)
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkTINStitcher::FillOutputPortInformation(int vtkNotUsed(port), vtkInformation* info)
 {
   // now add our info
@@ -1109,7 +1087,6 @@ int vtkTINStitcher::FillOutputPortInformation(int vtkNotUsed(port), vtkInformati
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTINStitcher::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

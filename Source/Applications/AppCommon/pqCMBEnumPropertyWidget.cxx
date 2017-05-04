@@ -34,7 +34,6 @@ public:
   pqSignalAdaptorComboBox* Adaptor;
 };
 
-//-----------------------------------------------------------------------------
 pqCMBEnumPropertyWidget::pqCMBEnumPropertyWidget(QWidget* _p)
   : QWidget(_p)
 {
@@ -63,13 +62,11 @@ pqCMBEnumPropertyWidget::pqCMBEnumPropertyWidget(QWidget* _p)
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBEnumPropertyWidget::~pqCMBEnumPropertyWidget()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::setRepresentation(pqDataRepresentation* display)
 {
   if (display != this->Internal->Display)
@@ -79,21 +76,18 @@ void pqCMBEnumPropertyWidget::setRepresentation(pqDataRepresentation* display)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::setPropertyName(const char* propName)
 {
   this->RepPropertyName = propName;
   this->updateLinks();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::setLabelText(const char* labelText)
 {
   //this->Internal->label->setText(labelText);
   this->Internal->comboBox->setToolTip(labelText);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::updateLinks()
 {
   // break old links.
@@ -133,13 +127,11 @@ void pqCMBEnumPropertyWidget::updateLinks()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::reloadGUI()
 {
   this->updateLinks();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::onQtWidgetChanged()
 {
   emit this->beginUndo("Changed 'ModelFaceColorMode'");
@@ -169,7 +161,6 @@ void pqCMBEnumPropertyWidget::onQtWidgetChanged()
   emit this->endUndo();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBEnumPropertyWidget::onCurrentTextChanged(const QString&)
 {
   if (this->Internal->Display)
@@ -177,9 +168,8 @@ void pqCMBEnumPropertyWidget::onCurrentTextChanged(const QString&)
     this->Internal->Display->renderViewEventually();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBEnumPropertyWidget::setEnabled(int enable)
 {
   this->Internal->comboBox->setEnabled(enable);
 }
-//-----------------------------------------------------------------------------

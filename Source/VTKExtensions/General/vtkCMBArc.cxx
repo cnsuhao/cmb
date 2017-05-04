@@ -23,11 +23,9 @@
 
 #include <algorithm>
 
-//----------------------------------------------------------------------------
 vtkIdType vtkCMBArc::NextId = 0;
 vtkStandardNewMacro(vtkCMBArc);
 
-//----------------------------------------------------------------------------
 vtkCMBArc::vtkCMBArc()
   : Points()
   , PointIterationForward(true)
@@ -53,7 +51,6 @@ vtkCMBArc::vtkCMBArc()
   this->InvertTraversalRange = false;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArc::~vtkCMBArc()
 {
   this->ArcManager->UnRegisterArc(this);
@@ -63,7 +60,6 @@ vtkCMBArc::~vtkCMBArc()
   delete[] this->EndNodes;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArc::PrintSelf(ostream& os, vtkIndent indent)
 {
   double position[3];
@@ -92,25 +88,21 @@ void vtkCMBArc::PrintSelf(ostream& os, vtkIndent indent)
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::operator<(const vtkCMBArc& p) const
 {
   return (this->Id < p.Id);
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkCMBArc::GetId() const
 {
   return this->Id;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::IsClosedArc() const
 {
   return (this->EndNodes[1] && this->EndNodes[1] == this->EndNodes[0]);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArc::GetNumberOfEndNodes() const
 {
   int count = (this->EndNodes[0]) ? 1 : 0;
@@ -118,7 +110,6 @@ int vtkCMBArc::GetNumberOfEndNodes() const
   return count;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArc::GetEndNode(const int& index) const
 {
   if (this->InvalidEndNodeIndex(index))
@@ -128,7 +119,6 @@ vtkCMBArcEndNode* vtkCMBArc::GetEndNode(const int& index) const
   return this->EndNodes[index];
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::SetEndNode(const int& index, vtkCMBArc::Point const& point)
 {
   if (this->InvalidEndNodeIndex(index))
@@ -169,7 +159,6 @@ bool vtkCMBArc::SetEndNode(const int& index, vtkCMBArc::Point const& point)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::MoveEndNode(const int& index, vtkCMBArc::Point const& point)
 {
   if (this->InvalidEndNodeIndex(index))
@@ -195,7 +184,6 @@ bool vtkCMBArc::MoveEndNode(const int& index, vtkCMBArc::Point const& point)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArc::Initialize()
 {
   //We only want to delete end nodes that aren't used by any other arc
@@ -218,7 +206,6 @@ void vtkCMBArc::Initialize()
   this->UndoEndNodes.clear();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::ClearPoints()
 {
   this->Points.clear();
@@ -228,7 +215,6 @@ bool vtkCMBArc::ClearPoints()
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::InsertPointAtFront(unsigned int ptId, double point[3])
 {
   //create a constant point and push that back
@@ -254,14 +240,11 @@ bool vtkCMBArc::InsertPointAtFront(vtkCMBArc::Point& point)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::InsertNextPoint(unsigned int ptId, double point[3])
 {
   vtkCMBArc::Point pt(point, ptId);
   return this->InsertNextPoint(pt);
 }
-
-//----------------------------------------------------------------------------
 
 bool vtkCMBArc::InsertNextPoint(vtkCMBArc::Point& point)
 {
@@ -291,7 +274,6 @@ bool vtkCMBArc::InternalInsertNextPoint(InternalPointList& inPoints, vtkCMBArc::
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::InsertNextPoint(
   unsigned int ptId, const double& x, const double& y, const double& z)
 {
@@ -299,14 +281,12 @@ bool vtkCMBArc::InsertNextPoint(
   return this->InsertNextPoint(point);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::InitTraversal(const bool& forward)
 {
   return this->InitTraversal(forward ? 0 : this->GetNumberOfInternalPoints() - 1,
     this->GetNumberOfInternalPoints(), forward, false);
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::InitTraversal(const vtkIdType& startIndex, const vtkIdType& numPoints,
   const bool& forwardDirection, const bool& invertTraversalRange)
 {
@@ -351,7 +331,6 @@ bool vtkCMBArc::InitTraversal(const vtkIdType& startIndex, const vtkIdType& numP
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::GetNextPoint(vtkCMBArc::Point& point)
 {
   int numArcPoints = this->GetNumberOfInternalPoints();
@@ -411,13 +390,11 @@ bool vtkCMBArc::GetNextPoint(vtkCMBArc::Point& point)
   return false;
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkCMBArc::GetNumberOfInternalPoints() const
 {
   return this->Points.size();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::GetArcInternalPoint(vtkIdType pid, vtkCMBArc::Point& point)
 {
   if (pid >= 0 && pid < static_cast<vtkIdType>(this->Points.size()))
@@ -431,13 +408,11 @@ bool vtkCMBArc::GetArcInternalPoint(vtkIdType pid, vtkCMBArc::Point& point)
   return false;
 }
 
-//----------------------------------------------------------------------------
 vtkIdType vtkCMBArc::GetNumberOfArcPoints() const
 {
   return this->GetNumberOfInternalPoints() + this->GetNumberOfEndNodes();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::GetEndNodeDirection(const int& index, double direction[3]) const
 {
   if (this->InvalidEndNodeIndex(index))
@@ -473,7 +448,6 @@ bool vtkCMBArc::GetEndNodeDirection(const int& index, double direction[3]) const
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::GetEndNodeDirection(vtkCMBArcEndNode* endNode, double direction[3]) const
 {
   if (!endNode)
@@ -494,13 +468,11 @@ bool vtkCMBArc::GetEndNodeDirection(vtkCMBArcEndNode* endNode, double direction[
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArc::GetNumberOfConnectedArcs()
 {
   return static_cast<int>(this->ArcManager->GetConnectedArcs(this).size());
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArc::GetNumberOfConnectedArcs(const int& index) const
 {
   if (this->InvalidEndNodeIndex(index))
@@ -513,7 +485,6 @@ int vtkCMBArc::GetNumberOfConnectedArcs(const int& index) const
   return size;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBArc::GetNumberOfConnectedArcs(vtkCMBArcEndNode* endNode) const
 {
   //make sure this is a valid end node of the arc
@@ -534,7 +505,6 @@ int vtkCMBArc::GetNumberOfConnectedArcs(vtkCMBArcEndNode* endNode) const
   return size;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArc::MarkedForDeletion()
 {
   this->ArcManager->MarkedForDeletion(this);
@@ -557,7 +527,6 @@ void vtkCMBArc::MarkedForDeletion()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArc::UnMarkedForDeletion()
 {
   this->ArcManager->UnMarkedForDeletion(this);
@@ -571,7 +540,6 @@ void vtkCMBArc::UnMarkedForDeletion()
   this->UndoEndNodes.clear();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::ReplaceEndNode(vtkCMBArcEndNode* oldEndNode, vtkCMBArcEndNode* newEndNode)
 {
   if (oldEndNode == NULL || newEndNode == NULL)
@@ -596,7 +564,6 @@ bool vtkCMBArc::ReplaceEndNode(vtkCMBArcEndNode* oldEndNode, vtkCMBArcEndNode* n
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::ReplacePoints(vtkIdType startIndex, vtkIdType endIndex,
   std::list<vtkCMBArc::Point>& newPoints, bool includeEnds)
 {
@@ -705,7 +672,6 @@ bool vtkCMBArc::ReplacePoints(vtkIdType startIndex, vtkIdType endIndex,
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArc::IsWholeArcRange(
   vtkIdType startId, vtkIdType endId, vtkIdType numArcPoints, bool closedArc)
 {

@@ -12,7 +12,6 @@
 
 #include "pqDataRepresentation.h"
 
-//-----------------------------------------------------------------------------
 /// constructor
 pqCMBDisplayProxyEditor::pqCMBDisplayProxyEditor(pqDataRepresentation* repr, QWidget* p)
   : pqProxyWidget(repr ? repr->getProxy() : NULL, p)
@@ -20,7 +19,6 @@ pqCMBDisplayProxyEditor::pqCMBDisplayProxyEditor(pqDataRepresentation* repr, QWi
 {
 }
 
-//-----------------------------------------------------------------------------
 /// destructor
 pqCMBDisplayProxyEditor::~pqCMBDisplayProxyEditor()
 {

@@ -13,7 +13,6 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 
-//-----------------------------------------------------------------------------
 qtCMBTableWidget::qtCMBTableWidget(QWidget* p)
   : QTableWidget(p)
 {
@@ -21,12 +20,10 @@ qtCMBTableWidget::qtCMBTableWidget(QWidget* p)
   this->horizontalHeader()->setStretchLastSection(true);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBTableWidget::~qtCMBTableWidget()
 {
 }
 
-//----------------------------------------------------------------------------
 void qtCMBTableWidget::keyPressEvent(QKeyEvent* e)
 {
   emit this->keyPressed(e);

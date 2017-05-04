@@ -21,7 +21,6 @@
 
 vtkStandardNewMacro(vtkCMBSceneV2WriterHelper);
 
-//-----------------------------------------------------------------------------
 // The internals class mostly holds templated ivars that we don't want to
 // expose in the header file.
 class vtkCMBSceneV2WriterHelper::vtkSceneGenInternal
@@ -29,7 +28,7 @@ class vtkCMBSceneV2WriterHelper::vtkSceneGenInternal
 public:
   std::vector<vtkStdString> ObjectFileNames;
 };
-//-----------------------------------------------------------------------------
+
 vtkCMBSceneV2WriterHelper::vtkCMBSceneV2WriterHelper()
 {
   this->SetNumberOfInputPorts(0);
@@ -42,7 +41,6 @@ vtkCMBSceneV2WriterHelper::vtkCMBSceneV2WriterHelper()
   this->Internal = new vtkCMBSceneV2WriterHelper::vtkSceneGenInternal();
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBSceneV2WriterHelper::~vtkCMBSceneV2WriterHelper()
 {
   this->SetFileName(0);
@@ -54,7 +52,6 @@ vtkCMBSceneV2WriterHelper::~vtkCMBSceneV2WriterHelper()
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBSceneV2WriterHelper::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -78,7 +75,6 @@ int vtkCMBSceneV2WriterHelper::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBSceneV2WriterHelper::AddObjectFileName(const char* fname)
 {
   this->Internal->ObjectFileNames.push_back(fname);
@@ -101,7 +97,6 @@ const char* vtkCMBSceneV2WriterHelper::GetObjectFileName(unsigned int idx)
   return this->Internal->ObjectFileNames[idx].c_str();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBSceneV2WriterHelper::ProcessFileNames()
 {
   std::string fullPath = vtksys::SystemTools::CollapseFullPath(this->FileName);
@@ -139,7 +134,6 @@ void vtkCMBSceneV2WriterHelper::ProcessFileNames()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBSceneV2WriterHelper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -157,7 +151,6 @@ void vtkCMBSceneV2WriterHelper::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "PackageScene: " << this->PackageScene << endl;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSceneV2WriterHelper::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

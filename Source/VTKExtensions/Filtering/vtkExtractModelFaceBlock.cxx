@@ -18,20 +18,17 @@
 
 vtkStandardNewMacro(vtkExtractModelFaceBlock);
 
-//----------------------------------------------------------------------------
 vtkExtractModelFaceBlock::vtkExtractModelFaceBlock()
 {
   this->FaceId = -1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractModelFaceBlock::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractModelFaceBlock::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -63,7 +60,6 @@ int vtkExtractModelFaceBlock::RequestData(vtkInformation* vtkNotUsed(request),
   return 0;
 }
 
-//----------------------------------------------------------------------------
 void vtkExtractModelFaceBlock::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

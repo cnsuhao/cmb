@@ -83,7 +83,6 @@
 #include <map>
 #include <set>
 
-//-----------------------------------------------------------------------------
 class pqCMBModelManager::qInternal
 {
 public:
@@ -932,27 +931,23 @@ public:
   }
 };
 
-//----------------------------------------------------------------------------
 pqCMBModelManager::pqCMBModelManager(pqServer* server)
 {
   this->Internal = new qInternal(server);
   this->initialize();
 }
 
-//----------------------------------------------------------------------------
 pqCMBModelManager::~pqCMBModelManager()
 {
   this->clear();
   delete this->Internal;
 }
 
-//----------------------------------------------------------------------------
 pqServer* pqCMBModelManager::server()
 {
   return this->Internal->Server;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::initialize()
 {
   if (!this->Internal->ManagerProxy)
@@ -979,21 +974,19 @@ void pqCMBModelManager::initialize()
   }
 }
 
-//----------------------------------------------------------------------------
 vtkSMModelManagerProxy* pqCMBModelManager::managerProxy()
 {
   this->initialize();
   return this->Internal->ManagerProxy;
 }
 
-//----------------------------------------------------------------------------
 int pqCMBModelManager::numberOfRemoteSessions()
 {
   return this->Internal->ManagerProxy ? this->Internal->ManagerProxy->numberOfRemoteSessions() : 0;
 }
 
 // This will recursively check the submodels of the input model
-//-----------------------------------------------------------------------------
+
 pqSMTKModelInfo* internal_getModelInfo(
   const smtk::model::Model& inModel, std::map<smtk::common::UUID, pqSMTKModelInfo>& modelInfos)
 {
@@ -1017,7 +1010,6 @@ pqSMTKModelInfo* internal_getModelInfo(
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& selentity)
 {
   smtk::common::UUID modelId;
@@ -1067,7 +1059,6 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(const smtk::model::EntityRef& sele
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
 {
   if (!rep)
@@ -1083,7 +1074,6 @@ pqSMTKModelInfo* pqCMBModelManager::modelInfo(pqDataRepresentation* rep)
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 smtkAuxGeoInfo* pqCMBModelManager::auxGeoInfo(const std::string& aux_url)
 {
   if (this->Internal->AuxGeoInfos.find(aux_url) != this->Internal->AuxGeoInfos.end())
@@ -1093,7 +1083,6 @@ smtkAuxGeoInfo* pqCMBModelManager::auxGeoInfo(const std::string& aux_url)
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKMeshInfo* pqCMBModelManager::meshInfo(const smtk::mesh::MeshSet& mesh)
 {
   smtk::common::UUID modelId = mesh.collection()->associatedModel();
@@ -1117,7 +1106,6 @@ pqSMTKMeshInfo* pqCMBModelManager::meshInfo(const smtk::mesh::MeshSet& mesh)
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKMeshInfo* pqCMBModelManager::meshInfo(pqDataRepresentation* rep)
 {
   if (!rep)
@@ -1139,7 +1127,6 @@ pqSMTKMeshInfo* pqCMBModelManager::meshInfo(pqDataRepresentation* rep)
   return NULL;
 }
 
-//----------------------------------------------------------------------------
 QList<pqSMTKModelInfo*> pqCMBModelManager::selectedModels() const
 {
   QList<pqSMTKModelInfo*> selModels;
@@ -1160,7 +1147,6 @@ QList<pqSMTKModelInfo*> pqCMBModelManager::selectedModels() const
   return selModels;
 }
 
-//----------------------------------------------------------------------------
 QList<pqSMTKModelInfo*> pqCMBModelManager::allModels() const
 {
   QList<pqSMTKModelInfo*> selModels;
@@ -1172,7 +1158,6 @@ QList<pqSMTKModelInfo*> pqCMBModelManager::allModels() const
   return selModels;
 }
 
-//----------------------------------------------------------------------------
 smtk::model::EntityRef pqCMBModelManager::entityOfRepresentation(const pqDataRepresentation* rep)
 {
   if (!rep)
@@ -1191,7 +1176,6 @@ smtk::model::EntityRef pqCMBModelManager::entityOfRepresentation(const pqDataRep
   return smtk::model::EntityRef(managerProxy()->modelManager(), uid);
 }
 
-//----------------------------------------------------------------------------
 pqDataRepresentation* pqCMBModelManager::representationOfEntity(const smtk::model::EntityRef& ent)
 {
   auto minfoIt = this->Internal->ModelInfos.find(ent.entity());
@@ -1207,7 +1191,6 @@ pqDataRepresentation* pqCMBModelManager::representationOfEntity(const smtk::mode
   return nullptr;
 }
 
-//----------------------------------------------------------------------------
 QList<pqSMTKMeshInfo*> pqCMBModelManager::allMeshes() const
 {
   QList<pqSMTKMeshInfo*> allmeshes;
@@ -1223,7 +1206,6 @@ QList<pqSMTKMeshInfo*> pqCMBModelManager::allMeshes() const
   return allmeshes;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::clearModelSelections()
 {
   for (qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
@@ -1237,7 +1219,6 @@ void pqCMBModelManager::clearModelSelections()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::clearMeshSelections()
 {
   for (qInternal::itModelInfo mit = this->Internal->ModelInfos.begin();
@@ -1255,7 +1236,6 @@ void pqCMBModelManager::clearMeshSelections()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::clearAuxGeoSelections()
 {
   std::map<std::string, smtkAuxGeoInfo>::iterator it;
@@ -1270,7 +1250,6 @@ void pqCMBModelManager::clearAuxGeoSelections()
   }
 }
 
-//----------------------------------------------------------------------------
 int pqCMBModelManager::numberOfModels()
 {
   if (this->managerProxy())
@@ -1282,7 +1261,6 @@ int pqCMBModelManager::numberOfModels()
   return 0;
 }
 
-//----------------------------------------------------------------------------
 pqSMTKModelInfo* pqCMBModelManager::activateModelRepresentation()
 {
   pqSMTKModelInfo* minfo = NULL;
@@ -1320,7 +1298,6 @@ pqSMTKModelInfo* pqCMBModelManager::activateModelRepresentation()
   return minfo;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::setActiveModelRepresentation(pqDataRepresentation* rep)
 {
   if (this->Internal->ActiveRepresentation)
@@ -1328,7 +1305,6 @@ void pqCMBModelManager::setActiveModelRepresentation(pqDataRepresentation* rep)
   this->Internal->ActiveRepresentation = rep;
 }
 
-//----------------------------------------------------------------------------
 QList<pqDataRepresentation*> pqCMBModelManager::modelRepresentations() const
 {
   QList<pqDataRepresentation*> result;
@@ -1342,7 +1318,7 @@ QList<pqDataRepresentation*> pqCMBModelManager::modelRepresentations() const
   }
   return result;
 }
-//----------------------------------------------------------------------------
+
 QList<pqDataRepresentation*> pqCMBModelManager::meshRepresentations() const
 {
   QList<pqDataRepresentation*> result;
@@ -1361,7 +1337,6 @@ QList<pqDataRepresentation*> pqCMBModelManager::meshRepresentations() const
   return result;
 }
 
-//----------------------------------------------------------------------------
 std::set<std::string> pqCMBModelManager::supportedFileTypes(const std::string& sessionName)
 {
   std::set<std::string> resultSet;
@@ -1389,7 +1364,6 @@ std::set<std::string> pqCMBModelManager::supportedFileTypes(const std::string& s
   return resultSet;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::supportedColorByModes(QStringList& types)
 {
   types.clear();
@@ -1399,7 +1373,6 @@ void pqCMBModelManager::supportedColorByModes(QStringList& types)
         << vtkModelMultiBlockSource::GetAttributeTagName();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::updateEntityColorTable(pqDataRepresentation* rep,
   const QMap<smtk::model::EntityRef, QColor>& colorEntities, const QString& colorByMode)
 {
@@ -1467,7 +1440,6 @@ void pqCMBModelManager::updateEntityColorTable(pqDataRepresentation* rep,
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::updateAttributeColorTable(pqDataRepresentation* rep, vtkSMProxy* lutProxy,
   const QMap<std::string, QColor>& colorAtts, const std::vector<std::string>& annList)
 {
@@ -1514,7 +1486,6 @@ void pqCMBModelManager::updateAttributeColorTable(pqDataRepresentation* rep, vtk
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep,
   smtk::attribute::SystemPtr attsys, const QString& attDefType, const QString& attItemName)
 {
@@ -1657,13 +1628,12 @@ void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep
 */
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
 {
   this->clearModelSelections();
   this->Internal->updateModelRepresentation(model);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
 {
   if (!modinfo)
@@ -1673,13 +1643,11 @@ void pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
   this->updateModelRepresentation(model);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::updateModelMeshRepresentations(const smtk::model::Model& model)
 {
   this->Internal->updateModelMeshRepresentations(model);
 }
 
-//----------------------------------------------------------------------------
 smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& filename)
 {
   smtk::model::StringData retBrEns;
@@ -1717,7 +1685,6 @@ smtk::model::StringData pqCMBModelManager::fileModelSessions(const std::string& 
   return retBrEns;
 }
 
-//----------------------------------------------------------------------------
 smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(const std::string& filename)
 {
   this->initialize();
@@ -1763,7 +1730,6 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(const std::string
   return fileOp;
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 {
   this->initialize();
@@ -1849,7 +1815,6 @@ bool internal_isNewGeometricBlock(const smtk::model::EntityRef& ent)
     !ent.hasIntegerProperty("block_index"));
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult& result,
   const smtk::common::UUID& sessionId, bool& hasNewModels, bool& bModelGeometryChanged,
   bool& hasNewMeshes, std::set<smtk::model::SessionRef>& emptySessions)
@@ -2167,7 +2132,6 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
   return success;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBModelManager::DetermineFileReader(const std::string& filename, std::string& sessionType,
   std::string& engineType, const smtk::model::StringData& sessionTypes)
 {
@@ -2206,7 +2170,6 @@ bool pqCMBModelManager::DetermineFileReader(const std::string& filename, std::st
   return false;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::clear()
 {
   this->Internal->clear();
@@ -2219,7 +2182,6 @@ void pqCMBModelManager::clear()
   emit currentModelCleared();
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelManager::startNewSession(
   const std::string& sessionName, const bool& createDefaultModel, const bool& useExistingSession)
 {
@@ -2244,7 +2206,6 @@ bool pqCMBModelManager::startNewSession(
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
 {
   vtkSMModelManagerProxy* pxy = this->Internal->ManagerProxy;
@@ -2269,7 +2230,6 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
   return false;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::onPluginLoaded()
 {
   // force remote server to refetch sessions incase a new session is loaded
@@ -2304,7 +2264,6 @@ void pqCMBModelManager::onPluginLoaded()
   }
 }
 
-//----------------------------------------------------------------------------
 QList<pqSMTKMeshInfo*> pqCMBModelManager::selectedMeshes() const
 {
   QList<pqSMTKMeshInfo*> selMeshInfos;
@@ -2327,7 +2286,6 @@ QList<pqSMTKMeshInfo*> pqCMBModelManager::selectedMeshes() const
   return selMeshInfos;
 }
 
-//----------------------------------------------------------------------------
 QList<smtkAuxGeoInfo*> pqCMBModelManager::selectedAuxGeos() const
 {
   QList<smtkAuxGeoInfo*> selAuxInfos;
@@ -2349,7 +2307,6 @@ QList<smtkAuxGeoInfo*> pqCMBModelManager::selectedAuxGeos() const
   return selAuxInfos;
 }
 
-//----------------------------------------------------------------------------
 smtk::common::UUIDs pqCMBModelManager::auxGeoRelatedEntities(const std::string& auxurl) const
 {
   smtk::common::UUIDs relatedmodels;
@@ -2360,7 +2317,6 @@ smtk::common::UUIDs pqCMBModelManager::auxGeoRelatedEntities(const std::string& 
   return relatedmodels;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
 {
   smtk::model::EntityRef entity(this->managerProxy()->modelManager(), entid);
@@ -2369,7 +2325,6 @@ void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
   pqActiveObjects::instance().setActiveSource(activeSource);
 }
 
-//----------------------------------------------------------------------------
 smtk::model::Model pqCMBModelManager::sortExistingModels(smtk::model::Models& models)
 {
   return this->Internal->InternalSortExistingModels(models);

@@ -14,7 +14,6 @@
 
 #include <iostream>
 
-//-----------------------------------------------------------------------------
 qtCMBCreateSimpleGeometry::qtCMBCreateSimpleGeometry(QWidget* Parent)
   : QDialog(Parent)
   , Ui(new Ui::qtCMBCreateSimpleGeometry())
@@ -29,19 +28,16 @@ qtCMBCreateSimpleGeometry::qtCMBCreateSimpleGeometry(QWidget* Parent)
     SLOT(setCurrentIndex(int)));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBCreateSimpleGeometry::~qtCMBCreateSimpleGeometry()
 {
   delete this->Ui;
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBCreateSimpleGeometry::getGeometryType()
 {
   return this->Ui->geometryType->currentIndex();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBCreateSimpleGeometry::getGeometryValues(std::vector<double>& values)
 {
   values.clear();
@@ -86,7 +82,6 @@ void qtCMBCreateSimpleGeometry::getGeometryValues(std::vector<double>& values)
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBCreateSimpleGeometry::getResolutionValues(std::vector<int>& values)
 {
   values.clear();

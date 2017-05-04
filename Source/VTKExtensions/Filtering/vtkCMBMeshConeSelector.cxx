@@ -33,7 +33,6 @@ vtkStandardNewMacro(vtkCMBMeshConeSelector);
 vtkCxxSetObjectMacro(vtkCMBMeshConeSelector, Transform, vtkTransform);
 vtkCxxSetObjectMacro(vtkCMBMeshConeSelector, ConeSource, vtkCMBConeSource);
 
-//----------------------------------------------------------------------------
 vtkCMBMeshConeSelector::vtkCMBMeshConeSelector()
 {
   this->SetNumberOfInputPorts(1);
@@ -48,13 +47,12 @@ vtkCMBMeshConeSelector::vtkCMBMeshConeSelector()
   this->IsSelectionEmpty = 1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBMeshConeSelector::~vtkCMBMeshConeSelector()
 {
   this->SetTransform(static_cast<vtkTransform*>(0));
   this->SetConeSource(NULL);
 }
-//----------------------------------------------------------------------------
+
 // Overload standard modified time function. If ConeSource is modified,
 // then this object is modified as well.
 vtkMTimeType vtkCMBMeshConeSelector::GetMTime()
@@ -70,7 +68,7 @@ vtkMTimeType vtkCMBMeshConeSelector::GetMTime()
 
   return mTime;
 }
-//----------------------------------------------------------------------------
+
 int vtkCMBMeshConeSelector::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -80,7 +78,6 @@ int vtkCMBMeshConeSelector::FillInputPortInformation(int port, vtkInformation* i
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshConeSelector::FillOutputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -91,7 +88,6 @@ int vtkCMBMeshConeSelector::FillOutputPortInformation(int port, vtkInformation* 
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBMeshConeSelector::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -100,7 +96,6 @@ void vtkCMBMeshConeSelector::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshConeSelector::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -215,7 +210,7 @@ int vtkCMBMeshConeSelector::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 // The following algorithm is copied from Bob's vtkCMBConeCellClassifier
-//----------------------------------------------------------------------------
+
 inline bool IsInsideCone(const double p[3], double BaseCenter[3], double AxisUnitDir[3],
   double Height, double BaseRadius, double TopRadius)
 {
@@ -246,7 +241,6 @@ inline bool IsInsideCone(const double p[3], double BaseCenter[3], double AxisUni
   return true;
 }
 
-//----------------------------------------------------------------------------
 inline bool IsAllIn(vtkIdType npts, vtkIdType* pts, double* point, double BaseCenter[3],
   double AxisUnitDir[3], double Height, double BaseRadius, double TopRadius,
   vtkUnstructuredGrid* input)
@@ -261,7 +255,7 @@ inline bool IsAllIn(vtkIdType npts, vtkIdType* pts, double* point, double BaseCe
   }
   return true;
 }
-//----------------------------------------------------------------------------
+
 inline bool IsTransFormAllIn(vtkIdType npts, vtkIdType* pts, double* point, double BaseCenter[3],
   double AxisUnitDir[3], double Height, double BaseRadius, double TopRadius,
   vtkTransform* transform, double* transpoint, vtkUnstructuredGrid* input)
@@ -292,7 +286,7 @@ inline bool IsAllOut(vtkIdType npts, vtkIdType* pts, double* point, double BaseC
   }
   return true;
 }
-//----------------------------------------------------------------------------
+
 inline bool IsTransFormAllOut(vtkIdType npts, vtkIdType* pts, double* point, double BaseCenter[3],
   double AxisUnitDir[3], double Height, double BaseRadius, double TopRadius,
   vtkTransform* transform, double* transpoint, vtkUnstructuredGrid* input)
@@ -328,7 +322,7 @@ inline bool IsIntersecting(vtkIdType npts, vtkIdType* pts, double* point, double
   }
   return partIn && partOut;
 }
-//----------------------------------------------------------------------------
+
 inline bool IsTransFormIntersecting(vtkIdType npts, vtkIdType* pts, double* point,
   double BaseCenter[3], double AxisUnitDir[3], double Height, double BaseRadius, double TopRadius,
   vtkTransform* transform, double* transpoint, vtkUnstructuredGrid* input)
@@ -350,7 +344,7 @@ inline bool IsTransFormIntersecting(vtkIdType npts, vtkIdType* pts, double* poin
   }
   return partIn && partOut;
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBMeshConeSelector::DoCellConeCheck(vtkIdType npts, vtkIdType* pts,
   vtkUnstructuredGrid* input, double BaseCenter[3], double AxisUnitDir[3], double Height,
   double BaseRadius, double TopRadius)
@@ -387,7 +381,6 @@ bool vtkCMBMeshConeSelector::DoCellConeCheck(vtkIdType npts, vtkIdType* pts,
   return bKeep;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshConeSelector::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

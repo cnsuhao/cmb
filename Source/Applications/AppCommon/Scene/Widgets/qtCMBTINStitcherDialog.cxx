@@ -11,7 +11,6 @@
 #include "qtCMBTINStitcherDialog.h"
 #include "ui_qtCMBTINStitcherDialog.h"
 
-//-----------------------------------------------------------------------------
 qtCMBTINStitcherDialog::qtCMBTINStitcherDialog(QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
@@ -26,37 +25,31 @@ qtCMBTINStitcherDialog::qtCMBTINStitcherDialog(QWidget* parent, Qt::WindowFlags 
     this, SLOT(allowPointInsertionChanged()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBTINStitcherDialog::~qtCMBTINStitcherDialog()
 {
   delete this->InternalWidget;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::setMinimumAngle(double angle)
 {
   this->InternalWidget->MinimumAngle->setValue(angle);
 }
 
-//-----------------------------------------------------------------------------
 double qtCMBTINStitcherDialog::getMinimumAngle() const
 {
   return this->InternalWidget->MinimumAngle->value();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::setUseQuads(bool useQuads)
 {
   this->InternalWidget->UseQuads->setCheckState(useQuads ? Qt::Checked : Qt::Unchecked);
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBTINStitcherDialog::getUseQuads() const
 {
   return this->InternalWidget->UseQuads->checkState() == Qt::Checked;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::setUserSpecifiedTINType(int tinType)
 {
   if (tinType < 0)
@@ -70,38 +63,32 @@ void qtCMBTINStitcherDialog::setUserSpecifiedTINType(int tinType)
   this->InternalWidget->UserSpecifiedTINType->setCurrentIndex(tinType);
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBTINStitcherDialog::getUserSpecifiedTINType() const
 {
   return this->InternalWidget->UserSpecifiedTINType->currentIndex();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::setAllowInteriorPointInsertion(bool allowInteriorPointInsertion)
 {
   this->InternalWidget->AllowInteriorPointInsertion->setCheckState(
     allowInteriorPointInsertion ? Qt::Checked : Qt::Unchecked);
 }
 
-//-----------------------------------------------------------------------------
 bool qtCMBTINStitcherDialog::getAllowInteriorPointInsertion() const
 {
   return this->InternalWidget->AllowInteriorPointInsertion->checkState() == Qt::Checked;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::setTolerance(double tolerance)
 {
   this->InternalWidget->Tolerance->setValue(tolerance);
 }
 
-//-----------------------------------------------------------------------------
 double qtCMBTINStitcherDialog::getTolerance() const
 {
   return this->InternalWidget->Tolerance->value();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::tinTypeChanged()
 {
   if (this->getUserSpecifiedTINType() == 1 && this->getUseQuads())
@@ -127,7 +114,6 @@ void qtCMBTINStitcherDialog::tinTypeChanged()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::useQuadsChanged()
 {
   if (this->getUserSpecifiedTINType() == 1 && this->getUseQuads())
@@ -141,7 +127,6 @@ void qtCMBTINStitcherDialog::useQuadsChanged()
   }
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBTINStitcherDialog::allowPointInsertionChanged()
 {
   if (this->getAllowInteriorPointInsertion())

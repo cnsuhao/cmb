@@ -17,20 +17,17 @@
 
 vtkStandardNewMacro(vtkExtractMultiBlockBlock);
 
-//----------------------------------------------------------------------------
 vtkExtractMultiBlockBlock::vtkExtractMultiBlockBlock()
 {
   this->BlockIndex = -1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractMultiBlockBlock::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkExtractMultiBlockBlock::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -63,7 +60,6 @@ int vtkExtractMultiBlockBlock::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkExtractMultiBlockBlock::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

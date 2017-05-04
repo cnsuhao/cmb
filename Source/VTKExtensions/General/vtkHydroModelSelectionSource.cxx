@@ -47,7 +47,6 @@ public:
 
 vtkStandardNewMacro(vtkHydroModelSelectionSource);
 
-//-----------------------------------------------------------------------------
 vtkHydroModelSelectionSource::vtkHydroModelSelectionSource()
 {
   this->Internal = new vtkInternal();
@@ -57,7 +56,6 @@ vtkHydroModelSelectionSource::vtkHydroModelSelectionSource()
   this->InsideOut = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkHydroModelSelectionSource::~vtkHydroModelSelectionSource()
 {
   this->Source->Delete();
@@ -65,7 +63,6 @@ vtkHydroModelSelectionSource::~vtkHydroModelSelectionSource()
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::CopyData(vtkSelection* selection)
 {
   if (this->Internal->IDs.size() > 0)
@@ -76,7 +73,7 @@ void vtkHydroModelSelectionSource::CopyData(vtkSelection* selection)
   this->Selection->DeepCopy(selection);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 void vtkHydroModelSelectionSource::CopyData(vtkAlgorithm* algOut)
 {
   if (algOut)
@@ -89,7 +86,6 @@ void vtkHydroModelSelectionSource::CopyData(vtkAlgorithm* algOut)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::AddID(vtkIdType piece, vtkIdType id)
 {
   if (piece < -1)
@@ -100,14 +96,12 @@ void vtkHydroModelSelectionSource::AddID(vtkIdType piece, vtkIdType id)
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::RemoveAllIDs()
 {
   this->RemoveAllIDsInternal();
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::RemoveAllIDsInternal()
 {
   if (this->Internal->IDs.size() > 0)
@@ -116,7 +110,6 @@ void vtkHydroModelSelectionSource::RemoveAllIDsInternal()
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkHydroModelSelectionSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -142,7 +135,7 @@ int vtkHydroModelSelectionSource::RequestData(vtkInformation* vtkNotUsed(request
   this->RemoveAllIDsInternal();
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 int vtkHydroModelSelectionSource::GetSelectionFieldType()
 {
   int fieldType = 0;
@@ -155,7 +148,6 @@ int vtkHydroModelSelectionSource::GetSelectionFieldType()
   return fieldType;
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::InvertSelection(int vtkNotUsed(ignored))
 {
   vtkSelectionNode* selNode =
@@ -169,7 +161,6 @@ void vtkHydroModelSelectionSource::InvertSelection(int vtkNotUsed(ignored))
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelSelectionSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

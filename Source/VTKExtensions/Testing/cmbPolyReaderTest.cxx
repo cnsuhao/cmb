@@ -23,8 +23,6 @@
 #include "vtkTesting.h"
 #include <string>
 
-//----------------------------------------------------------------------------
-
 int main(int argc, char* argv[])
 {
   vtkSmartPointer<vtkTesting> testHelper = vtkSmartPointer<vtkTesting>::New();

@@ -31,7 +31,6 @@
 vtkStandardNewMacro(vtkClipPolygons);
 vtkCxxSetObjectMacro(vtkClipPolygons, Transform, vtkTransform);
 
-//----------------------------------------------------------------------------
 // Construct with user-specified implicit function; InsideOut turned off; value
 // set to 0.0; and generate clip scalars turned off.
 vtkClipPolygons::vtkClipPolygons()
@@ -50,7 +49,6 @@ vtkClipPolygons::vtkClipPolygons()
   output2->Delete();
 }
 
-//----------------------------------------------------------------------------
 vtkClipPolygons::~vtkClipPolygons()
 {
   if (this->Locator)
@@ -62,7 +60,6 @@ vtkClipPolygons::~vtkClipPolygons()
   this->RemoveAllClipPolygons();
 }
 
-//----------------------------------------------------------------------------
 int vtkClipPolygons::IsActiveGroupValid()
 {
   if (this->ActiveGroupIdx < 0)
@@ -72,7 +69,6 @@ int vtkClipPolygons::IsActiveGroupValid()
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::SetGroupInvert(int val)
 {
   if (this->IsActiveGroupValid() &&
@@ -84,7 +80,6 @@ void vtkClipPolygons::SetGroupInvert(int val)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::AddClipPolygon(vtkImplicitFunction* cf)
 {
   if (this->IsActiveGroupValid())
@@ -100,7 +95,6 @@ void vtkClipPolygons::AddClipPolygon(vtkImplicitFunction* cf)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::RemoveClipPolygon(vtkImplicitFunction* cf)
 {
   if (cf && this->IsActiveGroupValid())
@@ -125,7 +119,6 @@ void vtkClipPolygons::RemoveClipPolygon(vtkImplicitFunction* cf)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::RemoveAllClipPolygons()
 {
   for (std::map<int, std::vector<PolygonInfo*> >::iterator it = this->Polygons.begin();
@@ -141,7 +134,6 @@ void vtkClipPolygons::RemoveAllClipPolygons()
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::SetClipApplyPolygon(int idx, int val)
 {
   if (this->IsActiveGroupValid())
@@ -157,7 +149,6 @@ void vtkClipPolygons::SetClipApplyPolygon(int idx, int val)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::SetClipInsideOut(int idx, int val)
 {
   if (this->IsActiveGroupValid())
@@ -173,7 +164,6 @@ void vtkClipPolygons::SetClipInsideOut(int idx, int val)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::SetClipAsROI(int idx, int val)
 {
   if (this->IsActiveGroupValid())
@@ -193,7 +183,6 @@ void vtkClipPolygons::SetClipAsROI(int idx, int val)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkClipPolygons::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -202,7 +191,6 @@ void vtkClipPolygons::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//----------------------------------------------------------------------------
 // Overload standard modified time function. If Clip functions is modified,
 // then this object is modified as well.
 vtkMTimeType vtkClipPolygons::GetMTime()
@@ -232,19 +220,16 @@ vtkMTimeType vtkClipPolygons::GetMTime()
   return mTime;
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkClipPolygons::GetClippedOutput()
 {
   return vtkPolyData::SafeDownCast(this->GetExecutive()->GetOutputData(1));
 }
 
-//----------------------------------------------------------------------------
 vtkAlgorithmOutput* vtkClipPolygons::GetClippedOutputPort()
 {
   return this->GetOutputPort(1);
 }
 
-//----------------------------------------------------------------------------
 //
 // Clip through data generating surface.
 //
@@ -454,17 +439,17 @@ int vtkClipPolygons::RequestData(vtkInformation* vtkNotUsed(request),
 
     switch (cell->GetCellDimension())
     {
-      case 0: //points are generated-------------------------------
+      case 0: //points are generated
         connList = newVerts;
         clippedList = clippedVerts;
         break;
 
-      case 1: //lines are generated----------------------------------
+      case 1: //lines are generated
         connList = newLines;
         clippedList = clippedLines;
         break;
 
-      case 2: //triangles are generated------------------------------
+      case 2: //triangles are generated
         connList = newPolys;
         clippedList = clippedPolys;
         break;
@@ -566,7 +551,6 @@ int vtkClipPolygons::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 // Specify a spatial locator for merging points. By default,
 // an instance of vtkMergePoints is used.
 void vtkClipPolygons::SetLocator(vtkIncrementalPointLocator* locator)
@@ -591,7 +575,6 @@ void vtkClipPolygons::SetLocator(vtkIncrementalPointLocator* locator)
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::CreateDefaultLocator()
 {
   if (this->Locator == NULL)
@@ -600,7 +583,6 @@ void vtkClipPolygons::CreateDefaultLocator()
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkClipPolygons::GetNumberOfActivePolygons()
 {
   int ret = 0;
@@ -619,7 +601,6 @@ int vtkClipPolygons::GetNumberOfActivePolygons()
   return ret;
 }
 
-//----------------------------------------------------------------------------
 void vtkClipPolygons::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

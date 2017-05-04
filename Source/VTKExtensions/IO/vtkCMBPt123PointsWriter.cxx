@@ -23,7 +23,7 @@
 #define SEPARATOR "  "
 
 vtkStandardNewMacro(vtkCMBPt123PointsWriter);
-//----------------------------------------------------------------------------
+
 vtkCMBPt123PointsWriter::vtkCMBPt123PointsWriter()
 {
   this->FileName = 0;
@@ -36,20 +36,17 @@ vtkCMBPt123PointsWriter::vtkCMBPt123PointsWriter()
   this->FloatPrecision = 6;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBPt123PointsWriter::~vtkCMBPt123PointsWriter()
 {
   this->SetFileName(0);
   this->SetHeader(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123PointsWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkCMBPt123PointsWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -68,7 +65,6 @@ ostream* vtkCMBPt123PointsWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123PointsWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -78,7 +74,6 @@ void vtkCMBPt123PointsWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123PointsWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -125,7 +120,6 @@ void vtkCMBPt123PointsWriter::WriteData()
   this->MyGeom = 0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123PointsWriter::WriteHeader(ostream& fp)
 {
   if (this->Header && (this->Header[0] != '\0'))
@@ -136,7 +130,6 @@ bool vtkCMBPt123PointsWriter::WriteHeader(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123PointsWriter::WritePoints(ostream& fp)
 {
   vtkIdType i, n = this->MyData->GetNumberOfTuples();
@@ -154,21 +147,18 @@ bool vtkCMBPt123PointsWriter::WritePoints(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123PointsWriter::WriteFooter(ostream& fp)
 {
   fp << "ENDR" << endl;
   return true;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPt123PointsWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123PointsWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "FileName = " << this->FileName << endl;

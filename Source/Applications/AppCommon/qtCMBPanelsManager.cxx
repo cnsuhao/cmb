@@ -26,20 +26,17 @@ public:
   QList<qtCMBPanelsManager::PanelType> PanelTypes;
 };
 
-//----------------------------------------------------------------------------
 qtCMBPanelsManager::qtCMBPanelsManager(QObject* p)
   : QObject(p)
   , mgrInternal(new Internal())
 {
 }
 
-//----------------------------------------------------------------------------
 qtCMBPanelsManager::~qtCMBPanelsManager()
 {
   delete this->mgrInternal;
 }
 
-//-----------------------------------------------------------------------------
 QDockWidget* qtCMBPanelsManager::createDockWidget(QMainWindow* mw, QWidget* content,
   const std::string& title, Qt::DockWidgetArea dockarea, QDockWidget* lastdw)
 {
@@ -70,17 +67,16 @@ QDockWidget* qtCMBPanelsManager::createDockWidget(QMainWindow* mw, QWidget* cont
   return dw;
 }
 
-//----------------------------------------------------------------------------
 void qtCMBPanelsManager::setPanelTypes(const QList<qtCMBPanelsManager::PanelType>& ptypes)
 {
   this->mgrInternal->PanelTypes = ptypes;
 }
-//----------------------------------------------------------------------------
+
 const QList<qtCMBPanelsManager::PanelType>& qtCMBPanelsManager::panelTypes() const
 {
   return this->mgrInternal->PanelTypes;
 }
-//----------------------------------------------------------------------------
+
 std::string qtCMBPanelsManager::type2String(qtCMBPanelsManager::PanelType t)
 {
   switch (t)
@@ -110,7 +106,7 @@ std::string qtCMBPanelsManager::type2String(qtCMBPanelsManager::PanelType t)
   }
   return "Error!";
 }
-//----------------------------------------------------------------------------
+
 qtCMBPanelsManager::PanelType qtCMBPanelsManager::string2Type(const std::string& s)
 {
   if (s == "Attribute")

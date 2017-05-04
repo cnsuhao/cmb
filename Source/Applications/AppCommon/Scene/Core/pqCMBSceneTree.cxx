@@ -83,7 +83,6 @@
 
 #define MAX_RANDOM_PLACEMENT_TRY 100
 
-//-----------------------------------------------------------------------------
 pqCMBSceneTree::pqCMBSceneTree(QPixmap* visPixMap, QPixmap* ivisPixMap, QPixmap* snapPixMap,
   QPixmap* lockPixMap, QTreeWidget* widget, QTreeWidget* infoWidget)
   : CurrentUndoIndex(0)
@@ -231,7 +230,6 @@ pqCMBSceneTree::pqCMBSceneTree(QPixmap* visPixMap, QPixmap* ivisPixMap, QPixmap*
   this->useGlyphPlayback = false;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneTree::~pqCMBSceneTree()
 {
   this->empty();
@@ -247,7 +245,6 @@ pqCMBSceneTree::~pqCMBSceneTree()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::emptyEventList()
 {
   // Need to empty the UndoRedo List
@@ -268,7 +265,7 @@ void pqCMBSceneTree::emptyEventList()
     this->RedoAction->setEnabled(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::deleteUndoEvents()
 {
   // Need to delete all undone events
@@ -290,7 +287,7 @@ void pqCMBSceneTree::deleteUndoEvents()
   }
   this->CurrentUndoIndex = this->UndoRedoList.size();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::undo()
 {
   // Nothing to undo if the curret index is 0
@@ -318,7 +315,7 @@ void pqCMBSceneTree::undo()
   // Since this could cause a change in what has been selected
   // this->nodesSelected(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::redo()
 {
   // Nothing to redo if the curret index == the size of the list
@@ -344,7 +341,7 @@ void pqCMBSceneTree::redo()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::insertEvent(cmbEvent* event)
 {
   //First delete all undo events
@@ -362,7 +359,7 @@ void pqCMBSceneTree::insertEvent(cmbEvent* event)
     this->RedoAction->setEnabled(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::empty()
 {
   this->emptyEventList();
@@ -406,7 +403,6 @@ void pqCMBSceneTree::empty()
   this->TreeWidget->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 std::string pqCMBSceneTree::createUniqueName(const char* name) const
 {
   if (this->NameMap.find(name) == this->NameMap.end())
@@ -431,7 +427,6 @@ std::string pqCMBSceneTree::createUniqueName(const char* name) const
   return "";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::createNode(const char* name, pqCMBSceneNode* parent,
   pqCMBSceneObjectBase* obj, cmbSceneNodeReplaceEvent* event)
 {
@@ -478,7 +473,6 @@ pqCMBSceneNode* pqCMBSceneTree::createNode(const char* name, pqCMBSceneNode* par
   return node;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::attachNode(pqCMBSceneNode* node)
 {
   pqCMBSceneObjectBase* obj = node->getDataObject();
@@ -497,7 +491,6 @@ void pqCMBSceneTree::attachNode(pqCMBSceneNode* node)
   this->NameMap[node->getName()] = node;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::detachNode(pqCMBSceneNode* node)
 {
   pqCMBSceneObjectBase* obj = node->getDataObject();
@@ -525,7 +518,6 @@ void pqCMBSceneTree::detachNode(pqCMBSceneNode* node)
   this->NameMap.erase(node->getName());
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::createRoot(const char* name)
 {
   if (this->Root)
@@ -553,7 +545,6 @@ pqCMBSceneNode* pqCMBSceneTree::createRoot(const char* name)
   return this->Root;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::findNode(const char* name) const
 {
   std::map<std::string, pqCMBSceneNode*>::const_iterator i = this->NameMap.find(name);
@@ -567,7 +558,6 @@ pqCMBSceneNode* pqCMBSceneTree::findNode(const char* name) const
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::findNode(pqCMBSceneObjectBase* obj) const
 {
   std::map<pqCMBSceneObjectBase*, pqCMBSceneNode*>::const_iterator i = this->ObjectMap.find(obj);
@@ -581,7 +571,6 @@ pqCMBSceneNode* pqCMBSceneTree::findNode(pqCMBSceneObjectBase* obj) const
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::findNode(pqPipelineSource* obj) const
 {
   std::map<pqPipelineSource*, pqCMBSceneNode*>::const_iterator i = this->SourceMap.find(obj);
@@ -595,7 +584,6 @@ pqCMBSceneNode* pqCMBSceneTree::findNode(pqPipelineSource* obj) const
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::sceneObjectChanged()
 {
   if (!this->EditMode)
@@ -604,7 +592,6 @@ void pqCMBSceneTree::sceneObjectChanged()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::nodesSelected(bool clearSelection /*=false*/)
 {
   // if we're already blocking signals, we want to maintain that block
@@ -800,7 +787,6 @@ void pqCMBSceneTree::nodesSelected(bool clearSelection /*=false*/)
   this->sceneObjectChanged();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateSelectedColorMode()
 {
   if (!this->SetNodeColorAction || !this->UnsetNodeColorAction)
@@ -839,7 +825,6 @@ void pqCMBSceneTree::updateSelectedColorMode()
   this->UnsetNodeColorAction->setVisible(state);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setColorNodeIcon(double color[4])
 {
   if (color[0] < 0)
@@ -856,13 +841,11 @@ void pqCMBSceneTree::setColorNodeIcon(double color[4])
   this->SetNodeColorAction->setIcon(QIcon(px));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::clearColorNodeIcon()
 {
   this->SetNodeColorAction->setIcon(QIcon());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateTexturedObjectOptions()
 {
   bool enabled0 = false;
@@ -887,7 +870,7 @@ void pqCMBSceneTree::updateTexturedObjectOptions()
     this->ElevationAction->setChecked(showingElevation);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateBathymetryOptions()
 {
   pqCMBTexturedObject* tobj = NULL;
@@ -906,7 +889,6 @@ void pqCMBSceneTree::updateBathymetryOptions()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateDefineVOIOption()
 {
   if (this->DefineVOIAction)
@@ -922,7 +904,7 @@ void pqCMBSceneTree::updateDefineVOIOption()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateEditConeOption()
 {
   if (this->ConeEditAction)
@@ -938,7 +920,7 @@ void pqCMBSceneTree::updateEditConeOption()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateGroundPlaneOptions()
 {
   if (!this->CreateGroundPlaneAction)
@@ -960,7 +942,7 @@ void pqCMBSceneTree::updateGroundPlaneOptions()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateArcOptions()
 {
   bool managerGood = (this->ArcWidgetManager && this->ArcWidgetManager->getActiveNode() == NULL);
@@ -984,7 +966,6 @@ void pqCMBSceneTree::updateArcOptions()
   this->GrowArcSelectionAction->setVisible(en);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateTINStitchOptions()
 {
   // have to have at least 2 selected, and all must be of type TIN
@@ -1011,7 +992,6 @@ void pqCMBSceneTree::updateTINStitchOptions()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateTINStackOptions()
 {
   // have to have 1 TIN selected
@@ -1030,7 +1010,7 @@ void pqCMBSceneTree::updateTINStackOptions()
     this->TINStackAction->setVisible(state);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateGenerateArcsOptions()
 {
   if (this->GenerateArcsAction && this->GenerateImageMesh)
@@ -1048,7 +1028,7 @@ void pqCMBSceneTree::updateGenerateArcsOptions()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::nodeChanged(QTreeWidgetItem* item, int col)
 {
   if (this->isEmpty())
@@ -1064,7 +1044,6 @@ void pqCMBSceneTree::nodeChanged(QTreeWidgetItem* item, int col)
   this->changeName(node, item->text(nameColumn).toStdString().c_str());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::deleteNode(pqCMBSceneNode* node, cmbSceneNodeReplaceEvent* event)
 {
   // Do not allow the Root to be deleted this way
@@ -1094,7 +1073,6 @@ void pqCMBSceneTree::deleteNode(pqCMBSceneNode* node, cmbSceneNodeReplaceEvent* 
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneTree::getGlyphPoint(
   double p[3], std::deque<double>* glyphPoints, int glyphPlaybackOption, double bounds[6])
 {
@@ -1127,7 +1105,6 @@ bool pqCMBSceneTree::getGlyphPoint(
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::addPointsToGlyph(pqCMBSceneNode* node, int count, double* scaling,
   std::deque<double>* glyphPoints, bool repositionOriginal, QMap<pqCMBSceneNode*, int>* constraints,
   bool useTextureConstraint, int glyphPlaybackOption)
@@ -1267,7 +1244,6 @@ void pqCMBSceneTree::addPointsToGlyph(pqCMBSceneNode* node, int count, double* s
   }
 }
 
-//-----------------------------------------------------------------------------
 std::vector<pqCMBSceneNode*> pqCMBSceneTree::duplicateNode(pqCMBSceneNode* node,
   std::deque<double>* glyphPoints, int count, bool randomPlacement, bool repositionOriginal,
   QMap<pqCMBSceneNode*, int>* constraints, bool useGlyphs, bool useTextureConstraint,
@@ -1581,7 +1557,6 @@ std::vector<pqCMBSceneNode*> pqCMBSceneTree::duplicateNode(pqCMBSceneNode* node,
   return nodes;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::duplicateNode(pqCMBSceneNode* node, double zOffset)
 {
   // We don't allow for non-leaf nodes to be duplicated
@@ -1612,7 +1587,6 @@ pqCMBSceneNode* pqCMBSceneTree::duplicateNode(pqCMBSceneNode* node, double zOffs
   return copy;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::changeName(pqCMBSceneNode* node, const char* newName)
 {
   if (node->getName() == newName)
@@ -1625,7 +1599,6 @@ void pqCMBSceneTree::changeName(pqCMBSceneNode* node, const char* newName)
   emit nodeNameChanged(node);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::nodeClicked(QTreeWidgetItem* item, int col)
 {
   if (col == pqCMBSceneNode::getNameColumn())
@@ -1656,7 +1629,6 @@ void pqCMBSceneTree::nodeClicked(QTreeWidgetItem* item, int col)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::deleteSelected()
 {
 
@@ -1742,7 +1714,7 @@ void pqCMBSceneTree::deleteSelected()
 
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::insertTypeNode()
 {
   if (this->Selected.size() != 1)
@@ -1757,7 +1729,7 @@ void pqCMBSceneTree::insertTypeNode()
   }
   this->createNode("New Node", parent, NULL, NULL);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::importObject()
 {
   if (this->Selected.size() != 1)
@@ -1819,7 +1791,6 @@ void pqCMBSceneTree::importObject()
   this->nodesSelected();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setNewObjectPosition(pqCMBSceneNode* node, bool randomPlacement,
   bool translateBasedOnView, int repeatCount, QMap<pqCMBSceneNode*, int>* constraints,
   int glyphPlaybackOption, QString glyphPlaybackFilename, bool useTextureConstraint)
@@ -1944,7 +1915,7 @@ void pqCMBSceneTree::setNewObjectPosition(pqCMBSceneNode* node, bool randomPlace
   }
   delete glyphPoints;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::createVOI()
 {
   if (this->Selected.size() != 1)
@@ -1980,7 +1951,7 @@ void pqCMBSceneTree::createVOI()
   node->getWidget()->setSelected(true);
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneNode* pqCMBSceneTree::createBoreholeObject(
   pqPipelineSource* source, pqCMBSceneNode* parent)
 {
@@ -1999,7 +1970,7 @@ pqCMBSceneNode* pqCMBSceneTree::createBoreholeObject(
   node->setIsLocked(true);
   return node;
 }
-//----------------------------------------------------------------------------
+
 int pqCMBSceneTree::createBorFileObjects(const QString& filename, pqPipelineSource* source)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -2122,7 +2093,7 @@ int pqCMBSceneTree::createBorFileObjects(const QString& filename, pqPipelineSour
   this->clearSelection();
   return (numberOfBoreholes + numberOfCrossSections);
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneNode* pqCMBSceneTree::createCrossSectionObject(
   pqPipelineSource* source, pqCMBSceneNode* parent)
 {
@@ -2141,7 +2112,7 @@ pqCMBSceneNode* pqCMBSceneTree::createCrossSectionObject(
   node->setIsLocked(true);
   return node;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBSceneTree::getACrossSectionRepresentation()
 {
   pqCMBSceneNode* node;
@@ -2159,7 +2130,7 @@ pqDataRepresentation* pqCMBSceneTree::getACrossSectionRepresentation()
   }
   return NULL;
 }
-//-----------------------------------------------------------------------------
+
 pqDataRepresentation* pqCMBSceneTree::getABoreHoleRepresentation()
 {
   pqCMBSceneNode* node;
@@ -2178,7 +2149,6 @@ pqDataRepresentation* pqCMBSceneTree::getABoreHoleRepresentation()
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setBoreHolesRadius(double radius)
 {
   pqCMBSceneNode* node;
@@ -2196,7 +2166,6 @@ void pqCMBSceneTree::setBoreHolesRadius(double radius)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::createCone()
 {
   if (this->Selected.size() != 1)
@@ -2235,7 +2204,7 @@ void pqCMBSceneTree::createCone()
   qtCMBConeNodeDialog::manageCone(node);
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::editCone()
 {
   if ((this->Selected.size() == 1) && (!(this->Selected[0]->isTypeNode())) &&
@@ -2252,7 +2221,7 @@ void pqCMBSceneTree::editCone()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::createLineObject()
 {
   pqCMBSceneNode* node;
@@ -2280,7 +2249,6 @@ void pqCMBSceneTree::createLineObject()
   //  this->nodesSelected();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::createArcObject()
 {
   if (!this->ArcWidgetManager)
@@ -2311,7 +2279,6 @@ void pqCMBSceneTree::createArcObject()
   this->nodesSelected();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::createLineNode(double bounds[6])
 {
   double pos1[3], pos2[3];
@@ -2327,7 +2294,6 @@ pqCMBSceneNode* pqCMBSceneTree::createLineNode(double bounds[6])
   return this->createNode("New Line", this->getLineTypeNode(), obj, NULL);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::createPolygonObject()
 {
   //collect all the sources that are input for the polygon filter
@@ -2403,17 +2369,16 @@ void pqCMBSceneTree::createPolygonObject()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::stitchTINs()
 {
   emit requestTINStitch();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::stackTINs()
 {
   qtCMBStackedTINDialog::processTIN(this->Selected[0]);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::generateArcsFromImage()
 {
   if ((this->Selected.size() == 1) && (!(this->Selected[0]->isTypeNode())) &&
@@ -2423,7 +2388,7 @@ void pqCMBSceneTree::generateArcsFromImage()
     generateContoursDlg.exec();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::generateMeshFromImage()
 {
   if ((this->Selected.size() == 1) && (!(this->Selected[0]->isTypeNode())) &&
@@ -2440,7 +2405,7 @@ void pqCMBSceneTree::generateMeshFromImage()
     this->createNode("Meshed Image", gridNode->getParent(), obj, NULL);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::duplicateSelected()
 {
   if ((this->Selected.size() != 1) || this->Selected[0]->isTypeNode())
@@ -2463,7 +2428,7 @@ void pqCMBSceneTree::duplicateSelected()
   this->TreeWidget->blockSignals(false);
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::duplicateSelectedRandomly()
 {
   if ((this->Selected.size() != 1) || this->Selected[0]->isTypeNode())
@@ -2561,7 +2526,7 @@ void pqCMBSceneTree::duplicateSelectedRandomly()
   this->TreeWidget->blockSignals(false);
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::changeNumberOfPointsLoadedAction()
 {
   pqCMBPoints* dataObj = dynamic_cast<pqCMBPoints*>(this->Selected[0]->getDataObject());
@@ -2644,7 +2609,7 @@ void pqCMBSceneTree::changeNumberOfPointsLoadedAction()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateSnapOptions()
 {
   if (this->SetSnapTargetAction)
@@ -2681,7 +2646,6 @@ void pqCMBSceneTree::updateSnapOptions()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setSelectSnapNodeAction(QAction* setAction, QAction* unsetAction)
 {
   if (this->SetSnapTargetAction)
@@ -2709,7 +2673,7 @@ void pqCMBSceneTree::setSelectSnapNodeAction(QAction* setAction, QAction* unsetA
   }
   this->updateSnapOptions();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setTextureAction(QAction* changeAction)
 {
   if (this->ChangeTextureAction)
@@ -2725,7 +2689,6 @@ void pqCMBSceneTree::setTextureAction(QAction* changeAction)
   this->updateTexturedObjectOptions();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setApplyBathymetryAction(QAction* changeAction)
 {
   if (this->ApplyBathymetryAction)
@@ -2741,7 +2704,6 @@ void pqCMBSceneTree::setApplyBathymetryAction(QAction* changeAction)
   this->updateBathymetryOptions();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setUndoRedoActions(QAction* undoAction, QAction* redoAction)
 {
   if (this->UndoAction)
@@ -2771,7 +2733,7 @@ void pqCMBSceneTree::setUndoRedoActions(QAction* undoAction, QAction* redoAction
     this->RedoAction->setEnabled(this->CurrentUndoIndex < this->UndoRedoList.size());
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setSnapObjectAction(QAction* action)
 {
   if (this->SetSnapObjectAction)
@@ -2787,7 +2749,7 @@ void pqCMBSceneTree::setSnapObjectAction(QAction* action)
 
   this->updateSnapOptions();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setInsertNodeAction(QAction* action)
 {
   if (this->InsertAction)
@@ -2804,7 +2766,7 @@ void pqCMBSceneTree::setInsertNodeAction(QAction* action)
     this->InsertAction->setEnabled(this->Selected.size() == 1);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setImportObjectAction(QAction* action)
 {
   if (this->ImportAction)
@@ -2820,7 +2782,7 @@ void pqCMBSceneTree::setImportObjectAction(QAction* action)
     this->ImportAction->setEnabled(this->Selected.size() == 1);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setConvertToGlyphAction(QAction* action)
 {
   if (this->ConvertToGlyphAction)
@@ -2836,7 +2798,7 @@ void pqCMBSceneTree::setConvertToGlyphAction(QAction* action)
     this->ConvertToGlyphAction->setEnabled(this->Selected.size() != 0);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setDeleteNodeAction(QAction* action)
 {
   if (this->DeleteAction)
@@ -2852,7 +2814,7 @@ void pqCMBSceneTree::setDeleteNodeAction(QAction* action)
     this->DeleteAction->setEnabled(this->Selected.size() != 0);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setDuplicateNodeAction(QAction* nonrandom, QAction* randomAction)
 {
 
@@ -2886,13 +2848,11 @@ void pqCMBSceneTree::setDuplicateNodeAction(QAction* nonrandom, QAction* randomA
   }
 }
 
-////-----------------------------------------------------------------------------
 //void pqCMBSceneTree::setUseGlyphPlaybackAction( QAction *useGlyphPlaybackAction )
 //{
 //  QObject::connect(useGlyphPlaybackAction, SIGNAL(stateChanged(int)), this, SLOT(updateUseGlyphPlayback(int)));
 //}
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateUseGlyphPlayback(bool checked)
 {
   if (checked)
@@ -2905,7 +2865,6 @@ void pqCMBSceneTree::updateUseGlyphPlayback(bool checked)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setCreateVOINodeAction(QAction* action)
 {
   if (this->VOIAction)
@@ -2920,7 +2879,7 @@ void pqCMBSceneTree::setCreateVOINodeAction(QAction* action)
     this->VOIAction->setEnabled(this->Selected.size() == 1);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setConicalNodeActions(QAction* create, QAction* edit)
 {
   if (this->ConeCreateAction)
@@ -2948,7 +2907,7 @@ void pqCMBSceneTree::setConicalNodeActions(QAction* create, QAction* edit)
     this->updateEditConeOption();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setGroundPlaneActions(QAction* create, QAction* edit)
 {
   if (this->CreateGroundPlaneAction)
@@ -2975,7 +2934,7 @@ void pqCMBSceneTree::setGroundPlaneActions(QAction* create, QAction* edit)
   }
   this->updateGroundPlaneOptions();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setCreateLineNodeAction(QAction* action)
 {
   if (this->LineAction)
@@ -2990,7 +2949,7 @@ void pqCMBSceneTree::setCreateLineNodeAction(QAction* action)
     this->LineAction->setEnabled(this->Selected.size() == 1);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setCreateArcNodeAction(QAction* action)
 {
   if (this->ArcAction)
@@ -3007,7 +2966,7 @@ void pqCMBSceneTree::setCreateArcNodeAction(QAction* action)
     this->ArcAction->setEnabled(enable);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setArcActions(QAction* edit, QAction* snapArcs, QAction* mergeArcs,
   QAction* growSelection, QAction* autoConnArcs)
 {
@@ -3072,7 +3031,6 @@ void pqCMBSceneTree::setArcActions(QAction* edit, QAction* snapArcs, QAction* me
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setCreatePolygonAction(QAction* action)
 {
   if (this->CreatePolygonAction)
@@ -3090,7 +3048,6 @@ void pqCMBSceneTree::setCreatePolygonAction(QAction* action)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setChangeNumberOfPointsLoadedAction(QAction* action)
 {
   if (this->ChangeNumberOfPointsLoadedAction)
@@ -3104,7 +3061,7 @@ void pqCMBSceneTree::setChangeNumberOfPointsLoadedAction(QAction* action)
     QObject::connect(action, SIGNAL(triggered()), this, SLOT(changeNumberOfPointsLoadedAction()));
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setChangeUserDefineObjectTypeAction(QAction* action)
 {
   if (this->ChangeUserDefineObjectTypeAction)
@@ -3118,7 +3075,7 @@ void pqCMBSceneTree::setChangeUserDefineObjectTypeAction(QAction* action)
     QObject::connect(action, SIGNAL(triggered()), this, SLOT(changeUserDefineObjectTypeAction()));
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setTINStitchAction(QAction* action)
 {
   if (this->TINStitchAction)
@@ -3133,7 +3090,7 @@ void pqCMBSceneTree::setTINStitchAction(QAction* action)
     this->updateTINStitchOptions();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setTINStackAction(QAction* action)
 {
   if (this->TINStackAction)
@@ -3148,7 +3105,7 @@ void pqCMBSceneTree::setTINStackAction(QAction* action)
     this->updateTINStackOptions();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setGenerateArcsAction(QAction* action)
 {
   if (this->GenerateArcsAction)
@@ -3163,7 +3120,7 @@ void pqCMBSceneTree::setGenerateArcsAction(QAction* action)
     this->updateGenerateArcsOptions();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setGenerateImageMeshAction(QAction* action)
 {
   if (this->GenerateImageMesh)
@@ -3178,7 +3135,7 @@ void pqCMBSceneTree::setGenerateImageMeshAction(QAction* action)
     this->updateGenerateArcsOptions();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setExportSolidsAction(QAction* action)
 {
   if (this->ExportSolidsAction)
@@ -3193,7 +3150,7 @@ void pqCMBSceneTree::setExportSolidsAction(QAction* action)
     this->ExportSolidsAction->setEnabled(this->Selected.size() != 0);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setExportPolygonsAction(QAction* action)
 {
   if (this->ExportPolygonsAction)
@@ -3208,7 +3165,7 @@ void pqCMBSceneTree::setExportPolygonsAction(QAction* action)
     this->ExportPolygonsAction->setEnabled(this->Selected.size() != 0);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setDefineVOIAction(QAction* action)
 {
   if (this->DefineVOIAction)
@@ -3224,7 +3181,7 @@ void pqCMBSceneTree::setDefineVOIAction(QAction* action)
     this->updateDefineVOIOption();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setElevationAction(QAction* action)
 {
   if (this->ElevationAction)
@@ -3240,30 +3197,30 @@ void pqCMBSceneTree::setElevationAction(QAction* action)
     this->updateTexturedObjectOptions();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setCurrentView(pqRenderView* view)
 {
   this->CurrentView = view;
   emit newCurrentView(this->CurrentView);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setCurrentServer(pqServer* server)
 {
   this->CurrentServer = server;
   emit newCurrentServer(this->CurrentServer);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setUnits(cmbSceneUnits::Enum utype)
 {
   this->Units = utype;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::showContextMenu(const QPoint& p)
 {
   this->nodesSelected();
   this->ContextMenu->popup(this->TreeWidget->mapToGlobal(p));
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setSnapTarget(pqCMBSceneNode* node)
 {
   if (this->SnapTarget == node)
@@ -3284,7 +3241,6 @@ void pqCMBSceneTree::setSnapTarget(pqCMBSceneNode* node)
   this->updateSnapOptions();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setSnapTarget()
 {
   if ((this->Selected.size() != 1) || this->Selected[0]->isTypeNode() ||
@@ -3294,7 +3250,7 @@ void pqCMBSceneTree::setSnapTarget()
   }
   this->setSnapTarget(this->Selected[0]);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::unsetSnapTarget()
 {
   if (!this->SnapTarget)
@@ -3309,7 +3265,7 @@ void pqCMBSceneTree::unsetSnapTarget()
   this->SnapTarget = NULL;
   this->updateSnapOptions();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::snapSelected()
 {
   if (!this->SnapTarget)
@@ -3324,7 +3280,6 @@ void pqCMBSceneTree::snapSelected()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::snapObject(pqCMBSceneNode* node)
 {
   if ((!this->SnapTarget) || (this->SnapTarget == node))
@@ -3366,7 +3321,6 @@ void pqCMBSceneTree::snapObject(pqCMBSceneNode* node)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneTree::containsDataObjects() const
 {
   SceneObjectNodeIterator iter(this->Root);
@@ -3379,7 +3333,7 @@ bool pqCMBSceneTree::containsDataObjects() const
   }
   return hasObjects;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setColorActions(QAction* setColor, QAction* unset)
 {
   if (this->SetNodeColorAction)
@@ -3411,7 +3365,6 @@ void pqCMBSceneTree::setColorActions(QAction* setColor, QAction* unset)
   this->updateSelectedColorMode();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::unsetNodeColor()
 {
   //the user wants to clear the explicit color
@@ -3431,7 +3384,6 @@ void pqCMBSceneTree::unsetNodeColor()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setNodeColor()
 {
   size_t i, n = this->Selected.size();
@@ -3465,7 +3417,7 @@ void pqCMBSceneTree::setNodeColor()
   this->setColorNodeIcon(color);
   this->sceneObjectChanged();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::getVOIs(std::vector<pqCMBSceneNode*>* vois) const
 {
   vois->clear();
@@ -3477,7 +3429,7 @@ void pqCMBSceneTree::getVOIs(std::vector<pqCMBSceneNode*>* vois) const
     vois->push_back(node);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::getArcs(std::vector<pqCMBSceneNode*>* arcs) const
 {
   arcs->clear();
@@ -3489,13 +3441,13 @@ void pqCMBSceneTree::getArcs(std::vector<pqCMBSceneNode*>* arcs) const
     arcs->push_back(node);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::clearSelection()
 {
   this->nodesSelected(true);
   this->clearSelectedGlyphPointsColor();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::clearSelectedGlyphPointsColor()
 {
   if (this->isEmpty())
@@ -3510,7 +3462,7 @@ void pqCMBSceneTree::clearSelectedGlyphPointsColor()
     dynamic_cast<pqCMBGlyphObject*>(n->getDataObject())->clearSelectedPointsColor();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::editTexture()
 {
   this->CurrentTextureObj = NULL;
@@ -3559,7 +3511,7 @@ void pqCMBSceneTree::editTexture()
   this->enableSceneTree(true);
   emit this->enableToolbars(true);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::updateElevation()
 {
   if ((this->Selected.size() != 1) || (this->Selected[0]->isTypeNode()))
@@ -3575,7 +3527,7 @@ void pqCMBSceneTree::updateElevation()
     this->sceneObjectChanged();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::editBathymetry()
 {
   if ((this->Selected.size() != 1) || (this->Selected[0]->isTypeNode()))
@@ -3594,7 +3546,6 @@ void pqCMBSceneTree::editBathymetry()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::selectLineNode()
 {
   qtLineWidget* const lineWidget = qobject_cast<qtLineWidget*>(QObject::sender());
@@ -3643,7 +3594,6 @@ pqCMBSceneNode* pqCMBSceneTree::getArcTypeNode(bool createIfDoesntExist /*=true*
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::FindLineNode(qtLineWidget* lineWidget)
 {
   if (!lineWidget || !this->findNode("Lines"))
@@ -3672,7 +3622,7 @@ pqCMBSceneNode* pqCMBSceneTree::FindLineNode(qtLineWidget* lineWidget)
   }
   return NULL;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setLineWidgetCallbacks(pqCMBLine* obj)
 {
   if (obj)
@@ -3686,7 +3636,6 @@ void pqCMBSceneTree::setLineWidgetCallbacks(pqCMBLine* obj)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateLineNodeVisibility(bool visible)
 {
   qtLineWidget* const lineWidget = qobject_cast<qtLineWidget*>(QObject::sender());
@@ -3703,12 +3652,12 @@ void pqCMBSceneTree::updateLineNodeVisibility(bool visible)
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::collapseAllDataInfo()
 {
   this->getRoot()->collapseAllDataInfo();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::recomputeInfo(QTreeWidgetItem* item)
 {
   if (this->getRoot())
@@ -3716,18 +3665,17 @@ void pqCMBSceneTree::recomputeInfo(QTreeWidgetItem* item)
     this->getRoot()->recomputeInfo(item);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::exportSelectedSolids()
 {
   emit requestSolidExport();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::exportSelectedPolygons()
 {
   emit requestPolygonsExport();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::defineSelectedVOI()
 {
   if ((this->Selected.size() == 1) && (!(this->Selected[0]->isTypeNode())) &&
@@ -3744,7 +3692,7 @@ void pqCMBSceneTree::defineSelectedVOI()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::createGroundPlane()
 {
   if (this->Selected.size() != 1)
@@ -3768,7 +3716,7 @@ void pqCMBSceneTree::createGroundPlane()
     this->nodesSelected();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::editGroundPlane()
 {
   if ((this->Selected.size() == 1) && (!(this->Selected[0]->isTypeNode())) &&
@@ -3786,7 +3734,6 @@ void pqCMBSceneTree::editGroundPlane()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::editArcObject()
 {
   if (this->Selected.size() != 1)
@@ -3811,7 +3758,6 @@ void pqCMBSceneTree::editArcObject()
   this->nodesSelected();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::setArcSnapping()
 {
   vtkNew<vtkCMBArcSnapClientOperator> snapOp;
@@ -3839,7 +3785,6 @@ void pqCMBSceneTree::setArcSnapping()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::mergeArcs()
 {
   //Merge arcs should not be undoable intill we have a custom
@@ -3898,7 +3843,6 @@ void pqCMBSceneTree::mergeArcs()
   this->refreshArcsAndPolygons();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::growArcSelection()
 {
   //pass in a collection of arc sets
@@ -3974,7 +3918,6 @@ void pqCMBSceneTree::growArcSelection()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::autoConnectArcs()
 {
   //pass in two arcs
@@ -4013,7 +3956,6 @@ void pqCMBSceneTree::autoConnectArcs()
   this->refreshArcsAndPolygons();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneTree::getRandomConstraintPoint(double p[3], QMap<pqCMBSceneNode*, int>* constraints,
   int glyphPlaybackOption, std::deque<double>* glyphPoints)
 {
@@ -4159,7 +4101,6 @@ bool pqCMBSceneTree::getRandomConstraintPoint(double p[3], QMap<pqCMBSceneNode*,
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneTree::boundingBoxContainsPoint(vtkBoundingBox* bb, double p[])
 {
   //Considering only 2D bounding box i.e. along XY plane
@@ -4174,7 +4115,6 @@ bool pqCMBSceneTree::boundingBoxContainsPoint(vtkBoundingBox* bb, double p[])
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneTree::IsTemporaryPtsFileForMesherNeeded(QStringList& surfaceNames)
 {
   if (surfaceNames.count() > 1)
@@ -4230,7 +4170,7 @@ bool pqCMBSceneTree::IsTemporaryPtsFileForMesherNeeded(QStringList& surfaceNames
 
   return false;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::addUserDefinedType(const char* typeName, bool cleanList)
 {
   this->UserObjectTypes.append(typeName);
@@ -4239,13 +4179,13 @@ void pqCMBSceneTree::addUserDefinedType(const char* typeName, bool cleanList)
     this->cleanUpUserDefinedTypes();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::cleanUpUserDefinedTypes()
 {
   this->UserObjectTypes.sort();
   this->UserObjectTypes.removeDuplicates();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::changeUserDefineObjectTypeAction()
 {
   if (this->Selected.size() == 1)
@@ -4253,7 +4193,7 @@ void pqCMBSceneTree::changeUserDefineObjectTypeAction()
     qtCMBUserTypeDialog::updateUserType(this->Selected[0]);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::createArcWidgetManager()
 {
   this->ArcWidgetManager = new qtCMBArcWidgetManager(this->CurrentServer, this->CurrentView);
@@ -4273,7 +4213,6 @@ void pqCMBSceneTree::createArcWidgetManager()
     SLOT(updateActiveServer(pqServer*)));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::arcWidgetReady()
 {
   //we connect the manager on the free signal so that the edit menu will be always updated
@@ -4285,7 +4224,7 @@ void pqCMBSceneTree::arcWidgetReady()
 
   this->nodesSelected();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::arcWidgetBusy()
 {
   //on this signal we need to move to the display tab
@@ -4295,7 +4234,6 @@ void pqCMBSceneTree::arcWidgetBusy()
   this->enableSceneTree(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::enableSceneTree(const bool& lock)
 {
   //lock the tree
@@ -4307,7 +4245,6 @@ void pqCMBSceneTree::enableSceneTree(const bool& lock)
   emit this->enableMenuItems(lock);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::getSceneObjectNode(pqCMBSceneObjectBase* obj)
 {
   if (!obj || !this->getRoot())
@@ -4326,7 +4263,6 @@ pqCMBSceneNode* pqCMBSceneTree::getSceneObjectNode(pqCMBSceneObjectBase* obj)
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneNode* pqCMBSceneTree::getSceneNodeByName(const char* nodename)
 {
   if (!nodename || !this->getRoot())
@@ -4345,7 +4281,6 @@ pqCMBSceneNode* pqCMBSceneTree::getSceneNodeByName(const char* nodename)
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateArcsAfterSplit(pqCMBSceneNode* arcNode, QList<vtkIdType> newArcIds)
 {
   // Creating the root should not be undoable
@@ -4385,7 +4320,6 @@ void pqCMBSceneTree::updateArcsAfterSplit(pqCMBSceneNode* arcNode, QList<vtkIdTy
   this->refreshArcsAndPolygons();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::updateArc(pqCMBSceneNode* arcNode)
 {
   // Creating the root should not be undoable
@@ -4405,7 +4339,6 @@ void pqCMBSceneTree::updateArc(pqCMBSceneNode* arcNode)
   this->refreshArcsAndPolygons();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneTree::refreshArcsAndPolygons()
 {
   if (!this->Root)
@@ -4431,7 +4364,7 @@ void pqCMBSceneTree::refreshArcsAndPolygons()
     poly->updateRepresentation();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::convertNodesToGlyphs()
 {
   // For each node in the selected list we will convert all faceted object children nodes
@@ -4488,7 +4421,7 @@ void pqCMBSceneTree::convertNodesToGlyphs()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::convertChildrenToGlyphs(
   pqCMBSceneNode* node, const std::string& filename, cmbSceneNodeReplaceEvent* event)
 {
@@ -4543,7 +4476,7 @@ void pqCMBSceneTree::convertChildrenToGlyphs(
     this->deleteNode(child, event);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::unsetTextureMap()
 {
   if (this->CurrentTextureObj)
@@ -4551,7 +4484,7 @@ void pqCMBSceneTree::unsetTextureMap()
     this->CurrentTextureObj->unsetTextureMap();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::setTextureMap(
   const QString& filename, int numberOfRegistrationPoints, double* points)
 {
@@ -4567,7 +4500,7 @@ void pqCMBSceneTree::setTextureMap(
   }
   this->addTextureFileName(filename.toLatin1().data());
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneTree::addTextureFileName(const char* filename)
 {
   if (filename && !this->TextureFiles.contains(filename))

@@ -50,7 +50,6 @@
 using namespace std;
 using namespace smtk::model;
 
-//-----------------------------------------------------------------------------
 pqSMTKMeshPanel::pqSMTKMeshPanel(
   QPointer<pqCMBModelManager> modelManager, QPointer<qtCMBMeshingMonitor> monitor, QWidget* p)
   : QDockWidget(p)
@@ -128,18 +127,15 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqSMTKMeshPanel::~pqSMTKMeshPanel()
 {
 }
 
-//-----------------------------------------------------------------------------
 QPointer<pqCMBModelManager> pqSMTKMeshPanel::modelManager()
 {
   return this->ModelManager;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::updateModel(
   QPointer<pqCMBModelManager> mmgr, QPointer<qtCMBMeshingMonitor> monitor)
 {
@@ -148,7 +144,6 @@ void pqSMTKMeshPanel::updateModel(
   this->MeshMonitor = monitor;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDisplay,
   const QString& vtkNotUsed(workerName), const remus::proto::JobRequirements& reqs)
 {
@@ -214,20 +209,17 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   emit this->meshingPossible(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::clearActiveModel()
 { //this happens we we switch away from the mesh tab
   emit this->meshingPossible(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::clearActiveMesh()
 { //this happens when we have no meshers at all!
   this->AttUIManager.reset();
   emit this->meshingPossible(false);
 }
 
-//-----------------------------------------------------------------------------
 bool pqSMTKMeshPanel::submitMeshJob()
 {
 
@@ -291,7 +283,6 @@ bool pqSMTKMeshPanel::submitMeshJob()
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::cacheAtts(const std::string& atts)
 {
   AttCacheKey key = { this->ActiveModel, this->ActiveRequirements.workerName() };
@@ -299,7 +290,6 @@ void pqSMTKMeshPanel::cacheAtts(const std::string& atts)
   this->CachedAttributes[key] = atts;
 }
 
-//-----------------------------------------------------------------------------
 const std::string& pqSMTKMeshPanel::fetchCachedAtts() const
 {
   typedef std::map<AttCacheKey, std::string>::const_iterator c_it;
@@ -309,7 +299,6 @@ const std::string& pqSMTKMeshPanel::fetchCachedAtts() const
   return result->second;
 }
 
-//-----------------------------------------------------------------------------
 bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& vtkNotUsed(reqs)) const
 {
   typedef std::map<AttCacheKey, std::string>::const_iterator c_it;
@@ -319,7 +308,6 @@ bool pqSMTKMeshPanel::hasCachedAtts(const remus::proto::JobRequirements& vtkNotU
   return result != this->CachedAttributes.end();
 }
 
-//-----------------------------------------------------------------------------
 void pqSMTKMeshPanel::displayMeshOpLog(const smtk::io::Logger& log)
 {
   QString txt(log.convertToString(false).c_str());

@@ -26,7 +26,6 @@
 
 vtkStandardNewMacro(vtkCMBSphericalPointSource);
 
-//----------------------------------------------------------------------------
 // Construct with defaults
 vtkCMBSphericalPointSource::vtkCMBSphericalPointSource()
 {
@@ -39,7 +38,6 @@ vtkCMBSphericalPointSource::vtkCMBSphericalPointSource()
   this->SetNumberOfInputPorts(0);
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBSphericalPointSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -184,7 +182,6 @@ int vtkCMBSphericalPointSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSphericalPointSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

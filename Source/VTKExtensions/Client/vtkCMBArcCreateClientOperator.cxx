@@ -19,18 +19,15 @@
 
 vtkStandardNewMacro(vtkCMBArcCreateClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcCreateClientOperator::vtkCMBArcCreateClientOperator()
   : ArcId(-1)
 {
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcCreateClientOperator::~vtkCMBArcCreateClientOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcCreateClientOperator::Create(vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
   this->ArcId = -1;
@@ -53,7 +50,6 @@ bool vtkCMBArcCreateClientOperator::Create(vtkSMNewWidgetRepresentationProxy* wi
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcCreateClientOperator::Create(vtkSMSourceProxy* sourceProxy)
 {
   this->ArcId = -1;
@@ -75,7 +71,7 @@ bool vtkCMBArcCreateClientOperator::Create(vtkSMSourceProxy* sourceProxy)
   proxy->Delete();
   return valid;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBArcCreateClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -55,7 +55,6 @@
 
 #include <sstream>
 
-//-----------------------------------------------------------------------------
 SimBuilderExportDialog::SimBuilderExportDialog()
   : Status(-1)
   , ActiveServer(0)
@@ -96,14 +95,12 @@ SimBuilderExportDialog::SimBuilderExportDialog()
   QObject::connect(buttonBox, SIGNAL(rejected()), this->MainDialog, SLOT(reject()));
 }
 
-//-----------------------------------------------------------------------------
 SimBuilderExportDialog::~SimBuilderExportDialog()
 {
   delete this->ExportUIManager;
   delete this->MainDialog;
 }
 
-//-----------------------------------------------------------------------------
 int SimBuilderExportDialog::exec()
 {
   if (!this->SimAttSystem)
@@ -167,7 +164,6 @@ int SimBuilderExportDialog::exec()
   return status;
 }
 
-//-----------------------------------------------------------------------------
 // Returns python script "value" as stored in the export attribute system
 std::string SimBuilderExportDialog::getPythonScript() const
 {
@@ -181,7 +177,6 @@ std::string SimBuilderExportDialog::getPythonScript() const
   return script;
 }
 
-//-----------------------------------------------------------------------------
 // [Slot] Handles analysis selection from radio buttons
 void SimBuilderExportDialog::analysisSelected()
 {
@@ -211,7 +206,6 @@ void SimBuilderExportDialog::analysisSelected()
   }
 }
 
-//-----------------------------------------------------------------------------
 // [Slot] Handles multiple-selection checkbox changing state
 void SimBuilderExportDialog::multipleSelectChanged(int state)
 {
@@ -229,7 +223,6 @@ void SimBuilderExportDialog::multipleSelectChanged(int state)
   this->AnalysisButtonGroup->setExclusive(!boolState);
 }
 
-//-----------------------------------------------------------------------------
 // Returns the export attribute system
 // When the baseline flag is true, return the original/initial attributes
 // loaded in the dialog, otherwise return the copy used in the export panel
@@ -243,27 +236,23 @@ smtk::attribute::SystemPtr SimBuilderExportDialog::exportAttSystem(bool baseline
   return this->ExportUIManager->attributeSystem();
 }
 
-//-----------------------------------------------------------------------------
 void SimBuilderExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
 {
   this->ExportAttSystem = system;
   this->IsPanelSet = false;
 }
 
-//-----------------------------------------------------------------------------
 void SimBuilderExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
 {
   this->SimAttSystem = system;
   this->IsPanelSet = false;
 }
 
-//-----------------------------------------------------------------------------
 void SimBuilderExportDialog::setActiveServer(pqServer* server)
 {
   this->ActiveServer = server;
 }
 
-//-----------------------------------------------------------------------------
 // Rebuilds ExportSystem with copy of ExportAttSystem,
 // For now, does brute-force copy
 void SimBuilderExportDialog::updatePanel()
@@ -337,7 +326,6 @@ void SimBuilderExportDialog::updatePanel()
   this->IsPanelSet = true;
 }
 
-//-----------------------------------------------------------------------------
 // Rebuilds selection list of analyis types
 void SimBuilderExportDialog::updateAnalysisTypesWidget()
 {
@@ -434,7 +422,6 @@ void SimBuilderExportDialog::updateAnalysisTypesWidget()
   this->AnalysisTypesContainer->show();
 }
 
-//-----------------------------------------------------------------------------
 // Retrieves PythonScript item definition from export attributes
 smtk::attribute::FileItemDefinitionPtr SimBuilderExportDialog::getPythonScriptDef(
   const smtk::attribute::SystemPtr attributeSystem, bool warnIfMissing) const
@@ -474,7 +461,6 @@ smtk::attribute::FileItemDefinitionPtr SimBuilderExportDialog::getPythonScriptDe
   return smtk::attribute::FileItemDefinitionPtr();
 }
 
-//-----------------------------------------------------------------------------
 // Retrieves PythonScript item from export attributes
 smtk::attribute::FileItemPtr SimBuilderExportDialog::getPythonScriptItem(bool warnIfMissing) const
 {
@@ -490,7 +476,6 @@ smtk::attribute::FileItemPtr SimBuilderExportDialog::getPythonScriptItem(bool wa
   return fileItem;
 }
 
-//-----------------------------------------------------------------------------
 // Retrieves item with specified name from ExportSpec attribute
 smtk::attribute::ItemPtr SimBuilderExportDialog::getExportSpecItem(
   const std::string& name, bool warnIfMissing) const
@@ -537,7 +522,6 @@ smtk::attribute::ItemPtr SimBuilderExportDialog::getExportSpecItem(
   return item;
 }
 
-//-----------------------------------------------------------------------------
 // Finds absolute path to script file, by checking "standard" locations
 std::string SimBuilderExportDialog::findPythonScriptPath(
   smtk::attribute::FileItemPtr fileItem, bool warnIfMissing) const
@@ -555,7 +539,6 @@ std::string SimBuilderExportDialog::findPythonScriptPath(
   return this->findPythonScriptPath(scriptName, warnIfMissing);
 }
 
-//-----------------------------------------------------------------------------
 // Finds absolute path to script file, by checking "standard" locations
 std::string SimBuilderExportDialog::findPythonScriptPath(
   const std::string& scriptName, bool warnIfMissing) const

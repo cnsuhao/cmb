@@ -24,7 +24,7 @@
 #define SEPARATOR "  "
 
 vtkStandardNewMacro(vtkCMBPt123VelocityWriter);
-//----------------------------------------------------------------------------
+
 vtkCMBPt123VelocityWriter::vtkCMBPt123VelocityWriter()
 {
   this->FileName = 0;
@@ -39,19 +39,16 @@ vtkCMBPt123VelocityWriter::vtkCMBPt123VelocityWriter()
   this->MyDataSet = 0;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBPt123VelocityWriter::~vtkCMBPt123VelocityWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkCMBPt123VelocityWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -70,7 +67,6 @@ ostream* vtkCMBPt123VelocityWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -80,7 +76,6 @@ void vtkCMBPt123VelocityWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -129,7 +124,6 @@ void vtkCMBPt123VelocityWriter::WriteData()
   this->MyDataSet = 0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityWriter::WriteHeader(ostream& fp)
 {
   if (WriteCellBased)
@@ -146,7 +140,6 @@ bool vtkCMBPt123VelocityWriter::WriteHeader(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityWriter::WriteTimeStep(ostream& fp, double t)
 {
   vtkIdType i, n = this->MyData->GetNumberOfTuples();
@@ -188,21 +181,18 @@ bool vtkCMBPt123VelocityWriter::WriteTimeStep(ostream& fp, double t)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityWriter::WriteFooter(ostream& fp)
 {
   fp << "ENDR" << endl;
   return true;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPt123VelocityWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "FileName = " << this->FileName << endl;

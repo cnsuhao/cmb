@@ -40,17 +40,17 @@
 
 #include "vtkPVXMLElement.h"
 #include "vtkSMPropertyIterator.h"
-//-----------------------------------------------------------------------------
+
 pqCMBPlane::pqCMBPlane()
   : pqCMBTexturedObject()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBPlane::pqCMBPlane(pqPipelineSource* source, pqRenderView* view, pqServer* server)
   : pqCMBTexturedObject(source, view, server)
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBPlane::pqCMBPlane(
   double p1[3], double p2[3], pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -76,12 +76,10 @@ pqCMBPlane::pqCMBPlane(
   this->UserDefinedType = "GroundPlane";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPlane::~pqCMBPlane()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPlane::setPlaneInfo(double p1[3], double p2[3])
 {
   double p[3];
@@ -96,7 +94,6 @@ void pqCMBPlane::setPlaneInfo(double p1[3], double p2[3])
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPlane::getPlaneInfo(double p1[3], double p2[3]) const
 {
   double p[3];
@@ -109,12 +106,11 @@ int pqCMBPlane::getPlaneInfo(double p1[3], double p2[3]) const
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBPlane::getType() const
 {
   return pqCMBSceneObjectBase::GroundPlane;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBPlane::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -132,5 +128,3 @@ pqCMBSceneObjectBase* pqCMBPlane::duplicate(pqServer* server, pqRenderView* view
   }
   return nobj;
 }
-
-//-----------------------------------------------------------------------------

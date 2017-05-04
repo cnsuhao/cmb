@@ -24,18 +24,15 @@
 
 vtkStandardNewMacro(vtkCMBArcUpdateOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcUpdateOperator::vtkCMBArcUpdateOperator()
 {
   this->Reset();
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcUpdateOperator::~vtkCMBArcUpdateOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcUpdateOperator::Reset()
 {
   this->ArcId = -1;
@@ -46,7 +43,6 @@ void vtkCMBArcUpdateOperator::Reset()
   this->EndNodeFlags[1] = this->EndNodeDefault;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateOperator::SetEndNodeToMove(int endNode)
 {
   if (endNode < 0 || endNode > 1)
@@ -57,7 +53,6 @@ bool vtkCMBArcUpdateOperator::SetEndNodeToMove(int endNode)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateOperator::SetEndNodeToRecreate(int endNode)
 {
   if (endNode < 0 || endNode > 1)
@@ -68,7 +63,6 @@ bool vtkCMBArcUpdateOperator::SetEndNodeToRecreate(int endNode)
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcUpdateOperator::SetArcId(vtkIdType arcId)
 {
   if (this->ArcId != arcId)
@@ -80,7 +74,6 @@ void vtkCMBArcUpdateOperator::SetArcId(vtkIdType arcId)
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateOperator::Operate(vtkPolyData* source)
 {
   //create the new arc we are going to add all the info too
@@ -151,7 +144,6 @@ bool vtkCMBArcUpdateOperator::Operate(vtkPolyData* source)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcUpdateOperator::UpdateSubArc(vtkPolyData* source, vtkCMBArc* updatedArc)
 {
   if (this->StartPointId < 0 || this->EndPointId < 0 || this->StartPointId == this->EndPointId)
@@ -205,7 +197,6 @@ bool vtkCMBArcUpdateOperator::UpdateSubArc(vtkPolyData* source, vtkCMBArc* updat
   return result;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcUpdateOperator::UpdateEndNode(
   vtkCMBArc* arc, const int& endNodePos, unsigned int ptId, double pos[3])
 {
@@ -227,7 +218,6 @@ void vtkCMBArcUpdateOperator::UpdateEndNode(
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcUpdateOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

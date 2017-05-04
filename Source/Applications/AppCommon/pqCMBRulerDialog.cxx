@@ -21,7 +21,6 @@
 #include <QDialog>
 #include <QVBoxLayout>
 
-//-----------------------------------------------------------------------------
 /// constructor
 pqCMBRulerDialog::pqCMBRulerDialog(QWidget* p)
   : QDialog(p)
@@ -46,7 +45,6 @@ pqCMBRulerDialog::pqCMBRulerDialog(QWidget* p)
   this->RulerWidget->updatePanel();
 }
 
-//-----------------------------------------------------------------------------
 /// destructor
 pqCMBRulerDialog::~pqCMBRulerDialog()
 {

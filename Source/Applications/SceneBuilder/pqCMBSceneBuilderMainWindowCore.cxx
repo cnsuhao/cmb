@@ -358,7 +358,6 @@ pqCMBSceneBuilderMainWindowCore::pqCMBSceneBuilderMainWindowCore(QWidget* parent
   this->TINStitcher = 0;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneBuilderMainWindowCore::~pqCMBSceneBuilderMainWindowCore()
 {
   //  pqActiveView::instance().setCurrent(0);
@@ -366,7 +365,6 @@ pqCMBSceneBuilderMainWindowCore::~pqCMBSceneBuilderMainWindowCore()
   this->SelectedTransform->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(
   QObject* /*parent_widget*/)
 {
@@ -378,7 +376,6 @@ void pqCMBSceneBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(
     new qtCMBSceneBuilderContextMenuBehavior(this->Tree, this->parent());
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::setupBoxWidget()
 {
   this->Internal->BoxWidget = vtkSMNewWidgetRepresentationProxy::SafeDownCast(
@@ -422,7 +419,6 @@ void pqCMBSceneBuilderMainWindowCore::setupBoxWidget()
     vtkEvent::ControlModifier, 0, 0, NULL, vtkWidgetEvent::EndSelect);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::processScene(
   const QString& filename, pqPipelineSource* source)
 {
@@ -469,7 +465,7 @@ void pqCMBSceneBuilderMainWindowCore::processScene(
     this->Tree->turnOnEventRecording();
   }
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::processSceneInfo(
   const QString& filename, pqPipelineSource* source)
 {
@@ -495,7 +491,7 @@ void pqCMBSceneBuilderMainWindowCore::processSceneInfo(
   this->activeRenderView()->render();
   emit this->newSceneLoaded();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::processMapInfo(
   const QString& /*filename*/, pqPipelineSource* source)
 {
@@ -562,7 +558,7 @@ void pqCMBSceneBuilderMainWindowCore::processMapInfo(
 
   emit this->newSceneLoaded();
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::processOSDLInfo(
   const QString& /*filename*/, pqPipelineSource* source)
 {
@@ -740,7 +736,6 @@ void pqCMBSceneBuilderMainWindowCore::processOSDLInfo(
   emit this->newSceneLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::updateSelection(
   const QList<pqCMBSceneNode*>* unselected, const QList<pqCMBSceneNode*>* newlySelected)
 {
@@ -782,7 +777,6 @@ void pqCMBSceneBuilderMainWindowCore::updateSelection(
   this->updateBoxWidget();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::updateWidgetPanel(pqCMBSceneObjectBase* widgetObject)
 {
   if (!widgetObject)
@@ -850,7 +844,6 @@ void pqCMBSceneBuilderMainWindowCore::updateWidgetPanel(pqCMBSceneObjectBase* wi
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::unselectNode(pqCMBSceneNode* node, bool updateBox)
 {
   pqCMBSceneObjectBase* obj;
@@ -896,7 +889,6 @@ void pqCMBSceneBuilderMainWindowCore::unselectNode(pqCMBSceneNode* node, bool up
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::RemoveBoxWidgetPropertyLinks()
 {
   if (this->Internal->PositionLink)
@@ -913,7 +905,6 @@ void pqCMBSceneBuilderMainWindowCore::RemoveBoxWidgetPropertyLinks()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::prepSelectedObject(pqCMBSceneObjectBase* obj)
 {
   if (!obj)
@@ -994,7 +985,6 @@ void pqCMBSceneBuilderMainWindowCore::prepSelectedObject(pqCMBSceneObjectBase* o
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::selectNode(pqCMBSceneNode* node, bool updateBox)
 {
   pqCMBSceneObjectBase* obj = NULL;
@@ -1038,7 +1028,7 @@ void pqCMBSceneBuilderMainWindowCore::selectNode(pqCMBSceneNode* node, bool upda
     this->updateBoxWidget();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::updateBoxWidget()
 {
   // Get the bounds of all selected nodes and determine if there
@@ -1161,7 +1151,6 @@ void pqCMBSceneBuilderMainWindowCore::updateBoxWidget()
   this->Internal->BoxWidget->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::zoomOnSelection()
 {
   QList<pqCMBSceneNode*>::iterator iter;
@@ -1194,7 +1183,7 @@ void pqCMBSceneBuilderMainWindowCore::zoomOnSelection()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::setSelectionMode(int mode)
 {
   if (mode == this->SelectionMode)
@@ -1225,7 +1214,6 @@ void pqCMBSceneBuilderMainWindowCore::setSelectionMode(int mode)
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onSaveAsData()
 {
   if (this->Tree->isEmpty())
@@ -1253,7 +1241,6 @@ void pqCMBSceneBuilderMainWindowCore::onSaveAsData()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onPackageScene()
 {
   if (this->Tree->isEmpty())
@@ -1286,13 +1273,11 @@ void pqCMBSceneBuilderMainWindowCore::onPackageScene()
   writer.write(true);
 }
 
-//-----------------------------------------------------------------------------
 QString pqCMBSceneBuilderMainWindowCore::getOutputFileName() const
 {
   return this->Internal->OutputFileName;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onSaveData()
 {
   if (this->Tree->isEmpty())
@@ -1311,7 +1296,6 @@ void pqCMBSceneBuilderMainWindowCore::onSaveData()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::saveData(const QString& filename)
 {
   if (this->Tree->isEmpty())
@@ -1326,7 +1310,6 @@ void pqCMBSceneBuilderMainWindowCore::saveData(const QString& filename)
   emit this->sceneSaved();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onCloseData()
 {
   if (this->checkForPreviewDialog())
@@ -1338,7 +1321,6 @@ void pqCMBSceneBuilderMainWindowCore::onCloseData()
   emit this->newSceneLoaded();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onCreateOmicronInput()
 {
   // dialog to get filename and necessary parameters
@@ -1368,7 +1350,6 @@ void pqCMBSceneBuilderMainWindowCore::onCreateOmicronInput()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onExport2DBCSFile()
 {
   // dialog to get filename and necessary parameters
@@ -1420,7 +1401,6 @@ void pqCMBSceneBuilderMainWindowCore::onExport2DBCSFile()
   }
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBSceneBuilderMainWindowCore::computeVolumeContraint(double volumeFactor)
 {
   int voiNodeIndex = this->Internal->MesherOptionDlg->getCurrentVOINameIndex();
@@ -1453,7 +1433,6 @@ double pqCMBSceneBuilderMainWindowCore::computeVolumeContraint(double volumeFact
   return volume * volumeFactor;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::applyArcToSurface()
 {
   if (this->Internal->ArcDepress == NULL)
@@ -1511,7 +1490,6 @@ void pqCMBSceneBuilderMainWindowCore::applyArcToSurface()
   this->Internal->ArcDepress = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumObjectType dt)
 {
   this->Internal->ArcModManager->setSourceType(dt);
@@ -1562,7 +1540,6 @@ void pqCMBSceneBuilderMainWindowCore::arcDeformData(pqCMBSceneObjectBase::enumOb
   this->Internal->ArcModManager->showDialog();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::createSurfaceMesh()
 {
   //Step 0: Determine the Bounds of the VOI
@@ -1680,7 +1657,6 @@ void pqCMBSceneBuilderMainWindowCore::createSurfaceMesh()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::CreatTransPipelineMesh(const QStringList& selectedNames,
   vtkBoundingBox& bbox, QList<pqPipelineSource*>& transformFilters,
   pqCMBSceneObjectBase::enumObjectType dt)
@@ -1726,7 +1702,6 @@ void pqCMBSceneBuilderMainWindowCore::CreatTransPipelineMesh(const QStringList& 
   }
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBSceneBuilderMainWindowCore::getMinVOIBounds()
 {
   int voiNodeIndex = this->Internal->MesherOptionDlg->getCurrentVOINameIndex();
@@ -1768,7 +1743,6 @@ double pqCMBSceneBuilderMainWindowCore::getMinVOIBounds()
   return minL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::createOmicronInput(
   QString* filename, double /*vConstraintNotUsed*/)
 {
@@ -2068,7 +2042,6 @@ void pqCMBSceneBuilderMainWindowCore::createOmicronInput(
   delete writer;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onSpawnSurfaceMesher()
 {
   if (!this->setupSurfaceMesherDialog())
@@ -2085,14 +2058,10 @@ void pqCMBSceneBuilderMainWindowCore::onSpawnSurfaceMesher()
   }
 }
 
-//-----------------------------------------------------------------------------
-
 void pqCMBSceneBuilderMainWindowCore::modifierInputSelectionType()
 {
   this->setupModifierDialog(this->Internal->ArcModOptionDlg->GetSourceType());
 }
-
-//-----------------------------------------------------------------------------
 
 void pqCMBSceneBuilderMainWindowCore::onSpawnArcModifier()
 {
@@ -2108,7 +2077,6 @@ void pqCMBSceneBuilderMainWindowCore::onSpawnArcModifier()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onSpawnModelMesher()
 {
   if (!setupModelMesherDialog())
@@ -2187,7 +2155,6 @@ void pqCMBSceneBuilderMainWindowCore::onSpawnModelMesher()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::checkForChooseMesher(int mesherIndex)
 {
   if (this->Internal->MesherOptionDlg->getMesherPath(mesherIndex) == "Choose Mesher")
@@ -2201,7 +2168,6 @@ void pqCMBSceneBuilderMainWindowCore::checkForChooseMesher(int mesherIndex)
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBSceneBuilderMainWindowCore::selectSurfaceMesher()
 {
   QString newMesher;
@@ -2231,7 +2197,6 @@ int pqCMBSceneBuilderMainWindowCore::selectSurfaceMesher()
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBSceneBuilderMainWindowCore::setupSurfaceMesherDialog()
 {
   SceneObjectNodeIterator nodeIter(this->Tree->getRoot());
@@ -2314,7 +2279,6 @@ int pqCMBSceneBuilderMainWindowCore::setupSurfaceMesherDialog()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBSceneBuilderMainWindowCore::setupModifierDialog(pqCMBSceneObjectBase::enumObjectType dt)
 {
   SceneObjectNodeIterator nodeIter(this->Tree->getRoot());
@@ -2370,7 +2334,6 @@ int pqCMBSceneBuilderMainWindowCore::setupModifierDialog(pqCMBSceneObjectBase::e
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBSceneBuilderMainWindowCore::setupModelMesherDialog()
 {
   SceneObjectNodeIterator nodeIter(this->Tree->getRoot());
@@ -2458,7 +2421,6 @@ int pqCMBSceneBuilderMainWindowCore::setupModelMesherDialog()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::previewMesherOutput()
 {
   // Normal exit... see if our expected output file exists... and if so,
@@ -2528,7 +2490,6 @@ void pqCMBSceneBuilderMainWindowCore::previewMesherOutput()
   }
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBSceneBuilderMainWindowCore::exportSolidsCMBModel(
   QList<pqOutputPort*>& /*inputs*/, const QString& /*cmbFileName*/, bool /*is2D*/)
 {
@@ -2536,7 +2497,6 @@ bool pqCMBSceneBuilderMainWindowCore::exportSolidsCMBModel(
   return false;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
 {
   // see what we have for inputs (must be at least 1 solid); use NodeInfo to
@@ -2604,7 +2564,7 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedSolids()
 
   this->exportSolidsCMBModel(inputs, cmbFileName, false);
 }
-//----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::exportSelectedPolygons()
 {
   // see what we have for inputs (must be at least 1 solid); use NodeInfo to
@@ -2662,7 +2622,6 @@ void pqCMBSceneBuilderMainWindowCore::exportSelectedPolygons()
   /*bool success = */ this->exportSolidsCMBModel(inputs, cmbFileName, true);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::exportCMBFile()
 {
   emit enableExternalProcesses(true);
@@ -2795,7 +2754,6 @@ void pqCMBSceneBuilderMainWindowCore::exportCMBFile()
   this->AddContourObjectsToModel(wrapper);
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::rejectMesh()
 {
   emit enableExternalProcesses(true);
@@ -2820,7 +2778,6 @@ void pqCMBSceneBuilderMainWindowCore::rejectMesh()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::addOmicronModelFaceData(vtkPolyData* outputPD)
 {
   vtkIntArray* regionIDs = vtkIntArray::SafeDownCast(
@@ -2893,7 +2850,7 @@ void pqCMBSceneBuilderMainWindowCore::addOmicronModelFaceData(vtkPolyData* outpu
     qDebug() << "ERROR: ReaLLLy expected there to be region/shell data!";
   }
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBSceneBuilderMainWindowCore::clientTransformSource(
   pqPipelineSource* serverSource, vtkHydroModelPolySource* clientSource, vtkTransform* transform)
 {
@@ -2926,7 +2883,6 @@ bool pqCMBSceneBuilderMainWindowCore::clientTransformSource(
   return true;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onRubberBandSelect(bool checked)
 {
   if (checked)
@@ -2948,7 +2904,6 @@ void pqCMBSceneBuilderMainWindowCore::onRubberBandSelect(bool checked)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::closeData()
 {
   this->ColorNode = NULL;
@@ -2962,7 +2917,6 @@ void pqCMBSceneBuilderMainWindowCore::closeData()
   this->Superclass::closeData();
 }
 
-//-----------------------------------------------------------------------------
 /// Called when a new reader is created by the GUI.
 void pqCMBSceneBuilderMainWindowCore::onReaderCreated(
   pqPipelineSource* reader, const QString& filename)
@@ -2993,7 +2947,6 @@ void pqCMBSceneBuilderMainWindowCore::onReaderCreated(
   this->processScene(filename, reader);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
@@ -3050,7 +3003,6 @@ void pqCMBSceneBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData
 */
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
 {
   if (this->Tree)
@@ -3081,7 +3033,6 @@ void pqCMBSceneBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
   this->setupBoxWidget();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::setpqCMBSceneTree(pqCMBSceneTree* tree)
 {
   this->Tree = tree;
@@ -3127,7 +3078,7 @@ void pqCMBSceneBuilderMainWindowCore::setpqCMBSceneTree(pqCMBSceneTree* tree)
   QObject::connect(this->Internal->MesherOptionDlg, SIGNAL(mesherSelectionChanged(int)), this,
     SLOT(checkForChooseMesher(int)));
 }
-//-----------------------------------------------------------------------------
+
 // I'm leaving this here when we need to deal with multiselection
 
 void pqCMBSceneBuilderMainWindowCore::boxWidgetInteraction()
@@ -3149,7 +3100,7 @@ void pqCMBSceneBuilderMainWindowCore::boxWidgetInteraction()
   srcProxy->GetProperty("Scale")->Copy(this->Internal->BoxWidget->GetProperty("Scale"));
   srcProxy->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::newScene()
 {
   if (this->checkForPreviewDialog())
@@ -3165,7 +3116,7 @@ void pqCMBSceneBuilderMainWindowCore::newScene()
   this->Internal->OutputFileName = "";
   emit this->newSceneLoaded();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::updateNodeColor()
 {
   if (!this->ColorNode)
@@ -3185,7 +3136,6 @@ void pqCMBSceneBuilderMainWindowCore::updateNodeColor()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::updateBoxInteraction()
 {
   // We only have to do anything  iff there is more than 1 leaf
@@ -3247,7 +3197,6 @@ void pqCMBSceneBuilderMainWindowCore::updateBoxInteraction()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::AddLineSegmentObjectsToModel(
   vtkDiscreteModelWrapper* wrapper, bool voiPresent)
 {
@@ -3334,7 +3283,6 @@ void pqCMBSceneBuilderMainWindowCore::AddLineSegmentObjectsToModel(
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBSceneBuilderMainWindowCore::AddContourObjectsToModel(vtkDiscreteModelWrapper* wrapper)
 {
   SceneObjectNodeIterator iter(this->Tree->getRoot());
@@ -3459,7 +3407,7 @@ bool pqCMBSceneBuilderMainWindowCore::AddContourObjectsToModel(vtkDiscreteModelW
 
   return validContourFound;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::stitchTINs()
 {
   if (this->previewDialog()->isVisible())
@@ -3531,7 +3479,6 @@ void pqCMBSceneBuilderMainWindowCore::stitchTINs()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onPreviewAccepted()
 {
   if (this->PreviewMeshOutput)
@@ -3653,7 +3600,6 @@ void pqCMBSceneBuilderMainWindowCore::onPreviewAccepted()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onPreviewRejected()
 {
   if (this->PreviewMeshOutput)
@@ -3669,7 +3615,6 @@ void pqCMBSceneBuilderMainWindowCore::onPreviewRejected()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::clearColorNode()
 {
   this->Internal->VTKColorConnect->Disconnect();
@@ -3678,7 +3623,6 @@ void pqCMBSceneBuilderMainWindowCore::clearColorNode()
   this->ColorNode = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::onSelectGlyph(bool checked)
 {
   if (checked)
@@ -3698,7 +3642,7 @@ void pqCMBSceneBuilderMainWindowCore::onSelectGlyph(bool checked)
     this->renderViewSelectionHelper()->endSelection();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::selectGlyph(QList<pqCMBGlyphObject*>& glyphList)
 {
   this->Internal->selGlyphs.clear();
@@ -3739,7 +3683,7 @@ void pqCMBSceneBuilderMainWindowCore::selectGlyph(QList<pqCMBGlyphObject*>& glyp
   this->updateBoxWidgetForGlyph();
   this->activeRenderView()->render();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::updateBoxWidgetForGlyph()
 {
   // If there are no selected glyph objects, then turn off widget
@@ -3806,7 +3750,7 @@ void pqCMBSceneBuilderMainWindowCore::updateBoxWidgetForGlyph()
   pqSMAdaptor::setElementProperty(this->Internal->BoxWidget->GetProperty("Enabled"), true);
   this->Internal->BoxWidget->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::clearSelectedGlyphList()
 {
   QMap<pqCMBGlyphObject*, QList<vtkIdType> >::iterator iter;
@@ -3822,7 +3766,7 @@ void pqCMBSceneBuilderMainWindowCore::clearSelectedGlyphList()
   this->Internal->selGlyphs.clear();
   this->updateBoxWidgetForGlyph();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::updateBoxInteractionForGlyph(
   double sdelta[3], double odelta[3], double tdelta[3])
 {
@@ -3850,7 +3794,7 @@ void pqCMBSceneBuilderMainWindowCore::updateBoxInteractionForGlyph(
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBSceneBuilderMainWindowCore::onEditSettings()
 {
   if (!this->appSettingsDialog())
@@ -3867,7 +3811,6 @@ void pqCMBSceneBuilderMainWindowCore::onEditSettings()
   this->Superclass::onEditSettings();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindowCore::applyAppSettings()
 {
   this->Superclass::applyAppSettings();

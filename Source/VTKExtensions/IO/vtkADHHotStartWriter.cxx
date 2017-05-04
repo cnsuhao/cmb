@@ -25,7 +25,6 @@
 
 vtkStandardNewMacro(vtkADHHotStartWriter);
 
-//-----------------------------------------------------------------------------
 struct vtkADHHotStartWriterInternal
 {
 public:
@@ -35,7 +34,6 @@ public:
   std::vector<std::string> OutputArrays;
 };
 
-//-----------------------------------------------------------------------------
 vtkADHHotStartWriter::vtkADHHotStartWriter()
 {
   this->SetNumberOfInputConnections(0, 1);
@@ -43,7 +41,6 @@ vtkADHHotStartWriter::vtkADHHotStartWriter()
   this->FileName = 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkADHHotStartWriter::~vtkADHHotStartWriter()
 {
   if (this->Implementation)
@@ -52,14 +49,13 @@ vtkADHHotStartWriter::~vtkADHHotStartWriter()
     this->Implementation = 0;
   }
 }
-//----------------------------------------------------------------------------
+
 int vtkADHHotStartWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkADHHotStartWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -78,7 +74,6 @@ ostream* vtkADHHotStartWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkADHHotStartWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -88,7 +83,6 @@ void vtkADHHotStartWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkADHHotStartWriter::WriteData()
 {
   size_t noOfArrays = this->Implementation->OutputArrays.size();
@@ -110,21 +104,18 @@ void vtkADHHotStartWriter::WriteData()
   this->CloseFile(file);
 }
 
-//-----------------------------------------------------------------------------
 void vtkADHHotStartWriter::AddInputPointArrayToProcess(const char* name)
 {
   this->Implementation->OutputArrays.push_back(std::string(name));
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkADHHotStartWriter::ClearInputPointArrayToProcess()
 {
   this->Implementation->OutputArrays.clear();
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 bool vtkADHHotStartWriter::WriteArrays(ostream& fp)
 {
   vtkDataObject* input = this->GetInput();
@@ -150,7 +141,7 @@ bool vtkADHHotStartWriter::WriteArrays(ostream& fp)
   }
   return true;
 }
-//----------------------------------------------------------------------------
+
 bool vtkADHHotStartWriter::WriteArray(ostream& fp, vtkDataArray* darray)
 {
   vtkIdType i, n = darray->GetNumberOfTuples();
@@ -178,7 +169,7 @@ bool vtkADHHotStartWriter::WriteArray(ostream& fp, vtkDataArray* darray)
   }
   return true;
 }
-//----------------------------------------------------------------------------
+
 bool vtkADHHotStartWriter::WriteArrayHeader(ostream& fp, vtkDataArray* darray)
 {
   vtkDataObject* input = this->GetInput();
@@ -202,14 +193,13 @@ bool vtkADHHotStartWriter::WriteArrayHeader(ostream& fp, vtkDataArray* darray)
 
   return true;
 }
-//----------------------------------------------------------------------------
+
 bool vtkADHHotStartWriter::WriteArrayFooter(ostream& fp)
 {
   fp << "ENDDS" << endl;
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void vtkADHHotStartWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

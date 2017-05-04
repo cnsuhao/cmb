@@ -41,12 +41,12 @@
 
 #include "vtkPVXMLElement.h"
 #include "vtkSMPropertyIterator.h"
-//-----------------------------------------------------------------------------
+
 pqCMBConicalRegion::pqCMBConicalRegion()
   : pqCMBSceneObjectBase()
 {
 }
-//-----------------------------------------------------------------------------
+
 pqCMBConicalRegion::pqCMBConicalRegion(
   pqPipelineSource* source, pqRenderView* view, pqServer* /*server*/)
   : pqCMBSceneObjectBase(source)
@@ -60,7 +60,7 @@ pqCMBConicalRegion::pqCMBConicalRegion(
     this->getRepresentation()->getProxy()->GetProperty("Representation"),
     qtCMBApplicationOptions::instance()->defaultRepresentationType().c_str());
 }
-//-----------------------------------------------------------------------------
+
 pqCMBConicalRegion::pqCMBConicalRegion(double baseCenter[3], double baseRadius, double height,
   double topRadius, double direction[3], int resolution, pqServer* server, pqRenderView* view,
   bool updateRep)
@@ -98,17 +98,15 @@ pqCMBConicalRegion::pqCMBConicalRegion(double baseCenter[3], double baseRadius, 
   this->UserDefinedType = "ConicalRegion";
 }
 
-//-----------------------------------------------------------------------------
 pqCMBConicalRegion::~pqCMBConicalRegion()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBSceneObjectBase::enumObjectType pqCMBConicalRegion::getType() const
 {
   return pqCMBSceneObjectBase::GeneralCone;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBConicalRegion::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -128,7 +126,6 @@ pqCMBSceneObjectBase* pqCMBConicalRegion::duplicate(
   return nobj;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setBaseCenter(double p[3])
 {
 
@@ -136,14 +133,12 @@ void pqCMBConicalRegion::setBaseCenter(double p[3])
   this->getRepresentation()->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::getBaseCenter(double p[3]) const
 {
 
   vtkSMPropertyHelper(this->getRepresentation()->getProxy(), "Position").Get(p, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setDirection(double p[3])
 {
 
@@ -151,14 +146,12 @@ void pqCMBConicalRegion::setDirection(double p[3])
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::getDirection(double p[3]) const
 {
 
   vtkSMPropertyHelper(this->Source->getProxy(), "Direction").Get(p, 3);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setHeight(double a)
 {
 
@@ -166,14 +159,12 @@ void pqCMBConicalRegion::setHeight(double a)
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBConicalRegion::getHeight() const
 {
 
   return vtkSMPropertyHelper(this->Source->getProxy(), "Height").GetAsDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setBaseRadius(double a)
 {
 
@@ -181,14 +172,12 @@ void pqCMBConicalRegion::setBaseRadius(double a)
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBConicalRegion::getBaseRadius() const
 {
 
   return vtkSMPropertyHelper(this->Source->getProxy(), "BaseRadius").GetAsDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setTopRadius(double a)
 {
 
@@ -196,14 +185,12 @@ void pqCMBConicalRegion::setTopRadius(double a)
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBConicalRegion::getTopRadius() const
 {
 
   return vtkSMPropertyHelper(this->Source->getProxy(), "TopRadius").GetAsDouble();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBConicalRegion::setResolution(int a)
 {
 
@@ -211,11 +198,8 @@ void pqCMBConicalRegion::setResolution(int a)
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBConicalRegion::getResolution() const
 {
 
   return vtkSMPropertyHelper(this->Source->getProxy(), "Resolution").GetAsInt();
 }
-
-//-----------------------------------------------------------------------------

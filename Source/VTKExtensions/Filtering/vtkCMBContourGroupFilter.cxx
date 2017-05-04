@@ -21,7 +21,7 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 
 vtkStandardNewMacro(vtkCMBContourGroupFilter);
-//-----------------------------------------------------------------------------
+
 vtkCMBContourGroupFilter::vtkCMBContourGroupFilter()
 {
   this->SetNumberOfInputPorts(0);
@@ -29,13 +29,11 @@ vtkCMBContourGroupFilter::vtkCMBContourGroupFilter()
   this->ActiveGroupIdx = -1;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBContourGroupFilter::~vtkCMBContourGroupFilter()
 {
   this->RemoveAllContours();
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBContourGroupFilter::IsActiveGroupValid()
 {
   if (this->ActiveGroupIdx < 0)
@@ -45,7 +43,6 @@ int vtkCMBContourGroupFilter::IsActiveGroupValid()
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetGroupInvert(int val)
 {
   if (this->IsActiveGroupValid() &&
@@ -57,7 +54,6 @@ void vtkCMBContourGroupFilter::SetGroupInvert(int val)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::AddContour(vtkAlgorithm* contour)
 {
   if (this->IsActiveGroupValid())
@@ -73,7 +69,6 @@ void vtkCMBContourGroupFilter::AddContour(vtkAlgorithm* contour)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::RemoveContour(vtkAlgorithm* contour)
 {
   if (contour && this->IsActiveGroupValid())
@@ -98,7 +93,6 @@ void vtkCMBContourGroupFilter::RemoveContour(vtkAlgorithm* contour)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::RemoveAllContours()
 {
   for (std::map<int, std::vector<PolygonInfo*> >::iterator it = this->Polygons.begin();
@@ -114,7 +108,6 @@ void vtkCMBContourGroupFilter::RemoveAllContours()
   this->Modified();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetContourProjectionNormal(int idx, int val)
 {
   if (this->IsActiveGroupValid())
@@ -130,7 +123,6 @@ void vtkCMBContourGroupFilter::SetContourProjectionNormal(int idx, int val)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::SetContourProjectionPosition(int idx, double val)
 {
   if (this->IsActiveGroupValid())
@@ -146,7 +138,6 @@ void vtkCMBContourGroupFilter::SetContourProjectionPosition(int idx, double val)
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBContourGroupFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {
@@ -202,7 +193,6 @@ int vtkCMBContourGroupFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBContourGroupFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
@@ -210,7 +200,6 @@ int vtkCMBContourGroupFilter::FillInputPortInformation(int, vtkInformation* info
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBContourGroupFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "ActiveGroupIdx: " << this->ActiveGroupIdx << "\n";

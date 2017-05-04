@@ -50,13 +50,11 @@
 #include "pqRepresentationHelperFunctions.h"
 using namespace RepresentationHelperFunctions;
 
-//-----------------------------------------------------------------------------
 InternalDoubleValidator::InternalDoubleValidator(QObject* parent)
   : QDoubleValidator(parent)
 {
 }
 
-//-----------------------------------------------------------------------------
 void InternalDoubleValidator::fixup(QString& input) const
 {
   if (input.length() == 0)
@@ -76,7 +74,6 @@ void InternalDoubleValidator::fixup(QString& input) const
   }
 }
 
-//-----------------------------------------------------------------------------
 qtCMBGenerateContoursDialog::qtCMBGenerateContoursDialog(
   pqCMBSceneNode* gridNode, QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
@@ -188,7 +185,6 @@ qtCMBGenerateContoursDialog::qtCMBGenerateContoursDialog(
   //                 this, SLOT(abort()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBGenerateContoursDialog::~qtCMBGenerateContoursDialog()
 {
   delete this->InternalWidget;
@@ -216,12 +212,12 @@ qtCMBGenerateContoursDialog::~qtCMBGenerateContoursDialog()
     delete Grid;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBGenerateContoursDialog::exec()
 {
   return this->MainDialog->exec();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBGenerateContoursDialog::generateContours()
 {
   this->Progress = new QProgressDialog(this->MainDialog);
@@ -306,7 +302,6 @@ void qtCMBGenerateContoursDialog::generateContours()
   this->Progress = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBGenerateContoursDialog::onCreateContourNodes()
 {
   this->Progress = new QProgressDialog(this->MainDialog);
@@ -365,7 +360,6 @@ void qtCMBGenerateContoursDialog::onCreateContourNodes()
   this->Progress = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBGenerateContoursDialog::onCancel()
 {
   this->MainDialog->done(QDialog::Rejected);
@@ -373,7 +367,6 @@ void qtCMBGenerateContoursDialog::onCancel()
   // disconnect progressManager????
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBGenerateContoursDialog::updateProgress(const QString& message, int progress)
 {
   // Is there any progress being reported?
@@ -386,7 +379,6 @@ void qtCMBGenerateContoursDialog::updateProgress(const QString& message, int pro
   QCoreApplication::processEvents();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBGenerateContoursDialog::disableWhileProcessing()
 {
   this->InternalWidget->loadImageFrame->setEnabled(false);
@@ -394,7 +386,6 @@ void qtCMBGenerateContoursDialog::disableWhileProcessing()
   this->InternalWidget->okCancelBox->setEnabled(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBGenerateContoursDialog::updateContourButtonStatus()
 {
   if (this->ContourValue == this->InternalWidget->contourValue->text().toDouble() &&
@@ -408,7 +399,7 @@ void qtCMBGenerateContoursDialog::updateContourButtonStatus()
     this->InternalWidget->generateContoursButton->setEnabled(true);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBGenerateContoursDialog::onOpacityChanged(int opacity)
 {
   vtkSMPropertyHelper(this->Grid->getRepresentation()->getProxy(), "Opacity")

@@ -27,7 +27,6 @@
 #include "vtkUnsignedCharArray.h"
 #include <string>
 
-//----------------------------------------------------------------------------
 void CalcRGB(double llimit, double ulimit, double& r, double& g, double& b)
 {
   double l;
@@ -44,7 +43,7 @@ void CalcRGB(double llimit, double ulimit, double& r, double& g, double& b)
     }
   }
 }
-//----------------------------------------------------------------------------
+
 vtkIdType GetNextIndex(vtkIdType i, vtkUnsignedCharArray* avail)
 {
   if (!avail->GetValue(i))
@@ -77,7 +76,7 @@ vtkIdType GetNextIndex(vtkIdType i, vtkUnsignedCharArray* avail)
   avail->SetValue(i, 0);
   return i;
 }
-//----------------------------------------------------------------------------
+
 void CreateLookupTable(vtkLookupTable* lut, double llimit, double ulimit, int urange, double rgbD2)
 {
   vtkIdType n = lut->GetNumberOfTableValues();
@@ -136,7 +135,7 @@ void CreateLookupTable(vtkLookupTable* lut, double llimit, double ulimit, int ur
     lut->SetTableValue(i, r, g, b);
   }
 }
-//----------------------------------------------------------------------------
+
 void CreatePolyDataGrid(vtkPolyData* poly, const int numColors)
 {
   // we hard code how many steps to display

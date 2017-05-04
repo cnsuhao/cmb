@@ -72,11 +72,9 @@ public:
     tsToBytePosition; //map timevalue to the byte positino in the file for quick reading
   std::map<double, vtkDoubleArray*> DataArray; //map of timevalue to dataset
 };
-// -----------------------------------------------------------------------------
 
 vtkStandardNewMacro(vtkCMBPt123Reader);
 
-// -----------------------------------------------------------------------------
 vtkCMBPt123Reader::vtkCMBPt123Reader()
 {
   this->CacheSize = 100;
@@ -92,14 +90,14 @@ vtkCMBPt123Reader::vtkCMBPt123Reader()
   this->TimeSteps = 0;
   this->VelData = 0;
 }
-// -----------------------------------------------------------------------------
+
 vtkCMBPt123Reader::~vtkCMBPt123Reader()
 {
   this->FileNamePath = 0;
   this->ResetAllData();
   this->SetFileName(0);
 }
-// -----------------------------------------------------------------------------
+
 void vtkCMBPt123Reader::ResetAllData()
 {
   this->SetOldFileName(0);
@@ -122,7 +120,7 @@ void vtkCMBPt123Reader::ResetAllData()
   this->TimeStepRange[0] = -1;
   this->TimeStepRange[1] = -1;
 }
-// -----------------------------------------------------------------------------
+
 void vtkCMBPt123Reader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -130,7 +128,7 @@ void vtkCMBPt123Reader::PrintSelf(ostream& os, vtkIndent indent)
      << "CacheSize: " << CacheSize << "\n"
      << "NumberOfTimeSteps: " << NumberOfTimeSteps << "\n";
 }
-// -----------------------------------------------------------------------------
+
 vtkDoubleArray* vtkCMBPt123Reader::GetDataAtTime(Pt123TemporalData* dat, double requestedTime)
 {
   // Find the time span that contains this time
@@ -199,7 +197,7 @@ vtkDoubleArray* vtkCMBPt123Reader::GetDataAtTime(Pt123TemporalData* dat, double 
   dat->DataArray[dataTime] = arr;
   return arr;
 }
-// -----------------------------------------------------------------------------
+
 // Scan the temporal data to make a note of where the useful information is so
 // We can access it very quickly later in the program
 int vtkCMBPt123Reader::ScanTemporalData(
@@ -266,7 +264,7 @@ int vtkCMBPt123Reader::ScanTemporalData(
   tf.close();
   return 1;
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBPt123Reader::ReadPts2File(vtkPolyData* polyData, const char* filename)
 {
   if (!polyData)
@@ -324,7 +322,6 @@ int vtkCMBPt123Reader::ReadPts2File(vtkPolyData* polyData, const char* filename)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPt123Reader::ReadBinaryStreams(vtkPolyData* polyData, const char* filename)
 {
   ifstream file(filename, ios::in | ios::binary);
@@ -414,7 +411,6 @@ int vtkCMBPt123Reader::ReadBinaryStreams(vtkPolyData* polyData, const char* file
   return 1;
 }
 
-// -----------------------------------------------------------------------------
 int vtkCMBPt123Reader::ReadSUPFile(const char* filename)
 {
   //Open File
@@ -511,7 +507,7 @@ int vtkCMBPt123Reader::ReadSUPFile(const char* filename)
   supStream.close();
   return 1;
 }
-// -----------------------------------------------------------------------------
+
 int vtkCMBPt123Reader::UpdateTimeData(Pt123TemporalData* dat, double timeValue)
 {
   if (!dat)
@@ -536,7 +532,7 @@ int vtkCMBPt123Reader::UpdateTimeData(Pt123TemporalData* dat, double timeValue)
   this->NumberOfTimeSteps = dat->NumberOfTimeSteps;
   return 1;
 }
-// -----------------------------------------------------------------------------
+
 int vtkCMBPt123Reader::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {
@@ -584,7 +580,7 @@ int vtkCMBPt123Reader::RequestData(vtkInformation* /*request*/,
 
   return 1;
 }
-// -----------------------------------------------------------------------------
+
 int vtkCMBPt123Reader::RequestInformation(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {

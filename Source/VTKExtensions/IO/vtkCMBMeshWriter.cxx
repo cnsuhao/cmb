@@ -179,7 +179,6 @@ struct vtkCMBMeshWriterInternals
 // enum in vtkCMBMeshWriter.h. Make sure this list is NULL terminated
 static const char* vtkCMBMeshFormatStrings[] = { "ADH", "PT123", "WASH123D", "XMS", NULL };
 
-//----------------------------------------------------------------------------
 vtkCMBMeshWriter::vtkCMBMeshWriter()
 {
   this->FileName = NULL;
@@ -194,20 +193,17 @@ vtkCMBMeshWriter::vtkCMBMeshWriter()
   this->Internals = new vtkCMBMeshWriterInternals;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBMeshWriter::~vtkCMBMeshWriter()
 {
   this->SetFileName(NULL);
   delete this->Internals;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkCMBMeshWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -226,7 +222,6 @@ ostream* vtkCMBMeshWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -236,7 +231,6 @@ void vtkCMBMeshWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -284,7 +278,6 @@ void vtkCMBMeshWriter::WriteData()
   this->Internals->ClearInput();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshWriter::WriteHeader(ostream& fp)
 {
   switch (this->FileFormat)
@@ -468,7 +461,6 @@ std::string vtkGetCellCard(int cellType, vtkIdType npts, int fileFormat)
   return "";
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshWriter::WriteCells(ostream& fp)
 {
   vtkDataArray* materialArray = NULL;
@@ -591,7 +583,6 @@ bool vtkCMBMeshWriter::WriteCells(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshWriter::WritePoints(ostream& fp)
 {
   vtkPoints* points = this->Internals->input->GetPoints();
@@ -641,7 +632,6 @@ bool vtkCMBMeshWriter::WritePoints(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshWriter::WriteFooter(ostream& fp)
 {
   switch (this->FileFormat)
@@ -656,7 +646,6 @@ bool vtkCMBMeshWriter::WriteFooter(ostream& fp)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBMeshWriter::ValidateFileFormat()
 {
   if (!this->Internals->input)
@@ -790,14 +779,12 @@ bool vtkCMBMeshWriter::ValidateFileFormat()
   return valid;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

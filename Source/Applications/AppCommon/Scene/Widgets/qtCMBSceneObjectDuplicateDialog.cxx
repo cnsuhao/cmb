@@ -19,7 +19,6 @@
 #include "qtCMBPlacementConstraintWidget.h"
 #include "ui_qtCMBSceneObjectDuplicate.h"
 
-//-----------------------------------------------------------------------------
 int qtCMBSceneObjectDuplicateDialog::getCopyInfo(pqCMBSceneNode* parent, bool enableGlyphOption,
   bool enableTextureConstraintOption, bool& useGlyphPlayback,
   QMap<pqCMBSceneNode*, int>& constraints, bool& okToUseGlyphs, bool& useTextureConstraint,
@@ -31,7 +30,6 @@ int qtCMBSceneObjectDuplicateDialog::getCopyInfo(pqCMBSceneNode* parent, bool en
     glyphPlaybackOption, glyphPlaybackFileName);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectDuplicateDialog::qtCMBSceneObjectDuplicateDialog(pqCMBSceneNode* node,
   bool enableGlyphOption, bool enableTextureConstraintOption, bool& useGlyphPlayback)
   : Count(0)
@@ -59,7 +57,6 @@ qtCMBSceneObjectDuplicateDialog::qtCMBSceneObjectDuplicateDialog(pqCMBSceneNode*
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBSceneObjectDuplicateDialog::~qtCMBSceneObjectDuplicateDialog()
 {
   if (this->PlacementWidget)
@@ -75,7 +72,7 @@ qtCMBSceneObjectDuplicateDialog::~qtCMBSceneObjectDuplicateDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBSceneObjectDuplicateDialog::exec(QMap<pqCMBSceneNode*, int>& constraints,
   bool& okToUseGlyphs, bool& useTextureConstraint, bool& useGlyphPlayback, int& glyphPlaybackOption,
   QString& glyphPlaybackFileName)
@@ -103,15 +100,14 @@ int qtCMBSceneObjectDuplicateDialog::exec(QMap<pqCMBSceneNode*, int>& constraint
   }
   return this->Count;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectDuplicateDialog::accept()
 {
   this->MainDialog->hide();
   this->Count = this->PlacementWidget->getPlacementCount();
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBSceneObjectDuplicateDialog::cancel()
 {
   this->Count = 0;
 }
-//-----------------------------------------------------------------------------

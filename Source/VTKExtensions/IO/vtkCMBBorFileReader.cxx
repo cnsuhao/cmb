@@ -336,11 +336,9 @@ public:
   std::map<int, CSArc> Arcs;
   std::map<int, CSPolygon> Polygons;
 };
-// -----------------------------------------------------------------------------
 
 vtkStandardNewMacro(vtkCMBBorFileReader);
 
-// -----------------------------------------------------------------------------
 vtkCMBBorFileReader::vtkCMBBorFileReader()
 {
   this->FileName = 0;
@@ -350,21 +348,20 @@ vtkCMBBorFileReader::vtkCMBBorFileReader()
   this->NumberOfBoreholes = 0;
   this->NumberOfCrossSections = 0;
 }
-// -----------------------------------------------------------------------------
+
 vtkCMBBorFileReader::~vtkCMBBorFileReader()
 {
   this->SetFileName(0);
   this->CrossSections.clear();
   this->BoreHoles.clear();
 }
-// -----------------------------------------------------------------------------
+
 void vtkCMBBorFileReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
   os << indent << "FileName: " << (this->FileName ? this->FileName : "(null)") << endl;
 }
 
-// -----------------------------------------------------------------------------
 int vtkCMBBorFileReader::ReadBorFile(const char* filename)
 {
   ifstream supStream(filename);
@@ -554,7 +551,6 @@ int vtkCMBBorFileReader::ReadBorFile(const char* filename)
   return 1;
 }
 
-// -----------------------------------------------------------------------------
 int vtkCMBBorFileReader::RequestData(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {
@@ -584,7 +580,7 @@ int vtkCMBBorFileReader::RequestData(vtkInformation* /*request*/,
 
   return 1;
 }
-// -----------------------------------------------------------------------------
+
 int vtkCMBBorFileReader::RequestInformation(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* /*outputVector*/)
 {
@@ -595,7 +591,7 @@ int vtkCMBBorFileReader::RequestInformation(vtkInformation* /*request*/,
   }
   return 1;
 }
-// -----------------------------------------------------------------------------
+
 int vtkCMBBorFileReader::ProcessBorFileInfo(vtkMultiBlockDataSet* output)
 {
   output->SetNumberOfBlocks(2);

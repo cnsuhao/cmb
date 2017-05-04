@@ -37,7 +37,6 @@ public:
   ~pqInternals() {}
 };
 
-//-----------------------------------------------------------------------------
 pqCMBColorMapWidget::pqCMBColorMapWidget(QWidget* parentObject)
   : Superclass(parentObject)
   , Internals(new pqCMBColorMapWidget::pqInternals(this))
@@ -50,14 +49,12 @@ pqCMBColorMapWidget::pqCMBColorMapWidget(QWidget* parentObject)
   this->updateRepresentation();
 }
 
-//-----------------------------------------------------------------------------
 pqCMBColorMapWidget::~pqCMBColorMapWidget()
 {
   delete this->Internals;
   this->Internals = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBColorMapWidget::updatePanel()
 {
   if (this->Internals->ProxyWidget)
@@ -66,7 +63,6 @@ void pqCMBColorMapWidget::updatePanel()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBColorMapWidget::updateRepresentation()
 {
   //  pqDataRepresentation* repr =
@@ -85,7 +81,6 @@ void pqCMBColorMapWidget::updateRepresentation()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBColorMapWidget::setDataRepresentation(pqDataRepresentation* repr)
 {
   // this method sets up hooks to ensure that when the repr's properties are
@@ -115,7 +110,6 @@ void pqCMBColorMapWidget::setDataRepresentation(pqDataRepresentation* repr)
   this->updateRepresentation();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBColorMapWidget::setColorTransferFunction(vtkSMProxy* ctf)
 {
   if (this->Internals->ProxyWidget == NULL && ctf == NULL)
@@ -152,7 +146,6 @@ void pqCMBColorMapWidget::setColorTransferFunction(vtkSMProxy* ctf)
   QObject::connect(widget, SIGNAL(changeFinished()), this, SLOT(renderViews()));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBColorMapWidget::renderViews()
 {
   if (this->Internals->ActiveRepresentation)

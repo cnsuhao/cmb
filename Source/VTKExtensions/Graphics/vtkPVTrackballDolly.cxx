@@ -17,18 +17,15 @@
 
 vtkStandardNewMacro(vtkPVTrackballDolly);
 
-//-------------------------------------------------------------------------
 vtkPVTrackballDolly::vtkPVTrackballDolly()
 {
   this->ZoomScale = 0.0;
 }
 
-//-------------------------------------------------------------------------
 vtkPVTrackballDolly::~vtkPVTrackballDolly()
 {
 }
 
-//-------------------------------------------------------------------------
 void vtkPVTrackballDolly::OnButtonDown(int, int, vtkRenderer* ren, vtkRenderWindowInteractor*)
 {
   int* size = ren->GetSize();
@@ -37,12 +34,10 @@ void vtkPVTrackballDolly::OnButtonDown(int, int, vtkRenderer* ren, vtkRenderWind
   this->ZoomScale = 1.5 * range[1] / static_cast<double>(size[1]);
 }
 
-//-------------------------------------------------------------------------
 void vtkPVTrackballDolly::OnButtonUp(int, int, vtkRenderer*, vtkRenderWindowInteractor*)
 {
 }
 
-//-------------------------------------------------------------------------
 void vtkPVTrackballDolly::OnMouseMove(
   int vtkNotUsed(x), int y, vtkRenderer* ren, vtkRenderWindowInteractor* rwi)
 {
@@ -83,7 +78,6 @@ void vtkPVTrackballDolly::OnMouseMove(
   rwi->Render();
 }
 
-//-------------------------------------------------------------------------
 void vtkPVTrackballDolly::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

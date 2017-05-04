@@ -24,13 +24,11 @@
 
 vtkStandardNewMacro(vtkPVCMBSceneV2WriterInformation);
 
-//----------------------------------------------------------------------------
 vtkPVCMBSceneV2WriterInformation::vtkPVCMBSceneV2WriterInformation()
 {
   this->ObjectFileNames = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkPVCMBSceneV2WriterInformation::~vtkPVCMBSceneV2WriterInformation()
 {
   if (this->ObjectFileNames)
@@ -40,13 +38,11 @@ vtkPVCMBSceneV2WriterInformation::~vtkPVCMBSceneV2WriterInformation()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVCMBSceneV2WriterInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 const char* vtkPVCMBSceneV2WriterInformation::GetObjectFileName(int index)
 {
   if (!this->ObjectFileNames)
@@ -56,13 +52,11 @@ const char* vtkPVCMBSceneV2WriterInformation::GetObjectFileName(int index)
   return this->ObjectFileNames->GetString(index);
 }
 
-//----------------------------------------------------------------------------
 int vtkPVCMBSceneV2WriterInformation::GetNumberOfObjectFileNames()
 {
   return (this->ObjectFileNames) ? this->ObjectFileNames->GetNumberOfStrings() : 0;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVCMBSceneV2WriterInformation::CopyFromObject(vtkObject* obj)
 {
   vtkCMBSceneV2WriterHelper* dataObject = vtkCMBSceneV2WriterHelper::SafeDownCast(obj);
@@ -87,12 +81,10 @@ void vtkPVCMBSceneV2WriterInformation::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVCMBSceneV2WriterInformation::AddInformation(vtkPVInformation* /*info*/)
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkPVCMBSceneV2WriterInformation::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -111,7 +103,6 @@ void vtkPVCMBSceneV2WriterInformation::CopyToStream(vtkClientServerStream* css)
   *css << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVCMBSceneV2WriterInformation::CopyFromStream(const vtkClientServerStream* css)
 {
   if (this->ObjectFileNames)

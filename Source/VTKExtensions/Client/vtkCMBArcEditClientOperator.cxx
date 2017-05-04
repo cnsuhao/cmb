@@ -22,18 +22,15 @@
 
 vtkStandardNewMacro(vtkCMBArcEditClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcEditClientOperator::vtkCMBArcEditClientOperator()
   : ArcIsClosed(false)
 {
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcEditClientOperator::~vtkCMBArcEditClientOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcEditClientOperator::Operate(
   vtkSMProxy* sourceProxy, vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
@@ -93,7 +90,7 @@ bool vtkCMBArcEditClientOperator::Operate(
 
   return true;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBArcEditClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

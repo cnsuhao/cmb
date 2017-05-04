@@ -21,13 +21,11 @@
 #include <QApplication>
 #include <QtDebug>
 
-//-----------------------------------------------------------------------------
 pqCMBFileDialogEventPlayer::pqCMBFileDialogEventPlayer(QObject* p)
   : pqWidgetEventPlayer(p)
 {
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBFileDialogEventPlayer::playEvent(
   QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {

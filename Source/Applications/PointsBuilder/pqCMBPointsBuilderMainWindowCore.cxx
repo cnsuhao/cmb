@@ -281,7 +281,6 @@ pqCMBPointsBuilderMainWindowCore::pqCMBPointsBuilderMainWindowCore(QWidget* pare
     SLOT(onReaderForFilesCreated(pqPipelineSource*, const QStringList&)));
 }
 
-//-----------------------------------------------------------------------------
 pqCMBPointsBuilderMainWindowCore::~pqCMBPointsBuilderMainWindowCore()
 {
   //  pqActiveView::instance().setCurrent(0);
@@ -297,19 +296,16 @@ pqCMBPointsBuilderMainWindowCore::~pqCMBPointsBuilderMainWindowCore()
   delete Internal;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARTerrainExtractionManager* pqCMBPointsBuilderMainWindowCore::getTerrainExtractionManager()
 {
   return this->TerrainExtractionManager;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBLIDARPieceTable* pqCMBPointsBuilderMainWindowCore::getLIDARPieceTable()
 {
   return this->Internal->PieceMainTable;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onOpenMoreFiles(pqCMBLoadDataReaction* ldReaction)
 {
   this->Internal->AddingMoreFiles = true;
@@ -320,7 +316,6 @@ void pqCMBPointsBuilderMainWindowCore::onOpenMoreFiles(pqCMBLoadDataReaction* ld
   this->Internal->AddingMoreFiles = false;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(
   const QStringList& files, pqPipelineSource* reader)
 {
@@ -416,19 +411,16 @@ void pqCMBPointsBuilderMainWindowCore::ImportLIDARFiles(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onSaveAsData()
 {
   this->onAcceptToLoad();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onSaveData()
 {
   this->onSaveAsData();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onCloseData()
 {
   // make sure the terrain extraction "preview" tree is cleared
@@ -445,7 +437,6 @@ void pqCMBPointsBuilderMainWindowCore::onCloseData()
   emit this->newDataLoaded();
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onRubberBandSelect(bool checked)
 {
   if (checked)
@@ -459,7 +450,6 @@ void pqCMBPointsBuilderMainWindowCore::onRubberBandSelect(bool checked)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onConvertFromLatLong(bool state)
 {
   this->Internal->ConvertFromLatLong = state ? 1 : 0;
@@ -501,7 +491,6 @@ void pqCMBPointsBuilderMainWindowCore::onConvertFromLatLong(bool state)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::closeData()
 {
   pqActiveObjects::instance().setActiveSource(NULL);
@@ -511,13 +500,11 @@ void pqCMBPointsBuilderMainWindowCore::closeData()
   this->Superclass::closeData();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::IsDataLoaded()
 {
   return this->Internal->FilePieceIdObjectMap.count() > 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::abort()
 {
   vtkSMSourceProxy* source = NULL;
@@ -548,7 +535,7 @@ void pqCMBPointsBuilderMainWindowCore::abort()
 
   //this->enableAbort(false);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onReaderForFilesCreated(
   pqPipelineSource* reader, const QStringList& files)
 {
@@ -583,7 +570,6 @@ void pqCMBPointsBuilderMainWindowCore::onReaderForFilesCreated(
   this->ImportLIDARFiles(newFileList, reader);
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::ImportLIDARFile(const char* filename)
 {
   // The reader should have been created from scanTotalNumPointsInfo
@@ -637,7 +623,6 @@ int pqCMBPointsBuilderMainWindowCore::ImportLIDARFile(const char* filename)
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::initThresholdTable()
 {
   //Add the new filter to the table
@@ -656,7 +641,6 @@ void pqCMBPointsBuilderMainWindowCore::initThresholdTable()
     SLOT(onThresholdItemChanged(QTableWidgetItem*)) /*, Qt::QueuedConnection*/);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::initPolygonsTree()
 {
   if (this->Internal->ContourTree)
@@ -679,7 +663,6 @@ void pqCMBPointsBuilderMainWindowCore::initPolygonsTree()
     SLOT(onPolygonItemRemoved(QList<qtArcWidget*>)));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::initControlPanel()
 {
   if (!this->IsDataLoaded())
@@ -714,7 +697,6 @@ void pqCMBPointsBuilderMainWindowCore::initControlPanel()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::setupReadClipping()
 {
   this->Internal->LIDARPanel->setEnabled(true);
@@ -777,7 +759,6 @@ void pqCMBPointsBuilderMainWindowCore::setupReadClipping()
   this->Internal->OutlineRepresentation->setVisible(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::setupElevationFilter(double minZ, double maxZ)
 {
   this->Internal->LIDARPanel->getGUIPanel()->elevationMinSpinBox->blockSignals(true);
@@ -807,7 +788,6 @@ void pqCMBPointsBuilderMainWindowCore::setupElevationFilter(double minZ, double 
   this->Internal->LIDARPanel->getGUIPanel()->elevationUpdateButton->setEnabled(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateElevationFilterExtent()
 {
   // loop over all pieces, update ElevationFilter settings
@@ -825,13 +805,12 @@ void pqCMBPointsBuilderMainWindowCore::updateElevationFilterExtent()
   this->Internal->ElevationMinZ = minPt[2];
   this->Internal->ElevationMaxZ = maxPt[2];
 }
-//-----------------------------------------------------------------------------
+
 QString pqCMBPointsBuilderMainWindowCore::getLIDARFileTitle() const
 {
   return this->ReaderManager->getFileTitle();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::clearCurrentLIDARData()
 {
   if (this->IsDataLoaded())
@@ -887,7 +866,6 @@ void pqCMBPointsBuilderMainWindowCore::clearCurrentLIDARData()
   this->Internal->LIDARPanel->getGUIPanel()->elevationGroup->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::unselectCheckBoxes()
 {
   //Make sure all toggle events are called by selecting all checkboxes
@@ -900,25 +878,24 @@ void pqCMBPointsBuilderMainWindowCore::unselectCheckBoxes()
   this->Internal->LIDARPanel->getGUIPanel()->groupBoxFilters->setChecked(0);
   this->Internal->LIDARPanel->getGUIPanel()->elevationGroup->setChecked(0);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::resetCenterOfRotationToCenterOfCurrentData()
 {
   this->Superclass::resetCenterOfRotationToCenterOfCurrentData();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::onSavePieces(int /*onRatio*/, bool /*askMultiOutput*/)
 {
   return 0;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::showFilterDialog()
 {
   this->onActiveFilterChanged();
   this->Internal->FilterDlg->show();
   return;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onAcceptToLoad()
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -946,7 +923,6 @@ void pqCMBPointsBuilderMainWindowCore::onAcceptToLoad()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::savePieces(QList<pqCMBLIDARPieceObject*> pieces,
   const QString& filename, bool saveAsSinglePiece, bool loadAsDisplayed, bool multiOutput)
 {
@@ -1007,7 +983,6 @@ bool pqCMBPointsBuilderMainWindowCore::savePieces(QList<pqCMBLIDARPieceObject*> 
   return writeResult;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::WritePiece(
   pqPipelineSource* source, const QString& writerName, const QString& fileName)
 {
@@ -1017,7 +992,6 @@ bool pqCMBPointsBuilderMainWindowCore::WritePiece(
   return this->WriteFile(fileName);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::ExportDem(
   QList<pqPipelineSource*> pieces, const QString& writerName, const QString& fileName)
 {
@@ -1100,7 +1074,6 @@ bool pqCMBPointsBuilderMainWindowCore::ExportDem(
   return result;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::WritePieces(QList<pqPipelineSource*> pieces,
   const QString& writerName, const QString& fileName, bool writeAsSinglePiece)
 {
@@ -1143,7 +1116,6 @@ bool pqCMBPointsBuilderMainWindowCore::WritePieces(QList<pqPipelineSource*> piec
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::WriteFile(const QString& fileName)
 {
   this->enableAbort(true);
@@ -1176,7 +1148,6 @@ bool pqCMBPointsBuilderMainWindowCore::WriteFile(const QString& fileName)
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::generateAndValidateOutFileNames(
   QList<pqCMBLIDARPieceObject*> pieces, const QString& filename, QList<QString>& outFiles)
 {
@@ -1221,7 +1192,6 @@ bool pqCMBPointsBuilderMainWindowCore::generateAndValidateOutFileNames(
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onVTKConnectionChanged(pqDataRepresentation* connRep)
 {
   this->setDisplayRepresentation(connRep);
@@ -1232,7 +1202,6 @@ void pqCMBPointsBuilderMainWindowCore::onVTKConnectionChanged(pqDataRepresentati
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::setupControlPanel(QWidget* parent)
 {
   this->Internal->LIDARPanel = new qtCMBLIDARPanelWidget(parent);
@@ -1375,7 +1344,6 @@ void pqCMBPointsBuilderMainWindowCore::setupControlPanel(QWidget* parent)
     SLOT(onDefaultMaxNumberOfTargetPointsChanged()));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onDefaultMaxNumberOfTargetPointsChanged()
 {
   this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->setText(
@@ -1384,13 +1352,11 @@ void pqCMBPointsBuilderMainWindowCore::onDefaultMaxNumberOfTargetPointsChanged()
   this->Internal->LIDARPanel->getGUIPanel()->targetNumberOfPoints->update();
 }
 
-//-----------------------------------------------------------------------------
 QWidget* pqCMBPointsBuilderMainWindowCore::getControlPanel()
 {
   return this->Internal->LIDARPanel;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::calculateMainOnRatio(int totalNumberOfPoints)
 {
   double tmpOnRatio =
@@ -1414,7 +1380,6 @@ int pqCMBPointsBuilderMainWindowCore::calculateMainOnRatio(int totalNumberOfPoin
   return onRatio;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::calculateOnRatioForPiece(
   int onRatio, int numberOfPointsInPiece)
 {
@@ -1429,13 +1394,11 @@ int pqCMBPointsBuilderMainWindowCore::calculateOnRatioForPiece(
   return onRatio;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::getMinimumNumberOfPointsPerPiece()
 {
   return this->Internal->MinimumNumberOfPointsPerPiece;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateSelection(pqOutputPort* selPort)
 {
   if (selPort && this->Internal->PieceMainTable->getCurrentObject() &&
@@ -1459,7 +1422,6 @@ void pqCMBPointsBuilderMainWindowCore::updateSelection(pqOutputPort* selPort)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onUpdateSelectedPieces()
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -1475,7 +1437,6 @@ void pqCMBPointsBuilderMainWindowCore::onUpdateSelectedPieces()
   }
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::isUpdateNeeded()
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -1491,7 +1452,6 @@ bool pqCMBPointsBuilderMainWindowCore::isUpdateNeeded()
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::isObjectUpToDate(pqCMBLIDARPieceObject* dataObj)
 {
   if (!dataObj)
@@ -1503,7 +1463,6 @@ bool pqCMBPointsBuilderMainWindowCore::isObjectUpToDate(pqCMBLIDARPieceObject* d
     this->Internal->LIDARPanel->getGUIPanel()->clipGroupBox->isChecked(), this->Internal->ClipBBox);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updatePieceRepresentations(
   QList<pqCMBLIDARPieceObject*> pieces, bool forceRead /*=false*/)
 {
@@ -1545,7 +1504,7 @@ void pqCMBPointsBuilderMainWindowCore::updatePieceRepresentations(
   this->updatePointTotals();
   this->activeRenderView()->render();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::setupProgressBar(QStatusBar* statusBar)
 {
   this->Internal->ProgressBar = new qtCMBProgressWidget(statusBar);
@@ -1582,7 +1541,6 @@ void pqCMBPointsBuilderMainWindowCore::setupProgressBar(QStatusBar* statusBar)
   //this->enableAbort(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::enableAbort(bool abortEnabled)
 {
   pqProgressManager* progress_manager = pqApplicationCore::instance()->getProgressManager();
@@ -1593,14 +1551,12 @@ void pqCMBPointsBuilderMainWindowCore::enableAbort(bool abortEnabled)
   this->enableButtons(!abortEnabled);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateProgress(const QString& text, int progress)
 {
   this->Internal->ProgressBar->setProgress(text, progress);
   QCoreApplication::processEvents();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::OnPreviewSelected()
 {
   this->updateFocus(true);
@@ -1608,14 +1564,12 @@ void pqCMBPointsBuilderMainWindowCore::OnPreviewSelected()
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::enableButtons(bool enabled)
 {
   this->Internal->LIDARPanel->getGUIPanel()->PieceFrame->setEnabled(enabled);
   this->Internal->LIDARPanel->getGUIPanel()->clipGroupBox->setEnabled(enabled);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onEnableClip()
 {
   bool clipEnabled = this->Internal->LIDARPanel->getGUIPanel()->clipGroupBox->isChecked();
@@ -1635,7 +1589,6 @@ void pqCMBPointsBuilderMainWindowCore::onEnableClip()
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onClippingBoxChanged()
 {
   if (this->Internal->OutlineSource)
@@ -1667,7 +1620,6 @@ void pqCMBPointsBuilderMainWindowCore::onClippingBoxChanged()
   this->updateLoadAndUpdateButtons(false); // don't change focus
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::applyTargetNumberOfPoints()
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -1703,7 +1655,6 @@ void pqCMBPointsBuilderMainWindowCore::applyTargetNumberOfPoints()
   this->updateLoadAndUpdateButtons();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::zoomSelection()
 {
   pqCMBLIDARPieceObject* currentObject = this->Internal->PieceMainTable->getCurrentObject();
@@ -1715,7 +1666,6 @@ void pqCMBPointsBuilderMainWindowCore::zoomSelection()
   this->updateFocus(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::clearSelection(bool updateFocusFlag /*=true*/)
 {
   this->Internal->LIDARPanel->getGUIPanel()->tabDisplay->setEnabled(0);
@@ -1734,21 +1684,18 @@ void pqCMBPointsBuilderMainWindowCore::clearSelection(bool updateFocusFlag /*=tr
   this->Internal->LastSelectedObject = NULL;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::selectAll()
 {
   this->Internal->PieceMainTable->checkAll();
   this->updateFocus(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::unselectAll()
 {
   this->Internal->PieceMainTable->uncheckAll();
   this->clearSelection();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onObjectsCheckStateChanged(QList<int>, QList<int>)
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -1764,14 +1711,12 @@ void pqCMBPointsBuilderMainWindowCore::onObjectsCheckStateChanged(QList<int>, QL
   this->updateLoadAndUpdateButtons(true, true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onAdvancedCheckBox(int advancedState)
 {
   this->Internal->PieceMainTable->configureTable(advancedState);
   this->updateFocus(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onObjectOnRatioChanged(
   pqCMBLIDARPieceObject* dataObj, int /*onRatio*/)
 {
@@ -1782,7 +1727,6 @@ void pqCMBPointsBuilderMainWindowCore::onObjectOnRatioChanged(
   this->updateLoadAndUpdateButtons(true, true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onCurrentObjectChanged(pqCMBLIDARPieceObject* dataObj)
 {
   if (this->Internal->LastSelectedObject != dataObj)
@@ -1809,7 +1753,6 @@ void pqCMBPointsBuilderMainWindowCore::onCurrentObjectChanged(pqCMBLIDARPieceObj
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateLoadAndUpdateButtons(
   bool shouldUpdateFocus /*=true*/, bool focusOnTableIfRowIsSelected /*=false*/)
 {
@@ -1826,7 +1769,6 @@ void pqCMBPointsBuilderMainWindowCore::updateLoadAndUpdateButtons(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateFocus(bool focusOnTableIfRowIsSelected /*=false*/)
 {
   if ((focusOnTableIfRowIsSelected && this->Internal->PieceMainTable->getCurrentRow() >= 0) ||
@@ -1843,7 +1785,6 @@ void pqCMBPointsBuilderMainWindowCore::updateFocus(bool focusOnTableIfRowIsSelec
   this->updateZoomAndClearState();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateZoomAndClearState()
 {
   // enable/disable zoom/clear selection buttons depending on whether
@@ -1861,7 +1802,6 @@ void pqCMBPointsBuilderMainWindowCore::updateZoomAndClearState()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updatePointTotals()
 {
   QList<pqCMBLIDARPieceObject*> visiblePieces =
@@ -1922,14 +1862,12 @@ void pqCMBPointsBuilderMainWindowCore::updatePointTotals()
     QString::number(totalSavePoints));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onRequestRender()
 {
   this->Internal->RenderNeeded = true;
   emit this->renderRequested();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onRenderRequested()
 {
   if (this->Internal->RenderNeeded)
@@ -1939,7 +1877,6 @@ void pqCMBPointsBuilderMainWindowCore::onRenderRequested()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onPiecesSelectionChanged(pqCMBLIDARPieceObject* selObject)
 {
   if (selObject && selObject->getRepresentation())
@@ -1953,7 +1890,6 @@ void pqCMBPointsBuilderMainWindowCore::onPiecesSelectionChanged(pqCMBLIDARPieceO
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::hideDisplayPanelPartialComponents()
 {
   QCheckBox* visibleCheck = this->getAppearanceEditorContainer()->findChild<QCheckBox*>("ViewData");
@@ -2011,7 +1947,6 @@ void pqCMBPointsBuilderMainWindowCore::hideDisplayPanelPartialComponents()
   }
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onUseFiltersToggled(bool checked)
 {
   this->updateTransformPanel(!checked);
@@ -2032,7 +1967,6 @@ void pqCMBPointsBuilderMainWindowCore::onUseFiltersToggled(bool checked)
   }
 }
 
-//----------------------------------------------------------------------------
 //Called when the filter properties are changed
 void pqCMBPointsBuilderMainWindowCore::onFilterChanged()
 {
@@ -2058,7 +1992,6 @@ void pqCMBPointsBuilderMainWindowCore::onFilterChanged()
   this->activeRenderView()->render();
 }
 
-//----------------------------------------------------------------------------
 bool pqCMBPointsBuilderMainWindowCore::updateThresholdTransform(pqCMBLIDARPieceObject* dataObj)
 {
   if (dataObj->isThresholdTransformationUnchanged())
@@ -2109,7 +2042,6 @@ bool pqCMBPointsBuilderMainWindowCore::updateThresholdTransform(pqCMBLIDARPieceO
   return false;
 }
 
-//----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onTabChanged(int tabIndex)
 {
   // switched to main from Display... update info about the piece because
@@ -2159,7 +2091,7 @@ void pqCMBPointsBuilderMainWindowCore::onTabChanged(int tabIndex)
     lastTabIndex = tabIndex;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onAddThreshold()
 {
   //Add the new filter to the table
@@ -2193,7 +2125,6 @@ void pqCMBPointsBuilderMainWindowCore::onAddThreshold()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onRemoveFilter()
 {
   QTableWidget* table = this->Internal->LIDARPanel->getGUIPanel()->FilterTable;
@@ -2238,7 +2169,6 @@ void pqCMBPointsBuilderMainWindowCore::onRemoveFilter()
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 //Called when the selected filter changes index
 void pqCMBPointsBuilderMainWindowCore::onActiveFilterChanged()
 {
@@ -2280,7 +2210,6 @@ void pqCMBPointsBuilderMainWindowCore::onActiveFilterChanged()
 */
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onContourChanged()
 {
   qtArcWidget* const contourWidget = qobject_cast<qtArcWidget*>(QObject::sender());
@@ -2306,7 +2235,6 @@ void pqCMBPointsBuilderMainWindowCore::onContourChanged()
     this->Internal->NeedUpdateItems.count() > 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onContourFinished()
 {
   qtArcWidget* const contourWidget = qobject_cast<qtArcWidget*>(QObject::sender());
@@ -2352,14 +2280,12 @@ qtArcWidget* pqCMBPointsBuilderMainWindowCore::createArcWidget(int normal, doubl
   return widget;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onRemoveContour()
 {
   this->Internal->ContourTree->deleteSelected();
   this->enableCameraInteractionModeChanges(true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onPolygonItemRemoved(QList<qtArcWidget*> remContours)
 {
   pqWaitCursor cursor;
@@ -2392,14 +2318,12 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonItemRemoved(QList<qtArcWidget*> 
   this->Internal->LIDARPanel->getGUIPanel()->tabContour->setEnabled(1);
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArcTreeItem* pqCMBPointsBuilderMainWindowCore::onAddContourGroup()
 {
   pqCMBArcTreeItem* groupItem = this->Internal->ContourTree->createContourGroupNode();
   return groupItem;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onAddContourWidget()
 {
   QList<QTreeWidgetItem*> selItems = this->Internal->ContourTree->getSelectedItems();
@@ -2428,7 +2352,6 @@ void pqCMBPointsBuilderMainWindowCore::onAddContourWidget()
     SLOT(onContourChanged()) /*, Qt::QueuedConnection*/);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::addContourFilter(qtArcWidget* contourWidgt)
 {
   if (!contourWidgt)
@@ -2462,7 +2385,6 @@ void pqCMBPointsBuilderMainWindowCore::addContourFilter(qtArcWidget* contourWidg
   this->Internal->LIDARPanel->getGUIPanel()->tabContour->setEnabled(1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateContourSource(
   vtkSMSourceProxy* contourSource, vtkSMSourceProxy* currentContours, bool forceUpdate)
 {
@@ -2521,7 +2443,7 @@ void pqCMBPointsBuilderMainWindowCore::updateContourSource(
 
   contourSource->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::updateThresholdSource(
   vtkSMSourceProxy* thresholdSource, vtkSMSourceProxy* currentThresholds, bool forceUpdate)
 {
@@ -2619,7 +2541,7 @@ void pqCMBPointsBuilderMainWindowCore::updateThresholdSource(
 
   thresholdSource->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onThresholdSelectionChanged()
 {
   QTableWidget* table = this->Internal->LIDARPanel->getGUIPanel()->FilterTable;
@@ -2632,7 +2554,7 @@ void pqCMBPointsBuilderMainWindowCore::onThresholdSelectionChanged()
     this->onActiveFilterChanged();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onThresholdItemChanged(QTableWidgetItem* item)
 {
   if (item->column() != pqCMBLIDARContourTree::UseFilterCol)
@@ -2651,7 +2573,6 @@ void pqCMBPointsBuilderMainWindowCore::onThresholdItemChanged(QTableWidgetItem* 
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onPolygonTreeItemsDropped(
   QTreeWidgetItem* toGroup, int fromGroup, QList<QTreeWidgetItem*> movedContours)
 {
@@ -2690,7 +2611,6 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonTreeItemsDropped(
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onPolygonItemChanged(
   QList<QTreeWidgetItem*> changedItems, int col, int val)
 {
@@ -2767,7 +2687,7 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonItemChanged(
   this->activeRenderView()->render();
   this->Internal->LIDARPanel->getGUIPanel()->tabContour->setEnabled(1);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onPolygonTableSelectionChanged(QTreeWidgetItem* /*selItem*/)
 {
   QList<QTreeWidgetItem*> selectedItems = this->Internal->ContourTree->getSelectedItems();
@@ -2778,7 +2698,6 @@ void pqCMBPointsBuilderMainWindowCore::onPolygonTableSelectionChanged(QTreeWidge
   this->activeRenderView()->render();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::updateTransformPanel(bool enable)
 {
   QGroupBox* transfromBox =
@@ -2788,7 +2707,7 @@ void pqCMBPointsBuilderMainWindowCore::updateTransformPanel(bool enable)
     transfromBox->setEnabled(enable);
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::resetAllPiecesWithNoFilters()
 {
   pqWaitCursor cursor;
@@ -2806,7 +2725,6 @@ void pqCMBPointsBuilderMainWindowCore::resetAllPiecesWithNoFilters()
   this->Internal->LIDARPanel->getGUIPanel()->tabContour->setEnabled(1);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::clearContourFilters()
 {
   //Add the new filter to the vtk object
@@ -2837,7 +2755,6 @@ void pqCMBPointsBuilderMainWindowCore::clearContourFilters()
   }
 }
 
-//-----------------------------------------------------------------------------
 pqCMBArcTreeItem* pqCMBPointsBuilderMainWindowCore::getContourGroupNodeWithId(int id)
 {
   for (int i = 0; i < this->Internal->ContourGroupMap.keys().count(); i++)
@@ -2851,7 +2768,6 @@ pqCMBArcTreeItem* pqCMBPointsBuilderMainWindowCore::getContourGroupNodeWithId(in
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithNode(QTreeWidgetItem* inItem)
 {
   for (int i = 0; i < this->Internal->ContourGroupMap.keys().count(); i++)
@@ -2865,7 +2781,6 @@ int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithNode(QTreeWidgetItem*
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::clearThresholdFilters()
 {
   //Add the new filter to the vtk object
@@ -2885,7 +2800,6 @@ void pqCMBPointsBuilderMainWindowCore::clearThresholdFilters()
   this->Internal->LIDARPanel->getGUIPanel()->FilterTable->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onUpdateContours()
 {
   pqWaitCursor cursor;
@@ -2917,7 +2831,6 @@ void pqCMBPointsBuilderMainWindowCore::onUpdateContours()
   this->Internal->LIDARPanel->getGUIPanel()->buttonUpdateContours->setEnabled(0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onElevationFilter(bool useFilter)
 {
   QList<pqCMBLIDARPieceObject*> allPieces = this->Internal->PieceMainTable->getAllPieceObjects();
@@ -2929,7 +2842,6 @@ void pqCMBPointsBuilderMainWindowCore::onElevationFilter(bool useFilter)
   emit this->requestingRender();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onUpdateElevationFilter()
 {
   this->Internal->LIDARPanel->getGUIPanel()->elevationUpdateButton->setEnabled(false);
@@ -2937,7 +2849,6 @@ void pqCMBPointsBuilderMainWindowCore::onUpdateElevationFilter()
   emit this->requestingRender();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onElevationMinChanged(double minZ)
 {
   this->Internal->LIDARPanel->getGUIPanel()->elevationMaxSpinBox->setMinimum(minZ);
@@ -2953,7 +2864,6 @@ void pqCMBPointsBuilderMainWindowCore::onElevationMinChanged(double minZ)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onElevationMaxChanged(double maxZ)
 {
   this->Internal->LIDARPanel->getGUIPanel()->elevationMinSpinBox->setMaximum(maxZ);
@@ -2969,7 +2879,6 @@ void pqCMBPointsBuilderMainWindowCore::onElevationMaxChanged(double maxZ)
   }
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithContour(qtArcWidget* contourWidget)
 {
   for (int i = 0; i < this->Internal->ContourGroupMap.keys().count(); i++)
@@ -2982,7 +2891,7 @@ int pqCMBPointsBuilderMainWindowCore::getContourGroupIdWithContour(qtArcWidget* 
   }
   return -1;
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
 {
   this->Superclass::onServerCreationFinished(server);
@@ -2996,7 +2905,6 @@ void pqCMBPointsBuilderMainWindowCore::onServerCreationFinished(pqServer* server
     this->activeRenderView()->getProxy()->GetProperty("LODThreshold"), 50);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onSaveContour()
 {
   QString filters = "MultiGroup Contours (*.vtm);;All files (*)";
@@ -3012,7 +2920,7 @@ void pqCMBPointsBuilderMainWindowCore::onSaveContour()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onLoadContour()
 {
   QString filters = "MultiGroup Contours (*.vtm);;All files (*)";
@@ -3030,7 +2938,7 @@ void pqCMBPointsBuilderMainWindowCore::onLoadContour()
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::saveContour(const char* filename)
 {
   pqObjectBuilder* const builder = pqApplicationCore::instance()->getObjectBuilder();
@@ -3101,7 +3009,7 @@ void pqCMBPointsBuilderMainWindowCore::saveContour(const char* filename)
   builder->destroy(writer);
   builder->destroy(contourSource);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
 {
   // Load the file and extract the contour groups
@@ -3219,7 +3127,7 @@ void pqCMBPointsBuilderMainWindowCore::loadContour(const char* filename)
   this->Internal->ContourTree->TreeWidget->blockSignals(false);
   this->Internal->ContourTree->TreeWidget->clearSelection();
 }
-//-----------------------------------------------------------------------------
+
 QTreeWidgetItem* pqCMBPointsBuilderMainWindowCore::addContourNode(
   qtArcWidget* contourWidget, int orthoPlane)
 {
@@ -3244,13 +3152,12 @@ QTreeWidgetItem* pqCMBPointsBuilderMainWindowCore::addContourNode(
   return contourNode;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBPointsBuilderMainWindowCore::onModifierArcWidgetStart()
 {
   this->set2DCameraInteraction();
   this->resetViewDirectionNegZ();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBPointsBuilderMainWindowCore::onModifierArcWidgetFinish()
 {
   this->set3DCameraInteraction();

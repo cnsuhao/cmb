@@ -49,7 +49,6 @@
 
 #include "zoom.xpm"
 
-//---------------------------------------------------------------------------
 class pqCMBRubberBandHelper::pqInternal
 {
 public:
@@ -153,7 +152,6 @@ public:
   void ClearPressPosition() { this->LastPressedPosition[0] = this->LastPressedPosition[1] = -1000; }
 };
 
-//-----------------------------------------------------------------------------
 pqCMBRubberBandHelper::pqCMBRubberBandHelper(QObject* _parent /*=null*/)
   : QObject(_parent)
 {
@@ -165,20 +163,17 @@ pqCMBRubberBandHelper::pqCMBRubberBandHelper(QObject* _parent /*=null*/)
     this, SIGNAL(enableSurfaceSelection(bool)), this, SIGNAL(enableBlockSelection(bool)));
 }
 
-//-----------------------------------------------------------------------------
 pqCMBRubberBandHelper::~pqCMBRubberBandHelper()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::DisabledPush()
 {
   this->DisableCount++;
   this->emitEnabledSignals();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::DisabledPop()
 {
   if (this->DisableCount > 0)
@@ -188,7 +183,6 @@ void pqCMBRubberBandHelper::DisabledPop()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::emitEnabledSignals()
 {
   if (this->DisableCount == 1 || !this->Internal->RenderView)
@@ -222,7 +216,6 @@ void pqCMBRubberBandHelper::emitEnabledSignals()
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::setView(pqView* view)
 {
   pqRenderView* renView = qobject_cast<pqRenderView*>(view);
@@ -260,7 +253,6 @@ inline void internal_setInteractionMode(
   rmp->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
 {
   pqRenderView* rm = this->Internal->RenderView;
@@ -322,7 +314,6 @@ int pqCMBRubberBandHelper::setRubberBandOn(int selectionMode)
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBRubberBandHelper::setRubberBandOff()
 {
   pqRenderView* rm = this->Internal->RenderView;
@@ -352,73 +343,61 @@ int pqCMBRubberBandHelper::setRubberBandOff()
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 pqRenderView* pqCMBRubberBandHelper::getRenderView() const
 {
   return this->Internal->RenderView;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginSurfaceSelection()
 {
   this->setRubberBandOn(SELECT);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginSurfacePointsSelection()
 {
   this->setRubberBandOn(SELECT_POINTS);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginFrustumSelection()
 {
   this->setRubberBandOn(FRUSTUM);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginFrustumPointsSelection()
 {
   this->setRubberBandOn(FRUSTUM_POINTS);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginBlockSelection()
 {
   this->setRubberBandOn(BLOCKS);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginZoom()
 {
   this->setRubberBandOn(ZOOM);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginPick()
 {
   this->setRubberBandOn(PICK);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginPickOnClick()
 {
   this->setRubberBandOn(PICK_ON_CLICK);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::beginFastIntersect()
 {
   this->setRubberBandOn(FAST_INTERSECT);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::endSelection()
 {
   this->setRubberBandOff();
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long, void* vregion)
 
 {
@@ -520,7 +499,7 @@ void pqCMBRubberBandHelper::onSelectionChanged(vtkObject*, unsigned long, void* 
 
   this->clearHardwareSelectionBuffer();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBRubberBandHelper::triggerFastIntersect()
 {
   if (!this->Internal->RenderView)
@@ -552,12 +531,12 @@ void pqCMBRubberBandHelper::triggerFastIntersect()
   this->onSelectionChanged(NULL, 0, region);
   this->endSelection();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBRubberBandHelper::onZoom(vtkObject*, unsigned long, void*)
 {
   pqTimer::singleShot(0, this, SLOT(delayedSelectionChanged()));
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBRubberBandHelper::onPolygonSelection(vtkObject*, unsigned long, void* vpolygonpoints)
 {
   if (!this->Internal->RenderView)
@@ -592,7 +571,7 @@ void pqCMBRubberBandHelper::onPolygonSelection(vtkObject*, unsigned long, void* 
     this->endSelection();
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBRubberBandHelper::onPickOnClick(vtkObject*, unsigned long, void*)
 {
   if (!this->Internal->RenderView->getRenderViewProxy() ||
@@ -625,7 +604,6 @@ void pqCMBRubberBandHelper::onPickOnClick(vtkObject*, unsigned long, void*)
   }
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBRubberBandHelper::clearHardwareSelectionBuffer()
 {
   // Currently there is no direct way to do this in paraview, and resetting

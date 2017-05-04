@@ -20,7 +20,6 @@
 
 vtkStandardNewMacro(vtkCMBWriter);
 
-//----------------------------------------------------------------------------
 vtkCMBWriter::vtkCMBWriter()
 {
   this->SetNumberOfOutputPorts(0);
@@ -28,20 +27,17 @@ vtkCMBWriter::vtkCMBWriter()
   this->BinaryOutput = 1;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBWriter::~vtkCMBWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBWriter::Write()
 {
   this->Modified();
   this->Update();
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBWriter::RequestData(vtkInformation* /*request*/, vtkInformationVector** inputVector,
   vtkInformationVector* /*outputVector*/)
 {
@@ -79,7 +75,6 @@ int vtkCMBWriter::RequestData(vtkInformation* /*request*/, vtkInformationVector*
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -26,20 +26,17 @@
 
 vtkStandardNewMacro(vtkCMBPolyReader);
 
-//-----------------------------------------------------------------------------
 vtkCMBPolyReader::vtkCMBPolyReader()
 {
   this->FileName = NULL;
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBPolyReader::~vtkCMBPolyReader()
 {
   this->SetFileName(0);
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPolyReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -228,7 +225,6 @@ int vtkCMBPolyReader::Read3DFile(
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPolyReader::Read2DFile(
   ifstream& fin, int numPts, int numberOfAttributes, int hasBoundaryMarkers, vtkPolyData* output)
 {
@@ -328,7 +324,6 @@ int vtkCMBPolyReader::Read2DFile(
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPolyReader::GetNextLineOfData(ifstream& fin, std::stringstream& lineStream)
 {
   // clear the string for the line
@@ -357,7 +352,6 @@ int vtkCMBPolyReader::GetNextLineOfData(ifstream& fin, std::stringstream& lineSt
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPolyReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -365,7 +359,6 @@ void vtkCMBPolyReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPolyReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

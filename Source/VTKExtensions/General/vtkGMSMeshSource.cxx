@@ -26,31 +26,28 @@
 
 vtkStandardNewMacro(vtkGMSMeshSource);
 
-//-----------------------------------------------------------------------------
 vtkGMSMeshSource::vtkGMSMeshSource()
 {
   this->Source = vtkUnstructuredGrid::New();
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkGMSMeshSource::~vtkGMSMeshSource()
 {
   this->Source->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkGMSMeshSource::CopyData(vtkUnstructuredGrid* source)
 {
   this->Source->ShallowCopy(source);
   this->Modified();
 }
-//-----------------------------------------------------------------------------
+
 bool vtkGMSMeshSource::MovePoints(vtkPolyData* movedPoly)
 {
   return MoveTransformPoints(movedPoly, NULL);
 }
-//-----------------------------------------------------------------------------
+
 bool vtkGMSMeshSource::MoveTransformPoints(vtkPolyData* movedPoly, vtkAbstractTransform* transform)
 {
   if (!(this->Source && movedPoly))
@@ -92,7 +89,7 @@ bool vtkGMSMeshSource::MoveTransformPoints(vtkPolyData* movedPoly, vtkAbstractTr
   }
   return false;
 }
-//-----------------------------------------------------------------------------
+
 bool vtkGMSMeshSource::MoveSurfacePoints(
   vtkIdTypeArray* meshCellArray, vtkIdList* meshIdList, vtkPoints* transformedPts)
 {
@@ -151,7 +148,7 @@ bool vtkGMSMeshSource::MoveSurfacePoints(
   }
   return movable;
 }
-//-----------------------------------------------------------------------------
+
 bool vtkGMSMeshSource::MoveVolumePoints(
   vtkIdTypeArray* meshCellArray, vtkIdList* meshIdList, vtkPoints* transformedPts)
 {
@@ -201,7 +198,7 @@ bool vtkGMSMeshSource::MoveVolumePoints(
   }
   return movable;
 }
-//-----------------------------------------------------------------------------
+
 bool vtkGMSMeshSource::MoveMeshPoints(vtkIdList* meshIdList, vtkPoints* transformedPts)
 {
   vtkIdType numIds = meshIdList->GetNumberOfIds();
@@ -216,7 +213,7 @@ bool vtkGMSMeshSource::MoveMeshPoints(vtkIdList* meshIdList, vtkPoints* transfor
   }
   return true;
 }
-//-----------------------------------------------------------------------------
+
 int vtkGMSMeshSource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -235,7 +232,6 @@ int vtkGMSMeshSource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkGMSMeshSource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

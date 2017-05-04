@@ -21,7 +21,6 @@
 #include <QDoubleValidator>
 #include <QLineEdit>
 
-//-----------------------------------------------------------------------------
 int qtCMBStackedTINDialog::processTIN(pqCMBSceneNode* node)
 {
   if (node->isTypeNode())
@@ -33,7 +32,6 @@ int qtCMBStackedTINDialog::processTIN(pqCMBSceneNode* node)
   return importer.exec();
 }
 
-//-----------------------------------------------------------------------------
 qtCMBStackedTINDialog::qtCMBStackedTINDialog(pqCMBSceneNode* n)
   : Status(-1)
   , Node(n)
@@ -62,7 +60,6 @@ qtCMBStackedTINDialog::qtCMBStackedTINDialog(pqCMBSceneNode* n)
   this->StackDialog->TotalThickness->setValue(1.0);
 }
 
-//-----------------------------------------------------------------------------
 qtCMBStackedTINDialog::~qtCMBStackedTINDialog()
 {
   if (this->StackDialog)
@@ -74,7 +71,7 @@ qtCMBStackedTINDialog::~qtCMBStackedTINDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBStackedTINDialog::setTotalThickness(double thickness)
 {
   // Distribute this equally amoung the copies
@@ -92,7 +89,7 @@ void qtCMBStackedTINDialog::setTotalThickness(double thickness)
     entry->blockSignals(false);
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBStackedTINDialog::setNumberOfLayers(int n)
 {
   double delta = this->StackDialog->TotalThickness->value() / static_cast<double>(n);
@@ -116,7 +113,7 @@ void qtCMBStackedTINDialog::setNumberOfLayers(int n)
     this->StackDialog->LayerInformation->setCellWidget(i, 0, entry);
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBStackedTINDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -124,7 +121,7 @@ int qtCMBStackedTINDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBStackedTINDialog::accept()
 {
   this->Status = 1;
@@ -145,7 +142,7 @@ void qtCMBStackedTINDialog::accept()
     newNode->select();
   }
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBStackedTINDialog::offsetChanged()
 {
   int n = this->StackDialog->LayerInformation->rowCount();
@@ -164,10 +161,8 @@ void qtCMBStackedTINDialog::offsetChanged()
   this->StackDialog->TotalThickness->setValue(totalDisplacement);
   this->StackDialog->TotalThickness->blockSignals(false);
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBStackedTINDialog::cancel()
 {
   this->Status = 0;
 }
-
-//-----------------------------------------------------------------------------

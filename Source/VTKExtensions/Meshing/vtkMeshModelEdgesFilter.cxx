@@ -22,7 +22,6 @@
 
 vtkStandardNewMacro(vtkMeshModelEdgesFilter);
 
-//----------------------------------------------------------------------------
 vtkMeshModelEdgesFilter::vtkMeshModelEdgesFilter()
 {
   this->TargetSegmentLengthCellArrayName = 0;
@@ -33,7 +32,6 @@ vtkMeshModelEdgesFilter::vtkMeshModelEdgesFilter()
   this->MeshPtIdsFromEnd = vtkIdList::New();
 }
 
-//----------------------------------------------------------------------------
 vtkMeshModelEdgesFilter::~vtkMeshModelEdgesFilter()
 {
   this->SetTargetSegmentLengthCellArrayName(0);
@@ -42,7 +40,6 @@ vtkMeshModelEdgesFilter::~vtkMeshModelEdgesFilter()
   this->MeshPtIdsFromEnd->Delete();
 }
 
-//----------------------------------------------------------------------------
 int vtkMeshModelEdgesFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -118,7 +115,6 @@ int vtkMeshModelEdgesFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkMeshModelEdgesFilter::EstimateNumberOfOutputPoints(
   vtkPolyData* input, vtkDoubleArray* targetSegmentLengthArray)
 {
@@ -142,7 +138,6 @@ vtkIdType vtkMeshModelEdgesFilter::EstimateNumberOfOutputPoints(
   return numberOfPointsEstimate;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMeshModelEdgesFilter::MeshPolyLine(vtkIdType npts, vtkIdType* pts, vtkPoints* inputPoints,
   double startTargetSegmentLength, double endTargetSegmentLength, vtkPoints* outputPoints,
   vtkIdList* outputPtIds)
@@ -353,7 +348,6 @@ void vtkMeshModelEdgesFilter::MeshPolyLine(vtkIdType npts, vtkIdType* pts, vtkPo
   }
 }
 
-//-----------------------------------------------------------------------------
 double vtkMeshModelEdgesFilter::ComputeSegmentLength(
   double s1, double s2, double l, double L, double factor)
 {
@@ -361,7 +355,6 @@ double vtkMeshModelEdgesFilter::ComputeSegmentLength(
   return s1 + (s2 - s1) * (l + factor * initialLength) / L;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkMeshModelEdgesFilter::FindRequiredPointOnEdge(double currentPt[3],
   double segmentLength, vtkPoints* inputPoints, vtkPoints* outputPoints, vtkIdType* pts,
   vtkIdType firstIndex, vtkIdType afterLastIndex, vtkIdType searchDirection, vtkIdType finalPtId,
@@ -425,7 +418,6 @@ vtkIdType vtkMeshModelEdgesFilter::FindRequiredPointOnEdge(double currentPt[3],
     (segmentLength - distToStartPoint) / (distToEndPoint - distToStartPoint));
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkMeshModelEdgesFilter::ComputeRequiredPointAlongLine(
   vtkPoints* points, double* pt0, double* pt1, double t)
 {
@@ -437,7 +429,6 @@ vtkIdType vtkMeshModelEdgesFilter::ComputeRequiredPointAlongLine(
   return points->InsertNextPoint(newPt);
 }
 
-//-----------------------------------------------------------------------------
 double vtkMeshModelEdgesFilter::ComputeEdgeLength(
   vtkPoints* inputPoints, vtkIdType npts, vtkIdType* pts)
 {
@@ -452,7 +443,6 @@ double vtkMeshModelEdgesFilter::ComputeEdgeLength(
   return edgeLength;
 }
 
-//----------------------------------------------------------------------------
 void vtkMeshModelEdgesFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

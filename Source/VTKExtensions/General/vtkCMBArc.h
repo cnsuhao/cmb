@@ -295,7 +295,6 @@ private:
   static vtkIdType NextId;
 };
 
-//----------------------------------------------------------------------------
 inline bool vtkCMBArc::InvalidEndNodeIndex(const int& index) const
 {
   return (index < 0 || index > 1);

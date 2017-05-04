@@ -87,14 +87,12 @@ enum MBRootBlockIndex
 };
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiBlockWrapper::vtkMultiBlockWrapper()
 {
   this->mb = 0;
   this->needToRemoveDeletedCells = false;
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiBlockWrapper::~vtkMultiBlockWrapper()
 {
   if (this->mb != 0)
@@ -104,109 +102,91 @@ vtkMultiBlockWrapper::~vtkMultiBlockWrapper()
   this->mb = 0;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceTagName()
 {
   return ModelFaceIdsString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetShellTagName()
 {
   return ShellTagString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetMaterialTagName()
 {
   return MaterialTagString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetReverseClassificationTagName()
 {
   return RCNameString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetSplitFacesTagName()
 {
   return SplitFacesString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceDataName()
 {
   return ModelFaceDataString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceConvenientArrayName()
 {
   return ModelFaceConvenientArrayName;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetMaterialUserNamesString()
 {
   return MaterialUserNamesString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetShellUserNamesString()
 {
   return ShellUserNamesString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetShellTranslationPointString()
 {
   return ShellTranslationPointString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceUserNamesString()
 {
   return ModelFaceUserNamesString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetBCSUserNamesString()
 {
   return BCSUserNamesString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetShellColorsString()
 {
   return ShellColorsString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceColorsString()
 {
   return ModelFaceColorsString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetMaterialColorsString()
 {
   return MaterialColorsString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetBCSColorsString()
 {
   return BCSColorsString;
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceUse1String()
 {
   return "ModelFaceUse1";
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceId(vtkPolyData* poly)
 {
   vtkFieldData* field = poly->GetFieldData();
@@ -218,7 +198,6 @@ int vtkMultiBlockWrapper::GetModelFaceId(vtkPolyData* poly)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetModelFaceUse1(int modelFaceId, int shellId)
 {
   vtkPolyData* modelFace = this->GetModelFaceWithId(modelFaceId);
@@ -256,7 +235,6 @@ void vtkMultiBlockWrapper::SetModelFaceUse1(int modelFaceId, int shellId)
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceUse1(int modelFaceId)
 {
   vtkPolyData* master = this->GetMasterPolyData();
@@ -273,7 +251,6 @@ int vtkMultiBlockWrapper::GetModelFaceUse1(int modelFaceId)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetMultiBlock(vtkMultiBlockDataSet* mb_in)
 {
   if (mb_in != this->mb)
@@ -291,13 +268,11 @@ void vtkMultiBlockWrapper::SetMultiBlock(vtkMultiBlockDataSet* mb_in)
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiBlockDataSet* vtkMultiBlockWrapper::GetMultiBlock()
 {
   return this->mb;
 }
 
-//-----------------------------------------------------------------------------
 vtkPolyData* vtkMultiBlockWrapper::GetMasterPolyData()
 {
   if (!this->mb)
@@ -308,7 +283,6 @@ vtkPolyData* vtkMultiBlockWrapper::GetMasterPolyData()
   return vtkPolyData::SafeDownCast(this->mb->GetBlock(MasterPolyRootIndex));
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetNumberOfModelFaces()
 {
   if (this->GetModelFaceRootBlock())
@@ -320,7 +294,6 @@ int vtkMultiBlockWrapper::GetNumberOfModelFaces()
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiBlockDataSet* vtkMultiBlockWrapper::GetModelFaceRootBlock()
 {
   vtkMultiBlockDataSet* mfData = NULL;
@@ -331,7 +304,6 @@ vtkMultiBlockDataSet* vtkMultiBlockWrapper::GetModelFaceRootBlock()
   return mfData;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetNumberOfNodalGroups()
 {
   if (this->mb && this->GetNodalGroupRootBlock())
@@ -343,7 +315,6 @@ int vtkMultiBlockWrapper::GetNumberOfNodalGroups()
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkMultiBlockDataSet* vtkMultiBlockWrapper::GetNodalGroupRootBlock()
 {
   vtkMultiBlockDataSet* ngData = NULL;
@@ -354,7 +325,6 @@ vtkMultiBlockDataSet* vtkMultiBlockWrapper::GetNodalGroupRootBlock()
   return ngData;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetModelFaceIds(vtkIdList* ids)
 {
   ids->Reset();
@@ -376,7 +346,6 @@ void vtkMultiBlockWrapper::GetModelFaceIds(vtkIdList* ids)
   return;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetBCSIds(vtkIdList* ids)
 {
   ids->Reset();
@@ -404,7 +373,6 @@ void vtkMultiBlockWrapper::GetBCSIds(vtkIdList* ids)
   return;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetMaterialIds(vtkIdList* ids)
 {
   ids->Reset();
@@ -428,7 +396,6 @@ void vtkMultiBlockWrapper::GetMaterialIds(vtkIdList* ids)
   return;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetShellIds(vtkIdList* ids)
 {
   ids->Reset();
@@ -452,7 +419,6 @@ void vtkMultiBlockWrapper::GetShellIds(vtkIdList* ids)
   return;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetShellMaterial(int shellId)
 {
   if (!this->mb)
@@ -472,7 +438,6 @@ int vtkMultiBlockWrapper::GetShellMaterial(int shellId)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 double* vtkMultiBlockWrapper::GetShellTranslationPoint(vtkIdType ShellId)
 {
   vtkPolyData* master = this->GetMasterPolyData();
@@ -486,7 +451,6 @@ double* vtkMultiBlockWrapper::GetShellTranslationPoint(vtkIdType ShellId)
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetShellTranslationPoint(vtkIdType ShellId, double* translationPoint)
 {
   vtkPolyData* master = this->GetMasterPolyData();
@@ -511,7 +475,6 @@ void vtkMultiBlockWrapper::SetShellTranslationPoint(vtkIdType ShellId, double* t
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkIntArray* vtkMultiBlockWrapper::GetBCSModelFaceIdArray(const char* BCSName)
 {
   if (!this->mb)
@@ -523,7 +486,6 @@ vtkIntArray* vtkMultiBlockWrapper::GetBCSModelFaceIdArray(const char* BCSName)
   return vtkIntArray::SafeDownCast(field->GetArray(BCSName));
 }
 
-//-----------------------------------------------------------------------------
 vtkIntArray* vtkMultiBlockWrapper::GetBCSModelFaceIdArray(int BCSId)
 {
   if (!this->mb)
@@ -534,7 +496,6 @@ vtkIntArray* vtkMultiBlockWrapper::GetBCSModelFaceIdArray(int BCSId)
   return this->GetBCSModelFaceIdArray(this->GetBCSNameFromId(BCSId));
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 {
   if (!this->mb)
@@ -595,7 +556,6 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
   //     }
 }
 
-// //-----------------------------------------------------------------------------
 // int vtkMultiBlockWrapper::Load(const char* FileName)
 // {
 //   vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
@@ -817,7 +777,6 @@ void vtkMultiBlockWrapper::ProcessForWriting(vtkPolyData* poly)
 //   return 0;
 // }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetNumberOfShells()
 {
   if (!this->mb)
@@ -829,7 +788,6 @@ int vtkMultiBlockWrapper::GetNumberOfShells()
   return field->GetAbstractArray(ShellUserNamesString)->GetNumberOfTuples();
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetSplitModelFaces(int modelFaceId, vtkIntArray* newfaces)
 {
   if (!this->mb)
@@ -850,7 +808,6 @@ void vtkMultiBlockWrapper::SetSplitModelFaces(int modelFaceId, vtkIntArray* newf
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::CreateModelFace(int shellId, int materialId, float* rgba,
   vtkIdList* cellIds, vtkIdList* BCSIds, int modelFaceUse1)
 {
@@ -906,7 +863,6 @@ int vtkMultiBlockWrapper::CreateModelFace(int shellId, int materialId, float* rg
   return newModelFaceId;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::CreateModelFace(vtkIdList* cellIds)
 {
   if (cellIds->GetNumberOfIds() == 0)
@@ -1011,7 +967,6 @@ int vtkMultiBlockWrapper::CreateModelFace(vtkIdList* cellIds)
   return newModelFaceId;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::MergeModelFaces(vtkIdType targetFaceId, vtkIdList* faceIds)
 {
   if (!this->mb)
@@ -1093,7 +1048,6 @@ int vtkMultiBlockWrapper::MergeModelFaces(vtkIdType targetFaceId, vtkIdList* fac
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::CreateModelFaces(vtkIntArray* markedCells, vtkIntArray* modelFaceIds)
 {
   modelFaceIds->Reset();
@@ -1139,7 +1093,6 @@ void vtkMultiBlockWrapper::CreateModelFaces(vtkIntArray* markedCells, vtkIntArra
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::CreateModelFace(float* rgba, vtkIdList* cellIds, int modelFaceUse1Id,
   vtkIntArray* modelFaceData, int isLoadingFile)
 {
@@ -1322,7 +1275,6 @@ int vtkMultiBlockWrapper::CreateModelFace(float* rgba, vtkIdList* cellIds, int m
   return modelFaceId;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveDeletedCellsFromModelFaces()
 {
   if (this->needToRemoveDeletedCells)
@@ -1336,7 +1288,6 @@ void vtkMultiBlockWrapper::RemoveDeletedCellsFromModelFaces()
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkPolyData* vtkMultiBlockWrapper::GetModelFaceWithId(int modelFaceId)
 {
   if (this->mb)
@@ -1348,7 +1299,6 @@ vtkPolyData* vtkMultiBlockWrapper::GetModelFaceWithId(int modelFaceId)
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 vtkPolyData* vtkMultiBlockWrapper::GetModelFaceWithIndex(int mfIndex)
 {
   if (this->GetModelFaceRootBlock() && mfIndex >= 0 &&
@@ -1360,7 +1310,6 @@ vtkPolyData* vtkMultiBlockWrapper::GetModelFaceWithIndex(int mfIndex)
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::DeleteModelFace(int modelFaceId)
 {
   if (!this->mb)
@@ -1384,7 +1333,6 @@ void vtkMultiBlockWrapper::DeleteModelFace(int modelFaceId)
   this->GetModelFaceRootBlock()->RemoveBlock(this->GetModelFaceBlockIndex(modelFaceId));
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkMultiBlockWrapper::GetCellIdOnMasterPolyData(vtkIdType cellId, int modelFaceId)
 {
   vtkPolyData* poly = GetModelFaceWithId(modelFaceId);
@@ -1399,7 +1347,6 @@ vtkIdType vtkMultiBlockWrapper::GetCellIdOnMasterPolyData(vtkIdType cellId, int 
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetMaterialUserData(
   int materialId, int& materialUserId, const char*& materialUserName)
 {
@@ -1412,7 +1359,6 @@ void vtkMultiBlockWrapper::GetMaterialUserData(
   materialUserId = userIds->GetValue(materialId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetBCSUserData(int BCSId, int& BCSUserId, const char*& BCSUserName)
 {
   vtkPolyData* poly = this->GetMasterPolyData();
@@ -1424,7 +1370,6 @@ void vtkMultiBlockWrapper::GetBCSUserData(int BCSId, int& BCSUserId, const char*
   BCSUserId = userIds->GetValue(BCSId);
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetModelFaceUserName(int modelFaceId)
 {
   vtkPolyData* poly = this->GetMasterPolyData();
@@ -1433,7 +1378,6 @@ const char* vtkMultiBlockWrapper::GetModelFaceUserName(int modelFaceId)
   return userNames->GetValue(modelFaceId);
 }
 
-//-----------------------------------------------------------------------------
 const char* vtkMultiBlockWrapper::GetShellUserName(int shellId)
 {
   vtkPolyData* poly = this->GetMasterPolyData();
@@ -1442,7 +1386,6 @@ const char* vtkMultiBlockWrapper::GetShellUserName(int shellId)
   return userNames->GetValue(shellId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetModelFaceBCSIds(int modelFaceId, vtkIdList* list)
 {
   list->Reset();
@@ -1459,7 +1402,6 @@ void vtkMultiBlockWrapper::GetModelFaceBCSIds(int modelFaceId, vtkIdList* list)
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceMaterialId(int modelFaceId)
 {
   if (!this->mb)
@@ -1483,7 +1425,6 @@ int vtkMultiBlockWrapper::GetModelFaceMaterialId(int modelFaceId)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceShellId(int modelFaceId)
 {
   if (!this->mb)
@@ -1507,7 +1448,6 @@ int vtkMultiBlockWrapper::GetModelFaceShellId(int modelFaceId)
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 unsigned int vtkMultiBlockWrapper::GetModelFaceBlockIndex(int modelFaceId)
 {
   if (!this->GetModelFaceRootBlock())
@@ -1532,7 +1472,6 @@ unsigned int vtkMultiBlockWrapper::GetModelFaceBlockIndex(int modelFaceId)
   vtkErrorMacro("Trying to access a non-existent model face.") return -1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeMaterialIdOfShell(int shellId, int newMaterialId)
 {
   if (!this->mb)
@@ -1610,7 +1549,6 @@ void vtkMultiBlockWrapper::ChangeMaterialIdOfShell(int shellId, int newMaterialI
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfMaterial(int materialId, const char* userName)
 {
   if (!this->mb)
@@ -1624,7 +1562,6 @@ void vtkMultiBlockWrapper::ChangeUserNameOfMaterial(int materialId, const char* 
   matNames->SetValue(materialId, userName);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserIdOfMaterial(int materialId, int materialUserId)
 {
   if (!this->mb)
@@ -1638,7 +1575,6 @@ void vtkMultiBlockWrapper::ChangeUserIdOfMaterial(int materialId, int materialUs
   matIds->SetValue(materialId, materialUserId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfMaterial(int materialId, float* RGBA)
 {
   if (!this->mb)
@@ -1652,7 +1588,6 @@ void vtkMultiBlockWrapper::ChangeUserColorOfMaterial(int materialId, float* RGBA
   matColors->SetTuple(materialId, RGBA);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfShell(int shellId, const char* userName)
 {
   if (!this->mb)
@@ -1666,7 +1601,6 @@ void vtkMultiBlockWrapper::ChangeUserNameOfShell(int shellId, const char* userNa
   shellNames->SetValue(shellId, userName);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserIdOfShell(int /*shellId*/, int /*shellUserId*/)
 {
   throw 1;
@@ -1682,7 +1616,6 @@ void vtkMultiBlockWrapper::ChangeUserIdOfShell(int /*shellId*/, int /*shellUserI
   shellIds->SetValue(shellId, shellUserId);*/
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfShell(int shellId, float* RGBA)
 {
   if (!this->mb)
@@ -1696,7 +1629,6 @@ void vtkMultiBlockWrapper::ChangeUserColorOfShell(int shellId, float* RGBA)
   shellColors->SetTuple(shellId, RGBA);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfBCS(int BCSId, const char* userName)
 {
   if (!this->mb)
@@ -1710,7 +1642,6 @@ void vtkMultiBlockWrapper::ChangeUserNameOfBCS(int BCSId, const char* userName)
   BCSNames->SetValue(BCSId, userName);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserIdOfBCS(int BCSId, int BCSUserId)
 {
   if (!this->mb)
@@ -1724,7 +1655,6 @@ void vtkMultiBlockWrapper::ChangeUserIdOfBCS(int BCSId, int BCSUserId)
   BCSIds->SetValue(BCSId, BCSUserId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfBCS(int BCSId, float* RGBA)
 {
   if (!this->mb)
@@ -1738,7 +1668,6 @@ void vtkMultiBlockWrapper::ChangeUserColorOfBCS(int BCSId, float* RGBA)
   BCSColors->SetTuple(BCSId, RGBA);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfModelFace(int modelFaceId, float* RGBA)
 {
   if (!this->mb)
@@ -1752,7 +1681,6 @@ void vtkMultiBlockWrapper::ChangeUserColorOfModelFace(int modelFaceId, float* RG
   modelFaceColors->SetTuple(modelFaceId, RGBA);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfModelFace(int modelFaceId, const char* userName)
 {
   if (!this->mb)
@@ -1766,7 +1694,6 @@ void vtkMultiBlockWrapper::ChangeUserNameOfModelFace(int modelFaceId, const char
   ModelFaceNames->SetValue(modelFaceId, userName);
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetNextId(const char* colorsArrayName)
 {
   vtkFloatArray* array = vtkFloatArray::SafeDownCast(
@@ -1785,7 +1712,6 @@ int vtkMultiBlockWrapper::GetNextId(const char* colorsArrayName)
   return array->GetNumberOfTuples(); // no "holes" so append
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::MarkObjectAsRemoved(const char* colorsArrayName, int id)
 {
   this->MarkObjectAsRemoved(vtkFloatArray::SafeDownCast(
@@ -1793,7 +1719,6 @@ void vtkMultiBlockWrapper::MarkObjectAsRemoved(const char* colorsArrayName, int 
     id);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::MarkObjectAsRemoved(vtkFloatArray* colors, int id)
 {
   // mark the alpha value as -2 to indicate that this is a "hole" and
@@ -1802,7 +1727,6 @@ void vtkMultiBlockWrapper::MarkObjectAsRemoved(vtkFloatArray* colors, int id)
   colors->SetTuple(id, vals);
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetNumberOfBCSs()
 {
   if (!this->mb)
@@ -1830,7 +1754,6 @@ int vtkMultiBlockWrapper::GetNumberOfBCSs()
   return num;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::GetBCSIdList(vtkIdList* IdList)
 {
   IdList->Reset();
@@ -1850,7 +1773,6 @@ void vtkMultiBlockWrapper::GetBCSIdList(vtkIdList* IdList)
   }
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::AddBCS(
   int BCSUserId, const char* BCSUserName, float* colors, vtkIdList* modelFaceIds)
 {
@@ -1934,7 +1856,6 @@ int vtkMultiBlockWrapper::AddBCS(
   return BCSId;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::DeleteBCS(const char* name)
 {
   if (!mb)
@@ -1985,7 +1906,6 @@ void vtkMultiBlockWrapper::DeleteBCS(const char* name)
   this->MarkObjectAsRemoved(BCSColors, BCSId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::DeleteBCS(int id)
 {
   if (!this->mb)
@@ -1997,7 +1917,6 @@ void vtkMultiBlockWrapper::DeleteBCS(int id)
   this->DeleteBCS(name);
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::AddMaterial(
   int MaterialUserId, const char* MaterialUserName, float* colors)
 {
@@ -2053,7 +1972,6 @@ int vtkMultiBlockWrapper::AddMaterial(
   return MaterialId;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::DeleteMaterial(int id)
 {
   if (!this->mb)
@@ -2068,7 +1986,6 @@ void vtkMultiBlockWrapper::DeleteMaterial(int id)
   this->MarkObjectAsRemoved(rgba, id);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, const char* BCSName)
 {
   if (!this->mb)
@@ -2080,7 +1997,6 @@ void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, const char* BCSNam
   this->AddBCSToModelFace(modelFaceId, id, BCSName);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, int BCSId)
 {
   if (!mb)
@@ -2092,7 +2008,6 @@ void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, int BCSId)
   this->AddBCSToModelFace(modelFaceId, BCSId, name);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, int BCSId, const char* BCSName)
 {
   vtkIntArray* BCSModelFaces =
@@ -2142,7 +2057,6 @@ void vtkMultiBlockWrapper::AddBCSToModelFace(int modelFaceId, int BCSId, const c
   modelFaceBCSs->InsertNextValue(BCSId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, const char* BCSName)
 {
   if (!mb)
@@ -2154,7 +2068,6 @@ void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, const char* B
   this->RemoveBCSFromModelFace(modelFaceId, BCSId, BCSName);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, int BCSId)
 {
   if (!mb)
@@ -2166,7 +2079,6 @@ void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, int BCSId)
   this->RemoveBCSFromModelFace(modelFaceId, BCSId, name);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, int BCSId, const char* BCSName)
 {
   vtkIntArray* BCSModelFaces =
@@ -2202,7 +2114,6 @@ void vtkMultiBlockWrapper::RemoveBCSFromModelFace(int modelFaceId, int BCSId, co
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveModelFaceFromBCSs(int modelFaceId)
 {
   if (!mb)
@@ -2219,7 +2130,6 @@ void vtkMultiBlockWrapper::RemoveModelFaceFromBCSs(int modelFaceId)
   bcsIds->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveModelFaceDataInfo(int modelFaceId)
 {
   if (!mb)
@@ -2255,7 +2165,6 @@ void vtkMultiBlockWrapper::RemoveModelFaceDataInfo(int modelFaceId)
   this->MarkObjectAsRemoved(rgba, modelFaceId);
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::AddShell(
   const char* ShellUserName, float* RGBA, int materialId, double* translationPoint)
 {
@@ -2338,7 +2247,6 @@ int vtkMultiBlockWrapper::AddShell(
   return ShellId;
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceId(int cellId)
 {
   vtkCellData* cellData = this->GetMasterPolyData()->GetCellData();
@@ -2346,7 +2254,6 @@ int vtkMultiBlockWrapper::GetModelFaceId(int cellId)
   return array->GetValue(cellId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetModelFaceId(int cellId, int modelFaceId)
 {
   vtkCellData* cellData = this->GetMasterPolyData()->GetCellData();
@@ -2355,7 +2262,6 @@ void vtkMultiBlockWrapper::SetModelFaceId(int cellId, int modelFaceId)
   array->SetValue(cellId, modelFaceId);
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetModelFaceCellId(int cellId)
 {
   vtkCellData* cellData = this->GetMasterPolyData()->GetCellData();
@@ -2363,7 +2269,6 @@ int vtkMultiBlockWrapper::GetModelFaceCellId(int cellId)
   return array->GetValue(cellId);
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::SetModelFaceCellId(int cellId, int modelFaceCellId)
 {
   vtkCellData* cellData = this->GetMasterPolyData()->GetCellData();
@@ -2372,7 +2277,6 @@ void vtkMultiBlockWrapper::SetModelFaceCellId(int cellId, int modelFaceCellId)
   array->SetValue(cellId, modelFaceCellId);
 }
 
-//-----------------------------------------------------------------------------
 vtkAbstractArray* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   vtkAbstractArray* array, vtkFieldData* owner)
 {
@@ -2394,7 +2298,6 @@ vtkAbstractArray* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   return array;
 }
 
-//-----------------------------------------------------------------------------
 vtkDataObject* vtkMultiBlockWrapper::PerformNeededShallowCopy(
   vtkDataObject* data, unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet)
 {
@@ -2418,7 +2321,6 @@ vtkDataObject* vtkMultiBlockWrapper::PerformNeededShallowCopy(
   return data;
 }
 
-//-----------------------------------------------------------------------------
 vtkDataObject* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   vtkDataObject* data, unsigned int blockIndex, vtkMultiBlockDataSet* mbDataSet)
 {
@@ -2471,7 +2373,6 @@ vtkDataObject* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   return data;
 }
 
-//-----------------------------------------------------------------------------
 /*vtkFieldData* vtkMultiBlockWrapper::PerformNeededDeepCopy(vtkFieldData* field,
                                                              vtkDataObject* data)
 {
@@ -2488,7 +2389,6 @@ vtkDataObject* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   return field;
 }*/
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::GetBCSIdFromName(const char* name)
 {
   int id;
@@ -2496,7 +2396,6 @@ int vtkMultiBlockWrapper::GetBCSIdFromName(const char* name)
   return id;
 }
 
-//-----------------------------------------------------------------------------
 // This is a roundabout way to return the string name but this way we don't
 // have to worry about allocation/deallocation of the string.
 const char* vtkMultiBlockWrapper::GetBCSNameFromId(int id)
@@ -2512,7 +2411,6 @@ const char* vtkMultiBlockWrapper::GetBCSNameFromId(int id)
   return array->GetName();
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::CreateBCSNameFromId(int BCSId, char** name)
 {
   *name = new char[20];
@@ -2521,7 +2419,7 @@ void vtkMultiBlockWrapper::CreateBCSNameFromId(int BCSId, char** name)
 }
 
 /*
-//-----------------------------------------------------------------------------
+
 void vtkMultiBlockWrapper::SetFaceVisibility(
   int face, int visible)
 {
@@ -2541,7 +2439,7 @@ void vtkMultiBlockWrapper::SetFaceVisibility(
     vtkMultiBlockWrapper::BlockVisibilityMetaKey(), visible);
 }
 
-//-----------------------------------------------------------------------------
+
 int vtkMultiBlockWrapper::GetFaceVisibility(int face)
 {
   if(!this->mb)
@@ -2568,7 +2466,6 @@ int vtkMultiBlockWrapper::GetFaceVisibility(int face)
 }
 */
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::CreateNodalGroup(
   vtkIntArray* ptIds, vtkIntArray* /*modelFaceIds*/, float* rgba, int isLoadingFile)
 {
@@ -2703,74 +2600,60 @@ int vtkMultiBlockWrapper::CreateNodalGroup(
   return ngId;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::CreateNodalGroups(vtkIntArray* /*markedPoints*/, vtkIntArray* /*NGIds*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::DeleteNodalGroup(int /*ngId*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveDeletedCellsFromNodalGroups()
 {
 }
 
-//-----------------------------------------------------------------------------
 int vtkMultiBlockWrapper::AddNodalBCS(
   int /*BCSUserId*/, const char* /*BCSUserName*/, float* /*colors*/, vtkIdList* /*ngIds*/)
 {
   return -1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::AddBCSToNodalGroup(int /*NodalGroupId*/, const char* /*BCSName*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::AddBCSToNodalGroup(int /*NodalGroupId*/, int /*BCSId*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveBCSFromNodalGroup(int /*NodalGroupId*/, const char* /*BCSName*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::RemoveBCSFromNodalGroup(int /*NodalGroupId*/, int /*BCSSsytemId*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfNodalBCS(int /*BCSId*/, const char* /*userName*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserIdOfNodalBCS(int /*BCSId*/, int /*BCSUserId*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfNodalBCS(int /*BCSId*/, float* /*userRGBA*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserColorOfNodalGroup(int /*ngId*/, float* /*userRGBA*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::ChangeUserNameOfNodalGroup(int /*ngId*/, const char* /*userName*/)
 {
 }
 
-//-----------------------------------------------------------------------------
 void vtkMultiBlockWrapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

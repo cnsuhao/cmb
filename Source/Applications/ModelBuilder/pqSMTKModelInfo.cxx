@@ -70,7 +70,6 @@ bool pqSMTKModelInfo::hasAnalysisMesh() const
 */
 }
 
-//----------------------------------------------------------------------------
 void pqSMTKModelInfo::init(pqPipelineSource* modelsource, pqPipelineSource* repsource,
   pqDataRepresentation* rep, const std::string& filename, smtk::model::ManagerPtr mgr)
 {

@@ -19,7 +19,6 @@
 #include <pqServerResource.h>
 #include <pqStandardRecentlyUsedResourceLoaderImplementation.h>
 
-//-----------------------------------------------------------------------------
 pqCMBRecentlyUsedResourceLoaderImplementatation::pqCMBRecentlyUsedResourceLoaderImplementatation(
   pqCMBCommonMainWindowCore* parentObject)
   : Superclass(pqApplicationCore::instance()->interfaceTracker())
@@ -28,13 +27,11 @@ pqCMBRecentlyUsedResourceLoaderImplementatation::pqCMBRecentlyUsedResourceLoader
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBRecentlyUsedResourceLoaderImplementatation::~pqCMBRecentlyUsedResourceLoaderImplementatation()
 {
   delete this->Impl;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::canLoad(const pqServerResource& resource)
 {
   if (resource.hasData("CMB_MODEL_FILE"))
@@ -44,7 +41,6 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::canLoad(const pqServerReso
   return this->Impl->canLoad(resource);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::load(
   const pqServerResource& resource, pqServer* server)
 {
@@ -56,7 +52,6 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::load(
   return this->Impl->load(resource, server);
 }
 
-//-----------------------------------------------------------------------------
 QIcon pqCMBRecentlyUsedResourceLoaderImplementatation::icon(const pqServerResource& resource)
 {
   if (resource.hasData("CMB_MODEL_FILE"))
@@ -68,7 +63,6 @@ QIcon pqCMBRecentlyUsedResourceLoaderImplementatation::icon(const pqServerResour
   return this->Impl->icon(resource);
 }
 
-//-----------------------------------------------------------------------------
 QString pqCMBRecentlyUsedResourceLoaderImplementatation::label(const pqServerResource& resource)
 {
   if (resource.hasData("CMB_MODEL_FILE"))
@@ -78,7 +72,6 @@ QString pqCMBRecentlyUsedResourceLoaderImplementatation::label(const pqServerRes
   return this->Impl->label(resource);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFilesToRecentResources(
   pqServer* server, const QStringList& files, const QString& smgroup, const QString& smname)
 {
@@ -86,7 +79,6 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFilesToRecentResour
     server, files, smgroup, smname);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFileToRecentResources(
   pqServer* server, const QString& file, const QString& smgroup, const QString& smname)
 {
@@ -96,7 +88,6 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::addDataFileToRecentResourc
     server, files, smgroup, smname);
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::addModelFileToRecentResources(
   pqServer* server, const QString& filename)
 {
@@ -113,7 +104,6 @@ bool pqCMBRecentlyUsedResourceLoaderImplementatation::addModelFileToRecentResour
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBRecentlyUsedResourceLoaderImplementatation::loadModel(
   const pqServerResource& resource, pqServer* server)
 {

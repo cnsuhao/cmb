@@ -16,47 +16,39 @@
 
 vtkStandardNewMacro(vtkCMBProgramManager);
 
-//-----------------------------------------------------------------------------
 vtkCMBProgramManager::vtkCMBProgramManager()
 {
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBProgramManager::~vtkCMBProgramManager()
 {
 }
 
-//-----------------------------------------------------------------------------
 vtkStdString const& vtkCMBProgramManager::GetDirectoryPath() const
 {
   return this->DirectoryPath;
 }
 
-//-----------------------------------------------------------------------------
 vtkStdString const& vtkCMBProgramManager::GetProgramName() const
 {
   return this->ProgramName;
 }
 
-//-----------------------------------------------------------------------------
 vtkStdString const& vtkCMBProgramManager::GetProgramVersion() const
 {
   return this->ProgramVersion;
 }
 
-//-----------------------------------------------------------------------------
 int const& vtkCMBProgramManager::GetVersionMajor() const
 {
   return this->VersionMajor;
 }
 
-//-----------------------------------------------------------------------------
 int const& vtkCMBProgramManager::GetVersionMinor() const
 {
   return this->VersionMinor;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProgramManager::SetDirectoryPath(const vtkStdString& path)
 {
   this->DirectoryPath = path;
@@ -65,14 +57,12 @@ void vtkCMBProgramManager::SetDirectoryPath(const vtkStdString& path)
   vtksys::SystemTools::MakeDirectory(path.c_str());
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProgramManager::SetProgram(vtkCMBProjectManager::PROGRAM program)
 {
   this->Program = program;
   this->ProgramName = vtkCMBProjectManager::GetProgramName(program);
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProgramManager::SetProgramVersion(const int& major, const int& minor)
 {
   this->VersionMajor = major;
@@ -85,7 +75,6 @@ void vtkCMBProgramManager::SetProgramVersion(const int& major, const int& minor)
   this->ProgramVersion = buff.str();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBProgramManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

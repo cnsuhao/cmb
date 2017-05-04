@@ -11,7 +11,6 @@
 
 #include <vnl/vnl_vector_fixed.h>
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 rtvl_weight_original<N>::rtvl_weight_original(double gs, double cc)
   : derived(gs)
@@ -20,7 +19,6 @@ rtvl_weight_original<N>::rtvl_weight_original(double gs, double cc)
   this->set_scale_impl(gs);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_original<N>::set_scale_impl(double gs)
 {
@@ -30,7 +28,6 @@ void rtvl_weight_original<N>::set_scale_impl(double gs)
   c = cconst * geodesic_scale2 * geodesic_scale2;
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_original<N>::set_scale(double gs)
 {
@@ -38,14 +35,12 @@ void rtvl_weight_original<N>::set_scale(double gs)
   this->set_scale_impl(gs);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_weight_original<N>::compute_flat(rtvl_terms<N> const& terms)
 {
   return vcl_exp(-terms.vlen_squared / geodesic_scale2);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_original<N>::compute_flat_d(
   rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwflat)
@@ -53,7 +48,6 @@ void rtvl_weight_original<N>::compute_flat_d(
   dwflat = terms.v * (-2 * terms.wflat / geodesic_scale2);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 double rtvl_weight_original<N>::compute_curved(rtvl_terms<N> const& terms)
 {
@@ -71,7 +65,6 @@ double rtvl_weight_original<N>::compute_curved(rtvl_terms<N> const& terms)
   return vcl_exp(-sk2 / geodesic_scale2);
 }
 
-//----------------------------------------------------------------------------
 template <unsigned int N>
 void rtvl_weight_original<N>::compute_curved_d(
   rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwcurve)
@@ -90,7 +83,6 @@ void rtvl_weight_original<N>::compute_curved_d(
   }
 }
 
-//----------------------------------------------------------------------------
 #define RTVL_WEIGHT_ORIGINAL_INSTANTIATE(N) template class rtvl_weight_original<N>
 
 #endif

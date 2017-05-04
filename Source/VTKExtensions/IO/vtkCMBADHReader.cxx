@@ -112,7 +112,7 @@ vtkCMBADHReader::vtkCMBADHReader()
   this->PrimaryDataSet = 0;
   this->CacheSize = 100;
 }
-//-----------------------------------------------------------------------------
+
 vtkCMBADHReader::~vtkCMBADHReader()
 {
   this->SetFileName(0);
@@ -128,17 +128,17 @@ vtkCMBADHReader::~vtkCMBADHReader()
   }
   this->DataSets.clear();
 }
-//-----------------------------------------------------------------------------
+
 int vtkCMBADHReader::GetNumberOfTimeSteps()
 {
   return DataSets[PrimaryDataSet]->NumberOfTimeSteps;
 }
-//-----------------------------------------------------------------------------
+
 double* vtkCMBADHReader::GetTimeStepRange()
 {
   return DataSets[PrimaryDataSet]->TimeStepRange;
 }
-//-----------------------------------------------------------------------------
+
 //Do an initial read of the file scanning the header
 
 /*
@@ -248,7 +248,7 @@ int vtkCMBADHReader::ScanFile()
   file.close();
   return operation_succeded;
 }
-//-----------------------------------------------------------------------------
+
 //This is a reader for the SMS ADH file for help on the format of the file go to
 //http://www.ems-i.com/smshelp/SMS-Help.htm#File_Formats/SMS_Project_Files.htm
 int vtkCMBADHReader::ReadTemporalData()
@@ -373,7 +373,6 @@ int vtkCMBADHReader::ReadTemporalData()
   return 0;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBADHReader::RequestData(vtkInformation* /*request*/, vtkInformationVector** inputVector,
   vtkInformationVector* outputVector)
 {
@@ -490,7 +489,6 @@ int vtkCMBADHReader::RequestData(vtkInformation* /*request*/, vtkInformationVect
   return 1;
 }
 
-//----------------------------------------------------------------------------
 //This is here because of a bug in vtkPointSetAlgorithm
 //It can be removed whenever the ExecuteInformation function in
 //vtkPointSetAlgorithm is changed to RequestInformation
@@ -499,7 +497,7 @@ int vtkCMBADHReader::ExecuteInformation(
 {
   return this->RequestInformation(request, inputVector, outputVector);
 }
-//----------------------------------------------------------------------------
+
 int vtkCMBADHReader::RequestInformation(vtkInformation* /*request*/,
   vtkInformationVector** /*inputVector*/, vtkInformationVector* outputVector)
 {

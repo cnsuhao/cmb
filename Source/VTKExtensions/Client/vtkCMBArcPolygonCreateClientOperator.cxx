@@ -20,19 +20,16 @@
 
 vtkStandardNewMacro(vtkCMBArcPolygonCreateClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBArcPolygonCreateClientOperator::vtkCMBArcPolygonCreateClientOperator()
 {
   this->ArcIds = NULL;
 }
 
-//---------------------------------------------------------------------------
 void vtkCMBArcPolygonCreateClientOperator::AddArc(vtkIdType arcId)
 {
   this->InputArcIds.push_back(arcId);
 }
 
-//---------------------------------------------------------------------------
 vtkCMBArcPolygonCreateClientOperator::~vtkCMBArcPolygonCreateClientOperator()
 {
   if (this->ArcIds)
@@ -41,7 +38,6 @@ vtkCMBArcPolygonCreateClientOperator::~vtkCMBArcPolygonCreateClientOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcPolygonCreateClientOperator::Create(
   double minAngle, double edgeLength, vtkSMProxy* providerProxy)
 {
@@ -88,7 +84,6 @@ bool vtkCMBArcPolygonCreateClientOperator::Create(
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcPolygonCreateClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

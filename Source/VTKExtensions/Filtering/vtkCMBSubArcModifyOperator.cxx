@@ -23,25 +23,21 @@
 
 vtkStandardNewMacro(vtkCMBSubArcModifyOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBSubArcModifyOperator::vtkCMBSubArcModifyOperator()
 {
   this->Reset();
 }
 
-//----------------------------------------------------------------------------
 vtkCMBSubArcModifyOperator::~vtkCMBSubArcModifyOperator()
 {
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSubArcModifyOperator::Reset()
 {
   this->ArcId = -1;
   this->OperationType = OpNONE;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyOperator::Operate(vtkIdType startPointId, vtkIdType endPointId)
 {
   if (this->OperationType == OpNONE || this->ArcId < 0)
@@ -100,7 +96,6 @@ bool vtkCMBSubArcModifyOperator::Operate(vtkIdType startPointId, vtkIdType endPo
   return result;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyOperator::StraightenSubArc(
   vtkIdType startPointId, vtkIdType endPointId, vtkCMBArc* updatedArc)
 {
@@ -114,7 +109,7 @@ bool vtkCMBSubArcModifyOperator::StraightenSubArc(
 
   return result;
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBSubArcModifyOperator::CollapseSubArc(
   vtkIdType startPointId, vtkIdType endPointId, vtkCMBArc* updatedArc)
 {
@@ -168,7 +163,6 @@ bool vtkCMBSubArcModifyOperator::CollapseSubArc(
   return result;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSubArcModifyOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

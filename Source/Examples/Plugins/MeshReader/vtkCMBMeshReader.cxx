@@ -22,7 +22,6 @@
 
 vtkStandardNewMacro(vtkCMBMeshReader);
 
-//----------------------------------------------------------------------------
 vtkCMBMeshReader::vtkCMBMeshReader()
 {
   this->FileName = NULL;
@@ -35,7 +34,6 @@ vtkCMBMeshReader::vtkCMBMeshReader()
   this->SetNumberOfInputPorts(0);
 }
 
-//----------------------------------------------------------------------------
 vtkCMBMeshReader::~vtkCMBMeshReader()
 {
   if (this->FileName)
@@ -44,7 +42,6 @@ vtkCMBMeshReader::~vtkCMBMeshReader()
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -69,7 +66,6 @@ int vtkCMBMeshReader::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -83,7 +79,6 @@ void vtkCMBMeshReader::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Number Of Cell Fields: " << this->NumberOfCellFields << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadFile(vtkUnstructuredGrid* output)
 {
   this->ReadGeometry(output);
@@ -105,19 +100,16 @@ void vtkCMBMeshReader::ReadFile(vtkUnstructuredGrid* output)
   this->FileStream = NULL;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadNodeData(vtkUnstructuredGrid* vtkNotUsed(output))
 {
   vtkWarningMacro("Not implemented due to lack of examples");
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadCellData(vtkUnstructuredGrid* vtkNotUsed(output))
 {
   vtkWarningMacro("Not implemented due to lack of examples");
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
@@ -182,7 +174,6 @@ int vtkCMBMeshReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadGeometry(vtkUnstructuredGrid* output)
 {
   vtkDoubleArray* coords = vtkDoubleArray::New();
@@ -208,7 +199,6 @@ void vtkCMBMeshReader::ReadGeometry(vtkUnstructuredGrid* output)
   points->Delete();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadBoundaryConditionSets(vtkUnstructuredGrid* output)
 {
   int bcs, f, itype, nentry, nvalues;
@@ -288,7 +278,6 @@ void vtkCMBMeshReader::ReadBoundaryConditionSets(vtkUnstructuredGrid* output)
   bcscalar->Delete();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadMaterialTypes(vtkUnstructuredGrid* output)
 {
   int grp, f, flag, id, nbelts, elt, mat, nbflags;
@@ -342,7 +331,6 @@ void vtkCMBMeshReader::ReadMaterialTypes(vtkUnstructuredGrid* output)
   materials->Delete();
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadCellConnectivity(vtkUnstructuredGrid* output)
 {
   int i, k;
@@ -449,7 +437,6 @@ void vtkCMBMeshReader::ReadCellConnectivity(vtkUnstructuredGrid* output)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBMeshReader::ReadXYZCoords(vtkDoubleArray* coords)
 {
   int i;

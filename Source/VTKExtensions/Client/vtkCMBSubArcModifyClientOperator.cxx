@@ -60,7 +60,6 @@ public:
 
 vtkStandardNewMacro(vtkCMBSubArcModifyClientOperator);
 
-//---------------------------------------------------------------------------
 vtkCMBSubArcModifyClientOperator::vtkCMBSubArcModifyClientOperator()
 {
   this->CreatedArcs = NULL;
@@ -69,7 +68,6 @@ vtkCMBSubArcModifyClientOperator::vtkCMBSubArcModifyClientOperator()
   this->EndPointId = -1;
 }
 
-//---------------------------------------------------------------------------
 vtkCMBSubArcModifyClientOperator::~vtkCMBSubArcModifyClientOperator()
 {
   if (this->CreatedArcs)
@@ -83,7 +81,6 @@ vtkCMBSubArcModifyClientOperator::~vtkCMBSubArcModifyClientOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::Operate(vtkIdType arcId,
   vtkSMNewWidgetRepresentationProxy* widgetProxy, vtkSMSourceProxy* arcSource, int OperationType)
 {
@@ -107,7 +104,6 @@ bool vtkCMBSubArcModifyClientOperator::Operate(vtkIdType arcId,
   return result;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::UpdateArc(
   vtkIdType arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy, vtkSMSourceProxy* arcSource)
 {
@@ -150,7 +146,6 @@ bool vtkCMBSubArcModifyClientOperator::UpdateArc(
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::FindArcsInWidgetOutput(
   vtkSMTKArcRepresentation* widgetRep, vtkSMSourceProxy* arcSource)
 {
@@ -202,7 +197,6 @@ bool vtkCMBSubArcModifyClientOperator::FindArcsInWidgetOutput(
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::UpdateOperation(const vtkIdType& arcId,
   vtkSMNewWidgetRepresentationProxy* widgetProxy, vtkSMTKArcRepresentation* widgetRep)
 {
@@ -256,7 +250,6 @@ bool vtkCMBSubArcModifyClientOperator::UpdateOperation(const vtkIdType& arcId,
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::SplitOperation(const vtkIdType& arcId)
 {
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
@@ -297,7 +290,6 @@ bool vtkCMBSubArcModifyClientOperator::SplitOperation(const vtkIdType& arcId)
   return splitValid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::ModifyOperation(const vtkIdType& arcId, const int& opType)
 {
   //Send the info from the widget down to the update operator
@@ -317,7 +309,6 @@ bool vtkCMBSubArcModifyClientOperator::ModifyOperation(const vtkIdType& arcId, c
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBSubArcModifyClientOperator::MakeArc(vtkIdType arcId, vtkSMSourceProxy* arcSource)
 {
   vtkNew<vtkPVArcInfo> arcInfo;
@@ -374,7 +365,6 @@ bool vtkCMBSubArcModifyClientOperator::MakeArc(vtkIdType arcId, vtkSMSourceProxy
   return this->SplitOperation(arcId);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBSubArcModifyClientOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

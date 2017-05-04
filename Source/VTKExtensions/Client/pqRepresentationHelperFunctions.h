@@ -59,7 +59,6 @@ inline void GetRepresentationTransform(vtkSMProxy* contourRepProxy, vtkTransform
   t->Translate(-origin[0], -origin[1], -origin[2]);
 }
 
-//-----------------------------------------------------------------------------
 inline void GetRepresentationTransformedBounds(
   vtkTransform* t, pqDataRepresentation* rep, vtkBoundingBox* inBB)
 {
@@ -86,7 +85,6 @@ inline void GetRepresentationTransformedBounds(
   *inBB = bb;
 }
 
-//-----------------------------------------------------------------------------
 inline void GetRepresentationTransformedBounds(pqDataRepresentation* rep, double bounds[6])
 {
   vtkBoundingBox bb;
@@ -95,7 +93,6 @@ inline void GetRepresentationTransformedBounds(pqDataRepresentation* rep, double
   bb.GetBounds(bounds);
 }
 
-//-----------------------------------------------------------------------------
 inline pqPipelineSource* ReadTextureImage(pqObjectBuilder* builder, pqServer* server,
   const char* filename, const char* xmlgroup = "sources",
   const char* xmlname = "CMBNetworkImageSource")

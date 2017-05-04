@@ -16,27 +16,23 @@
 
 vtkStandardNewMacro(vtkHydroModelPolySource);
 
-//-----------------------------------------------------------------------------
 vtkHydroModelPolySource::vtkHydroModelPolySource()
 {
   this->Source = vtkPolyData::New();
   this->SetNumberOfInputPorts(0);
 }
 
-//-----------------------------------------------------------------------------
 vtkHydroModelPolySource::~vtkHydroModelPolySource()
 {
   this->Source->Delete();
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelPolySource::CopyData(vtkPolyData* source)
 {
   this->Source->ShallowCopy(source);
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 int vtkHydroModelPolySource::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -49,7 +45,6 @@ int vtkHydroModelPolySource::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 void vtkHydroModelPolySource::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

@@ -43,16 +43,13 @@ class qtSceneBuilderOptions::pqInternal : public Ui::qtSceneBuilderOptions
 public:
 };
 
-//-----------------------------------------------------------------------------
 qtSceneBuilderOptions* qtSceneBuilderOptions::Instance = 0;
 
-//-----------------------------------------------------------------------------
 qtSceneBuilderOptions* qtSceneBuilderOptions::instance()
 {
   return qtSceneBuilderOptions::Instance;
 }
 
-//----------------------------------------------------------------------------
 qtSceneBuilderOptions::qtSceneBuilderOptions(QWidget* widgetParent)
   : qtCMBOptionsContainer(widgetParent)
 {
@@ -71,13 +68,11 @@ qtSceneBuilderOptions::qtSceneBuilderOptions(QWidget* widgetParent)
     SIGNAL(chosenColorChanged(const QColor&)), this, SIGNAL(changesAvailable()));
 }
 
-//-----------------------------------------------------------------------------
 qtSceneBuilderOptions::~qtSceneBuilderOptions()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void qtSceneBuilderOptions::setPage(const QString& page)
 {
   int count = this->Internal->stackedWidget->count();
@@ -91,7 +86,6 @@ void qtSceneBuilderOptions::setPage(const QString& page)
   }
 }
 
-//-----------------------------------------------------------------------------
 QStringList qtSceneBuilderOptions::getPageList()
 {
   QStringList pages;
@@ -104,7 +98,6 @@ QStringList qtSceneBuilderOptions::getPageList()
   return pages;
 }
 
-//-----------------------------------------------------------------------------
 void qtSceneBuilderOptions::applyChanges()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -112,13 +105,12 @@ void qtSceneBuilderOptions::applyChanges()
     "SceneBuilder/InitialSceneObjectColor", this->Internal->InitialSceneObjectColor->chosenColor());
 }
 
-//-----------------------------------------------------------------------------
 void qtSceneBuilderOptions::resetChanges()
 {
   QColor objcolor = this->initialNewObjectColor();
   this->Internal->InitialSceneObjectColor->setChosenColor(objcolor);
 }
-//-----------------------------------------------------------------------------
+
 QColor qtSceneBuilderOptions::initialNewObjectColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();

@@ -48,7 +48,6 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
-//-----------------------------------------------------------------------------
 pqCMBTexturedObject::pqCMBTexturedObject()
   : pqCMBSceneObjectBase()
 {
@@ -56,7 +55,7 @@ pqCMBTexturedObject::pqCMBTexturedObject()
   this->BathymetrySource = NULL;
   this->ShowElevation = false;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBTexturedObject::pqCMBTexturedObject(
   pqPipelineSource* source, pqRenderView* view, pqServer* server)
   : pqCMBSceneObjectBase(source)
@@ -67,7 +66,6 @@ pqCMBTexturedObject::pqCMBTexturedObject(
   this->ShowElevation = false;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBTexturedObject::~pqCMBTexturedObject()
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -107,13 +105,12 @@ pqCMBTexturedObject::~pqCMBTexturedObject()
     this->BathymetrySource = 0;
   }
 }
-//-----------------------------------------------------------------------------
+
 pqPipelineSource* pqCMBTexturedObject::getSelectionSource() const
 {
   return this->ElevationFilter;
 }
 
-//-----------------------------------------------------------------------------
 vtkSMSourceProxy* pqCMBTexturedObject::getSelectionInput() const
 {
   vtkSMSourceProxy* proxy;
@@ -121,7 +118,6 @@ vtkSMSourceProxy* pqCMBTexturedObject::getSelectionInput() const
   return proxy->GetSelectionInput(0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBTexturedObject::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
   vtkSMSourceProxy* proxy;
@@ -129,14 +125,13 @@ void pqCMBTexturedObject::setSelectionInput(vtkSMSourceProxy* selectionInput)
   proxy->SetSelectionInput(0, selectionInput, 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBTexturedObject::getDataBounds(double bounds[6]) const
 {
   vtkSMSourceProxy::SafeDownCast(this->BathymetryFilter->getProxy())
     ->GetDataInformation()
     ->GetBounds(bounds);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::duplicateInternals(pqCMBSceneObjectBase* o)
 {
   pqCMBSceneObjectBase::duplicateInternals(o);
@@ -149,7 +144,6 @@ void pqCMBTexturedObject::duplicateInternals(pqCMBSceneObjectBase* o)
   nobj->showElevation(this->ShowElevation);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBTexturedObject::prepTexturedObject(pqServer* /*server*/, pqRenderView* view)
 {
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -208,7 +202,7 @@ void pqCMBTexturedObject::prepTexturedObject(pqServer* /*server*/, pqRenderView*
     }
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::showElevation(bool flag)
 {
   if (this->ShowElevation == flag)
@@ -241,7 +235,7 @@ void pqCMBTexturedObject::showElevation(bool flag)
   // force pipeline update
   vtkSMSourceProxy::SafeDownCast(this->ElevationFilter->getProxy())->UpdatePipeline();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::getRegistrationPointPair(int i, double xy[2], double st[2]) const
 {
   int j = 4 * i;
@@ -250,7 +244,7 @@ void pqCMBTexturedObject::getRegistrationPointPair(int i, double xy[2], double s
   st[0] = this->RegistrationPoints[j++];
   st[1] = this->RegistrationPoints[j++];
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::unsetTextureMap()
 {
   this->NumberOfRegistrationPoints = 0;
@@ -270,7 +264,7 @@ void pqCMBTexturedObject::unsetTextureMap()
   this->RegisterTextureFilter->getProxy()->UpdateVTKObjects();
   this->getRepresentation()->getProxy()->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::setTextureMap(
   const char* filename, int numberOfRegistrationPoints, double* points)
 {
@@ -334,13 +328,11 @@ void pqCMBTexturedObject::setTextureMap(
   }
 }
 
-//-----------------------------------------------------------------------------
 pqServer* pqCMBTexturedObject::getTextureRegistrationServer(void)
 {
   return this->RegisterTextureFilter->getServer();
 }
 
-//-----------------------------------------------------------------------------
 double pqCMBTexturedObject::getTextureIntensityAtPoint(double pt[3])
 {
   if (!this->TexturePointIntensityFilter)
@@ -375,13 +367,12 @@ double pqCMBTexturedObject::getTextureIntensityAtPoint(double pt[3])
   fproxy->UpdatePropertyInformation();
   return vtkSMPropertyHelper(fproxy, "Intensity").GetAsDouble();
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBTexturedObject::getBathymetrySource()
 {
   return this->BathymetrySource;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBTexturedObject::unApplyBathymetry()
 {
   if (this->BathymetrySource)
@@ -396,7 +387,7 @@ void pqCMBTexturedObject::unApplyBathymetry()
   this->BathymetryFilter->getProxy()->UpdateVTKObjects();
   this->getRepresentation()->getProxy()->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBTexturedObject::applyBathymetry(pqCMBSceneObjectBase* bathymetrySource,
   double elevationRadious, bool useHighLimit, double eleHigh, bool useLowLimit, double eleLow)
 {

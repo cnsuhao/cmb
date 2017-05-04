@@ -14,7 +14,6 @@
 #include "pqFileDialog.h"
 #include <QPushButton>
 
-//-----------------------------------------------------------------------------
 qtCMBArcModifierInputDialog::qtCMBArcModifierInputDialog(
   pqCMBSceneTree* tree, QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
@@ -30,19 +29,16 @@ qtCMBArcModifierInputDialog::qtCMBArcModifierInputDialog(
     SIGNAL(sourceTypeChanged()));
 }
 
-//-----------------------------------------------------------------------------
 qtCMBArcModifierInputDialog::~qtCMBArcModifierInputDialog()
 {
   delete this->InternalWidget;
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcModifierInputDialog::insertSourceName(int i, const char* vname)
 {
   this->InternalWidget->SurfaceList->insertItem(i, vname);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcModifierInputDialog::removeAllSourceNames()
 {
   this->InternalWidget->SurfaceList->blockSignals(true);
@@ -50,7 +46,6 @@ void qtCMBArcModifierInputDialog::removeAllSourceNames()
   this->InternalWidget->SurfaceList->blockSignals(false);
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcModifierInputDialog::setSelectedSourceNames(QList<int>& currentIndices)
 {
   QListIterator<int> listIter(currentIndices);
@@ -63,7 +58,6 @@ void qtCMBArcModifierInputDialog::setSelectedSourceNames(QList<int>& currentIndi
   this->selectedSourceChanged();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcModifierInputDialog::getSelectedSourceNames(QStringList& selectedNames) const
 {
   selectedNames.clear();
@@ -75,13 +69,11 @@ void qtCMBArcModifierInputDialog::getSelectedSourceNames(QStringList& selectedNa
   }
 }
 
-//-----------------------------------------------------------------------------
 int qtCMBArcModifierInputDialog::getNumberOfSourceNames() const
 {
   return this->InternalWidget->SurfaceList->count();
 }
 
-//-----------------------------------------------------------------------------
 void qtCMBArcModifierInputDialog::selectedSourceChanged()
 {
   this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)

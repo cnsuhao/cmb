@@ -23,7 +23,7 @@
 #define SEPARATOR "  "
 
 vtkStandardNewMacro(vtkCMBPt123VelocityConversionWriter);
-//----------------------------------------------------------------------------
+
 vtkCMBPt123VelocityConversionWriter::vtkCMBPt123VelocityConversionWriter()
 {
   this->FileName = 0;
@@ -34,19 +34,16 @@ vtkCMBPt123VelocityConversionWriter::vtkCMBPt123VelocityConversionWriter()
   this->FloatPrecision = 6;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBPt123VelocityConversionWriter::~vtkCMBPt123VelocityConversionWriter()
 {
   this->SetFileName(0);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityConversionWriter::SetInputData(vtkDataObject* ug)
 {
   this->Superclass::SetInputData(ug);
 }
 
-//----------------------------------------------------------------------------
 ostream* vtkCMBPt123VelocityConversionWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
@@ -65,7 +62,6 @@ ostream* vtkCMBPt123VelocityConversionWriter::OpenFile()
   return fp;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityConversionWriter::CloseFile(ostream* fp)
 {
   if (fp)
@@ -75,7 +71,6 @@ void vtkCMBPt123VelocityConversionWriter::CloseFile(ostream* fp)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityConversionWriter::WriteData()
 {
   vtkDataObject* input = this->GetInput();
@@ -123,14 +118,12 @@ void vtkCMBPt123VelocityConversionWriter::WriteData()
   this->MyData = 0;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityConversionWriter::WriteHeader(ostream& fp)
 {
   fp << this->MyData->GetNumberOfTuples() << " 1       NNP, NTSTEP" << endl;
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityConversionWriter::WriteTimeStep(ostream& fp, double t)
 {
   vtkIdType i, n = this->MyData->GetNumberOfTuples();
@@ -148,21 +141,18 @@ bool vtkCMBPt123VelocityConversionWriter::WriteTimeStep(ostream& fp, double t)
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBPt123VelocityConversionWriter::WriteFooter(ostream& fp)
 {
   fp << "ENDR" << endl;
   return true;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPt123VelocityConversionWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBPt123VelocityConversionWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   os << indent << "FileName = " << this->FileName << endl;

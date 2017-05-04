@@ -21,14 +21,12 @@
 
 vtkStandardNewMacro(vtkPVContourGroupInformation);
 
-//----------------------------------------------------------------------------
 vtkPVContourGroupInformation::vtkPVContourGroupInformation()
 {
   this->ProjectionPositionArray = NULL;
   this->ProjectionPlaneArray = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkPVContourGroupInformation::~vtkPVContourGroupInformation()
 {
   if (this->ProjectionPositionArray)
@@ -41,7 +39,6 @@ vtkPVContourGroupInformation::~vtkPVContourGroupInformation()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourGroupInformation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -49,7 +46,6 @@ void vtkPVContourGroupInformation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "ProjectionPlaneArray: " << this->ProjectionPlaneArray << endl;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourGroupInformation::CopyFromObject(vtkObject* obj)
 {
   vtkDataSet* dataObject = vtkDataSet::SafeDownCast(obj);
@@ -100,7 +96,6 @@ void vtkPVContourGroupInformation::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourGroupInformation::AddInformation(vtkPVInformation* info)
 {
   vtkPVContourGroupInformation* ContourArrayInfo = vtkPVContourGroupInformation::SafeDownCast(info);

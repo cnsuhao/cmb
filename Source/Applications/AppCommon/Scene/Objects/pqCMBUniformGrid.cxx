@@ -47,13 +47,12 @@
 #include "pqRepresentationHelperFunctions.h"
 #include "vtkDataObject.h"
 
-//-----------------------------------------------------------------------------
 pqCMBUniformGrid::pqCMBUniformGrid()
   : pqCMBSceneObjectBase()
 {
   HasInvalidValue = false;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBUniformGrid::pqCMBUniformGrid(pqPipelineSource* source, pqRenderView* view, pqServer* server,
   const char* filename, bool updateRep)
   : pqCMBSceneObjectBase(source)
@@ -64,7 +63,6 @@ pqCMBUniformGrid::pqCMBUniformGrid(pqPipelineSource* source, pqRenderView* view,
   HasInvalidValue = false;
 }
 
-//-----------------------------------------------------------------------------
 pqCMBUniformGrid::pqCMBUniformGrid(
   const char* filename, pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -100,7 +98,6 @@ pqCMBUniformGrid::pqCMBUniformGrid(
   this->prepGridObject(server, view, updateRep, true);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBUniformGrid::prepGridObject(
   pqServer* server, pqRenderView* view, bool updateRep, bool transferColor)
 {
@@ -135,22 +132,20 @@ void pqCMBUniformGrid::prepGridObject(
     this->getRepresentation()->getProxy()->UpdateVTKObjects();
   }
 }
-//-----------------------------------------------------------------------------
+
 pqCMBUniformGrid::~pqCMBUniformGrid()
 {
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBUniformGrid::updatePolyDataStats()
 {
 }
 
-//-----------------------------------------------------------------------------
 pqCMBUniformGrid::enumObjectType pqCMBUniformGrid::getType() const
 {
   return pqCMBSceneObjectBase::UniformGrid;
 }
-//-----------------------------------------------------------------------------
+
 pqCMBSceneObjectBase* pqCMBUniformGrid::duplicate(
   pqServer* server, pqRenderView* view, bool updateRep)
 {
@@ -171,7 +166,6 @@ pqCMBSceneObjectBase* pqCMBUniformGrid::duplicate(
   return dup;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBUniformGrid::isRawDEM(const QString& filename)
 {
   QFileInfo finfo(filename);
@@ -183,27 +177,24 @@ bool pqCMBUniformGrid::isRawDEM(const QString& filename)
   return false;
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBUniformGrid::isRawDEM() const
 {
   return isRawDEM(QString(this->FileName.c_str()));
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBUniformGrid::getDimensions(vtkIdType dims[2])
 {
   this->ImageSource->getProxy()->InvokeCommand("GatherDimensions");
   this->ImageSource->getProxy()->UpdatePropertyInformation();
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "Dimensions").Get(dims, 2);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBUniformGrid::setReadGroupOfFiles(bool mode)
 {
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "ReadSetOfFiles").Set(mode);
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 bool pqCMBUniformGrid::getReadGroupOfFiles() const
 {
   int mode;
@@ -211,14 +202,12 @@ bool pqCMBUniformGrid::getReadGroupOfFiles() const
   return (mode != 0);
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBUniformGrid::setOnRatio(int r)
 {
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "OnRatio").Set(r);
   this->Source->getProxy()->UpdateVTKObjects();
 }
 
-//-----------------------------------------------------------------------------
 int pqCMBUniformGrid::getOnRatio() const
 {
   int r;
@@ -226,20 +215,19 @@ int pqCMBUniformGrid::getOnRatio() const
   return r;
 }
 
-//-----------------------------------------------------------------------------
 void pqCMBUniformGrid::setExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2])
 {
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "RowReadExtents").Set(rowExtents, 2);
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "ColumnReadExtents").Set(columnExtents, 2);
   this->Source->getProxy()->UpdateVTKObjects();
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBUniformGrid::getExtents(vtkIdType rowExtents[2], vtkIdType columnExtents[2]) const
 {
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "RowReadExtents").Get(rowExtents, 2);
   vtkSMPropertyHelper(this->ImageSource->getProxy(), "ColumnReadExtents").Get(columnExtents, 2);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBUniformGrid::getAreaStats(double* areaStats)
 {
   // Calculate the number of cells
@@ -254,17 +242,17 @@ void pqCMBUniformGrid::getAreaStats(double* areaStats)
     areaStats[0] = areaStats[1] = areaStats[2] = 0.0;
   }
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBUniformGrid::getGeometryBounds(double* geoBounds) const
 {
   this->getBounds(geoBounds);
 }
-//-----------------------------------------------------------------------------
+
 void pqCMBUniformGrid::getPolySideStats(double* polySide)
 {
   polySide[0] = polySide[1] = polySide[2] = 4;
 }
-//-----------------------------------------------------------------------------
+
 double pqCMBUniformGrid::getSurfaceArea()
 {
   double b[6];
@@ -272,24 +260,24 @@ double pqCMBUniformGrid::getSurfaceArea()
   double a = (b[1] - b[0]) * (b[3] - b[2]);
   return a;
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType pqCMBUniformGrid::getNumberOfPoints()
 {
   vtkPVDataInformation* imageInfo = this->Source->getOutputPort(0)->getDataInformation();
   return imageInfo->GetNumberOfPoints();
 }
-//-----------------------------------------------------------------------------
+
 vtkIdType pqCMBUniformGrid::getNumberOfPolygons()
 {
   vtkPVDataInformation* imageInfo = this->Source->getOutputPort(0)->getDataInformation();
   return imageInfo->GetNumberOfCells();
 }
-//-----------------------------------------------------------------------------
+
 bool pqCMBUniformGrid::hasInvalidValue()
 {
   return HasInvalidValue;
 }
-//-----------------------------------------------------------------------------
+
 double pqCMBUniformGrid::invalidValue()
 {
   double v;

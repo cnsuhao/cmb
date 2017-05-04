@@ -153,7 +153,6 @@ public:
   }
 };
 
-// ----------------------------------------------------------------------
 TerrainLevelBlock::~TerrainLevelBlock()
 {
   for (int i = 0; i < this->NumberOfSubBlocks; i++)
@@ -165,7 +164,6 @@ TerrainLevelBlock::~TerrainLevelBlock()
   }
 }
 
-// ----------------------------------------------------------------------
 class vtkTerrainExtractionInternal
 {
 public:
@@ -320,7 +318,6 @@ void vtkTerrainExtractionInternal::DeleteTemporaryFiles()
   this->TemporaryFiles.clear();
 }
 
-//----------------------------------------------------------------------------
 vtkTerrainExtractionFilter::vtkTerrainExtractionFilter()
 {
   this->Internal = new vtkTerrainExtractionInternal();
@@ -343,7 +340,6 @@ vtkTerrainExtractionFilter::vtkTerrainExtractionFilter()
   this->MaskSize = 1.0; //default pulled from rtvl_refine
 }
 
-//----------------------------------------------------------------------------
 vtkTerrainExtractionFilter::~vtkTerrainExtractionFilter()
 {
   this->SetOutputPath(0);
@@ -351,7 +347,6 @@ vtkTerrainExtractionFilter::~vtkTerrainExtractionFilter()
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::SetDataTransform(double elements[16])
 {
   memcpy(this->DataTransform, elements, sizeof(double) * 16);
@@ -360,7 +355,6 @@ void vtkTerrainExtractionFilter::SetDataTransform(double elements[16])
   this->Internal->InverseTransform->Inverse();
 }
 
-//-----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::SetDataTransform(vtkTransform* transform)
 {
   for (int i = 0; i < 4; i++)
@@ -375,13 +369,11 @@ void vtkTerrainExtractionFilter::SetDataTransform(vtkTransform* transform)
   this->Internal->InverseTransform->Inverse();
 }
 
-//-----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::GetDataTransform(vtkTransform* transform)
 {
   transform->DeepCopy(this->Internal->Transform);
 }
 
-//----------------------------------------------------------------------------
 //
 // Clip through data generating surface.
 //
@@ -608,7 +600,6 @@ int vtkTerrainExtractionFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::AppendOutputs()
 {
   double maxPoints = 1e7;
@@ -741,7 +732,6 @@ void vtkTerrainExtractionFilter::AppendOutputs()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::TokenRefineAnalyze(
   const char* baseFileName, vtkMultiBlockDataSet* /*output*/)
 {
@@ -798,7 +788,6 @@ void vtkTerrainExtractionFilter::TokenRefineAnalyze(
   this->NumberOfLevels = level;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::WritePoints(
   vcl_string fileName, int outputPtsFormat, vtkPolyData* outputPD)
 {
@@ -824,7 +813,6 @@ void vtkTerrainExtractionInternal::WritePoints(
   }
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkTerrainExtractionInternal::Visualize(vcl_string& outFileName, int outputPtsFormat,
   bool cacheToDisk, rtvl_tokens<3>& tokens, unsigned int /*level*/)
 {
@@ -868,7 +856,6 @@ vtkPolyData* vtkTerrainExtractionInternal::Visualize(vcl_string& outFileName, in
   return outPD;
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::TestRotatedBounds(
   vtkPolyData* data, double angle, double& bestArea)
 {
@@ -895,7 +882,6 @@ bool vtkTerrainExtractionInternal::TestRotatedBounds(
   return false;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::DetermineZRotation(vtkPolyData* data)
 {
   //data surface area
@@ -939,7 +925,6 @@ void vtkTerrainExtractionInternal::DetermineZRotation(vtkPolyData* data)
   this->InverseTransform->Inverse();
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::UpdateProgress(int currentLevel, double* bounds)
 {
   double currentProgress = this->Main->GetProgress();
@@ -953,7 +938,6 @@ bool vtkTerrainExtractionInternal::UpdateProgress(int currentLevel, double* boun
   return false;
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::TerrainExtractSubLevel(
   TerrainLevelBlock* prevLevelBlock, int extractLevel)
 {
@@ -1062,7 +1046,6 @@ bool vtkTerrainExtractionInternal::TerrainExtractSubLevel(
   return abort;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::BuildLevelBlockTree(
   TerrainLevelBlock* parentBlock, int currentLevel, bool split)
 {
@@ -1104,7 +1087,6 @@ void vtkTerrainExtractionInternal::BuildLevelBlockTree(
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::SetupBlockExtents(TerrainLevelBlock* childBlock)
 {
   // figure out what extents to use; for currentLevel = MinExtractLevel, want
@@ -1181,7 +1163,6 @@ void vtkTerrainExtractionInternal::SetupBlockExtents(TerrainLevelBlock* childBlo
   childBlock->Nj = maxIndex - childBlock->Offset[1] + 1;
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionFilter::TerrainExtract(
   const char* /*baseIntermediateFileName*/, vtkMultiBlockDataSet* /*output*/)
 {
@@ -1217,7 +1198,6 @@ bool vtkTerrainExtractionFilter::TerrainExtract(
   return this->Internal->TerrainExtractSubLevel(0, this->MaxExtractLevel);
 }
 
-//----------------------------------------------------------------------------
 int vtkTerrainExtractionFilter::DetermineStartingSplitLevel(unsigned int maxMemoryMB)
 {
   double size[2] = { this->InputBounds[1] - this->InputBounds[0],
@@ -1246,7 +1226,6 @@ int vtkTerrainExtractionFilter::DetermineStartingSplitLevel(unsigned int maxMemo
   return startingSplitLevel;
 }
 
-//----------------------------------------------------------------------------
 unsigned int vtkTerrainExtractionInternal::ComputeMemoryRequirement(
   int level, int minLevel, bool splitThisLevel, double size[2])
 {
@@ -1278,7 +1257,6 @@ unsigned int vtkTerrainExtractionInternal::ComputeMemoryRequirement(
   return persistentMemory;
 }
 
-//----------------------------------------------------------------------------
 vtkPolyData* vtkTerrainExtractionInternal::ExtractSave(TerrainLevelBlock* levelBlock,
   int extractLevel, bool levelSplit, vtkPoints* extractOutPoints, vtkDoubleArray* outScales)
 {
@@ -1363,7 +1341,6 @@ struct vtkThreadUserData
   rtvl_weight_smooth<3>* TVW;
 };
 
-//----------------------------------------------------------------------------
 VTK_THREAD_RETURN_TYPE vtkExtract2DExecute(void* arg)
 {
 
@@ -1489,7 +1466,6 @@ VTK_THREAD_RETURN_TYPE vtkExtract2DExecute(void* arg)
   return VTK_THREAD_RETURN_VALUE;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::Extract2D(TerrainLevelBlock* levelBlock,
   TerrainLevelBlock* prevLevelBlock, vtkPoints* outPoints, vtkDoubleArray* outScales,
   rtvl_weight_smooth<3>& tvw)
@@ -1610,7 +1586,6 @@ void vtkTerrainExtractionInternal::Extract2D(TerrainLevelBlock* levelBlock,
   delete[] userData.IntensityArray;
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::ExtractSegmentInit(
   TerrainLevelBlock* levelBlock, ThreadSpecificData& threadData, rgtl_octree_objects<2>& objects2D)
 {
@@ -1678,7 +1653,6 @@ bool vtkTerrainExtractionInternal::ExtractSegmentInit(
   return true;
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::ExtractSegmentVote(
   Location& loc, ThreadSpecificData& threadData, rtvl_weight_smooth<3>& tvw)
 {
@@ -1731,7 +1705,6 @@ bool vtkTerrainExtractionInternal::ExtractSegmentVote(
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::ExtractSegmentSearch(TerrainLevelBlock* levelBlock,
   ThreadSpecificData& threadData, vtkPoints* outPoints, vtkDoubleArray* outScales,
   rtvl_weight_smooth<3>& tvw)
@@ -1842,7 +1815,6 @@ void vtkTerrainExtractionInternal::ExtractSegmentSearch(TerrainLevelBlock* level
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::ExtractSegmentRefine(TerrainLevelBlock* levelBlock, Location a,
   Location c, ThreadSpecificData& threadData, vtkPoints* outPoints, vtkDoubleArray* outScales,
   rtvl_weight_smooth<3>& tvw)
@@ -1857,7 +1829,6 @@ bool vtkTerrainExtractionInternal::ExtractSegmentRefine(TerrainLevelBlock* level
   }
 }
 
-//----------------------------------------------------------------------------
 bool vtkTerrainExtractionInternal::ExtractSegmentLocalMax(TerrainLevelBlock* levelBlock, Location a,
   Location c, ThreadSpecificData& threadData, vtkPoints* outPoints, vtkDoubleArray* outScales,
   rtvl_weight_smooth<3>& tvw)
@@ -2016,7 +1987,6 @@ bool vtkTerrainExtractionInternal::ExtractSegmentLocalMax(TerrainLevelBlock* lev
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionInternal::ExtractNextLevel(TerrainLevelBlock* levelBlock,
   TerrainLevelBlock* prevLevelBlock, unsigned int startRow, unsigned int endRow)
 {
@@ -2072,7 +2042,6 @@ void vtkTerrainExtractionInternal::ExtractNextLevel(TerrainLevelBlock* levelBloc
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkTerrainExtractionFilter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1); // only needed for "setup refine" step
@@ -2080,7 +2049,6 @@ int vtkTerrainExtractionFilter::FillInputPortInformation(int, vtkInformation* in
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkTerrainExtractionFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

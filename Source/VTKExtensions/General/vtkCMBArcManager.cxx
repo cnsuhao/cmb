@@ -21,22 +21,18 @@
 #include <algorithm>
 #include <iterator>
 
-//----------------------------------------------------------------------------
-
 vtkCMBArcManager* vtkCMBArcManager::Instance = 0;
 vtkCMBArcManagerCleanup vtkCMBArcManager::Cleanup;
 
-//-----------------------------------------------------------------------------
 vtkCMBArcManagerCleanup::vtkCMBArcManagerCleanup()
 {
 }
-//-----------------------------------------------------------------------------
+
 vtkCMBArcManagerCleanup::~vtkCMBArcManagerCleanup()
 {
   vtkCMBArcManager::SetInstance(NULL);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcManager::vtkCMBArcManager(std::set<vtkCMBArc*> subset)
   : PointLocator(NULL)
   , LocatorBounds()
@@ -64,7 +60,6 @@ vtkCMBArcManager::vtkCMBArcManager(std::set<vtkCMBArc*> subset)
   this->BuildLocator();
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcManager::vtkCMBArcManager()
   : PointLocator(NULL)
   , LocatorBounds()
@@ -79,7 +74,6 @@ vtkCMBArcManager::vtkCMBArcManager()
 {
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcManager::~vtkCMBArcManager()
 {
   if (this->PointLocator)
@@ -124,7 +118,6 @@ vtkCMBArcManager::~vtkCMBArcManager()
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -134,7 +127,6 @@ void vtkCMBArcManager::PrintSelf(ostream& os, vtkIndent indent)
      << endl;
 }
 
-//-----------------------------------------------------------------------------
 // Up the reference count so it behaves like New
 vtkCMBArcManager* vtkCMBArcManager::New()
 {
@@ -143,7 +135,6 @@ vtkCMBArcManager* vtkCMBArcManager::New()
   return ret;
 }
 
-//-----------------------------------------------------------------------------
 // Return the single instance of the vtkCMBArcManager
 vtkCMBArcManager* vtkCMBArcManager::GetInstance()
 {
@@ -165,7 +156,6 @@ vtkCMBArcManager* vtkCMBArcManager::GetInstance()
   return vtkCMBArcManager::Instance;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::SetInstance(vtkCMBArcManager* instance)
 {
   if (vtkCMBArcManager::Instance == instance)
@@ -186,19 +176,16 @@ void vtkCMBArcManager::SetInstance(vtkCMBArcManager* instance)
   instance->Register(NULL);
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBArcManager::GetNumberOfArcs() const
 {
   return static_cast<int>(this->Arcs.size());
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBArcManager::GetNumberOfEndNodes() const
 {
   return static_cast<int>(this->EndNodesToArcs.size());
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArc* vtkCMBArcManager::GetArc(const vtkIdType& id)
 {
   vtkCMBArcMap::const_iterator it = this->Arcs.find(id);
@@ -209,7 +196,6 @@ vtkCMBArc* vtkCMBArcManager::GetArc(const vtkIdType& id)
   return it->second;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArc* vtkCMBArcManager::GetArcReadyForDeletion(const vtkIdType& id)
 {
   //this is slower since we don't index the arcs on id
@@ -224,7 +210,6 @@ vtkCMBArc* vtkCMBArcManager::GetArcReadyForDeletion(const vtkIdType& id)
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::SetSnapRadius(double radius)
 {
   if (radius >= 0)
@@ -234,13 +219,11 @@ void vtkCMBArcManager::SetSnapRadius(double radius)
   }
 }
 
-//-----------------------------------------------------------------------------
 bool vtkCMBArcManager::IsManagedEndNode(vtkCMBArcEndNode* endNode) const
 {
   return (this->EndNodesToArcs.find(endNode) != this->EndNodesToArcs.end());
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBArcManager::GetNumberOfArcs(vtkCMBArcEndNode* endNode) const
 {
   if (!this->IsManagedEndNode(endNode))
@@ -251,7 +234,6 @@ int vtkCMBArcManager::GetNumberOfArcs(vtkCMBArcEndNode* endNode) const
   return static_cast<int>(this->EndNodesToArcs.find(endNode)->second.size());
 }
 
-//-----------------------------------------------------------------------------
 std::set<vtkCMBArc*> vtkCMBArcManager::GetConnectedArcs(vtkCMBArcEndNode* endNode)
 {
   if (!this->IsManagedEndNode(endNode))
@@ -263,7 +245,6 @@ std::set<vtkCMBArc*> vtkCMBArcManager::GetConnectedArcs(vtkCMBArcEndNode* endNod
   return it->second;
 }
 
-//-----------------------------------------------------------------------------
 std::set<vtkCMBArc*> vtkCMBArcManager::GetConnectedArcs(vtkCMBArc* arc)
 {
   if (!arc)
@@ -296,7 +277,6 @@ std::set<vtkCMBArc*> vtkCMBArcManager::GetConnectedArcs(vtkCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::GetEndNodeAt(double position[3])
 {
   this->BuildLocator(); //make sure we have a locator
@@ -321,7 +301,6 @@ vtkCMBArcEndNode* vtkCMBArcManager::GetEndNodeAt(double position[3])
   return this->EndNodeFromPointId(pointId);
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::CreateEndNode(vtkCMBArc::Point const& point)
 {
   double position[3] = { point[0], point[1], point[2] };
@@ -337,7 +316,6 @@ vtkCMBArcEndNode* vtkCMBArcManager::CreateEndNode(vtkCMBArc::Point const& point)
   return new vtkCMBArcEndNode(position, point.GetId());
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::MergeEndNodes(
   vtkCMBArcEndNode* endNode1, vtkCMBArcEndNode* endNode2)
 {
@@ -376,7 +354,6 @@ vtkCMBArcEndNode* vtkCMBArcManager::MergeEndNodes(
   return NULL;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::MoveEndNode(
   vtkCMBArcEndNode* endNode, vtkCMBArc::Point const& point)
 {
@@ -422,7 +399,6 @@ vtkCMBArcEndNode* vtkCMBArcManager::MoveEndNode(
   }
 }
 
-//-----------------------------------------------------------------------------
 bool vtkCMBArcManager::RemoveEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc)
 {
   if (!this->IsManagedEndNode(en))
@@ -446,7 +422,6 @@ bool vtkCMBArcManager::RemoveEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc)
   return true;
 }
 
-//-----------------------------------------------------------------------------
 bool vtkCMBArcManager::AddEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc)
 {
   if (en == NULL || arc == NULL)
@@ -469,7 +444,6 @@ bool vtkCMBArcManager::AddEndNode(vtkCMBArcEndNode* en, vtkCMBArc* arc)
   return true;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::RegisterArc(vtkCMBArc* arc)
 {
   if (arc)
@@ -478,7 +452,6 @@ void vtkCMBArcManager::RegisterArc(vtkCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::UnRegisterArc(vtkCMBArc* arc)
 {
   if (arc)
@@ -496,7 +469,6 @@ void vtkCMBArcManager::UnRegisterArc(vtkCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::MarkedForDeletion(vtkCMBArc* arc)
 {
   if (arc)
@@ -506,7 +478,6 @@ void vtkCMBArcManager::MarkedForDeletion(vtkCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::UnMarkedForDeletion(vtkCMBArc* arc)
 {
   if (arc)
@@ -516,7 +487,6 @@ void vtkCMBArcManager::UnMarkedForDeletion(vtkCMBArc* arc)
   }
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBArcEndNode* vtkCMBArcManager::EndNodeFromPointId(const vtkIdType& pointId)
 {
   if (pointId < 0 || pointId > static_cast<vtkIdType>(this->EndNodesToArcs.size()))
@@ -526,7 +496,6 @@ vtkCMBArcEndNode* vtkCMBArcManager::EndNodeFromPointId(const vtkIdType& pointId)
   return this->PointIdsToEndNodes.find(pointId)->second;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::AddEndNodeToLocator(vtkCMBArcEndNode* en)
 {
 
@@ -543,7 +512,6 @@ void vtkCMBArcManager::AddEndNodeToLocator(vtkCMBArcEndNode* en)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::BuildLocator()
 {
   if (!this->LocatorNeedsRebuilding)
@@ -608,7 +576,6 @@ void vtkCMBArcManager::BuildLocator()
   this->LocatorNeedsRebuilding = false;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBArcManager::LocatorModified()
 {
   this->LocatorNeedsRebuilding = true;

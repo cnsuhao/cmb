@@ -44,7 +44,7 @@
 //BTX
 namespace pqSMTKUIHelper
 {
-//----------------------------------------------------------------------------
+
 inline void process_smtkFileItemRequest(
   smtk::extension::qtFileItem* fileItem, pqServer* server, QWidget* parent_Widget = NULL)
 {
@@ -98,7 +98,6 @@ inline void process_smtkFileItemRequest(
   }
 }
 
-//----------------------------------------------------------------------------
 inline void process_smtkModelEntityItemSelectionRequest(
   smtk::extension::qtModelEntityItem* entityItem, smtk::extension::qtModelView* modelView)
 {
@@ -123,7 +122,8 @@ inline void process_smtkModelEntityItemSelectionRequest(
   if (selentityrefs.size() > 0)
     entityItem->associateEntities(selentityrefs);
 }
-/// Fetch children for volum and group entities.
+
+/// Fetch children for volume and group entities.
 inline bool containsGroup(const smtk::common::UUID& grpId, const smtk::model::EntityRef& toplevel)
 {
   if (toplevel.isGroup())

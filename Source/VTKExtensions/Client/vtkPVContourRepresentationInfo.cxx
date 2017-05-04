@@ -26,7 +26,6 @@
 
 vtkStandardNewMacro(vtkPVContourRepresentationInfo);
 
-//----------------------------------------------------------------------------
 vtkPVContourRepresentationInfo::vtkPVContourRepresentationInfo()
 {
   this->AllNodesWorldPositions = NULL;
@@ -36,7 +35,6 @@ vtkPVContourRepresentationInfo::vtkPVContourRepresentationInfo()
   this->Bounds[1] = this->Bounds[3] = this->Bounds[5] = -1.0;
 }
 
-//----------------------------------------------------------------------------
 vtkPVContourRepresentationInfo::~vtkPVContourRepresentationInfo()
 {
   if (this->AllNodesWorldPositions)
@@ -49,13 +47,11 @@ vtkPVContourRepresentationInfo::~vtkPVContourRepresentationInfo()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::CopyFromObject(vtkObject* obj)
 {
   this->ClosedLoop = false;
@@ -74,7 +70,6 @@ void vtkPVContourRepresentationInfo::CopyFromObject(vtkObject* obj)
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::CopyFromContourPolySource(vtkSceneContourSource* source)
 {
 
@@ -145,7 +140,6 @@ void vtkPVContourRepresentationInfo::CopyFromContourPolySource(vtkSceneContourSo
   data->GetBounds(this->Bounds);
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::CopyFromContourRepresentation(
   vtkContourRepresentation* contourRep)
 {
@@ -189,19 +183,16 @@ void vtkPVContourRepresentationInfo::CopyFromContourRepresentation(
   }
 }
 
-//----------------------------------------------------------------------------
 int vtkPVContourRepresentationInfo::GetNumberOfAllNodes()
 {
   return this->AllNodesWorldPositions ? this->AllNodesWorldPositions->GetNumberOfTuples() : 0;
 }
 
-//----------------------------------------------------------------------------
 int vtkPVContourRepresentationInfo::GetNumberOfSelectedNodes()
 {
   return this->SelectedNodes ? this->SelectedNodes->GetNumberOfTuples() : 0;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::CopyToStream(vtkClientServerStream* css)
 {
   css->Reset();
@@ -209,11 +200,10 @@ void vtkPVContourRepresentationInfo::CopyToStream(vtkClientServerStream* css)
   *css << vtkClientServerStream::End;
 }
 
-//----------------------------------------------------------------------------
 void vtkPVContourRepresentationInfo::CopyFromStream(const vtkClientServerStream*)
 {
 }
-//----------------------------------------------------------------------------
+
 void vtkPVContourRepresentationInfo::GetBounds(
   double& xMin, double& xMax, double& yMin, double& yMax, double& zMin, double& zMax) const
 {

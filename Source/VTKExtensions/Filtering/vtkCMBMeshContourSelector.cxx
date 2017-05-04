@@ -36,7 +36,6 @@
 vtkStandardNewMacro(vtkCMBMeshContourSelector);
 vtkCxxSetObjectMacro(vtkCMBMeshContourSelector, Contour, vtkImplicitSelectionLoop);
 
-//----------------------------------------------------------------------------
 vtkCMBMeshContourSelector::vtkCMBMeshContourSelector()
 {
   this->SetNumberOfInputPorts(3);
@@ -55,7 +54,6 @@ vtkCMBMeshContourSelector::vtkCMBMeshContourSelector()
     this->OrientationOfSelectedNodes[2] = 0.0;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBMeshContourSelector::~vtkCMBMeshContourSelector()
 {
   this->SetContour(NULL);
@@ -65,7 +63,6 @@ vtkCMBMeshContourSelector::~vtkCMBMeshContourSelector()
   }
 }
 
-//----------------------------------------------------------------------------
 // Overload standard modified time function. If Clip functions is modified,
 // then this object is modified as well.
 vtkMTimeType vtkCMBMeshContourSelector::GetMTime()
@@ -82,7 +79,6 @@ vtkMTimeType vtkCMBMeshContourSelector::GetMTime()
   return mTime;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshContourSelector::FillOutputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -97,14 +93,13 @@ int vtkCMBMeshContourSelector::FillOutputPortInformation(int port, vtkInformatio
   }
   return 0;
 }
-//----------------------------------------------------------------------------
+
 vtkPolyData* vtkCMBMeshContourSelector::GetSelectionPolyData()
 {
   //return this->SelectionPolyData;
   return vtkPolyData::SafeDownCast(this->GetOutputDataObject(1));
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshContourSelector::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -355,7 +350,6 @@ int vtkCMBMeshContourSelector::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBMeshContourSelector::FillInputPortInformation(int port, vtkInformation* info)
 {
   if (port == 0)
@@ -374,7 +368,7 @@ int vtkCMBMeshContourSelector::FillInputPortInformation(int port, vtkInformation
   }
   return 1;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBMeshContourSelector::DoSurfaceSelectionCheck(int selType, vtkIdList* tmpIds,
   bool bVolume, vtkIdType selId, vtkUnstructuredGrid* input, vtkIdTypeArray* meshCellIdArray,
   vtkIdTypeArray* meshNodeIdArray, vtkPoints* newPoints, vtkCellArray* outVerts,
@@ -561,7 +555,6 @@ void vtkCMBMeshContourSelector::DoSurfaceSelectionCheck(int selType, vtkIdList* 
   }
 }
 
-//----------------------------------------------------------------------------
 inline bool IsAllIn(vtkIdType npts, vtkIdType* pts, double* point, vtkImplicitSelectionLoop* cFunc,
   vtkUnstructuredGrid* input)
 {
@@ -613,7 +606,7 @@ inline bool IsIntersecting(vtkIdType npts, vtkIdType* pts, double* point,
   }
   return partIn && partOut;
 }
-//----------------------------------------------------------------------------
+
 bool vtkCMBMeshContourSelector::DoCellContourCheck(
   vtkIdType npts, vtkIdType* pts, vtkUnstructuredGrid* input)
 {
@@ -637,7 +630,7 @@ bool vtkCMBMeshContourSelector::DoCellContourCheck(
   }
   return bKeep;
 }
-//----------------------------------------------------------------------------
+
 void vtkCMBMeshContourSelector::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

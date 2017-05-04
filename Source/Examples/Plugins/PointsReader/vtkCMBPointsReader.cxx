@@ -33,7 +33,6 @@ vtkStandardNewMacro(vtkCMBPointsReader);
 
 vtkCxxSetObjectMacro(vtkCMBPointsReader, Transform, vtkTransform);
 
-//-----------------------------------------------------------------------------
 vtkCMBPointsReader::vtkCMBPointsReader()
 {
   this->FileName = NULL;
@@ -62,14 +61,12 @@ vtkCMBPointsReader::vtkCMBPointsReader()
   this->FileType = VTK_ASCII;
 }
 
-//-----------------------------------------------------------------------------
 vtkCMBPointsReader::~vtkCMBPointsReader()
 {
   this->SetFileName(0);
   this->SetTransform(static_cast<vtkTransform*>(0));
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPointsReader::SetConvertFromLatLongToXYZ(bool mode)
 {
   if (this->ConvertFromLatLongToXYZ == mode)
@@ -90,7 +87,6 @@ void vtkCMBPointsReader::SetConvertFromLatLongToXYZ(bool mode)
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 // vtkSetStringMacro except we clear some variables if we update the value
 void vtkCMBPointsReader::SetFileName(const char* filename)
 {
@@ -135,7 +131,6 @@ void vtkCMBPointsReader::SetFileName(const char* filename)
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPointsReader::AddRequestedPieceForRead(int pieceIdx, int onRatio)
 {
   if (pieceIdx >= 0 && onRatio > 0)
@@ -145,20 +140,17 @@ void vtkCMBPointsReader::AddRequestedPieceForRead(int pieceIdx, int onRatio)
   }
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPointsReader::RemoveAllRequestedReadPieces()
 {
   this->RequestedReadPieces.clear();
   this->Modified();
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPointsReader::GetKnownNumberOfPieces()
 {
   return static_cast<int>(this->LIDARPieces.size());
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkCMBPointsReader::GetTotalNumberOfPoints()
 {
   if (this->LIDARPieces.size() == 0)
@@ -177,7 +169,6 @@ vtkIdType vtkCMBPointsReader::GetTotalNumberOfPoints()
   return totalNumPts;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkCMBPointsReader::GetNumberOfPointsInPiece(int pieceIndex)
 {
   if (pieceIndex < 0 || pieceIndex >= static_cast<int>(this->LIDARPieces.size()))
@@ -188,7 +179,6 @@ vtkIdType vtkCMBPointsReader::GetNumberOfPointsInPiece(int pieceIndex)
   return this->LIDARPieces[pieceIndex].NumPoints;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPointsReader::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -197,7 +187,6 @@ void vtkCMBPointsReader::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPointsReader::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
@@ -391,7 +380,6 @@ int vtkCMBPointsReader::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//-----------------------------------------------------------------------------
 vtkIdType vtkCMBPointsReader::GetEstimatedNumOfOutPoints()
 {
   vtkIdType numOutputPts = 0;
@@ -424,7 +412,6 @@ vtkIdType vtkCMBPointsReader::GetEstimatedNumOfOutPoints()
   return numOutputPts;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPointsReader::ReadFileInfo()
 {
   if (this->CompleteFileHasBeenRead)
@@ -498,7 +485,6 @@ int vtkCMBPointsReader::ReadFileInfo()
   return res;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPointsReader::GetPointInfo(ifstream& fin)
 {
   if ((this->FileType == VTK_ASCII && this->ValuesPerLine > 0) || this->BytesPerPoint > 0)
@@ -591,7 +577,6 @@ int vtkCMBPointsReader::GetPointInfo(ifstream& fin)
   return VTK_OK;
 }
 
-//-----------------------------------------------------------------------------
 int vtkCMBPointsReader::ReadPiece(ifstream& fin, int pieceIndex, int onRatio, long totalNumPts,
   vtkPoints* newPts, vtkCellArray* newVerts, vtkUnsignedCharArray* scalars,
   vtkFloatArray* intensityArray, vtkUnsignedCharArray* pieceIndexArray)
@@ -789,7 +774,6 @@ int vtkCMBPointsReader::ReadPiece(ifstream& fin, int pieceIndex, int onRatio, lo
   return res;
 }
 
-//-----------------------------------------------------------------------------
 //  attempt to move to specified piece
 int vtkCMBPointsReader::MoveToStartOfPiece(ifstream& fin, int pieceIndex)
 {
@@ -897,7 +881,6 @@ int vtkCMBPointsReader::MoveToStartOfPiece(ifstream& fin, int pieceIndex)
   return READ_OK;
 }
 
-//-----------------------------------------------------------------------------
 void vtkCMBPointsReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -907,7 +890,6 @@ void vtkCMBPointsReader::PrintSelf(ostream& os, vtkIndent indent)
      << "Convert From Lat/Long to xyz: " << (this->ConvertFromLatLongToXYZ ? "On" : "Off");
 }
 
-//----------------------------------------------------------------------------
 int vtkCMBPointsReader::RequestInformation(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {

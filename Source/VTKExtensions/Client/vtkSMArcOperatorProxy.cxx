@@ -18,17 +18,15 @@
 #include "vtkSMSourceProxy.h"
 
 vtkStandardNewMacro(vtkSMArcOperatorProxy);
-//----------------------------------------------------------------------------
+
 vtkSMArcOperatorProxy::vtkSMArcOperatorProxy()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkSMArcOperatorProxy::~vtkSMArcOperatorProxy()
 {
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate(vtkSMSourceProxy* sourceProxy)
 {
   this->UpdateVTKObjects();
@@ -47,7 +45,6 @@ bool vtkSMArcOperatorProxy::Operate(vtkSMSourceProxy* sourceProxy)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate(vtkSMOutputPort* sourceOutputPort)
 {
   this->UpdateVTKObjects();
@@ -69,7 +66,6 @@ bool vtkSMArcOperatorProxy::Operate(vtkSMOutputPort* sourceOutputPort)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate(vtkSMNewWidgetRepresentationProxy* widgetProxy)
 {
   this->UpdateVTKObjects();
@@ -95,7 +91,6 @@ bool vtkSMArcOperatorProxy::Operate(vtkSMNewWidgetRepresentationProxy* widgetPro
   return false;
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate(vtkIdType arcId)
 {
   this->UpdateVTKObjects();
@@ -113,7 +108,6 @@ bool vtkSMArcOperatorProxy::Operate(vtkIdType arcId)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate(vtkIdType firstArcId, vtkIdType secondArcId)
 {
   this->UpdateVTKObjects();
@@ -131,7 +125,6 @@ bool vtkSMArcOperatorProxy::Operate(vtkIdType firstArcId, vtkIdType secondArcId)
   return valid;
 }
 
-//----------------------------------------------------------------------------
 bool vtkSMArcOperatorProxy::Operate()
 {
   this->UpdateVTKObjects();
@@ -149,7 +142,6 @@ bool vtkSMArcOperatorProxy::Operate()
   return valid;
 }
 
-//----------------------------------------------------------------------------
 void vtkSMArcOperatorProxy::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

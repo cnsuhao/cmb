@@ -23,7 +23,6 @@
 vtkStandardNewMacro(vtkLIDARElevationFilter);
 vtkCxxSetObjectMacro(vtkLIDARElevationFilter, Transform, vtkTransform);
 
-//----------------------------------------------------------------------------
 vtkLIDARElevationFilter::vtkLIDARElevationFilter()
 {
   this->LowPoint[0] = 0.0;
@@ -40,13 +39,11 @@ vtkLIDARElevationFilter::vtkLIDARElevationFilter()
   this->CreateElevation = true;
 }
 
-//----------------------------------------------------------------------------
 vtkLIDARElevationFilter::~vtkLIDARElevationFilter()
 {
   this->SetTransform(static_cast<vtkTransform*>(0));
 }
 
-//----------------------------------------------------------------------------
 void vtkLIDARElevationFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
@@ -58,7 +55,6 @@ void vtkLIDARElevationFilter::PrintSelf(ostream& os, vtkIndent indent)
      << ")\n";
 }
 
-//-----------------------------------------------------------------------------
 void vtkLIDARElevationFilter::SetTransform(double elements[16])
 {
   vtkTransform* tmpTransform = vtkTransform::New();
@@ -67,7 +63,6 @@ void vtkLIDARElevationFilter::SetTransform(double elements[16])
   tmpTransform->Delete();
 }
 
-//----------------------------------------------------------------------------
 int vtkLIDARElevationFilter::RequestData(
   vtkInformation*, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {

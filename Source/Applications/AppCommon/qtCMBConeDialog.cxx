@@ -20,7 +20,7 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
-//-----------------------------------------------------------------------------
+
 qtCMBConeDialog::qtCMBConeDialog(pqPipelineSource* coneSource, pqRenderView* view)
   : Status(0)
   , ConeSourcePanel(0)
@@ -42,7 +42,6 @@ qtCMBConeDialog::qtCMBConeDialog(pqPipelineSource* coneSource, pqRenderView* vie
   }
 }
 
-//-----------------------------------------------------------------------------
 qtCMBConeDialog::~qtCMBConeDialog()
 {
   if (this->ConeSourcePanel)
@@ -54,7 +53,7 @@ qtCMBConeDialog::~qtCMBConeDialog()
     delete MainDialog;
   }
 }
-//-----------------------------------------------------------------------------
+
 int qtCMBConeDialog::exec()
 {
   this->MainDialog->setModal(true);
@@ -62,7 +61,7 @@ int qtCMBConeDialog::exec()
   this->MainDialog->exec();
   return this->Status;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBConeDialog::accept()
 {
   this->MainDialog->hide();
@@ -73,11 +72,10 @@ void qtCMBConeDialog::accept()
   this->ConeSourcePanel->apply();
   this->Status = 1;
 }
-//-----------------------------------------------------------------------------
+
 void qtCMBConeDialog::cancel()
 {
   this->MainDialog->hide();
   this->ConeSourcePanel->reset();
   this->Status = 0;
 }
-//-----------------------------------------------------------------------------

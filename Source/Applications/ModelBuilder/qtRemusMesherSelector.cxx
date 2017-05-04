@@ -25,12 +25,10 @@ T fromItemData(QComboBox* cb, int index)
 }
 }
 
-//-----------------------------------------------------------------------------
 class qtRemusMesherSelector::pqInternal : public Ui::qtMesherSelector
 {
 };
 
-//-----------------------------------------------------------------------------
 qtRemusMesherSelector::qtRemusMesherSelector(smtk::model::ManagerPtr modelManager,
   const remus::client::ServerConnection& connection, QWidget* parent)
   : QWidget(parent)
@@ -53,7 +51,6 @@ qtRemusMesherSelector::qtRemusMesherSelector(smtk::model::ManagerPtr modelManage
   this->rebuildModelList(true);
 }
 
-//-----------------------------------------------------------------------------
 void qtRemusMesherSelector::rebuildModelList(bool shouldRebuild)
 {
   if (!shouldRebuild)
@@ -104,7 +101,6 @@ void qtRemusMesherSelector::rebuildModelList(bool shouldRebuild)
   this->modelChanged(this->Internal->cb_models->currentIndex());
 }
 
-//-----------------------------------------------------------------------------
 void qtRemusMesherSelector::modelChanged(int index)
 {
 
@@ -181,13 +177,11 @@ void qtRemusMesherSelector::modelChanged(int index)
   }
 }
 
-//-----------------------------------------------------------------------------
 qtRemusMesherSelector::~qtRemusMesherSelector()
 {
   delete this->Internal;
 }
 
-//-----------------------------------------------------------------------------
 void qtRemusMesherSelector::updateModel(
   smtk::model::ManagerPtr modelManager, const remus::client::ServerConnection& connection)
 {
@@ -196,27 +190,23 @@ void qtRemusMesherSelector::updateModel(
   this->Client.reset(new remus::client::Client(connection));
 }
 
-//-----------------------------------------------------------------------------
 smtk::model::Model qtRemusMesherSelector::currentModel() const
 {
   return fromItemData<smtk::model::Model>(
     this->Internal->cb_models, this->Internal->cb_models->currentIndex());
 }
 
-//-----------------------------------------------------------------------------
 QString qtRemusMesherSelector::currentMesherName() const
 {
   return this->Internal->cb_meshers->currentText();
 }
 
-//-----------------------------------------------------------------------------
 remus::proto::JobRequirements qtRemusMesherSelector::currentMesherRequirements() const
 {
   return fromItemData<remus::proto::JobRequirements>(
     this->Internal->cb_meshers, this->Internal->cb_meshers->currentIndex());
 }
 
-//-----------------------------------------------------------------------------
 void qtRemusMesherSelector::mesherChanged(int index)
 {
   if (index >= 0)

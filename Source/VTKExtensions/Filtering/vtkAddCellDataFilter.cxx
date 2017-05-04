@@ -20,17 +20,14 @@
 
 vtkStandardNewMacro(vtkAddCellDataFilter);
 
-//----------------------------------------------------------------------------
 vtkAddCellDataFilter::vtkAddCellDataFilter()
 {
 }
 
-//----------------------------------------------------------------------------
 vtkAddCellDataFilter::~vtkAddCellDataFilter()
 {
 }
 
-//----------------------------------------------------------------------------
 int vtkAddCellDataFilter::RequestData(vtkInformation* vtkNotUsed(request),
   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
@@ -87,7 +84,6 @@ int vtkAddCellDataFilter::RequestData(vtkInformation* vtkNotUsed(request),
   return 1;
 }
 
-//----------------------------------------------------------------------------
 void vtkAddCellDataFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

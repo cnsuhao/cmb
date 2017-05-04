@@ -59,7 +59,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 
-//----------------------------------------------------------------------------
 SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
 {
   this->UIPanel = NULL;
@@ -71,14 +70,12 @@ SimBuilderCore::SimBuilderCore(pqServer* pvServer, pqRenderView* view)
   this->m_attUIManager = NULL;
 }
 
-//----------------------------------------------------------------------------
 SimBuilderCore::~SimBuilderCore()
 {
   this->clearSimulationModel();
   delete this->ExportDialog;
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::Initialize()
 {
   this->IsSimModelLoaded = false;
@@ -94,7 +91,6 @@ void SimBuilderCore::Initialize()
   }
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
 {
   QString filters;
@@ -131,7 +127,6 @@ int SimBuilderCore::LoadSimulation(bool templateOnly, bool isScenario)
   return 0;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::LoadSimulation(const char* filename)
 {
   if (!filename)
@@ -177,7 +172,6 @@ int SimBuilderCore::LoadSimulation(const char* filename)
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*sceneTree*/)
 {
   // force read
@@ -297,7 +291,6 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*s
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::SaveSimulation(bool writeScenario)
 {
   QString filters;
@@ -326,7 +319,6 @@ int SimBuilderCore::SaveSimulation(bool writeScenario)
   return 0;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
 {
   // Currently, we can't write out the Template File only, and the writing
@@ -397,7 +389,6 @@ int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::LoadResources(const char* filename)
 {
   if (!filename)
@@ -433,7 +424,6 @@ int SimBuilderCore::LoadResources(const char* filename)
   return 1;
 }
 
-//----------------------------------------------------------------------------
 int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sceneTree*/)
 {
   // force read
@@ -540,7 +530,6 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   return 1;
 }
 
-//----------------------------------------------------------------------------
 // Loads hard-coded default export template (att system)
 // Returns true if logger has errors
 bool SimBuilderCore::setDefaultExportTemplate()
@@ -560,7 +549,6 @@ bool SimBuilderCore::setDefaultExportTemplate()
   return hasErrors;
 }
 
-//----------------------------------------------------------------------------
 qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
 {
   if (!this->UIPanel)
@@ -571,7 +559,6 @@ qtSimBuilderUIPanel* SimBuilderCore::GetUIPanel()
   return this->UIPanel;
 }
 
-//----------------------------------------------------------------------------
 pqSimBuilderUIManager* SimBuilderCore::uiManager()
 {
   if (!this->m_attUIManager)
@@ -583,13 +570,11 @@ pqSimBuilderUIManager* SimBuilderCore::uiManager()
   ;
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::updateSimBuilder(pqCMBSceneTree* /*sceneTree*/)
 {
   //vtkGenericWarningMacro("Not implemented");
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::updateSimulationModel()
 {
   if (this->uiManager()->topView() && this->isSimModelLoaded()) // && this->CMBModel)
@@ -601,7 +586,6 @@ void SimBuilderCore::updateSimulationModel()
   }
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::clearCMBModel()
 {
   if (this->isSimModelLoaded() && this->uiManager()->topView())
@@ -611,12 +595,11 @@ void SimBuilderCore::clearCMBModel()
   }
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::updateCMBModelWithScenario(bool emitSignal)
 {
   (void)emitSignal;
 }
-//----------------------------------------------------------------------------
+
 void SimBuilderCore::clearSimulationModel()
 {
   if (this->m_attUIManager)
@@ -633,7 +616,6 @@ void SimBuilderCore::clearSimulationModel()
   }
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
 {
   /*
@@ -753,13 +735,12 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
   return;
 }
 
-//----------------------------------------------------------------------------
 void SimBuilderCore::setServer(pqServer* server)
 {
   this->ActiveServer = server;
   this->uiManager()->setServer(server);
 }
-//----------------------------------------------------------------------------
+
 void SimBuilderCore::setRenderView(pqRenderView* view)
 {
   this->RenderView = view;

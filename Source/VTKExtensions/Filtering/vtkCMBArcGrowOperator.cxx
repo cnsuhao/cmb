@@ -22,13 +22,11 @@
 
 vtkStandardNewMacro(vtkCMBArcGrowOperator);
 
-//----------------------------------------------------------------------------
 vtkCMBArcGrowOperator::vtkCMBArcGrowOperator()
 {
   this->GrownArcSetIds = NULL;
 }
 
-//----------------------------------------------------------------------------
 vtkCMBArcGrowOperator::~vtkCMBArcGrowOperator()
 {
   if (this->GrownArcSetIds)
@@ -37,19 +35,16 @@ vtkCMBArcGrowOperator::~vtkCMBArcGrowOperator()
   }
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcGrowOperator::AddArc(vtkIdType arcId)
 {
   this->InputArcs.insert(arcId);
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcGrowOperator::ClearInputArcs()
 {
   this->InputArcs.clear();
 }
 
-//----------------------------------------------------------------------------
 bool vtkCMBArcGrowOperator::Operate()
 {
   if (this->InputArcs.size() == 0)
@@ -93,7 +88,6 @@ bool vtkCMBArcGrowOperator::Operate()
   return true;
 }
 
-//----------------------------------------------------------------------------
 void vtkCMBArcGrowOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
