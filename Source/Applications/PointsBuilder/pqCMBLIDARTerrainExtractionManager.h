@@ -11,9 +11,9 @@
 #ifndef _pqCMBLIDARTerrainExtractionManager_h
 #define _pqCMBLIDARTerrainExtractionManager_h
 
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBPointsBuilderMainWindowCore;
 class qtCMBLIDARPanelWidget;
@@ -25,19 +25,17 @@ class QIcon;
 class QTreeWidgetItem;
 class QFileInfo;
 
-class pqCMBLIDARTerrainExtractionManager :  public QObject
+class pqCMBLIDARTerrainExtractionManager : public QObject
 {
   Q_OBJECT
 
 public:
-  pqCMBLIDARTerrainExtractionManager(pqCMBPointsBuilderMainWindowCore *core,
-    qtCMBLIDARPanelWidget *panel);
+  pqCMBLIDARTerrainExtractionManager(
+    pqCMBPointsBuilderMainWindowCore* core, qtCMBLIDARPanelWidget* panel);
   ~pqCMBLIDARTerrainExtractionManager() override;
 
-  pqPipelineSource *getTerrainFilter()
-    { return this->TerrainExtractFilter; }
-  pqPipelineSource *getFullTerrainFilter()
-    { return this->FullProcessTerrainExtractFilter; }
+  pqPipelineSource* getTerrainFilter() { return this->TerrainExtractFilter; }
+  pqPipelineSource* getFullTerrainFilter() { return this->FullProcessTerrainExtractFilter; }
 
   void onExitExtraction(bool changeTabs = true);
 
@@ -68,41 +66,39 @@ protected slots:
   void onElevationFilter(bool useElevation);
 
   //resolution controls
-  void onResolutionScaleChange( QString scaleString );
-  void ComputeDetailedResolution( );
+  void onResolutionScaleChange(QString scaleString);
+  void ComputeDetailedResolution();
 
   //mask size control
   void onMaskSizeTextChanged(QString);
 
   //if we are saving the refine results
-  void onSaveRefineResultsChange( bool change );
+  void onSaveRefineResultsChange(bool change);
 
 protected:
-
   //resolution controls
-  double ComputeResolution( pqPipelineSource *extractionFilter, bool computeDetailedScale );
+  double ComputeResolution(pqPipelineSource* extractionFilter, bool computeDetailedScale);
 
   //methods called from onShow()
-  void GuessCacheDirectory( );
-  void ComputeBasicResolution(  );
+  void GuessCacheDirectory();
+  void ComputeBasicResolution();
 
-  pqDataRepresentation *createPreviewRepresentation(QString &filename);
-  pqPipelineSource *setupFullProcessTerrainFilter();
+  pqDataRepresentation* createPreviewRepresentation(QString& filename);
+  pqPipelineSource* setupFullProcessTerrainFilter();
 
   void setupExtractionPanel();
 
-  pqPipelineSource *PrepDataForTerrainExtraction();
+  pqPipelineSource* PrepDataForTerrainExtraction();
 
-  void addExtractionOutputToTree(int minLevel, int maxLevel,
-    double initialScale, QFileInfo &autoSaveInfo);
-  void getNumPointsCounts(QTreeWidgetItem* item,
-    qulonglong &loadedNumPoints, qulonglong &actualNumPoints);
-  bool setSubTreeVisibility(QTreeWidgetItem* item, bool visible, QIcon *icon);
+  void addExtractionOutputToTree(
+    int minLevel, int maxLevel, double initialScale, QFileInfo& autoSaveInfo);
+  void getNumPointsCounts(
+    QTreeWidgetItem* item, qulonglong& loadedNumPoints, qulonglong& actualNumPoints);
+  bool setSubTreeVisibility(QTreeWidgetItem* item, bool visible, QIcon* icon);
   void makeAllInvisible();
   void clearTree();
-  void destroyTreeRepresentations(QTreeWidgetItem *treeNode);
-  void updateRepresentationsElevationFilter(QTreeWidgetItem *treeNode,
-    bool useElevation);
+  void destroyTreeRepresentations(QTreeWidgetItem* treeNode);
+  void updateRepresentationsElevationFilter(QTreeWidgetItem* treeNode, bool useElevation);
 
   // Description:
   // Some internal ivars.
@@ -112,20 +108,19 @@ protected:
   double DetailedScale;
   double InputDims[2];
 
-  qtCMBLIDARPanelWidget *LIDARPanel;
-  pqCMBPointsBuilderMainWindowCore *LIDARCore;
+  qtCMBLIDARPanelWidget* LIDARPanel;
+  pqCMBPointsBuilderMainWindowCore* LIDARCore;
   qtArcWidget* Contour;
 
-  pqPipelineSource *TerrainExtractFilter;
-  pqPipelineSource *FullProcessTerrainExtractFilter;
+  pqPipelineSource* TerrainExtractFilter;
+  pqPipelineSource* FullProcessTerrainExtractFilter;
 
   QList<QVariant> DataTransform;
 
-  std::vector< pqPipelineSource* > PDSources;
+  std::vector<pqPipelineSource*> PDSources;
 
   QIcon* IconVisible;
   QIcon* IconInvisible;
-
 };
 
 #endif /* __pqCMBLIDARTerrainExtractionManager_h */

@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBStackedTINDialog_h
 #define __qtCMBStackedTINDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
@@ -27,7 +26,7 @@ class QDialog;
 
 namespace Ui
 {
-  class  qtSceneGenqtCMBStackedTINDialog;
+class qtSceneGenqtCMBStackedTINDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBStackedTINDialog : public QObject
@@ -35,7 +34,7 @@ class CMBAPPCOMMON_EXPORT qtCMBStackedTINDialog : public QObject
   Q_OBJECT
 
 public:
-  static int processTIN(pqCMBSceneNode *node);
+  static int processTIN(pqCMBSceneNode* node);
 
 protected slots:
   void accept();
@@ -45,16 +44,15 @@ protected slots:
   void offsetChanged();
 
 protected:
-  qtCMBStackedTINDialog(pqCMBSceneNode *n);
+  qtCMBStackedTINDialog(pqCMBSceneNode* n);
   ~qtCMBStackedTINDialog() override;
   int exec();
   int Status;
-  Ui::qtSceneGenqtCMBStackedTINDialog *StackDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
+  Ui::qtSceneGenqtCMBStackedTINDialog* StackDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
   double TotalThickness;
   int NumberOfLayers;
 };
-
 
 #endif /* __qtCMBStackedTINDialog_h */

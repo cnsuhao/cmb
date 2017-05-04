@@ -11,22 +11,21 @@
 #include "ui_qtHelpDialog.h"
 
 #include <QFile>
-#include <QTextStream>
 #include <QScrollBar>
+#include <QTextStream>
 
 //-----------------------------------------------------------------------------
-qtCMBHelpDialog::qtCMBHelpDialog(const char *helpFileResource, QWidget* Parent) :
-  QDialog(Parent),
-  Ui(new Ui::qtHelpDialog())
+qtCMBHelpDialog::qtCMBHelpDialog(const char* helpFileResource, QWidget* Parent)
+  : QDialog(Parent)
+  , Ui(new Ui::qtHelpDialog())
 {
   this->Ui->setupUi(this);
-  this->setWindowTitle(QApplication::translate("HelpDialog",
-                                               "Help (Release Notes)",
-                                               0
+  this->setWindowTitle(QApplication::translate("HelpDialog", "Help (Release Notes)", 0
 #if QT_VERSION < 0x050000
-                                               , QApplication::UnicodeUTF8
+    ,
+    QApplication::UnicodeUTF8
 #endif
-                                               ));
+    ));
   this->setObjectName("qtCMBHelpDialog");
   this->Ui->textBrowser->clear();
 
@@ -47,7 +46,7 @@ qtCMBHelpDialog::~qtCMBHelpDialog()
 
 //-----------------------------------------------------------------------------
 void qtCMBHelpDialog::setToTop()
-  {
+{
   this->Ui->textBrowser->verticalScrollBar()->setSliderPosition(
-    this->Ui->textBrowser->verticalScrollBar()->minimum() );
-  }
+    this->Ui->textBrowser->verticalScrollBar()->minimum());
+}

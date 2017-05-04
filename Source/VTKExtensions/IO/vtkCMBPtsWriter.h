@@ -16,17 +16,16 @@
 #ifndef __vtkCMBPtsWriter_h
 #define __vtkCMBPtsWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
 #include <string>
-#include "cmbSystemConfig.h"
 class vtkIdTypeArray;
 class vtkDataSet;
 
 class VTKCMBIO_EXPORT vtkCMBPtsWriter : public vtkWriter
 {
 public:
-
   static vtkCMBPtsWriter* New();
   vtkTypeMacro(vtkCMBPtsWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -45,7 +44,6 @@ public:
   vtkSetStringMacro(Header);
   vtkGetStringMacro(Header);
 
-
   // Description:
   // Turn on/off the use of scientific notation for writing floating point values.
   vtkBooleanMacro(UseScientificNotation, bool);
@@ -57,7 +55,7 @@ public:
   vtkSetMacro(FloatPrecision, int);
   vtkGetMacro(FloatPrecision, int);
 
-//BTX
+  //BTX
 protected:
   vtkCMBPtsWriter();
   ~vtkCMBPtsWriter() override;
@@ -71,17 +69,18 @@ protected:
   // Actual writing.
   void WriteData() override;
   char* FileName;
-  char * Header;
+  char* Header;
   bool UseScientificNotation;
   int FloatPrecision;
-  vtkDataSet *MyGeom;
-  vtkIdTypeArray *MyData;
+  vtkDataSet* MyGeom;
+  vtkIdTypeArray* MyData;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
   vtkCMBPtsWriter(const vtkCMBPtsWriter&); // Not implemented.
-  void operator=(const vtkCMBPtsWriter&); // Not implemented.
-//ETX
+  void operator=(const vtkCMBPtsWriter&);  // Not implemented.
+  //ETX
 };
 
 #endif

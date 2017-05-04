@@ -10,8 +10,8 @@
 #include "pqCMBPluginStarter.h"
 
 // Server Manager Includes.
-#include "vtkProcessModule.h"
 #include "vtkClientServerInterpreter.h"
+#include "vtkProcessModule.h"
 
 // Qt Includes.
 //#include <QtDebug>
@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-pqCMBPluginStarter::pqCMBPluginStarter(QObject* p/*=0*/)
+pqCMBPluginStarter::pqCMBPluginStarter(QObject* p /*=0*/)
   : QObject(p)
 {
 }
@@ -37,7 +37,7 @@ pqCMBPluginStarter::~pqCMBPluginStarter()
 //-----------------------------------------------------------------------------
 void pqCMBPluginStarter::onStartup()
 {
-    // FIXME SEB Don't need that anymore // vtkCMBVTKExtensionsCS_Initialize(vtkProcessModule::GetProcessModule()->GetInterpreter());
+  // FIXME SEB Don't need that anymore // vtkCMBVTKExtensionsCS_Initialize(vtkProcessModule::GetProcessModule()->GetInterpreter());
 }
 
 //-----------------------------------------------------------------------------

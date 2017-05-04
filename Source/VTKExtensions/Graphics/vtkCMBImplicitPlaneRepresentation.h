@@ -17,47 +17,48 @@
 // .SECTION See Also
 // vtkImplicitPlaneWidget2 vtkImplicitPlaneRepresentation
 
-
 #ifndef __vtkCMBImplicitPlaneRepresentation_h
 #define __vtkCMBImplicitPlaneRepresentation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkPVImplicitPlaneRepresentation.h"
-#include "cmbSystemConfig.h"
 
-class VTKCMBGRAPHICS_EXPORT vtkCMBImplicitPlaneRepresentation : public vtkPVImplicitPlaneRepresentation
+class VTKCMBGRAPHICS_EXPORT vtkCMBImplicitPlaneRepresentation
+  : public vtkPVImplicitPlaneRepresentation
 {
 public:
   // Description:
   // Instantiate the class.
-  static vtkCMBImplicitPlaneRepresentation *New();
+  static vtkCMBImplicitPlaneRepresentation* New();
 
   // Description:
   // Standard methods for the class.
-  vtkTypeMacro(vtkCMBImplicitPlaneRepresentation,vtkPVImplicitPlaneRepresentation);
+  vtkTypeMacro(vtkCMBImplicitPlaneRepresentation, vtkPVImplicitPlaneRepresentation);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Turn on/off the ability to scale the widget with the mouse.
-  vtkSetMacro(NormalFixed,int);
-  vtkGetMacro(NormalFixed,int);
-  vtkBooleanMacro(NormalFixed,int);
+  vtkSetMacro(NormalFixed, int);
+  vtkGetMacro(NormalFixed, int);
+  vtkBooleanMacro(NormalFixed, int);
 
   // Description:
   // Methods to interface with the vtkSliderWidget.
-  int ComputeInteractionState(int X, int Y, int modify=0) override;
+  int ComputeInteractionState(int X, int Y, int modify = 0) override;
   void WidgetInteraction(double newEventPos[2]) override;
 
 protected:
   vtkCMBImplicitPlaneRepresentation();
   ~vtkCMBImplicitPlaneRepresentation() override;
 
-  void TranslateAlongNormal(double *p1, double *p2);
+  void TranslateAlongNormal(double* p1, double* p2);
 
   int NormalFixed;
+
 private:
-  vtkCMBImplicitPlaneRepresentation(const vtkCMBImplicitPlaneRepresentation&);  //Not implemented
-  void operator=(const vtkCMBImplicitPlaneRepresentation&);  //Not implemented
+  vtkCMBImplicitPlaneRepresentation(const vtkCMBImplicitPlaneRepresentation&); //Not implemented
+  void operator=(const vtkCMBImplicitPlaneRepresentation&);                    //Not implemented
 };
 
 #endif

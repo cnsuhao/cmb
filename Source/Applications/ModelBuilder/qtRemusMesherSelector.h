@@ -16,13 +16,13 @@
 #ifndef __qtRemusMesherSelector_h
 #define __qtRemusMesherSelector_h
 
-#include <QWidget>
 #include <QPointer>
 #include <QScopedPointer>
+#include <QWidget>
 
 #ifndef Q_MOC_RUN
-# include <remus/client/Client.h>
-# include <remus/proto/JobRequirements.h>
+#include <remus/client/Client.h>
+#include <remus/proto/JobRequirements.h>
 #endif
 
 #include "smtk/common/UUID.h"
@@ -34,13 +34,12 @@ class qtRemusMesherSelector : public QWidget
   Q_OBJECT
 public:
   qtRemusMesherSelector(smtk::model::ManagerPtr modelManager,
-                        const remus::client::ServerConnection& connection,
-                        QWidget* parent);
+    const remus::client::ServerConnection& connection, QWidget* parent);
 
   ~qtRemusMesherSelector() override;
 
-  void updateModel(smtk::model::ManagerPtr modelManager,
-                   const remus::client::ServerConnection& connection);
+  void updateModel(
+    smtk::model::ManagerPtr modelManager, const remus::client::ServerConnection& connection);
 
   smtk::model::Model currentModel() const;
 
@@ -51,17 +50,16 @@ public slots:
   void rebuildModelList(bool shouldRebuild);
 
 signals:
-  void currentModelChanged( );
+  void currentModelChanged();
 
   void noMesherForModel();
 
-  void currentMesherChanged(const smtk::model::Model& model,
-                            const QString & workerName,
-                            const remus::proto::JobRequirements& reqs);
+  void currentMesherChanged(const smtk::model::Model& model, const QString& workerName,
+    const remus::proto::JobRequirements& reqs);
 
 protected slots:
-  void modelChanged( int index );
-  void mesherChanged( int index );
+  void modelChanged(int index);
+  void mesherChanged(int index);
 
 private:
   class pqInternal;

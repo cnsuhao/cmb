@@ -21,63 +21,66 @@
 #include "smtk/extension/paraview/widgets/qtLineWidget.h"
 
 //-----------------------------------------------------------------------------
-pqCMBLine::pqCMBLine() : pqCMBSceneObjectBase()
+pqCMBLine::pqCMBLine()
+  : pqCMBSceneObjectBase()
 {
   this->LineWidget = NULL;
 }
 
 //-----------------------------------------------------------------------------
-pqCMBLine::~pqCMBLine() { delete this->LineWidget; }
-
-//-----------------------------------------------------------------------------
-void pqCMBLine::getDefaultBounds(
-  pqRenderView* theView, double bounds[6])
+pqCMBLine::~pqCMBLine()
 {
-  if(!theView)
-    {
-    return;
-    }
-  double focal[3];
-  pqCMBSceneObjectBase::getCameraFocalPoint(theView, focal);
-  bounds[0]=focal[0]-0.5;bounds[2]=focal[1]-0.5;bounds[4]=focal[2]-0.5;
-  bounds[1]=focal[0]+0.5;bounds[3]=focal[1]+0.5;bounds[5]=focal[2]+0.5;
+  delete this->LineWidget;
 }
 
 //-----------------------------------------------------------------------------
-pqCMBLine::pqCMBLine(pqCMBSceneObjectBase* refObj,
-                           pqServer *server,
-                           pqRenderView *view,
-                           bool updateRep)
+void pqCMBLine::getDefaultBounds(pqRenderView* theView, double bounds[6])
+{
+  if (!theView)
+  {
+    return;
+  }
+  double focal[3];
+  pqCMBSceneObjectBase::getCameraFocalPoint(theView, focal);
+  bounds[0] = focal[0] - 0.5;
+  bounds[2] = focal[1] - 0.5;
+  bounds[4] = focal[2] - 0.5;
+  bounds[1] = focal[0] + 0.5;
+  bounds[3] = focal[1] + 0.5;
+  bounds[5] = focal[2] + 0.5;
+}
+
+//-----------------------------------------------------------------------------
+pqCMBLine::pqCMBLine(
+  pqCMBSceneObjectBase* refObj, pqServer* server, pqRenderView* view, bool updateRep)
 {
   double bounds[6];
   pqCMBLine::getDefaultBounds(view, bounds);
   if (refObj && refObj->getType() != pqCMBSceneObjectBase::Line)
-    {
+  {
     refObj->getBounds(bounds);
-    }
+  }
 
   double pos1[3], pos2[3];
-  pos1[0]=bounds[0];pos1[1]=bounds[2];pos1[2]=bounds[4];
-  pos2[0]=bounds[1];pos2[1]=bounds[3];pos2[2]=bounds[5];
+  pos1[0] = bounds[0];
+  pos1[1] = bounds[2];
+  pos1[2] = bounds[4];
+  pos2[0] = bounds[1];
+  pos2[1] = bounds[3];
+  pos2[2] = bounds[5];
 
   this->initialize(pos1, pos2, server, view, updateRep);
 }
 
 //-----------------------------------------------------------------------------
-pqCMBLine::pqCMBLine(double point1[3],
-                           double point2[3],
-                           pqServer *server,
-                           pqRenderView *view,
-                           bool updateRep)
+pqCMBLine::pqCMBLine(
+  double point1[3], double point2[3], pqServer* server, pqRenderView* view, bool updateRep)
 {
   this->initialize(point1, point2, server, view, updateRep);
 }
 //-----------------------------------------------------------------------------
-void pqCMBLine::initialize(double point1[3],
-                              double point2[3],
-                              pqServer* server,
-                              pqRenderView *view,
-                              bool /*updateRep*/)
+void pqCMBLine::initialize(
+  double point1[3], double point2[3], pqServer* server, pqRenderView* view, bool /*updateRep*/)
 {
   (void)server;
   this->LineWidget = new qtLineWidget();
@@ -90,23 +93,23 @@ void pqCMBLine::initialize(double point1[3],
 //-----------------------------------------------------------------------------
 void pqCMBLine::setVisibility(bool mode)
 {
-  if (this->LineWidget) {
+  if (this->LineWidget)
+  {
     this->LineWidget->setEnableInteractivity(mode);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBLine::setSelectionInput(
-  vtkSMSourceProxy *selectionInput)
+void pqCMBLine::setSelectionInput(vtkSMSourceProxy* selectionInput)
 {
-  if(!selectionInput)
-    {
+  if (!selectionInput)
+  {
     this->deselect();
-    }
+  }
   else
-    {
+  {
     this->select();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -125,43 +128,43 @@ void pqCMBLine::deselect()
 }
 
 //-----------------------------------------------------------------------------
-int pqCMBLine::getPointPosition( int pointIdx,
-  double &x, double &y, double &z)
+int pqCMBLine::getPointPosition(int pointIdx, double& x, double& y, double& z)
 {
-  if(!this->LineWidget)
-    {
+  if (!this->LineWidget)
+  {
     return 0;
-    }
-  if(pointIdx != 1 && pointIdx != 2)
-    {
+  }
+  if (pointIdx != 1 && pointIdx != 2)
+  {
     return 0;
-    }
+  }
 
-    double p1[3], p2[3];
-    this->LineWidget->points(p1, p2);
+  double p1[3], p2[3];
+  this->LineWidget->points(p1, p2);
 
-    /// looking at old code, seems like pointIdx is 1-based.
-    if (pointIdx == 1) {
-      x = p1[0];
-      y = p1[1];
-      z = p1[2];
-    } else {
-      x = p2[0];
-      y = p2[1];
-      z = p2[2];
-    }
-    return 1;
+  /// looking at old code, seems like pointIdx is 1-based.
+  if (pointIdx == 1)
+  {
+    x = p1[0];
+    y = p1[1];
+    z = p1[2];
+  }
+  else
+  {
+    x = p2[0];
+    y = p2[1];
+    z = p2[2];
+  }
+  return 1;
 }
 
 //-----------------------------------------------------------------------------
-pqCMBSceneObjectBase *pqCMBLine::duplicate(pqServer *server,
-                                                  pqRenderView *view,
-                                                  bool updateRep)
+pqCMBSceneObjectBase* pqCMBLine::duplicate(pqServer* server, pqRenderView* view, bool updateRep)
 {
   double point1[3], point2[3];
   this->getPoint1Position(point1[0], point1[1], point1[2]);
   this->getPoint2Position(point2[0], point2[1], point2[2]);
-  pqCMBLine *nobj = new pqCMBLine(point1, point2, server, view, updateRep);
+  pqCMBLine* nobj = new pqCMBLine(point1, point2, server, view, updateRep);
   nobj->UserDefinedType = this->UserDefinedType;
   double color[4];
   this->getColor(color);
@@ -182,8 +185,8 @@ void pqCMBLine::getColor(double color[4]) const
 //-----------------------------------------------------------------------------
 void pqCMBLine::setColor(double color[4], bool /*updateRep*/)
 {
-//  vtkSMPropertyHelper(this->LineWidget->getWidgetProxy(), "LineColor").Set(color, 3);
-this->LineWidget->setLineColor(color);
+  //  vtkSMPropertyHelper(this->LineWidget->getWidgetProxy(), "LineColor").Set(color, 3);
+  this->LineWidget->setLineColor(color);
 }
 
 //-----------------------------------------------------------------------------

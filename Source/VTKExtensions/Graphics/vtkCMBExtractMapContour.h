@@ -14,36 +14,34 @@
 #ifndef __vtkCMBExtractMapContour_h
 #define __vtkCMBExtractMapContour_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 #include <vector>
 
 class VTKCMBGRAPHICS_EXPORT vtkCMBExtractMapContour : public vtkPolyDataAlgorithm
 {
 
-  public:
-    static vtkCMBExtractMapContour *New();
-    vtkTypeMacro(vtkCMBExtractMapContour,vtkPolyDataAlgorithm);
-    void PrintSelf(ostream& os, vtkIndent indent) override;
+public:
+  static vtkCMBExtractMapContour* New();
+  vtkTypeMacro(vtkCMBExtractMapContour, vtkPolyDataAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
-    void AddContourToExtract(int index);
-    void ExtractSingleContour(int index);
+  void AddContourToExtract(int index);
+  void ExtractSingleContour(int index);
 
+protected:
+  vtkCMBExtractMapContour();
+  ~vtkCMBExtractMapContour() override;
 
-  protected:
-    vtkCMBExtractMapContour();
-    ~vtkCMBExtractMapContour() override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  std::vector<int> contoursToExtract;
 
-    std::vector<int> contoursToExtract;
-  private:
-
-    //Helper function used to make reading lines easier
-    vtkCMBExtractMapContour(const vtkCMBExtractMapContour&);  // Not implemented.
-    void operator=(const vtkCMBExtractMapContour&);  // Not implemented.
-
+private:
+  //Helper function used to make reading lines easier
+  vtkCMBExtractMapContour(const vtkCMBExtractMapContour&); // Not implemented.
+  void operator=(const vtkCMBExtractMapContour&);          // Not implemented.
 };
 
 #endif

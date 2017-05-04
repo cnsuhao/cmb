@@ -14,24 +14,22 @@
 #ifndef __qtSimBuilderUIPanel_h
 #define __qtSimBuilderUIPanel_h
 
-#include <QDockWidget>
 #include "cmbSystemConfig.h"
+#include <QDockWidget>
 
 class qtSimBuilderUIPanel : public QDockWidget
 {
   Q_OBJECT
 
-public:         
-  qtSimBuilderUIPanel(QWidget* pW=NULL);
-  ~qtSimBuilderUIPanel() override;  
+public:
+  qtSimBuilderUIPanel(QWidget* pW = NULL);
+  ~qtSimBuilderUIPanel() override;
 
   QWidget* panelWidget();
   void initialize();
 
 private:
-
   QWidget* ContainerWidget;
 };
 
 #endif
-

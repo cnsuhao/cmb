@@ -15,69 +15,69 @@
 #include "ui_qtArcEditWidget.h"
 
 #include "pqApplicationCore.h"
-#include "pqObjectBuilder.h"
 #include "pqCMBArc.h"
+#include "pqObjectBuilder.h"
 
-#include <QTableWidget>
-#include <QTableWidgetItem>
 #include <QDebug>
 #include <QDialog>
-#include <QHeaderView>
-#include <QGridLayout>
 #include <QDialogButtonBox>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGridLayout>
+#include <QHeaderView>
 #include <QPointer>
+#include <QTableWidget>
+#include <QTableWidgetItem>
 
 #include <fstream>
 #include <sstream>
 
-#include "pqSMAdaptor.h"
 #include "pqCMBModifierArc.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
-#include "vtkSMRepresentationProxy.h"
-#include <vtksys/SystemTools.hxx>
+#include "pqSMAdaptor.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "ui_qtArcFunctionControl.h"
 #include "ui_qtModifierArcDialog.h"
 #include "vtkPVArcInfo.h"
-#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "vtkSMRenderViewProxy.h"
+#include "vtkSMRepresentationProxy.h"
+#include <vtksys/SystemTools.hxx>
 
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
+#include "vtkContourWidget.h"
+#include "vtkNew.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyProperty.h"
+#include "vtkSMRepresentationProxy.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkSMVectorProperty.h"
-#include "vtkSMRepresentationProxy.h"
-#include "vtkNew.h"
-#include "vtkContourWidget.h"
-#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 
-#include "qtCMBManualFunctionWidget.h"
-#include "qtCMBProfileWedgeFunctionWidget.h"
 #include "cmbManualProfileFunction.h"
 #include "cmbProfileFunction.h"
 #include "cmbProfileWedgeFunction.h"
 #include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
+#include "qtCMBManualFunctionWidget.h"
+#include "qtCMBProfileWedgeFunctionWidget.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
 
 #include "vtkCMBArcEditClientOperator.h"
 
 #include "pqRepresentationHelperFunctions.h"
 
-#include <vtkPoints.h>
-#include <vtkActor.h> 
-#include <vtkPolyDataMapper.h>
+#include <QVTKWidget.h>
+#include <vtkActor.h>
 #include <vtkGlyph3D.h>
-#include <vtkRenderer.h>
-#include <vtkSmartPointer.h>
-#include <vtkSphereSource.h>
+#include <vtkPoints.h>
+#include <vtkPolyDataMapper.h>
 #include <vtkProperty.h>
 #include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
-#include <QVTKWidget.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
 
 #include "vtkSMCMBGlyphPointSourceProxy.h"
 
@@ -87,7 +87,7 @@ namespace
 // enum for different column types
 enum DataTableCol
 {
-  VisibilityCol=0,
+  VisibilityCol = 0,
   Id,
   Mode,
   Relative
@@ -100,31 +100,31 @@ enum EditMode
   EditArc
 };
 
-QStringList pointModesStrings = QStringList() << "Continuous" << "End Points" << "Advance";
-
+QStringList pointModesStrings = QStringList() << "Continuous"
+                                              << "End Points"
+                                              << "Advance";
 }
 
 class pqCMBModifierArcManagerInternal
 {
 public:
   QPointer<pqPipelineSource> ArcPointSelectSource;
-  vtkSMNewWidgetRepresentationProxy * editableWidget;
+  vtkSMNewWidgetRepresentationProxy* editableWidget;
   QPointer<pqPipelineSource> SphereSource;
   QPointer<pqDataRepresentation> Representation;
   QPointer<pqPipelineSource> LineGlyphFilter;
-  Ui_qtArcFunctionControl * UI;
-  Ui_qtModifierArcDialog * UI_Dialog;
-  Ui_ArcEditWidget * arcEditWidget;
+  Ui_qtArcFunctionControl* UI;
+  Ui_qtModifierArcDialog* UI_Dialog;
+  Ui_ArcEditWidget* arcEditWidget;
   EditMode mode;
-  qtArcWidget * CurrentArcWidget;
+  qtArcWidget* CurrentArcWidget;
   int selectedRow;
   vtkBoundingBox boundingBox;
 };
 
 //-----------------------------------------------------------------------------
-pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
-                                                 pqServer *serverInput,
-                                                 pqRenderView *renderer)
+pqCMBModifierArcManager::pqCMBModifierArcManager(
+  QLayout* layout, pqServer* serverInput, pqRenderView* renderer)
 {
   useNormal = false;
   pqApplicationCore* core = pqApplicationCore::instance();
@@ -136,20 +136,18 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->Internal->editableWidget = NULL;
 
   this->Internal->SphereSource = builder->createSource("sources", "SphereSource", serverInput);
-  this->Internal->LineGlyphFilter = builder->createSource("filters",
-                                                          "ArcPointGlyphingFilter", serverInput);
-  this->Internal->Representation =
-      builder->createDataRepresentation( this->Internal->LineGlyphFilter->getOutputPort(0),
-                                         this->view,
-                                         "GeometryRepresentation");
+  this->Internal->LineGlyphFilter =
+    builder->createSource("filters", "ArcPointGlyphingFilter", serverInput);
+  this->Internal->Representation = builder->createDataRepresentation(
+    this->Internal->LineGlyphFilter->getOutputPort(0), this->view, "GeometryRepresentation");
 
   //vtkSMSourceProxy* source = this->Internal->SphereSource->getProxy();
   //pqSMAdaptor::setElementProperty(this->Internal->SphereSource->getProxy()->GetProperty("SetRadius"),1000);
 
   this->Internal->SphereSource->getProxy()->MarkModified(this->Internal->SphereSource->getProxy());
 
-  vtkSMProxy *repProxy = this->Internal->Representation->getProxy();
-  RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY( repProxy, "Color", vtkDataObject::POINT);
+  vtkSMProxy* repProxy = this->Internal->Representation->getProxy();
+  RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(repProxy, "Color", vtkDataObject::POINT);
 
   pqSMAdaptor::setEnumerationProperty(repProxy->GetProperty("Representation"), "3D Glyphs");
   //vtkSMPropertyHelper(repProxy, "ImmediateModeRendering").Set(0);
@@ -172,9 +170,9 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->WedgeFunctionWidget = NULL;
   this->selectedFunction = NULL;
   this->Internal->UI = new Ui_qtArcFunctionControl();
-  QWidget * w = new QWidget();
+  QWidget* w = new QWidget();
   this->Internal->UI->setupUi(w);
-  if(layout != NULL)
+  if (layout != NULL)
   {
     layout->addWidget(w);
     this->Dialog = NULL;
@@ -186,7 +184,8 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
     this->Internal->UI_Dialog = new Ui_qtModifierArcDialog();
     this->Internal->UI_Dialog->setupUi(this->Dialog);
     this->Internal->UI_Dialog->modifierLayout->addWidget(w);
-    QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+    QPushButton* applyButton =
+      this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
     connect(applyButton, SIGNAL(clicked()), this, SLOT(accepted()));
     //connect(this->Dialog, SIGNAL(rejected()), this, SLOT(clear()));
   }
@@ -196,55 +195,55 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
   this->TableWidget = this->Internal->UI->ModifyArcTable;
   this->clear();
   this->initialize();
-  QObject::connect(this->Internal->UI->addLineButton, SIGNAL(clicked()),
-                   this, SLOT(addLine()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->removeLineButton, SIGNAL(clicked()),
-                   this, SLOT(removeArc()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->buttonUpdateLine, SIGNAL(clicked()),
-                   this, SLOT(update()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->addLineButton, SIGNAL(clicked()), this, SLOT(addLine()),
+    Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->removeLineButton, SIGNAL(clicked()), this, SLOT(removeArc()),
+    Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->buttonUpdateLine, SIGNAL(clicked()), this, SLOT(update()),
+    Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->EditArc, SIGNAL(clicked()),
-                   this, SLOT(editArc()), Qt::UniqueConnection);
+  QObject::connect(
+    this->Internal->UI->EditArc, SIGNAL(clicked()), this, SLOT(editArc()), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->DeleteFunction, SIGNAL(clicked()),
-                   this, SLOT(deleteFunction()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->CloneFunction, SIGNAL(clicked()),
-                   this, SLOT(cloneFunction()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->DeleteFunction, SIGNAL(clicked()), this,
+    SLOT(deleteFunction()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->CloneFunction, SIGNAL(clicked()), this,
+    SLOT(cloneFunction()), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->FunctionName, SIGNAL(currentIndexChanged(int)),
-                   this, SLOT(onFunctionSelectionChange()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->FunctionType, SIGNAL(currentIndexChanged(int)),
-                   this,  SLOT(functionTypeChanged(int)), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->FunctionName, SIGNAL(currentIndexChanged(int)), this,
+    SLOT(onFunctionSelectionChange()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->FunctionType, SIGNAL(currentIndexChanged(int)), this,
+    SLOT(functionTypeChanged(int)), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->Save, SIGNAL(clicked()),
-                   this, SLOT(onSaveArc()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->Load, SIGNAL(clicked()),
-                   this, SLOT(onLoadArc()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->importFunctions, SIGNAL(clicked()),
-                   this, SLOT(importFunction()), Qt::UniqueConnection);
+  QObject::connect(
+    this->Internal->UI->Save, SIGNAL(clicked()), this, SLOT(onSaveArc()), Qt::UniqueConnection);
+  QObject::connect(
+    this->Internal->UI->Load, SIGNAL(clicked()), this, SLOT(onLoadArc()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->importFunctions, SIGNAL(clicked()), this,
+    SLOT(importFunction()), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)),
-                   this, SLOT(nameChanged(QString)), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->FunctionName, SIGNAL(editTextChanged(QString const&)), this,
+    SLOT(nameChanged(QString)), Qt::UniqueConnection);
 
   this->ArcWidgetManager = new qtCMBArcWidgetManager(serverInput, renderer);
-  QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)),
-                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
-  QObject::connect(this->ArcWidgetManager, SIGNAL(ArcModified2(pqCMBArc*)),
-                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
-  QObject::connect(this->ArcWidgetManager, SIGNAL(Finish()),
-                   this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
-  QObject::connect( this->ArcWidgetManager, SIGNAL(selectedId(vtkIdType)),
-                    this, SLOT(addPoint(vtkIdType)), Qt::UniqueConnection);
-  QObject::connect(this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)),
-                   Qt::UniqueConnection);
+  QObject::connect(this->ArcWidgetManager, SIGNAL(ArcSplit2(pqCMBArc*, QList<vtkIdType>)), this,
+    SLOT(doneModifyingArc()), Qt::UniqueConnection);
+  QObject::connect(this->ArcWidgetManager, SIGNAL(ArcModified2(pqCMBArc*)), this,
+    SLOT(doneModifyingArc()), Qt::UniqueConnection);
+  QObject::connect(
+    this->ArcWidgetManager, SIGNAL(Finish()), this, SLOT(doneModifyingArc()), Qt::UniqueConnection);
+  QObject::connect(this->ArcWidgetManager, SIGNAL(selectedId(vtkIdType)), this,
+    SLOT(addPoint(vtkIdType)), Qt::UniqueConnection);
+  QObject::connect(
+    this, SIGNAL(selectionChanged(int)), this, SLOT(selectLine(int)), Qt::UniqueConnection);
   QObject::connect(this, SIGNAL(orderChanged()), this, SLOT(sendOrder()), Qt::UniqueConnection);
 
-  QObject::connect(this->Internal->UI->ComputeChange, SIGNAL(clicked()),
-                   this, SLOT(computeChange()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->ComputeChange, SIGNAL(clicked()), this,
+    SLOT(computeChange()), Qt::UniqueConnection);
   this->check_save();
   this->addPointMode = false;
 
-  this->Internal->arcEditWidget =  new Ui_ArcEditWidget();
+  this->Internal->arcEditWidget = new Ui_ArcEditWidget();
   this->Internal->arcEditWidget->setupUi(this->Internal->UI->EditControl);
   this->Internal->mode = NoEditMode;
   this->updateUiControls();
@@ -259,9 +258,10 @@ pqCMBModifierArcManager::pqCMBModifierArcManager(QLayout *layout,
 //-----------------------------------------------------------------------------
 pqCMBModifierArcManager::~pqCMBModifierArcManager()
 {
-  if(this->Internal->ArcPointSelectSource)
+  if (this->Internal->ArcPointSelectSource)
   {
-    pqApplicationCore::instance()->getObjectBuilder()->destroy(this->Internal->ArcPointSelectSource);
+    pqApplicationCore::instance()->getObjectBuilder()->destroy(
+      this->Internal->ArcPointSelectSource);
     this->Internal->ArcPointSelectSource = NULL;
   }
   delete this->Internal->arcEditWidget;
@@ -278,56 +278,53 @@ pqCMBModifierArcManager::~pqCMBModifierArcManager()
 void pqCMBModifierArcManager::initialize()
 {
   this->TableWidget->setColumnCount(4);
-  this->TableWidget->setHorizontalHeaderLabels(QStringList() << tr("Apply")
-                                                             << tr("ID")
-                                                             << tr("       Mode       ")
-                                                             << tr("Relative"));
+  this->TableWidget->setHorizontalHeaderLabels(
+    QStringList() << tr("Apply") << tr("ID") << tr("       Mode       ") << tr("Relative"));
 
   this->TableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
   this->TableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->TableWidget->verticalHeader()->hide();
 
-  QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onCurrentObjectChanged()), Qt::QueuedConnection);
-  QObject::connect(this->TableWidget, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   this, SLOT(onItemChanged(QTableWidgetItem*)), Qt::UniqueConnection);
+  QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()), this,
+    SLOT(onCurrentObjectChanged()), Qt::QueuedConnection);
+  QObject::connect(this->TableWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this,
+    SLOT(onItemChanged(QTableWidgetItem*)), Qt::UniqueConnection);
   QObject::connect(this->Internal->UI->DatasetControl, SIGNAL(clicked(bool)),
-                   this->Internal->UI->DatasetTable, SLOT(setVisible(bool)), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->DatasetTable, SIGNAL(itemChanged(QTableWidgetItem*)),
-                   this, SLOT(onDatasetChange(QTableWidgetItem*)), Qt::UniqueConnection);
-  QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onSelectionChange()), Qt::UniqueConnection);
+    this->Internal->UI->DatasetTable, SLOT(setVisible(bool)), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->DatasetTable, SIGNAL(itemChanged(QTableWidgetItem*)), this,
+    SLOT(onDatasetChange(QTableWidgetItem*)), Qt::UniqueConnection);
+  QObject::connect(this->TableWidget, SIGNAL(itemSelectionChanged()), this,
+    SLOT(onSelectionChange()), Qt::UniqueConnection);
 
   this->Internal->UI->DatasetControl->setChecked(false);
   this->Internal->UI->DatasetTable->hide();
 
   this->Internal->UI->points->setColumnCount(2);
-  this->Internal->UI->points->setHorizontalHeaderLabels( QStringList() << tr("Point")
-                                                                       << tr("Function"));
+  this->Internal->UI->points->setHorizontalHeaderLabels(
+    QStringList() << tr("Point") << tr("Function"));
   this->Internal->UI->points->setSelectionMode(QAbstractItemView::SingleSelection);
   this->Internal->UI->points->setSelectionBehavior(QAbstractItemView::SelectRows);
   this->Internal->UI->points->verticalHeader()->hide();
 
-  QObject::connect(this->Internal->UI->points, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(onPointsSelectionChange()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->AddPoint, SIGNAL(clicked()),
-                   this, SLOT(addPoint()), Qt::UniqueConnection);
-  QObject::connect(this->Internal->UI->RemovePoint, SIGNAL(clicked()),
-                   this, SLOT(deletePoint()), Qt::UniqueConnection);
-
+  QObject::connect(this->Internal->UI->points, SIGNAL(itemSelectionChanged()), this,
+    SLOT(onPointsSelectionChange()), Qt::UniqueConnection);
+  QObject::connect(
+    this->Internal->UI->AddPoint, SIGNAL(clicked()), this, SLOT(addPoint()), Qt::UniqueConnection);
+  QObject::connect(this->Internal->UI->RemovePoint, SIGNAL(clicked()), this, SLOT(deletePoint()),
+    Qt::UniqueConnection);
 }
 
 //-----------------------------------------------------------------------------
 void pqCMBModifierArcManager::accepted()
 {
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
   {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
+      for (unsigned int i = 0; i < this->ArcLines.size(); ++i)
       {
-        if(this->ArcLines[i]!= NULL)
+        if (this->ArcLines[i] != NULL)
         {
           this->ArcLines[i]->updateArc(source, this->Internal->boundingBox);
         }
@@ -336,26 +333,27 @@ void pqCMBModifierArcManager::accepted()
   }
   this->sendOrder();
   //this->clear();
-  if(this->Dialog != NULL) this->Dialog->hide();
+  if (this->Dialog != NULL)
+    this->Dialog->hide();
   emit(applyFunctions());
 }
 
 void pqCMBModifierArcManager::showDialog()
 {
-  if(this->Dialog != NULL)
+  if (this->Dialog != NULL)
   {
     this->Dialog->show();
   }
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
   {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
+      for (unsigned int i = 0; i < this->ArcLines.size(); ++i)
       {
-        if(this->ArcLines[i]!= NULL)
+        if (this->ArcLines[i] != NULL)
         {
-          QList< QVariant > v;
+          QList<QVariant> v;
           v << this->ArcLines[i]->getId();
           pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
           v.clear();
@@ -381,10 +379,10 @@ void pqCMBModifierArcManager::clear()
   this->TableWidget->setRowCount(0);
   this->Internal->UI->points->clearContents();
   this->Internal->UI->points->setRowCount(0);
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
-    {
+  for (unsigned int i = 0; i < ArcLines.size(); ++i)
+  {
     delete ArcLines[i];
-    }
+  }
 
   ArcLines.clear();
   ServerProxies.clear();
@@ -417,10 +415,10 @@ void pqCMBModifierArcManager::onClearSelection()
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visible)
+void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc* dataObj, int visible)
 {
   this->TableWidget->insertRow(this->TableWidget->rowCount());
-  int row =  this->TableWidget->rowCount()-1;
+  int row = this->TableWidget->rowCount() - 1;
 
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
@@ -436,32 +434,29 @@ void pqCMBModifierArcManager::AddLinePiece(pqCMBModifierArc *dataObj, int visibl
   objItem->setCheckState(visible ? Qt::Checked : Qt::Unchecked);
 
   this->TableWidget->resizeColumnsToContents();
-  connect(dataObj, SIGNAL(functionChanged(int)),
-          this, SLOT(onLineChange(int)), Qt::UniqueConnection);
+  connect(
+    dataObj, SIGNAL(functionChanged(int)), this, SLOT(onLineChange(int)), Qt::UniqueConnection);
   //unselectAllRows();
   this->TableWidget->selectRow(row);
-  if(visible)
+  if (visible)
     emit orderChanged();
 }
 
-void pqCMBModifierArcManager::AddFunction(cmbProfileFunction * fun)
+void pqCMBModifierArcManager::AddFunction(cmbProfileFunction* fun)
 {
   QVariant vdata;
   vdata.setValue(static_cast<void*>(fun));
   this->Internal->UI->FunctionName->addItem(fun->getName().c_str(), vdata);
-  this->Internal->UI->DeleteFunction->setEnabled(this->Internal->UI->FunctionName->count()>1);
+  this->Internal->UI->DeleteFunction->setEnabled(this->Internal->UI->FunctionName->count() > 1);
 }
 
 void pqCMBModifierArcManager::unselectAllRows()
 {
   this->TableWidget->setRangeSelected(
-                      QTableWidgetSelectionRange(0,0,
-                                                 this->TableWidget->rowCount()-1,
-                                                 Id),
-                      false);
+    QTableWidgetSelectionRange(0, 0, this->TableWidget->rowCount() - 1, Id), false);
 }
 
-void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
+void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc* dataObj)
 {
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
@@ -474,7 +469,7 @@ void pqCMBModifierArcManager::setRow(int row, pqCMBModifierArc * dataObj)
   v->setFlags(commFlags);
 
   QTableWidgetItem* objItem = new QTableWidgetItem();
-  objItem->setFlags(commFlags | ((useNormal)?Qt::NoItemFlags:Qt::ItemIsUserCheckable));
+  objItem->setFlags(commFlags | ((useNormal) ? Qt::NoItemFlags : Qt::ItemIsUserCheckable));
   objItem->setCheckState(dataObj->isRelative() ? Qt::Checked : Qt::Unchecked);
   this->TableWidget->setItem(row, Relative, objItem);
 }
@@ -486,67 +481,68 @@ void pqCMBModifierArcManager::onCurrentObjectChanged()
 
 void pqCMBModifierArcManager::onLineChange(int id)
 {
-  pqCMBModifierArc * line = NULL;
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  pqCMBModifierArc* line = NULL;
+  for (unsigned int i = 0; i < ArcLines.size(); ++i)
+  {
+    if (ArcLines[i] != NULL && ArcLines[i]->getId() == id)
     {
-    if(ArcLines[i] != NULL && ArcLines[i]->getId() == id)
-      {
       line = ArcLines[i];
-      }
     }
-  if(line == NULL) return;
-  for( int i = 0; i < this->TableWidget->rowCount(); ++i)
+  }
+  if (line == NULL)
+    return;
+  for (int i = 0; i < this->TableWidget->rowCount(); ++i)
+  {
+    QTableWidgetItem* tmp = this->TableWidget->item(i, Id);
+    if (tmp->text().toInt() == id)
     {
-    QTableWidgetItem * tmp = this->TableWidget->item( i, Id );
-    if(tmp->text().toInt() == id)
-      {
       this->setRow(i, line);
-      }
     }
+  }
 }
 
 bool pqCMBModifierArcManager::remove(int id, bool all)
 {
   this->TableWidget->blockSignals(true);
 
-  QList<QTableWidgetSelectionRange>     selected = this->TableWidget->selectedRanges();
+  QList<QTableWidgetSelectionRange> selected = this->TableWidget->selectedRanges();
   int row = selected.front().topRow();
-  int sid = this->TableWidget->item( row, Id )->text().toInt();
+  int sid = this->TableWidget->item(row, Id)->text().toInt();
 
-  if(id == -1)//Just remove the selected one
-    {
+  if (id == -1) //Just remove the selected one
+  {
     id = sid;
-    }
-  if(id == sid)
-    {
+  }
+  if (id == sid)
+  {
     this->TableWidget->removeRow(row);
-    }
-  if(all)
-    {
+  }
+  if (all)
+  {
     int r = this->TableWidget->rowCount() - 1;
-    for(; r >= 0; --r)
+    for (; r >= 0; --r)
+    {
+      QTableWidgetItem* tmp = this->TableWidget->item(r, Id);
+      if (tmp->text().toInt() == id)
       {
-      QTableWidgetItem *        tmp = this->TableWidget->item( r, Id );
-      if(tmp->text().toInt() == id)
-        {
         this->TableWidget->removeRow(r);
-        }
       }
     }
+  }
   else
+  {
+    for (int i = 0; i < this->TableWidget->rowCount(); ++i)
     {
-    for(int i = 0; i < this->TableWidget->rowCount(); ++i)
+      QTableWidgetItem* tmp = this->TableWidget->item(i, Id);
+      if (id == tmp->text().toInt())
       {
-      QTableWidgetItem *        tmp = this->TableWidget->item( i, Id );
-      if(id == tmp->text().toInt())
-        {
         this->TableWidget->blockSignals(false);
         emit(orderChanged());
         onClearSelection();
         return true;
-        }
       }
     }
+  }
   ArcLines[id] = NULL;
   this->TableWidget->blockSignals(false);
   emit(orderChanged());
@@ -556,20 +552,21 @@ bool pqCMBModifierArcManager::remove(int id, bool all)
 }
 
 //-----------------------------------------------------------------------------
-void pqCMBModifierArcManager::onItemChanged( QTableWidgetItem* item)
+void pqCMBModifierArcManager::onItemChanged(QTableWidgetItem* item)
 {
-  int id = this->TableWidget->item( item->row(), Id )->text().toInt();
+  int id = this->TableWidget->item(item->row(), Id)->text().toInt();
   pqCMBModifierArc* dl = ArcLines[id];
-  if(dl == NULL) return;
-  if(item->column() == VisibilityCol)
-    {
+  if (dl == NULL)
+    return;
+  if (item->column() == VisibilityCol)
+  {
     emit(orderChanged());
-    }
-  if(item->column() == Relative)
+  }
+  if (item->column() == Relative)
   {
     bool relative = item->checkState() == Qt::Checked;
     dl->setRelative(relative);
-    if(WedgeFunctionWidget)
+    if (WedgeFunctionWidget)
     {
       WedgeFunctionWidget->setRelative(relative);
     }
@@ -578,31 +575,32 @@ void pqCMBModifierArcManager::onItemChanged( QTableWidgetItem* item)
 
 void pqCMBModifierArcManager::onDatasetChange(QTableWidgetItem* item)
 {
-  if(this->CurrentModifierArc == NULL) return;
+  if (this->CurrentModifierArc == NULL)
+    return;
   int id = this->CurrentModifierArc->getId();
-  if(item->column() == 0)
-    {
-    QString fname = this->Internal->UI->DatasetTable->item( item->row(), 1 )->text();
-    int pieceIdx = this->Internal->UI->DatasetTable->item( item->row(), 2 )->text().toInt();
+  if (item->column() == 0)
+  {
+    QString fname = this->Internal->UI->DatasetTable->item(item->row(), 1)->text();
+    int pieceIdx = this->Internal->UI->DatasetTable->item(item->row(), 2)->text().toInt();
     bool visible = item->checkState() == Qt::Checked;
     ArcLinesApply[id][fname][pieceIdx] = visible;
     emit orderChanged();
-    }
+  }
 }
 
 void pqCMBModifierArcManager::applyAgain()
 {
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->TableWidget->blockSignals(true);
-  QList<QTableWidgetSelectionRange>     selected = this->TableWidget->selectedRanges();
+  QList<QTableWidgetSelectionRange> selected = this->TableWidget->selectedRanges();
   if (!selected.empty())
-    {
+  {
     int row = selected.front().topRow();
-    int id = this->TableWidget->item( row, Id )->text().toInt();
-    bool visible = this->TableWidget->item( row, VisibilityCol )->checkState() == Qt::Checked;
+    int id = this->TableWidget->item(row, Id)->text().toInt();
+    bool visible = this->TableWidget->item(row, VisibilityCol)->checkState() == Qt::Checked;
     pqCMBModifierArc* dl = ArcLines[id];
     this->TableWidget->insertRow(this->TableWidget->rowCount());
-    row =  this->TableWidget->rowCount()-1;
+    row = this->TableWidget->rowCount() - 1;
 
     setRow(row, dl);
 
@@ -616,25 +614,26 @@ void pqCMBModifierArcManager::applyAgain()
     objItem->setCheckState(visible ? Qt::Checked : Qt::Unchecked);
 
     this->TableWidget->resizeColumnsToContents();
-    if(visible) emit orderChanged();
-    }
+    if (visible)
+      emit orderChanged();
+  }
   this->TableWidget->blockSignals(false);
 }
 
 void pqCMBModifierArcManager::onSelectionChange()
 {
   this->TableWidget->blockSignals(true);
-  if(this->Internal->selectedRow != -1)
+  if (this->Internal->selectedRow != -1)
   {
-    QTableWidgetItem * tmp = this->TableWidget->item( this->Internal->selectedRow, Id );
-    if(tmp != NULL)
+    QTableWidgetItem* tmp = this->TableWidget->item(this->Internal->selectedRow, Id);
+    if (tmp != NULL)
     {
       int id = tmp->text().toInt();
-      pqCMBModifierArc * ma = ArcLines[id];
-      tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
+      pqCMBModifierArc* ma = ArcLines[id];
+      tmp = this->TableWidget->item(this->Internal->selectedRow, Relative);
       tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
 
-      QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
+      QTableWidgetItem* qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
       Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
       this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
       this->TableWidget->setItem(this->Internal->selectedRow, Mode, qtwi);
@@ -642,22 +641,22 @@ void pqCMBModifierArcManager::onSelectionChange()
     }
     this->Internal->selectedRow = -1;
   }
-  QList<QTableWidgetSelectionRange>     selected = this->TableWidget->selectedRanges();
+  QList<QTableWidgetSelectionRange> selected = this->TableWidget->selectedRanges();
   if (!selected.empty())
   {
     int row = selected.front().topRow();
     this->Internal->selectedRow = row;
-    int id = this->TableWidget->item( row, Id )->text().toInt();
-    pqCMBModifierArc * ma = ArcLines[id];
+    int id = this->TableWidget->item(row, Id)->text().toInt();
+    pqCMBModifierArc* ma = ArcLines[id];
 
-    QTableWidgetItem * tmp = this->TableWidget->item( this->Internal->selectedRow, Relative);
-    tmp->setFlags(tmp->flags() | ((useNormal)?Qt::NoItemFlags:Qt::ItemIsUserCheckable));
+    QTableWidgetItem* tmp = this->TableWidget->item(this->Internal->selectedRow, Relative);
+    tmp->setFlags(tmp->flags() | ((useNormal) ? Qt::NoItemFlags : Qt::ItemIsUserCheckable));
 
-    switch(this->Internal->mode)
+    switch (this->Internal->mode)
     {
       case EditArc:
       {
-        QTableWidgetItem * qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
+        QTableWidgetItem* qtwi = new QTableWidgetItem(pointModesStrings[ma->getFunctionMode()]);
         Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, NULL);
         this->TableWidget->setItem(this->Internal->selectedRow, Mode, qtwi);
@@ -674,8 +673,8 @@ void pqCMBModifierArcManager::onSelectionChange()
         combo->setCurrentIndex(ma->getFunctionMode());
         this->TableWidget->setItem(this->Internal->selectedRow, Mode, NULL);
         this->TableWidget->setCellWidget(this->Internal->selectedRow, Mode, combo);
-        QObject::connect( combo, SIGNAL(currentIndexChanged(int)),
-                          this,  SLOT(functionModeChanged(int)), Qt::UniqueConnection );
+        QObject::connect(combo, SIGNAL(currentIndexChanged(int)), this,
+          SLOT(functionModeChanged(int)), Qt::UniqueConnection);
         break;
       }
     }
@@ -691,11 +690,11 @@ void pqCMBModifierArcManager::onSelectionChange()
 void pqCMBModifierArcManager::onFunctionSelectionChange()
 {
   cmbProfileFunction* fun = NULL;
-  int	index = this->Internal->UI->FunctionName->currentIndex();
-  if(index != -1)
+  int index = this->Internal->UI->FunctionName->currentIndex();
+  if (index != -1)
   {
     QVariant d = this->Internal->UI->FunctionName->itemData(index);
-    void * dv = d.value<void *>();
+    void* dv = d.value<void*>();
     fun = static_cast<cmbProfileFunction*>(dv);
   }
   selectFunction(fun);
@@ -703,23 +702,24 @@ void pqCMBModifierArcManager::onFunctionSelectionChange()
 
 void pqCMBModifierArcManager::onPointsSelectionChange()
 {
-  QList<QTableWidgetItem *>selected =	this->Internal->UI->points->selectedItems();
-  if( !selected.empty() )
+  QList<QTableWidgetItem*> selected = this->Internal->UI->points->selectedItems();
+  if (!selected.empty())
   {
-    vtkSMSourceProxy * pointDisplaySource =
-                        vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
+    vtkSMSourceProxy* pointDisplaySource =
+      vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
     QVariant qv = selected[0]->data(Qt::UserRole);
-    pqCMBModifierArc::pointFunctionWrapper * wrapper =
-                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
-    this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
+    pqCMBModifierArc::pointFunctionWrapper* wrapper =
+      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
+    this->Internal->UI->FunctionName->setCurrentIndex(
+      this->Internal->UI->FunctionName->findText(wrapper->getName().c_str()));
     selectFunction(const_cast<cmbProfileFunction*>(wrapper->getFunction()));
     {
       pointDisplaySource->InvokeCommand("clearVisible");
       double ml = this->Internal->boundingBox.GetMaxLength() * 0.015625;
-      if(this->CurrentModifierArc->getFunctionMode() != pqCMBModifierArc::Single)
+      if (this->CurrentModifierArc->getFunctionMode() != pqCMBModifierArc::Single)
       {
-        pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setVisible"),
-                                        wrapper->getPointIndex());
+        pqSMAdaptor::setElementProperty(
+          pointDisplaySource->GetProperty("setVisible"), wrapper->getPointIndex());
         pqSMAdaptor::setElementProperty(pointDisplaySource->GetProperty("setScale"), ml);
         pointDisplaySource->UpdateVTKObjects();
       }
@@ -735,16 +735,16 @@ void pqCMBModifierArcManager::onPointsSelectionChange()
 std::vector<int> pqCMBModifierArcManager::getCurrentOrder(QString fname, int pindx)
 {
   std::vector<int> result;
-  for(int i = 0; i < this->TableWidget->rowCount(); ++i)
-    {
-    QTableWidgetItem * tmp = this->TableWidget->item( i, Id );
+  for (int i = 0; i < this->TableWidget->rowCount(); ++i)
+  {
+    QTableWidgetItem* tmp = this->TableWidget->item(i, Id);
     int id = tmp->text().toInt();
-    tmp = this->TableWidget->item( i, VisibilityCol );
-    if(tmp->checkState() == Qt::Checked && ArcLinesApply[id][fname][pindx])
-      {
+    tmp = this->TableWidget->item(i, VisibilityCol);
+    if (tmp->checkState() == Qt::Checked && ArcLinesApply[id][fname][pindx])
+    {
       result.push_back(id);
-      }
     }
+  }
   return result;
 }
 
@@ -756,11 +756,12 @@ void pqCMBModifierArcManager::addLine()
 
 void pqCMBModifierArcManager::selectLine(int sid)
 {
-  vtkSMSourceProxy * pointDisplaySource =
-                        vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
-  if(this->CurrentModifierArc != NULL)
-    {
-    if(sid == this->CurrentModifierArc->getId()) return;
+  vtkSMSourceProxy* pointDisplaySource =
+    vtkSMSourceProxy::SafeDownCast(this->Internal->LineGlyphFilter->getProxy());
+  if (this->CurrentModifierArc != NULL)
+  {
+    if (sid == this->CurrentModifierArc->getId())
+      return;
     pqSMAdaptor::setInputProperty(pointDisplaySource->GetProperty("Input"), NULL, 0);
     pointDisplaySource->MarkModified(pointDisplaySource);
     pointDisplaySource->UpdateVTKObjects();
@@ -769,65 +770,66 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->Internal->UI->removeLineButton->setEnabled(false);
     this->Internal->UI->buttonUpdateLine->setEnabled(false);
     this->Internal->UI->addLineButton->setEnabled(true);
-    if(this->Internal->UI_Dialog != NULL)
-      {
-      QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+    if (this->Internal->UI_Dialog != NULL)
+    {
+      QPushButton* applyButton =
+        this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
       applyButton->setEnabled(true);
-      }
     }
-  if(sid == -1 || sid < -2)
+  }
+  if (sid == -1 || sid < -2)
   {
     this->Internal->UI->points->setRowCount(0);
     this->Internal->mode = NoEditMode;
     return;
   }
-  else if(sid == -2) //create new one
+  else if (sid == -2) //create new one
   {
     this->Internal->mode = EditArc;
-    pqCMBModifierArc * dig = new pqCMBModifierArc();
+    pqCMBModifierArc* dig = new pqCMBModifierArc();
     this->ArcWidgetManager->setActiveArc(dig->GetCmbArc());
     this->ArcWidgetManager->create();
-    QWidget * tmpWidget =this->ArcWidgetManager->getActiveWidget();
+    QWidget* tmpWidget = this->ArcWidgetManager->getActiveWidget();
     tmpWidget->hide();
     this->Internal->CurrentArcWidget = dynamic_cast<qtArcWidget*>(tmpWidget);
 
     QObject::connect(this->Internal->arcEditWidget->Close, SIGNAL(toggled(bool)),
-                     this->Internal->CurrentArcWidget, SLOT(closeLoop(bool)), Qt::UniqueConnection);
+      this->Internal->CurrentArcWidget, SLOT(closeLoop(bool)), Qt::UniqueConnection);
     QObject::connect(this->Internal->arcEditWidget->EditMode, SIGNAL(toggled(bool)),
-                     this->Internal->CurrentArcWidget, SLOT(updateMode()), Qt::UniqueConnection);
+      this->Internal->CurrentArcWidget, SLOT(updateMode()), Qt::UniqueConnection);
     QObject::connect(this->Internal->arcEditWidget->ModifyMode, SIGNAL(toggled(bool)),
-                     this->Internal->CurrentArcWidget, SLOT(ModifyMode()), Qt::UniqueConnection);
+      this->Internal->CurrentArcWidget, SLOT(ModifyMode()), Qt::UniqueConnection);
     this->Internal->arcEditWidget->EditMode->setChecked(true);
 
     addNewArc(dig);
 
     this->disableSelection();
     this->Internal->UI->addLineButton->setEnabled(false);
-    if(this->Internal->UI_Dialog != NULL)
+    if (this->Internal->UI_Dialog != NULL)
     {
-      QPushButton* applyButton = this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+      QPushButton* applyButton =
+        this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
       applyButton->setEnabled(false);
     }
   }
   else
+  {
+    if (static_cast<size_t>(sid) < ArcLines.size() && ArcLines[sid] != NULL)
     {
-    if(static_cast<size_t>(sid)<ArcLines.size() && ArcLines[sid] != NULL)
-      {
       this->CurrentModifierArc = ArcLines[sid];
       this->CurrentModifierArc->switchToEditable();
       this->Internal->mode = EditFunction;
       this->ArcWidgetManager->setActiveArc(this->CurrentModifierArc->GetCmbArc());
       this->Internal->UI->removeLineButton->setEnabled(true);
       this->Internal->UI->buttonUpdateLine->setEnabled(true);
-      }
     }
-  if(this->CurrentModifierArc != NULL)
+  }
+  if (this->CurrentModifierArc != NULL)
   {
-    if(this->CurrentModifierArc->GetCmbArc()->getSource() != NULL)
+    if (this->CurrentModifierArc->GetCmbArc()->getSource() != NULL)
     {
       pqSMAdaptor::setInputProperty(pointDisplaySource->GetProperty("Input"),
-                                    this->CurrentModifierArc->GetCmbArc()->getSource()->getProxy(),
-                                    0);
+        this->CurrentModifierArc->GetCmbArc()->getSource()->getProxy(), 0);
       pointDisplaySource->MarkModified(pointDisplaySource);
       pointDisplaySource->UpdateVTKObjects();
     }
@@ -835,7 +837,6 @@ void pqCMBModifierArcManager::selectLine(int sid)
     this->setDatasetTable(sid);
     this->setUpPointsTable();
     this->Internal->UI->points->selectRow(0);
-
   }
   this->updateUiControls();
 }
@@ -848,16 +849,16 @@ void pqCMBModifierArcManager::addNewArc(pqCMBModifierArc* dig)
   addApplyControl();
   //TODO THIS NEEDS TO BE BETTER
   dig->setId(sid);
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
   {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      QList< QVariant > v;
-      v <<sid;
+      QList<QVariant> v;
+      v << sid;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
       v.clear();
-      v <<sid << 1;
+      v << sid << 1;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ArcEnable"), v);
       source->UpdateVTKObjects();
     }
@@ -868,15 +869,15 @@ void pqCMBModifierArcManager::addNewArc(pqCMBModifierArc* dig)
 
 void pqCMBModifierArcManager::update()
 {
-  switch(this->Internal->mode)
+  switch (this->Internal->mode)
   {
     case EditArc:
       this->Internal->mode = EditFunction;
       this->Internal->CurrentArcWidget->finishContour();
-      if(this->Internal->UI_Dialog != NULL)
+      if (this->Internal->UI_Dialog != NULL)
       {
         QPushButton* applyButton =
-                            this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
+          this->Internal->UI_Dialog->buttonBox->button(QDialogButtonBox::Apply);
         applyButton->setEnabled(true);
       }
       break;
@@ -885,19 +886,20 @@ void pqCMBModifierArcManager::update()
       break;
   }
 
-  if(this->CurrentModifierArc == NULL)
-    {
+  if (this->CurrentModifierArc == NULL)
+  {
     return;
-    }
-  foreach(QString filename, ServerProxies.keys())
+  }
+  foreach (QString filename, ServerProxies.keys())
+  {
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
-      {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      if(source == NULL) continue;
+      if (source == NULL)
+        continue;
       this->CurrentModifierArc->updateArc(source, this->Internal->boundingBox);
-      }
     }
+  }
   setUpPointsTable();
   updateUiControls();
   emit(functionsUpdated());
@@ -907,17 +909,18 @@ void pqCMBModifierArcManager::update()
 
   bool isN1 = false;
   bool allNull = true;
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
   {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      if(source == NULL) continue;
+      if (source == NULL)
+        continue;
       allNull = false;
       source->UpdatePropertyInformation();
       double r = pqSMAdaptor::getElementProperty(source->GetProperty("AmountRemoved")).toDouble();
       double a = pqSMAdaptor::getElementProperty(source->GetProperty("AmountAdded")).toDouble();
-      if(r == -1 || a == -1)
+      if (r == -1 || a == -1)
       {
         isN1 = true;
         continue;
@@ -926,18 +929,20 @@ void pqCMBModifierArcManager::update()
       added += a;
     }
   }
-  if(isN1)
+  if (isN1)
   {
     this->Internal->UI->amountAdded->setText("NA");
     this->Internal->UI->amountRemoved->setText("NA");
-    if(!allNull) this->Internal->UI->PointBathChangeControl->show();
+    if (!allNull)
+      this->Internal->UI->PointBathChangeControl->show();
   }
   else
   {
     this->Internal->UI->amountAdded->setText(QString::number(added));
     this->Internal->UI->amountRemoved->setText(QString::number(removed));
   }
-  if(allNull) this->Internal->UI->PointBathChangeControl->hide();
+  if (allNull)
+    this->Internal->UI->PointBathChangeControl->hide();
 }
 
 void pqCMBModifierArcManager::computeChange()
@@ -947,21 +952,22 @@ void pqCMBModifierArcManager::computeChange()
   double removed = 0;
   double added = 0;
 
-  QList< QVariant > v;
+  QList<QVariant> v;
   v << spacing << radius;
 
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
   {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
-      if(source == NULL) continue;
+      if (source == NULL)
+        continue;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("computeDisplacementChange"), v);
       source->UpdateVTKObjects();
       source->UpdatePropertyInformation();
       double r = pqSMAdaptor::getElementProperty(source->GetProperty("AmountRemoved")).toDouble();
       double a = pqSMAdaptor::getElementProperty(source->GetProperty("AmountAdded")).toDouble();
-      if(r == -1 || a == -1)
+      if (r == -1 || a == -1)
       {
         continue;
       }
@@ -975,32 +981,31 @@ void pqCMBModifierArcManager::computeChange()
 
 void pqCMBModifierArcManager::removeArc()
 {
-  if(this->CurrentModifierArc == NULL)
-    {
+  if (this->CurrentModifierArc == NULL)
+  {
     return;
-    }
+  }
   int id = this->CurrentModifierArc->getId();
   this->enableSelection();
   selectLine(-1);
 
-  pqCMBModifierArc * tmp = ArcLines[id];
+  pqCMBModifierArc* tmp = ArcLines[id];
   bool hasMore = this->remove(id, false);
-  if(!hasMore)
-    {
-    QObject::disconnect( tmp, SIGNAL(requestRender()),
-                         this, SIGNAL(requestRender()) );
+  if (!hasMore)
+  {
+    QObject::disconnect(tmp, SIGNAL(requestRender()), this, SIGNAL(requestRender()));
     ArcLines[id] = NULL;
-    foreach(QString filename, ServerProxies.keys())
+    foreach (QString filename, ServerProxies.keys())
+    {
+      foreach (int pieceIdx, ServerProxies[filename].keys())
       {
-      foreach(int pieceIdx, ServerProxies[filename].keys())
-        {
         vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
         tmp->removeFromServer(source);
-        }
       }
+    }
 
     delete tmp;
-    }
+  }
   emit(requestRender());
 }
 
@@ -1009,8 +1014,8 @@ void pqCMBModifierArcManager::addProxy(QString s, int pid, vtkBoundingBox box, p
   assert(ps != NULL);
   assert(!s.isNull());
   vtkSMSourceProxy* source = NULL;
-  source = vtkSMSourceProxy::SafeDownCast(ps->getProxy() );
-  if(source == NULL)
+  source = vtkSMSourceProxy::SafeDownCast(ps->getProxy());
+  if (source == NULL)
   {
     return;
   }
@@ -1019,11 +1024,11 @@ void pqCMBModifierArcManager::addProxy(QString s, int pid, vtkBoundingBox box, p
 
   this->Internal->boundingBox.AddBox(box);
 
-  for(unsigned int i = 0; i < this->ArcLines.size(); ++i)
+  for (unsigned int i = 0; i < this->ArcLines.size(); ++i)
   {
-    if(this->ArcLines[i]!= NULL)
+    if (this->ArcLines[i] != NULL)
     {
-      QList< QVariant > v;
+      QList<QVariant> v;
       v << this->ArcLines[i]->getId();
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("AddArc"), v);
       v.clear();
@@ -1043,9 +1048,9 @@ void pqCMBModifierArcManager::clearProxies()
   ServerProxies.clear();
   ServerRows.clear();
   ArcLinesApply.clear();
-  if(!this->ArcLines.empty())
+  if (!this->ArcLines.empty())
   {
-    QMap< QString, QMap<int, bool> > newVis;
+    QMap<QString, QMap<int, bool> > newVis;
     ArcLinesApply.resize(this->ArcLines.size(), newVis);
   }
   this->Internal->boundingBox.Reset();
@@ -1053,28 +1058,30 @@ void pqCMBModifierArcManager::clearProxies()
 
 void pqCMBModifierArcManager::updateLineFunctions()
 {
-  if(this->CurrentModifierArc == NULL) return;
-  pqCMBModifierArc * dig = this->CurrentModifierArc;
-  std::vector<cmbProfileFunction *> funs;
+  if (this->CurrentModifierArc == NULL)
+    return;
+  pqCMBModifierArc* dig = this->CurrentModifierArc;
+  std::vector<cmbProfileFunction*> funs;
   dig->getFunctions(funs);
   this->Internal->UI->FunctionName->blockSignals(true);
   this->Internal->UI->FunctionName->clear();
-  for(unsigned int i = 0; i < funs.size(); ++i)
+  for (unsigned int i = 0; i < funs.size(); ++i)
   {
     this->AddFunction(funs[i]);
   }
   this->functionModeChanged(CurrentModifierArc->getFunctionMode());
   QString name;
-  QList<QTableWidgetItem *>selected =	this->Internal->UI->points->selectedItems();
-  if( !selected.empty() )
+  QList<QTableWidgetItem*> selected = this->Internal->UI->points->selectedItems();
+  if (!selected.empty())
   {
     QVariant qv = selected[0]->data(Qt::UserRole);
-    pqCMBModifierArc::pointFunctionWrapper * wrapper =
-                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+    pqCMBModifierArc::pointFunctionWrapper* wrapper =
+      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
     name = wrapper->getName().c_str();
   }
 
-  this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(name));
+  this->Internal->UI->FunctionName->setCurrentIndex(
+    this->Internal->UI->FunctionName->findText(name));
   this->Internal->UI->FunctionName->blockSignals(false);
   onFunctionSelectionChange();
 }
@@ -1086,7 +1093,7 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
   ManualFunctionWidget = NULL;
   WedgeFunctionWidget = NULL;
   selectedFunction = NULL;
-  if(fun == NULL)
+  if (fun == NULL)
   {
     this->Internal->UI->CloneFunction->setEnabled(false);
     this->Internal->UI->DeleteFunction->setEnabled(false);
@@ -1100,18 +1107,19 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
     this->Internal->UI->FunctionType->setCurrentIndex(static_cast<int>(fun->getType()));
     selectedFunction = fun;
     this->nameChanged(fun->getName().c_str());
-    QList<QTableWidgetItem *>selected =	this->Internal->UI->points->selectedItems();
-    if( !selected.empty() )
+    QList<QTableWidgetItem*> selected = this->Internal->UI->points->selectedItems();
+    if (!selected.empty())
     {
       QVariant qv = selected[0]->data(Qt::UserRole);
-      pqCMBModifierArc::pointFunctionWrapper * wrapper =
-                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
-      this->Internal->UI->points->item(selected[0]->row(), 1)->setText(selectedFunction->getName().c_str());
+      pqCMBModifierArc::pointFunctionWrapper* wrapper =
+        static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
+      this->Internal->UI->points->item(selected[0]->row(), 1)
+        ->setText(selectedFunction->getName().c_str());
       this->Internal->UI->points->resizeColumnsToContents();
       switch (this->CurrentModifierArc->getFunctionMode())
       {
         case pqCMBModifierArc::EndPoints:
-          if(wrapper->getPointIndex()!=0)
+          if (wrapper->getPointIndex() != 0)
           {
             CurrentModifierArc->setEndFun(selectedFunction->getName());
             break;
@@ -1120,15 +1128,15 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
           CurrentModifierArc->setStartFun(selectedFunction->getName());
           break;
         case pqCMBModifierArc::PointAssignment:
-          CurrentModifierArc->addFunctionAtPoint(wrapper->getPointId(),selectedFunction);
+          CurrentModifierArc->addFunctionAtPoint(wrapper->getPointId(), selectedFunction);
       }
     }
 
-    switch(fun->getType())
+    switch (fun->getType())
     {
       case cmbProfileFunction::MANUAL:
         ManualFunctionWidget =
-            new qtCMBManualFunctionWidget(dynamic_cast<cmbManualProfileFunction*>(fun), NULL);
+          new qtCMBManualFunctionWidget(dynamic_cast<cmbManualProfileFunction*>(fun), NULL);
         functionLayout->addWidget(this->ManualFunctionWidget);
         break;
       case cmbProfileFunction::WEDGE:
@@ -1142,14 +1150,15 @@ void pqCMBModifierArcManager::selectFunction(cmbProfileFunction* fun)
 
 void pqCMBModifierArcManager::functionTypeChanged(int type)
 {
-  if(selectedFunction == NULL) return;
-  if(type == selectedFunction->getType()) return;
+  if (selectedFunction == NULL)
+    return;
+  if (type == selectedFunction->getType())
+    return;
   std::string name = selectedFunction->getName();
-  cmbProfileFunction* fun =
-        this->CurrentModifierArc->setFunction(name,
-                                              static_cast<cmbProfileFunction::FunctionType>(type));
-  int	index = this->Internal->UI->FunctionName->currentIndex();
-  if(index != -1)
+  cmbProfileFunction* fun = this->CurrentModifierArc->setFunction(
+    name, static_cast<cmbProfileFunction::FunctionType>(type));
+  int index = this->Internal->UI->FunctionName->currentIndex();
+  if (index != -1)
   {
     QVariant vdata;
     vdata.setValue(static_cast<void*>(fun));
@@ -1161,28 +1170,28 @@ void pqCMBModifierArcManager::functionTypeChanged(int type)
 
 void pqCMBModifierArcManager::doneModifyingArc()
 {
-  if(this->CurrentModifierArc != NULL)
+  if (this->CurrentModifierArc != NULL)
+  {
+    foreach (QString filename, ServerProxies.keys())
     {
-    foreach(QString filename, ServerProxies.keys())
+      foreach (int pieceIdx, ServerProxies[filename].keys())
       {
-      foreach(int pieceIdx, ServerProxies[filename].keys())
-        {
         vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
         this->CurrentModifierArc->updateArc(source, this->Internal->boundingBox);
-        }
       }
     }
+  }
 
   this->enableSelection();
   this->CurrentModifierArc = NULL;
   //this->unselectAllRows();
   emit this->modifyingArcDone();
   {
-    QList<QTableWidgetSelectionRange>     selected = this->TableWidget->selectedRanges();
+    QList<QTableWidgetSelectionRange> selected = this->TableWidget->selectedRanges();
     if (!selected.empty())
     {
       int row = selected.front().topRow();
-      int id = this->TableWidget->item( row, Id )->text().toInt();
+      int id = this->TableWidget->item(row, Id)->text().toInt();
       selectLine(id);
     }
   }
@@ -1191,26 +1200,26 @@ void pqCMBModifierArcManager::doneModifyingArc()
 
 void pqCMBModifierArcManager::addApplyControl()
 {
-  QMap< QString, QMap<int, bool> > newVis;
-  foreach(QString filename, ServerProxies.keys())
+  QMap<QString, QMap<int, bool> > newVis;
+  foreach (QString filename, ServerProxies.keys())
+  {
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
-      {
       newVis[filename][pieceIdx] = true;
-      }
     }
+  }
   ArcLinesApply.resize(this->ArcLines.size(), newVis);
 }
 
 void pqCMBModifierArcManager::sendOrder()
 {
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
+  {
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
-      {
       vtkSMSourceProxy* source = ServerProxies[filename][pieceIdx].source;
       std::vector<int> order = this->getCurrentOrder(filename, pieceIdx);
-      QList< QVariant > v;
+      QList<QVariant> v;
       v << static_cast<int>(order.size());
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ResizeOrder"), v);
       source->UpdateVTKObjects();
@@ -1219,20 +1228,20 @@ void pqCMBModifierArcManager::sendOrder()
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("ResizeOrder"), v);
       source->UpdateVTKObjects();
       for (unsigned int i = 0; i < order.size(); ++i)
-        {
+      {
         v.clear();
         v << static_cast<int>(i) << order[i];
         pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetOrderValue"), v);
         source->UpdateVTKObjects();
-        }
+      }
       v.clear();
       v << -1 << -1;
       pqSMAdaptor::setMultipleElementProperty(source->GetProperty("SetOrderValue"), v);
       source->UpdateVTKObjects();
       source->UpdatePipeline();
       source->UpdatePropertyInformation();
-      }
     }
+  }
   emit requestRender();
 }
 
@@ -1244,12 +1253,12 @@ void pqCMBModifierArcManager::setUpTable()
   tmp->setRowCount(0);
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   tmp->setSelectionMode(QAbstractItemView::NoSelection);
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
+  {
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
-      {
       tmp->insertRow(tmp->rowCount());
-      int row =  tmp->rowCount()-1;
+      int row = tmp->rowCount() - 1;
       ServerRows[filename][pieceIdx] = row;
       QTableWidgetItem* objItem = new QTableWidgetItem();
       QVariant vdata;
@@ -1263,23 +1272,23 @@ void pqCMBModifierArcManager::setUpTable()
       tmp->setItem(row, 1, objItem);
       objItem->setFlags(commFlags);
 
-      objItem = new QTableWidgetItem( QString::number(pieceIdx) );
+      objItem = new QTableWidgetItem(QString::number(pieceIdx));
       tmp->setItem(row, 2, objItem);
       objItem->setFlags(commFlags);
-      }
     }
+  }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
 }
 
 void pqCMBModifierArcManager::setUpPointsTable()
 {
-  pqCMBModifierArc::pointFunctionWrapper * wrapper = NULL;
-  QList<QTableWidgetItem *> selected =	this->Internal->UI->points->selectedItems();
-  if( !selected.empty() )
+  pqCMBModifierArc::pointFunctionWrapper* wrapper = NULL;
+  QList<QTableWidgetItem*> selected = this->Internal->UI->points->selectedItems();
+  if (!selected.empty())
   {
     QVariant qv = selected[0]->data(Qt::UserRole);
-    wrapper = static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+    wrapper = static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
   }
   QTableWidget* tmp = this->Internal->UI->points;
   tmp->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -1288,7 +1297,7 @@ void pqCMBModifierArcManager::setUpPointsTable()
 
   tmp->clearContents();
   tmp->setRowCount(0);
-  if(CurrentModifierArc == NULL)
+  if (CurrentModifierArc == NULL)
   {
     tmp->blockSignals(false);
     return;
@@ -1297,9 +1306,9 @@ void pqCMBModifierArcManager::setUpPointsTable()
 
   std::vector<pqCMBModifierArc::pointFunctionWrapper const*> points;
   CurrentModifierArc->getPointFunctions(points);
-  for(size_t i = 0; i < points.size(); ++i)
+  for (size_t i = 0; i < points.size(); ++i)
   {
-    this->addItemToTable(points[i], wrapper == points[i] || (wrapper == NULL && i == 0 ));
+    this->addItemToTable(points[i], wrapper == points[i] || (wrapper == NULL && i == 0));
   }
   tmp->resizeColumnsToContents();
   tmp->blockSignals(false);
@@ -1308,17 +1317,19 @@ void pqCMBModifierArcManager::setUpPointsTable()
 
 void pqCMBModifierArcManager::setDatasetTable(int inId)
 {
-  if(inId < 0 || static_cast<size_t>(inId) >= ArcLines.size()) return;
+  if (inId < 0 || static_cast<size_t>(inId) >= ArcLines.size())
+    return;
   this->Internal->UI->DatasetTable->blockSignals(true);
-  foreach(QString filename, ServerProxies.keys())
+  foreach (QString filename, ServerProxies.keys())
+  {
+    foreach (int pieceIdx, ServerProxies[filename].keys())
     {
-    foreach(int pieceIdx, ServerProxies[filename].keys())
-      {
       int row = ServerRows[filename][pieceIdx];
       bool visOnDs = ArcLinesApply[inId][filename][pieceIdx];
-      this->Internal->UI->DatasetTable->item( row, 0 )->setCheckState( visOnDs ? Qt::Checked : Qt::Unchecked);
-      }
+      this->Internal->UI->DatasetTable->item(row, 0)->setCheckState(
+        visOnDs ? Qt::Checked : Qt::Unchecked);
     }
+  }
   this->Internal->UI->DatasetTable->blockSignals(false);
 }
 
@@ -1326,11 +1337,11 @@ void pqCMBModifierArcManager::disableAbsolute()
 {
   useNormal = true;
   this->TableWidget->blockSignals(true);
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  for (unsigned int i = 0; i < ArcLines.size(); ++i)
   {
-    QTableWidgetItem * tmp = this->TableWidget->item( i, Relative);
+    QTableWidgetItem* tmp = this->TableWidget->item(i, Relative);
     tmp->setFlags((tmp->flags() | Qt::ItemIsUserCheckable) ^ Qt::ItemIsUserCheckable);
-    tmp->setCheckState( Qt::Checked );
+    tmp->setCheckState(Qt::Checked);
 
     ArcLines[i]->setRelative(true);
   }
@@ -1340,19 +1351,18 @@ void pqCMBModifierArcManager::disableAbsolute()
 void pqCMBModifierArcManager::enableAbsolute()
 {
   useNormal = false;
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  for (unsigned int i = 0; i < ArcLines.size(); ++i)
   {
-    QTableWidgetItem * tmp = this->TableWidget->item( i, Relative);
+    QTableWidgetItem* tmp = this->TableWidget->item(i, Relative);
     tmp->setFlags(tmp->flags() | Qt::ItemIsUserCheckable);
   }
 }
 
 void pqCMBModifierArcManager::onSaveArc()
 {
-  QString fileName = QFileDialog::getSaveFileName(NULL, tr("Save File"),
-                                                  "",
-                                                  tr("Function Profile (*.mar)"));
-  if(fileName.isEmpty())
+  QString fileName =
+    QFileDialog::getSaveFileName(NULL, tr("Save File"), "", tr("Function Profile (*.mar)"));
+  if (fileName.isEmpty())
   {
     return;
   }
@@ -1362,26 +1372,25 @@ void pqCMBModifierArcManager::onSaveArc()
   out << 2 << "\n";
 
   CurrentModifierArc->write(out);
-  pqOutputPort *port = CurrentModifierArc->GetCmbArc()->getSource()->getOutputPort(0);
-  ContourInputs.push_back( port );
+  pqOutputPort* port = CurrentModifierArc->GetCmbArc()->getSource()->getOutputPort(0);
+  ContourInputs.push_back(port);
 
   {
     QFileInfo fi(fileName);
-    std::string fname = QFileInfo(fi.dir(), fi.baseName()+".vtp").absoluteFilePath().toStdString();
+    std::string fname =
+      QFileInfo(fi.dir(), fi.baseName() + ".vtp").absoluteFilePath().toStdString();
     QMap<QString, QList<pqOutputPort*> > namedInputs;
     namedInputs["Input"] = ContourInputs;
 
     //now that we have collected all the contour info, write out the file
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
-    pqPipelineSource* writer = builder->createFilter("writers",
-                                                     "SceneGenV2ContourWriter",
-                                                     namedInputs, core->getActiveServer());
+    pqPipelineSource* writer = builder->createFilter(
+      "writers", "SceneGenV2ContourWriter", namedInputs, core->getActiveServer());
 
-    vtkSMSourceProxy *proxy = vtkSMSourceProxy::SafeDownCast(writer->getProxy());
+    vtkSMSourceProxy* proxy = vtkSMSourceProxy::SafeDownCast(writer->getProxy());
 
-    pqSMAdaptor::setElementProperty( proxy->GetProperty("FileName"),
-                                     fname.c_str() );
+    pqSMAdaptor::setElementProperty(proxy->GetProperty("FileName"), fname.c_str());
     proxy->UpdateProperty("FileName");
     proxy->UpdatePipeline();
 
@@ -1393,8 +1402,8 @@ void pqCMBModifierArcManager::onSaveArc()
 void pqCMBModifierArcManager::onLoadArc()
 {
   QStringList fileNames =
-  QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
-  if(fileNames.count()==0)
+    QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
+  if (fileNames.count() == 0)
   {
     return;
   }
@@ -1404,36 +1413,34 @@ void pqCMBModifierArcManager::onLoadArc()
   int rc = this->TableWidget->rowCount();
   {
     QFileInfo fi(fileNames[0]);
-    pqPipelineSource *reader = NULL;
+    pqPipelineSource* reader = NULL;
     QStringList files;
-    files << QFileInfo(fi.dir(), fi.baseName()+".vtp").absoluteFilePath();
+    files << QFileInfo(fi.dir(), fi.baseName() + ".vtp").absoluteFilePath();
 
     pqApplicationCore* core = pqApplicationCore::instance();
     pqObjectBuilder* builder = core->getObjectBuilder();
     builder->blockSignals(true);
 
-    reader = builder->createReader("sources", "XMLPolyDataReader", files,
-                                   core->getActiveServer());
+    reader = builder->createReader("sources", "XMLPolyDataReader", files, core->getActiveServer());
     builder->blockSignals(false);
 
     if (reader)
     {
-      pqPipelineSource* extractContour = builder->createFilter("filters",
-                                                               "CmbExtractContours", reader);
-      vtkSMSourceProxy *proxy = vtkSMSourceProxy::SafeDownCast( extractContour->getProxy() );
+      pqPipelineSource* extractContour =
+        builder->createFilter("filters", "CmbExtractContours", reader);
+      vtkSMSourceProxy* proxy = vtkSMSourceProxy::SafeDownCast(extractContour->getProxy());
       proxy->UpdatePipeline();
       proxy->UpdatePropertyInformation();
-      int max =pqSMAdaptor::getElementProperty(proxy->GetProperty("NumberOfContoursInfo")).toInt();
-      pqCMBModifierArc * dig = new pqCMBModifierArc(proxy);
+      int max = pqSMAdaptor::getElementProperty(proxy->GetProperty("NumberOfContoursInfo")).toInt();
+      pqCMBModifierArc* dig = new pqCMBModifierArc(proxy);
       addNewArc(dig);
-      for ( int i = 1; i < max; ++i)
+      for (int i = 1; i < max; ++i)
       {
-        pqSMAdaptor::setElementProperty(proxy->GetProperty("ContourIndex"),i);
+        pqSMAdaptor::setElementProperty(proxy->GetProperty("ContourIndex"), i);
         proxy->UpdateProperty("ContourIndex");
         proxy->UpdatePipeline();
-        pqCMBModifierArc * dig2 = new pqCMBModifierArc(proxy);
-        QObject::connect( dig2, SIGNAL(requestRender()),
-                          this, SIGNAL(requestRender()) );
+        pqCMBModifierArc* dig2 = new pqCMBModifierArc(proxy);
+        QObject::connect(dig2, SIGNAL(requestRender()), this, SIGNAL(requestRender()));
         addNewArc(dig2);
       }
     }
@@ -1444,7 +1451,7 @@ void pqCMBModifierArcManager::onLoadArc()
 
   size_t at = start + 0;
   ArcLines[at]->read(in);
-  this->setRow( rc+0, ArcLines[at] );
+  this->setRow(rc + 0, ArcLines[at]);
   ArcLines[at]->switchToNotEditable();
 
   accepted();
@@ -1456,8 +1463,8 @@ void pqCMBModifierArcManager::onLoadArc()
 void pqCMBModifierArcManager::importFunction()
 {
   QStringList fileNames =
-  QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
-  if(fileNames.count()==0)
+    QFileDialog::getOpenFileNames(NULL, "Open File...", "", "Function Profile (*.mar)");
+  if (fileNames.count() == 0)
   {
     return;
   }
@@ -1472,9 +1479,9 @@ void pqCMBModifierArcManager::importFunction()
 
 void pqCMBModifierArcManager::check_save()
 {
-  for(unsigned int i = 0; i < ArcLines.size(); ++i)
+  for (unsigned int i = 0; i < ArcLines.size(); ++i)
   {
-    if(ArcLines[i] != NULL)
+    if (ArcLines[i] != NULL)
     {
       this->Internal->UI->Save->setEnabled(true);
       return;
@@ -1483,28 +1490,30 @@ void pqCMBModifierArcManager::check_save()
   this->Internal->UI->Save->setEnabled(false);
 }
 
-
 void pqCMBModifierArcManager::nameChanged(QString n)
 {
-  if(selectedFunction == NULL || CurrentModifierArc == NULL) return;
-  if(n.isEmpty()) return;
+  if (selectedFunction == NULL || CurrentModifierArc == NULL)
+    return;
+  if (n.isEmpty())
+    return;
 
-  if(CurrentModifierArc->updateLabel(n.toStdString(), selectedFunction))
+  if (CurrentModifierArc->updateLabel(n.toStdString(), selectedFunction))
   {
-    int	index = this->Internal->UI->FunctionName->currentIndex();
-    if(index != -1)
+    int index = this->Internal->UI->FunctionName->currentIndex();
+    if (index != -1)
     {
       this->Internal->UI->FunctionName->setItemText(index, n);
     }
     QPalette palette;
-    palette.setColor(QPalette::Base,Qt::white);
-    palette.setColor(QPalette::Text,Qt::black);
+    palette.setColor(QPalette::Base, Qt::white);
+    palette.setColor(QPalette::Text, Qt::black);
     this->Internal->UI->FunctionName->setPalette(palette);
-    for(int row = 0; row < this->Internal->UI->points->rowCount(); ++row )
+    for (int row = 0; row < this->Internal->UI->points->rowCount(); ++row)
     {
-      QTableWidgetItem * item = this->Internal->UI->points->item(row, 1);
-      pqCMBModifierArc::pointFunctionWrapper * other =
-        static_cast<pqCMBModifierArc::pointFunctionWrapper*>(item->data(Qt::UserRole).value<void *>());
+      QTableWidgetItem* item = this->Internal->UI->points->item(row, 1);
+      pqCMBModifierArc::pointFunctionWrapper* other =
+        static_cast<pqCMBModifierArc::pointFunctionWrapper*>(
+          item->data(Qt::UserRole).value<void*>());
       item->setText(other->getName().c_str());
     }
     this->Internal->UI->points->resizeColumnsToContents();
@@ -1512,8 +1521,8 @@ void pqCMBModifierArcManager::nameChanged(QString n)
   else
   {
     QPalette palette;
-    palette.setColor(QPalette::Base,Qt::red);
-    palette.setColor(QPalette::Text,Qt::black);
+    palette.setColor(QPalette::Base, Qt::red);
+    palette.setColor(QPalette::Text, Qt::black);
     this->Internal->UI->FunctionName->setPalette(palette);
   }
 }
@@ -1529,16 +1538,16 @@ void pqCMBModifierArcManager::setToDefault()
 
 void pqCMBModifierArcManager::deleteFunction()
 {
-  if(selectedFunction && CurrentModifierArc)
+  if (selectedFunction && CurrentModifierArc)
   {
     this->Internal->UI->FunctionName->blockSignals(true);
-    if(CurrentModifierArc->deleteFunction(selectedFunction->getName()))
+    if (CurrentModifierArc->deleteFunction(selectedFunction->getName()))
     {
-      int	index = this->Internal->UI->FunctionName->currentIndex();
-      if(index != -1)
+      int index = this->Internal->UI->FunctionName->currentIndex();
+      if (index != -1)
       {
         this->Internal->UI->FunctionName->removeItem(index);
-        if(index != 0)
+        if (index != 0)
         {
           index--;
         }
@@ -1553,9 +1562,9 @@ void pqCMBModifierArcManager::deleteFunction()
 
 void pqCMBModifierArcManager::cloneFunction()
 {
-  if(selectedFunction && CurrentModifierArc)
+  if (selectedFunction && CurrentModifierArc)
   {
-    int	count = this->Internal->UI->FunctionName->count();
+    int count = this->Internal->UI->FunctionName->count();
     this->AddFunction(CurrentModifierArc->cloneFunction(selectedFunction->getName()));
     this->Internal->UI->FunctionName->setCurrentIndex(count);
   }
@@ -1563,12 +1572,14 @@ void pqCMBModifierArcManager::cloneFunction()
 
 void pqCMBModifierArcManager::functionModeChanged(int m)
 {
-  if(CurrentModifierArc == NULL) return;
+  if (CurrentModifierArc == NULL)
+    return;
   pqCMBModifierArc::FunctionMode mode = static_cast<pqCMBModifierArc::FunctionMode>(m);
-  if(mode == CurrentModifierArc->getFunctionMode()) return;
+  if (mode == CurrentModifierArc->getFunctionMode())
+    return;
   CurrentModifierArc->setFunctionMode(mode);
   this->Internal->UI->pointsFrame->show();
-  switch(CurrentModifierArc->getFunctionMode())
+  switch (CurrentModifierArc->getFunctionMode())
   {
     case pqCMBModifierArc::EndPoints:
       this->Internal->UI->AddPoint->hide();
@@ -1589,11 +1600,12 @@ void pqCMBModifierArcManager::functionModeChanged(int m)
 void pqCMBModifierArcManager::pointDisplayed(int index)
 {
   QString name;
-  if(CurrentModifierArc == NULL) return;
-  switch(CurrentModifierArc->getFunctionMode())
+  if (CurrentModifierArc == NULL)
+    return;
+  switch (CurrentModifierArc->getFunctionMode())
   {
     case pqCMBModifierArc::EndPoints:
-      if(index == 1)
+      if (index == 1)
       {
         name = CurrentModifierArc->getEndFun()->getName().c_str();
         break;
@@ -1605,7 +1617,8 @@ void pqCMBModifierArcManager::pointDisplayed(int index)
     case pqCMBModifierArc::PointAssignment:
       break;
   }
-  this->Internal->UI->FunctionName->setCurrentIndex(this->Internal->UI->FunctionName->findText(name));
+  this->Internal->UI->FunctionName->setCurrentIndex(
+    this->Internal->UI->FunctionName->findText(name));
 }
 
 int pqCMBModifierArcManager::addPoint(vtkIdType id)
@@ -1614,7 +1627,7 @@ int pqCMBModifierArcManager::addPoint(vtkIdType id)
   std::vector<cmbProfileFunction*> funs;
   CurrentModifierArc->getFunctions(funs);
   int result = -1;
-  if(!CurrentModifierArc->pointHasFunction(id))
+  if (!CurrentModifierArc->pointHasFunction(id))
   {
     result = this->addItemToTable(CurrentModifierArc->addFunctionAtPoint(id, funs[0]), true);
   }
@@ -1626,25 +1639,25 @@ int pqCMBModifierArcManager::addPoint(vtkIdType id)
 class vtkPointSelectedCallback : public vtkCommand
 {
   friend class pqCMBModifierArcManager;
+
 public:
-  static vtkPointSelectedCallback *New()
+  static vtkPointSelectedCallback* New()
   {
-    vtkPointSelectedCallback *cb = new vtkPointSelectedCallback;
+    vtkPointSelectedCallback* cb = new vtkPointSelectedCallback;
 
     return cb;
   }
 
-  void Execute(vtkObject *vtkNotUsed(caller),
-                       unsigned long pointID,
-                       void *vtkNotUsed(callData)) override
+  void Execute(
+    vtkObject* vtkNotUsed(caller), unsigned long pointID, void* vtkNotUsed(callData)) override
   {
     int index = static_cast<int>(pointID);
-    vtkSMNewWidgetRepresentationProxy * widgetProxy = this->arcWidget->widgetProxy();
-    vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-    vtkSMTKArcRepresentation *widgetRep =
-    vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
+    vtkSMNewWidgetRepresentationProxy* widgetProxy = this->arcWidget->widgetProxy();
+    vtkContourWidget* widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
+    vtkSMTKArcRepresentation* widgetRep =
+      vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
     int row = -1;
-    if(index >= 0 && index < this->arcInfo->GetNumberOfPoints())
+    if (index >= 0 && index < this->arcInfo->GetNumberOfPoints())
     {
       vtkIdType id;
       this->arcInfo->GetPointID(index, id);
@@ -1661,13 +1674,14 @@ public:
     this->arcWidget->widgetProxy()->UpdatePropertyInformation();
     this->arcWidget->setView(NULL);
     this->arcWidget->hide();
-    if(row >= 0) manager->Internal->UI->points->selectRow(row);
+    if (row >= 0)
+      manager->Internal->UI->points->selectRow(row);
   }
 
 private:
-  qtArcWidget * arcWidget;
+  qtArcWidget* arcWidget;
   vtkPVArcInfo* arcInfo;
-  pqCMBModifierArcManager * manager;
+  pqCMBModifierArcManager* manager;
 };
 
 void pqCMBModifierArcManager::addPoint()
@@ -1675,14 +1689,13 @@ void pqCMBModifierArcManager::addPoint()
   this->editArc();
   this->Internal->mode = EditFunction;
 
-  vtkSMNewWidgetRepresentationProxy * widgetProxy =
-                                                this->Internal->CurrentArcWidget->widgetProxy();
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkSMTKArcRepresentation *widgetRep =
-                          vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMNewWidgetRepresentationProxy* widgetProxy = this->Internal->CurrentArcWidget->widgetProxy();
+  vtkContourWidget* widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
+  vtkSMTKArcRepresentation* widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
   widgetRep->PickableOn();
   widgetRep->SetPointSelectMode(1);
-  vtkPointSelectedCallback * psc = vtkPointSelectedCallback::New();
+  vtkPointSelectedCallback* psc = vtkPointSelectedCallback::New();
   psc->arcWidget = this->Internal->CurrentArcWidget;
   psc->manager = this;
   psc->arcInfo = this->CurrentModifierArc->GetCmbArc()->getArcInfo();
@@ -1695,56 +1708,57 @@ void pqCMBModifierArcManager::addPoint()
 
 void pqCMBModifierArcManager::deletePoint()
 {
-  if(this->addPointMode)
+  if (this->addPointMode)
   {
     ArcWidgetManager->cancelSelectPoint();
     this->addPointMode = false;
     return;
   }
 
-  QList<QTableWidgetItem *>selected =	this->Internal->UI->points->selectedItems();
-  if( !selected.empty() )
+  QList<QTableWidgetItem*> selected = this->Internal->UI->points->selectedItems();
+  if (!selected.empty())
   {
     QVariant qv = selected[0]->data(Qt::UserRole);
-    pqCMBModifierArc::pointFunctionWrapper * wrapper =
-                          static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
+    pqCMBModifierArc::pointFunctionWrapper* wrapper =
+      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
     CurrentModifierArc->removeFunctionAtPoint(wrapper->getPointId());
     this->Internal->UI->points->removeRow(selected[0]->row());
-
   }
 }
 
-int pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapper const* mp,
-                                             bool select)
+int pqCMBModifierArcManager::addItemToTable(
+  pqCMBModifierArc::pointFunctionWrapper const* mp, bool select)
 {
-  if(mp == NULL) return -1;
+  if (mp == NULL)
+    return -1;
   QTableWidget* tmp = this->Internal->UI->points;
 
   Qt::ItemFlags commFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
   double pt[3];
-  vtkPVArcInfo* ai =  CurrentModifierArc->GetCmbArc()->getArcInfo();
+  vtkPVArcInfo* ai = CurrentModifierArc->GetCmbArc()->getArcInfo();
   ai->GetPointLocation(mp->getPointIndex(), pt);
 
   int row = tmp->rowCount();
-  if(tmp->rowCount() != 0)
+  if (tmp->rowCount() != 0)
   {
     //If there are enough points, binary would be significantly faster
-    for(row = 0; row < tmp->rowCount(); ++row)
+    for (row = 0; row < tmp->rowCount(); ++row)
     {
-      QTableWidgetItem * item = tmp->item(row, 0);
+      QTableWidgetItem* item = tmp->item(row, 0);
       QVariant qv = item->data(Qt::UserRole);
-      pqCMBModifierArc::pointFunctionWrapper * wrapper =
-                      static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void *>());
-      if(mp->getPointIndex() < wrapper->getPointIndex()) break;
+      pqCMBModifierArc::pointFunctionWrapper* wrapper =
+        static_cast<pqCMBModifierArc::pointFunctionWrapper*>(qv.value<void*>());
+      if (mp->getPointIndex() < wrapper->getPointIndex())
+        break;
     }
   }
 
   tmp->insertRow(row);
 
-  QTableWidgetItem * qtwi = new QTableWidgetItem(QString::number(mp->getPointIndex()));
+  QTableWidgetItem* qtwi = new QTableWidgetItem(QString::number(mp->getPointIndex()));
   QVariant vdata;
-  vdata.setValue(static_cast<void*>(const_cast<pqCMBModifierArc::pointFunctionWrapper *>(mp)));
+  vdata.setValue(static_cast<void*>(const_cast<pqCMBModifierArc::pointFunctionWrapper*>(mp)));
   qtwi->setData(Qt::UserRole, vdata);
   qtwi->setFlags(commFlags);
   tmp->setItem(row, 0, qtwi);
@@ -1752,7 +1766,7 @@ int pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapp
   qtwi->setData(Qt::UserRole, vdata);
   qtwi->setFlags(commFlags);
   tmp->setItem(row, 1, qtwi);
-  if(select)
+  if (select)
   {
     tmp->selectRow(row);
   }
@@ -1765,7 +1779,7 @@ int pqCMBModifierArcManager::addItemToTable(pqCMBModifierArc::pointFunctionWrapp
 
 void pqCMBModifierArcManager::updateUiControls()
 {
-  switch(this->Internal->mode)
+  switch (this->Internal->mode)
   {
     case NoEditMode:
       this->Internal->UI->EditControl->hide();
@@ -1798,7 +1812,7 @@ void pqCMBModifierArcManager::updateUiControls()
       this->Internal->UI->DatasetControl->show();
       this->Internal->UI->Load->setEnabled(true);
       this->Internal->UI->importFunctions->setEnabled(true);
-      if(this->CurrentModifierArc->getFunctionMode() == pqCMBModifierArc::Single)
+      if (this->CurrentModifierArc->getFunctionMode() == pqCMBModifierArc::Single)
       {
         this->Internal->UI->pointsFrame->hide();
       }
@@ -1829,7 +1843,7 @@ void pqCMBModifierArcManager::editArc()
   vtkNew<vtkCMBArcEditClientOperator> editOp;
   editOp->SetArcIsClosed(CurrentModifierArc->GetCmbArc()->isClosedLoop());
   editOp->Operate(CurrentModifierArc->GetCmbArc()->getSource()->getProxy(),
-                  this->Internal->CurrentArcWidget->widgetProxy());
+    this->Internal->CurrentArcWidget->widgetProxy());
   this->Internal->arcEditWidget->ModifyMode->setChecked(true);
   this->Internal->CurrentArcWidget->emphasize();
   this->Internal->CurrentArcWidget->setVisible(true);

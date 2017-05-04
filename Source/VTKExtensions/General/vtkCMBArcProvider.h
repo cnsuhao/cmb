@@ -16,10 +16,9 @@
 #ifndef __vtkCMBArcProvider_h
 #define __vtkCMBArcProvider_h
 
-
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 #include <list>
 
 class vtkCMBArc;
@@ -29,17 +28,16 @@ class vtkPolyData;
 class VTKCMBGENERAL_EXPORT vtkCMBArcProvider : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCMBArcProvider *New();
-  vtkTypeMacro(vtkCMBArcProvider,vtkPolyDataAlgorithm);
+  static vtkCMBArcProvider* New();
+  vtkTypeMacro(vtkCMBArcProvider, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-
   void SetArcId(vtkIdType arcId);
-  vtkGetMacro(ArcId,vtkIdType);
+  vtkGetMacro(ArcId, vtkIdType);
   void SetStartPointId(vtkIdType startPointId);
-  vtkGetMacro(StartPointId,vtkIdType);
+  vtkGetMacro(StartPointId, vtkIdType);
   void SetEndPointId(vtkIdType endPointId);
-  vtkGetMacro(EndPointId,vtkIdType);
+  vtkGetMacro(EndPointId, vtkIdType);
 
   // Description:
   // Return the mtime also considering the arc.
@@ -52,9 +50,8 @@ protected:
   // Description:
   // This is called by the superclass.
   // This is the method you should override.
-  int RequestData(vtkInformation* request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector) override;
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector) override;
 
   //Description:
   //Generate the polyData representation for the associated arc
@@ -65,15 +62,15 @@ protected:
   // StartPointId and EndPointId, from the associated arc
   vtkPolyData* CreateSubArcPolyDataRepresentation();
 
-  vtkCMBArcManager *ArcManager;
-  vtkCMBArc *Arc;
+  vtkCMBArcManager* ArcManager;
+  vtkCMBArc* Arc;
   vtkIdType ArcId;
   vtkIdType StartPointId;
   vtkIdType EndPointId;
 
 private:
-  vtkCMBArcProvider(const vtkCMBArcProvider&);  // Not implemented.
-  void operator=(const vtkCMBArcProvider&);  // Not implemented.
+  vtkCMBArcProvider(const vtkCMBArcProvider&); // Not implemented.
+  void operator=(const vtkCMBArcProvider&);    // Not implemented.
 };
 
 #endif

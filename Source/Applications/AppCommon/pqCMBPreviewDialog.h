@@ -16,10 +16,13 @@
 #define __pqCMBPreviewDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QDialog>
 #include "cmbSystemConfig.h"
+#include <QDialog>
 
-namespace Ui { class qtPreviewDialog; }
+namespace Ui
+{
+class qtPreviewDialog;
+}
 
 class pqDataRepresentation;
 class pqRenderView;
@@ -35,8 +38,7 @@ public:
 
   // Description:
   // Set teh representation and view for the preview dialog
-  void setRepresentationAndView(
-   pqDataRepresentation* dataRep, pqRenderView* renderView);
+  void setRepresentationAndView(pqDataRepresentation* dataRep, pqRenderView* renderView);
 
   // Description:
   // Sets the preview in "error mode" where this is no accept and cancel
@@ -45,7 +47,7 @@ public:
 
 private:
   pqCMBPreviewDialog(const pqCMBPreviewDialog&); // Not implemented.
-  void operator=(const pqCMBPreviewDialog&); // Not implemented.
+  void operator=(const pqCMBPreviewDialog&);     // Not implemented.
 
   // Description:
   // ivars

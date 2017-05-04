@@ -14,16 +14,15 @@
 #include <QPushButton>
 
 //-----------------------------------------------------------------------------
-qtCMBSceneSurfaceMesherDialog::qtCMBSceneSurfaceMesherDialog(pqCMBSceneTree *tree,
-                                                   QWidget *parent,
-                                                   Qt::WindowFlags flags)
+qtCMBSceneSurfaceMesherDialog::qtCMBSceneSurfaceMesherDialog(
+  pqCMBSceneTree* tree, QWidget* parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
   this->Tree = tree;
   this->InternalWidget = new Ui::qtCMBSceneSurfaceMesherDialog;
   this->InternalWidget->setupUi(this);
-  QObject::connect(this->InternalWidget->SurfaceList, SIGNAL(itemSelectionChanged()),
-                   this, SLOT(surfaceSelectionChanged()));
+  QObject::connect(this->InternalWidget->SurfaceList, SIGNAL(itemSelectionChanged()), this,
+    SLOT(surfaceSelectionChanged()));
 }
 
 //-----------------------------------------------------------------------------
@@ -33,7 +32,7 @@ qtCMBSceneSurfaceMesherDialog::~qtCMBSceneSurfaceMesherDialog()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBSceneSurfaceMesherDialog::insertSurfaceName(int i, const char *vname)
+void qtCMBSceneSurfaceMesherDialog::insertSurfaceName(int i, const char* vname)
 {
   this->InternalWidget->SurfaceList->insertItem(i, vname);
 }
@@ -47,28 +46,28 @@ void qtCMBSceneSurfaceMesherDialog::removeAllSurfaceNames()
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBSceneSurfaceMesherDialog::setSelectedSurfaceNames(QList<int> &currentIndices)
+void qtCMBSceneSurfaceMesherDialog::setSelectedSurfaceNames(QList<int>& currentIndices)
 {
   QListIterator<int> listIter(currentIndices);
   this->InternalWidget->SurfaceList->blockSignals(true);
   while (listIter.hasNext())
-    {
+  {
     this->InternalWidget->SurfaceList->item(listIter.next())->setSelected(true);
-    }
+  }
   this->InternalWidget->SurfaceList->blockSignals(false);
   this->surfaceSelectionChanged();
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBSceneSurfaceMesherDialog::getSelectedSurfaceNames(QStringList &selectedNames) const
+void qtCMBSceneSurfaceMesherDialog::getSelectedSurfaceNames(QStringList& selectedNames) const
 {
   selectedNames.clear();
-  const QList<QListWidgetItem*> &selectedItems = this->InternalWidget->SurfaceList->selectedItems();
+  const QList<QListWidgetItem*>& selectedItems = this->InternalWidget->SurfaceList->selectedItems();
   QList<QListWidgetItem*>::const_iterator iter = selectedItems.begin();
   for (; iter != selectedItems.end(); iter++)
-    {
-    selectedNames.push_back( (*iter)->text() );
-    }
+  {
+    selectedNames.push_back((*iter)->text());
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -78,7 +77,7 @@ int qtCMBSceneSurfaceMesherDialog::getNumberOfSurfaceNames() const
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBSceneSurfaceMesherDialog::insertVOIName(int i, const char *vname)
+void qtCMBSceneSurfaceMesherDialog::insertVOIName(int i, const char* vname)
 {
   this->InternalWidget->VOI->insertItem(i, vname);
 }
@@ -127,8 +126,8 @@ int qtCMBSceneSurfaceMesherDialog::getNumberOfVOINames() const
 //-----------------------------------------------------------------------------
 void qtCMBSceneSurfaceMesherDialog::surfaceSelectionChanged()
 {
-  this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
-    this->InternalWidget->SurfaceList->selectedItems().count() > 0 );
+  this->InternalWidget->buttonBox->button(QDialogButtonBox::Ok)
+    ->setEnabled(this->InternalWidget->SurfaceList->selectedItems().count() > 0);
 }
 
 //-----------------------------------------------------------------------------

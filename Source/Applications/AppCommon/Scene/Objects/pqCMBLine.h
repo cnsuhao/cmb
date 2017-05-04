@@ -15,8 +15,8 @@
 #define __pqCMBLine_h
 
 #include "cmbAppCommonExport.h"
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
 class pqRenderView;
 class pqServer;
@@ -29,55 +29,50 @@ public:
   pqCMBLine();
   ~pqCMBLine() override;
 
-  pqCMBLine(pqCMBSceneObjectBase* refObj,
-               pqServer *server,
-               pqRenderView *view,
-               bool updateRep = true);
+  pqCMBLine(
+    pqCMBSceneObjectBase* refObj, pqServer* server, pqRenderView* view, bool updateRep = true);
 
-  pqCMBLine(double point1[3],
-               double point2[3],
-               pqServer *server,
-               pqRenderView *view,
-               bool updateRep = true);
+  pqCMBLine(double point1[3], double point2[3], pqServer* server, pqRenderView* view,
+    bool updateRep = true);
 
   static void getDefaultBounds(pqRenderView* theView, double bounds[6]);
 
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
 
- void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
- virtual void select();
- virtual void deselect();
- vtkSMSourceProxy *getSelectionInput() const override
-  {return NULL;}
+  void setSelectionInput(vtkSMSourceProxy* selectionInput) override;
+  virtual void select();
+  virtual void deselect();
+  vtkSMSourceProxy* getSelectionInput() const override { return NULL; }
 
- void getColor(double color[4]) const override;
- void setColor(double color[4], bool updateRep = true) override;
- void getBounds(double bounds[6]) const override;
- void getDataBounds(double bounds[6]) const override;
+  void getColor(double color[4]) const override;
+  void setColor(double color[4], bool updateRep = true) override;
+  void getBounds(double bounds[6]) const override;
+  void getDataBounds(double bounds[6]) const override;
 
- //return 1 on success; 0 on failure.
- virtual int getPointPosition( int pointIdx, double &x, double &y, double &z);
- virtual int getPoint1Position(double &x, double &y, double &z)
-   {return getPointPosition( 1,x, y, z);}
- virtual int getPoint2Position(double &x, double &y, double &z)
-    {return getPointPosition( 2, x, y, z);}
+  //return 1 on success; 0 on failure.
+  virtual int getPointPosition(int pointIdx, double& x, double& y, double& z);
+  virtual int getPoint1Position(double& x, double& y, double& z)
+  {
+    return getPointPosition(1, x, y, z);
+  }
+  virtual int getPoint2Position(double& x, double& y, double& z)
+  {
+    return getPointPosition(2, x, y, z);
+  }
 
- void setVisibility(bool mode) override;
+  void setVisibility(bool mode) override;
 
- qtLineWidget *getLineWidget() { return this->LineWidget; }
+  qtLineWidget* getLineWidget() { return this->LineWidget; }
 
- pqCMBSceneObjectBase::enumObjectType getType() const override;
- bool isDefaultConstrained() const override{return true;}
+  pqCMBSceneObjectBase::enumObjectType getType() const override;
+  bool isDefaultConstrained() const override { return true; }
 
 protected:
- void initialize(double point1[3],
-                 double point2[3],
-                 pqServer *server,
-                 pqRenderView *view,
-                 bool updateRep);
+  void initialize(
+    double point1[3], double point2[3], pqServer* server, pqRenderView* view, bool updateRep);
 
- qtLineWidget *LineWidget;
+  qtLineWidget* LineWidget;
 };
 
 #endif /* __pqCMBLine_h */

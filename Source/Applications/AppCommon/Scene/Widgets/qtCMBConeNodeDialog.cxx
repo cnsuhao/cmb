@@ -13,37 +13,36 @@
 
 #include "qtCMBConeNodeDialog.h"
 
-#include "ui_qtCMBConicalSourceDialog.h"
 #include "pqCMBConicalRegion.h"
-#include "pqCMBSceneTree.h"
 #include "pqCMBSceneNode.h"
-#include <QLineEdit>
+#include "pqCMBSceneTree.h"
+#include "ui_qtCMBConicalSourceDialog.h"
 #include <QDoubleValidator>
 #include <QIntValidator>
+#include <QLineEdit>
 
 //-----------------------------------------------------------------------------
-int qtCMBConeNodeDialog::manageCone(pqCMBSceneNode *node)
+int qtCMBConeNodeDialog::manageCone(pqCMBSceneNode* node)
 {
-  if (node->isTypeNode() ||
-      (node->getDataObject()->getType() != pqCMBSceneObjectBase::GeneralCone))
-    {
+  if (node->isTypeNode() || (node->getDataObject()->getType() != pqCMBSceneObjectBase::GeneralCone))
+  {
     return 0;
-    }
+  }
 
   qtCMBConeNodeDialog editor(node);
   return editor.exec();
 }
 
 //-----------------------------------------------------------------------------
-qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode *n) :
-  Status(-1), Node(n)
+qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode* n)
+  : Status(-1)
+  , Node(n)
 {
-  pqCMBConicalRegion *object =
-    dynamic_cast<pqCMBConicalRegion*>(n->getDataObject());
+  pqCMBConicalRegion* object = dynamic_cast<pqCMBConicalRegion*>(n->getDataObject());
 
   this->MainDialog = new QDialog();
-  QDoubleValidator *validator = new QDoubleValidator(this->MainDialog);
-  QIntValidator *ivalidator = new QIntValidator(this->MainDialog);
+  QDoubleValidator* validator = new QDoubleValidator(this->MainDialog);
+  QIntValidator* ivalidator = new QIntValidator(this->MainDialog);
   ivalidator->setBottom(3);
   this->ConeDialog = new Ui::qtCMBConicalSourceDialog;
   this->ConeDialog->setupUi(MainDialog);
@@ -77,7 +76,7 @@ qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode *n) :
   this->ConeDialog->Resolution->setValidator(ivalidator);
   this->ConeDialog->Resolution->setText(QString::number(b));
 
-   //
+  //
   QObject::connect(this->MainDialog, SIGNAL(accepted()), this, SLOT(accept()));
   QObject::connect(this->MainDialog, SIGNAL(rejected()), this, SLOT(cancel()));
 }
@@ -86,13 +85,13 @@ qtCMBConeNodeDialog::qtCMBConeNodeDialog(pqCMBSceneNode *n) :
 qtCMBConeNodeDialog::~qtCMBConeNodeDialog()
 {
   if (this->ConeDialog)
-    {
+  {
     delete ConeDialog;
-    }
+  }
   if (this->MainDialog)
-    {
+  {
     delete MainDialog;
-    }
+  }
 }
 //-----------------------------------------------------------------------------
 int qtCMBConeNodeDialog::exec()
@@ -113,8 +112,7 @@ void qtCMBConeNodeDialog::accept()
   p1[1] = this->ConeDialog->YPos->text().toDouble();
   p1[2] = this->ConeDialog->ZPos->text().toDouble();
 
-  pqCMBConicalRegion *object =
-    dynamic_cast<pqCMBConicalRegion*>(this->Node->getDataObject());
+  pqCMBConicalRegion* object = dynamic_cast<pqCMBConicalRegion*>(this->Node->getDataObject());
   object->setBaseCenter(p1);
   a = this->ConeDialog->Depth->text().toDouble();
   object->setHeight(a);
@@ -130,6 +128,5 @@ void qtCMBConeNodeDialog::cancel()
 {
   this->Status = 0;
 }
-
 
 //-----------------------------------------------------------------------------

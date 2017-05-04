@@ -10,12 +10,12 @@
 
 #include "vtkCMBArcPointGlyphingFilter.h"
 
-#include <vtkInformationVector.h>
-#include <vtkInformation.h>
-#include <vtkDoubleArray.h>
 #include <vtkBitArray.h>
-#include <vtkPoints.h>
+#include <vtkDoubleArray.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
 #include <vtkPointData.h>
+#include <vtkPoints.h>
 
 vtkStandardNewMacro(vtkCMBArcPointGlyphingFilter);
 
@@ -32,7 +32,8 @@ void vtkCMBArcPointGlyphingFilter::clearVisible()
 
 void vtkCMBArcPointGlyphingFilter::setVisible(int index)
 {
-  if(index < 0) return;
+  if (index < 0)
+    return;
   this->visible.insert(index);
   this->Modified();
 }
@@ -44,7 +45,7 @@ void vtkCMBArcPointGlyphingFilter::setScale(double s)
 }
 
 vtkCMBArcPointGlyphingFilter::vtkCMBArcPointGlyphingFilter()
-:scale(5.0)
+  : scale(5.0)
 {
   GetInputPortInformation(0)->Set(INPUT_IS_OPTIONAL(), 1);
 }
@@ -53,66 +54,65 @@ vtkCMBArcPointGlyphingFilter::~vtkCMBArcPointGlyphingFilter()
 {
 }
 
-int vtkCMBArcPointGlyphingFilter::RequestData(vtkInformation * /*info*/,
-                                              vtkInformationVector ** inputVector,
-                                              vtkInformationVector * outputVector)
+int vtkCMBArcPointGlyphingFilter::RequestData(
+  vtkInformation* /*info*/, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  if(inInfo == NULL) return 1; //no input
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  if (inInfo == NULL)
+    return 1; //no input
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkPolyData *input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkIdType numPts = input->GetNumberOfPoints();
-  vtkPoints *inPts = input->GetPoints();
+  vtkPoints* inPts = input->GetPoints();
 
   vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
-  newPoints->Allocate(numPts,numPts/2);
+  newPoints->Allocate(numPts, numPts / 2);
 
   vtkSmartPointer<vtkCellArray> cellIds = vtkSmartPointer<vtkCellArray>::New();
-  cellIds->Allocate(numPts,numPts/2);
+  cellIds->Allocate(numPts, numPts / 2);
   cellIds->InsertNextCell(0);
   output->SetVerts(cellIds);
 
-
   // Add color information
   vtkSmartPointer<vtkUnsignedCharArray> color = vtkSmartPointer<vtkUnsignedCharArray>::New();
-  color->Allocate(numPts,numPts/2);
+  color->Allocate(numPts, numPts / 2);
   color->SetName("Color");
   color->SetNumberOfComponents(4);
 
   // Add Scaling information
   vtkSmartPointer<vtkDoubleArray> scaling = vtkSmartPointer<vtkDoubleArray>::New();
-  scaling->Allocate(numPts,numPts/2);
+  scaling->Allocate(numPts, numPts / 2);
   scaling->SetName("Scaling");
   scaling->SetNumberOfComponents(3);
 
   // Add Visibility information
   vtkSmartPointer<vtkBitArray> visibility = vtkSmartPointer<vtkBitArray>::New();
-  visibility->Allocate(numPts,numPts/2);
+  visibility->Allocate(numPts, numPts / 2);
   visibility->SetName("Visibility");
   visibility->SetNumberOfComponents(1);
 
   double point[3];
 
-  for ( int i=0; i < numPts; i++ )
+  for (int i = 0; i < numPts; i++)
   {
-    if(visible.find(i) != visible.end())
+    if (visible.find(i) != visible.end())
     {
       inPts->GetPoint(i, point);
       vtkIdType id = newPoints->InsertNextPoint(point);
-      color->InsertNextTuple4(225,0,0,255);
+      color->InsertNextTuple4(225, 0, 0, 255);
       scaling->InsertNextTuple3(this->scale, this->scale, this->scale);
       visibility->InsertNextValue(1);
       cellIds->InsertCellPoint(id);
-      cellIds->UpdateCellCount(id+1);
+      cellIds->UpdateCellCount(id + 1);
     }
   }
 
   output->SetPoints(newPoints);
-  vtkPointData *pdata = output->GetPointData();
+  vtkPointData* pdata = output->GetPointData();
   pdata->AddArray(color);
   pdata->AddArray(scaling);
   pdata->AddArray(visibility);

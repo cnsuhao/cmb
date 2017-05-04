@@ -7,21 +7,22 @@
 
 #include "rtvl_weight.hxx"
 
-template <unsigned int N> class rtvl_terms;
+template <unsigned int N>
+class rtvl_terms;
 
 template <unsigned int N>
-class rtvl_weight_smooth: public rtvl_weight<N>
+class rtvl_weight_smooth : public rtvl_weight<N>
 {
 public:
   typedef rtvl_weight<N> derived;
   rtvl_weight_smooth(double gs = 1, unsigned int n = 4);
+
 protected:
   double compute_flat(rtvl_terms<N> const& terms) override;
-  void compute_flat_d(rtvl_terms<N> const& terms,
-                              vnl_vector_fixed<double, N>& dwflat) override;
+  void compute_flat_d(rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwflat) override;
   double compute_curved(rtvl_terms<N> const& terms) override;
-  void compute_curved_d(rtvl_terms<N> const& terms,
-                                vnl_vector_fixed<double, N>& dwcurve) override;
+  void compute_curved_d(rtvl_terms<N> const& terms, vnl_vector_fixed<double, N>& dwcurve) override;
+
 private:
   using derived::geodesic_scale;
   double z;

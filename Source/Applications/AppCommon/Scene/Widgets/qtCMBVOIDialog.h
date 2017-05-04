@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBVOIDialog_h
 #define __qtCMBVOIDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
@@ -28,7 +27,7 @@ class pqPipelineSource;
 
 namespace Ui
 {
-  class  qtDefineVOI;
+class qtDefineVOI;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBVOIDialog : public QObject
@@ -36,20 +35,20 @@ class CMBAPPCOMMON_EXPORT qtCMBVOIDialog : public QObject
   Q_OBJECT
 
 public:
-  static int manageVOI(pqCMBSceneNode *node);
+  static int manageVOI(pqCMBSceneNode* node);
 
 protected slots:
   void accept();
   void cancel();
 
 protected:
-  qtCMBVOIDialog(pqCMBSceneNode *n);
+  qtCMBVOIDialog(pqCMBSceneNode* n);
   ~qtCMBVOIDialog() override;
   int exec();
   int Status;
-  Ui::qtDefineVOI *VOIDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
+  Ui::qtDefineVOI* VOIDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
 };
 
 #endif /* __qtCMBVOIDialog_h */

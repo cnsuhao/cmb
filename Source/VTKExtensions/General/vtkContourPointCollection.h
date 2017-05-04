@@ -17,10 +17,10 @@
 #ifndef __vtkContourPointCollection_h
 #define __vtkContourPointCollection_h
 
-#include "vtkCMBGeneralModule.h" // For export macro
-#include <set>
-#include "vtkObject.h"
 #include "cmbSystemConfig.h"
+#include "vtkCMBGeneralModule.h" // For export macro
+#include "vtkObject.h"
+#include <set>
 
 class vtkPoints;
 class vtkMergePoints;
@@ -37,8 +37,8 @@ public:
 class VTKCMBGENERAL_EXPORT vtkContourPointCollection : public vtkObject
 {
 public:
-// Methods from vtkObject
-  vtkTypeMacro(vtkContourPointCollection,vtkObject);
+  // Methods from vtkObject
+  vtkTypeMacro(vtkContourPointCollection, vtkObject);
   // Description:
   // Print ObjectFactor to stream.
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -56,20 +56,20 @@ public:
   // Description:
   // Supply a user defined output window. Call ->Delete() on the supplied
   // instance after setting it.
-  static void SetInstance(vtkContourPointCollection *instance);
+  static void SetInstance(vtkContourPointCollection* instance);
 
-//BTX
+  //BTX
   // use this as a way of memory management when the
   // program exits the SmartPointer will be deleted which
   // will delete the Instance singleton
   static vtkContourPointCollectionCleanup Cleanup;
-//ETX
+  //ETX
 
   //Description:
   //Get the points in the collection
   vtkGetObjectMacro(Points, vtkPoints);
 
-  void SetPoints(vtkPoints *points);
+  void SetPoints(vtkPoints* points);
 
   //Description:
   //Get the locator for the points
@@ -79,30 +79,30 @@ public:
 
   //Description:
   //Get if the passed in point id is being stored as an end node
-  bool IsEndNode( const vtkIdType &id) const;
+  bool IsEndNode(const vtkIdType& id) const;
 
   //Description:
   //Set the passed in point id as an end node
   //If this point is already an end node, this increments
   //the number of Contours that this end node is used by
-  void SetAsEndNode(const vtkIdType &id, const vtkIdType &contourId);
+  void SetAsEndNode(const vtkIdType& id, const vtkIdType& contourId);
 
   //Description:
   //Decrements the number of contours this node
   //is used by. If the number hits zero it will remove
   //the id as an end node.
-  void RemoveAsEndNode(const vtkIdType &id, const vtkIdType &contourId);
+  void RemoveAsEndNode(const vtkIdType& id, const vtkIdType& contourId);
 
   //Description:
   //Set the passed in point id as an end node
   //If this point is already an end node, this increments
   //the number of Contours that this end node is used by
-  int NumberOfContoursUsingEndNode( const vtkIdType &id ) const;
+  int NumberOfContoursUsingEndNode(const vtkIdType& id) const;
 
   //BTX
   //Description:
   //Get the Id's of the arcs that are using this end node
-  std::set<vtkIdType> ContoursUsingEndNode(const vtkIdType &id) const;
+  std::set<vtkIdType> ContoursUsingEndNode(const vtkIdType& id) const;
   //ETX
 
   //Description:
@@ -110,13 +110,12 @@ public:
   //is that when the contour count reaches zero we can delete the point
   //locator and recreate it with zero points. We don't do this in
   //RemoveAsEndNode as that is used in the undo/redo stack
-  void RegisterContour( const vtkIdType &id );
+  void RegisterContour(const vtkIdType& id);
 
   //Description:
   //Unregister a contour. When this hits zero we will flush
   //the point locator of all points and recreate it.
-  void UnRegisterContour( const vtkIdType &id );
-
+  void UnRegisterContour(const vtkIdType& id);
 
   //Description:
   //Call this to Reset the entire class to a new instance
@@ -129,19 +128,20 @@ protected:
   ~vtkContourPointCollection() override;
 
   vtkPoints* Points;
-  vtkMergePoints *PointLocator;
+  vtkMergePoints* PointLocator;
 
   class vtkInternalMap;
-  vtkInternalMap *EndNodes;
+  vtkInternalMap* EndNodes;
 
   class vtkInternalSet;
-  vtkInternalSet *RegisteredContourIds;
+  vtkInternalSet* RegisteredContourIds;
 
 private:
   static vtkContourPointCollection* Instance;
+
 private:
-  vtkContourPointCollection(const vtkContourPointCollection&);  // Not implemented.
-  void operator=(const vtkContourPointCollection&);  // Not implemented.
+  vtkContourPointCollection(const vtkContourPointCollection&); // Not implemented.
+  void operator=(const vtkContourPointCollection&);            // Not implemented.
 };
 
 #endif

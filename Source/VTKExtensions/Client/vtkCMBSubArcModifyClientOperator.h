@@ -20,14 +20,13 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkCMBArcUpdateOperator vtkCMBArcSplitOnIndexOperator
 
-
 #ifndef __vtkCMBSubArcModifyClientOperator_h
 #define __vtkCMBSubArcModifyClientOperator_h
 
-#include "vtkCMBClientModule.h" // For export macro
-#include "vtkSMSourceProxy.h"
-#include "vtkCMBSubArcModifyOperator.h"
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkCMBSubArcModifyOperator.h"
+#include "vtkSMSourceProxy.h"
 
 class vtkIdTypeArray;
 class vtkSMTKArcRepresentation;
@@ -43,57 +42,53 @@ public:
 
   //BTX
   enum EnumModificationType
-    {
-    OpUPDATE = 0, // Default to update
+  {
+    OpUPDATE = 0,     // Default to update
     OpSTRAIGHTEN = 1, // remove all internal points between two ends
-    OpCOLLAPSE = 2, // collapse the endPoint into startPoint
-    OpMAKEARC = 3 // Make a new arc from StartPoint to EndPoint
-    };
+    OpCOLLAPSE = 2,   // collapse the endPoint into startPoint
+    OpMAKEARC = 3     // Make a new arc from StartPoint to EndPoint
+  };
   //ETX
 
   // Description:
   // Update
-  virtual bool Operate( vtkIdType arcId,
-    vtkSMNewWidgetRepresentationProxy *widgetProxy,
-    vtkSMSourceProxy* arcSource,  int OperationType=OpUPDATE);
+  virtual bool Operate(vtkIdType arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy,
+    vtkSMSourceProxy* arcSource, int OperationType = OpUPDATE);
 
-  vtkGetObjectMacro(CreatedArcs,vtkIdTypeArray);
+  vtkGetObjectMacro(CreatedArcs, vtkIdTypeArray);
 
   //Description:
   // Sets/Gets the range with Start/End point Ids that the input
   // polydata will update.
   // Default values are -1, and whole arc will be updated.
   vtkSetMacro(StartPointId, vtkIdType);
-  vtkGetMacro(StartPointId,vtkIdType);
+  vtkGetMacro(StartPointId, vtkIdType);
   vtkSetMacro(EndPointId, vtkIdType);
-  vtkGetMacro(EndPointId,vtkIdType);
+  vtkGetMacro(EndPointId, vtkIdType);
 
 protected:
   vtkCMBSubArcModifyClientOperator();
   ~vtkCMBSubArcModifyClientOperator() override;
 
-  virtual bool UpdateArc( vtkIdType arcId,
-    vtkSMNewWidgetRepresentationProxy *widgetProxy,
-    vtkSMSourceProxy* arcSource);
-  bool FindArcsInWidgetOutput(
-    vtkSMTKArcRepresentation *widgetRep, vtkSMSourceProxy* arcSource);
-  bool UpdateOperation(const vtkIdType& arcId,
-                       vtkSMNewWidgetRepresentationProxy *widgetProxy,
-                       vtkSMTKArcRepresentation *widgetRep);
+  virtual bool UpdateArc(
+    vtkIdType arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy, vtkSMSourceProxy* arcSource);
+  bool FindArcsInWidgetOutput(vtkSMTKArcRepresentation* widgetRep, vtkSMSourceProxy* arcSource);
+  bool UpdateOperation(const vtkIdType& arcId, vtkSMNewWidgetRepresentationProxy* widgetProxy,
+    vtkSMTKArcRepresentation* widgetRep);
   bool SplitOperation(const vtkIdType& arcId);
   bool ModifyOperation(const vtkIdType& arcId, const int& opType);
   bool MakeArc(vtkIdType arcId, vtkSMSourceProxy* arcSource);
 
   vtkIdTypeArray* CreatedArcs;
   class InternalInfo;
-  InternalInfo *Info;
+  InternalInfo* Info;
   vtkIdType StartPointId;
   vtkIdType EndPointId;
   vtkIdType NumOfArcPoints;
 
 private:
   vtkCMBSubArcModifyClientOperator(const vtkCMBSubArcModifyClientOperator&); // Not implemented
-  void operator=(const vtkCMBSubArcModifyClientOperator&); // Not implemented
+  void operator=(const vtkCMBSubArcModifyClientOperator&);                   // Not implemented
 };
 
 #endif

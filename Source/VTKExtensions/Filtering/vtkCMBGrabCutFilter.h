@@ -18,23 +18,23 @@
 class VTKCMBFILTERING_EXPORT vtkCMBGrabCutFilter : public vtkImageAlgorithm
 {
 public:
-  static vtkCMBGrabCutFilter *New();
-  vtkTypeMacro(vtkCMBGrabCutFilter,vtkImageAlgorithm);
+  static vtkCMBGrabCutFilter* New();
+  vtkTypeMacro(vtkCMBGrabCutFilter, vtkImageAlgorithm);
 
-  vtkSetMacro(NumberOfIterations,int);
-  vtkGetMacro(NumberOfIterations,int);
+  vtkSetMacro(NumberOfIterations, int);
+  vtkGetMacro(NumberOfIterations, int);
 
-  vtkSetMacro(PotentialForegroundValue,int);
-  vtkGetMacro(PotentialForegroundValue,int);
+  vtkSetMacro(PotentialForegroundValue, int);
+  vtkGetMacro(PotentialForegroundValue, int);
 
-  vtkSetMacro(PotentialBackgroundValue,int);
-  vtkGetMacro(PotentialBackgroundValue,int);
+  vtkSetMacro(PotentialBackgroundValue, int);
+  vtkGetMacro(PotentialBackgroundValue, int);
 
-  vtkSetMacro(ForegroundValue,int);
-  vtkGetMacro(ForegroundValue,int);
+  vtkSetMacro(ForegroundValue, int);
+  vtkGetMacro(ForegroundValue, int);
 
-  vtkSetMacro(BackgroundValue,int);
-  vtkGetMacro(BackgroundValue,int);
+  vtkSetMacro(BackgroundValue, int);
+  vtkGetMacro(BackgroundValue, int);
 
   void DoGrabCut()
   {
@@ -45,7 +45,6 @@ public:
   ~vtkCMBGrabCutFilter() override;
 
 protected:
-
   int NumberOfIterations;
   int PotentialForegroundValue;
   int PotentialBackgroundValue;
@@ -54,17 +53,16 @@ protected:
 
   vtkCMBGrabCutFilter();
 
-  int FillOutputPortInformation(int port, vtkInformation *info) override;
+  int FillOutputPortInformation(int port, vtkInformation* info) override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **,
-                  vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkCMBGrabCutFilter(const vtkCMBGrabCutFilter&);  // Not implemented.
-  void operator=(const vtkCMBGrabCutFilter&);  // Not implemented.
+  vtkCMBGrabCutFilter(const vtkCMBGrabCutFilter&); // Not implemented.
+  void operator=(const vtkCMBGrabCutFilter&);      // Not implemented.
   bool RunGrabCuts;
   class InternalData;
-  InternalData * internal;
+  InternalData* internal;
 };
 
 #endif

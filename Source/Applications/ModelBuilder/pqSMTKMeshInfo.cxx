@@ -22,20 +22,20 @@
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMPropertyHelper.h"
+#include "vtkSMPropertyLink.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMProxyProperty.h"
 #include "vtkSMRepresentationProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
-#include "vtkSMPropertyLink.h"
 
 #include "smtk/common/UUID.h"
+#include "smtk/mesh/Collection.h"
+#include "smtk/mesh/Manager.h"
 #include "smtk/model/Group.h"
+#include "smtk/model/IntegerData.h"
 #include "smtk/model/Manager.h"
 #include "smtk/model/Model.h"
-#include "smtk/model/IntegerData.h"
-#include "smtk/mesh/Manager.h"
-#include "smtk/mesh/Collection.h"
 
 //-----------------------------------------------------------------------------
 pqSMTKMeshInfo::~pqSMTKMeshInfo()
@@ -46,20 +46,20 @@ pqSMTKMeshInfo::~pqSMTKMeshInfo()
 //-----------------------------------------------------------------------------
 void pqSMTKMeshInfo::clearLinks()
 {
-  if(this->PositionLink)
+  if (this->PositionLink)
     this->PositionLink->RemoveAllLinks();
-  if(this->OrientationLink)
+  if (this->OrientationLink)
     this->OrientationLink->RemoveAllLinks();
-  if(this->ScaleLink)
+  if (this->ScaleLink)
     this->ScaleLink->RemoveAllLinks();
-  if(this->OriginLink)
+  if (this->OriginLink)
     this->OriginLink->RemoveAllLinks();
 }
 
 //----------------------------------------------------------------------------
-void pqSMTKMeshInfo::init(
-  pqPipelineSource* meshsource, pqPipelineSource* repsource, pqDataRepresentation* rep, pqDataRepresentation* pointsRep,
-  const std::string& filename, smtk::model::ManagerPtr mgr, pqSMTKModelInfo* modinfo)
+void pqSMTKMeshInfo::init(pqPipelineSource* meshsource, pqPipelineSource* repsource,
+  pqDataRepresentation* rep, pqDataRepresentation* pointsRep, const std::string& filename,
+  smtk::model::ManagerPtr mgr, pqSMTKModelInfo* modinfo)
 {
   this->MeshSource = meshsource;
   this->RepSource = repsource;
@@ -69,7 +69,7 @@ void pqSMTKMeshInfo::init(
   this->Info = vtkSmartPointer<vtkPVSMTKMeshInformation>::New();
 
   // create block selection source proxy
-  vtkSMSessionProxyManager *proxyManager =
+  vtkSMSessionProxyManager* proxyManager =
     vtkSMProxyManager::GetProxyManager()->GetActiveSessionProxyManager();
 
   this->BlockSelectionSource.TakeReference(
@@ -80,57 +80,55 @@ void pqSMTKMeshInfo::init(
   this->ColorMode = "None";
   this->ModelInfo = modinfo;
 
-  if(modinfo && modinfo->Representation && rep)
-    {
+  if (modinfo && modinfo->Representation && rep)
+  {
     vtkSMProxy* modelRepProxy = modinfo->Representation->getProxy();
     vtkSMProxy* meshRepProxy = rep->getProxy();
     vtkSMProxy* meshPointsRepProxy = (pointsRep ? pointsRep->getProxy() : NULL);
 
     this->PositionLink = vtkSmartPointer<vtkSMPropertyLink>::New();
-    this->PositionLink->AddLinkedProperty(modelRepProxy, "Position",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-    this->PositionLink->AddLinkedProperty(meshRepProxy, "Position",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->PositionLink->AddLinkedProperty(
+      modelRepProxy, "Position", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    this->PositionLink->AddLinkedProperty(
+      meshRepProxy, "Position", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
     if (meshPointsRepProxy)
-      {
-      this->PositionLink->AddLinkedProperty(meshPointsRepProxy, "Position",
-                                            vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-      }
+    {
+      this->PositionLink->AddLinkedProperty(
+        meshPointsRepProxy, "Position", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    }
 
     this->OrientationLink = vtkSmartPointer<vtkSMPropertyLink>::New();
-    this->OrientationLink->AddLinkedProperty(modelRepProxy, "Orientation",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-    this->OrientationLink->AddLinkedProperty(meshRepProxy, "Orientation",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->OrientationLink->AddLinkedProperty(
+      modelRepProxy, "Orientation", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    this->OrientationLink->AddLinkedProperty(
+      meshRepProxy, "Orientation", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
     if (meshPointsRepProxy)
-      {
+    {
       this->OrientationLink->AddLinkedProperty(
-        meshPointsRepProxy, "Orientation", vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-      }
+        meshPointsRepProxy, "Orientation", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    }
 
     this->ScaleLink = vtkSmartPointer<vtkSMPropertyLink>::New();
-    this->ScaleLink->AddLinkedProperty(modelRepProxy, "Scale",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-    this->ScaleLink->AddLinkedProperty(meshRepProxy, "Scale",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->ScaleLink->AddLinkedProperty(
+      modelRepProxy, "Scale", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    this->ScaleLink->AddLinkedProperty(meshRepProxy, "Scale", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
     if (meshPointsRepProxy)
-      {
-      this->ScaleLink->AddLinkedProperty(meshPointsRepProxy, "Scale",
-                                         vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-      }
+    {
+      this->ScaleLink->AddLinkedProperty(
+        meshPointsRepProxy, "Scale", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    }
 
     this->OriginLink = vtkSmartPointer<vtkSMPropertyLink>::New();
-    this->OriginLink->AddLinkedProperty(modelRepProxy, "Origin",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-    this->OriginLink->AddLinkedProperty(meshRepProxy, "Origin",
-                        vtkSMLink::INPUT|vtkSMLink::OUTPUT);
+    this->OriginLink->AddLinkedProperty(
+      modelRepProxy, "Origin", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
+    this->OriginLink->AddLinkedProperty(
+      meshRepProxy, "Origin", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
     if (meshPointsRepProxy)
-      {
-      this->OriginLink->AddLinkedProperty(meshPointsRepProxy, "Origin",
-                                          vtkSMLink::INPUT|vtkSMLink::OUTPUT);
-      }
-
+    {
+      this->OriginLink->AddLinkedProperty(
+        meshPointsRepProxy, "Origin", vtkSMLink::INPUT | vtkSMLink::OUTPUT);
     }
+  }
 
   this->updateBlockInfo(mgr);
 }
@@ -138,48 +136,47 @@ void pqSMTKMeshInfo::init(
 void pqSMTKMeshInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 {
   this->MeshSource->getProxy()->GatherInformation(this->Info);
-  smtk::mesh::CollectionPtr c = mgr->meshes()->collection(
-    this->Info->GetMeshCollectionID());
+  smtk::mesh::CollectionPtr c = mgr->meshes()->collection(this->Info->GetMeshCollectionID());
 
   std::vector<int> invis_ids;
 
   std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator it =
     this->Info->GetMesh2BlockIdMap().begin();
 
-  for(; it != this->Info->GetMesh2BlockIdMap().end(); ++it)
-    {
+  for (; it != this->Info->GetMesh2BlockIdMap().end(); ++it)
+  {
     int visible = this->Representation->isVisible();
     if (c->hasIntegerProperty(it->first, "visible"))
-      {
+    {
       const smtk::model::IntegerList& prop(c->integerProperty(it->first, "visible"));
-      if(!prop.empty())
+      if (!prop.empty())
         visible = (prop[0] != 0);
-      }
+    }
     invis_ids.push_back(it->second + 1); // block id
-    invis_ids.push_back(visible); // visibility
+    invis_ids.push_back(visible);        // visibility
     // do we really need this? It should have been set by serialization.
     c->setIntegerProperty(it->first, "block_index", it->second);
-    }
+  }
 
-  if(invis_ids.size() > 1)
-    {
+  if (invis_ids.size() > 1)
+  {
     // update vtk property
-    vtkSMProxy *proxy = this->Representation->getProxy();
+    vtkSMProxy* proxy = this->Representation->getProxy();
     vtkSMPropertyHelper prop(proxy, "BlockVisibility");
     prop.SetNumberOfElements(0);
     proxy->UpdateVTKObjects();
     prop.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
     proxy->UpdateVTKObjects();
     if (this->PointsRepresentation)
-      {
+    {
       proxy = this->PointsRepresentation->getProxy();
       vtkSMPropertyHelper prop_(proxy, "BlockVisibility");
       prop_.SetNumberOfElements(0);
       proxy->UpdateVTKObjects();
       prop_.Set(&invis_ids[0], static_cast<unsigned int>(invis_ids.size()));
       proxy->UpdateVTKObjects();
-      }
     }
+  }
 }
 
 /// Copy constructor.

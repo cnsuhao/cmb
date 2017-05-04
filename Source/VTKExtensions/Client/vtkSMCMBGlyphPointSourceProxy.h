@@ -16,13 +16,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkSMCMBGlyphPointSourceProxy_h
 #define __vtkSMCMBGlyphPointSourceProxy_h
 
-#include "vtkSMSourceProxy.h"
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkSMSourceProxy.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -35,56 +34,51 @@ public:
 
   // Description:
   // Insert the next point into the object
-  vtkIdType InsertNextPoint(double *p);
+  vtkIdType InsertNextPoint(double* p);
 
   // Description:
   // Insert the next point and its properties into the object
-  vtkIdType InsertNextPoint(double *point, double *color, double *scale,
-                            double *orientation, int visibility);
+  vtkIdType InsertNextPoint(
+    double* point, double* color, double* scale, double* orientation, int visibility);
 
-  void SetScale(vtkIdType index, double *scale);
-  void SetOrientation(vtkIdType index, double *orientation);
+  void SetScale(vtkIdType index, double* scale);
+  void SetOrientation(vtkIdType index, double* orientation);
   void SetVisibility(vtkIdType index, int flag);
-  void SetColor(vtkIdType index, double *color);
-  void SetDefaultColor(double *color);
+  void SetColor(vtkIdType index, double* color);
+  void SetDefaultColor(double* color);
   void UnsetColor(vtkIdType index);
   void ResetColorsToDefault();
-  void SetPoint(vtkIdType index, double *point);
-  void GetPoint(vtkIdType index, double *p);
-  void GetScale(vtkIdType index, double *s);
-  void GetOrientation(vtkIdType index, double *o);
+  void SetPoint(vtkIdType index, double* point);
+  void GetPoint(vtkIdType index, double* p);
+  void GetScale(vtkIdType index, double* s);
+  void GetOrientation(vtkIdType index, double* o);
   int GetVisibility(vtkIdType index);
-  void GetColor(vtkIdType index, double *color);
-  void GetDefaultColor(double *color);
+  void GetColor(vtkIdType index, double* color);
+  void GetDefaultColor(double* color);
   vtkIdType GetNumberOfPoints();
   void SetGlyphSourceBounds(double bounds[6]);
-  void ApplyTransform(double *orinetationDelta, double *positionDelta,
-                      double *scaleDelta);
-  void ApplyTransform(vtkIdType index, double *orinetationDelta,
-                      double *positionDelta, double *scaleDelta);
-  void GetBounds(vtkIdType index, double *bounds);
+  void ApplyTransform(double* orinetationDelta, double* positionDelta, double* scaleDelta);
+  void ApplyTransform(
+    vtkIdType index, double* orinetationDelta, double* positionDelta, double* scaleDelta);
+  void GetBounds(vtkIdType index, double* bounds);
   // Load the point information from a file
-  void ReadFromFile(const char *);
+  void ReadFromFile(const char*);
 
   // Write the point information to a file
-  void WriteToFile(const char *);
+  void WriteToFile(const char*);
 
-//BTX
+  //BTX
 protected:
   vtkSMCMBGlyphPointSourceProxy();
   ~vtkSMCMBGlyphPointSourceProxy() override;
-  void SendString(const char *func,
-                  const char *data);
-  void SendDouble3Vector(const char *func,
-                        vtkIdType index, double *data);
-  void ReceiveDouble3Vector(const char *func,
-                        vtkIdType index, double *data);
+  void SendString(const char* func, const char* data);
+  void SendDouble3Vector(const char* func, vtkIdType index, double* data);
+  void ReceiveDouble3Vector(const char* func, vtkIdType index, double* data);
 
 private:
   vtkSMCMBGlyphPointSourceProxy(const vtkSMCMBGlyphPointSourceProxy&); // Not implemented
-  void operator=(const vtkSMCMBGlyphPointSourceProxy&); // Not implemented
-//ETX
+  void operator=(const vtkSMCMBGlyphPointSourceProxy&);                // Not implemented
+  //ETX
 };
 
 #endif
-

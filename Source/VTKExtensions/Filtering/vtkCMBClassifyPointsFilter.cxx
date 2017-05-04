@@ -9,18 +9,18 @@
 //=========================================================================
 #include "vtkCMBClassifyPointsFilter.h"
 
+#include "vtkCellLocator.h"
 #include "vtkDoubleArray.h"
 #include "vtkIdTypeArray.h"
-#include "vtkCellLocator.h"
-#include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
-#include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkPolyData.h"
-#include "vtkTransform.h"
 #include "vtkPointData.h"
+#include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkTransform.h"
 #include <math.h>
 
 vtkStandardNewMacro(vtkCMBClassifyPointsFilter);
@@ -39,36 +39,29 @@ void vtkCMBClassifyPointsFilter::SetSolidConnection(vtkAlgorithmOutput* algOutpu
 }
 
 //----------------------------------------------------------------------------
-int vtkCMBClassifyPointsFilter::FillInputPortInformation(
-  int vtkNotUsed(port), vtkInformation* info)
+int vtkCMBClassifyPointsFilter::FillInputPortInformation(int vtkNotUsed(port), vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkCMBClassifyPointsFilter::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+int vtkCMBClassifyPointsFilter::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *meshInfo = inputVector[1]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* meshInfo = inputVector[1]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkDataSet *input = vtkDataSet::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet* input = vtkDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkDataSet *mesh = vtkDataSet::SafeDownCast(
-    meshInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet* mesh = vtkDataSet::SafeDownCast(meshInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   // Create a Cell Locator
-  vtkSmartPointer<vtkCellLocator> locator =
-    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkCellLocator> locator = vtkSmartPointer<vtkCellLocator>::New();
   locator->SetDataSet(mesh);
   locator->BuildLocator();
 
@@ -86,27 +79,27 @@ int vtkCMBClassifyPointsFilter::RequestData(
   ids->SetNumberOfComponents(1);
   ids->Allocate(n);
   ids->SetName("GridCellIds");
-  vtkPointData *pdata = output->GetPointData();
+  vtkPointData* pdata = output->GetPointData();
   pdata->SetScalars(ids);
 
   vtkIdType cellId;
 
   for (i = 0; i < n; i++)
-    {
+  {
     input->GetPoint(i, p);
     cellId = locator->FindCell(p);
     if (cellId == -1)
-      {
+    {
       continue;
-      }
+    }
     newPoints->InsertNextPoint(p);
     ids->InsertNextTypedTuple(&cellId);
-    }
+  }
   return 1;
 }
 
 //----------------------------------------------------------------------------
 void vtkCMBClassifyPointsFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

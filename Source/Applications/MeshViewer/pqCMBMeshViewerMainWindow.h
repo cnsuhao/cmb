@@ -14,9 +14,9 @@
 #ifndef __pqCMBMeshViewerMainWindow_h
 #define __pqCMBMeshViewerMainWindow_h
 
+#include "cmbSystemConfig.h"
 #include "pqCMBCommonMainWindow.h"
 #include <QVariant>
-#include "cmbSystemConfig.h"
 
 class pqOutputPort;
 class vtkDataSet;
@@ -38,11 +38,11 @@ public:
   ~pqCMBMeshViewerMainWindow() override;
 
   enum enumInputTreeColumn
-    {
+  {
     TREE_INPUT_COL,
     TREE_ACTIVE_COL,
     TREE_VISIBLE_COL
-    };
+  };
 
 public slots:
 
@@ -120,9 +120,8 @@ protected slots:
 
   // Description:
   // slots to start cone selection
-  void onEditConeSelection()
-    { this->onStartConeSelection(true); }
-  void onStartConeSelection(bool showDialog=false);
+  void onEditConeSelection() { this->onStartConeSelection(true); }
+  void onStartConeSelection(bool showDialog = false);
 
 protected:
   using pqCMBCommonMainWindow::updateEnableState;
@@ -134,22 +133,16 @@ protected:
   // Initializes the application.
   virtual void initializeApplication();
 
-  void addInputItem(QTreeWidgetItem* parent,
-    pqDataRepresentation* extractRep, bool select=false);
-  pqPipelineSource* getInputSourceFromItem(
-    QTreeWidgetItem * item);
-  pqDataRepresentation* getInputRepresentationFromItem(
-    QTreeWidgetItem * item);
+  void addInputItem(QTreeWidgetItem* parent, pqDataRepresentation* extractRep, bool select = false);
+  pqPipelineSource* getInputSourceFromItem(QTreeWidgetItem* item);
+  pqDataRepresentation* getInputRepresentationFromItem(QTreeWidgetItem* item);
   void removeSubsets(QTreeWidgetItem* parent);
   void clearAllInputsList();
-  QTreeWidgetItem* findItemFromSource(
-    QTreeWidgetItem* parentItem, pqPipelineSource* source);
+  QTreeWidgetItem* findItemFromSource(QTreeWidgetItem* parentItem, pqPipelineSource* source);
   QTreeWidget* inputTreeWidget();
-  void removeInputItem(
-    QTreeWidgetItem* selItem, bool checkRemovable=true);
+  void removeInputItem(QTreeWidgetItem* selItem, bool checkRemovable = true);
   bool isItemInActiveChain(QTreeWidgetItem* item);
-  bool hasChildItem(
-    QTreeWidgetItem* parent, QTreeWidgetItem* child);
+  bool hasChildItem(QTreeWidgetItem* parent, QTreeWidgetItem* child);
 
   void hideBoxWidget();
   void hidePlaneWidget();
@@ -157,13 +150,10 @@ protected:
 
 private:
   pqCMBMeshViewerMainWindow(const pqCMBMeshViewerMainWindow&); // Not implemented.
-  void operator=(const pqCMBMeshViewerMainWindow&); // Not implemented.
+  void operator=(const pqCMBMeshViewerMainWindow&);            // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;
 };
 
 #endif
-
-
-

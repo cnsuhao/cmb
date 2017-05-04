@@ -10,30 +10,30 @@
 // Description: A simple program for creating VTK representations of meshes
 // Generate by the Delos Mesher
 
-#include "vtkNew.h"
-#include "vtkDelosMeshReader.h"
-#include "vtkPolyDataNormals.h"
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
 #include "vtkActor.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkPolyData.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkInteractorStyleSwitch.h"
+#include "vtkDelosMeshReader.h"
 #include "vtkDoubleArray.h"
-#include "vtkXMLPolyDataWriter.h"
+#include "vtkInteractorStyleSwitch.h"
+#include "vtkNew.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkPolyDataNormals.h"
 #include "vtkProperty.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
+#include "vtkXMLPolyDataWriter.h"
 #include <string>
 
 #include "vtkProperty.h"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   if (argc != 3)
-    {
+  {
     std::cerr << "Usage: delosMeshReader delosMeshFile vtkFileName\n";
     return -1;
-    }
+  }
 
   vtkNew<vtkRenderWindow> renWin;
   vtkNew<vtkRenderer> renderer;
@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
   vtkNew<vtkRenderWindowInteractor> iren;
   vtkNew<vtkInteractorStyleSwitch> style;
   style->SetCurrentStyleToTrackballCamera();
-  iren->SetInteractorStyle( style.GetPointer() );
+  iren->SetInteractorStyle(style.GetPointer());
 
   iren->SetRenderWindow(renWin.GetPointer());
-  renWin->AddRenderer( renderer.GetPointer() );
+  renWin->AddRenderer(renderer.GetPointer());
 
   vtkNew<vtkDelosMeshReader> reader;
   reader->SetFileName(argv[1]);
@@ -56,16 +56,16 @@ int main(int argc, char *argv[])
   writer->Write();
 
   vtkNew<vtkPolyDataMapper> mapper;
-  mapper->SetInputConnection( reader->GetOutputPort(0) );
+  mapper->SetInputConnection(reader->GetOutputPort(0));
   vtkNew<vtkActor> actor;
-  actor->SetMapper( mapper.GetPointer() );
+  actor->SetMapper(mapper.GetPointer());
   vtkNew<vtkProperty> property;
   property->SetDiffuseColor(1.0, 0.5, 0.2);
   property->SetEdgeColor(0.2, 0.2, 1.0);
   property->EdgeVisibilityOn();
   property->SetRepresentationToSurface();
   actor->SetProperty(property.GetPointer());
-  renderer->AddViewProp( actor.GetPointer() );
+  renderer->AddViewProp(actor.GetPointer());
   iren->Initialize();
   renWin->Render();
   iren->Start();

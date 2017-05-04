@@ -15,9 +15,9 @@
 #ifndef __vtkPVSceneGenFileInformation_h
 #define __vtkPVSceneGenFileInformation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 #include <string>
 
 class vtkTransform;
@@ -42,8 +42,8 @@ public:
   void CopyToStream(vtkClientServerStream*) override;
   void CopyFromStream(const vtkClientServerStream*) override;
 
-  const char *GetFileContents() { return this->FileContents.c_str(); }
-  const char *GetFileName() { return this->FileName.c_str(); }
+  const char* GetFileContents() { return this->FileContents.c_str(); }
+  const char* GetFileName() { return this->FileName.c_str(); }
 
   //BTX
 protected:
@@ -55,9 +55,8 @@ protected:
   std::string FileName;
 
 private:
-
   vtkPVSceneGenFileInformation(const vtkPVSceneGenFileInformation&); // Not implemented
-  void operator=(const vtkPVSceneGenFileInformation&); // Not implemented
+  void operator=(const vtkPVSceneGenFileInformation&);               // Not implemented
   //ETX
 };
 

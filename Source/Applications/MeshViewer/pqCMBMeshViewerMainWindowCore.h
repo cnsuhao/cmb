@@ -11,8 +11,8 @@
 #ifndef _pqCMBMeshViewerMainWindowCore_h
 #define _pqCMBMeshViewerMainWindowCore_h
 
-#include "pqCMBCommonMainWindowCore.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBCommonMainWindowCore.h"
 
 class vtkDiscreteModelWrapper;
 class vtkPolyData;
@@ -33,7 +33,7 @@ class vtkSMNewWidgetRepresentationProxy;
 class vtkTransform;
 class vtkSMPropertyLink;
 
-class pqCMBMeshViewerMainWindowCore :  public pqCMBCommonMainWindowCore
+class pqCMBMeshViewerMainWindowCore : public pqCMBCommonMainWindowCore
 {
   typedef pqCMBCommonMainWindowCore Superclass;
   Q_OBJECT
@@ -49,7 +49,7 @@ public:
   bool is2DMesh();
   void exportMesh(pqPipelineSource* meshSource);
 
-  void setupInspectorPanel (QWidget *parent);
+  void setupInspectorPanel(QWidget* parent);
   void setupSelectionPanel(QWidget* parent);
 
   pqPipelineSource* meshSource();
@@ -60,7 +60,7 @@ public:
   void changeSelectionMaterialId(int newId);
   void changeMeshMaterialId(int newId);
   pqDataRepresentation* extractSelectionAsInput();
-  vtkSMProxy* getActiveSelection(int selFieldType=0);
+  vtkSMProxy* getActiveSelection(int selFieldType = 0);
   void setActiveSelection(vtkSMSourceProxy* selSource);
   bool invertCurrentSelection();
   void setFiltersSource(pqPipelineSource* selSource);
@@ -70,16 +70,12 @@ public:
   vtkSMProxy* spreadSheetRepresentation();
   vtkSMNewWidgetRepresentationProxy* createBoxWidget();
   vtkSMNewWidgetRepresentationProxy* createPlaneWidget();
-  void linkContourPlaneWidget(
-    vtkSMNewWidgetRepresentationProxy* planeWidget);
-  void linkContourBoxWidget(
-    vtkSMNewWidgetRepresentationProxy* boxWidget, bool enable=true);
-  void linkBoxWidget(vtkSMPropertyLink* positionLink,
-    vtkSMPropertyLink* rotationLink, vtkSMPropertyLink* scaleLink,
-    vtkSMNewWidgetRepresentationProxy* boxWidget,
+  void linkContourPlaneWidget(vtkSMNewWidgetRepresentationProxy* planeWidget);
+  void linkContourBoxWidget(vtkSMNewWidgetRepresentationProxy* boxWidget, bool enable = true);
+  void linkBoxWidget(vtkSMPropertyLink* positionLink, vtkSMPropertyLink* rotationLink,
+    vtkSMPropertyLink* scaleLink, vtkSMNewWidgetRepresentationProxy* boxWidget,
     pqDataRepresentation* dataRep, bool enable);
-  void updatePlaneInteraction(
-    vtkSMNewWidgetRepresentationProxy* planeWidget);
+  void updatePlaneInteraction(vtkSMNewWidgetRepresentationProxy* planeWidget);
   pqPipelineSource* meshSculptingSource();
   pqDataRepresentation* meshSculptingRepresentation();
   void createSelectedNodesRepresentation();
@@ -91,19 +87,15 @@ public:
   pqDataRepresentation* coneRepresentation();
 
   // Destroy source
-  void destroySource(
-    pqObjectBuilder* builder, pqPipelineSource* source);
+  void destroySource(pqObjectBuilder* builder, pqPipelineSource* source);
   void destroyRepresentation(pqDataRepresentation* selRep);
 
   // Description:
   // Select surface points with arc
-  void contourSelectSurface(qtArcWidget* arcWidget,
-    bool isCell, int selectArcType);
+  void contourSelectSurface(qtArcWidget* arcWidget, bool isCell, int selectArcType);
   // Select through cells with arc
-  void contourSelectThrough(qtArcWidget* arcWidget,
-    int selectArcType);
-  void setShapeSelectionOption(qtArcWidget* arcWidget,
-    int selectCellThrough, int selectShapeType);
+  void contourSelectThrough(qtArcWidget* arcWidget, int selectArcType);
+  void setShapeSelectionOption(qtArcWidget* arcWidget, int selectCellThrough, int selectShapeType);
   bool hasContourSelection();
   bool hasConeSelection();
   int shapeSelectionOption();
@@ -116,7 +108,7 @@ signals:
 
 public slots:
   /// Called when a new server is connected.
-  void onServerCreationFinished(pqServer *server) override;
+  void onServerCreationFinished(pqServer* server) override;
 
   /// Called when a new reader is created by the GUI.
   /// We add the reader to the recent files menu.
@@ -159,7 +151,7 @@ public slots:
 
   // Description:
   // Accept/Reset changes on the filters, and update the representation
-  void acceptFilterPanels(bool ignoreList=false);
+  void acceptFilterPanels(bool ignoreList = false);
   void resetFilterPanels();
 
   // Description:
@@ -171,21 +163,16 @@ public slots:
   // Move mesh points according to current arc selection and box widget
   // return true on success; false on failure
   bool moveMeshScultpingPoints();
-  bool moveMeshPoints(pqPipelineSource* source,
-    vtkSMProxy* transformProxy=NULL);
+  bool moveMeshPoints(pqPipelineSource* source, vtkSMProxy* transformProxy = NULL);
 
 protected:
-
   void destroySources();
   void removeFiltertPanel(pqProxyWidget* panel);
 
   void createFilters(pqPipelineSource* source);
-  pqPipelineSource* createFilter(const char* filterxmlname,
-    pqPipelineSource* inputsrc);
+  pqPipelineSource* createFilter(const char* filterxmlname, pqPipelineSource* inputsrc);
   void createFilterPanels();
-  void setInputArray(
-    pqPipelineSource* filter,
-    const char* propName, const char* arrayname);
+  void setInputArray(pqPipelineSource* filter, const char* propName, const char* arrayname);
   void initScrollArea(QScrollArea* area);
   QScrollArea* createScrollArea(QWidget* parent);
 
@@ -195,18 +182,15 @@ protected:
   void updateMeshHistogram();
   void resetFilterInputArrays();
   bool getMeshSaveAsFileName(QString& filename);
-  void updateMeshContourSelection(
-    qtArcWidget* arcWidget, int selectCellThrough,
-    vtkSMProxy* selectionSource, int selectArcType,
-    int fieldType, int GenerateSelectedOutput=0);
+  void updateMeshContourSelection(qtArcWidget* arcWidget, int selectCellThrough,
+    vtkSMProxy* selectionSource, int selectArcType, int fieldType, int GenerateSelectedOutput = 0);
   void createSmoothMeshPanel();
 
 private slots:
 
   // Description:
   // Load a solid file.
-  void processMesh(const QString& filename,
-                    pqPipelineSource* source);
+  void processMesh(const QString& filename, pqPipelineSource* source);
   void updateApplyState(bool changesAvailable);
   void updateMeshThreshold();
   void updateMeshQuality();
@@ -215,24 +199,19 @@ private slots:
 
   // Description:
   // Save the mesh.
-  void saveMesh(const QString& filename,
-    pqPipelineSource* meshSource = NULL);
+  void saveMesh(const QString& filename, pqPipelineSource* meshSource = NULL);
   void updateFilters();
   void updateSource(pqPipelineSource* source);
 
   void onUpdateConeInteraction();
 
 private:
-
   class vtkInternal;
   vtkInternal* const Internal;
 
   // The Leaf nodes that are currently selected
   bool PreviewMeshOutput;
-  void getContourDisplayBounds(
-    vtkPVContourRepresentationInfo* arcInfo, double bounds[6]);
-
+  void getContourDisplayBounds(vtkPVContourRepresentationInfo* arcInfo, double bounds[6]);
 };
-
 
 #endif // !_pqCMBMeshViewerMainWindowCore_h

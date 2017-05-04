@@ -13,10 +13,10 @@
 
 //----------------------------------------------------------------------------
 template <unsigned int N>
-rtvl_votee<N>::
-rtvl_votee(vnl_vector_fixed<double, N> const& votee_location,
-           vnl_matrix_fixed<double, N, N>& votee_tensor):
-  location_(votee_location), tensor_(votee_tensor)
+rtvl_votee<N>::rtvl_votee(
+  vnl_vector_fixed<double, N> const& votee_location, vnl_matrix_fixed<double, N, N>& votee_tensor)
+  : location_(votee_location)
+  , tensor_(votee_tensor)
 {
 }
 
@@ -31,7 +31,6 @@ void rtvl_votee<N>::go(rtvl_vote_internal<N>& vi, double saliency)
 }
 
 //----------------------------------------------------------------------------
-#define RTVL_VOTEE_INSTANTIATE(N) \
-  template class rtvl_votee<N>
+#define RTVL_VOTEE_INSTANTIATE(N) template class rtvl_votee<N>
 
 #endif

@@ -12,15 +12,14 @@
 //  Create and controls the arc editing singelton widget
 // .SECTION Caveats
 
-
 #ifndef __qtCMBArcWidgetManager_h
 #define __qtCMBArcWidgetManager_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
+#include "vtkType.h"
 #include <QList>
 #include <QObject>
-#include "vtkType.h"
-#include "cmbSystemConfig.h"
 
 class pqCMBArc;
 class pqCMBSceneNode;
@@ -36,7 +35,7 @@ class CMBAPPCOMMON_EXPORT qtCMBArcWidgetManager : public QObject
   Q_OBJECT
 
 public:
-  qtCMBArcWidgetManager(pqServer *server, pqRenderView *view);
+  qtCMBArcWidgetManager(pqServer* server, pqRenderView* view);
   ~qtCMBArcWidgetManager() override;
 
   pqCMBArc* createpqCMBArc();
@@ -44,12 +43,12 @@ public:
   int create();
   int edit();
 
-  bool hasActiveNode( );
+  bool hasActiveNode();
   bool hasActiveArc();
   bool isActive();
-  void setActiveNode(pqCMBSceneNode *node);
+  void setActiveNode(pqCMBSceneNode* node);
   void setActiveArc(pqCMBArc*);
-  pqCMBSceneNode* getActiveNode( );
+  pqCMBSceneNode* getActiveNode();
   pqCMBArc* getActiveArc();
   qtArcWidget* createDefaultContourWidget(int& normal, double& pos);
 
@@ -57,8 +56,7 @@ public:
 
   //this converts the old V1 reader format of information
   //to the new cmbScenePolyline object. Nobody else should use this method.
-  pqCMBArc* createLegacyV1Contour(const int &normal,
-    const double &position, const int &closedLoop,
+  pqCMBArc* createLegacyV1Contour(const int& normal, const double& position, const int& closedLoop,
     vtkDoubleArray* nodePositions, vtkIdTypeArray* SelIndices);
 
 signals:
@@ -91,28 +89,27 @@ protected slots:
   // called when a whole arc is done creating or modifying.
   void updateArcNode();
   // called when a sub arc modification is done
-  void updateModifiedArc(
-    qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID);
+  void updateModifiedArc(qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID);
   // called when the edit widget is closed
   void editingFinished();
 
-  void updateActiveView( pqRenderView *view ){ View=view;}
-  void updateActiveServer( pqServer *server ){ Server=server;}
+  void updateActiveView(pqRenderView* view) { View = view; }
+  void updateActiveServer(pqServer* server) { Server = server; }
 
 protected:
   void getDefaultArcPlane(int& normal, double& pos);
   void resetArcPlane(int normal, double pos);
-  qtArcWidget* createContourWidget( int normal, double position );
+  qtArcWidget* createContourWidget(int normal, double position);
   void modifyArc(vtkIdType startIdx, vtkIdType endIdx, int opType);
 
   qtArcWidget* Widget;
   qtCMBArcEditWidget* EditWidget;
 
-  pqCMBSceneNode *Node;
-  pqCMBArc  *Arc;
+  pqCMBSceneNode* Node;
+  pqCMBArc* Arc;
 
-  pqRenderView *View;
-  pqServer *Server;
+  pqRenderView* View;
+  pqServer* Server;
   QWidget* ActiveWidget;
 };
 

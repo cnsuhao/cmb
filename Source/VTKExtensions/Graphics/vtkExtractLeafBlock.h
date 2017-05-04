@@ -20,10 +20,9 @@
 #ifndef __vtkExtractLeafBlock_h
 #define __vtkExtractLeafBlock_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
-
 
 class VTKCMBGRAPHICS_EXPORT vtkExtractLeafBlock : public vtkPolyDataAlgorithm
 {
@@ -38,27 +37,22 @@ public:
   vtkSetMacro(BlockIndex, int);
   vtkGetMacro(BlockIndex, int);
 
-//BTX
+  //BTX
 protected:
   vtkExtractLeafBlock();
-  ~vtkExtractLeafBlock() override {};
+  ~vtkExtractLeafBlock() override{};
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   /// Implementation of the algorithm.
-  int RequestData(vtkInformation *,
-                          vtkInformationVector **,
-                          vtkInformationVector *) override;
-
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkExtractLeafBlock(const vtkExtractLeafBlock&); // Not implemented.
-  void operator=(const vtkExtractLeafBlock&); // Not implemented.
+  void operator=(const vtkExtractLeafBlock&);      // Not implemented.
 
   int BlockIndex;
-//ETX
+  //ETX
 };
 
 #endif
-
-

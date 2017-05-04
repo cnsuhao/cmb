@@ -11,8 +11,8 @@
 #define __qtPluginIOBehavior_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
 #include "cmbSystemConfig.h"
+#include <QObject>
 
 #include <QMap>
 #include <QPair>
@@ -26,8 +26,9 @@ class CMBAPPCOMMON_EXPORT pqPluginIOBehavior : public QObject
   Q_OBJECT
   typedef QObject Superclass;
   typedef QMap<QString, QPair<QString, QString> > FileExtMap;
+
 public:
-  pqPluginIOBehavior(QObject* parent=0);
+  pqPluginIOBehavior(QObject* parent = 0);
   ~pqPluginIOBehavior() override;
 
   // Description:

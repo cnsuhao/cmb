@@ -13,15 +13,14 @@
 
 #include <QApplication>
 #include <QGridLayout>
-#include <QToolButton>
 #include <QLabel>
-
+#include <QToolButton>
 
 //-----------------------------------------------------------------------------
-pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent/*=0*/)
+pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent /*=0*/)
   : QWidget(_parent)
 {
-  QGridLayout *gridLayout = new QGridLayout(this);
+  QGridLayout* gridLayout = new QGridLayout(this);
   gridLayout->setSpacing(4);
   gridLayout->setMargin(0);
   gridLayout->setObjectName("gridLayout");
@@ -29,27 +28,24 @@ pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent/*=0*/)
   this->OutputButton = new QToolButton(this);
   this->OutputButton->setObjectName("OutputButton");
   this->OutputButton->setText("Process Output");
-  QObject::connect(this->OutputButton, SIGNAL(pressed()),
-    this, SLOT(showOutputWindow()));
+  QObject::connect(this->OutputButton, SIGNAL(pressed()), this, SLOT(showOutputWindow()));
 
   this->Message = new QLabel;
   this->Message->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
   this->AbortButton = new QToolButton(this);
   this->AbortButton->setObjectName("AbortButton");
-  this->AbortButton->setIcon(
-    QIcon(QString::fromUtf8(":/QtWidgets/Icons/pqDelete16.png")));
+  this->AbortButton->setIcon(QIcon(QString::fromUtf8(":/QtWidgets/Icons/pqDelete16.png")));
   this->AbortButton->setIconSize(QSize(12, 12));
-  this->AbortButton->setToolTip(
-    QApplication::translate("Form", "Abort", 0
+  this->AbortButton->setToolTip(QApplication::translate("Form", "Abort", 0
 #if QT_VERSION < 0x050000
-                                               , QApplication::UnicodeUTF8
+    ,
+    QApplication::UnicodeUTF8
 #endif
-                                               ));
+    ));
 
   this->AbortButton->setEnabled(false);
-  QObject::connect(this->AbortButton, SIGNAL(pressed()),
-    this, SIGNAL(abortPressed()));
+  QObject::connect(this->AbortButton, SIGNAL(pressed()), this, SIGNAL(abortPressed()));
 
   gridLayout->addWidget(this->Message, 0, 0);
   gridLayout->addWidget(this->AbortButton, 0, 1);
@@ -62,9 +58,8 @@ pqCMBProcessWidget::pqCMBProcessWidget(QWidget* _parent/*=0*/)
   this->OutputWindow->setAttribute(Qt::WA_QuitOnClose, false);
   this->OutputWindow->setObjectName("processOutputDialog");
   this->OutputWindow->setWindowTitle(tr("Process Output"));
-//  this->OutputWindow->setShowOutput(false);
+  //  this->OutputWindow->setShowOutput(false);
 }
-
 
 //-----------------------------------------------------------------------------
 pqCMBProcessWidget::~pqCMBProcessWidget()
@@ -86,7 +81,6 @@ void pqCMBProcessWidget::appendToOutput(const QString& message)
 {
   this->OutputWindow->onDisplayText(message);
 }
-
 
 //-----------------------------------------------------------------------------
 void pqCMBProcessWidget::showOutputWindow()

@@ -13,51 +13,49 @@
 #include "pqCMBModifierArc.h"
 #include "ui_qtCMBManualFunctionWidget.h"
 
-qtCMBManualFunctionWidget
-::qtCMBManualFunctionWidget(cmbManualProfileFunction*fun, QWidget * parent)
-:QWidget(parent), Ui(new Ui_qtCMBManualFunctionWidget), function(fun)
+qtCMBManualFunctionWidget::qtCMBManualFunctionWidget(cmbManualProfileFunction* fun, QWidget* parent)
+  : QWidget(parent)
+  , Ui(new Ui_qtCMBManualFunctionWidget)
+  , function(fun)
 {
   Ui->setupUi(this);
-  connect(this->Ui->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
-          this, SLOT(updateDepthMin(double)));
-  connect(this->Ui->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
-          this, SLOT(updateDepthMax(double)));
-  connect(this->Ui->leftValue, SIGNAL(valueChanged(double)),
-          this, SLOT(updateDistMin(double)));
-  connect(this->Ui->rightValue, SIGNAL(valueChanged(double)),
-          this, SLOT(updateDistMax(double)));
-  connect(this->Ui->DisplacementSplineCont, SIGNAL(toggled(bool)),
-          this, SLOT(dispSplineBox(bool)));
-  connect(this->Ui->WeightingSplineControl, SIGNAL(toggled(bool)),
-          this, SLOT(weightSplineBox(bool)));
+  connect(this->Ui->dispacementMinDepthValue, SIGNAL(valueChanged(double)), this,
+    SLOT(updateDepthMin(double)));
+  connect(this->Ui->displacementMaxDepthValue, SIGNAL(valueChanged(double)), this,
+    SLOT(updateDepthMax(double)));
+  connect(this->Ui->leftValue, SIGNAL(valueChanged(double)), this, SLOT(updateDistMin(double)));
+  connect(this->Ui->rightValue, SIGNAL(valueChanged(double)), this, SLOT(updateDistMax(double)));
+  connect(this->Ui->DisplacementSplineCont, SIGNAL(toggled(bool)), this, SLOT(dispSplineBox(bool)));
+  connect(
+    this->Ui->WeightingSplineControl, SIGNAL(toggled(bool)), this, SLOT(weightSplineBox(bool)));
   this->Ui->weightingChartFrame->setVisible(false);
   this->Ui->WeightRange->setVisible(false);
   this->Ui->WeightingSplineControl->setVisible(false);
 
-  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
-          this->Ui->weightingChartFrame, SLOT(setVisible(bool)));
-  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
-          this->Ui->WeightRange, SLOT(setVisible(bool)));
-  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)),
-          this->Ui->WeightingSplineControl, SLOT(setVisible(bool)));
+  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)), this->Ui->weightingChartFrame,
+    SLOT(setVisible(bool)));
+  connect(
+    this->Ui->weightingBox, SIGNAL(toggled(bool)), this->Ui->WeightRange, SLOT(setVisible(bool)));
+  connect(this->Ui->weightingBox, SIGNAL(toggled(bool)), this->Ui->WeightingSplineControl,
+    SLOT(setVisible(bool)));
   {
     QGridLayout* gridlayout = new QGridLayout(this->Ui->displacementChartFrame);
     gridlayout->setMargin(0);
     this->DisplacementProfile = new pqGeneralTransferFunctionWidget();
     gridlayout->addWidget(this->DisplacementProfile);
     this->DisplacementProfile->addFunction(NULL, false);
-    connect( this->Ui->DisplacementSplineCont, SIGNAL(toggled(bool)),
-            this->DisplacementProfile, SLOT(setFunctionType(bool)));
-    connect(this->DisplacementProfile, SIGNAL(controlPointsModified()),
-            this->DisplacementProfile, SLOT(render()));
+    connect(this->Ui->DisplacementSplineCont, SIGNAL(toggled(bool)), this->DisplacementProfile,
+      SLOT(setFunctionType(bool)));
+    connect(this->DisplacementProfile, SIGNAL(controlPointsModified()), this->DisplacementProfile,
+      SLOT(render()));
     connect(this->Ui->dispacementMinDepthValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMinY(double)));
+      this->DisplacementProfile, SLOT(setMinY(double)));
     connect(this->Ui->displacementMaxDepthValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMaxY(double)));
-    connect(this->Ui->leftValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMinX(double)));
-    connect(this->Ui->rightValue, SIGNAL(valueChanged(double)),
-            this->DisplacementProfile, SLOT(setMaxX(double)));
+      this->DisplacementProfile, SLOT(setMaxY(double)));
+    connect(this->Ui->leftValue, SIGNAL(valueChanged(double)), this->DisplacementProfile,
+      SLOT(setMinX(double)));
+    connect(this->Ui->rightValue, SIGNAL(valueChanged(double)), this->DisplacementProfile,
+      SLOT(setMaxX(double)));
   }
 
   {
@@ -68,14 +66,14 @@ qtCMBManualFunctionWidget
     this->WeightingFunction->addFunction(NULL, false);
     this->WeightingFunction->setMinY(0);
     this->WeightingFunction->setMaxY(1);
-    connect( this->Ui->WeightingSplineControl, SIGNAL(toggled(bool)),
-            this->WeightingFunction, SLOT(setFunctionType(bool)));
-    connect(this->WeightingFunction, SIGNAL(controlPointsModified()),
-            this->WeightingFunction, SLOT(render()));
-    connect(this->Ui->leftValue, SIGNAL(valueChanged(double)),
-            this->WeightingFunction, SLOT(setMinX(double)));
-    connect(this->Ui->rightValue, SIGNAL(valueChanged(double)),
-            this->WeightingFunction, SLOT(setMaxX(double)));
+    connect(this->Ui->WeightingSplineControl, SIGNAL(toggled(bool)), this->WeightingFunction,
+      SLOT(setFunctionType(bool)));
+    connect(this->WeightingFunction, SIGNAL(controlPointsModified()), this->WeightingFunction,
+      SLOT(render()));
+    connect(this->Ui->leftValue, SIGNAL(valueChanged(double)), this->WeightingFunction,
+      SLOT(setMinX(double)));
+    connect(this->Ui->rightValue, SIGNAL(valueChanged(double)), this->WeightingFunction,
+      SLOT(setMaxX(double)));
   }
 
   this->Ui->dispacementMinDepthValue->setValue(function->getDepthRange(pqCMBModifierArc::MIN));
@@ -85,8 +83,7 @@ qtCMBManualFunctionWidget
   bool isSymmetric = function->isSymmetric();
   this->setSemetricMode(isSymmetric);
   this->Ui->Symmetric->setChecked(isSymmetric);
-  connect(this->Ui->Symmetric, SIGNAL(clicked(bool)),
-          this, SLOT(setSemetricMode(bool)));
+  connect(this->Ui->Symmetric, SIGNAL(clicked(bool)), this, SLOT(setSemetricMode(bool)));
 
   this->Ui->DisplacementSplineCont->setChecked(function->isDispSpline());
   this->Ui->WeightingSplineControl->setChecked(function->isWeightSpline());
@@ -98,7 +95,6 @@ qtCMBManualFunctionWidget
   this->updateDistMax(function->getDistanceRange(pqCMBModifierArc::MAX));
   this->updateDepthMin(function->getDepthRange(pqCMBModifierArc::MIN));
   this->updateDepthMax(function->getDepthRange(pqCMBModifierArc::MAX));
-
 
   this->WeightingFunction->setMinY(0);
   this->WeightingFunction->setMaxY(1);
@@ -123,7 +119,7 @@ void qtCMBManualFunctionWidget::dispSplineBox(bool v)
   this->DisplacementProfile->setMaxY(function->getDepthRange(pqCMBModifierArc::MAX));
 }
 
-void  qtCMBManualFunctionWidget::weightSplineBox(bool v)
+void qtCMBManualFunctionWidget::weightSplineBox(bool v)
 {
   this->function->setWeightSpline(v);
   this->WeightingFunction->changeFunction(0, function->getWeightingFunction(), true);
@@ -133,9 +129,9 @@ void  qtCMBManualFunctionWidget::weightSplineBox(bool v)
   this->WeightingFunction->setMaxY(1);
 }
 
-void qtCMBManualFunctionWidget::setSemetricMode( bool sm )
+void qtCMBManualFunctionWidget::setSemetricMode(bool sm)
 {
-  if(sm)
+  if (sm)
   {
     this->Ui->leftValue->setEnabled(false);
   }

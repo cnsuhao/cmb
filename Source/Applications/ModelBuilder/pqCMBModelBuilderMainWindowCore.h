@@ -14,8 +14,8 @@
 #ifndef _pqCMBModelBuilderMainWindowCore_h
 #define _pqCMBModelBuilderMainWindowCore_h
 
-#include "pqCMBCommonMainWindowCore.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBCommonMainWindowCore.h"
 #include "smtk/PublicPointerDefs.h"
 
 #include "smtk/model/SessionRef.h"
@@ -33,7 +33,7 @@ class pqSMTKMeshPanel;
 class QComboBox;
 class vtkSMModelManagerProxy;
 
-class pqCMBModelBuilderMainWindowCore :  public pqCMBCommonMainWindowCore
+class pqCMBModelBuilderMainWindowCore : public pqCMBCommonMainWindowCore
 {
   typedef pqCMBCommonMainWindowCore Superclass;
   Q_OBJECT
@@ -64,7 +64,7 @@ public:
 
   // Description
   // set pqCMBSceneTree for the core.
-  void setpqCMBSceneTree(pqCMBSceneTree* );
+  void setpqCMBSceneTree(pqCMBSceneTree*);
 
   // Description
   // Check whether pqCMBSceneTree is empty.
@@ -84,7 +84,7 @@ public:
 
   // Descirption:
   // override the base class to give an editor by default
-  virtual pqCMBDisplayProxyEditor *getAppearanceEditor();
+  virtual pqCMBDisplayProxyEditor* getAppearanceEditor();
 
   // Description:
   // The application's model manager
@@ -108,15 +108,13 @@ public slots:
   // Description
   /// Called when a new server is connected.
   void onRemovingServer(pqServer*) override;
-  void onServerCreationFinished(pqServer *server) override;
-  virtual void onColorByModeChanged(const QString &);
+  void onServerCreationFinished(pqServer* server) override;
+  virtual void onColorByModeChanged(const QString&);
   virtual void onColorByAttribute();
-  virtual void colorByAttributeFieldSelected(const QString& attdeftype,
-        const QString& itemname);
+  virtual void colorByAttributeFieldSelected(const QString& attdeftype, const QString& itemname);
 
   void onFileOpen(const QStringList& Files) override;
-  void onCloseData() override
-    { this->onCloseData(false); }
+  void onCloseData() override { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
   bool onCloseSession(const smtk::model::SessionRef&);
   void clearSimBuilder();
@@ -127,8 +125,7 @@ public slots:
 
   void onSaveSimulation();
   void onExportSimFile();
-  int onLoadSimulationTemplate()
-    {return this->onLoadSimulation(true);}
+  int onLoadSimulationTemplate() { return this->onLoadSimulation(true); }
   void clearpqCMBSceneTree();
   void onLoadScene();
 
@@ -167,23 +164,18 @@ public slots:
   // We add the reader to the recent files menu.
   void onReaderCreated(pqPipelineSource* reader, const QString& filename) override;
 
-  void updateScalarBarWidget(
-    pqScalarBarWidget* scalarBar,
-    const QString& strDefType, bool show);
+  void updateScalarBarWidget(pqScalarBarWidget* scalarBar, const QString& strDefType, bool show);
 
   int loadModelFile(const QString& filename);
 
-  void processSceneInfo(const QString& filename,
-    pqPipelineSource* source);
-  void processMapInfo(const QString& filename,
-    pqPipelineSource* source);
+  void processSceneInfo(const QString& filename, pqPipelineSource* source);
+  void processMapInfo(const QString& filename, pqPipelineSource* source);
 
   void loadJSONFile(const QString& filename);
   bool processOperatorResult(const smtk::model::OperatorResult& result,
-                        const smtk::model::SessionRef& sref,
-                        bool hasNewModels, bool bModelGeometryChanged,
-                        bool hasNewMeshes);
-  void selectRepresentationBlock( pqDataRepresentation*, unsigned int, bool ctrlKey );
+    const smtk::model::SessionRef& sref, bool hasNewModels, bool bModelGeometryChanged,
+    bool hasNewMeshes);
+  void selectRepresentationBlock(pqDataRepresentation*, unsigned int, bool ctrlKey);
 
   // Called to show the settings dialog.
   // Subclass should override this method to add app-specific options.
@@ -202,13 +194,11 @@ public slots:
   // whether to create a default model.
   bool startNewSession(const std::string& sessionName);
   bool startNewSession(
-    const std::string& sessionName,
-    bool createDefaultModel,
-    bool useExistingSession);
+    const std::string& sessionName, bool createDefaultModel, bool useExistingSession);
 
   // Description:
   // Override the zoomToSelection function to do real task
-  bool  zoomToSelection() override;
+  bool zoomToSelection() override;
 
   /// Call setCameraManipulationMode() to match \a dimension, but only if the user preference is enabled.
   void autoSwitchCameraManipulationMode(int dimension);
@@ -218,10 +208,8 @@ protected:
 
   void buildRenderWindowContextMenuBehavior(QObject* parent_widget) override;
   virtual void setSimBuilderModelManager();
-  virtual void processModifiedMeshes(
-    const smtk::attribute::MeshItemPtr& modifiedMeshes);
-  virtual void processModifiedEntities(
-  const smtk::attribute::ModelEntityItemPtr& resultEntities);
+  virtual void processModifiedMeshes(const smtk::attribute::MeshItemPtr& modifiedMeshes);
+  virtual void processModifiedEntities(const smtk::attribute::ModelEntityItemPtr& resultEntities);
 
   /**\brief Return true if the user wants to abort \a action, false if the application should continue.
     *
@@ -230,8 +218,7 @@ protected:
     * all the models in the model manager are checked.
     */
   bool abortActionForUnsavedWork(
-    const std::string& action,
-    const smtk::model::SessionRef& sref = smtk::model::SessionRef());
+    const std::string& action, const smtk::model::SessionRef& sref = smtk::model::SessionRef());
 
 private:
   // Description:

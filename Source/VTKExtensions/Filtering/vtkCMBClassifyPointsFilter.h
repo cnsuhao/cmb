@@ -16,9 +16,9 @@
 #ifndef __vtkCMBClassifyPointsFilter_h
 #define __vtkCMBClassifyPointsFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkCellLocator;
 class vtkPoints;
@@ -27,10 +27,10 @@ class vtkIdTypeArray;
 class VTKCMBFILTERING_EXPORT vtkCMBClassifyPointsFilter : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCMBClassifyPointsFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkCMBClassifyPointsFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-  static vtkCMBClassifyPointsFilter *New();
+  static vtkCMBClassifyPointsFilter* New();
 
   // Description:
   // Specify the solid mesh to be used. Any geometry
@@ -42,12 +42,11 @@ protected:
   ~vtkCMBClassifyPointsFilter() override {}
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
 private:
-  vtkCMBClassifyPointsFilter(const vtkCMBClassifyPointsFilter&);  // Not implemented.
-  void operator=(const vtkCMBClassifyPointsFilter&);  // Not implemented.
+  vtkCMBClassifyPointsFilter(const vtkCMBClassifyPointsFilter&); // Not implemented.
+  void operator=(const vtkCMBClassifyPointsFilter&);             // Not implemented.
 };
 
 #endif
-
-

@@ -43,7 +43,7 @@ class MODELBRIDGECLIENT_EXPORT vtkModelManagerWrapper : public vtkObject
 public:
   static vtkModelManagerWrapper* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  vtkTypeMacro(vtkModelManagerWrapper,vtkObject);
+  vtkTypeMacro(vtkModelManagerWrapper, vtkObject);
 
   smtk::model::ManagerPtr GetModelManager();
 
@@ -51,8 +51,7 @@ public:
   vtkSetStringMacro(JSONRequest);
 
   void ProcessJSONRequest(vtkSMTKOperator* vsOp);
-  void ProcessJSONRequest()
-  { ProcessJSONRequest(NULL); }
+  void ProcessJSONRequest() { ProcessJSONRequest(NULL); }
 
   vtkGetStringMacro(JSONResponse);
 
@@ -71,14 +70,14 @@ protected:
 
   char* JSONRequest;
   char* JSONResponse;
-//  char* ModelEntityID;
+  //  char* ModelEntityID;
 
   // Instance model Manager:
   smtk::model::ManagerPtr ModelMgr;
 
 private:
   vtkModelManagerWrapper(const vtkModelManagerWrapper&); // Not implemented.
-  void operator = (const vtkModelManagerWrapper&); // Not implemented.
+  void operator=(const vtkModelManagerWrapper&);         // Not implemented.
 };
 
 #endif // __vtkModelManagerWrapper_h

@@ -12,9 +12,9 @@
 #include <QColorDialog>
 #include <stdlib.h>
 
-QColor qtCMBColorDialog::getColor ( const QColor &icolor, QWidget * parent)
+QColor qtCMBColorDialog::getColor(const QColor& icolor, QWidget* parent)
 {
-/*
+  /*
   // See if we are running in a test mode or creating a test on a Mac
   if (getenv("DASHBOARD_TEST_FROM_CTEST") ||
       getenv("DART_TEST_FROM_DART") ||
@@ -25,6 +25,5 @@ QColor qtCMBColorDialog::getColor ( const QColor &icolor, QWidget * parent)
                                   QColorDialog::ShowAlphaChannel);
     }
 */
-  return QColorDialog::getColor(icolor, parent, "Select Color",
-                                QColorDialog::DontUseNativeDialog);
+  return QColorDialog::getColor(icolor, parent, "Select Color", QColorDialog::DontUseNativeDialog);
 }

@@ -11,7 +11,6 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBGroundPlaneDialog_h
 #define __qtCMBGroundPlaneDialog_h
 
@@ -28,7 +27,7 @@ class pqPipelineSource;
 
 namespace Ui
 {
-  class  qtDefineGroundPlane;
+class qtDefineGroundPlane;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBGroundPlaneDialog : public QObject
@@ -36,7 +35,7 @@ class CMBAPPCOMMON_EXPORT qtCMBGroundPlaneDialog : public QObject
   Q_OBJECT
 
 public:
-  static int manageGroundPlane(pqCMBSceneNode *node);
+  static int manageGroundPlane(pqCMBSceneNode* node);
   static int defineGroundPlane(double p1[3], double p2[3]);
 
 protected slots:
@@ -44,13 +43,13 @@ protected slots:
   void cancel();
 
 protected:
-  qtCMBGroundPlaneDialog(pqCMBSceneNode *n);
+  qtCMBGroundPlaneDialog(pqCMBSceneNode* n);
   ~qtCMBGroundPlaneDialog() override;
   int exec();
   int Status;
-  Ui::qtDefineGroundPlane *GroundPlaneDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
+  Ui::qtDefineGroundPlane* GroundPlaneDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
   double Point1[3], Point2[3];
 };
 

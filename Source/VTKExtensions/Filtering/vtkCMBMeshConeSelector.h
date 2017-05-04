@@ -18,66 +18,69 @@
 #ifndef __CmbMeshConeSelector_h
 #define __CmbMeshConeSelector_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkSelectionAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkCMBConeSource;
 class vtkTransform;
 class vtkUnstructuredGrid;
 
 class VTKCMBFILTERING_EXPORT vtkCMBMeshConeSelector : public vtkSelectionAlgorithm
-  {
+{
 public:
-  vtkTypeMacro(vtkCMBMeshConeSelector,vtkSelectionAlgorithm);
+  vtkTypeMacro(vtkCMBMeshConeSelector, vtkSelectionAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  static vtkCMBMeshConeSelector *New();
+  static vtkCMBMeshConeSelector* New();
 
   // Description:
   // Control whether to invert the output selection.
-  vtkSetMacro(InsideOut,int);
-  vtkGetMacro(InsideOut,int);
-  vtkBooleanMacro(InsideOut,int);
+  vtkSetMacro(InsideOut, int);
+  vtkGetMacro(InsideOut, int);
+  vtkBooleanMacro(InsideOut, int);
 
   //BTX
-  enum enumSelectCellThroughType {
+  enum enumSelectCellThroughType
+  {
     ALL_IN = 0,
     PARTIAL_OR_ALL_IN,
-    INTERSECT_ONLY };
-    //ETX
+    INTERSECT_ONLY
+  };
+  //ETX
 
-    // Description:
-    // Set/Get the select cell through type
+  // Description:
+  // Set/Get the select cell through type
   // default: 0
-  vtkSetClampMacro(SelectConeType, int , 0 , 2);
-  vtkGetMacro(SelectConeType,int);
+  vtkSetClampMacro(SelectConeType, int, 0, 2);
+  vtkGetMacro(SelectConeType, int);
 
   //BTX
-  enum enumSelectionFieldType {
+  enum enumSelectionFieldType
+  {
     CELL = 0,
-    POINT };
-    //ETX
+    POINT
+  };
+  //ETX
 
   // Description:
   // Set/Get the output selection field type
   // default: 0
-  vtkSetClampMacro(SelectionFieldType, int , 0 , 1);
-  vtkGetMacro(SelectionFieldType,int);
+  vtkSetClampMacro(SelectionFieldType, int, 0, 1);
+  vtkGetMacro(SelectionFieldType, int);
 
   // Description:
   // Transform to apply to the pts being read in for determining whether the
   // data is in/out of the ReadBounds (if LimitReadToBounds is true), or for
   // transforming data for the output (or both);  Note, the transform is
   // ignored if neither LimitReadToBounds nor TransformOutputData is true.
-  void SetTransform(vtkTransform *transform);
+  void SetTransform(vtkTransform* transform);
   vtkGetObjectMacro(Transform, vtkTransform);
   void SetTransform(double elements[16]);
-  void ClearTransform()
-    {this->SetTransform(static_cast<vtkTransform*>(0));}
+  void ClearTransform() { this->SetTransform(static_cast<vtkTransform*>(0)); }
 
   // Description:
   // Set contour function
-  void SetConeSource(vtkCMBConeSource *coneSource);
+  void SetConeSource(vtkCMBConeSource* coneSource);
   vtkGetObjectMacro(ConeSource, vtkCMBConeSource);
 
   // Description:
@@ -88,33 +91,32 @@ public:
   // Flag to indicate whether the output selection is empty, which
   // will be true, if all cells are selected, but InsideOut is set;
   // or no cells are selection and InsideOut is not set.
-  vtkGetMacro(IsSelectionEmpty,int);
+  vtkGetMacro(IsSelectionEmpty, int);
 
-    //BTX
+  //BTX
 protected:
   vtkCMBMeshConeSelector();
   ~vtkCMBMeshConeSelector() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   int FillInputPortInformation(int port, vtkInformation* info) override;
   int FillOutputPortInformation(int port, vtkInformation* info) override;
 
-  virtual bool DoCellConeCheck(
-    vtkIdType npts, vtkIdType* pts, vtkUnstructuredGrid* input,
-    double BaseCenter[3],double AxisUnitDir[3], double Height,
-    double BaseRadius, double TopRadius);
+  virtual bool DoCellConeCheck(vtkIdType npts, vtkIdType* pts, vtkUnstructuredGrid* input,
+    double BaseCenter[3], double AxisUnitDir[3], double Height, double BaseRadius,
+    double TopRadius);
 
   int SelectConeType;
   int SelectionFieldType;
   int InsideOut;
   int IsSelectionEmpty;
 
-  vtkTransform *Transform;
+  vtkTransform* Transform;
   vtkCMBConeSource* ConeSource;
 
 private:
-  vtkCMBMeshConeSelector(const vtkCMBMeshConeSelector&);  // Not implemented.
-  void operator=(const vtkCMBMeshConeSelector&);  // Not implemented.
+  vtkCMBMeshConeSelector(const vtkCMBMeshConeSelector&); // Not implemented.
+  void operator=(const vtkCMBMeshConeSelector&);         // Not implemented.
 
   bool IsProcessing;
   //ETX

@@ -7,9 +7,9 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+#include <rgtl/rgtl_serialize_ostream.hxx>
 #include <rtvl/rtvl_refine.hxx>
 #include <rtvl/rtvl_tokens.hxx>
-#include <rgtl/rgtl_serialize_ostream.hxx>
 
 #include <vcl_exception.h>
 #include <vcl_fstream.h>
@@ -27,7 +27,7 @@
 #include <vtkPointData.h>
 #include <vtkXMLPolyDataWriter.h>
 #if defined(_WIN32)
-# include <vtkWin32ProcessOutputWindow.h>
+#include <vtkWin32ProcessOutputWindow.h>
 #endif
 
 #include "smtk/extension/vtk/reader/vtkLIDARReader.h"
@@ -37,9 +37,10 @@ class TokenRefine
 public:
   TokenRefine(const char* fname, const char* outname);
   void Analyze();
+
 private:
   void Visualize(unsigned int level);
-  vcl_auto_ptr< rtvl_refine<3> > Refine;
+  vcl_auto_ptr<rtvl_refine<3> > Refine;
   rtvl_tokens<3> Tokens;
 
   vcl_string OutName;
@@ -64,33 +65,32 @@ TokenRefine::TokenRefine(const char* fname, const char* outname)
   this->OutName = outname;
   this->Timer = vtkSmartPointer<vtkTimerLog>::New();
   vtkPoints* inPoints;
-  vtkAlgorithm *reader;
+  vtkAlgorithm* reader;
   std::string fileNameStr = fname;
   if (fileNameStr.find(".pts") != std::string::npos ||
     fileNameStr.find(".bin") != std::string::npos)
-    {
+  {
     reader = vtkLIDARReader::New();
     vtkLIDARReader::SafeDownCast(reader)->SetFileName(fname);
     reader->Update();
     inPoints = vtkLIDARReader::SafeDownCast(reader)->GetOutput()->GetPoints();
-    }
+  }
   else
-    {
+  {
     reader = vtkXMLPolyDataReader::New();
     vtkXMLPolyDataReader::SafeDownCast(reader)->SetFileName(fname);
     reader->Update();
     inPoints = vtkXMLPolyDataReader::SafeDownCast(reader)->GetOutput()->GetPoints();
-    }
+  }
 
-  vcl_cout << "loaded " << inPoints->GetNumberOfPoints() << " points"
-           << vcl_endl;
+  vcl_cout << "loaded " << inPoints->GetNumberOfPoints() << " points" << vcl_endl;
 
   vtkIdType n = inPoints->GetNumberOfPoints();
-  vcl_vector<double> points(n*3);
-  for(vtkIdType i=0; i < n; ++i)
-    {
-    inPoints->GetPoint(i, &points[i*3]);
-    }
+  vcl_vector<double> points(n * 3);
+  for (vtkIdType i = 0; i < n; ++i)
+  {
+    inPoints->GetPoint(i, &points[i * 3]);
+  }
   reader->Delete();
   this->Timer->StartTimer();
   this->Refine.reset(new rtvl_refine<3>(n, &points[0]));
@@ -135,35 +135,31 @@ TokenRefine::TokenRefine(const char* fname, const char* outname)
 void TokenRefine::Analyze()
 {
   bool have_level = true;
-  for(unsigned int level = 0; have_level; ++level)
-    {
+  for (unsigned int level = 0; have_level; ++level)
+  {
     this->Refine->get_tokens(this->Tokens);
 
     // Write the output file.
     vcl_string fname = this->OutName;
     {
-    char buf[64];
-    sprintf(buf, "_level_%02u.tvl", level);
-    fname += buf;
-    vcl_ofstream fout(fname.c_str(), vcl_ios::out | vcl_ios::binary);
-    rgtl_serialize_ostream saver(fout);
-    saver << this->Tokens;
+      char buf[64];
+      sprintf(buf, "_level_%02u.tvl", level);
+      fname += buf;
+      vcl_ofstream fout(fname.c_str(), vcl_ios::out | vcl_ios::binary);
+      rgtl_serialize_ostream saver(fout);
+      saver << this->Tokens;
     }
-    vcl_cout << "saved scale " << this->Tokens.scale
-             << " to " << fname << vcl_endl;
-    vcl_cout << "  refinement time = "
-             << this->Timer->GetElapsedTime() << vcl_endl;
-    vcl_cout << "  output tokens   = "
-             << this->Tokens.tokens.size() << vcl_endl;
-    vcl_cout << "  votes cast      = "
-             << this->Refine->get_vote_count() << vcl_endl;
+    vcl_cout << "saved scale " << this->Tokens.scale << " to " << fname << vcl_endl;
+    vcl_cout << "  refinement time = " << this->Timer->GetElapsedTime() << vcl_endl;
+    vcl_cout << "  output tokens   = " << this->Tokens.tokens.size() << vcl_endl;
+    vcl_cout << "  votes cast      = " << this->Refine->get_vote_count() << vcl_endl;
 
     this->Visualize(level);
 
     this->Timer->StartTimer();
     have_level = this->Refine->next_scale();
     this->Timer->StopTimer();
-    }
+  }
 }
 
 void TokenRefine::Visualize(unsigned int level)
@@ -182,8 +178,8 @@ void TokenRefine::Visualize(unsigned int level)
   this->OutLambda2->SetNumberOfTuples(n);
   this->OutLambda3->SetNumberOfTuples(n);
 
-  for(vtkIdType i=0; i < n; ++i)
-    {
+  for (vtkIdType i = 0; i < n; ++i)
+  {
     double p[3];
     this->Tokens.points.get_point(i, p);
     this->OutPoints->SetPoint(i, p);
@@ -211,11 +207,10 @@ void TokenRefine::Visualize(unsigned int level)
     this->OutLambda1->SetTypedTuple(i, &lambda1);
     this->OutLambda2->SetTypedTuple(i, &lambda2);
     this->OutLambda3->SetTypedTuple(i, &lambda3);
-    }
+  }
   this->OutPD->SetVerts(verts);
 
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer =
-    vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   vcl_string fname = this->OutName;
   char buf[64];
   sprintf(buf, "_level_%02u.vtp", level);
@@ -229,30 +224,30 @@ int main(int argc, const char* argv[])
 {
 #if defined(USE_WIN32_OUTPUT_WINDOW)
   {
-  vtkSmartPointer<vtkWin32ProcessOutputWindow> ow =
-    vtkSmartPointer<vtkWin32ProcessOutputWindow>::New();
-  ow->SetInstance(ow);
+    vtkSmartPointer<vtkWin32ProcessOutputWindow> ow =
+      vtkSmartPointer<vtkWin32ProcessOutputWindow>::New();
+    ow->SetInstance(ow);
   }
 #endif
-  if(argc < 3)
-    {
+  if (argc < 3)
+  {
     fprintf(stderr, "Specify input.vtp outname\n");
     return 1;
-    }
+  }
   try
-    {
+  {
     TokenRefine t(argv[1], argv[2]);
     t.Analyze();
-    }
-  catch(vcl_exception& e)
-    {
+  }
+  catch (vcl_exception& e)
+  {
     vcl_cerr << "caught exception: " << e.what() << vcl_endl;
     return 1;
-    }
-  catch(...)
-    {
+  }
+  catch (...)
+  {
     vcl_cerr << "caught unknown exception!" << vcl_endl;
     return 1;
-    }
+  }
   return 0;
 }

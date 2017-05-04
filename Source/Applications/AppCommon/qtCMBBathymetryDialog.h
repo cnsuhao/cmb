@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBBathymetryDialog_h
 #define __qtCMBBathymetryDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
@@ -30,7 +29,7 @@ class qtCMBSceneObjectImporter;
 
 namespace Ui
 {
-  class  qtCMBBathymetryDialog;
+class qtCMBBathymetryDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBBathymetryDialog : public QObject
@@ -38,7 +37,7 @@ class CMBAPPCOMMON_EXPORT qtCMBBathymetryDialog : public QObject
   Q_OBJECT
 
 public:
-  static int manageBathymetry(pqCMBSceneNode *node);
+  static int manageBathymetry(pqCMBSceneNode* node);
 
   qtCMBBathymetryDialog(pqCMBSceneTree* sceneTree);
   ~qtCMBBathymetryDialog() override;
@@ -59,17 +58,17 @@ protected slots:
   void removeBathymetry();
 
 protected:
-  qtCMBBathymetryDialog(pqCMBSceneNode *n);
+  qtCMBBathymetryDialog(pqCMBSceneNode* n);
 
   void initConnections();
   void initUI();
 
   int Status; // 0, cancel; 1, accept; 2, reverse/remove
   bool ModelAndMeshMode;
-  Ui::qtCMBBathymetryDialog *BathymetryDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Node;
-  pqCMBSceneTree *SceneTree;
+  Ui::qtCMBBathymetryDialog* BathymetryDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Node;
+  pqCMBSceneTree* SceneTree;
   qtCMBSceneObjectImporter* ObjectImporter;
 };
 

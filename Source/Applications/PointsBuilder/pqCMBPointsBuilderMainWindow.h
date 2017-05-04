@@ -14,11 +14,11 @@
 #ifndef __pqCMBPointsBuilderMainWindow_h
 #define __pqCMBPointsBuilderMainWindow_h
 
+#include "cmbSystemConfig.h"
 #include "pqCMBCommonMainWindow.h"
+#include <QTreeWidgetItem>
 #include <QVariant>
 #include <vtkIOStream.h>
-#include <QTreeWidgetItem>
-#include "cmbSystemConfig.h"
 
 class pqOutputPort;
 class pqCMBPointsBuilderMainWindowCore;
@@ -51,13 +51,12 @@ protected slots:
   void onHelpAbout() override;
   void onHelpHelp() override;
 
- // void onRenderRequested();
+  // void onRenderRequested();
   void onViewSelected(pqOutputPort*);
   void onEnableMenuItems(bool state) override;
 
   void loadMultiFilesStart() override;
   void loadMultiFilesStop() override;
-
 
 protected:
   using pqCMBCommonMainWindow::updateEnableState;
@@ -73,7 +72,7 @@ protected:
 
 private:
   pqCMBPointsBuilderMainWindow(const pqCMBPointsBuilderMainWindow&); // Not implemented.
-  void operator=(const pqCMBPointsBuilderMainWindow&); // Not implemented.
+  void operator=(const pqCMBPointsBuilderMainWindow&);               // Not implemented.
 
   pqCMBPointsBuilderMainWindowCore* getThisCore();
 
@@ -82,6 +81,3 @@ private:
 };
 
 #endif
-
-
-

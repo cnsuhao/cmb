@@ -11,20 +11,19 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBSceneObjectFilterDialog_h
 #define __qtCMBSceneObjectFilterDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QDialog>
 #include <QPointer>
-#include "cmbSystemConfig.h"
 
 class QDoubleValidator;
 
 namespace Ui
 {
-  class qtqtCMBSceneObjectFilterDialog;
+class qtqtCMBSceneObjectFilterDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBSceneObjectFilterDialog : public QDialog
@@ -33,9 +32,8 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneObjectFilterDialog : public QDialog
   typedef QDialog Superclass;
 
 public:
-  qtCMBSceneObjectFilterDialog(QWidget* parent=0);
+  qtCMBSceneObjectFilterDialog(QWidget* parent = 0);
   ~qtCMBSceneObjectFilterDialog() override;
-
 
   void setBounds(double bounds[6]);
   void getBounds(double bounds[6]);
@@ -44,7 +42,7 @@ public:
   void getSelectedObjectTypes(QStringList& objTypes);
 
   const char* getSceneFile();
-  void setSceneFile(const char* );
+  void setSceneFile(const char*);
 
   bool getUseBoundsConstraint();
   void setUseBoundsConstraint(bool);
@@ -53,10 +51,8 @@ public slots:
   void accept() override;
 
 protected:
-
-  Ui::qtqtCMBSceneObjectFilterDialog *FilterDialog;
+  Ui::qtqtCMBSceneObjectFilterDialog* FilterDialog;
   QPointer<QDoubleValidator> BoundsValidator;
-
 };
 
 #endif /* __qtCMBSceneObjectFilterDialog_h */

@@ -13,21 +13,21 @@
 
 #include "pqModelTreeViewEventTranslator.h"
 
-#include <QEvent>
-#include <QKeyEvent>
+#include "smtk/common/UUID.h"
+#include "smtk/extension/qt/qtModelView.h"
 #include <QAbstractItemModel>
 #include <QAction>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QMouseEvent>
-#include "smtk/extension/qt/qtModelView.h"
-#include "smtk/common/UUID.h"
 
 static QString toIndexStr(QModelIndex index)
 {
   QString result;
-  for(QModelIndex i = index; i.isValid(); i = i.parent())
-    {
+  for (QModelIndex i = index; i.isValid(); i = i.parent())
+  {
     result = "/" + QString("%1:%2").arg(i.row()).arg(i.column()) + result;
-    }
+  }
   return result;
 }
 
@@ -36,55 +36,56 @@ pqModelTreeViewEventTranslator::pqModelTreeViewEventTranslator(QObject* p)
 {
 }
 
-bool pqModelTreeViewEventTranslator::translateEvent(QObject* senderObject, QEvent* tr_event, bool& Error)
+bool pqModelTreeViewEventTranslator::translateEvent(
+  QObject* senderObject, QEvent* tr_event, bool& Error)
 {
 
-  smtk::extension::qtModelView* treeWidget = qobject_cast<smtk::extension::qtModelView*>(senderObject);
-  if(!treeWidget)
-    {
+  smtk::extension::qtModelView* treeWidget =
+    qobject_cast<smtk::extension::qtModelView*>(senderObject);
+  if (!treeWidget)
+  {
     // mouse events go to the viewport widget
     treeWidget = qobject_cast<smtk::extension::qtModelView*>(senderObject->parent());
-    }
-  if(!treeWidget)
-    {
+  }
+  if (!treeWidget)
+  {
     return false;
-    }
+  }
 
-  if(tr_event->type() == QEvent::MouseButtonRelease)
-    {
+  if (tr_event->type() == QEvent::MouseButtonRelease)
+  {
     QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(tr_event);
     // record visibility or color change on left button release
-    if(mouseEvent->button() == Qt::LeftButton)
-      {
+    if (mouseEvent->button() == Qt::LeftButton)
+    {
       std::string actionString = treeWidget->determineAction(mouseEvent->pos());
       std::string recordCommand;
-      if(actionString == "visible")
-        {
+      if (actionString == "visible")
+      {
         recordCommand = "toggleVisibility";
-        }
-      else if(actionString == "color")
-        {
+      }
+      else if (actionString == "color")
+      {
         recordCommand = "changeColor";
-        }
+      }
 
-      if(!recordCommand.empty())
-        {
+      if (!recordCommand.empty())
+      {
         QString str_index = toIndexStr(treeWidget->indexAt(mouseEvent->pos()));
         emit this->recordEvent(treeWidget, recordCommand.c_str(), str_index);
-        }
-      }
-    // show context menu on right button release
-    else if(mouseEvent->button() == Qt::RightButton)
-      {
-      QModelIndex idx = treeWidget->indexAt(mouseEvent->pos());
-      if(idx.isValid())
-        {
-        emit this->recordEvent(treeWidget, "showContextMenu", toIndexStr(idx));
-        }
       }
     }
+    // show context menu on right button release
+    else if (mouseEvent->button() == Qt::RightButton)
+    {
+      QModelIndex idx = treeWidget->indexAt(mouseEvent->pos());
+      if (idx.isValid())
+      {
+        emit this->recordEvent(treeWidget, "showContextMenu", toIndexStr(idx));
+      }
+    }
+  }
 
   // always return false so that its super class can still do its event recording
   return pqWidgetEventTranslator::translateEvent(senderObject, tr_event, Error);
-
 }

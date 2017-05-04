@@ -15,7 +15,8 @@
 #include <QVBoxLayout>
 
 //----------------------------------------------------------------------------
-qtSimBuilderUIPanel::qtSimBuilderUIPanel(QWidget* pW) : QDockWidget(pW)
+qtSimBuilderUIPanel::qtSimBuilderUIPanel(QWidget* pW)
+  : QDockWidget(pW)
 {
   this->ContainerWidget = NULL;
   this->setObjectName("SimBuilderDockWidget");
@@ -28,22 +29,21 @@ qtSimBuilderUIPanel::~qtSimBuilderUIPanel()
 
 //----------------------------------------------------------------------------
 QWidget* qtSimBuilderUIPanel::panelWidget()
-{  
+{
   return this->ContainerWidget;
 }
 
 //----------------------------------------------------------------------------
 void qtSimBuilderUIPanel::initialize()
 {
-  if(this->ContainerWidget)
-    {
+  if (this->ContainerWidget)
+  {
     delete this->ContainerWidget;
-    }
+  }
 
   this->ContainerWidget = new QWidget();
   this->ContainerWidget->setObjectName("attScrollWidget");
-  this->ContainerWidget->setSizePolicy(QSizePolicy::Preferred,
-    QSizePolicy::Expanding);
+  this->ContainerWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
   QScrollArea* s = new QScrollArea(this);
   s->setWidgetResizable(true);

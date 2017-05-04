@@ -8,35 +8,35 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBADHReader.h"
-#include "vtkGeometryFilter.h"
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
 #include "vtkActor.h"
 #include "vtkCamera.h"
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
+#include "vtkGeometryFilter.h"
 #include "vtkNew.h"
 #include "vtkPointData.h"
+#include "vtkPointSet.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
+#include "vtkPolyDataWriter.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkPolyDataWriter.h"
-#include "vtkPointSet.h"
-#include "vtkTesting.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
+#include "vtkTesting.h"
 
 int main(int argc, char** argv)
 {
   vtkNew<vtkTesting> testHelper;
 
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data was not specified.";
     return 1;
-    }
+  }
   std::string filename;
   std::string datafilename;
   std::string dataroot = testHelper->GetDataRoot();
@@ -54,21 +54,20 @@ int main(int argc, char** argv)
   geomfilter->SetInputConnection(adh->GetOutputPort());
 
   vtkNew<vtkPolyDataMapper> adhMapper;
-      adhMapper->SetScalarModeToUsePointFieldData();
-      adhMapper->SelectColorArray("TestData");
-      adhMapper->SetScalarRange(1,5);
-      adhMapper->SetInputConnection(geomfilter->GetOutputPort());
-      adhMapper->Update();
+  adhMapper->SetScalarModeToUsePointFieldData();
+  adhMapper->SelectColorArray("TestData");
+  adhMapper->SetScalarRange(1, 5);
+  adhMapper->SetInputConnection(geomfilter->GetOutputPort());
+  adhMapper->Update();
 
   vtkNew<vtkActor> act;
-      act->SetMapper(adhMapper.GetPointer());
+  act->SetMapper(adhMapper.GetPointer());
 
   // The usual rendering stuff.
   vtkNew<vtkCamera> camera;
-      camera->SetPosition(1,1,1);
-      camera->SetFocalPoint(8, 6,0);
-      camera->Azimuth(-90);
-
+  camera->SetPosition(1, 1, 1);
+  camera->SetFocalPoint(8, 6, 0);
+  camera->Azimuth(-90);
 
   vtkNew<vtkRenderer> renderer;
   vtkNew<vtkRenderWindow> renWin;
@@ -80,9 +79,9 @@ int main(int argc, char** argv)
   renderer->AddActor(act.GetPointer());
   renderer->SetActiveCamera(camera.GetPointer());
   renderer->ResetCamera();
-  renderer->SetBackground(.1,.1,.1);
+  renderer->SetBackground(.1, .1, .1);
 
-  renWin->SetSize(600,600);
+  renWin->SetSize(600, 600);
   iren->Initialize();
   renWin->Render();
 
@@ -95,15 +94,15 @@ int main(int argc, char** argv)
 
   int retVal = vtkTesting::FAILED;
   if (testHelper->IsFlagSpecified("-V"))
-    {
+  {
     testHelper->SetRenderWindow(renWin.GetPointer());
     retVal = testHelper->RegressionTest(10);
-    }
+  }
 
   if (testHelper->IsInteractiveModeSpecified())
-    {
+  {
     iren->Start();
-    }
+  }
 
   return (retVal == vtkTesting::PASSED) ? 0 : 1;
 }

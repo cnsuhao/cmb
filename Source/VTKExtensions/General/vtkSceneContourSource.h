@@ -14,9 +14,9 @@
 #ifndef __vtkSceneContourSource_h
 #define __vtkSceneContourSource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdTypeArray;
 class vtkContourPointCollection;
@@ -24,12 +24,12 @@ class vtkContourPointCollection;
 class VTKCMBGENERAL_EXPORT vtkSceneContourSource : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkSceneContourSource *New();
-  vtkTypeMacro(vtkSceneContourSource,vtkPolyDataAlgorithm);
+  static vtkSceneContourSource* New();
+  vtkTypeMacro(vtkSceneContourSource, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
-  void CopyData(vtkPolyData *source);
+  void CopyData(vtkPolyData* source);
   vtkGetObjectMacro(Source, vtkPolyData);
 
   //Description:
@@ -42,17 +42,17 @@ public:
   //returns the current end nodes for this object
   //for the most up to date end nodes, call
   //RegenerateEndNodes first
-  vtkGetObjectMacro(EndNodes,vtkIdTypeArray);
+  vtkGetObjectMacro(EndNodes, vtkIdTypeArray);
 
   //Description:
   //Syncs this objects end nodes with
   //the global end node collection
   void RegenerateEndNodes();
 
-  vtkSetMacro(ClosedLoop,int);
-  vtkGetMacro(ClosedLoop,int);
+  vtkSetMacro(ClosedLoop, int);
+  vtkGetMacro(ClosedLoop, int);
 
-  vtkIdType GetInstanceId() const {return Id;};
+  vtkIdType GetInstanceId() const { return Id; };
 
   //Description:
   //Since the node is going to be removed ( added to the undo stack )
@@ -68,21 +68,22 @@ protected:
   vtkSceneContourSource();
   ~vtkSceneContourSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  void InitSourceData(vtkPolyData *source);
-  void EditSourceData(vtkPolyData *source);
+  void InitSourceData(vtkPolyData* source);
+  void EditSourceData(vtkPolyData* source);
 
-  void UpdateSelectedNodes(vtkPolyData *source);
+  void UpdateSelectedNodes(vtkPolyData* source);
 
-  vtkIdTypeArray *EndNodes;
-  vtkPolyData *Source;
-  vtkContourPointCollection *Collection;
+  vtkIdTypeArray* EndNodes;
+  vtkPolyData* Source;
+  vtkContourPointCollection* Collection;
 
   int ClosedLoop;
+
 private:
-  vtkSceneContourSource(const vtkSceneContourSource&);  // Not implemented.
-  void operator=(const vtkSceneContourSource&);  // Not implemented.
+  vtkSceneContourSource(const vtkSceneContourSource&); // Not implemented.
+  void operator=(const vtkSceneContourSource&);        // Not implemented.
   const vtkIdType Id;
   static vtkIdType NextId;
 };

@@ -51,9 +51,9 @@
 #ifndef __vtkClipPolygons_h
 #define __vtkClipPolygons_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkImplicitFunction;
 class vtkIncrementalPointLocator;
@@ -63,25 +63,25 @@ class vtkTransform;
 class VTKCMBFILTERING_EXPORT vtkClipPolygons : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkClipPolygons,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkClipPolygons, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct with user-specified implicit function; InsideOut turned off;
   // value set to 0.0; and generate clip scalars turned off.
-  static vtkClipPolygons *New();
+  static vtkClipPolygons* New();
 
   // Description:
   // Set the active group to modify
   void SetActiveGroupIndex(int i)
-    {
+  {
     if (i != this->ActiveGroupIdx)
-      {
+    {
       ActiveGroupIdx = i;
       //Do not want to trigger the filter
       // this->Modified();
-      }
     }
+  }
 
   void SetGroupInvert(int val);
 
@@ -92,13 +92,13 @@ public:
   // Description:
   // Control whether a second output is generated. The second output
   // contains the polygonal data that's been clipped away.
-  vtkSetMacro(GenerateClippedOutput,int);
-  vtkGetMacro(GenerateClippedOutput,int);
-  vtkBooleanMacro(GenerateClippedOutput,int);
+  vtkSetMacro(GenerateClippedOutput, int);
+  vtkGetMacro(GenerateClippedOutput, int);
+  vtkBooleanMacro(GenerateClippedOutput, int);
 
   // Description:
   // Return the Clipped output.
-  vtkPolyData *GetClippedOutput();
+  vtkPolyData* GetClippedOutput();
 
   // Description:
   // Return the output port (a vtkAlgorithmOutput) of the clipped output.
@@ -108,14 +108,14 @@ public:
   // Set the clipping value of the implicit function (if clipping with
   // implicit function) or scalar value (if clipping with
   // scalars). The default value is 0.0.
-  vtkSetMacro(Value,double);
-  vtkGetMacro(Value,double);
+  vtkSetMacro(Value, double);
+  vtkGetMacro(Value, double);
 
   // Description:
   // Specify a spatial locator for merging points. By default, an
   // instance of vtkMergePoints is used.
-  void SetLocator(vtkIncrementalPointLocator *locator);
-  vtkGetObjectMacro(Locator,vtkIncrementalPointLocator);
+  void SetLocator(vtkIncrementalPointLocator* locator);
+  vtkGetObjectMacro(Locator, vtkIncrementalPointLocator);
 
   // Description:
   // Create default locator. Used to create one when none is specified. The
@@ -131,13 +131,10 @@ public:
   // data is in/out of the ReadBounds (if LimitReadToBounds is true), or for
   // transforming data for the output (or both);  Note, the transform is
   // ignored if neither LimitReadToBounds nor TransformOutputData is true.
-  void SetTransform(vtkTransform *transform);
+  void SetTransform(vtkTransform* transform);
   vtkGetObjectMacro(Transform, vtkTransform);
   void SetTransform(double elements[16]);
-  void ClearTransform()
-    {
-    this->SetTransform(static_cast<vtkTransform*>(0));
-    }
+  void ClearTransform() { this->SetTransform(static_cast<vtkTransform*>(0)); }
 
   // Description:
   // Add/Remove clip functions
@@ -155,45 +152,45 @@ public:
   // Get number of active polygons, whose ApplyPolygon is 1;
   int GetNumberOfActivePolygons();
 
-//BTX
+  //BTX
 protected:
   vtkClipPolygons();
   ~vtkClipPolygons() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkIncrementalPointLocator *Locator;
+  vtkIncrementalPointLocator* Locator;
   int GenerateClippedOutput;
   double Value;
 
-  vtkTransform *Transform;
+  vtkTransform* Transform;
   bool TransformOutputData;
   int ActiveGroupIdx;
 
   struct PolygonInfo
-    {
+  {
     PolygonInfo()
-      {
+    {
       this->InsideOut = 1;
       this->Polygon = NULL;
       this->ApplyPolygon = 0;
       this->AsROI = 0;
-      }
+    }
     int InsideOut;
     int ApplyPolygon;
     int AsROI;
     vtkImplicitFunction* Polygon;
-    };
+  };
 
-  std::map<int, std::vector<PolygonInfo*> >Polygons;
+  std::map<int, std::vector<PolygonInfo*> > Polygons;
   std::map<int, int> GroupInvert;
 
 private:
-  vtkClipPolygons(const vtkClipPolygons&);  // Not implemented.
+  vtkClipPolygons(const vtkClipPolygons&); // Not implemented.
   void operator=(const vtkClipPolygons&);  // Not implemented.
 
   bool IsProcessing;
-//ETX
+  //ETX
 };
 
 #endif

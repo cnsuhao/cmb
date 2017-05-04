@@ -10,12 +10,12 @@
 #include "pqCMBRulerDialog.h"
 
 #include "pqActiveObjects.h"
-#include "pqProxyWidget.h"
 #include "pqObjectBuilder.h"
-#include "pqRenderView.h"
 #include "pqPVApplicationCore.h"
-#include "vtkSMProxyManager.h"
+#include "pqProxyWidget.h"
+#include "pqRenderView.h"
 #include "vtkSMProperty.h"
+#include "vtkSMProxyManager.h"
 #include "vtkSMSourceProxy.h"
 
 #include <QDialog>
@@ -33,7 +33,7 @@ pqCMBRulerDialog::pqCMBRulerDialog(QWidget* p)
   pqRenderView* view = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
   // Connect the rendering window with pipeline source
   pqObjectBuilder* const builder = pqPVApplicationCore::instance()->getObjectBuilder();
-  this->RulerSource = builder->createSource("sources","Ruler", view->getServer());
+  this->RulerSource = builder->createSource("sources", "Ruler", view->getServer());
 
   // Create widget for this source
   this->RulerWidget = new pqProxyWidget(this->RulerSource->getSourceProxy());
@@ -44,8 +44,6 @@ pqCMBRulerDialog::pqCMBRulerDialog(QWidget* p)
   QVBoxLayout* RulerLayout = new QVBoxLayout(this);
   RulerLayout->addWidget(this->RulerWidget);
   this->RulerWidget->updatePanel();
-
-
 }
 
 //-----------------------------------------------------------------------------

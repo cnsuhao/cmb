@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqPlanarTextureRegistrationDialog_h
 #define __pqPlanarTextureRegistrationDialog_h
 
-#include <QObject>
-#include <QStringList>
-#include <QPointer>
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include <QObject>
+#include <QPointer>
+#include <QStringList>
 
 class pqDataRepresentation;
 class pqPipelineSource;
@@ -33,7 +32,7 @@ class QDialog;
 
 namespace Ui
 {
-  class qtPlanarTextureRegistrationDialog;
+class qtPlanarTextureRegistrationDialog;
 };
 
 class VTKCMBCLIENT_EXPORT pqPlanarTextureRegistrationDialog : public QObject
@@ -42,36 +41,29 @@ class VTKCMBCLIENT_EXPORT pqPlanarTextureRegistrationDialog : public QObject
 
 public:
   pqPlanarTextureRegistrationDialog(
-    pqServer* server, pqRenderView* view,
-    const QString &strTitle, QWidget* parent);
+    pqServer* server, pqRenderView* view, const QString& strTitle, QWidget* parent);
   ~pqPlanarTextureRegistrationDialog() override;
 
-  void initializeTexture(
-    const double bounds[6], const QStringList & textureFiles,
-    const QString& currentTextureFile, const double regPoints[12],
-    int numRegPoints, bool pluginPanel=false);
+  void initializeTexture(const double bounds[6], const QStringList& textureFiles,
+    const QString& currentTextureFile, const double regPoints[12], int numRegPoints,
+    bool pluginPanel = false);
 
   int getNumberOfRegistrationPoints();
   void getRegistrationPoints(double pnts[12]);
-  const QString& getCurrentImageFileName()
-    {return this->currentImageFileName;}
-  void updateTextureList(
-    const QStringList & textureFiles,
-    const QString& currentTextureFile);
+  const QString& getCurrentImageFileName() { return this->currentImageFileName; }
+  void updateTextureList(const QStringList& textureFiles, const QString& currentTextureFile);
 
-  QDialog *getMainDialog();
+  QDialog* getMainDialog();
   pqRenderView* getImageRenderView();
   pqRenderView* currentView();
   pqPropertyLinks* getLinks();
   void showButtons(bool showing);
-  pqPipelineSource* getTextureImageSource()
-  { return this->textureImageSource;}
+  pqPipelineSource* getTextureImageSource() { return this->textureImageSource; }
 
 signals:
   void removeCurrentTexture();
   void registerCurrentTexture(
-    const QString& filename, int numberOfRegistrationPoints,
-    double *points);
+    const QString& filename, int numberOfRegistrationPoints, double* points);
   void dialogModified();
 
 public slots:
@@ -82,25 +74,25 @@ protected slots:
   void accept();
   void cancel();
   void displayFileBrowser();
-  void filesSelected(const QStringList &files);
+  void filesSelected(const QStringList& files);
   void registrationModeChanged(int mode);
   void applyTexture();
   void removeTexture();
-  void displayImage(const QString &filename);
+  void displayImage(const QString& filename);
   void updateAllViews();
   void destroyingView(pqView*);
 
 protected:
   int Status;
-  QDialog *MainDialog;
-  Ui::qtPlanarTextureRegistrationDialog *TextureDialog;
+  QDialog* MainDialog;
+  Ui::qtPlanarTextureRegistrationDialog* TextureDialog;
   pqServer* CurrentServer;
   pqRenderView* CurrentView;
   double CurrentBounds[6];
   bool PV_PLUGIN_USE;
 
   QPointer<pqRenderView> imageRenderView;
-  pqDataRepresentation *imageDataRepresentation;
+  pqDataRepresentation* imageDataRepresentation;
   pqPipelineSource* textureImageSource;
   pqPropertyLinks* Links;
   QString currentImageFileName;
@@ -115,17 +107,13 @@ protected:
   vtkSMNewWidgetRepresentationProxy* widgetS3;
 
   void PlaceWidgets(bool defaultPosition = true);
-  vtkSMNewWidgetRepresentationProxy* setupPointWidget(pqServer *server,
-                                                      pqRenderView *view);
-  void updatePointWidget(vtkSMNewWidgetRepresentationProxy *widget,
-                         QList<QVariant> center,
-                         bool visibility = true,
-                         bool enable = true);
-  void getRegistrationPointPair(int i,
-    double xy[2], double st[2], const double regPoints[12]) const;
+  vtkSMNewWidgetRepresentationProxy* setupPointWidget(pqServer* server, pqRenderView* view);
+  void updatePointWidget(vtkSMNewWidgetRepresentationProxy* widget, QList<QVariant> center,
+    bool visibility = true, bool enable = true);
+  void getRegistrationPointPair(
+    int i, double xy[2], double st[2], const double regPoints[12]) const;
   void removeSWidgets();
   void removeIWidgets();
-
 };
 
 #endif /* __pqPlanarTextureRegistrationDialog_h */

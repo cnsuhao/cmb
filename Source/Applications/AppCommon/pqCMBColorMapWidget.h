@@ -13,9 +13,9 @@
 #ifndef __CmbColorMapWidget_h
 #define __CmbColorMapWidget_h
 
-#include <QWidget>
 #include "cmbAppCommonExport.h"
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
 class vtkSMProxy;
 class pqDataRepresentation;
@@ -30,8 +30,9 @@ class CMBAPPCOMMON_EXPORT pqCMBColorMapWidget : public QWidget
 {
   Q_OBJECT
   typedef QWidget Superclass;
+
 public:
-  pqCMBColorMapWidget(QWidget* parent=0);
+  pqCMBColorMapWidget(QWidget* parent = 0);
   ~pqCMBColorMapWidget() override;
 
 public slots:

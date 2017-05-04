@@ -15,37 +15,37 @@
 #include "qtCMBArcWidgetManager.h"
 
 #include "pqCMBArc.h"
-#include "pqCMBSceneTree.h"
-#include "pqCMBSceneNode.h"
 #include "pqCMBCommonMainWindowCore.h"
-#include "smtk/extension/paraview/widgets/qtArcWidget.h"
+#include "pqCMBSceneNode.h"
+#include "pqCMBSceneTree.h"
 #include "qtCMBArcEditWidget.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 
 #include "pqApplicationCore.h"
-#include "pqObjectBuilder.h"
 #include "pqDataRepresentation.h"
+#include "pqObjectBuilder.h"
 #include "pqPipelineSource.h"
 #include "pqRenderView.h"
 #include "pqSMAdaptor.h"
 #include "pqServer.h"
 
+#include "vtkAbstractWidget.h"
+#include "vtkCMBSubArcModifyClientOperator.h"
 #include "vtkCommand.h"
 #include "vtkDoubleArray.h"
 #include "vtkIdTypeArray.h"
+#include "vtkNew.h"
 #include "vtkProcessModule.h"
-#include "vtkSMNewWidgetRepresentationProxy.h"
 #include "vtkSMInputProperty.h"
 #include "vtkSMIntVectorProperty.h"
+#include "vtkSMNewWidgetRepresentationProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSourceProxy.h"
-#include "vtkAbstractWidget.h"
-#include "vtkNew.h"
-#include "vtkCMBSubArcModifyClientOperator.h"
 
 //-----------------------------------------------------------------------------
-qtCMBArcWidgetManager::qtCMBArcWidgetManager(pqServer *server, pqRenderView *view)
+qtCMBArcWidgetManager::qtCMBArcWidgetManager(pqServer* server, pqRenderView* view)
 {
   //server and view need to be set before we call createContourWidget
   this->Server = server;
@@ -64,27 +64,27 @@ qtCMBArcWidgetManager::~qtCMBArcWidgetManager()
   this->Server = NULL;
   this->Node = NULL;
 
-  if ( this->Widget )
-    {
+  if (this->Widget)
+  {
     //if a widget is deleted without having an active view it throws errors
-    if ( this->View && !this->Widget->view() )
-      {
+    if (this->View && !this->Widget->view())
+    {
       this->Widget->setView(this->View);
-      }
+    }
 
     delete this->Widget;
-    }
+  }
   this->Widget = NULL;
-  if ( this->EditWidget )
-    {
+  if (this->EditWidget)
+  {
     delete this->EditWidget;
-    }
+  }
   this->EditWidget = NULL;
   this->View = NULL;
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidgetManager::setActiveNode(pqCMBSceneNode *node)
+void qtCMBArcWidgetManager::setActiveNode(pqCMBSceneNode* node)
 {
   this->Node = node;
 }
@@ -111,16 +111,16 @@ bool qtCMBArcWidgetManager::isActive()
 }
 
 //-----------------------------------------------------------------------------
-pqCMBSceneNode * qtCMBArcWidgetManager::getActiveNode()
+pqCMBSceneNode* qtCMBArcWidgetManager::getActiveNode()
 {
   return this->Node;
 }
 
 pqCMBArc* qtCMBArcWidgetManager::getActiveArc()
 {
-  if(this->Node != NULL)
+  if (this->Node != NULL)
   {
-    return dynamic_cast<pqCMBArc*>( this->Node->getDataObject() );
+    return dynamic_cast<pqCMBArc*>(this->Node->getDataObject());
   }
   return this->Arc;
 }
@@ -141,24 +141,23 @@ pqCMBArc* qtCMBArcWidgetManager::createpqCMBArc()
 int qtCMBArcWidgetManager::create()
 {
   emit this->Busy();
-  if ( !this->Node && !this->Arc )
-    {
+  if (!this->Node && !this->Arc)
+  {
     emit this->Ready();
     return 0;
-    }
+  }
   bool created = false;
   int normal;
   double planepos;
-  if ( !this->Widget )
-    {
+  if (!this->Widget)
+  {
     this->Widget = this->createDefaultContourWidget(normal, planepos);
-    QObject::connect(this->Widget,SIGNAL(contourDone()),
-                     this,SLOT(updateArcNode()));
+    QObject::connect(this->Widget, SIGNAL(contourDone()), this, SLOT(updateArcNode()));
     created = true;
-    }
+  }
 
-  if ( !created )
-    {
+  if (!created)
+  {
     this->Widget->setView(this->View);
     this->getDefaultArcPlane(normal, planepos);
     this->resetArcPlane(normal, planepos);
@@ -168,24 +167,24 @@ int qtCMBArcWidgetManager::create()
     vtkSMPropertyHelper(this->Widget->widgetProxy(), "Enabled").Set(1);
     this->Widget->widgetProxy()->UpdateVTKObjects();
     this->Widget->setVisible(true);
-    }
+  }
 
   this->Widget->emphasize();
   this->Widget->setVisible(true);
-  if(this->Node != NULL)
-    {
+  if (this->Node != NULL)
+  {
     pqCMBSceneObjectBase* obj = this->Node->getDataObject();
-    if ( obj  && obj->getType()==pqCMBSceneObjectBase::Arc)
-      {
+    if (obj && obj->getType() == pqCMBSceneObjectBase::Arc)
+    {
       dynamic_cast<pqCMBArc*>(obj)->setPlaneProjectionNormal(normal);
       dynamic_cast<pqCMBArc*>(obj)->setPlaneProjectionPosition(planepos);
-      }
     }
+  }
   else
-    {
+  {
     this->Arc->setPlaneProjectionNormal(normal);
     this->Arc->setPlaneProjectionPosition(planepos);
-    }
+  }
   this->ActiveWidget = this->Widget;
   return 1;
 }
@@ -194,32 +193,29 @@ int qtCMBArcWidgetManager::create()
 int qtCMBArcWidgetManager::edit()
 {
   emit this->Busy();
-  if ( !this->Node && !this->Arc )
-    {
+  if (!this->Node && !this->Arc)
+  {
     emit this->Ready();
     return 0;
-    }
-  if(!this->EditWidget)
-    {
+  }
+  if (!this->EditWidget)
+  {
     this->EditWidget = new qtCMBArcEditWidget();
-    QObject::connect(this->EditWidget,SIGNAL(
-      arcModified(qtArcWidget*, vtkIdType, vtkIdType)),
-      this,SLOT(updateModifiedArc(qtArcWidget*, vtkIdType, vtkIdType)));
-    QObject::connect(this->EditWidget,SIGNAL(arcModificationfinished()),
-      this,SLOT(editingFinished()));
-    QObject::connect(this->EditWidget,SIGNAL(startArcEditing()),
-      this,SIGNAL(editingStarted()));
-    QObject::connect(this->EditWidget,SIGNAL(selectedPointOnLine(vtkIdType)),
-                     this, SIGNAL(selectedId(vtkIdType)));
-
-    }
+    QObject::connect(this->EditWidget, SIGNAL(arcModified(qtArcWidget*, vtkIdType, vtkIdType)),
+      this, SLOT(updateModifiedArc(qtArcWidget*, vtkIdType, vtkIdType)));
+    QObject::connect(
+      this->EditWidget, SIGNAL(arcModificationfinished()), this, SLOT(editingFinished()));
+    QObject::connect(this->EditWidget, SIGNAL(startArcEditing()), this, SIGNAL(editingStarted()));
+    QObject::connect(this->EditWidget, SIGNAL(selectedPointOnLine(vtkIdType)), this,
+      SIGNAL(selectedId(vtkIdType)));
+  }
   pqCMBArc* arcObj = this->Arc;
 
-  if(this->Node != NULL)
-    {
+  if (this->Node != NULL)
+  {
     pqCMBSceneObjectBase* obj = this->Node->getDataObject();
     arcObj = dynamic_cast<pqCMBArc*>(obj);
-    }
+  }
 
   this->EditWidget->setView(this->View);
 
@@ -234,52 +230,52 @@ int qtCMBArcWidgetManager::edit()
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::updateArcNode()
 {
-  if ( !this->Node && !this->Arc )
-    {
+  if (!this->Node && !this->Arc)
+  {
     return;
-    }
+  }
 
   //push the polydata from the widget representation to the poly source
 
-  pqCMBArc* obj = (this->Node != NULL)?dynamic_cast<pqCMBArc*>
-    (this->Node->getDataObject()):this->Arc;
-  if ( obj )
-    {
-    vtkSMNewWidgetRepresentationProxy *widget = this->Widget->widgetProxy();
+  pqCMBArc* obj =
+    (this->Node != NULL) ? dynamic_cast<pqCMBArc*>(this->Node->getDataObject()) : this->Arc;
+  if (obj)
+  {
+    vtkSMNewWidgetRepresentationProxy* widget = this->Widget->widgetProxy();
 
     //if the object hasn't been created yet update will call createArc
     //this way we don't have to check here
     QList<vtkIdType> newArcIds;
-    vtkIdTypeArray *arcIdsFromSplit = vtkIdTypeArray::New();
-    obj->updateArc(widget,arcIdsFromSplit);
+    vtkIdTypeArray* arcIdsFromSplit = vtkIdTypeArray::New();
+    obj->updateArc(widget, arcIdsFromSplit);
 
     vtkIdType arcIdsSize = arcIdsFromSplit->GetNumberOfTuples();
-    if(arcIdsSize > 0)
-      {
+    if (arcIdsSize > 0)
+    {
       //convert this into a QList of vtkIdTypes so we can emit to the tree
-      for(vtkIdType idx=0; idx < arcIdsSize; ++idx)
-        {
+      for (vtkIdType idx = 0; idx < arcIdsSize; ++idx)
+      {
         newArcIds.push_back(arcIdsFromSplit->GetValue(idx));
-        }
       }
+    }
     arcIdsFromSplit->Delete();
 
     //make sure the model rep is visible, it would be hidden if we can from edit mode
-    pqDataRepresentation *modelRep = obj->getRepresentation();
-    if(modelRep)
-      {
+    pqDataRepresentation* modelRep = obj->getRepresentation();
+    if (modelRep)
+    {
       modelRep->setVisible(true);
-      }
+    }
 
     //pass onto the scene tree that this scene polyline is finished being editing
     //it needs the signal so that the tree can split the arcset into arcs.
     //Also this is need to make all the arc representation rerender to fix
     //any old end nodes hanging around
-    if(this->Node != NULL)
-      emit this->ArcSplit(this->Node,newArcIds);
+    if (this->Node != NULL)
+      emit this->ArcSplit(this->Node, newArcIds);
     else
       emit this->ArcSplit2(this->Arc, newArcIds);
-   }
+  }
 
   //update the object
   this->Widget->setVisible(false);
@@ -298,10 +294,10 @@ void qtCMBArcWidgetManager::updateArcNode()
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::editingFinished()
 {
-  if(this->EditWidget && this->ActiveWidget == this->EditWidget)
-    {
+  if (this->EditWidget && this->ActiveWidget == this->EditWidget)
+  {
     this->EditWidget->hide();
-    }
+  }
   this->ActiveWidget = NULL;
   this->Node = NULL;
   this->Arc = NULL;
@@ -313,16 +309,17 @@ void qtCMBArcWidgetManager::editingFinished()
 void qtCMBArcWidgetManager::updateModifiedArc(
   qtArcWidget* subArcWidget, vtkIdType startPID, vtkIdType endPID)
 {
-  if ( (!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
-    {
+  if ((!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
+  {
     return;
-    }
+  }
 
   //push the polydata from the widget representation to the poly source
-  pqCMBArc* obj = (this->Node != NULL)?dynamic_cast<pqCMBArc*>(this->Node->getDataObject()):this->Arc;
-  if ( obj )
-    {
-    vtkSMNewWidgetRepresentationProxy *widget = subArcWidget->widgetProxy();
+  pqCMBArc* obj =
+    (this->Node != NULL) ? dynamic_cast<pqCMBArc*>(this->Node->getDataObject()) : this->Arc;
+  if (obj)
+  {
+    vtkSMNewWidgetRepresentationProxy* widget = subArcWidget->widgetProxy();
 
     //if the object hasn't been created yet update will call createArc
     //this way we don't have to check here
@@ -332,57 +329,57 @@ void qtCMBArcWidgetManager::updateModifiedArc(
     vtkNew<vtkCMBSubArcModifyClientOperator> updateAndSplitOp;
     updateAndSplitOp->SetStartPointId(startPID);
     updateAndSplitOp->SetEndPointId(endPID);
-    bool valid = updateAndSplitOp->Operate(obj->getArcId(),widget,
-      vtkSMSourceProxy::SafeDownCast(obj->getSource()->getProxy()));
+    bool valid = updateAndSplitOp->Operate(
+      obj->getArcId(), widget, vtkSMSourceProxy::SafeDownCast(obj->getSource()->getProxy()));
     if (!valid)
-      {
+    {
       //we didn't update ourselves, most likely bad widget representation
       //ie. a representation that has 1 or 0 points
       return;
-      }
+    }
 
     //copy the arc ids to create new arcs for
     arcIdsFromSplit->DeepCopy(updateAndSplitOp->GetCreatedArcs());
 
     vtkIdType arcIdsSize = arcIdsFromSplit->GetNumberOfTuples();
-    if(arcIdsSize > 0)
-      {
+    if (arcIdsSize > 0)
+    {
       //convert this into a QList of vtkIdTypes so we can emit to the tree
-      for(vtkIdType idx=0; idx < arcIdsSize; ++idx)
-        {
+      for (vtkIdType idx = 0; idx < arcIdsSize; ++idx)
+      {
         newArcIds.push_back(arcIdsFromSplit->GetValue(idx));
-        }
       }
+    }
 
     //make sure the model rep is visible, it would be hidden if we can from edit mode
-    pqDataRepresentation *modelRep = obj->getRepresentation();
-    if(modelRep)
-      {
+    pqDataRepresentation* modelRep = obj->getRepresentation();
+    if (modelRep)
+    {
       modelRep->setVisible(true);
-      }
+    }
 
     //pass onto the scene tree that this scene polyline is finished being editing
     //it needs the signal so that the tree can split the arcset into arcs.
     //Also this is need to make all the arc representation rerender to fix
     //any old end nodes hanging around
-    if(this->Node != NULL) emit this->ArcSplit(this->Node,newArcIds);
-    else emit this->ArcSplit2(this->Arc,newArcIds);
-    }
+    if (this->Node != NULL)
+      emit this->ArcSplit(this->Node, newArcIds);
+    else
+      emit this->ArcSplit2(this->Arc, newArcIds);
+  }
 }
 
 //-----------------------------------------------------------------------------
-qtArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(
-  int& normal, double& planePos)
+qtArcWidget* qtCMBArcWidgetManager::createDefaultContourWidget(int& normal, double& planePos)
 {
   this->getDefaultArcPlane(normal, planePos);
   return this->createContourWidget(normal, planePos);
 }
 
 //-----------------------------------------------------------------------------
-qtArcWidget* qtCMBArcWidgetManager::createContourWidget(
-   int normal, double position)
+qtArcWidget* qtCMBArcWidgetManager::createContourWidget(int normal, double position)
 {
-  qtArcWidget *widget= new qtArcWidget(nullptr);
+  qtArcWidget* widget = new qtArcWidget(nullptr);
   widget->setObjectName("CmbSceneContourWidget");
 
   vtkSMProxy* pointplacer = widget->pointPlacer();
@@ -390,12 +387,11 @@ qtArcWidget* qtCMBArcWidgetManager::createContourWidget(
   vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(position);
   pointplacer->UpdateVTKObjects();
 
-
   //this block is needed to create the widget in the right order
   //we need to set on the proxy enabled, not the widget
   //than we need to call Initialize
-  widget->setView( this->View );
-  widget->setEnableInteractivity(this->View != NULL );
+  widget->setView(this->View);
+  widget->setEnableInteractivity(this->View != NULL);
 
   vtkSMPropertyHelper(widget->widgetProxy(), "AlwaysOnTop").Set(1);
   vtkSMPropertyHelper(widget->widgetProxy(), "Enabled").Set(1);
@@ -406,53 +402,48 @@ qtArcWidget* qtCMBArcWidgetManager::createContourWidget(
 }
 
 //-----------------------------------------------------------------------------
-pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(
-  const int &normal,const double &position,const int &closedLoop,
-  vtkDoubleArray* nodePositions, vtkIdTypeArray* SelIndices)
+pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(const int& normal, const double& position,
+  const int& closedLoop, vtkDoubleArray* nodePositions, vtkIdTypeArray* SelIndices)
 {
 
-  qtArcWidget* contourWidget =
-    this->createContourWidget(normal,position);
+  qtArcWidget* contourWidget = this->createContourWidget(normal, position);
 
-  vtkSMNewWidgetRepresentationProxy *widgetProxy =
-    contourWidget->widgetProxy();
+  vtkSMNewWidgetRepresentationProxy* widgetProxy = contourWidget->widgetProxy();
 
-  if(nodePositions && nodePositions->GetNumberOfTuples() > 0)
-    {
+  if (nodePositions && nodePositions->GetNumberOfTuples() > 0)
+  {
     QList<QVariant> values;
     double pointPos[3];
-    for(vtkIdType i=0; i<nodePositions->GetNumberOfTuples(); i++)
-      {
-      nodePositions->GetTuple(i,pointPos);
-      values << pointPos[0] << pointPos[1] << pointPos[2];
-      }
-    pqSMAdaptor::setMultipleElementProperty(
-      widgetProxy->GetRepresentationProxy()->GetProperty("NodePositions"),
-      values);
-    }
-
-  if ( SelIndices && SelIndices->GetNumberOfTuples() > 0 )
+    for (vtkIdType i = 0; i < nodePositions->GetNumberOfTuples(); i++)
     {
-    QList<QVariant> values;
-    for(vtkIdType i=0; i<SelIndices->GetNumberOfTuples(); i++)
-      {
-      values << SelIndices->GetValue(i);
-      }
-    pqSMAdaptor::setMultipleElementProperty(
-      widgetProxy->GetRepresentationProxy()->GetProperty("SelectNodes"),
-      values);
+      nodePositions->GetTuple(i, pointPos);
+      values << pointPos[0] << pointPos[1] << pointPos[2];
     }
+    pqSMAdaptor::setMultipleElementProperty(
+      widgetProxy->GetRepresentationProxy()->GetProperty("NodePositions"), values);
+  }
+
+  if (SelIndices && SelIndices->GetNumberOfTuples() > 0)
+  {
+    QList<QVariant> values;
+    for (vtkIdType i = 0; i < SelIndices->GetNumberOfTuples(); i++)
+    {
+      values << SelIndices->GetValue(i);
+    }
+    pqSMAdaptor::setMultipleElementProperty(
+      widgetProxy->GetRepresentationProxy()->GetProperty("SelectNodes"), values);
+  }
 
   //push all the node positions down to the server before
   //we call on close loop, or else close loop will fail
   widgetProxy->UpdateVTKObjects();
 
-  if ( closedLoop )
-    {
+  if (closedLoop)
+  {
     widgetProxy->InvokeCommand("CloseLoop");
-    }
+  }
 
-  pqCMBArc *obj = this->createpqCMBArc();
+  pqCMBArc* obj = this->createpqCMBArc();
   obj->createArc(widgetProxy);
 
   //obj->SetPlaneProjectionNormal(normal);
@@ -465,134 +456,128 @@ pqCMBArc* qtCMBArcWidgetManager::createLegacyV1Contour(
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidgetManager::getDefaultArcPlane(
-  int& orthoPlane, double& projpos)
+void qtCMBArcWidgetManager::getDefaultArcPlane(int& orthoPlane, double& projpos)
 {
   double focalPt[3], position[3], viewUp[3], viewDirection[3];
   double cameraDistance, parallelScale;
   pqCMBCommonMainWindowCore::getViewCameraInfo(
-    this->View, focalPt, position, viewDirection, cameraDistance,
-                      viewUp, parallelScale);
+    this->View, focalPt, position, viewDirection, cameraDistance, viewUp, parallelScale);
   projpos = 0;
-  QList<QVariant> values =
-    pqSMAdaptor::getMultipleElementProperty(
+  QList<QVariant> values = pqSMAdaptor::getMultipleElementProperty(
     this->View->getProxy()->GetProperty("CameraFocalPointInfo"));
   projpos = values[2].toDouble();
   orthoPlane = 2; // z axis
   if (viewDirection[0] < -.99 || viewDirection[0] > .99)
-    {
+  {
     projpos = values[0].toDouble();
     orthoPlane = 0; // x axis
-    }
+  }
   else if (viewDirection[1] < -.99 || viewDirection[1] > .99)
-    {
+  {
     orthoPlane = 1; // y axis;
     projpos = values[1].toDouble();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidgetManager::resetArcPlane(
-  int normal, double planePos)
+void qtCMBArcWidgetManager::resetArcPlane(int normal, double planePos)
 {
   vtkSMProxyProperty* proxyProp =
-    vtkSMProxyProperty::SafeDownCast(
-    this->Widget->widgetProxy()->GetProperty("PointPlacer"));
+    vtkSMProxyProperty::SafeDownCast(this->Widget->widgetProxy()->GetProperty("PointPlacer"));
   if (proxyProp && proxyProp->GetNumberOfProxies())
-    {
+  {
     vtkSMProxy* pointplacer = proxyProp->GetProxy(0);
     vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(normal);
     vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(planePos);
     pointplacer->MarkModified(pointplacer);
     pointplacer->UpdateVTKObjects();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
-void qtCMBArcWidgetManager::modifyArc(
-  vtkIdType startPID, vtkIdType endPID, int opType)
+void qtCMBArcWidgetManager::modifyArc(vtkIdType startPID, vtkIdType endPID, int opType)
 {
-  if ( (!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
-    {
+  if ((!this->Node && !this->Arc) || this->ActiveWidget != this->EditWidget)
+  {
     return;
-    }
-  pqCMBArc* obj = (this->Node != NULL)?dynamic_cast<pqCMBArc*>(this->Node->getDataObject()):this->Arc;
-  if ( obj )
-    {
+  }
+  pqCMBArc* obj =
+    (this->Node != NULL) ? dynamic_cast<pqCMBArc*>(this->Node->getDataObject()) : this->Arc;
+  if (obj)
+  {
     //call the update arc operator
     vtkNew<vtkCMBSubArcModifyClientOperator> modifyOp;
     modifyOp->SetStartPointId(startPID);
     modifyOp->SetEndPointId(endPID);
-    bool valid = modifyOp->Operate(obj->getArcId(),NULL,
-      vtkSMSourceProxy::SafeDownCast(obj->getSource()->getProxy()),opType);
+    bool valid = modifyOp->Operate(
+      obj->getArcId(), NULL, vtkSMSourceProxy::SafeDownCast(obj->getSource()->getProxy()), opType);
     if (!valid)
-      {
+    {
       return;
-      }
+    }
 
     //make sure the model rep is visible, it would be hidden if we can from edit mode
-    pqDataRepresentation *modelRep = obj->getRepresentation();
-    if(modelRep)
-      {
+    pqDataRepresentation* modelRep = obj->getRepresentation();
+    if (modelRep)
+    {
       obj->updateRepresentation();
       modelRep->setVisible(true);
-      }
+    }
     // if there are new arcs, emit proper signals
-    if(opType == vtkCMBSubArcModifyClientOperator::OpMAKEARC)
-      {
+    if (opType == vtkCMBSubArcModifyClientOperator::OpMAKEARC)
+    {
       QList<vtkIdType> newArcIds;
       vtkNew<vtkIdTypeArray> arcIdsFromSplit;
       //copy the arc ids to create new arcs for
       arcIdsFromSplit->DeepCopy(modifyOp->GetCreatedArcs());
 
       vtkIdType arcIdsSize = arcIdsFromSplit->GetNumberOfTuples();
-      if(arcIdsSize > 0)
-        {
+      if (arcIdsSize > 0)
+      {
         //convert this into a QList of vtkIdTypes so we can emit to the tree
-        for(vtkIdType idx=0; idx < arcIdsSize; ++idx)
-          {
+        for (vtkIdType idx = 0; idx < arcIdsSize; ++idx)
+        {
           newArcIds.push_back(arcIdsFromSplit->GetValue(idx));
-          }
         }
+      }
       //pass onto the scene tree that this scene polyline is finished being editing
       //it needs the signal so that the tree can split the arcset into arcs.
       //Also this is need to make all the arc representation rerender to fix
       //any old end nodes hanging around
-      if(this->Node != NULL) emit this->ArcSplit(this->Node,newArcIds);
-      else emit this->ArcSplit2(this->Arc,newArcIds);
-      }
-    else if(this->Node != NULL)
-      {
+      if (this->Node != NULL)
+        emit this->ArcSplit(this->Node, newArcIds);
+      else
+        emit this->ArcSplit2(this->Arc, newArcIds);
+    }
+    else if (this->Node != NULL)
+    {
       //this is required so that the arc can tell polygons that it has changed
       //so that those polygons can remesh
       emit this->ArcModified(this->Node);
-      }
+    }
     else
-      {
+    {
       emit this->ArcModified2(this->Arc);
-      }
-   }
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::straightenArc(vtkIdType startPID, vtkIdType endPID)
 {
-  this->modifyArc(startPID, endPID,
-    vtkCMBSubArcModifyClientOperator::OpSTRAIGHTEN);
+  this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpSTRAIGHTEN);
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::collapseSubArc(vtkIdType startPID, vtkIdType endPID)
 {
-  this->modifyArc(startPID, endPID,
-    vtkCMBSubArcModifyClientOperator::OpCOLLAPSE);
+  this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpCOLLAPSE);
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcWidgetManager::makeArc(vtkIdType startPID, vtkIdType endPID)
 {
-  this->modifyArc(startPID, endPID,
-    vtkCMBSubArcModifyClientOperator::OpMAKEARC);
+  this->modifyArc(startPID, endPID, vtkCMBSubArcModifyClientOperator::OpMAKEARC);
 }
 
 void qtCMBArcWidgetManager::startSelectPoint()

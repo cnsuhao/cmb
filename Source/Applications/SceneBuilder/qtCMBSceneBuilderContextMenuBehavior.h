@@ -10,10 +10,10 @@
 #ifndef __qtCMBSceneBuilderContextMenuBehavior_h
 #define __qtCMBSceneBuilderContextMenuBehavior_h
 
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QPoint> // needed for QPoint.
 #include <QPointer>
-#include "cmbSystemConfig.h"
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -29,10 +29,11 @@ class qtCMBSceneBuilderContextMenuBehavior : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
+
 public:
-  qtCMBSceneBuilderContextMenuBehavior(pqCMBSceneTree *tree, QObject* parent=0);
+  qtCMBSceneBuilderContextMenuBehavior(pqCMBSceneTree* tree, QObject* parent = 0);
   ~qtCMBSceneBuilderContextMenuBehavior() override;
-  void setTree(pqCMBSceneTree *tree){Tree=tree;}
+  void setTree(pqCMBSceneTree* tree) { Tree = tree; }
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context
   /// menu if the view is a render-view.
@@ -51,9 +52,9 @@ protected:
   pqCMBSceneTree* Tree;
   QPoint Position;
   QPointer<pqDataRepresentation> PickedRepresentation;
+
 private:
   Q_DISABLE_COPY(qtCMBSceneBuilderContextMenuBehavior)
-
 };
 
 #endif

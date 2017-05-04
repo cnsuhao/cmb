@@ -14,32 +14,32 @@
 #ifndef __vtkHydroModelMultiBlockSource_h
 #define __vtkHydroModelMultiBlockSource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBGENERAL_EXPORT vtkHydroModelMultiBlockSource : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkHydroModelMultiBlockSource *New();
-  vtkTypeMacro(vtkHydroModelMultiBlockSource,vtkMultiBlockDataSetAlgorithm);
+  static vtkHydroModelMultiBlockSource* New();
+  vtkTypeMacro(vtkHydroModelMultiBlockSource, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
-  void CopyData(vtkMultiBlockDataSet *source);
+  void CopyData(vtkMultiBlockDataSet* source);
   vtkGetObjectMacro(Source, vtkMultiBlockDataSet);
 
 protected:
   vtkHydroModelMultiBlockSource();
   ~vtkHydroModelMultiBlockSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkMultiBlockDataSet *Source;
+  vtkMultiBlockDataSet* Source;
 
 private:
-  vtkHydroModelMultiBlockSource(const vtkHydroModelMultiBlockSource&);  // Not implemented.
-  void operator=(const vtkHydroModelMultiBlockSource&);  // Not implemented.
+  vtkHydroModelMultiBlockSource(const vtkHydroModelMultiBlockSource&); // Not implemented.
+  void operator=(const vtkHydroModelMultiBlockSource&);                // Not implemented.
 };
 
 #endif

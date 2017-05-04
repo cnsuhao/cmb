@@ -9,8 +9,7 @@
 //=========================================================================
 #include "qtCMBOptionsPage.h"
 
-
-qtCMBOptionsPage::qtCMBOptionsPage(QWidget *widgetParent)
+qtCMBOptionsPage::qtCMBOptionsPage(QWidget* widgetParent)
   : QWidget(widgetParent)
 {
 }

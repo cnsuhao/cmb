@@ -20,34 +20,34 @@
 #include "pqRenderViewSelectionReaction.h"
 #include "pqSMAdaptor.h"
 
+#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
+#include "vtkCMBArcEditClientOperator.h"
+#include "vtkContourWidget.h"
 #include "vtkDoubleArray.h"
+#include "vtkNew.h"
 #include "vtkPVArcInfo.h"
 #include "vtkSMNewWidgetRepresentationProxy.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyProperty.h"
+#include "vtkSMRepresentationProxy.h"
 #include "vtkSMSourceProxy.h"
 #include "vtkSMVectorProperty.h"
-#include "vtkSMRepresentationProxy.h"
-#include "vtkCMBArcEditClientOperator.h"
-#include "vtkNew.h"
-#include "vtkContourWidget.h"
-#include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
 
 #include "pqCMBArc.h"
 #include "pqCMBSceneNode.h"
-#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include "qtCMBArcWidgetManager.h"
+#include "smtk/extension/paraview/widgets/qtArcWidget.h"
 #include <QtDebug>
 
 namespace Ui
 {
 //-----------------------------------------------------------------------------
-ArcPointPicker::ArcPointPicker(QObject * parent):
-  QAction(parent),
-  Info(NULL),
-  Arc(NULL),
-  View(NULL),
-  Selecter(NULL)
+ArcPointPicker::ArcPointPicker(QObject* parent)
+  : QAction(parent)
+  , Info(NULL)
+  , Arc(NULL)
+  , View(NULL)
+  , Selecter(NULL)
 {
   this->setCheckable(true);
 }
@@ -55,44 +55,42 @@ ArcPointPicker::ArcPointPicker(QObject * parent):
 //-----------------------------------------------------------------------------
 ArcPointPicker::~ArcPointPicker()
 {
-  if(this->Selecter)
-    {
+  if (this->Selecter)
+  {
     this->Selecter->disconnect();
     delete this->Selecter;
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
-void ArcPointPicker::doPick(pqRenderView *view, pqCMBArc *arc, PickInfo &info)
+void ArcPointPicker::doPick(pqRenderView* view, pqCMBArc* arc, PickInfo& info)
 {
-  if(this->Selecter)
-    {
+  if (this->Selecter)
+  {
     delete this->Selecter;
-    }
+  }
 
   this->View = NULL; //clear the view each time
-  if(view)
-    {
-    this->Selecter = new pqRenderViewSelectionReaction(this,view,
-                          pqRenderViewSelectionReaction::SELECT_SURFACE_POINTS);
+  if (view)
+  {
+    this->Selecter = new pqRenderViewSelectionReaction(
+      this, view, pqRenderViewSelectionReaction::SELECT_SURFACE_POINTS);
 
     // we only want selection on one representation.
     view->setUseMultipleRepresentationSelection(false);
     // things are selected
-    QObject::connect(view,SIGNAL(selected(pqOutputPort*)),
-                     this,SLOT(selectedInfo(pqOutputPort*)),
-                     Qt::UniqueConnection);
+    QObject::connect(view, SIGNAL(selected(pqOutputPort*)), this, SLOT(selectedInfo(pqOutputPort*)),
+      Qt::UniqueConnection);
     // selection is done
-    QObject::connect(view,SIGNAL(selectionModeChanged(bool)),
-                     this,SLOT(onPickingFinished()),
-                     Qt::UniqueConnection);
+    QObject::connect(view, SIGNAL(selectionModeChanged(bool)), this, SLOT(onPickingFinished()),
+      Qt::UniqueConnection);
 
     this->Info = &info;
     this->Arc = arc;
     this->View = view;
 
     emit triggered(true);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -102,34 +100,33 @@ void ArcPointPicker::selectedInfo(pqOutputPort* port)
   this->Info->IsValid = false;
   this->Info->port = port;
 
-  if(port && port->getSource() == this->Arc->getSource())
-    {
+  if (port && port->getSource() == this->Arc->getSource())
+  {
     // get the selected point id
     // This "IDs" only have two components [processId, Index]
     // because the arc source is not a Composite Dataset
     vtkSMSourceProxy* selSource = port->getSelectionInput();
-    vtkSMVectorProperty* vp = vtkSMVectorProperty::SafeDownCast(
-      selSource->GetProperty("IDs"));
+    vtkSMVectorProperty* vp = vtkSMVectorProperty::SafeDownCast(selSource->GetProperty("IDs"));
     QList<QVariant> ids = pqSMAdaptor::getMultipleElementProperty(vp);
     int numElemsPerCommand = vp->GetNumberOfElementsPerCommand();
-    if(ids.count() > 1 && numElemsPerCommand > 0)
-      {
+    if (ids.count() > 1 && numElemsPerCommand > 0)
+    {
       vtkPVArcInfo* arcInfo = this->Arc->getArcInfo();
       // we just pick the first point
       vtkIdType pointId = ids.value(1).value<vtkIdType>();
-      if(arcInfo->GetPointLocation(pointId, this->Info->pointLocation))
-        {
+      if (arcInfo->GetPointLocation(pointId, this->Info->pointLocation))
+      {
         this->Info->IsValid = true;
         this->Info->PointId = pointId;
-        }
       }
     }
+  }
 
   // clear selection on this port if it is not the arc we expected
-  if(port && port->getSource() != this->Arc->getSource())
-    {
+  if (port && port->getSource() != this->Arc->getSource())
+  {
     port->setSelectionInput(NULL, 0);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -137,77 +134,71 @@ void ArcPointPicker::onPickingFinished()
 {
   //we want the connection to happen once the view goes away so
   //remove the connection
-  if(this->Selecter)
-    {
+  if (this->Selecter)
+  {
     this->Selecter->disconnect();
     delete this->Selecter;
     this->Selecter = NULL;
-    }
-  if(this->View)
-    {
+  }
+  if (this->View)
+  {
     this->View->forceRender();
     // reset multiple selection to true
     this->View->setUseMultipleRepresentationSelection(false);
-    }
+  }
   emit this->pickFinished();
 }
 }
 
-
 class qtCMBArcEditWidget::pqInternals : public Ui::qtCMBArcEditWidget
-  {
-  public:
-    QPointer<pqDataRepresentation> SubArcRepresentation;
-    QPointer<pqPipelineSource> SubArcSource;
-  };
+{
+public:
+  QPointer<pqDataRepresentation> SubArcRepresentation;
+  QPointer<pqPipelineSource> SubArcSource;
+};
 
 //-----------------------------------------------------------------------------
-qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget *parent) :
-  QWidget(parent),
-  Internals(new qtCMBArcEditWidget::pqInternals),
-  Picker(parent),
-  View(NULL),
-  Arc(NULL),
-  SubWidget(NULL),
-  ArcManager(NULL),
-  StartPoint(),
-  EndPoint()
+qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget* parent)
+  : QWidget(parent)
+  , Internals(new qtCMBArcEditWidget::pqInternals)
+  , Picker(parent)
+  , View(NULL)
+  , Arc(NULL)
+  , SubWidget(NULL)
+  , ArcManager(NULL)
+  , StartPoint()
+  , EndPoint()
 {
   Internals->setupUi(this);
   this->setObjectName("pqCMBArcEditWidget");
 
   //connect up the pick buttons
-  QObject::connect(this->Internals->PickButtonBox, SIGNAL(rejected()),
-    this, SLOT(finishedArcModification()));
+  QObject::connect(
+    this->Internals->PickButtonBox, SIGNAL(rejected()), this, SLOT(finishedArcModification()));
 
-  QObject::connect(this->Internals->WholeArcButton, SIGNAL(released()),
-    this, SLOT(pickWholeArc()));
-  QObject::connect(this->Internals->StartPointButton, SIGNAL(released()),
-    this, SLOT(PickStartPoint()));
-  QObject::connect(this->Internals->EndPointButton, SIGNAL(released()),
-    this, SLOT(PickEndPoint()));
+  QObject::connect(this->Internals->WholeArcButton, SIGNAL(released()), this, SLOT(pickWholeArc()));
+  QObject::connect(
+    this->Internals->StartPointButton, SIGNAL(released()), this, SLOT(PickStartPoint()));
+  QObject::connect(this->Internals->EndPointButton, SIGNAL(released()), this, SLOT(PickEndPoint()));
 
   // operations buttons
-  QObject::connect(this->Internals->ArcCollapseButton, SIGNAL(released()),
-    this, SLOT(onCollapseSubArc()));
-  QObject::connect(this->Internals->ArcStraightenButton, SIGNAL(released()),
-    this, SLOT(onStraightenArc()));
-  QObject::connect(this->Internals->EditButton, SIGNAL(released()),
-    this, SLOT(showEditWidget()));
-  QObject::connect(this->Internals->MakeArcButton, SIGNAL(released()),
-    this, SLOT(onMakeArc()));
+  QObject::connect(
+    this->Internals->ArcCollapseButton, SIGNAL(released()), this, SLOT(onCollapseSubArc()));
+  QObject::connect(
+    this->Internals->ArcStraightenButton, SIGNAL(released()), this, SLOT(onStraightenArc()));
+  QObject::connect(this->Internals->EditButton, SIGNAL(released()), this, SLOT(showEditWidget()));
+  QObject::connect(this->Internals->MakeArcButton, SIGNAL(released()), this, SLOT(onMakeArc()));
   //QObject::connect(this->Internals->RectArcButton, SIGNAL(released()),
   //  this, SLOT(generateRectangleArc()));
 
   //connect up the edit buttons
   //QObject::connect(this->Internals->EditButtonBox, SIGNAL(accepted()),
   //  this, SLOT(saveEdit()));
-  QObject::connect(this->Internals->EditButtonBox, SIGNAL(rejected()),
-    this, SLOT(cancelEdit()));
+  QObject::connect(this->Internals->EditButtonBox, SIGNAL(rejected()), this, SLOT(cancelEdit()));
 
   //connect the picker up so we know when it is done.
-  QObject::connect(&this->Picker, SIGNAL(pickFinished()),
-    this, SLOT(showPickWidget()), Qt::QueuedConnection);
+  QObject::connect(
+    &this->Picker, SIGNAL(pickFinished()), this, SLOT(showPickWidget()), Qt::QueuedConnection);
 
   //setup the widget to look correctly
   //this->Internals->ArcEditWidgtet->hide();
@@ -219,22 +210,21 @@ qtCMBArcEditWidget::qtCMBArcEditWidget(QWidget *parent) :
 
 qtCMBArcEditWidget::~qtCMBArcEditWidget()
 {
-  if(this->Internals->SubArcSource)
-    {
-    pqApplicationCore::instance()->getObjectBuilder()->destroy(
-      this->Internals->SubArcSource);
+  if (this->Internals->SubArcSource)
+  {
+    pqApplicationCore::instance()->getObjectBuilder()->destroy(this->Internals->SubArcSource);
     this->Internals->SubArcSource = NULL;
-    }
+  }
 
-  if ( this->SubWidget )
-    {
+  if (this->SubWidget)
+  {
     //if a widget is deleted without having an active view it throws errors
-    if ( this->View && !this->SubWidget->view() )
-      {
+    if (this->View && !this->SubWidget->view())
+    {
       this->SubWidget->setView(this->View);
-      }
-    delete this->SubWidget;
     }
+    delete this->SubWidget;
+  }
   this->SubWidget = NULL;
   delete Internals;
 }
@@ -242,14 +232,14 @@ qtCMBArcEditWidget::~qtCMBArcEditWidget()
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::setArc(pqCMBArc* arc)
 {
-  if(this->Arc != arc)
+  if (this->Arc != arc)
+  {
+    this->Arc = arc;
+    if (this->Arc)
     {
-    this->Arc=arc;
-    if(this->Arc)
-      {
       this->resetWidget();
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -257,17 +247,16 @@ bool qtCMBArcEditWidget::isSubArcValid()
 {
   // for a closed loop arc, we don't allow a sub-arc to include the end node
   // in the middle of the sub-arc, but it can be at either end of the sub-arc
-  bool isEndNodeInMiddle = (this->StartPoint.IsValid && this->EndPoint.IsValid &&
-   this->Arc && this->Arc->isClosedLoop() &&
-   this->StartPoint.PointId > this->EndPoint.PointId &&
-   this->EndPoint.PointId > 0);
-  if(isEndNodeInMiddle)
-    {
+  bool isEndNodeInMiddle =
+    (this->StartPoint.IsValid && this->EndPoint.IsValid && this->Arc && this->Arc->isClosedLoop() &&
+      this->StartPoint.PointId > this->EndPoint.PointId && this->EndPoint.PointId > 0);
+  if (isEndNodeInMiddle)
+  {
     qCritical() << "Currently for a closed loop arc, we don't allow a sub-arc \n"
-     <<"to include the end node in the middle of the sub-arc, \n"
-     << "but the end node can be at either end of the sub-arc. \n";
+                << "to include the end node in the middle of the sub-arc, \n"
+                << "but the end node can be at either end of the sub-arc. \n";
     return false;
-    }
+  }
   return (this->StartPoint.IsValid && this->EndPoint.IsValid &&
     this->StartPoint.PointId != this->EndPoint.PointId);
 }
@@ -275,21 +264,20 @@ bool qtCMBArcEditWidget::isSubArcValid()
 //-----------------------------------------------------------------------------
 bool qtCMBArcEditWidget::isWholeArcSelected()
 {
-  if(!this->StartPoint.IsValid || !this->EndPoint.IsValid )
-    {
+  if (!this->StartPoint.IsValid || !this->EndPoint.IsValid)
+  {
     return false;
-    }
+  }
 
-  vtkIdType numRequestedArcPoints =
-  (this->EndPoint.PointId >= this->StartPoint.PointId) ?
-  (this->EndPoint.PointId - this->StartPoint.PointId + 1) :
-  (this->StartPoint.PointId - this->EndPoint.PointId + 1);
+  vtkIdType numRequestedArcPoints = (this->EndPoint.PointId >= this->StartPoint.PointId)
+    ? (this->EndPoint.PointId - this->StartPoint.PointId + 1)
+    : (this->StartPoint.PointId - this->EndPoint.PointId + 1);
 
   //see if this is a closed arc
   vtkPVArcInfo* arcInfo = this->Arc->getArcInfo();
   bool closedArc = arcInfo->IsClosedLoop();
-  return ((numRequestedArcPoints == arcInfo->GetNumberOfPoints() &&
-   !closedArc) || (closedArc && this->StartPoint.PointId == this->EndPoint.PointId));
+  return ((numRequestedArcPoints == arcInfo->GetNumberOfPoints() && !closedArc) ||
+    (closedArc && this->StartPoint.PointId == this->EndPoint.PointId));
 }
 
 //-----------------------------------------------------------------------------
@@ -319,32 +307,30 @@ void qtCMBArcEditWidget::showPickWidget()
 
   //setup the state correctly
   //update the labels
-  QString labelText = this->StartPoint.IsValid ?
-    this->StartPoint.text() : "Start Point Location";
+  QString labelText = this->StartPoint.IsValid ? this->StartPoint.text() : "Start Point Location";
   this->Internals->StartPointLabel->setText(labelText);
-  labelText = this->EndPoint.IsValid ?
-    this->EndPoint.text() : "End Point Location";
+  labelText = this->EndPoint.IsValid ? this->EndPoint.text() : "End Point Location";
   this->Internals->EndPointLabel->setText(labelText);
   const bool enabled(this->isSubArcValid() || this->isWholeArcSelected());
   this->Internals->OperationsWidget->setEnabled(enabled);
 
-  if(this->isWholeArcSelected())
-    {
+  if (this->isWholeArcSelected())
+  {
     this->Internals->WholeArcOpWidget->setVisible(true);
     this->Internals->SubArcOpWidget->setVisible(false);
     this->Internals->ArcStraightenButton->setVisible(this->Arc->isClosedLoop() ? false : true);
-    }
+  }
   else
-    {
+  {
     this->Internals->WholeArcOpWidget->setVisible(false);
     this->Internals->SubArcOpWidget->setVisible(true);
     this->Internals->ArcStraightenButton->setVisible(true);
-    }
+  }
   // if a valid arc is picked, clear point selection on the arc
-  if(enabled)
-    {
+  if (enabled)
+  {
     this->Arc->pqCMBSceneObjectBase::setSelectionInput(NULL);
-    }
+  }
   this->updateSubArcRepresentation(enabled);
 }
 
@@ -352,7 +338,7 @@ void qtCMBArcEditWidget::showPickWidget()
 void qtCMBArcEditWidget::PickStartPoint()
 {
   //need to convey what we are pick (start,end)
-  this->Picker.doPick(this->View,this->Arc,this->StartPoint);
+  this->Picker.doPick(this->View, this->Arc, this->StartPoint);
 
   //do we need to lock the UI?
 }
@@ -360,30 +346,27 @@ void qtCMBArcEditWidget::PickStartPoint()
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::pickWholeArc()
 {
-  if ( !this->Arc || !this->Arc->getSource())
-    {
+  if (!this->Arc || !this->Arc->getSource())
+  {
     return;
-    }
+  }
   // set up start point as first point
   this->StartPoint.PointId = 0;
   this->StartPoint.port = this->Arc->getSource()->getOutputPort(0);
   vtkPVArcInfo* arcInfo = this->Arc->getArcInfo();
   // we just pick the first point
-  if(arcInfo->GetPointLocation(
-    this->StartPoint.PointId, this->StartPoint.pointLocation))
-    {
+  if (arcInfo->GetPointLocation(this->StartPoint.PointId, this->StartPoint.pointLocation))
+  {
     this->StartPoint.IsValid = true;
-    }
+  }
 
   // set up end point as last point
-  this->EndPoint.PointId = arcInfo->IsClosedLoop() ?
-    0 : arcInfo->GetNumberOfPoints() - 1;
+  this->EndPoint.PointId = arcInfo->IsClosedLoop() ? 0 : arcInfo->GetNumberOfPoints() - 1;
   this->EndPoint.port = this->Arc->getSource()->getOutputPort(0);
-  if(arcInfo->GetPointLocation(
-    this->EndPoint.PointId, this->EndPoint.pointLocation))
-    {
+  if (arcInfo->GetPointLocation(this->EndPoint.PointId, this->EndPoint.pointLocation))
+  {
     this->EndPoint.IsValid = true;
-    }
+  }
 
   // update the UI for whole arc
   this->showPickWidget();
@@ -392,13 +375,13 @@ void qtCMBArcEditWidget::pickWholeArc()
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::PickEndPoint()
 {
-  this->Picker.doPick(this->View,this->Arc,this->EndPoint);
+  this->Picker.doPick(this->View, this->Arc, this->EndPoint);
 }
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::hideArcWidget()
 {
-  if(this->SubWidget)
-    {
+  if (this->SubWidget)
+  {
     this->SubWidget->setEnableInteractivity(false);
     this->SubWidget->setVisible(false);
     this->SubWidget->deemphasize();
@@ -406,77 +389,75 @@ void qtCMBArcEditWidget::hideArcWidget()
     this->SubWidget->widgetProxy()->UpdatePropertyInformation();
     this->SubWidget->setView(NULL);
     this->SubWidget->hide();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::modifySubArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
-    {
+  {
     qCritical() << "There was not valid sub-arc to modify yet.\n";
     return;
-    }
+  }
   pqCMBArc* arcObj = this->ArcManager->getActiveArc();
-  if(!arcObj)
-    {
+  if (!arcObj)
+  {
     return;
-    }
+  }
   bool created = false;
   int normal;
   double planePos;
-  if ( !this->SubWidget )
-    {
+  if (!this->SubWidget)
+  {
     this->SubWidget = this->ArcManager->createDefaultContourWidget(normal, planePos);
     this->SubWidget->setParent(this->Internals->ArcEditWidgtet);
     this->Internals->ContourLayout->addWidget(this->SubWidget);
 
-    QObject::connect(this->SubWidget,SIGNAL(contourDone()),
-      this,SLOT(arcEditingFinished()));
+    QObject::connect(this->SubWidget, SIGNAL(contourDone()), this, SLOT(arcEditingFinished()));
     created = true;
-    }
-  if ( !created )
-    {
+  }
+  if (!created)
+  {
     this->SubWidget->setView(this->View);
-    if(arcObj)
-      {
+    if (arcObj)
+    {
       if (vtkSMProxy* pointplacer = this->SubWidget->pointPlacer())
-        {
-        vtkSMPropertyHelper(pointplacer, "ProjectionNormal").Set(
-          arcObj->getPlaneProjectionNormal());
-        vtkSMPropertyHelper(pointplacer, "ProjectionPosition").Set(
-          arcObj->getPlaneProjectionPosition());
+      {
+        vtkSMPropertyHelper(pointplacer, "ProjectionNormal")
+          .Set(arcObj->getPlaneProjectionNormal());
+        vtkSMPropertyHelper(pointplacer, "ProjectionPosition")
+          .Set(arcObj->getPlaneProjectionPosition());
         pointplacer->MarkModified(pointplacer);
         pointplacer->UpdateVTKObjects();
-        }
       }
+    }
     vtkSMPropertyHelper(this->SubWidget->widgetProxy(), "Enabled").Set(1);
     this->SubWidget->widgetProxy()->UpdateVTKObjects();
-    }
+  }
 
   this->SubWidget->useArcEditingUI(this->isWholeArcSelected());
   this->SubWidget->show();
   this->SubWidget->setEnabled(true);
   this->SubWidget->setEnableInteractivity(true);
 
-  if ( arcObj && arcObj->getType() == pqCMBSceneObjectBase::Arc)
-    {
+  if (arcObj && arcObj->getType() == pqCMBSceneObjectBase::Arc)
+  {
     //pass the info from the arc into the widget proxy
     //for now only works in built in mode
     vtkNew<vtkCMBArcEditClientOperator> editOp;
     editOp->SetArcIsClosed(this->Arc->isClosedLoop() && this->isWholeArcSelected());
-    editOp->Operate(this->Internals->SubArcSource->getProxy(),
-      this->SubWidget->widgetProxy());
+    editOp->Operate(this->Internals->SubArcSource->getProxy(), this->SubWidget->widgetProxy());
     if (!created)
-      {
+    {
       this->SubWidget->reset();
-      }
+    }
 
     this->SubWidget->checkContourLoopClosed();
     this->SubWidget->ModifyMode();
     this->SubWidget->checkCanBeEdited();
 
-/* TO DO: We may allow this in the future.
+    /* TO DO: We may allow this in the future.
     // if the end node of a closed-loop arc is in the middle of the
     // the specified sub-arc, we need to set that node in the SubWidget
     // to be selected.
@@ -491,8 +472,7 @@ void qtCMBArcEditWidget::modifySubArc()
       this->SubWidget->getWidgetProxy()->UpdateVTKObjects();
       }
 */
-
-    }
+  }
   //this->setSubArcVisible(false);
   this->View->forceRender();
   this->SubWidget->emphasize();
@@ -505,30 +485,30 @@ void qtCMBArcEditWidget::resetWidget()
   //resets the widget to what it would be like if it was just created
   this->StartPoint.IsValid = false;
   this->EndPoint.IsValid = false;
-  if(this->Internals->SubArcRepresentation)
-    {
+  if (this->Internals->SubArcRepresentation)
+  {
     this->setSubArcVisible(false);
     pqApplicationCore::instance()->getObjectBuilder()->destroy(
       this->Internals->SubArcRepresentation);
     this->Internals->SubArcRepresentation = NULL;
-    }
+  }
   this->showPickWidget();
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::updateWholeArcRepresentation(bool visible)
 {
-  if ( !this->Arc || !this->Arc->getRepresentation())
-    {
+  if (!this->Arc || !this->Arc->getRepresentation())
+  {
     return;
-    }
+  }
   // use a green color for representation if we are showing whole arc,
   // like sub-arc; else, set the representation back to the original color
-  double rgba[4] ={0, 0.8, 0, 1.0};
-  if(!visible)
-    {
+  double rgba[4] = { 0, 0.8, 0, 1.0 };
+  if (!visible)
+  {
     this->Arc->getColor(rgba);
-    }
+  }
   this->Arc->getRepresentation()->setVisible(visible);
   // only change the representation color
   this->Arc->pqCMBSceneObjectBase::setColor(rgba, visible);
@@ -538,69 +518,68 @@ void qtCMBArcEditWidget::updateWholeArcRepresentation(bool visible)
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::updateSubArcRepresentation(bool visible)
 {
-  if ( !this->Arc || !this->Arc->getSource())
-    {
+  if (!this->Arc || !this->Arc->getSource())
+  {
     return;
-    }
-  if(!visible)
-    {
+  }
+  if (!visible)
+  {
     this->setSubArcVisible(visible);
     return;
-    }
+  }
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
 
   if (!this->Internals->SubArcSource)
-    {
+  {
     //create an arc provider for this arc
-    this->Internals->SubArcSource = builder->createSource(
-      "CmbArcGroup", "ArcProvider", core->getActiveServer());
-    }
+    this->Internals->SubArcSource =
+      builder->createSource("CmbArcGroup", "ArcProvider", core->getActiveServer());
+  }
 
   //tell the provider the arc id it needs to be connected too
-  vtkSMProxy *sourceProxy = this->Internals->SubArcSource->getProxy();
-  vtkSMPropertyHelper(sourceProxy,"ArcId").Set(this->Arc->getArcId());
-  vtkSMPropertyHelper(sourceProxy,"StartPointId").Set(this->StartPoint.PointId);
-  vtkSMPropertyHelper(sourceProxy,"EndPointId").Set(this->EndPoint.PointId);
+  vtkSMProxy* sourceProxy = this->Internals->SubArcSource->getProxy();
+  vtkSMPropertyHelper(sourceProxy, "ArcId").Set(this->Arc->getArcId());
+  vtkSMPropertyHelper(sourceProxy, "StartPointId").Set(this->StartPoint.PointId);
+  vtkSMPropertyHelper(sourceProxy, "EndPointId").Set(this->EndPoint.PointId);
   sourceProxy->UpdateVTKObjects();
 
   //key line to tell the client to re-render the arc
   sourceProxy->MarkModified(NULL);
 
   if (!this->Internals->SubArcRepresentation)
-    {
+  {
     this->Internals->SubArcRepresentation = builder->createDataRepresentation(
-      this->Internals->SubArcSource->getOutputPort(0),
-      this->View, "GeometryRepresentation");
+      this->Internals->SubArcSource->getOutputPort(0), this->View, "GeometryRepresentation");
     vtkSMProxy* repProxy = this->Internals->SubArcRepresentation->getProxy();
     vtkSMPropertyHelper(repProxy, "LineWidth").Set(2);
     vtkSMPropertyHelper(repProxy, "PointSize").Set(6.0);
 
-    double rgb[3] ={0, 0.8, 0};
+    double rgb[3] = { 0, 0.8, 0 };
     vtkSMPropertyHelper(repProxy, "DiffuseColor").Set(rgb, 3);
     vtkSMPropertyHelper(repProxy, "AmbientColor").Set(rgb, 3);
     vtkSMPropertyHelper(repProxy, "Pickable").Set(0);
-    }
+  }
   this->setSubArcVisible(visible);
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::setSubArcVisible(int visible)
 {
-  if(this->Internals->SubArcRepresentation)
-    {
+  if (this->Internals->SubArcRepresentation)
+  {
     this->Internals->SubArcRepresentation->setVisible(visible);
     this->Internals->SubArcRepresentation->getProxy()->UpdateVTKObjects();
-    vtkSMRepresentationProxy::SafeDownCast(
-      this->Internals->SubArcRepresentation->getProxy())->UpdatePipeline();
+    vtkSMRepresentationProxy::SafeDownCast(this->Internals->SubArcRepresentation->getProxy())
+      ->UpdatePipeline();
     this->View->forceRender();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void qtCMBArcEditWidget::arcEditingFinished()
 {
-/* TO DO: We may allow this in the future.
+  /* TO DO: We may allow this in the future.
   vtkContourWidget *widget = vtkContourWidget::SafeDownCast(
     this->SubWidget->getWidgetProxy()->GetWidget());
   vtkSMTKArcRepresentation *widgetRep =
@@ -653,8 +632,7 @@ void qtCMBArcEditWidget::cancelEdit()
 void qtCMBArcEditWidget::saveEdit()
 {
   // modify/replace the sub-arc with the arc from the arc widget
-  emit this->arcModified(
-    this->SubWidget, this->StartPoint.PointId, this->EndPoint.PointId);
+  emit this->arcModified(this->SubWidget, this->StartPoint.PointId, this->EndPoint.PointId);
 
   //hide the arc widget
   this->hideArcWidget();
@@ -667,10 +645,10 @@ void qtCMBArcEditWidget::saveEdit()
 void qtCMBArcEditWidget::onStraightenArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
-    {
+  {
     qCritical() << "There was not valid sub-arc to do operations yet.\n";
     return;
-    }
+  }
   this->ArcManager->straightenArc(this->StartPoint.PointId, this->EndPoint.PointId);
   this->resetWidget();
 }
@@ -679,10 +657,10 @@ void qtCMBArcEditWidget::onStraightenArc()
 void qtCMBArcEditWidget::onCollapseSubArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
-    {
+  {
     qCritical() << "There was not valid sub-arc to do operations yet.\n";
     return;
-    }
+  }
   this->ArcManager->collapseSubArc(this->StartPoint.PointId, this->EndPoint.PointId);
   this->resetWidget();
 }
@@ -691,10 +669,10 @@ void qtCMBArcEditWidget::onCollapseSubArc()
 void qtCMBArcEditWidget::onMakeArc()
 {
   if (!this->Internals->SubArcSource || !this->ArcManager)
-    {
+  {
     qCritical() << "There was not valid sub-arc to do operations yet.\n";
     return;
-    }
+  }
   this->ArcManager->makeArc(this->StartPoint.PointId, this->EndPoint.PointId);
   this->resetWidget();
 }
@@ -706,12 +684,12 @@ void qtCMBArcEditWidget::selectPointMode()
 
 void qtCMBArcEditWidget::selectedPoint(int index)
 {
-  vtkSMNewWidgetRepresentationProxy * widgetProxy = this->SubWidget->widgetProxy();
-  vtkContourWidget *widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
-  vtkSMTKArcRepresentation *widgetRep =
-                          vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
+  vtkSMNewWidgetRepresentationProxy* widgetProxy = this->SubWidget->widgetProxy();
+  vtkContourWidget* widget = vtkContourWidget::SafeDownCast(widgetProxy->GetWidget());
+  vtkSMTKArcRepresentation* widgetRep =
+    vtkSMTKArcRepresentation::SafeDownCast(widget->GetRepresentation());
   vtkPVArcInfo* arcInfo = this->Arc->getArcInfo();
-  if(index >= 0 && index < arcInfo->GetNumberOfPoints())
+  if (index >= 0 && index < arcInfo->GetNumberOfPoints())
   {
     vtkIdType id;
     arcInfo->GetPointID(index, id);

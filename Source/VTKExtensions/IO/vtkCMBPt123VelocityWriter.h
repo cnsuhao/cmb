@@ -17,16 +17,15 @@
 #ifndef __vtkCMBPt123VelocityWriter_h
 #define __vtkCMBPt123VelocityWriter_h
 
+#include "cmbSystemConfig.h"
+#include "string"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "string"
-#include "cmbSystemConfig.h"
 class vtkDataArray;
 class vtkDataSet;
 class VTKCMBIO_EXPORT vtkCMBPt123VelocityWriter : public vtkWriter
 {
 public:
-
   static vtkCMBPt123VelocityWriter* New();
   vtkTypeMacro(vtkCMBPt123VelocityWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -39,7 +38,6 @@ public:
   // Get/Set the filename.
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
-
 
   // Description:
   // Turn on/off the use of scientific notation for writing floating point values.
@@ -61,7 +59,7 @@ public:
   // Get/Set the actual spatial dimension of the velocity field
   vtkSetMacro(SpatialDimension, int);
   vtkGetMacro(SpatialDimension, int);
-//BTX
+  //BTX
 protected:
   vtkCMBPt123VelocityWriter();
   ~vtkCMBPt123VelocityWriter() override;
@@ -77,18 +75,17 @@ protected:
   char* FileName;
   bool UseScientificNotation;
   int FloatPrecision;
-  vtkDataArray *MyData;
+  vtkDataArray* MyData;
   bool WriteCellBased;
   int SpatialDimension;
-  vtkDataSet *MyDataSet;
+  vtkDataSet* MyDataSet;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
   vtkCMBPt123VelocityWriter(const vtkCMBPt123VelocityWriter&); // Not implemented.
-  void operator=(const vtkCMBPt123VelocityWriter&); // Not implemented.
-//ETX
+  void operator=(const vtkCMBPt123VelocityWriter&);            // Not implemented.
+  //ETX
 };
 
 #endif
-
-

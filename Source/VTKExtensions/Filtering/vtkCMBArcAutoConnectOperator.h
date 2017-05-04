@@ -14,16 +14,16 @@
 #ifndef __vtkCMBArcAutoConnectOperator_h
 #define __vtkCMBArcAutoConnectOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkCMBArcAutoConnectOperator : public vtkObject
 {
 public:
-  static vtkCMBArcAutoConnectOperator * New();
-  vtkTypeMacro(vtkCMBArcAutoConnectOperator,vtkObject);
+  static vtkCMBArcAutoConnectOperator* New();
+  vtkTypeMacro(vtkCMBArcAutoConnectOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool Operate(vtkIdType firstId, vtkIdType secondId);
@@ -31,7 +31,7 @@ public:
   //Description:
   //If the auto connect works this is the ArcId for the newly
   //created arc
-  vtkGetMacro(CreatedArcId,vtkIdType);
+  vtkGetMacro(CreatedArcId, vtkIdType);
 
 protected:
   vtkCMBArcAutoConnectOperator();
@@ -40,9 +40,9 @@ protected:
   vtkIdType CreatedArcId;
 
 private:
-  vtkCMBArcAutoConnectOperator(const vtkCMBArcAutoConnectOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcAutoConnectOperator&);  // Not implemented.
-//ETX
+  vtkCMBArcAutoConnectOperator(const vtkCMBArcAutoConnectOperator&); // Not implemented.
+  void operator=(const vtkCMBArcAutoConnectOperator&);               // Not implemented.
+  //ETX
 };
 
 #endif

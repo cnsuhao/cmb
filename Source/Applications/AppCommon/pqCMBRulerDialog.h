@@ -28,14 +28,13 @@ class CMBAPPCOMMON_EXPORT pqCMBRulerDialog : public QDialog
 {
   Q_OBJECT
 
-  public:
-    pqCMBRulerDialog(QWidget* p = NULL);
-    virtual ~pqCMBRulerDialog();
+public:
+  pqCMBRulerDialog(QWidget* p = NULL);
+  virtual ~pqCMBRulerDialog();
 
-  protected:
-    pqProxyWidget* RulerWidget;
-    pqPipelineSource* RulerSource;
-
+protected:
+  pqProxyWidget* RulerWidget;
+  pqPipelineSource* RulerSource;
 };
 
 #endif // !_pqCMBRulerDialog_h

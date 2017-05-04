@@ -13,17 +13,17 @@
 #ifndef __vtkCMBConeCellClassifier_h
 #define __vtkCMBConeCellClassifier_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkUnstructuredGridAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIntArray;
 class vtkDoubleArray;
 class VTKCMBFILTERING_EXPORT vtkCMBConeCellClassifier : public vtkUnstructuredGridAlgorithm
 {
 public:
-  static vtkCMBConeCellClassifier *New();
-  vtkTypeMacro(vtkCMBConeCellClassifier,vtkUnstructuredGridAlgorithm);
+  static vtkCMBConeCellClassifier* New();
+  vtkTypeMacro(vtkCMBConeCellClassifier, vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
@@ -84,8 +84,8 @@ public:
   // changed if at least one of its points are inside a cone.  If mode is 1
   // then all of the cells points must be inside a cone. If mode is 2 then
   // only those cells that the cone passes through will be changed.  Default is 0.
-  vtkSetMacro(ClassificationMode,int);
-  vtkGetMacro(ClassificationMode,int);
+  vtkSetMacro(ClassificationMode, int);
+  vtkGetMacro(ClassificationMode, int);
 
   // Returns true if the point p is inside a truncated cone
   bool IsInside(const double p[3]);
@@ -94,10 +94,8 @@ protected:
   vtkCMBConeCellClassifier();
   ~vtkCMBConeCellClassifier() override;
 
-  int RequestData(vtkInformation* request,
-                          vtkInformationVector** inputVector,
-                          vtkInformationVector* outputVector) override;
-
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector) override;
 
   double BaseCenter[3];
   double AxisDirection[3];
@@ -112,9 +110,10 @@ protected:
   int NewCellValue;
   int ClassificationMode;
   double AxisUnitDir[3];
+
 private:
-  vtkCMBConeCellClassifier(const vtkCMBConeCellClassifier&);  // Not implemented.
-  void operator=(const vtkCMBConeCellClassifier&);  // Not implemented.
+  vtkCMBConeCellClassifier(const vtkCMBConeCellClassifier&); // Not implemented.
+  void operator=(const vtkCMBConeCellClassifier&);           // Not implemented.
 };
 
 #endif

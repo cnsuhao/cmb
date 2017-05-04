@@ -22,9 +22,9 @@
 #ifndef __vtkLIDARElevationFilter_h
 #define __vtkLIDARElevationFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 class vtkTransform;
 
 class VTKCMBFILTERING_EXPORT vtkLIDARElevationFilter : public vtkDataSetAlgorithm
@@ -37,52 +37,48 @@ public:
   // Description:
   // Define one end of the line (small scalar values).  Default is
   // (0,0,0).
-  vtkSetVector3Macro(LowPoint,double);
-  vtkGetVectorMacro(LowPoint,double,3);
+  vtkSetVector3Macro(LowPoint, double);
+  vtkGetVectorMacro(LowPoint, double, 3);
 
   // Description:
   // Define other end of the line (large scalar values).  Default is
   // (0,0,1).
-  vtkSetVector3Macro(HighPoint,double);
-  vtkGetVectorMacro(HighPoint,double,3);
+  vtkSetVector3Macro(HighPoint, double);
+  vtkGetVectorMacro(HighPoint, double, 3);
 
   // Description:
   // Specify range to map scalars into.  Default is [0, 1].
-  vtkSetVector2Macro(ScalarRange,double);
-  vtkGetVectorMacro(ScalarRange,double,2);
+  vtkSetVector2Macro(ScalarRange, double);
+  vtkGetVectorMacro(ScalarRange, double, 2);
 
   // Description:
   // Specify whether the filter should add elevation info or not (true by default)
-  vtkSetMacro(CreateElevation,bool);
-  vtkGetMacro(CreateElevation,bool);
+  vtkSetMacro(CreateElevation, bool);
+  vtkGetMacro(CreateElevation, bool);
 
   // Description:
   // Transform to apply to points before assigning a scalar value.
   // the point is not transformed for the output.
-  void SetTransform(vtkTransform *transform);
+  void SetTransform(vtkTransform* transform);
   vtkGetObjectMacro(Transform, vtkTransform);
   void SetTransform(double elements[16]);
-  void ClearTransform()
-    {
-    this->SetTransform(static_cast<vtkTransform*>(0));
-    }
+  void ClearTransform() { this->SetTransform(static_cast<vtkTransform*>(0)); }
 
 protected:
   vtkLIDARElevationFilter();
   ~vtkLIDARElevationFilter() override;
 
-  int RequestData(vtkInformation*,
-                  vtkInformationVector**,
-                  vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkTransform *Transform;
+  vtkTransform* Transform;
   double LowPoint[3];
   double HighPoint[3];
   double ScalarRange[2];
   bool CreateElevation;
+
 private:
-  vtkLIDARElevationFilter(const vtkLIDARElevationFilter&);  // Not implemented.
-  void operator=(const vtkLIDARElevationFilter&);  // Not implemented.
+  vtkLIDARElevationFilter(const vtkLIDARElevationFilter&); // Not implemented.
+  void operator=(const vtkLIDARElevationFilter&);          // Not implemented.
 };
 
 #endif

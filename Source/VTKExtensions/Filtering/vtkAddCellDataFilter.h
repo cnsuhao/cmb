@@ -13,9 +13,9 @@
 #ifndef __vtkAddCellDataFilter_h
 #define __vtkAddCellDataFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdList;
 
@@ -26,7 +26,7 @@ public:
   vtkTypeMacro(vtkAddCellDataFilter, vtkDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
-//BTX
+  //BTX
 protected:
   vtkAddCellDataFilter();
   ~vtkAddCellDataFilter() override;
@@ -36,20 +36,15 @@ protected:
   // to do its work. This is the method you should override to do whatever the
   // algorithm is designed to do. This happens during the fourth pass in the
   // pipeline execution process.
-  int RequestData(vtkInformation*,
-                          vtkInformationVector**,
-                          vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkAddCellDataFilter(const vtkAddCellDataFilter&); // Not implemented.
-  void operator=(const vtkAddCellDataFilter&); // Not implemented.
-
+  void operator=(const vtkAddCellDataFilter&);       // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;
-//ETX
+  //ETX
 };
 
 #endif
-
-

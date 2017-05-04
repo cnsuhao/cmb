@@ -11,10 +11,10 @@
 
 #include "vtkCellArray.h"
 #include "vtkCompositeDataIterator.h"
-#include "vtkDoubleArray.h"
-#include "vtkDataSetAttributes.h"
-#include "vtkInformation.h"
 #include "vtkCompositeDataSet.h"
+#include "vtkDataSetAttributes.h"
+#include "vtkDoubleArray.h"
+#include "vtkInformation.h"
 #include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkUnstructuredGrid.h"
@@ -28,9 +28,8 @@ vtkStandardNewMacro(vtkCMBPt123VelocityWriter);
 vtkCMBPt123VelocityWriter::vtkCMBPt123VelocityWriter()
 {
   this->FileName = 0;
-  this->SetInputArrayToProcess(0, 0, 0,
-    vtkDataObject::FIELD_ASSOCIATION_POINTS,
-    vtkDataSetAttributes::VECTORS);
+  this->SetInputArrayToProcess(
+    0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_POINTS, vtkDataSetAttributes::VECTORS);
   this->MyData = 0;
   this->UseScientificNotation = true;
   this->FloatPrecision = 6;
@@ -56,18 +55,18 @@ void vtkCMBPt123VelocityWriter::SetInputData(vtkDataObject* ug)
 ostream* vtkCMBPt123VelocityWriter::OpenFile()
 {
   if (!this->FileName || !this->FileName[0])
-    {
+  {
     vtkErrorMacro("FileName has to be specified.");
     return 0;
-    }
+  }
 
   ostream* fp = new ofstream(this->FileName, ios::out);
   if (fp->fail())
-    {
-    vtkErrorMacro(<< "Unable to open file: "<< this->FileName);
+  {
+    vtkErrorMacro(<< "Unable to open file: " << this->FileName);
     delete fp;
     return 0;
-    }
+  }
   return fp;
 }
 
@@ -75,10 +74,10 @@ ostream* vtkCMBPt123VelocityWriter::OpenFile()
 void vtkCMBPt123VelocityWriter::CloseFile(ostream* fp)
 {
   if (fp)
-    {
+  {
     delete fp;
     fp = 0;
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -88,45 +87,43 @@ void vtkCMBPt123VelocityWriter::WriteData()
   this->MyDataSet = NULL;
   vtkCompositeDataSet* mds = vtkCompositeDataSet::SafeDownCast(input);
   if (mds)
-    {
+  {
     vtkCompositeDataIterator* iter = mds->NewIterator();
     iter->InitTraversal();
     while (!iter->IsDoneWithTraversal())
-      {
+    {
       this->MyDataSet = vtkDataSet::SafeDownCast(iter->GetCurrentDataObject());
       if (this->MyDataSet)
-        {
+      {
         break;
-        }
       }
+    }
     iter->Delete();
-    }
+  }
   else
-    {
+  {
     this->MyDataSet = vtkDataSet::SafeDownCast(input);
-    }
+  }
 
   if (!this->MyDataSet)
-    {
+  {
     vtkErrorMacro("vtkDataSet input is required.");
     return;
-    }
+  }
 
   //Get the data array to be processed
   this->MyData = this->GetInputArrayToProcess(0, this->MyDataSet);
   if (!this->MyData)
-    {
+  {
     vtkErrorMacro("Could not find Velocity Array to be processed.");
     return;
-    }
+  }
   ostream* file = this->OpenFile();
-  if (!file ||
-      !this->WriteHeader(*file) ||
-      !this->WriteTimeStep(*file, 0.0) ||
-      !this->WriteFooter(*file))
-    {
+  if (!file || !this->WriteHeader(*file) || !this->WriteTimeStep(*file, 0.0) ||
+    !this->WriteFooter(*file))
+  {
     vtkErrorMacro("Write failed");
-    }
+  }
   this->CloseFile(file);
   this->MyData = 0;
   this->MyDataSet = 0;
@@ -136,15 +133,16 @@ void vtkCMBPt123VelocityWriter::WriteData()
 bool vtkCMBPt123VelocityWriter::WriteHeader(ostream& fp)
 {
   if (WriteCellBased)
-    {
+  {
     fp << this->MyDataSet->GetNumberOfCells() << "  " << this->SpatialDimension
-       <<" 1  No. Elements, Space Dimension, No. of Time Steps" << endl;
-    }
+       << " 1  No. Elements, Space Dimension, No. of Time Steps" << endl;
+  }
   else
-    {
-      fp << this->MyData->GetNumberOfTuples() << " " << this->SpatialDimension <<" 1 No. of Global Nodes, "
+  {
+    fp << this->MyData->GetNumberOfTuples() << " " << this->SpatialDimension
+       << " 1 No. of Global Nodes, "
        << "No. of Dimensions, No of Time Steps" << endl;
-    }
+  }
   return true;
 }
 
@@ -158,36 +156,35 @@ bool vtkCMBPt123VelocityWriter::WriteTimeStep(ostream& fp, double t)
   fp.setf(ios::showpoint);
   fp.setf(UseScientificNotation ? ios::scientific : ios::fixed, ios::floatfield);
   if (this->WriteCellBased)
-    {
-    vtkIdType j, k, nPerCell,
-      ncells = this->MyDataSet->GetNumberOfCells();
+  {
+    vtkIdType j, k, nPerCell, ncells = this->MyDataSet->GetNumberOfCells();
     if (this->SpatialDimension > this->MyData->GetNumberOfComponents())
-      {
+    {
       vtkErrorMacro("SpatialDimension must be <= NumberOfComponents");
       return false;
-      }
+    }
     vtkNew<vtkIdList> pcell;
     for (i = 0; i < ncells; i++)
-      {
-      this->MyDataSet->GetCellPoints(i,pcell.GetPointer());
+    {
+      this->MyDataSet->GetCellPoints(i, pcell.GetPointer());
       nPerCell = pcell->GetNumberOfIds();
       for (j = 0; j < nPerCell; j++)
-        {
-        this->MyData->GetTuple(pcell->GetId(j),v);
-        for (k = 0; k < this->SpatialDimension; k++)
-          fp <<v[k] << SEPARATOR;
-        }
-      fp << endl;
-      }
-    }
-  else
-    {
-    for (i = 0; i < n; i++)
       {
+        this->MyData->GetTuple(pcell->GetId(j), v);
+        for (k = 0; k < this->SpatialDimension; k++)
+          fp << v[k] << SEPARATOR;
+      }
+      fp << endl;
+    }
+  }
+  else
+  {
+    for (i = 0; i < n; i++)
+    {
       this->MyData->GetTuple(i, v);
       fp << v[0] << SEPARATOR << v[1] << SEPARATOR << v[2] << endl;
-      }
     }
+  }
   return true;
 }
 
@@ -199,8 +196,7 @@ bool vtkCMBPt123VelocityWriter::WriteFooter(ostream& fp)
 }
 
 //----------------------------------------------------------------------------
-int vtkCMBPt123VelocityWriter::FillInputPortInformation(int,
-  vtkInformation *info)
+int vtkCMBPt123VelocityWriter::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataObject");
   return 1;
@@ -217,4 +213,3 @@ void vtkCMBPt123VelocityWriter::PrintSelf(ostream& os, vtkIndent indent)
 
   this->Superclass::PrintSelf(os, indent);
 }
-

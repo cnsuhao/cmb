@@ -19,9 +19,9 @@
 #ifndef __vtkCMBSmoothMeshFilter_h
 #define __vtkCMBSmoothMeshFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkPolyData;
 class vtkUnstructuredGrid;
@@ -30,41 +30,43 @@ class vtkSmoothPolyDataFilter;
 class VTKCMBFILTERING_EXPORT vtkCMBSmoothMeshFilter : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCMBSmoothMeshFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkCMBSmoothMeshFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  static vtkCMBSmoothMeshFilter *New();
+  static vtkCMBSmoothMeshFilter* New();
 
   // Description:
   // Specify the vtkSelection object used for selecting the
   // mesh points.
   void SetSelectionConnection(vtkAlgorithmOutput* algOutput)
-  { this->SetInputConnection(1, algOutput); }
+  {
+    this->SetInputConnection(1, algOutput);
+  }
 
   // Description:
   // Removes all inputs from input port 1.
-  void RemoveAllSelectionsInputs()
-  { this->SetInputConnection(1, 0); }
+  void RemoveAllSelectionsInputs() { this->SetInputConnection(1, 0); }
 
   // Description:
   // Specify the vktPolyData object as mesh surface
   void SetSurfaceConnection(vtkAlgorithmOutput* algOutput)
-  { this->SetInputConnection(2, algOutput); }
+  {
+    this->SetInputConnection(2, algOutput);
+  }
 
   // Description:
   // Removes all inputs from input port 2.
-  void RemoveAllSurfaceInputs()
-  { this->SetInputConnection(2, 0); }
+  void RemoveAllSurfaceInputs() { this->SetInputConnection(2, 0); }
 
   // Description:
   // Specify a convergence criterion for the iteration
   // process. Smaller numbers result in more smoothing iterations.
-  vtkSetClampMacro(Convergence,double,0.0,1.0);
-  vtkGetMacro(Convergence,double);
+  vtkSetClampMacro(Convergence, double, 0.0, 1.0);
+  vtkGetMacro(Convergence, double);
 
   // Description:
   // Specify the number of iterations for Laplacian smoothing,
-  vtkSetClampMacro(NumberOfIterations,int,0,VTK_INT_MAX);
-  vtkGetMacro(NumberOfIterations,int);
+  vtkSetClampMacro(NumberOfIterations, int, 0, VTK_INT_MAX);
+  vtkGetMacro(NumberOfIterations, int);
 
   // Description:
   // Specify the relaxation factor for Laplacian smoothing. As in all
@@ -72,42 +74,41 @@ public:
   // this parameter. In general, small relaxation factors and large
   // numbers of iterations are more stable than larger relaxation
   // factors and smaller numbers of iterations.
-  vtkSetMacro(RelaxationFactor,double);
-  vtkGetMacro(RelaxationFactor,double);
+  vtkSetMacro(RelaxationFactor, double);
+  vtkGetMacro(RelaxationFactor, double);
 
   // Description:
   // Turn on/off smoothing along sharp interior edges.
-  vtkSetMacro(FeatureEdgeSmoothing,int);
-  vtkGetMacro(FeatureEdgeSmoothing,int);
-  vtkBooleanMacro(FeatureEdgeSmoothing,int);
+  vtkSetMacro(FeatureEdgeSmoothing, int);
+  vtkGetMacro(FeatureEdgeSmoothing, int);
+  vtkBooleanMacro(FeatureEdgeSmoothing, int);
 
   // Description:
   // Specify the feature angle for sharp edge identification.
-  vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
-  vtkGetMacro(FeatureAngle,double);
+  vtkSetClampMacro(FeatureAngle, double, 0.0, 180.0);
+  vtkGetMacro(FeatureAngle, double);
 
   // Description:
   // Specify the edge angle to control smoothing along edges (either interior
   // or boundary).
-  vtkSetClampMacro(EdgeAngle,double,0.0,180.0);
-  vtkGetMacro(EdgeAngle,double);
+  vtkSetClampMacro(EdgeAngle, double, 0.0, 180.0);
+  vtkGetMacro(EdgeAngle, double);
 
   // Description:
   // Turn on/off the smoothing of vertices on the boundary of the mesh.
-  vtkSetMacro(BoundarySmoothing,int);
-  vtkGetMacro(BoundarySmoothing,int);
-  vtkBooleanMacro(BoundarySmoothing,int);
+  vtkSetMacro(BoundarySmoothing, int);
+  vtkGetMacro(BoundarySmoothing, int);
+  vtkBooleanMacro(BoundarySmoothing, int);
 
-//BTX
+  //BTX
 protected:
   vtkCMBSmoothMeshFilter();
   ~vtkCMBSmoothMeshFilter() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   int FillInputPortInformation(int port, vtkInformation* info) override;
-  void ExtractSurfaceCells(bool bVolume,
-    vtkIdList* tmpIds, vtkIdList* nxtPts, vtkIdType cellId, vtkUnstructuredGrid* input,
-    vtkIdTypeArray* meshCellIdArray, vtkIdTypeArray* meshNodeIdArray,
+  void ExtractSurfaceCells(bool bVolume, vtkIdList* tmpIds, vtkIdList* nxtPts, vtkIdType cellId,
+    vtkUnstructuredGrid* input, vtkIdTypeArray* meshCellIdArray, vtkIdTypeArray* meshNodeIdArray,
     vtkPoints* newPoints, vtkCellArray* smoothPolys, vtkIdList* outMeshCellIds,
     vtkIdList* outNodeIdList, vtkIdList* surfaceNodeList);
 
@@ -121,10 +122,10 @@ protected:
   vtkSmoothPolyDataFilter* SmoothPolyFilter;
 
 private:
-  vtkCMBSmoothMeshFilter(const vtkCMBSmoothMeshFilter&);  // Not implemented.
-  void operator=(const vtkCMBSmoothMeshFilter&);  // Not implemented.
+  vtkCMBSmoothMeshFilter(const vtkCMBSmoothMeshFilter&); // Not implemented.
+  void operator=(const vtkCMBSmoothMeshFilter&);         // Not implemented.
 
-//ETX
+  //ETX
 };
 
 #endif

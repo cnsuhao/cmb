@@ -15,11 +15,11 @@
 #define __pqCMBLIDARPieceTable_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
-#include <QMap>
-#include <QList>
-#include "vtkBoundingBox.h"
 #include "cmbSystemConfig.h"
+#include "vtkBoundingBox.h"
+#include <QList>
+#include <QMap>
+#include <QObject>
 
 class QTableWidget;
 class pqCMBLIDARPieceObject;
@@ -32,37 +32,32 @@ class CMBAPPCOMMON_EXPORT pqCMBLIDARPieceTable : public QObject
   Q_OBJECT
 
 public:
-  pqCMBLIDARPieceTable(QTableWidget *widget, bool advancedTable = false);
+  pqCMBLIDARPieceTable(QTableWidget* widget, bool advancedTable = false);
   ~pqCMBLIDARPieceTable() override;
 
-  QTableWidget *getWidget() const { return this->TableWidget;}
+  QTableWidget* getWidget() const { return this->TableWidget; }
 
-  void AddLIDARPiece(pqCMBLIDARPieceObject *dataObj, int visible=1);
-  QList<pqCMBLIDARPieceObject *> getVisiblePieceObjects();
-  QList<pqCMBLIDARPieceObject *> getAllPieceObjects();
+  void AddLIDARPiece(pqCMBLIDARPieceObject* dataObj, int visible = 1);
+  QList<pqCMBLIDARPieceObject*> getVisiblePieceObjects();
+  QList<pqCMBLIDARPieceObject*> getAllPieceObjects();
 
   pqCMBLIDARPieceObject* getCurrentObject(bool onlyIfSelectable = true);
   void updateWithPieceInfo(int pieceIndex);
-  void updateWithPieceInfo(pqCMBLIDARPieceObject *dataObj, int row = -1);
+  void updateWithPieceInfo(pqCMBLIDARPieceObject* dataObj, int row = -1);
 
-  void setOnRatioOfSelectedPieces( int newOnRatio);
+  void setOnRatioOfSelectedPieces(int newOnRatio);
 
-  void setLinkedTable(pqCMBLIDARPieceTable* linkedTable)
-    { this->LinkedTable = linkedTable; }
+  void setLinkedTable(pqCMBLIDARPieceTable* linkedTable) { this->LinkedTable = linkedTable; }
 
-  void setClipEnabled(bool state)
-    { this->ClipEnabled = state; }
-  bool getClipEnabled()
-    { return this->ClipEnabled; }
+  void setClipEnabled(bool state) { this->ClipEnabled = state; }
+  bool getClipEnabled() { return this->ClipEnabled; }
 
-  void setClipBBox(vtkBoundingBox &clipBBox)
-    { this->ClipBBox = clipBBox; }
-  vtkBoundingBox &getClipBBox()
-    { return this->ClipBBox; }
+  void setClipBBox(vtkBoundingBox& clipBBox) { this->ClipBBox = clipBBox; }
+  vtkBoundingBox& getClipBBox() { return this->ClipBBox; }
 
   int getCurrentRow(bool onlyIfSelectable = true);
-  int computeSaveNumberOfPointsEstimate(pqCMBLIDARPieceObject *dataObj);
-  int computeDisplayNumberOfPointsEstimate(pqCMBLIDARPieceObject *dataObj);
+  int computeSaveNumberOfPointsEstimate(pqCMBLIDARPieceObject* dataObj);
+  int computeDisplayNumberOfPointsEstimate(pqCMBLIDARPieceObject* dataObj);
   void selectObject(pqPipelineSource* selSource);
 
 public slots:
@@ -84,16 +79,16 @@ signals:
 
 protected:
   QTableWidget* TableWidget;
-  pqCMBLIDARPieceTable *LinkedTable;
+  pqCMBLIDARPieceTable* LinkedTable;
 
   void initialize(bool advancedTable);
   pqCMBLIDARPieceObject* getRowObject(int row);
-  int getObjectRow(pqCMBLIDARPieceObject *dataObj);
+  int getObjectRow(pqCMBLIDARPieceObject* dataObj);
   QMap<int, int> getSelectedPieceOnRatios();
   void updateCheckedItems(QList<int> newChecked, QList<int> newUnChecked);
   void setSelection(int selectionRow);
   void setVisibility(int row, int visibilityState);
-  void addAdvancedColumns(int row, pqCMBLIDARPieceObject *dataObj);
+  void addAdvancedColumns(int row, pqCMBLIDARPieceObject* dataObj);
   bool ClipEnabled;
   vtkBoundingBox ClipBBox;
 };

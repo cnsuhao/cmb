@@ -21,11 +21,11 @@
 #ifndef __vtkCMBBorFileReader__
 #define __vtkCMBBorFileReader__
 
-#include "vtkCMBIOModule.h" // For export macro
 #include "cmbSystemConfig.h"
-#include <vtkMultiBlockDataSetAlgorithm.h>
+#include "vtkCMBIOModule.h" // For export macro
 #include <map>
 #include <vector>
+#include <vtkMultiBlockDataSetAlgorithm.h>
 
 class vtkMultiBlockDataSet;
 class BorHoleInfo;
@@ -33,41 +33,41 @@ class BorCrossSection;
 
 class VTKCMBIO_EXPORT vtkCMBBorFileReader : public vtkMultiBlockDataSetAlgorithm
 {
-  public:
-    static vtkCMBBorFileReader* New();
-    void PrintSelf( ostream&os, vtkIndent indent ) override;
-    vtkTypeMacro(vtkCMBBorFileReader, vtkMultiBlockDataSetAlgorithm);
+public:
+  static vtkCMBBorFileReader* New();
+  void PrintSelf(ostream& os, vtkIndent indent) override;
+  vtkTypeMacro(vtkCMBBorFileReader, vtkMultiBlockDataSetAlgorithm);
 
-    vtkSetStringMacro(FileName);
-    vtkGetStringMacro(FileName);
-    vtkGetMacro(NumberOfBoreholes, int);
-    vtkGetMacro(NumberOfCrossSections, int);
+  vtkSetStringMacro(FileName);
+  vtkGetStringMacro(FileName);
+  vtkGetMacro(NumberOfBoreholes, int);
+  vtkGetMacro(NumberOfCrossSections, int);
 
-//BTX
-  protected:
-    vtkCMBBorFileReader();
-    ~vtkCMBBorFileReader() override;
-    //Reader functions for various file formats found in the output of BorFile
-    int ReadBorFile(const char* filename);
-    int ProcessBorFileInfo(vtkMultiBlockDataSet* output);
+  //BTX
+protected:
+  vtkCMBBorFileReader();
+  ~vtkCMBBorFileReader() override;
+  //Reader functions for various file formats found in the output of BorFile
+  int ReadBorFile(const char* filename);
+  int ProcessBorFileInfo(vtkMultiBlockDataSet* output);
 
-    int RequestInformation( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
-    int RequestData( vtkInformation*, vtkInformationVector**, vtkInformationVector* ) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-    char* FileName;
-    double BHDisplayWidth;
-    // Borehole sample data will not be supported
-    // (not sure if GMS even exports datasets to this file anymore)
-    // so if the number of datasets is non-zero then a message
-    // stating that sample data will be ignored should be provided.
-    int BHNumSampleDatasets;
+  char* FileName;
+  double BHDisplayWidth;
+  // Borehole sample data will not be supported
+  // (not sure if GMS even exports datasets to this file anymore)
+  // so if the number of datasets is non-zero then a message
+  // stating that sample data will be ignored should be provided.
+  int BHNumSampleDatasets;
 
-    int NumberOfBoreholes;
-    int NumberOfCrossSections;
+  int NumberOfBoreholes;
+  int NumberOfCrossSections;
 
-    std::map<std::string, BorHoleInfo> BoreHoles;
-    std::vector<BorCrossSection> CrossSections;
-//ETX
+  std::map<std::string, BorHoleInfo> BoreHoles;
+  std::vector<BorCrossSection> CrossSections;
+  //ETX
 };
 
 #endif //__vtkCMBBorFileReader__

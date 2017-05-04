@@ -15,8 +15,8 @@
 #define _cmbSceneNodeReplaceEvent_h
 
 #include "cmbEvent.h"
-#include <vector>
 #include "cmbSystemConfig.h"
+#include <vector>
 
 class pqCMBSceneNode;
 
@@ -25,25 +25,18 @@ class CMBAPPCOMMON_EXPORT cmbSceneNodeReplaceEvent : public cmbEvent
 
 public:
   cmbSceneNodeReplaceEvent(std::size_t creationSize, std::size_t deletionSize);
-    ~cmbSceneNodeReplaceEvent() override;
+  ~cmbSceneNodeReplaceEvent() override;
 
-    void undo() override;
-    void redo() override;
+  void undo() override;
+  void redo() override;
 
-    void addCreatedNode(pqCMBSceneNode *node)
-    {
-        this->CreatedNodes.push_back(node);
-    }
+  void addCreatedNode(pqCMBSceneNode* node) { this->CreatedNodes.push_back(node); }
 
-    void addDeletedNode(pqCMBSceneNode *node)
-    {
-        this->DeletedNodes.push_back(node);
-    }
+  void addDeletedNode(pqCMBSceneNode* node) { this->DeletedNodes.push_back(node); }
 
 protected:
   std::vector<pqCMBSceneNode*> CreatedNodes;
   std::vector<pqCMBSceneNode*> DeletedNodes;
-
 };
 
 #endif // _cmbSceneNodeReplaceEvent_h

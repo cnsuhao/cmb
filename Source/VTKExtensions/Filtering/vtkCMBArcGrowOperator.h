@@ -14,18 +14,18 @@
 #ifndef __vtkCMBArcGrowOperator_h
 #define __vtkCMBArcGrowOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 #include <set>
 
 class vtkIdTypeArray;
 class VTKCMBFILTERING_EXPORT vtkCMBArcGrowOperator : public vtkObject
 {
 public:
-  static vtkCMBArcGrowOperator * New();
-  vtkTypeMacro(vtkCMBArcGrowOperator,vtkObject);
+  static vtkCMBArcGrowOperator* New();
+  vtkTypeMacro(vtkCMBArcGrowOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
@@ -42,9 +42,7 @@ public:
 
   //Description:
   //If the grow works this these are the arc ids of the grow
-  vtkGetObjectMacro(GrownArcSetIds,vtkIdTypeArray);
-
-
+  vtkGetObjectMacro(GrownArcSetIds, vtkIdTypeArray);
 
 protected:
   vtkCMBArcGrowOperator();
@@ -55,9 +53,9 @@ protected:
   vtkIdTypeArray* GrownArcSetIds;
 
 private:
-  vtkCMBArcGrowOperator(const vtkCMBArcGrowOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcGrowOperator&);  // Not implemented.
-//ETX
+  vtkCMBArcGrowOperator(const vtkCMBArcGrowOperator&); // Not implemented.
+  void operator=(const vtkCMBArcGrowOperator&);        // Not implemented.
+  //ETX
 };
 
 #endif

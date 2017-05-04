@@ -10,22 +10,20 @@
 #include "vtkCMBProgramManager.h"
 #include "vtkObjectFactory.h"
 
-#include <vtksys/SystemTools.hxx>
 #include <iostream>
 #include <sstream>
+#include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkCMBProgramManager);
 
 //-----------------------------------------------------------------------------
 vtkCMBProgramManager::vtkCMBProgramManager()
 {
-
 }
 
 //-----------------------------------------------------------------------------
 vtkCMBProgramManager::~vtkCMBProgramManager()
 {
-
 }
 
 //-----------------------------------------------------------------------------
@@ -59,7 +57,7 @@ int const& vtkCMBProgramManager::GetVersionMinor() const
 }
 
 //-----------------------------------------------------------------------------
-void vtkCMBProgramManager::SetDirectoryPath(const vtkStdString &path)
+void vtkCMBProgramManager::SetDirectoryPath(const vtkStdString& path)
 {
   this->DirectoryPath = path;
 
@@ -75,7 +73,7 @@ void vtkCMBProgramManager::SetProgram(vtkCMBProjectManager::PROGRAM program)
 }
 
 //-----------------------------------------------------------------------------
-void vtkCMBProgramManager::SetProgramVersion(const int &major, const int &minor)
+void vtkCMBProgramManager::SetProgramVersion(const int& major, const int& minor)
 {
   this->VersionMajor = major;
   this->VersionMinor = minor;
@@ -85,7 +83,6 @@ void vtkCMBProgramManager::SetProgramVersion(const int &major, const int &minor)
   std::stringstream buff(std::stringstream::in | std::stringstream::out);
   buff << major << "." << minor;
   this->ProgramVersion = buff.str();
-
 }
 
 //-----------------------------------------------------------------------------

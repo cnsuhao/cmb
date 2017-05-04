@@ -11,9 +11,9 @@
 
 #include "vtkCamera.h"
 #include "vtkObjectFactory.h"
+#include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
 
 vtkStandardNewMacro(vtkPVTrackballDolly);
 
@@ -29,29 +29,25 @@ vtkPVTrackballDolly::~vtkPVTrackballDolly()
 }
 
 //-------------------------------------------------------------------------
-void vtkPVTrackballDolly::OnButtonDown(int, int, vtkRenderer *ren,
-                                      vtkRenderWindowInteractor *)
+void vtkPVTrackballDolly::OnButtonDown(int, int, vtkRenderer* ren, vtkRenderWindowInteractor*)
 {
-  int *size = ren->GetSize();
-  vtkCamera *camera = ren->GetActiveCamera();
-  double *range = camera->GetClippingRange();
+  int* size = ren->GetSize();
+  vtkCamera* camera = ren->GetActiveCamera();
+  double* range = camera->GetClippingRange();
   this->ZoomScale = 1.5 * range[1] / static_cast<double>(size[1]);
 }
 
-
 //-------------------------------------------------------------------------
-void vtkPVTrackballDolly::OnButtonUp(int, int, vtkRenderer *,
-                                    vtkRenderWindowInteractor *)
+void vtkPVTrackballDolly::OnButtonUp(int, int, vtkRenderer*, vtkRenderWindowInteractor*)
 {
 }
 
 //-------------------------------------------------------------------------
-void vtkPVTrackballDolly::OnMouseMove(int vtkNotUsed(x), int y,
-                                     vtkRenderer *ren,
-                                     vtkRenderWindowInteractor *rwi)
+void vtkPVTrackballDolly::OnMouseMove(
+  int vtkNotUsed(x), int y, vtkRenderer* ren, vtkRenderWindowInteractor* rwi)
 {
   double dy = rwi->GetLastEventPosition()[1] - y;
-  vtkCamera *camera = ren->GetActiveCamera();
+  vtkCamera* camera = ren->GetActiveCamera();
   double pos[3], fp[3], *norm, k, tmp;
 
   camera->GetPosition(pos);
@@ -64,13 +60,13 @@ void vtkPVTrackballDolly::OnMouseMove(int vtkNotUsed(x), int y,
   // in general we expect / pln to only use this to move along an axis
   // (in 2D mode), but go ahead and cacculate in gereral sense
   if (cameraDistance < k * 4.0)
-    {
+  {
     k = cameraDistance / 4.0;
     if (k < 1e-10)
-      {
+    {
       k = 0;
-      }
     }
+  }
 
   tmp = k * norm[0];
   pos[0] += tmp;
@@ -94,9 +90,3 @@ void vtkPVTrackballDolly::PrintSelf(ostream& os, vtkIndent indent)
 
   os << indent << "ZoomScale: {" << this->ZoomScale << endl;
 }
-
-
-
-
-
-

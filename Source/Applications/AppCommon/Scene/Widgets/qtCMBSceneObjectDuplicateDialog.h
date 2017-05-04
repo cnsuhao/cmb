@@ -11,15 +11,14 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBSceneObjectDuplicateDialog_h
 #define __qtCMBSceneObjectDuplicateDialog_h
 
 #include "cmbAppCommonExport.h"
+#include "cmbSystemConfig.h"
 #include <QObject>
 #include <QStringList>
 #include <vector>
-#include "cmbSystemConfig.h"
 
 class pqCMBSceneNode;
 class pqCMBSceneObjectBase;
@@ -28,7 +27,7 @@ class qtCMBPlacementConstraintWidget;
 
 namespace Ui
 {
-  class qtCMBSceneObjectDuplicate;
+class qtCMBSceneObjectDuplicate;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBSceneObjectDuplicateDialog : public QObject
@@ -37,37 +36,32 @@ class CMBAPPCOMMON_EXPORT qtCMBSceneObjectDuplicateDialog : public QObject
 
 public:
   // returns the number of copies
-  static int getCopyInfo(pqCMBSceneNode *parent,
-                         bool enableGlyphOption,
-                         bool enableTextureConstraintOption,
-                         bool &useGlyphPlayback,
-                         QMap<pqCMBSceneNode *, int> &constraints,
-                         bool &okToUseGlyphs,
-                         bool &useTextureConstraint,
-                         int &glyphPlaybackOption,
-                         QString &glyphPlaybackFileName);
+  static int getCopyInfo(pqCMBSceneNode* parent, bool enableGlyphOption,
+    bool enableTextureConstraintOption, bool& useGlyphPlayback,
+    QMap<pqCMBSceneNode*, int>& constraints, bool& okToUseGlyphs, bool& useTextureConstraint,
+    int& glyphPlaybackOption, QString& glyphPlaybackFileName);
 
 protected slots:
   void accept();
   void cancel();
 
 protected:
-  qtCMBSceneObjectDuplicateDialog(pqCMBSceneNode *n, bool enableGylphOption,
-    bool enableTextureConstraintOption, bool &useGlyphPlayback);
-  qtCMBSceneObjectDuplicateDialog():
-    CopyDialog(NULL), MainDialog(NULL), Parent(NULL), Count(0)
-    {}
+  qtCMBSceneObjectDuplicateDialog(pqCMBSceneNode* n, bool enableGylphOption,
+    bool enableTextureConstraintOption, bool& useGlyphPlayback);
+  qtCMBSceneObjectDuplicateDialog()
+    : CopyDialog(NULL)
+    , MainDialog(NULL)
+    , Parent(NULL)
+    , Count(0)
+  {
+  }
   ~qtCMBSceneObjectDuplicateDialog() override;
-  int exec(QMap<pqCMBSceneNode*, int> &constraints,
-           bool &okToUseGlyphs,
-           bool &useTextureConstraint,
-           bool &useGlyphPlayback,
-           int &glyphPlaybackOption,
-           QString &glyphPlaybackFileName);
+  int exec(QMap<pqCMBSceneNode*, int>& constraints, bool& okToUseGlyphs, bool& useTextureConstraint,
+    bool& useGlyphPlayback, int& glyphPlaybackOption, QString& glyphPlaybackFileName);
 
-  Ui::qtCMBSceneObjectDuplicate *CopyDialog;
-  QDialog *MainDialog;
-  pqCMBSceneNode *Parent;
+  Ui::qtCMBSceneObjectDuplicate* CopyDialog;
+  QDialog* MainDialog;
+  pqCMBSceneNode* Parent;
 
   qtCMBPlacementConstraintWidget* PlacementWidget;
   int Count;

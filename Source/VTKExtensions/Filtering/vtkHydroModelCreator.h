@@ -16,29 +16,27 @@
 #ifndef __vtkHydroModelCreator_h
 #define __vtkHydroModelCreator_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkHydroModelCreator : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  static vtkHydroModelCreator *New();
-  vtkTypeMacro(vtkHydroModelCreator,vtkMultiBlockDataSetAlgorithm);
+  static vtkHydroModelCreator* New();
+  vtkTypeMacro(vtkHydroModelCreator, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-
-
 
 protected:
   vtkHydroModelCreator();
   ~vtkHydroModelCreator() override;
 
   int FillInputPortInformation(int, vtkInformation* info) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
-  vtkHydroModelCreator(const vtkHydroModelCreator&);  // Not implemented.
-  void operator=(const vtkHydroModelCreator&);  // Not implemented.
+  vtkHydroModelCreator(const vtkHydroModelCreator&); // Not implemented.
+  void operator=(const vtkHydroModelCreator&);       // Not implemented.
 };
 
 #endif

@@ -11,19 +11,18 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __qtCMBNewSceneUnitsDialog_h
 #define __qtCMBNewSceneUnitsDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
 #include "cmbSceneUnits.h"
 #include "cmbSystemConfig.h"
+#include <QObject>
 class QDialog;
 
 namespace Ui
 {
-  class qtNewSceneUnitsDialog;
+class qtNewSceneUnitsDialog;
 };
 
 class CMBAPPCOMMON_EXPORT qtCMBNewSceneUnitsDialog : public QObject
@@ -31,8 +30,7 @@ class CMBAPPCOMMON_EXPORT qtCMBNewSceneUnitsDialog : public QObject
   Q_OBJECT
 
 public:
-  static bool getUnits(cmbSceneUnits::Enum initialUnits,
-                       cmbSceneUnits::Enum &newUnits);
+  static bool getUnits(cmbSceneUnits::Enum initialUnits, cmbSceneUnits::Enum& newUnits);
 
 protected slots:
   void accept();
@@ -40,15 +38,18 @@ protected slots:
 
 protected:
   qtCMBNewSceneUnitsDialog(cmbSceneUnits::Enum initial);
-  qtCMBNewSceneUnitsDialog():
-    NewUnitsDialog(NULL), MainDialog(NULL), NewUnits(cmbSceneUnits::Unknown),
-    Status(false)
-    {}
+  qtCMBNewSceneUnitsDialog()
+    : NewUnitsDialog(NULL)
+    , MainDialog(NULL)
+    , NewUnits(cmbSceneUnits::Unknown)
+    , Status(false)
+  {
+  }
   ~qtCMBNewSceneUnitsDialog() override;
-  bool exec(cmbSceneUnits::Enum &newUnits);
+  bool exec(cmbSceneUnits::Enum& newUnits);
 
-  Ui::qtNewSceneUnitsDialog *NewUnitsDialog;
-  QDialog *MainDialog;
+  Ui::qtNewSceneUnitsDialog* NewUnitsDialog;
+  QDialog* MainDialog;
   cmbSceneUnits::Enum NewUnits;
   bool Status;
 };

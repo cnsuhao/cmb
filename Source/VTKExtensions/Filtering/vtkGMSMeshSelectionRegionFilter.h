@@ -18,9 +18,9 @@
 #ifndef __vtkGMSMeshSelectionRegionFilter_h
 #define __vtkGMSMeshSelectionRegionFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkUnstructuredGridAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIntArray;
 class vtkIdTypeArray;
@@ -29,7 +29,7 @@ class vtkSelectionNode;
 class VTKCMBFILTERING_EXPORT vtkGMSMeshSelectionRegionFilter : public vtkUnstructuredGridAlgorithm
 {
 public:
-  static vtkGMSMeshSelectionRegionFilter *New();
+  static vtkGMSMeshSelectionRegionFilter* New();
   vtkTypeMacro(vtkGMSMeshSelectionRegionFilter, vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
@@ -37,24 +37,23 @@ public:
   // Specify the vtkSelection object used for selecting the
   // mesh facets.
   void SetSelectionConnection(vtkAlgorithmOutput* algOutput)
-    { this->SetInputConnection(1, algOutput); }
+  {
+    this->SetInputConnection(1, algOutput);
+  }
   // Description:
   // Removes all inputs from input port 1.
-  void RemoveAllSelectionsInputs()
-    { this->SetInputConnection(1, 0); }
+  void RemoveAllSelectionsInputs() { this->SetInputConnection(1, 0); }
   // Description:
   // Specify the mesh object used for change regions.
-  void SetMeshConnection(vtkAlgorithmOutput* algOutput)
-  { this->SetInputConnection(2, algOutput); }
+  void SetMeshConnection(vtkAlgorithmOutput* algOutput) { this->SetInputConnection(2, algOutput); }
   // Description:
   // Removes all inputs from input port 2.
-  void RemoveAllMeshsInputs()
-  { this->SetInputConnection(2, 0); }
+  void RemoveAllMeshsInputs() { this->SetInputConnection(2, 0); }
 
   // Description:
   // Get/Set the RegionId, which will set to the selected cells.
   void SetSelectionRegionId(int);
-  vtkGetMacro(SelectionRegionId,int);
+  vtkGetMacro(SelectionRegionId, int);
 
 protected:
   vtkGMSMeshSelectionRegionFilter();
@@ -63,10 +62,7 @@ protected:
   int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // runs the algorithm and fills the output with results
-  int RequestData(vtkInformation *,
-                  vtkInformationVector **,
-                  vtkInformationVector *) override;
-
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   int ModifySelectedCellRegions(
     vtkSelectionNode* selNode, vtkIntArray* outArray, vtkIdTypeArray* cellIDArray);
@@ -75,8 +71,8 @@ protected:
   int IsNewRegionIdSet;
 
 private:
-  vtkGMSMeshSelectionRegionFilter(const vtkGMSMeshSelectionRegionFilter&);  // Not implemented.
-  void operator=(const vtkGMSMeshSelectionRegionFilter&);  // Not implemented.
+  vtkGMSMeshSelectionRegionFilter(const vtkGMSMeshSelectionRegionFilter&); // Not implemented.
+  void operator=(const vtkGMSMeshSelectionRegionFilter&);                  // Not implemented.
 };
 
 #endif

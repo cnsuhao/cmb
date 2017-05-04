@@ -8,14 +8,14 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBWriter.h"
-#include "vtkPolyData.h"
-#include "vtkMultiBlockDataSet.h"
-#include "vtkObjectFactory.h"
+#include "vtkCellData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkCellData.h"
+#include "vtkMultiBlockDataSet.h"
 #include "vtkMultiBlockWrapper.h"
 #include "vtkNew.h"
+#include "vtkObjectFactory.h"
+#include "vtkPolyData.h"
 #include "vtkXMLPolyDataWriter.h"
 
 vtkStandardNewMacro(vtkCMBWriter);
@@ -42,24 +42,22 @@ void vtkCMBWriter::Write()
 }
 
 //-----------------------------------------------------------------------------
-int vtkCMBWriter::RequestData(
-  vtkInformation * /*request*/,
-  vtkInformationVector **inputVector,
-  vtkInformationVector * /*outputVector*/)
+int vtkCMBWriter::RequestData(vtkInformation* /*request*/, vtkInformationVector** inputVector,
+  vtkInformationVector* /*outputVector*/)
 {
   vtkDebugMacro("Writing CMB File");
   // get the info object
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
 
   // get the input and output
-  vtkMultiBlockDataSet *input = vtkMultiBlockDataSet::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkMultiBlockDataSet* input =
+    vtkMultiBlockDataSet::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  if(!input)
-    {
+  if (!input)
+  {
     vtkWarningMacro("The input did not pass in a vtkMultiBlockDataSet object");
     return 0;
-    }
+  }
 
   vtkNew<vtkPolyData> poly;
   vtkNew<vtkMultiBlockWrapper> mbw;
@@ -69,14 +67,14 @@ int vtkCMBWriter::RequestData(
   vtkNew<vtkXMLPolyDataWriter> writer;
   writer->SetInputData(poly.GetPointer());
   writer->SetFileName(this->FileName);
-  if(this->BinaryOutput)
-    {
+  if (this->BinaryOutput)
+  {
     writer->SetDataModeToBinary();
-    }
+  }
   else
-    {
+  {
     writer->SetDataModeToAscii();
-    }
+  }
   writer->Write();
   return 1;
 }
@@ -84,8 +82,7 @@ int vtkCMBWriter::RequestData(
 //-----------------------------------------------------------------------------
 void vtkCMBWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   std::cout << indent << "FileName: " << (this->FileName ? this->FileName : "NULL") << "\n";
   std::cout << indent << "BinaryOutput: " << this->BinaryOutput << "\n";
-
 }

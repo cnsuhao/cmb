@@ -15,9 +15,9 @@
 #ifndef __vtkOmicronMeshInputWriter_h
 #define __vtkOmicronMeshInputWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "cmbSystemConfig.h"
 class vtkMultiBlockDataSet;
 
 class VTKCMBIO_EXPORT vtkOmicronMeshInputWriter : public vtkWriter
@@ -35,7 +35,6 @@ public:
   // Get/Set the filename.
   vtkSetStringMacro(FileName);
   vtkGetStringMacro(FileName);
-
 
   // Description:
   // Get/Set the filename of the geometry file associated with this file.
@@ -57,13 +56,12 @@ protected:
   char* GeometryFileName;
   double VolumeConstraint;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
 private:
   vtkOmicronMeshInputWriter(const vtkOmicronMeshInputWriter&); // Not implemented.
-  void operator=(const vtkOmicronMeshInputWriter&); // Not implemented.
-//ETX
+  void operator=(const vtkOmicronMeshInputWriter&);            // Not implemented.
+  //ETX
 };
 
 #endif
-
-

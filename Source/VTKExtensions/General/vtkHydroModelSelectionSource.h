@@ -14,21 +14,21 @@
 #ifndef __vtkHydroModelSelectionSource_h
 #define __vtkHydroModelSelectionSource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkSelectionAlgorithm.h"
-#include "cmbSystemConfig.h"
 class vtkSelectionSource;
 
 class VTKCMBGENERAL_EXPORT vtkHydroModelSelectionSource : public vtkSelectionAlgorithm
 {
 public:
-  static vtkHydroModelSelectionSource *New();
-  vtkTypeMacro(vtkHydroModelSelectionSource,vtkSelectionAlgorithm);
+  static vtkHydroModelSelectionSource* New();
+  vtkTypeMacro(vtkHydroModelSelectionSource, vtkSelectionAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
-  void CopyData(vtkSelection *selection);
-  void CopyData(vtkAlgorithm *algOut);
+  void CopyData(vtkSelection* selection);
+  void CopyData(vtkAlgorithm* algOut);
   vtkGetObjectMacro(Selection, vtkSelection);
 
   // Description:
@@ -48,24 +48,24 @@ public:
   // Invert the selection.
   void InvertSelection(int insideOut);
 
-//BTX
+  //BTX
 protected:
   vtkHydroModelSelectionSource();
   ~vtkHydroModelSelectionSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  vtkSelectionSource *Source;
+  vtkSelectionSource* Source;
   vtkSelection* Selection;
   int InsideOut;
 
 private:
-  vtkHydroModelSelectionSource(const vtkHydroModelSelectionSource&);  // Not implemented.
-  void operator=(const vtkHydroModelSelectionSource&);  // Not implemented.
+  vtkHydroModelSelectionSource(const vtkHydroModelSelectionSource&); // Not implemented.
+  void operator=(const vtkHydroModelSelectionSource&);               // Not implemented.
 
   class vtkInternal;
   vtkInternal* Internal;
-//ETX
+  //ETX
 };
 
 #endif

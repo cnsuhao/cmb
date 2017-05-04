@@ -15,10 +15,9 @@
 #ifndef __pqCMBPolygon_h
 #define __pqCMBPolygon_h
 
-
 #include "cmbAppCommonExport.h"
-#include "pqCMBTexturedObject.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBTexturedObject.h"
 #include <set>
 #include <vector>
 
@@ -26,25 +25,25 @@ class pqRenderView;
 class pqCMBSceneNode;
 class pqCMBArc;
 
-class  CMBAPPCOMMON_EXPORT pqCMBPolygon : public pqCMBTexturedObject
+class CMBAPPCOMMON_EXPORT pqCMBPolygon : public pqCMBTexturedObject
 {
   typedef pqCMBSceneObjectBase Superclass;
+
 public:
-  pqCMBPolygon(double minAngle, double edgeLength,
-    std::vector<pqCMBSceneNode*> &inputNodes);
+  pqCMBPolygon(double minAngle, double edgeLength, std::vector<pqCMBSceneNode*>& inputNodes);
   ~pqCMBPolygon() override;
 
-  bool isDefaultConstrained() const override{return true;}
+  bool isDefaultConstrained() const override { return true; }
 
   pqCMBSceneObjectBase::enumObjectType getType() const override;
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                    bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
 
   bool writeToFile();
   std::string getFileName() const;
-  void setFileName(std::string &filename);
+  void setFileName(std::string& filename);
 
-  bool isValidPolygon() const {return ValidPolygon;}
+  bool isValidPolygon() const { return ValidPolygon; }
 
   //returns the min angle used to mesh this polygon
   //a min angle of zero means min angle was disabled
@@ -54,8 +53,7 @@ public:
   //an edge legth of zero means the edge length was disabled
   double getEdgeLength() const { return EdgeLength; }
 
-  const std::set<pqCMBArc*>& arcsUsedByPolygon() const
-    { return this->InputArcs; }
+  const std::set<pqCMBArc*>& arcsUsedByPolygon() const { return this->InputArcs; }
 
   void updateRepresentation() override;
 
@@ -68,9 +66,9 @@ protected:
   //arcs and polygons refresh each other if needed
   friend class pqCMBArc;
 
-  void addArc( pqCMBArc* arc );
-  void removeArc( pqCMBArc* arc );
-  void arcIsDirty( pqCMBArc* arc );
+  void addArc(pqCMBArc* arc);
+  void removeArc(pqCMBArc* arc);
+  void arcIsDirty(pqCMBArc* arc);
 
   double MinAngle;
   double EdgeLength;
@@ -78,6 +76,5 @@ protected:
   std::set<pqCMBArc*> InputArcs;
   bool NeedsRemesh;
   std::string FileName;
-
 };
 #endif /* __pqCMBPolygon_h */

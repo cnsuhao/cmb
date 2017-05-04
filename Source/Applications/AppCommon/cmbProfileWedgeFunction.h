@@ -17,19 +17,20 @@ class CMBAPPCOMMON_EXPORT cmbProfileWedgeFunction : public cmbProfileFunction
 {
 public:
   friend class cmbProfileFunction;
-  enum DisplacmentMode{Dig,Raise,Level};
+  enum DisplacmentMode
+  {
+    Dig,
+    Raise,
+    Level
+  };
   cmbProfileWedgeFunction();
   ~cmbProfileWedgeFunction() override;
   cmbProfileFunction::FunctionType getType() const override;
-  cmbProfileFunction * clone(std::string const& name) const override;
-  void sendDataToProxy(int arc_ID, int pointID,
-                               vtkBoundingBox bbox,
-                               vtkSMSourceProxy* source) const override;
+  cmbProfileFunction* clone(std::string const& name) const override;
+  void sendDataToProxy(
+    int arc_ID, int pointID, vtkBoundingBox bbox, vtkSMSourceProxy* source) const override;
 
-  virtual vtkPiecewiseFunction * getWeightingFunction() const
-  {
-    return WeightingFunction;
-  }
+  virtual vtkPiecewiseFunction* getWeightingFunction() const { return WeightingFunction; }
 
   double getDepth() const;
   double getBaseWidth() const;
@@ -57,15 +58,16 @@ public:
   DisplacmentMode getMode() const;
 
 protected:
-  bool readData(std::ifstream & in, int version) override;
-  bool writeData(std::ofstream & out) const override;
+  bool readData(std::ifstream& in, int version) override;
+  bool writeData(std::ofstream& out) const override;
+
 private:
   double depth;
   double baseWidth;
   double slopeLeft;
   double slopeRight;
 
-  vtkPiecewiseFunction * WeightingFunction;
+  vtkPiecewiseFunction* WeightingFunction;
 
   bool Relative;
   bool Symmetry;

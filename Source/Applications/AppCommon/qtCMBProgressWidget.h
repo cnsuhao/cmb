@@ -16,8 +16,8 @@
 #define __qtCMBProgressWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 
 class QProgressBar;
 class QToolButton;
@@ -26,13 +26,10 @@ class CMBAPPCOMMON_EXPORT qtCMBProgressWidget : public QWidget
 {
   Q_OBJECT
 public:
-  qtCMBProgressWidget(QWidget* parent=0);
+  qtCMBProgressWidget(QWidget* parent = 0);
   ~qtCMBProgressWidget() override;
 
-  QToolButton* getAbortButton() const
-    {
-    return this->AbortButton;
-    }
+  QToolButton* getAbortButton() const { return this->AbortButton; }
 
 public slots:
   /// Set the progress.
@@ -55,7 +52,7 @@ protected:
 
 private:
   qtCMBProgressWidget(const qtCMBProgressWidget&); // Not implemented.
-  void operator=(const qtCMBProgressWidget&); // Not implemented.
+  void operator=(const qtCMBProgressWidget&);      // Not implemented.
 };
 
 #endif

@@ -15,10 +15,9 @@
 #ifndef __vtkExtractModelFaceBlock_h
 #define __vtkExtractModelFaceBlock_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
-
 
 class VTKCMBFILTERING_EXPORT vtkExtractModelFaceBlock : public vtkPolyDataAlgorithm
 {
@@ -33,25 +32,22 @@ public:
   vtkSetMacro(FaceId, int);
   vtkGetMacro(FaceId, int);
 
-//BTX
+  //BTX
 protected:
   vtkExtractModelFaceBlock();
-  ~vtkExtractModelFaceBlock() override {};
+  ~vtkExtractModelFaceBlock() override{};
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   /// Implementation of the algorithm.
-  int RequestData(vtkInformation *,
-                          vtkInformationVector **,
-                          vtkInformationVector *) override;
-
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkExtractModelFaceBlock(const vtkExtractModelFaceBlock&); // Not implemented.
-  void operator=(const vtkExtractModelFaceBlock&); // Not implemented.
+  void operator=(const vtkExtractModelFaceBlock&);           // Not implemented.
 
   int FaceId;
-//ETX
+  //ETX
 };
 
 #endif

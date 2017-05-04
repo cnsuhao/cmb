@@ -16,12 +16,12 @@
 #ifndef __vtkCMBArc_h
 #define __vtkCMBArc_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkDataObject.h"
 #include "vtkVector.h"
-#include "cmbSystemConfig.h"
-#include <list>
 #include <cmath>
+#include <list>
 
 class vtkCMBArcEndNode;
 class vtkCMBArcManager;
@@ -30,23 +30,28 @@ class vtkPolyData;
 
 class VTKCMBGENERAL_EXPORT vtkCMBArc : public vtkDataObject
 {
-friend class vtkCMBArcManager;
+  friend class vtkCMBArcManager;
+
 public:
-  vtkTypeMacro(vtkCMBArc,vtkDataObject);
+  vtkTypeMacro(vtkCMBArc, vtkDataObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  static vtkCMBArc *New();
+  static vtkCMBArc* New();
 
   struct Point
   {
-  friend class vtkCMBArc;
+    friend class vtkCMBArc;
+
   public:
     double operator[](size_t i) const
     {
-      switch(i)
+      switch (i)
       {
-        case 0: return x;
-        case 1: return y;
-        case 2: return z;
+        case 0:
+          return x;
+        case 1:
+          return y;
+        case 2:
+          return z;
       }
       return NAN;
     }
@@ -54,24 +59,35 @@ public:
     {
       return x == other.x && y == other.y && z == other.z;
     }
-    vtkIdType GetId() const
-    { return ptId; }
-    Point():ptId(0xDEADBEEF){}
+    vtkIdType GetId() const { return ptId; }
+    Point()
+      : ptId(0xDEADBEEF)
+    {
+    }
     Point(double const point[3], unsigned int pin)
-    :x(point[0]),y(point[1]),z(point[2]),ptId(pin)
-    {}
+      : x(point[0])
+      , y(point[1])
+      , z(point[2])
+      , ptId(pin)
+    {
+    }
+
   private:
     double x;
     double y;
     double z;
     vtkIdType ptId;
     Point(double xin, double yin, double zin, unsigned int pin)
-    :x(xin),y(yin),z(zin),ptId(pin)
-    {}
+      : x(xin)
+      , y(yin)
+      , z(zin)
+      , ptId(pin)
+    {
+    }
   };
 
   //comparison operator needed for storage
-  bool operator<(const vtkCMBArc &p) const;
+  bool operator<(const vtkCMBArc& p) const;
 
   //Description:
   //Get the Id of this arc
@@ -121,8 +137,7 @@ public:
   // should update the arc end nodes properly, otherwise, the resuling
   // arc may be invalid.
   bool ReplacePoints(vtkIdType startIndex, vtkIdType endIndex,
-                     std::list<vtkCMBArc::Point>& newPoints,
-                     bool includeEnds);
+    std::list<vtkCMBArc::Point>& newPoints, bool includeEnds);
 
   //Description:
   //Insert an internal point position to the front
@@ -148,7 +163,7 @@ public:
   //Initialize Traversal of the internal points.
   //This must be called before you call GetNextPoint
   //Setting forwardDirection to false will allow iteration from end to start
-  bool InitTraversal(const bool& forwardDirection=true);
+  bool InitTraversal(const bool& forwardDirection = true);
 
   //Description:
   //Initialize Traversal of the internal points.
@@ -161,7 +176,7 @@ public:
   // Note: the indices are only referring to the internal points of the arc,
   // NOT including the end nodes.
   bool InitTraversal(const vtkIdType& startIndex, const vtkIdType& numPoints,
-    const bool& forwardDirection=true, const bool& invertTraversalRange=false);
+    const bool& forwardDirection = true, const bool& invertTraversalRange = false);
 
   //Description
   //If end of internal points is encountered, false is returned.
@@ -206,7 +221,7 @@ public:
   // Returns the number of arcs connected to this arc
   // This only counts unique arcs. So if both end nodes
   // are connected to the same arc this will count that arc only once
-  int GetNumberOfConnectedArcs( );
+  int GetNumberOfConnectedArcs();
 
   //Description:
   // Returns the number of arcs connected to the given end node.
@@ -233,8 +248,8 @@ public:
 
   //Description:
   // check if the specified range is the whole arc
-  static bool IsWholeArcRange(vtkIdType startId, vtkIdType endId,
-                              vtkIdType numArcPoints, bool closedArc);
+  static bool IsWholeArcRange(
+    vtkIdType startId, vtkIdType endId, vtkIdType numArcPoints, bool closedArc);
 
 protected:
   vtkCMBArc();
@@ -245,16 +260,15 @@ protected:
   //manager to complete the merge end nodes operation
   bool ReplaceEndNode(vtkCMBArcEndNode* oldEndNode, vtkCMBArcEndNode* newEndNode);
 
-  vtkCMBArcEndNode **EndNodes;
-  vtkCMBArcManager *ArcManager;
+  vtkCMBArcEndNode** EndNodes;
+  vtkCMBArcManager* ArcManager;
 
   //list of internal points that are between the end nodes.
   typedef std::list<vtkCMBArc::Point> InternalPointList;
   InternalPointList Points;
   InternalPointList::const_iterator PointIterator;
 #ifdef VTK_CONST_REVERSE_ITERATOR_COMPARISON
-  typedef
-  InternalPointList::const_reverse_iterator InternalConstReversePointIterator;
+  typedef InternalPointList::const_reverse_iterator InternalConstReversePointIterator;
 #else
   typedef InternalPointList::reverse_iterator InternalConstReversePointIterator;
 #endif
@@ -263,7 +277,7 @@ protected:
 
   //Description:
   //Insert next point to the list
-  bool InternalInsertNextPoint( InternalPointList& Points, vtkCMBArc::Point& point);
+  bool InternalInsertNextPoint(InternalPointList& Points, vtkCMBArc::Point& point);
 
   bool InvertTraversalRange;
   vtkIdType TraversalStartIndex;
@@ -284,7 +298,7 @@ private:
 //----------------------------------------------------------------------------
 inline bool vtkCMBArc::InvalidEndNodeIndex(const int& index) const
 {
-  return ( index < 0 || index > 1 );
+  return (index < 0 || index > 1);
 }
 
 #endif

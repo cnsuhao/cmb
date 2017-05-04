@@ -14,36 +14,37 @@
 #ifndef __vtkCMBArcCreateOperator_h
 #define __vtkCMBArcCreateOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 
 class vtkPolyData;
 class VTKCMBFILTERING_EXPORT vtkCMBArcCreateOperator : public vtkObject
 {
 public:
-  static vtkCMBArcCreateOperator * New();
-  vtkTypeMacro(vtkCMBArcCreateOperator,vtkObject);
+  static vtkCMBArcCreateOperator* New();
+  vtkTypeMacro(vtkCMBArcCreateOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
   //Convert the passed in the polydata into an arc
-  bool Operate(vtkPolyData *source);
+  bool Operate(vtkPolyData* source);
 
   //Description:
   //If the merge work this is the ArcId for the newly
   //created arc
-  vtkGetMacro(CreatedArcId,vtkIdType);
+  vtkGetMacro(CreatedArcId, vtkIdType);
 
 protected:
   vtkCMBArcCreateOperator();
   ~vtkCMBArcCreateOperator() override;
 
   vtkIdType CreatedArcId;
+
 private:
-  vtkCMBArcCreateOperator(const vtkCMBArcCreateOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcCreateOperator&);  // Not implemented.
+  vtkCMBArcCreateOperator(const vtkCMBArcCreateOperator&); // Not implemented.
+  void operator=(const vtkCMBArcCreateOperator&);          // Not implemented.
 };
 
 #endif

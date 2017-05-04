@@ -16,42 +16,37 @@
 
 #include <cmath>
 
-qtCMBProfileWedgeFunctionWidget
-::qtCMBProfileWedgeFunctionWidget(QWidget * parent, cmbProfileWedgeFunction * fun)
-: QWidget(parent), UI(new Ui_qtCMBProfileWedgeFunction()), function(fun)
+qtCMBProfileWedgeFunctionWidget::qtCMBProfileWedgeFunctionWidget(
+  QWidget* parent, cmbProfileWedgeFunction* fun)
+  : QWidget(parent)
+  , UI(new Ui_qtCMBProfileWedgeFunction())
+  , function(fun)
 {
   this->UI->setupUi(this);
 
-  connect(this->UI->symmetric, SIGNAL(toggled(bool)),
-          this, SLOT(setSymmetry(bool)));
-  connect(this->UI->clamp, SIGNAL(toggled(bool)),
-          this, SLOT(setClamp(bool)));
-  connect(this->UI->displacementMode, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(setMode(int)));
+  connect(this->UI->symmetric, SIGNAL(toggled(bool)), this, SLOT(setSymmetry(bool)));
+  connect(this->UI->clamp, SIGNAL(toggled(bool)), this, SLOT(setClamp(bool)));
+  connect(this->UI->displacementMode, SIGNAL(currentIndexChanged(int)), this, SLOT(setMode(int)));
 
   this->UI->displacementMode->setVisible(!fun->isRelative());
 
-  connect(this->UI->LeftSlope, SIGNAL(valueChanged(double)),
-          this, SLOT(setLeftSlope(double)));
-  connect(this->UI->RightSlope, SIGNAL(valueChanged(double)),
-          this, SLOT(setRightSlope(double)));
-  connect(this->UI->depth, SIGNAL(valueChanged(double)),
-          this, SLOT(setDepth(double)));
-  connect(this->UI->baseWidth, SIGNAL(valueChanged(double)),
-          this, SLOT(setBaseWidth(double)));
-  connect(this->UI->WeightingSplineControl, SIGNAL(toggled(bool)),
-          this, SLOT(weightSplineBox(bool)));
+  connect(this->UI->LeftSlope, SIGNAL(valueChanged(double)), this, SLOT(setLeftSlope(double)));
+  connect(this->UI->RightSlope, SIGNAL(valueChanged(double)), this, SLOT(setRightSlope(double)));
+  connect(this->UI->depth, SIGNAL(valueChanged(double)), this, SLOT(setDepth(double)));
+  connect(this->UI->baseWidth, SIGNAL(valueChanged(double)), this, SLOT(setBaseWidth(double)));
+  connect(
+    this->UI->WeightingSplineControl, SIGNAL(toggled(bool)), this, SLOT(weightSplineBox(bool)));
 
   this->UI->weightingChartFrame->setVisible(false);
   this->UI->WeightRange->setVisible(false);
   this->UI->WeightingSplineControl->setVisible(false);
 
-  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
-          this->UI->weightingChartFrame, SLOT(setVisible(bool)));
-  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
-          this->UI->WeightRange, SLOT(setVisible(bool)));
-  connect(this->UI->weightingBox, SIGNAL(toggled(bool)),
-          this->UI->WeightingSplineControl, SLOT(setVisible(bool)));
+  connect(this->UI->weightingBox, SIGNAL(toggled(bool)), this->UI->weightingChartFrame,
+    SLOT(setVisible(bool)));
+  connect(
+    this->UI->weightingBox, SIGNAL(toggled(bool)), this->UI->WeightRange, SLOT(setVisible(bool)));
+  connect(this->UI->weightingBox, SIGNAL(toggled(bool)), this->UI->WeightingSplineControl,
+    SLOT(setVisible(bool)));
 
   {
     QGridLayout* gridlayout = new QGridLayout(this->UI->weightingChartFrame);
@@ -62,71 +57,64 @@ qtCMBProfileWedgeFunctionWidget
     this->WeightingFunction->setMinY(0);
     this->WeightingFunction->setMaxY(1);
 
-    connect( this->UI->WeightingSplineControl, SIGNAL(toggled(bool)),
-            this->WeightingFunction, SLOT(setFunctionType(bool)));
-    connect(this->WeightingFunction, SIGNAL(controlPointsModified()),
-            this->WeightingFunction, SLOT(render()));
+    connect(this->UI->WeightingSplineControl, SIGNAL(toggled(bool)), this->WeightingFunction,
+      SLOT(setFunctionType(bool)));
+    connect(this->WeightingFunction, SIGNAL(controlPointsModified()), this->WeightingFunction,
+      SLOT(render()));
   }
 
   this->setUp();
   setWeightFunction();
 }
 
-qtCMBProfileWedgeFunctionWidget
-::~qtCMBProfileWedgeFunctionWidget()
+qtCMBProfileWedgeFunctionWidget::~qtCMBProfileWedgeFunctionWidget()
 {
   delete this->WeightingFunction;
   this->WeightingFunction = NULL;
   delete UI;
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setLeftSlope(double d)
+void qtCMBProfileWedgeFunctionWidget::setLeftSlope(double d)
 {
   function->setSlopeLeft(d);
   setWeightFunction();
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setRightSlope(double d)
+void qtCMBProfileWedgeFunctionWidget::setRightSlope(double d)
 {
   function->setSlopeRight(d);
-  if(function->isSymmetric())
+  if (function->isSymmetric())
   {
     UI->LeftSlope->setValue(d);
   }
   setWeightFunction();
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setDepth(double d)
+void qtCMBProfileWedgeFunctionWidget::setDepth(double d)
 {
   function->setDepth(d);
   setWeightFunction();
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setBaseWidth(double d)
+void qtCMBProfileWedgeFunctionWidget::setBaseWidth(double d)
 {
   function->setBaseWidth(d);
   setWeightFunction();
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setRelative(bool b)
+void qtCMBProfileWedgeFunctionWidget::setRelative(bool b)
 {
   this->UI->displacementMode->setVisible(!b);
-  if(b)
+  if (b)
   {
     this->UI->displacementMode->setCurrentIndex(function->getMode());
   }
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setSymmetry(bool b)
+void qtCMBProfileWedgeFunctionWidget::setSymmetry(bool b)
 {
   function->setSymmetry(b);
-  if(b)
+  if (b)
   {
     this->UI->LeftSlope->setEnabled(false);
     this->UI->LeftSlope->setValue(function->getSlopeRight());
@@ -139,14 +127,12 @@ void qtCMBProfileWedgeFunctionWidget
   setWeightFunction();
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::setClamp(bool in)
+void qtCMBProfileWedgeFunctionWidget::setClamp(bool in)
 {
   function->setClamped(in);
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::weightSplineBox(bool v)
+void qtCMBProfileWedgeFunctionWidget::weightSplineBox(bool v)
 {
   this->function->setWeightSpline(v);
   setWeightFunction();
@@ -158,15 +144,15 @@ void qtCMBProfileWedgeFunctionWidget::setWeightFunction()
   double depth = function->getDepth();
   double slopeLeft = function->getSlopeLeft();
   double slopeRight = function->getSlopeRight();
-  double leftWidth = std::abs(function->getBaseWidth()*0.5);
+  double leftWidth = std::abs(function->getBaseWidth() * 0.5);
   double rightWidth = leftWidth;
-  if(slopeLeft != 0)
+  if (slopeLeft != 0)
   {
-    leftWidth += std::abs(depth/slopeLeft);
+    leftWidth += std::abs(depth / slopeLeft);
   }
-  if(slopeRight != 0)
+  if (slopeRight != 0)
   {
-    rightWidth += std::abs(depth/slopeRight);
+    rightWidth += std::abs(depth / slopeRight);
   }
 
   this->WeightingFunction->setMinX(-leftWidth);
@@ -175,8 +161,7 @@ void qtCMBProfileWedgeFunctionWidget::setWeightFunction()
   this->WeightingFunction->setMaxY(1);
 }
 
-void qtCMBProfileWedgeFunctionWidget
-::render()
+void qtCMBProfileWedgeFunctionWidget::render()
 {
   this->WeightingFunction->render();
 }
@@ -200,9 +185,9 @@ void qtCMBProfileWedgeFunctionWidget::setUp()
 void qtCMBProfileWedgeFunctionWidget::setMode(int b)
 {
   cmbProfileWedgeFunction::DisplacmentMode m =
-                                          static_cast<cmbProfileWedgeFunction::DisplacmentMode>(b);
-  this->function->setMode( m );
-  if(m == cmbProfileWedgeFunction::Level)
+    static_cast<cmbProfileWedgeFunction::DisplacmentMode>(b);
+  this->function->setMode(m);
+  if (m == cmbProfileWedgeFunction::Level)
   {
     this->UI->clamp->setChecked(true);
     this->UI->clamp->setDisabled(true);

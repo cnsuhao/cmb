@@ -14,8 +14,8 @@
 #ifndef __pqModelTreeViewEventPlayer_h
 #define __pqModelTreeViewEventPlayer_h
 
-#include "pqWidgetEventPlayer.h"
 #include "cmbSystemConfig.h"
+#include "pqWidgetEventPlayer.h"
 
 /**
 Concrete implementation of pqWidgetEventPlayer that translates high-level cmb events into low-level Qt events.
@@ -25,11 +25,12 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level cmb ev
 
 class pqModelTreeViewEventPlayer : public pqWidgetEventPlayer
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-  pqModelTreeViewEventPlayer(QObject* p=0);
+  pqModelTreeViewEventPlayer(QObject* p = 0);
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqModelTreeViewEventPlayer(const pqModelTreeViewEventPlayer&);
@@ -37,4 +38,3 @@ private:
 };
 
 #endif // !_pqModelTreeViewEventPlayer_h
-

@@ -12,22 +12,22 @@
 #ifndef _pqCMBFileDialogEventPlayer_h
 #define _pqCMBFileDialogEventPlayer_h
 
-#include <pqWidgetEventPlayer.h>
 #include "cmbAppCommonExport.h"
+#include <pqWidgetEventPlayer.h>
 
 /**
 Concrete implementation of pqWidgetEventPlayer that handles playback of recorded file dialog user input.
 
 \sa pqEventPlayer
 */
-class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventPlayer :
-  public pqWidgetEventPlayer
+class CMBAPPCOMMON_EXPORT pqCMBFileDialogEventPlayer : public pqWidgetEventPlayer
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-  pqCMBFileDialogEventPlayer(QObject* p=0);
+  pqCMBFileDialogEventPlayer(QObject* p = 0);
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqCMBFileDialogEventPlayer(const pqCMBFileDialogEventPlayer&);
@@ -35,4 +35,3 @@ private:
 };
 
 #endif // !_pqCMBFileDialogEventPlayer_h
-

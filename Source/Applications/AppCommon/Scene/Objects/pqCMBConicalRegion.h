@@ -11,29 +11,24 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBConicalRegion_h
 #define __pqCMBConicalRegion_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
-
-class  CMBAPPCOMMON_EXPORT pqCMBConicalRegion : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBConicalRegion : public pqCMBSceneObjectBase
 {
 public:
   pqCMBConicalRegion();
-  pqCMBConicalRegion(double baseCenter[3], double baseRadius,
-                        double height, double topRadius, double direction[3],
-                        int resolution,
-                        pqServer *server, pqRenderView *view,
-                        bool updateRep=true);
-  pqCMBConicalRegion(pqPipelineSource*source,
-              pqRenderView *view, pqServer *server);
+  pqCMBConicalRegion(double baseCenter[3], double baseRadius, double height, double topRadius,
+    double direction[3], int resolution, pqServer* server, pqRenderView* view,
+    bool updateRep = true);
+  pqCMBConicalRegion(pqPipelineSource* source, pqRenderView* view, pqServer* server);
 
   ~pqCMBConicalRegion() override;
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
   pqCMBSceneObjectBase::enumObjectType getType() const override;
   void setBaseCenter(double pnt[3]);
   void getBaseCenter(double pnt[3]) const;
@@ -47,8 +42,8 @@ public:
   double getTopRadius() const;
   void setResolution(int res);
   int getResolution() const;
-protected:
 
+protected:
 };
 
 #endif /* __pqCMBConicalRegion_h */

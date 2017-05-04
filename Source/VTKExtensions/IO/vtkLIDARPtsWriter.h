@@ -13,9 +13,9 @@
 #ifndef __LIDARPtsWriter_h
 #define __LIDARPtsWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkWriter.h"
-#include "cmbSystemConfig.h"
 #include <map>
 
 class vtkPolyData;
@@ -26,8 +26,8 @@ class vtkPolyData;
 class VTKCMBIO_EXPORT vtkLIDARPtsWriter : public vtkWriter
 {
 public:
-  static vtkLIDARPtsWriter *New();
-  vtkTypeMacro(vtkLIDARPtsWriter,vtkWriter);
+  static vtkLIDARPtsWriter* New();
+  vtkTypeMacro(vtkLIDARPtsWriter, vtkWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
@@ -37,7 +37,7 @@ public:
 
   // Description:
   // Add an input to this writer
-  void AddInputData(vtkDataObject *input) {this->AddInputData(0, input);}
+  void AddInputData(vtkDataObject* input) { this->AddInputData(0, input); }
   void AddInputData(int, vtkDataObject*);
 
   // Description:
@@ -46,13 +46,13 @@ public:
   vtkSetMacro(WriteAsSinglePiece, bool);
   vtkGetMacro(WriteAsSinglePiece, bool);
 
-//BTX
+  //BTX
   // Description:
   // Unlike vtkWriter which assumes data per port - this Writer can have multiple connections
   // on Port 0
-  vtkDataObject *GetInputFromPort0(int connection);
-  vtkDataObject *GetInputFromPort0() { return this->GetInputFromPort0( 0 ); };
-//ETX
+  vtkDataObject* GetInputFromPort0(int connection);
+  vtkDataObject* GetInputFromPort0() { return this->GetInputFromPort0(0); };
+  //ETX
 
   //BTX
 
@@ -65,7 +65,7 @@ protected:
   // return write_status: OK, Abort, or Error
   int WriteFile(ofstream& ofp);
   int ComputeRequiredAxisPrecision(double min, double max);
-  int WritePoints(ofstream& ofp, vtkPolyData *inputPoly);
+  int WritePoints(ofstream& ofp, vtkPolyData* inputPoly);
 
   ofstream* OpenOutputFile();
   bool IsBinaryType(const char* filename);
@@ -76,12 +76,11 @@ protected:
   int OutputIsBinary;
   bool WriteAsSinglePiece;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
-
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 private:
-  vtkLIDARPtsWriter(const vtkLIDARPtsWriter&);  // Not implemented.
-  void operator=(const vtkLIDARPtsWriter&);  // Not implemented.
+  vtkLIDARPtsWriter(const vtkLIDARPtsWriter&); // Not implemented.
+  void operator=(const vtkLIDARPtsWriter&);    // Not implemented.
 
   //ETX
 };

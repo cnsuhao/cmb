@@ -11,15 +11,16 @@
 #ifndef __pqCMBPluginStarter_h
 #define __pqCMBPluginStarter_h
 
-#include <QObject>
 #include "cmbSystemConfig.h"
+#include <QObject>
 
 class pqCMBPluginStarter : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
+
 public:
-  pqCMBPluginStarter(QObject* p=0);
+  pqCMBPluginStarter(QObject* p = 0);
   ~pqCMBPluginStarter() override;
 
   // Callback for shutdown.
@@ -30,7 +31,7 @@ public:
 
 private:
   pqCMBPluginStarter(const pqCMBPluginStarter&); // Not implemented.
-  void operator=(const pqCMBPluginStarter&); // Not implemented.
+  void operator=(const pqCMBPluginStarter&);     // Not implemented.
 };
 
 #endif

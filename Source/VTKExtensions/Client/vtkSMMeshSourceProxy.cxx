@@ -9,8 +9,8 @@
 //=========================================================================
 #include "vtkSMMeshSourceProxy.h"
 
-#include "vtkClientServerStream.h"
 #include "vtkClientServerMoveData.h"
+#include "vtkClientServerStream.h"
 #include "vtkDoubleArray.h"
 #include "vtkIdTypeArray.h"
 #include "vtkObjectFactory.h"
@@ -31,39 +31,34 @@ vtkSMMeshSourceProxy::~vtkSMMeshSourceProxy()
 {
 }
 //----------------------------------------------------------------------------
-bool vtkSMMeshSourceProxy::MovePoints(
-  vtkSMProxy *movedProxy, vtkSMProxy* transformProxy)
+bool vtkSMMeshSourceProxy::MovePoints(vtkSMProxy* movedProxy, vtkSMProxy* transformProxy)
 {
   if (!movedProxy)
-    {
+  {
     return false;
-    }
+  }
 
   vtkClientServerStream stream;
-  stream  << vtkClientServerStream::Invoke
-          << VTKOBJECT(movedProxy) << "GetOutput"
-          << vtkClientServerStream::End;
+  stream << vtkClientServerStream::Invoke << VTKOBJECT(movedProxy) << "GetOutput"
+         << vtkClientServerStream::End;
 
   this->ExecuteStream(stream);
-  if(transformProxy)
-    {
-    stream  << vtkClientServerStream::Invoke
-      << VTKOBJECT(this) << "MoveTransformPoints"
-      << this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0,0)
-      << VTKOBJECT(transformProxy)
-      << vtkClientServerStream::End;
-    }
+  if (transformProxy)
+  {
+    stream << vtkClientServerStream::Invoke << VTKOBJECT(this) << "MoveTransformPoints"
+           << this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0, 0)
+           << VTKOBJECT(transformProxy) << vtkClientServerStream::End;
+  }
   else
-    {
-    stream  << vtkClientServerStream::Invoke
-      << VTKOBJECT(this) << "MovePoints"
-      << this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0,0)
-      << vtkClientServerStream::End;
-    }
+  {
+    stream << vtkClientServerStream::Invoke << VTKOBJECT(this) << "MovePoints"
+           << this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0, 0)
+           << vtkClientServerStream::End;
+  }
 
   this->ExecuteStream(stream);
   bool moved = false;
-  this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0,0,&moved);
+  this->GetLastResult(vtkProcessModule::DATA_SERVER_ROOT).GetArgument(0, 0, &moved);
   return moved;
 }
 //----------------------------------------------------------------------------

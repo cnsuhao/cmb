@@ -9,14 +9,14 @@
 //=========================================================================
 #include "vtkStringReader.h"
 
+#include "vtkErrorCode.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
-#include "vtkErrorCode.h"
 
 #
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <vtksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkStringReader);
@@ -35,23 +35,21 @@ vtkStringReader::~vtkStringReader()
 }
 
 //-----------------------------------------------------------------------------
-int vtkStringReader::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *vtkNotUsed(outputVector))
+int vtkStringReader::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
-  unsigned long fsize = vtksys::SystemTools::FileLength( this->FileName );
-  FILE *fin;
+  unsigned long fsize = vtksys::SystemTools::FileLength(this->FileName);
+  FILE* fin;
   fin = fopen(this->FileName, "r");
 
-  if ( fin == NULL)
-    {
+  if (fin == NULL)
+  {
     this->FileContents = "";
     this->SetErrorCode(vtkErrorCode::FileNotFoundError);
     return VTK_ERROR;
-    }
+  }
 
-  char *buffer = new char[fsize+1];
+  char* buffer = new char[fsize + 1];
   size_t size = fread(buffer, 1, fsize, fin);
   fclose(fin);
   buffer[size] = '\0';
@@ -60,29 +58,23 @@ int vtkStringReader::RequestData(
   return VTK_OK;
 }
 
-
 //-----------------------------------------------------------------------------
 void vtkStringReader::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
-  os << indent << "File Name: "
-     << (this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "File Name: " << (this->FileName ? this->FileName : "(none)") << "\n";
 }
 
-
 //----------------------------------------------------------------------------
-int vtkStringReader::RequestInformation(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *vtkNotUsed(outputVector))
+int vtkStringReader::RequestInformation(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* vtkNotUsed(outputVector))
 {
   if (!this->FileName)
-    {
+  {
     vtkErrorMacro("FileName has to be specified!");
     return VTK_ERROR;
-    }
+  }
 
   return VTK_OK;
 }
-

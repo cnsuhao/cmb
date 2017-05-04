@@ -8,27 +8,27 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkADHHotStartWriter.h"
+#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 #include "vtkCMBADHReader.h"
 #include "vtkDataSetMapper.h"
-#include "vtkUnstructuredGrid.h"
+#include "vtkNew.h"
 #include "vtkPointData.h"
 #include "vtkPointSet.h"
 #include "vtkPolyData.h"
-#include "vtkTesting.h"
 #include "vtkSmartPointer.h"
-#include "vtkNew.h"
+#include "vtkTesting.h"
+#include "vtkUnstructuredGrid.h"
 #include <vtksys/SystemTools.hxx>
-#include "smtk/extension/vtk/reader/vtkCMBGeometryReader.h"
 
 int main(int argc, char** argv)
 {
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data was not specified.";
     return 1;
-    }
+  }
 
   vtkNew<vtkCMBGeometryReader> reader;
   std::string filename;
@@ -50,29 +50,28 @@ int main(int argc, char** argv)
 
   vtkSmartPointer<vtkPointData> pd = poly->GetPointData();
   if (!pd)
-    {
-    std::cerr<<"GetPointData Failed";
+  {
+    std::cerr << "GetPointData Failed";
     return 1;
-    }
+  }
   std::string iohName = "ioh";
   std::string iovName = "iov";
   vtkNew<vtkADHHotStartWriter> writer;
   bool foundArrays = false;
   for (int i = 0; i < pd->GetNumberOfArrays(); i++)
+  {
+    if (pd->GetArrayName(i) == iohName || pd->GetArrayName(i) == iovName)
     {
-    if (pd->GetArrayName(i) == iohName ||
-      pd->GetArrayName(i) == iovName)
-      {
       writer->AddInputPointArrayToProcess(pd->GetArrayName(i));
       foundArrays = true;
-      }
     }
+  }
 
   if (!foundArrays)
-    {
-    std::cerr<<"This Test requires input point array to be set";
+  {
+    std::cerr << "This Test requires input point array to be set";
     return 1;
-    }
+  }
 
   std::string tmproot = testHelper->GetTempDirectory();
 
@@ -81,10 +80,11 @@ int main(int argc, char** argv)
   writer->SetInputData(poly);
   writer->Write();
 
-  std::string basehotfile=dataroot + "/HotStart/base_angle_sup.hot";;
-  if(vtksys::SystemTools::FilesDiffer(outfile.c_str(), basehotfile.c_str()))
-    {
+  std::string basehotfile = dataroot + "/HotStart/base_angle_sup.hot";
+  ;
+  if (vtksys::SystemTools::FilesDiffer(outfile.c_str(), basehotfile.c_str()))
+  {
     return EXIT_FAILURE;
-    }
+  }
   return EXIT_SUCCESS;
 }

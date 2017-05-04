@@ -11,49 +11,48 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBSceneNodeIterator_h
 #define __pqCMBSceneNodeIterator_h
 
 #include "cmbAppCommonExport.h"
-#include <stack>
-#include <set>
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
+#include <set>
+#include <stack>
 
 class pqCMBSceneNode;
 
 class CMBAPPCOMMON_EXPORT pqCMBSceneNodeIterator
 {
 public:
-  pqCMBSceneNodeIterator(pqCMBSceneNode *root);
+  pqCMBSceneNodeIterator(pqCMBSceneNode* root);
   virtual ~pqCMBSceneNodeIterator();
-  virtual pqCMBSceneNode *next();
+  virtual pqCMBSceneNode* next();
   void reset();
+
 protected:
-  void addChildren(pqCMBSceneNode *node);
-  std::stack<pqCMBSceneNode *> Stack;
-  pqCMBSceneNode *Root;
+  void addChildren(pqCMBSceneNode* node);
+  std::stack<pqCMBSceneNode*> Stack;
+  pqCMBSceneNode* Root;
 };
 
 class CMBAPPCOMMON_EXPORT SceneObjectNodeIterator : public pqCMBSceneNodeIterator
 {
 public:
-  SceneObjectNodeIterator(pqCMBSceneNode *root);
+  SceneObjectNodeIterator(pqCMBSceneNode* root);
   void setTypeFilter(pqCMBSceneObjectBase::enumObjectType objectType);
   void setTypeFilter(pqCMBSceneObjectBase::enumObjectType objectType,
-                     pqCMBSceneObjectBase::enumSurfaceType surfaceType);
+    pqCMBSceneObjectBase::enumSurfaceType surfaceType);
   void addObjectTypeFilter(pqCMBSceneObjectBase::enumObjectType objectType);
   void clearTypeFilter();
   ~SceneObjectNodeIterator() override;
-  pqCMBSceneNode *next() override;
+  pqCMBSceneNode* next() override;
+
 protected:
   bool NoTypeSet;
   bool NoSurfaceTypeSet;
   std::set<pqCMBSceneObjectBase::enumObjectType> FilterTypes;
   pqCMBSceneObjectBase::enumSurfaceType FilterSurfaceType;
 };
-
-
 
 #endif /* __pqCMBSceneNodeIterator_h */

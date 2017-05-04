@@ -17,11 +17,14 @@
 #define __qtCMBPlacementConstraintWidget_h
 
 #include "cmbAppCommonExport.h"
-#include <QWidget>
 #include "cmbSystemConfig.h"
+#include <QWidget>
 class QTableWidgetItem;
 
-namespace Ui { class qtObjectPlacementConstraint; }
+namespace Ui
+{
+class qtObjectPlacementConstraint;
+}
 
 class qtCMBPlacementConstraintWidgetInternal;
 class pqCMBSceneNode;
@@ -31,11 +34,11 @@ class CMBAPPCOMMON_EXPORT qtCMBPlacementConstraintWidget : public QWidget
   Q_OBJECT
 
 public:
-  qtCMBPlacementConstraintWidget(pqCMBSceneNode* n, QWidget* parent=0);
+  qtCMBPlacementConstraintWidget(pqCMBSceneNode* n, QWidget* parent = 0);
   ~qtCMBPlacementConstraintWidget() override;
 
   Ui::qtObjectPlacementConstraint* getWidget();
-  const QMap <pqCMBSceneNode*, int>& getSelectedConstraints() const;
+  const QMap<pqCMBSceneNode*, int>& getSelectedConstraints() const;
   int getPlacementCount();
   void updateConstraintTable();
   void enableGlyphOption(bool mode);
@@ -55,7 +58,7 @@ private slots:
   void onTableSelectionChanged();
   void onItemChanged(QTableWidgetItem*);
   void displayGlyphPlaybackFileBrowser();
-  void filesSelected(const QList<QStringList> &files);
+  void filesSelected(const QList<QStringList>& files);
   void checkGlyphPlaybackFile(int option);
 
 private:
@@ -64,6 +67,5 @@ private:
   void addTableRow(pqCMBSceneNode* scenenode);
 
   pqCMBSceneNode* parentNode;
-
 };
 #endif

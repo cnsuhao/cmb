@@ -21,20 +21,16 @@
 class qtCMBPanelsManager::Internal
 {
 public:
-  Internal()
-  {
-  }
-  ~Internal()
-  {
-  }
+  Internal() {}
+  ~Internal() {}
   QList<qtCMBPanelsManager::PanelType> PanelTypes;
 };
 
 //----------------------------------------------------------------------------
-qtCMBPanelsManager::qtCMBPanelsManager(QObject* p) : QObject(p),
-mgrInternal(new Internal())
+qtCMBPanelsManager::qtCMBPanelsManager(QObject* p)
+  : QObject(p)
+  , mgrInternal(new Internal())
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -44,15 +40,13 @@ qtCMBPanelsManager::~qtCMBPanelsManager()
 }
 
 //-----------------------------------------------------------------------------
-QDockWidget* qtCMBPanelsManager::createDockWidget (QMainWindow* mw,
-  QWidget* content, const std::string& title,
-  Qt::DockWidgetArea dockarea, QDockWidget* lastdw)
+QDockWidget* qtCMBPanelsManager::createDockWidget(QMainWindow* mw, QWidget* content,
+  const std::string& title, Qt::DockWidgetArea dockarea, QDockWidget* lastdw)
 {
   QDockWidget* dw = new QDockWidget(mw);
   QWidget* container = new QWidget();
   container->setObjectName("dockscrollWidget");
-  container->setSizePolicy(QSizePolicy::Preferred,
-    QSizePolicy::Expanding);
+  container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
   QScrollArea* s = new QScrollArea(dw);
   s->setWidgetResizable(true);
@@ -68,22 +62,21 @@ QDockWidget* qtCMBPanelsManager::createDockWidget (QMainWindow* mw,
   dw->setWindowTitle(dockTitle);
   dw->setObjectName(dockTitle.append("dockWidget"));
   dw->setWidget(s);
-  mw->addDockWidget(dockarea,dw);
-  if(lastdw)
-    {
+  mw->addDockWidget(dockarea, dw);
+  if (lastdw)
+  {
     mw->tabifyDockWidget(lastdw, dw);
-    }
+  }
   return dw;
 }
 
 //----------------------------------------------------------------------------
-void qtCMBPanelsManager::setPanelTypes(
-  const QList<qtCMBPanelsManager::PanelType>& ptypes)
+void qtCMBPanelsManager::setPanelTypes(const QList<qtCMBPanelsManager::PanelType>& ptypes)
 {
   this->mgrInternal->PanelTypes = ptypes;
 }
 //----------------------------------------------------------------------------
-const QList<qtCMBPanelsManager::PanelType>&  qtCMBPanelsManager::panelTypes() const
+const QList<qtCMBPanelsManager::PanelType>& qtCMBPanelsManager::panelTypes() const
 {
   return this->mgrInternal->PanelTypes;
 }
@@ -91,7 +84,7 @@ const QList<qtCMBPanelsManager::PanelType>&  qtCMBPanelsManager::panelTypes() co
 std::string qtCMBPanelsManager::type2String(qtCMBPanelsManager::PanelType t)
 {
   switch (t)
-    {
+  {
     case ATTRIBUTE:
       return "Attribute";
     case MODEL:
@@ -114,51 +107,51 @@ std::string qtCMBPanelsManager::type2String(qtCMBPanelsManager::PanelType t)
       return "Jobs";
     default:
       return "";
-    }
+  }
   return "Error!";
 }
 //----------------------------------------------------------------------------
-qtCMBPanelsManager::PanelType qtCMBPanelsManager::string2Type(const std::string &s)
+qtCMBPanelsManager::PanelType qtCMBPanelsManager::string2Type(const std::string& s)
 {
   if (s == "Attribute")
-    {
+  {
     return ATTRIBUTE;
-    }
+  }
   if (s == "Model")
-    {
+  {
     return MODEL;
-    }
+  }
   if (s == "Properties")
-    {
+  {
     return PROPERTIES;
-    }
+  }
   if (s == "Mesh")
-    {
+  {
     return MESH;
-    }
+  }
   if (s == "Scene")
-    {
+  {
     return SCENE;
-    }
+  }
   if (s == "Info")
-    {
+  {
     return INFO;
-    }
+  }
   if (s == "Render")
-    {
+  {
     return RENDER;
-    }
+  }
   if (s == "Display")
-    {
+  {
     return DISPLAY;
-    }
+  }
   if (s == "Color Map")
-    {
+  {
     return COLORMAP;
-    }
+  }
   if (s == "Jobs")
-    {
+  {
     return JOBS;
-    }
+  }
   return NUMBER_OF_KNOWN_TYPES;
 }

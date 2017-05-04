@@ -12,14 +12,13 @@
 // This class is used to track the project information
 // Note each Program can be used by multiple Projects
 
-
 #ifndef __vtkCMBProjectManager_h
 #define __vtkCMBProjectManager_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkObject.h"
 #include "vtkStdString.h"
-#include "cmbSystemConfig.h"
 
 class vtkCMBProgramManager;
 
@@ -34,10 +33,11 @@ public:
 
 class VTKCMBGENERAL_EXPORT vtkCMBProjectManager : public vtkObject
 {
-friend class vtkCMBProjectManagerReader;
+  friend class vtkCMBProjectManagerReader;
+
 public:
-// Methods from vtkObject
-  vtkTypeMacro(vtkCMBProjectManager,vtkObject);
+  // Methods from vtkObject
+  vtkTypeMacro(vtkCMBProjectManager, vtkObject);
   // Description:
   // Print ObjectFactor to stream.
   void PrintSelf(ostream& os, vtkIndent indent) override;
@@ -55,14 +55,14 @@ public:
   // Description:
   // Supply a user defined output window. Call ->Delete() on the supplied
   // instance after setting it.
-  static void SetInstance(vtkCMBProjectManager *instance);
+  static void SetInstance(vtkCMBProjectManager* instance);
 
-//BTX
+  //BTX
   // use this as a way of memory management when the
   // program exits the SmartPointer will be deleted which
   // will delete the Instance singleton
   static vtkCMBProjectManagerCleanup Cleanup;
-//ETX
+  //ETX
 
   //Description
   //Reset the internal state so that it is tracking no programs
@@ -78,15 +78,15 @@ public:
 
   enum PROGRAM
   {
-  PointsBuilder = 0,
-  SceneBuilder,
-  ModelBuilder,
-  SimulationBuilder,
-  NUM_PROGRAMS
+    PointsBuilder = 0,
+    SceneBuilder,
+    ModelBuilder,
+    SimulationBuilder,
+    NUM_PROGRAMS
   };
 
-  static vtkCMBProjectManager::PROGRAM GetProgramType(const char *name);
-  static const char* GetProgramName(vtkCMBProjectManager::PROGRAM const &program);
+  static vtkCMBProjectManager::PROGRAM GetProgramType(const char* name);
+  static const char* GetProgramName(vtkCMBProjectManager::PROGRAM const& program);
 
   // Description
   // For a given program get back that exact program manager.
@@ -101,8 +101,7 @@ public:
 
   //Description sets the active program directory, only
   //if doesn't exist already.
-  void SetActiveProgramDirectory( const char* dir );
-
+  void SetActiveProgramDirectory(const char* dir);
 
   int GetManagerActive() const { return (ProjectFilePath.size() != 0); }
   const char* GetProjectFilePath() const { return ProjectFilePath.c_str(); }
@@ -115,10 +114,10 @@ protected:
   // Returns the default folder for the give program, this is used
   // when the program hasn't specified where it exists. All paths
   // need to be absolute.
-  const char* GetDefaultFolder(const vtkCMBProjectManager::PROGRAM &program);
+  const char* GetDefaultFolder(const vtkCMBProjectManager::PROGRAM& program);
 
   // Set the directory path, which only friend classes can do
-  void SetProjectFilePath(vtkStdString const& path ){ ProjectFilePath = path;}
+  void SetProjectFilePath(vtkStdString const& path) { ProjectFilePath = path; }
 
   // Description:
   // Get the programs directory if it is registered.
@@ -148,8 +147,8 @@ private:
   int VersionMinor;
 
   static vtkCMBProjectManager* Instance;
-  vtkCMBProjectManager(const vtkCMBProjectManager&);  // Not implemented.
-  void operator=(const vtkCMBProjectManager&);  // Not implemented.
+  vtkCMBProjectManager(const vtkCMBProjectManager&); // Not implemented.
+  void operator=(const vtkCMBProjectManager&);       // Not implemented.
 };
 
 #endif

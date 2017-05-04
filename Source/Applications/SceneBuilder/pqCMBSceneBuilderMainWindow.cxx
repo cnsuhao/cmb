@@ -9,50 +9,55 @@
 //=========================================================================
 #include "pqCMBSceneBuilderMainWindow.h"
 
-#include "pqCMBSceneBuilderMainWindowCore.h"
 #include "cmbSceneBuilderConfig.h"
+#include "pqCMBSceneBuilderMainWindowCore.h"
 #include "qtCMBSceneBuilderPanelWidget.h"
-#include "ui_qtCMBSceneBuilderPanel.h"
 #include "ui_qtCMBMainWindow.h"
+#include "ui_qtCMBSceneBuilderPanel.h"
 
+#include <QComboBox>
 #include <QDir>
+#include <QHeaderView>
+#include <QLabel>
+#include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QScrollArea>
 #include <QShortcut>
-#include <QtDebug>
-#include <QToolButton>
-#include <QHeaderView>
 #include <QToolBar>
-#include <QLabel>
-#include <QComboBox>
-#include <QMenu>
-#include <QMenuBar>
+#include <QToolButton>
+#include <QtDebug>
 
-#include "qtCMBAboutDialog.h"
 #include "pqActiveObjects.h"
 #include "pqApplicationCore.h"
-#include "pqProxyWidget.h"
+#include "pqCMBRubberBandHelper.h"
+#include "pqDataRepresentation.h"
 #include "pqDisplayColorWidget.h"
+#include "pqDisplayRepresentationWidget.h"
 #include "pqObjectBuilder.h"
 #include "pqOutputPort.h"
-#include "pqDataRepresentation.h"
 #include "pqPipelineSource.h"
 #include "pqPluginManager.h"
 #include "pqPropertyLinks.h"
+#include "pqProxyWidget.h"
 #include "pqRenderView.h"
-#include "pqDisplayRepresentationWidget.h"
-#include "pqCMBRubberBandHelper.h"
 #include "pqScalarBarRepresentation.h"
+#include "qtCMBAboutDialog.h"
 
+#include "pqSMAdaptor.h"
+#include "pqSMProxy.h"
 #include "pqScalarsToColors.h"
 #include "pqSelectionManager.h"
 #include "pqServer.h"
 #include "pqServerResource.h"
 #include "pqSetName.h"
-#include "pqSMAdaptor.h"
-#include "pqSMProxy.h"
 #include "pqWaitCursor.h"
 
+#include "pqCMBGlyphObject.h"
+#include "pqCMBSceneNode.h"
+#include "pqCMBSceneNodeIterator.h"
+#include "pqCMBSceneTree.h"
+#include "qtCMBHelpDialog.h"
 #include "vtkCellData.h"
 #include "vtkCleanUnstructuredGrid.h"
 #include "vtkCompositeDataIterator.h"
@@ -62,65 +67,57 @@
 #include "vtkDataSet.h"
 #include "vtkFacesConnectivityFilter.h"
 #include "vtkHydroModelPolySource.h"
-#include "vtkIdTypeArray.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMapper.h"
 #include "vtkMergeFacesFilter.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
-#include "vtkProcessModule.h"
 #include "vtkPVArrayInformation.h"
 #include "vtkPVDataSetAttributesInformation.h"
+#include "vtkPolyData.h"
+#include "vtkProcessModule.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkSelection.h"
-#include "vtkSelectionSource.h"
 #include "vtkSMDataSourceProxy.h"
 #include "vtkSMIdTypeVectorProperty.h"
 #include "vtkSMPropertyHelper.h"
 #include "vtkSMProxyManager.h"
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkSelection.h"
+#include "vtkSelectionSource.h"
 #include "vtkStringArray.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkVariant.h"
-#include "qtCMBHelpDialog.h"
-#include "pqCMBSceneTree.h"
-#include "pqCMBSceneNode.h"
-#include "pqCMBSceneNodeIterator.h"
-#include "pqCMBGlyphObject.h"
 
-#include "pqCMBLoadDataReaction.h"
 #include "pqCMBFileExtensions.h"
+#include "pqCMBLoadDataReaction.h"
 
 class pqCMBSceneBuilderMainWindow::vtkInternal
 {
 public:
-  vtkInternal(QWidget* /*parent*/)
-    {
-    this->ScenePanel = 0;
-    }
+  vtkInternal(QWidget* /*parent*/) { this->ScenePanel = 0; }
 
   ~vtkInternal()
+  {
+    if (this->ScenePanel)
     {
-    if(this->ScenePanel)
-      {
       delete this->ScenePanel;
-      }
     }
+  }
 
   qtCMBSceneBuilderPanelWidget* ScenePanel;
 
   pqPropertyLinks GUILinker;
-  QLabel *SelectionLabel;
-  QComboBox *SelectionMenu;
+  QLabel* SelectionLabel;
+  QComboBox* SelectionMenu;
   QList<QAction*> EditMenuActions;
 };
 
 //----------------------------------------------------------------------------
-pqCMBSceneBuilderMainWindow::pqCMBSceneBuilderMainWindow():
-  Internal(new vtkInternal(this))
+pqCMBSceneBuilderMainWindow::pqCMBSceneBuilderMainWindow()
+  : Internal(new vtkInternal(this))
 {
   this->initializeApplication();
   this->setupMenuActions();
@@ -142,7 +139,7 @@ pqCMBSceneBuilderMainWindow::~pqCMBSceneBuilderMainWindow()
 void pqCMBSceneBuilderMainWindow::initializeApplication()
 {
   this->MainWindowCore = new pqCMBSceneBuilderMainWindowCore(this);
-  this->setWindowIcon( QIcon(QString::fromUtf8(":/cmb/SceneBuilderIcon.png")) );
+  this->setWindowIcon(QIcon(QString::fromUtf8(":/cmb/SceneBuilderIcon.png")));
   this->initMainWindowCore();
 
   this->Internal->ScenePanel = new qtCMBSceneBuilderPanelWidget(
@@ -156,29 +153,29 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
   QPixmap pixs(":/cmb/snapIcon.png");
   QPixmap pixl(":/cmb/lockIcon.png");
   this->Tree = new pqCMBSceneTree(&pix, &pixd, &pixs, &pixl,
-                             this->Internal->ScenePanel->getGUIPanel()->SceneGraph,
-                             this->Internal->ScenePanel->getGUIPanel()->InfoGraph);
-  this->Tree->setUndoRedoActions(this->getMainDialog()->actionUndo,
-                                 this->getMainDialog()->actionRedo);
+    this->Internal->ScenePanel->getGUIPanel()->SceneGraph,
+    this->Internal->ScenePanel->getGUIPanel()->InfoGraph);
+  this->Tree->setUndoRedoActions(
+    this->getMainDialog()->actionUndo, this->getMainDialog()->actionRedo);
   this->Tree->setImportObjectAction(this->getMainDialog()->actionImport_Object_File);
   this->Tree->setDuplicateNodeAction(this->getMainDialog()->actionDuplicateNode,
-                                     this->getMainDialog()->actionDuplicate_Node_Randomly);
-// Create Actions
+    this->getMainDialog()->actionDuplicate_Node_Randomly);
+  // Create Actions
   this->Tree->setCreateArcNodeAction(this->getMainDialog()->actionContour_Widget);
-  this->Tree->setConicalNodeActions(this->getMainDialog()->actionCreateConicalSolid,
-                                   this->getMainDialog()->actionEditConicalSolid);
-  this->Tree->setGroundPlaneActions(this->getMainDialog()->actionCreateGroundPlane,
-                                   this->getMainDialog()->actionEditGroundPlane);
+  this->Tree->setConicalNodeActions(
+    this->getMainDialog()->actionCreateConicalSolid, this->getMainDialog()->actionEditConicalSolid);
+  this->Tree->setGroundPlaneActions(
+    this->getMainDialog()->actionCreateGroundPlane, this->getMainDialog()->actionEditGroundPlane);
   this->Tree->setInsertNodeAction(this->getMainDialog()->actionAddNode);
   this->Tree->setCreateLineNodeAction(this->getMainDialog()->actionCreate_Line);
   this->Tree->setCreatePolygonAction(this->getMainDialog()->actionCreatePolygon);
   this->Tree->setCreateVOINodeAction(this->getMainDialog()->actionCreate_VOI);
 
-  this->Tree->setSelectSnapNodeAction(this->getMainDialog()->actionSelectSnapTarget,
-                                      this->getMainDialog()->actionUnselectSnapTarget);
+  this->Tree->setSelectSnapNodeAction(
+    this->getMainDialog()->actionSelectSnapTarget, this->getMainDialog()->actionUnselectSnapTarget);
   this->Tree->setSnapObjectAction(this->getMainDialog()->actionSnap_Object);
   this->Tree->setColorActions(this->getMainDialog()->actionAssign_Color_to_Node,
-                              this->getMainDialog()->actionUnassign_Color_from_Node);
+    this->getMainDialog()->actionUnassign_Color_from_Node);
 
   this->Tree->setTextureAction(this->getMainDialog()->actionEditTextureMap);
   this->Tree->setElevationAction(this->getMainDialog()->actionShowElevation);
@@ -191,40 +188,36 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
   this->Tree->setExportSolidsAction(this->getMainDialog()->actionExportSelectedSolids);
   this->Tree->setExportPolygonsAction(this->getMainDialog()->actionExportSelectedPolygons);
 
- this->Tree->setDefineVOIAction(this->getMainDialog()->actionDefineVOI);
+  this->Tree->setDefineVOIAction(this->getMainDialog()->actionDefineVOI);
 
- //setup all the actions that relate to arcs/contours
- this->Tree->setArcActions(
-  this->getMainDialog()->actionEditContourNode,
-  this->getMainDialog()->actionArcSnapping,
-  this->getMainDialog()->actionMergeArcs,
-  this->getMainDialog()->actionGrowArcSelection,
-  this->getMainDialog()->actionAutoConnectArcs);
+  //setup all the actions that relate to arcs/contours
+  this->Tree->setArcActions(this->getMainDialog()->actionEditContourNode,
+    this->getMainDialog()->actionArcSnapping, this->getMainDialog()->actionMergeArcs,
+    this->getMainDialog()->actionGrowArcSelection, this->getMainDialog()->actionAutoConnectArcs);
 
   this->Tree->setChangeNumberOfPointsLoadedAction(
     this->getMainDialog()->actionChangeNumberOfPointsLoaded);
 
-  this->Tree->setChangeUserDefineObjectTypeAction(
-    this->getMainDialog()->actionChangeObjectsType);
+  this->Tree->setChangeUserDefineObjectTypeAction(this->getMainDialog()->actionChangeObjectsType);
 
   this->Tree->setConvertToGlyphAction(this->getMainDialog()->actionConvertToGlyphs);
 
   //setup the delete key as it relates to the scene tree
-  QShortcut *deleteShortcut = new QShortcut(Qt::Key_Delete,this->Tree->getWidget());
+  QShortcut* deleteShortcut = new QShortcut(Qt::Key_Delete, this->Tree->getWidget());
   deleteShortcut->setContext(Qt::WidgetShortcut); //only fire when the tree has focus
-  QObject::connect(deleteShortcut,SIGNAL(activated()),
-    this->getMainDialog()->actionDeleteNode,SLOT(trigger()));
+  QObject::connect(
+    deleteShortcut, SIGNAL(activated()), this->getMainDialog()->actionDeleteNode, SLOT(trigger()));
 
-#if defined(__APPLE__ ) || defined(APPLE)
+#if defined(__APPLE__) || defined(APPLE)
   //setup the backspace key to the delete key as the apple
   //is weird and names the backspace key the delete key
-  QShortcut *backSpaceShortcut = new QShortcut(Qt::Key_Backspace,this->Tree->getWidget());
+  QShortcut* backSpaceShortcut = new QShortcut(Qt::Key_Backspace, this->Tree->getWidget());
   backSpaceShortcut->setContext(Qt::WidgetShortcut); //only fire when the tree has focus
-  QObject::connect(backSpaceShortcut,SIGNAL(activated()),
-    this->getMainDialog()->actionDeleteNode,SLOT(trigger()));
+  QObject::connect(backSpaceShortcut, SIGNAL(activated()), this->getMainDialog()->actionDeleteNode,
+    SLOT(trigger()));
 #endif
 
- // Set the delete action to be last
+  // Set the delete action to be last
   this->Tree->setDeleteNodeAction(this->getMainDialog()->actionDeleteNode);
 
   pqCMBSceneBuilderMainWindowCore* mainWinCore =
@@ -235,109 +228,95 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
     SIGNAL(clicked()), this->Tree, SLOT(clearSelection()));
 
   QObject::connect(this->Internal->ScenePanel->getGUIPanel()->tabWidget,
-    SIGNAL(currentChanged(int)),this->Tree,SLOT(collapseAllDataInfo()));
+    SIGNAL(currentChanged(int)), this->Tree, SLOT(collapseAllDataInfo()));
 
-  QObject::connect(this->Internal->ScenePanel->getGUIPanel()->ZoomButton,
-    SIGNAL(clicked()), mainWinCore, SLOT(zoomOnSelection()));
+  QObject::connect(this->Internal->ScenePanel->getGUIPanel()->ZoomButton, SIGNAL(clicked()),
+    mainWinCore, SLOT(zoomOnSelection()));
 
-  QObject::connect(
-    mainWinCore, SIGNAL(newSceneLoaded()),
-    this, SLOT(onSceneLoaded()));
+  QObject::connect(mainWinCore, SIGNAL(newSceneLoaded()), this, SLOT(onSceneLoaded()));
 
-  QObject::connect(
-    mainWinCore, SIGNAL(sceneSaved()),
-    this, SLOT(onSceneSaved()));
+  QObject::connect(mainWinCore, SIGNAL(sceneSaved()), this, SLOT(onSceneSaved()));
 
-  QObject::connect(this->getMainDialog()->action_Select,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onRubberBandSelect(bool)));
+  QObject::connect(this->getMainDialog()->action_Select, SIGNAL(triggered(bool)), this,
+    SLOT(onRubberBandSelect(bool)));
   //
   //QObject::connect(mainWinCore->renderViewSelectionHelper(),
   //  SIGNAL(selectionModeChanged(int)),
   //  this, SLOT(onSelectionModeChanged(int)));
 
-  QObject::connect(this->getMainDialog()->actionNew,
-    SIGNAL(triggered()), mainWinCore, SLOT(newScene()));
+  QObject::connect(
+    this->getMainDialog()->actionNew, SIGNAL(triggered()), mainWinCore, SLOT(newScene()));
 
-  QObject::connect(this->getMainDialog()->actionCreate_Omicron_Input,
-    SIGNAL(triggered()), mainWinCore, SLOT(onCreateOmicronInput()));
-  QObject::connect(this->getMainDialog()->actionPackageScene,
-    SIGNAL(triggered()), mainWinCore, SLOT(onPackageScene()));
-  QObject::connect(this->getMainDialog()->actionExport_2D_BCS_File,
-    SIGNAL(triggered()), mainWinCore, SLOT(onExport2DBCSFile()));
+  QObject::connect(this->getMainDialog()->actionCreate_Omicron_Input, SIGNAL(triggered()),
+    mainWinCore, SLOT(onCreateOmicronInput()));
+  QObject::connect(this->getMainDialog()->actionPackageScene, SIGNAL(triggered()), mainWinCore,
+    SLOT(onPackageScene()));
+  QObject::connect(this->getMainDialog()->actionExport_2D_BCS_File, SIGNAL(triggered()),
+    mainWinCore, SLOT(onExport2DBCSFile()));
 
-  QObject::connect(this->getMainDialog()->actionCreate_CMB_Model,
-    SIGNAL(triggered()), mainWinCore, SLOT(onSpawnModelMesher()));
+  QObject::connect(this->getMainDialog()->actionCreate_CMB_Model, SIGNAL(triggered()), mainWinCore,
+    SLOT(onSpawnModelMesher()));
 
-  QObject::connect(this->getMainDialog()->actionCreate_Surface_Mesh,
-    SIGNAL(triggered()), mainWinCore, SLOT(onSpawnSurfaceMesher()));
+  QObject::connect(this->getMainDialog()->actionCreate_Surface_Mesh, SIGNAL(triggered()),
+    mainWinCore, SLOT(onSpawnSurfaceMesher()));
 
-  QObject::connect(this->getMainDialog()->actionModify_With_Arc_Functions,
-                   SIGNAL(triggered()), mainWinCore, SLOT(onSpawnArcModifier()),
-                   Qt::UniqueConnection);
+  QObject::connect(this->getMainDialog()->actionModify_With_Arc_Functions, SIGNAL(triggered()),
+    mainWinCore, SLOT(onSpawnArcModifier()), Qt::UniqueConnection);
 
-  QObject::connect(this->Tree,
-    SIGNAL(lockedNodesChanged()), mainWinCore, SLOT(updateBoxWidget()));
+  QObject::connect(this->Tree, SIGNAL(lockedNodesChanged()), mainWinCore, SLOT(updateBoxWidget()));
 
-  QObject::connect(this->Tree,
-    SIGNAL(firstDataObjectAdded()), mainWinCore, SLOT(resetCamera()),
-     Qt::QueuedConnection);
+  QObject::connect(this->Tree, SIGNAL(firstDataObjectAdded()), mainWinCore, SLOT(resetCamera()),
+    Qt::QueuedConnection);
 
-  mainWinCore->setupAppearanceEditor(
-    this->Internal->ScenePanel->getGUIPanel()->appearanceFrame);
+  mainWinCore->setupAppearanceEditor(this->Internal->ScenePanel->getGUIPanel()->appearanceFrame);
 
-  QObject::connect(this->Tree,
-                   SIGNAL(nodeNameChanged(pqCMBSceneNode *)),
-                   this, SLOT(onSceneNodeNameChanged(pqCMBSceneNode*)),
-                   Qt::QueuedConnection);
+  QObject::connect(this->Tree, SIGNAL(nodeNameChanged(pqCMBSceneNode*)), this,
+    SLOT(onSceneNodeNameChanged(pqCMBSceneNode*)), Qt::QueuedConnection);
 
   QObject::connect(this->Tree,
-                   SIGNAL(selectionUpdated(const QList<pqCMBSceneNode *> *,
-                                           const QList<pqCMBSceneNode *> *)),
-                   this,
-                   SLOT(onSceneNodeSelected(const QList<pqCMBSceneNode *> *,
-                                            const QList<pqCMBSceneNode *> *)),
-                   Qt::QueuedConnection);
+    SIGNAL(selectionUpdated(const QList<pqCMBSceneNode*>*, const QList<pqCMBSceneNode*>*)), this,
+    SLOT(onSceneNodeSelected(const QList<pqCMBSceneNode*>*, const QList<pqCMBSceneNode*>*)),
+    Qt::QueuedConnection);
 
-  QObject::connect(this->Tree,SIGNAL(enableMenuItems(bool)),
-    this,SLOT(onEnableMenuItems(bool)));
+  QObject::connect(this->Tree, SIGNAL(enableMenuItems(bool)), this, SLOT(onEnableMenuItems(bool)));
 
   //connect the contour manager to control which tab is active
-  QObject::connect(this->Tree,SIGNAL(focusOnSceneTab()),
-    this->Internal->ScenePanel,SLOT(focusOnSceneTab()));
-  QObject::connect(this->Tree,SIGNAL(focusOnDisplayTab()),
-    this->Internal->ScenePanel,SLOT(focusOnDisplayTab()));
+  QObject::connect(
+    this->Tree, SIGNAL(focusOnSceneTab()), this->Internal->ScenePanel, SLOT(focusOnSceneTab()));
+  QObject::connect(
+    this->Tree, SIGNAL(focusOnDisplayTab()), this->Internal->ScenePanel, SLOT(focusOnDisplayTab()));
 
   // Setup the selection widget
   QActionGroup* group = new QActionGroup(this->getMainDialog()->toolBar_Selection);
   group->addAction(this->getMainDialog()->action_Select);
   group->addAction(this->getMainDialog()->action_SelectPoints);
   this->getMainDialog()->action_SelectPoints->setText("Select Glyph Points");
-    this->getMainDialog()->action_SelectPoints->setToolTip("Select Glyph Points");
-  this->getMainDialog()->toolBar_Selection->addAction(
-    this->getMainDialog()->action_SelectPoints);
+  this->getMainDialog()->action_SelectPoints->setToolTip("Select Glyph Points");
+  this->getMainDialog()->toolBar_Selection->addAction(this->getMainDialog()->action_SelectPoints);
 
   // Setup the Undo/Redo Actions
   this->getMainDialog()->toolBar->addSeparator();
   this->getMainDialog()->toolBar->addAction(this->getMainDialog()->actionUndo);
   this->getMainDialog()->toolBar->addAction(this->getMainDialog()->actionRedo);
-  QObject::connect(this->getMainDialog()->actionClearUndoRedoStack,SIGNAL(triggered()),
-    this->Tree,SLOT(emptyEventList()));
+  QObject::connect(this->getMainDialog()->actionClearUndoRedoStack, SIGNAL(triggered()), this->Tree,
+    SLOT(emptyEventList()));
 
-  QObject::connect(this->getMainDialog()->action_SelectPoints,
-    SIGNAL(triggered(bool)),
-    this, SLOT(onSelectGlyph(bool)));
+  QObject::connect(this->getMainDialog()->action_SelectPoints, SIGNAL(triggered(bool)), this,
+    SLOT(onSelectGlyph(bool)));
 
-  this->Internal->SelectionLabel = new QLabel("Selection Style:", this->getMainDialog()->toolBar_Selection);
+  this->Internal->SelectionLabel =
+    new QLabel("Selection Style:", this->getMainDialog()->toolBar_Selection);
   this->Internal->SelectionMenu = new QComboBox(this->getMainDialog()->toolBar_Selection);
   this->getMainDialog()->toolBar_Selection->addWidget(this->Internal->SelectionLabel);
   this->getMainDialog()->toolBar_Selection->addWidget(this->Internal->SelectionMenu);
   QStringList list;
-  list << "Outline" << "Points" << "Wireframe" << "Surface";
+  list << "Outline"
+       << "Points"
+       << "Wireframe"
+       << "Surface";
   this->Internal->SelectionMenu->addItems(list);
-  QObject::connect(
-    this->Internal->SelectionMenu, SIGNAL(currentIndexChanged(int)),
-    mainWinCore, SLOT(setSelectionMode(int)));
+  QObject::connect(this->Internal->SelectionMenu, SIGNAL(currentIndexChanged(int)), mainWinCore,
+    SLOT(setSelectionMode(int)));
   this->Internal->SelectionMenu->setCurrentIndex(0);
 
   // disable until Scene loaded (what is the minimum requirement?)
@@ -353,24 +332,23 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
   this->getMainDialog()->actionImport_Object_File->setEnabled(false);
   this->Tree->clearSelection();
 
-  QObject::connect(this->getMainDialog()->actionGlyph_Playback, SIGNAL(toggled(bool)),
-                   this->Tree, SLOT(updateUseGlyphPlayback(bool)));
+  QObject::connect(this->getMainDialog()->actionGlyph_Playback, SIGNAL(toggled(bool)), this->Tree,
+    SLOT(updateUseGlyphPlayback(bool)));
 
   //Connect Tree signal for scene manipulation mode
-  QObject::connect(this->Tree, SIGNAL(set2DCameraMode()),
-    mainWinCore, SLOT(set2DCameraInteraction()));
-  QObject::connect(this->Tree, SIGNAL(pushCameraMode()),
-    mainWinCore, SLOT(pushCameraInteraction()));
-  QObject::connect(this->Tree, SIGNAL(popCameraMode()),
-    mainWinCore, SLOT(popCameraInteraction()));
+  QObject::connect(
+    this->Tree, SIGNAL(set2DCameraMode()), mainWinCore, SLOT(set2DCameraInteraction()));
+  QObject::connect(
+    this->Tree, SIGNAL(pushCameraMode()), mainWinCore, SLOT(pushCameraInteraction()));
+  QObject::connect(this->Tree, SIGNAL(popCameraMode()), mainWinCore, SLOT(popCameraInteraction()));
   QObject::connect(this->Tree, SIGNAL(enableToolbars(bool)), this, SLOT(setToolbarsEnabled(bool)));
-  QObject::connect(this->Tree, SIGNAL(resetViewDirection(double,double,double,double,double,double)),
-                   mainWinCore, SLOT(resetViewDirection(double,double,double,double,double,double)));
+  QObject::connect(this->Tree,
+    SIGNAL(resetViewDirection(double, double, double, double, double, double)), mainWinCore,
+    SLOT(resetViewDirection(double, double, double, double, double, double)));
 
   QString filters = pqCMBFileExtensions::SceneBuilder_FileTypes();
   this->loadDataReaction()->setSupportedFileTypes(filters);
-  this->loadDataReaction()->addReaderExtensionMap(
-    pqCMBFileExtensions::SceneBuilder_ReadersMap());
+  this->loadDataReaction()->addReaderExtensionMap(pqCMBFileExtensions::SceneBuilder_ReadersMap());
 }
 
 //----------------------------------------------------------------------------
@@ -378,16 +356,14 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
 {
   //this->Internal->ScenePanel->getGUIPanel()->setupUi(this);
   // First create a Create and Properties Submenu
-  QMenuBar *menubar = this->menuBar();
-  QMenu *createMenu = new QMenu("Create", menubar);
+  QMenuBar* menubar = this->menuBar();
+  QMenu* createMenu = new QMenu("Create", menubar);
   createMenu->setObjectName("menu_Create");
-  QMenu *propertiesMenu = new QMenu("Properties", menubar);
+  QMenu* propertiesMenu = new QMenu("Properties", menubar);
   propertiesMenu->setObjectName("menu_Properties");
 
-  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
-                        createMenu);
-  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(),
-                        propertiesMenu);
+  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(), createMenu);
+  menubar->insertMenu(this->getMainDialog()->menu_View->menuAction(), propertiesMenu);
 
   // Create Actions
   createMenu->addAction(this->getMainDialog()->actionContour_Widget);
@@ -426,28 +402,22 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
 
   this->Internal->EditMenuActions.append(this->getMainDialog()->actionChangeNumberOfPointsLoaded);
 
-    // Add actions to "File" menu.
+  // Add actions to "File" menu.
   this->getMainDialog()->menu_File->insertAction(
     this->getMainDialog()->action_Open_File, this->getMainDialog()->actionNew);
   this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Open_File,
-    this->getMainDialog()->actionImport_Object_File);
+    this->getMainDialog()->action_Open_File, this->getMainDialog()->actionImport_Object_File);
   this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Close,
-    this->getMainDialog()->actionCreate_Omicron_Input);
+    this->getMainDialog()->action_Close, this->getMainDialog()->actionCreate_Omicron_Input);
   this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Close,
-    this->getMainDialog()->actionExportSelectedSolids);
+    this->getMainDialog()->action_Close, this->getMainDialog()->actionExportSelectedSolids);
   this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->actionCreate_Omicron_Input,
-    this->getMainDialog()->actionPackageScene);
+    this->getMainDialog()->actionCreate_Omicron_Input, this->getMainDialog()->actionPackageScene);
   this->getMainDialog()->menu_File->insertSeparator(
     this->getMainDialog()->actionExportSelectedSolids);
   this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->action_Close,
-    this->getMainDialog()->actionExport_2D_BCS_File);
-  this->getMainDialog()->menu_File->insertAction(
-    this->getMainDialog()->actionExport_2D_BCS_File,
+    this->getMainDialog()->action_Close, this->getMainDialog()->actionExport_2D_BCS_File);
+  this->getMainDialog()->menu_File->insertAction(this->getMainDialog()->actionExport_2D_BCS_File,
     this->getMainDialog()->actionExportSelectedPolygons);
 
   // Add actions to "Edit" menu.
@@ -456,102 +426,83 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menuEdit->insertSeparator(this->getMainDialog()->actionDeleteNode);
   this->getMainDialog()->menuEdit->insertSeparator(this->getMainDialog()->actionSnap_Object);
 
-
-  for(int i=0; i<this->Internal->EditMenuActions.count(); i++)
-    {
+  for (int i = 0; i < this->Internal->EditMenuActions.count(); i++)
+  {
     this->Internal->ScenePanel->getGUIPanel()->SceneGraph->addAction(
       this->Internal->EditMenuActions.value(i));
-    }
+  }
   this->Internal->ScenePanel->getGUIPanel()->SceneGraph->addAction(
     this->getMainDialog()->actionExportSelectedSolids);
 
   // Add actions to "Tools" menu.
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionCreateStackTIN);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionCreateStackTIN);
 
-  this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
+  this->getMainDialog()->menu_Tools->insertAction(this->getMainDialog()->actionLock_View_Size,
     this->getMainDialog()->actionCreate_Solid_from_TINs);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionGenerateContours);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionGenerateContours);
 
-  this->getMainDialog()->menu_Tools->insertSeparator(
-    this->getMainDialog()->actionGenerateContours);
+  this->getMainDialog()->menu_Tools->insertSeparator(this->getMainDialog()->actionGenerateContours);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionGenerateContours,
-    this->getMainDialog()->actionCreateDEMMesh);
+    this->getMainDialog()->actionGenerateContours, this->getMainDialog()->actionCreateDEMMesh);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionArcSnapping);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionArcSnapping);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionMergeArcs);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionMergeArcs);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionGrowArcSelection);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionGrowArcSelection);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionAutoConnectArcs);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionAutoConnectArcs);
 
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionCreate_Surface_Mesh);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionCreate_Surface_Mesh);
 
   this->getMainDialog()->menu_Tools->insertSeparator(
     this->getMainDialog()->actionCreate_Surface_Mesh);
 
-
   this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
-    this->getMainDialog()->actionCreate_CMB_Model);
+    this->getMainDialog()->actionLock_View_Size, this->getMainDialog()->actionCreate_CMB_Model);
 
-  this->getMainDialog()->menu_Tools->insertSeparator(
-    this->getMainDialog()->actionLock_View_Size);
+  this->getMainDialog()->menu_Tools->insertSeparator(this->getMainDialog()->actionLock_View_Size);
 
-  this->getMainDialog()->menu_Tools->insertAction(
-    this->getMainDialog()->actionLock_View_Size,
+  this->getMainDialog()->menu_Tools->insertAction(this->getMainDialog()->actionLock_View_Size,
     this->getMainDialog()->actionModify_With_Arc_Functions);
-  this->getMainDialog()->menu_Tools->insertSeparator(
-    this->getMainDialog()->actionLock_View_Size);
+  this->getMainDialog()->menu_Tools->insertSeparator(this->getMainDialog()->actionLock_View_Size);
 
-  this->getMainDialog()->menu_Tools->insertAction(
-      0,
-      this->getMainDialog()->actionGlyph_Playback);
+  this->getMainDialog()->menu_Tools->insertAction(0, this->getMainDialog()->actionGlyph_Playback);
 
-  this->getMainDialog()->menu_Tools->insertSeparator(
-      this->getMainDialog()->actionGlyph_Playback);
+  this->getMainDialog()->menu_Tools->insertSeparator(this->getMainDialog()->actionGlyph_Playback);
 }
 
 //----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onSceneLoaded()
 {
   if (this->Tree->isEmpty())
-    {
+  {
     this->clearGUI();
-    }
+  }
   else
-    {
+  {
     this->updateEnableState();
     this->getMainDialog()->faceParametersDock->setEnabled(true);
-    }
+  }
   QString fname = this->getThisCore()->getOutputFileName();
   if (fname == "")
-    {
+  {
     this->appendDatasetNameToTitle("Untitled");
-    }
+  }
   else
-    {
+  {
     QFileInfo finfo(fname);
     this->appendDatasetNameToTitle(finfo.fileName());
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -569,14 +520,15 @@ void pqCMBSceneBuilderMainWindow::updateEnableState()
   this->updateEnableState(data_loaded);
 
   if (data_loaded &&
-      (static_cast<pqCMBSceneBuilderMainWindowCore*>(this->MainWindowCore)->getOutputFileName() != ""))
-    {
+    (static_cast<pqCMBSceneBuilderMainWindowCore*>(this->MainWindowCore)->getOutputFileName() !=
+        ""))
+  {
     this->getMainDialog()->actionPackageScene->setEnabled(true);
-    }
+  }
   else
-    {
+  {
     this->getMainDialog()->actionPackageScene->setEnabled(false);
-    }
+  }
 
   this->getMainDialog()->actionCreate_Surface_Mesh->setEnabled(data_loaded);
   this->getMainDialog()->actionModify_With_Arc_Functions->setEnabled(data_loaded);
@@ -597,13 +549,13 @@ void pqCMBSceneBuilderMainWindow::setToolbarsEnabled(bool enable)
 void pqCMBSceneBuilderMainWindow::onHelpAbout()
 {
   qtCMBAboutDialog* const dialog = new qtCMBAboutDialog(this);
-  dialog->setWindowTitle(QApplication::translate("Scene Builder AboutDialog",
-                                               "About Scene Builder",
-                                               0
+  dialog->setWindowTitle(
+    QApplication::translate("Scene Builder AboutDialog", "About Scene Builder", 0
 #if QT_VERSION < 0x050000
-                                               , QApplication::UnicodeUTF8
+      ,
+      QApplication::UnicodeUTF8
 #endif
-                                               ));
+      ));
   dialog->setPixmap(QPixmap(QString(":/cmb/SceneBuilderSplashAbout.png")));
   dialog->setVersionText(
     QString("<html><b>Version: <i>%1</i></b></html>").arg(SceneGen_VERSION_FULL));
@@ -617,13 +569,11 @@ void pqCMBSceneBuilderMainWindow::onHelpHelp()
   this->showHelpPage("qthelp://paraview.org/cmbsuite/SceneBuilder_README.html");
 }
 
-
 //----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::onEnableExternalProcesses(bool state)
 {
   this->getMainDialog()->actionCreate_CMB_Model->setEnabled(state);
 }
-
 
 //-----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::clearGUI()
@@ -633,42 +583,42 @@ void pqCMBSceneBuilderMainWindow::clearGUI()
 
 //-----------------------------------------------------------------------------
 // For processing selections via the Scene Tree's nodes
-void pqCMBSceneBuilderMainWindow::onSceneNodeSelected(const QList<pqCMBSceneNode *> *,
-                                                 const QList<pqCMBSceneNode *> *)
+void pqCMBSceneBuilderMainWindow::onSceneNodeSelected(
+  const QList<pqCMBSceneNode*>*, const QList<pqCMBSceneNode*>*)
 {
   int n = static_cast<int>(this->Tree->getSelected().size());
   this->getLastSelectionPorts().clear();
   if (!n)
-    {
+  {
     this->Internal->ScenePanel->getGUIPanel()->ClearSelectionButton->setEnabled(false);
     this->Internal->ScenePanel->getGUIPanel()->ZoomButton->setEnabled(false);
     this->getThisCore()->showStatusMessage("Selected Object: None");
     return;
-    }
+  }
 
   this->Internal->ScenePanel->getGUIPanel()->ClearSelectionButton->setEnabled(true);
 
   if (n != 1)
-    {
+  {
     this->getThisCore()->showStatusMessage("Selected Object: Multiple");
-    }
+  }
   else
-    {
+  {
     QString text("Selected Object: ");
     text += this->Tree->getSelected()[0]->getName();
     this->getThisCore()->showStatusMessage(text);
-    }
+  }
   this->Internal->ScenePanel->getGUIPanel()->ZoomButton->setEnabled(true);
 }
 //-----------------------------------------------------------------------------
 // For processing name changes via the Scene Tree's nodes
-void pqCMBSceneBuilderMainWindow::onSceneNodeNameChanged(pqCMBSceneNode *node)
+void pqCMBSceneBuilderMainWindow::onSceneNodeNameChanged(pqCMBSceneNode* node)
 {
-  if (node->isTypeNode()  || (!node->isSelected()))
-    {
+  if (node->isTypeNode() || (!node->isSelected()))
+  {
     // Type nodes are currently not allowed to be selected
     return;
-    }
+  }
 
   QString text("Selected Object: ");
   text += node->getName();
@@ -678,70 +628,69 @@ void pqCMBSceneBuilderMainWindow::onSceneNodeNameChanged(pqCMBSceneNode *node)
 //----------------------------------------------------------------------------
 void pqCMBSceneBuilderMainWindow::updateSelection()
 {
-  int isShiftKeyDown = this->MainWindowCore->activeRenderView()->
-    getRenderViewProxy()->GetInteractor()->GetShiftKey();
+  int isShiftKeyDown =
+    this->MainWindowCore->activeRenderView()->getRenderViewProxy()->GetInteractor()->GetShiftKey();
   if (!isShiftKeyDown)
-    {
+  {
     // Clear all existing selections
     this->Tree->clearSelection();
     this->getThisCore()->clearSelectedGlyphList();
-    }
+  }
 
   int i, n = this->getLastSelectionPorts().count();
   pqOutputPort* opPort;
-  pqCMBSceneNode *node;
+  pqCMBSceneNode* node;
   QTreeWidgetItem* objItem;
 
-  if(this->getMainDialog()->action_Select->isChecked())
-    {
+  if (this->getMainDialog()->action_Select->isChecked())
+  {
 
     this->Tree->getWidget()->blockSignals(true);
     for (i = 0; i < n; i++)
-      {
+    {
       opPort = this->getLastSelectionPorts().at(i);
       if (!opPort)
-        {
+      {
         continue;
-        }
+      }
       node = this->Tree->findNode(opPort->getSource());
       if ((!node) || node->isAncestorWidgetSelected())
-        {
+      {
         continue;
-        }
+      }
       objItem = node->getWidget();
       objItem->setSelected(true);
-      }
+    }
 
     this->Tree->getWidget()->blockSignals(false);
     this->Tree->nodesSelected();
-
-    }
-  else if(this->getMainDialog()->action_SelectPoints->isChecked())
-    {
+  }
+  else if (this->getMainDialog()->action_SelectPoints->isChecked())
+  {
     this->Tree->getWidget()->blockSignals(true);
     QList<pqCMBGlyphObject*> glyphList;
     for (i = 0; i < n; i++)
-      {
+    {
       opPort = this->getLastSelectionPorts().at(i);
       if (!opPort)
-        {
+      {
         continue;
-        }
+      }
       node = this->Tree->findNode(opPort->getSource());
       if (!node || !node->getDataObject())
-        {
+      {
         continue;
-        }
-      if(node->getDataObject()->getType() != pqCMBSceneObjectBase::Glyph)
-        {
+      }
+      if (node->getDataObject()->getType() != pqCMBSceneObjectBase::Glyph)
+      {
         opPort->setSelectionInput(NULL, 0);
-        }
+      }
       else
-        {
+      {
         glyphList.append(static_cast<pqCMBGlyphObject*>(node->getDataObject()));
         node->select();
-        }
       }
+    }
     this->getThisCore()->selectGlyph(glyphList);
     this->Tree->getWidget()->blockSignals(false);
     // The signal is blocked so that the selection of tree item won't
@@ -749,7 +698,7 @@ void pqCMBSceneBuilderMainWindow::updateSelection()
     this->Tree->blockSignals(true);
     this->Tree->nodesSelected();
     this->Tree->blockSignals(false);
-    }
+  }
 }
 
 //----------------------------------------------------------------------------

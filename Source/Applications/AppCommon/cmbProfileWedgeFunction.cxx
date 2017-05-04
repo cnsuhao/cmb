@@ -9,31 +9,42 @@
 //=========================================================================
 
 #include "cmbProfileWedgeFunction.h"
-#include "vtkSMPropertyHelper.h"
 #include "pqSMAdaptor.h"
-#include "vtkSMSourceProxy.h"
-#include "vtkSMProperty.h"
 #include "vtkPiecewiseFunction.h"
+#include "vtkSMProperty.h"
+#include "vtkSMPropertyHelper.h"
+#include "vtkSMSourceProxy.h"
 
 #include <cmath>
 
 cmbProfileWedgeFunction::cmbProfileWedgeFunction()
-: depth(-8), baseWidth(0), slopeLeft(1), slopeRight(1),
-  WeightingFunction(vtkPiecewiseFunction::New()), Relative(true),
-  Symmetry(true), WeightUseSpline(false), clamp(true), dispMode(Dig)
+  : depth(-8)
+  , baseWidth(0)
+  , slopeLeft(1)
+  , slopeRight(1)
+  , WeightingFunction(vtkPiecewiseFunction::New())
+  , Relative(true)
+  , Symmetry(true)
+  , WeightUseSpline(false)
+  , clamp(true)
+  , dispMode(Dig)
 {
   this->WeightingFunction->SetAllowDuplicateScalars(1);
   this->WeightingFunction->AddPoint(0, 1);
   this->WeightingFunction->AddPoint(1, 1);
 }
 
-cmbProfileWedgeFunction
-::cmbProfileWedgeFunction(cmbProfileWedgeFunction const* other)
-: depth(other->depth), baseWidth(other->baseWidth),
-  slopeLeft(other->slopeLeft), slopeRight(other->slopeRight),
-  WeightingFunction(vtkPiecewiseFunction::New()), Relative(other->Relative),
-  Symmetry(other->Symmetry), WeightUseSpline(other->WeightUseSpline),
-  clamp(other->clamp), dispMode(other->dispMode)
+cmbProfileWedgeFunction::cmbProfileWedgeFunction(cmbProfileWedgeFunction const* other)
+  : depth(other->depth)
+  , baseWidth(other->baseWidth)
+  , slopeLeft(other->slopeLeft)
+  , slopeRight(other->slopeRight)
+  , WeightingFunction(vtkPiecewiseFunction::New())
+  , Relative(other->Relative)
+  , Symmetry(other->Symmetry)
+  , WeightUseSpline(other->WeightUseSpline)
+  , clamp(other->clamp)
+  , dispMode(other->dispMode)
 {
   this->WeightingFunction->DeepCopy(other->WeightingFunction);
 }
@@ -48,35 +59,32 @@ cmbProfileFunction::FunctionType cmbProfileWedgeFunction::getType() const
   return cmbProfileFunction::WEDGE;
 }
 
-cmbProfileFunction * cmbProfileWedgeFunction::clone(std::string const& name) const
+cmbProfileFunction* cmbProfileWedgeFunction::clone(std::string const& name) const
 {
-  cmbProfileWedgeFunction * result = new cmbProfileWedgeFunction(this);
+  cmbProfileWedgeFunction* result = new cmbProfileWedgeFunction(this);
   result->setName(name);
   return result;
 }
 
-void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
-                                              vtkBoundingBox vtkNotUsed(bbox),
-                                              vtkSMSourceProxy* source) const
+void cmbProfileWedgeFunction::sendDataToProxy(
+  int arc_ID, int funId, vtkBoundingBox vtkNotUsed(bbox), vtkSMSourceProxy* source) const
 {
   double slopeLeftLocal = getSlopeLeft();
   double slopeRightLocal = getSlopeRight();
   double baseWidthLocal = getBaseWidth();
 
-  QList< QVariant > v;
+  QList<QVariant> v;
   double widthLeft = widthLeft = baseWidthLocal * 0.5;
-  if(slopeLeftLocal  != 0)
+  if (slopeLeftLocal != 0)
   {
-    slopeLeftLocal = 1.0/slopeLeftLocal;
+    slopeLeftLocal = 1.0 / slopeLeftLocal;
   }
-  if(slopeRightLocal != 0)
+  if (slopeRightLocal != 0)
   {
-    slopeRightLocal = 1.0/slopeRight;
+    slopeRightLocal = 1.0 / slopeRight;
   }
-  v << arc_ID << funId << ((this->WeightUseSpline)?1:0)
-    << Relative << this->getMode()
-    << this->clamp
-    << getBaseWidth() << getDepth() << slopeLeftLocal << slopeRightLocal;
+  v << arc_ID << funId << ((this->WeightUseSpline) ? 1 : 0) << Relative << this->getMode()
+    << this->clamp << getBaseWidth() << getDepth() << slopeLeftLocal << slopeRightLocal;
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
   source->UpdateVTKObjects();
   v.clear();
@@ -84,7 +92,7 @@ void cmbProfileWedgeFunction::sendDataToProxy(int arc_ID, int funId,
   pqSMAdaptor::setMultipleElementProperty(source->GetProperty("CreateWedgeFunction"), v);
   source->UpdateVTKObjects();
 
-  for(int i = 0; i < WeightingFunction->GetSize(); ++i)
+  for (int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
     double d[4];
     v.clear();
@@ -156,25 +164,26 @@ bool cmbProfileWedgeFunction::isSymmetric() const
 
 void cmbProfileWedgeFunction::setSymmetry(bool d)
 {
-  if(d == Symmetry) return;
+  if (d == Symmetry)
+    return;
   Symmetry = d;
   double v[4];
-  vtkPiecewiseFunction * tw = vtkPiecewiseFunction::New();
+  vtkPiecewiseFunction* tw = vtkPiecewiseFunction::New();
   tw->SetAllowDuplicateScalars(1);
   tw->DeepCopy(WeightingFunction);
   WeightingFunction->Initialize();
-  if(!d)
+  if (!d)
   {
     this->setSlopeRight(this->getSlopeLeft());
-    for(int i = 0; i < tw->GetSize(); ++i)
+    for (int i = 0; i < tw->GetSize(); ++i)
     {
       tw->GetNodeValue(i, v);
       WeightingFunction->AddPoint(v[0], v[1], v[2], v[3]);
     }
-    for(int i = tw->GetSize()-1; i >= 0; --i)
+    for (int i = tw->GetSize() - 1; i >= 0; --i)
     {
       tw->GetNodeValue(i, v);
-      if(v[0]!=0)
+      if (v[0] != 0)
       {
         WeightingFunction->AddPoint(-v[0], v[1], v[2], v[3]);
       }
@@ -182,10 +191,10 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
   }
   else
   {
-    for(int i = 0; i < tw->GetSize(); ++i)
+    for (int i = 0; i < tw->GetSize(); ++i)
     {
       tw->GetNodeValue(i, v);
-      if(v[0]>0)
+      if (v[0] > 0)
       {
         WeightingFunction->AddPoint(v[0], v[1], v[2], v[3]);
       }
@@ -194,19 +203,17 @@ void cmbProfileWedgeFunction::setSymmetry(bool d)
   }
 }
 
-bool cmbProfileWedgeFunction::readData(std::ifstream & in, int vtkNotUsed(version))
+bool cmbProfileWedgeFunction::readData(std::ifstream& in, int vtkNotUsed(version))
 {
   int subv, tmpMode;
-  in >> subv
-     >> this->depth >> this->baseWidth >> this->slopeLeft >> this->slopeRight
-     >> this->Relative >> this->Symmetry >> this->WeightUseSpline
-     >> this->clamp >> tmpMode;
+  in >> subv >> this->depth >> this->baseWidth >> this->slopeLeft >> this->slopeRight >>
+    this->Relative >> this->Symmetry >> this->WeightUseSpline >> this->clamp >> tmpMode;
   this->dispMode = static_cast<DisplacmentMode>(tmpMode);
 
   int n;
   in >> n;
   this->WeightingFunction->Initialize();
-  for(int i = 0; i < n; ++i)
+  for (int i = 0; i < n; ++i)
   {
     double d[4];
     in >> d[0] >> d[1] >> d[2] >> d[3];
@@ -215,15 +222,17 @@ bool cmbProfileWedgeFunction::readData(std::ifstream & in, int vtkNotUsed(versio
   return true;
 }
 
-bool cmbProfileWedgeFunction::writeData(std::ofstream & out) const
+bool cmbProfileWedgeFunction::writeData(std::ofstream& out) const
 {
-  out << '\n' << 1 << '\n' //version
-      << this->depth << ' ' << this->baseWidth << ' ' << this->slopeLeft << ' '
-      << this->slopeRight << '\n' << this->Relative << ' ' << this->Symmetry << ' '
-      << this->WeightUseSpline << ' ' << this->clamp << ' ' << this->dispMode << '\n';
+  out << '\n'
+      << 1 << '\n' //version
+      << this->depth << ' ' << this->baseWidth << ' ' << this->slopeLeft << ' ' << this->slopeRight
+      << '\n'
+      << this->Relative << ' ' << this->Symmetry << ' ' << this->WeightUseSpline << ' '
+      << this->clamp << ' ' << this->dispMode << '\n';
 
   out << this->WeightingFunction->GetSize() << "\n";
-  for(int i = 0; i < WeightingFunction->GetSize(); ++i)
+  for (int i = 0; i < WeightingFunction->GetSize(); ++i)
   {
     double d[4];
     this->WeightingFunction->GetNodeValue(i, d);
@@ -254,11 +263,14 @@ void cmbProfileWedgeFunction::setClamped(bool w)
 
 void cmbProfileWedgeFunction::setMode(DisplacmentMode d)
 {
-  if(Relative)
+  if (Relative)
   {
-    if(d == Level) return;
-    if(depth < 0) this->dispMode = Dig;
-    else this->dispMode = Raise;
+    if (d == Level)
+      return;
+    if (depth < 0)
+      this->dispMode = Dig;
+    else
+      this->dispMode = Raise;
   }
   else
   {
@@ -268,10 +280,12 @@ void cmbProfileWedgeFunction::setMode(DisplacmentMode d)
 
 cmbProfileWedgeFunction::DisplacmentMode cmbProfileWedgeFunction::getMode() const
 {
-  if(Relative)
+  if (Relative)
   {
-    if(depth<0) return Dig;
-    else return Raise;
+    if (depth < 0)
+      return Dig;
+    else
+      return Raise;
   }
   return this->dispMode;
 }

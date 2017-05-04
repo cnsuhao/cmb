@@ -16,13 +16,12 @@
 // .SECTION See Also
 // vtkSMSourceProxy vtkSMNewWidgetRepresentationProxy
 
-
 #ifndef __vtkSMSceneContourSourceProxy_h
 #define __vtkSMSceneContourSourceProxy_h
 
-#include "vtkSMSourceProxy.h"
-#include "vtkCMBClientModule.h" // For export macro
 #include "cmbSystemConfig.h"
+#include "vtkCMBClientModule.h" // For export macro
+#include "vtkSMSourceProxy.h"
 
 class vtkSMNewWidgetRepresentationProxy;
 
@@ -36,26 +35,25 @@ public:
   // Description:
   // Copies data from a widget proxy to object represented by this
   // source proxy object.
-  void CopyData(vtkSMNewWidgetRepresentationProxy *widgetProxy);
+  void CopyData(vtkSMNewWidgetRepresentationProxy* widgetProxy);
 
   // Description:
   // Copies the data this proxy output to the input of the widget
-  void EditData(vtkSMNewWidgetRepresentationProxy *widgetProxy, bool &closed);
+  void EditData(vtkSMNewWidgetRepresentationProxy* widgetProxy, bool& closed);
 
   // Dexcription:
   //copies the data from a source proxy using the GetOutput method
-  void ExtractContour(vtkSMSourceProxy *sourceProxy);
+  void ExtractContour(vtkSMSourceProxy* sourceProxy);
 
-//BTX
+  //BTX
 protected:
   vtkSMSceneContourSourceProxy();
   ~vtkSMSceneContourSourceProxy() override;
 
 private:
   vtkSMSceneContourSourceProxy(const vtkSMSceneContourSourceProxy&); // Not implemented
-  void operator=(const vtkSMSceneContourSourceProxy&); // Not implemented
-//ETX
+  void operator=(const vtkSMSceneContourSourceProxy&);               // Not implemented
+  //ETX
 };
 
 #endif
-

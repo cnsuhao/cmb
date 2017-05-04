@@ -15,9 +15,9 @@
 #ifndef __vtkPVMeshDataInformation_h
 #define __vtkPVMeshDataInformation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 
 class vtkCellTypes;
 class vtkIntArray;
@@ -42,8 +42,8 @@ public:
 
   // Description:
   // Manage a serialized version of the information.
-  void CopyToStream(vtkClientServerStream*) override{;}
-  void CopyFromStream(const vtkClientServerStream*) override{;}
+  void CopyToStream(vtkClientServerStream*) override { ; }
+  void CopyFromStream(const vtkClientServerStream*) override { ; }
 
   //BTX
 protected:
@@ -55,9 +55,8 @@ protected:
   vtkIntArray* RegionArray;
 
 private:
-
   vtkPVMeshDataInformation(const vtkPVMeshDataInformation&); // Not implemented
-  void operator=(const vtkPVMeshDataInformation&); // Not implemented
+  void operator=(const vtkPVMeshDataInformation&);           // Not implemented
   //ETX
 };
 

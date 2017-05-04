@@ -11,16 +11,16 @@
 #ifndef __pqModelBuilderViewContextMenuBehavior_h
 #define __pqModelBuilderViewContextMenuBehavior_h
 
-#include <QObject>
-#include <QPoint>
-#include <QPointer>
-#include <QList>
-#include <QColor>
-#include <QMap>
-#include <QPair>
-#include "vtkType.h"
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/mesh/MeshSet.h"
+#include "vtkType.h"
+#include <QColor>
+#include <QList>
+#include <QMap>
+#include <QObject>
+#include <QPair>
+#include <QPoint>
+#include <QPointer>
 
 class pqDataRepresentation;
 class pqPipelineRepresentation;
@@ -45,25 +45,24 @@ class pqModelBuilderViewContextMenuBehavior : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
+
 public:
-  pqModelBuilderViewContextMenuBehavior(QObject* parent=0);
+  pqModelBuilderViewContextMenuBehavior(QObject* parent = 0);
   ~pqModelBuilderViewContextMenuBehavior() override;
 
   void setModelPanel(pqSMTKModelPanel*);
 
-  void syncBlockVisibility(pqDataRepresentation* rep,
-    const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks);
-  void syncBlockColor(pqDataRepresentation* rep,
-    const QList<unsigned int>& colorBlocks, const QColor&);
-  virtual void colorByEntity(const QString &);
-  virtual void colorByAttribute(smtk::attribute::SystemPtr attSys,
-    const QString& attdeftype, const QString& itemname);
-  virtual void updateColorForEntities(pqDataRepresentation* rep,
-    const QString& colorMode,
-    const QMap<smtk::model::EntityRef, QColor >& colorEntities);
-  virtual void updateColorForMeshes(pqDataRepresentation* rep,
-    const QString& colorMode,
-    const QMap<smtk::mesh::MeshSet, QColor >& colorEntities);
+  void syncBlockVisibility(pqDataRepresentation* rep, const QList<unsigned int>& visBlocks,
+    bool visible, vtkIdType numBlocks);
+  void syncBlockColor(
+    pqDataRepresentation* rep, const QList<unsigned int>& colorBlocks, const QColor&);
+  virtual void colorByEntity(const QString&);
+  virtual void colorByAttribute(
+    smtk::attribute::SystemPtr attSys, const QString& attdeftype, const QString& itemname);
+  virtual void updateColorForEntities(pqDataRepresentation* rep, const QString& colorMode,
+    const QMap<smtk::model::EntityRef, QColor>& colorEntities);
+  virtual void updateColorForMeshes(pqDataRepresentation* rep, const QString& colorMode,
+    const QMap<smtk::mesh::MeshSet, QColor>& colorEntities);
 
 signals:
   void representationBlockPicked(pqDataRepresentation*, unsigned int, bool ctrlKey);
@@ -122,16 +121,14 @@ protected:
   QString lookupBlockName(unsigned int flatIndex, pqSMTKModelInfo* minfo) const;
 
   virtual void showAllEntitiesAndMeshes(
-    const QList<pqSMTKModelInfo*>&,
-    const QList<pqSMTKMeshInfo*>&);
+    const QList<pqSMTKModelInfo*>&, const QList<pqSMTKMeshInfo*>&);
   // \a sessionBlocks is map of <sessionId, < Entities, Meshes> >
   virtual void getSelectedEntitiesAndMeshes(
-    QMap<smtk::common::UUID,
-    QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> > &sessionBlocks);
+    QMap<smtk::common::UUID, QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> >& sessionBlocks);
   virtual void setSelectedBlocksColor(const QColor& color);
 
-  void pickRepresentationBlock(pqRenderView* view,
-    const QPoint& newPos, QWidget* senderWidget, bool ctrl);
+  void pickRepresentationBlock(
+    pqRenderView* view, const QPoint& newPos, QWidget* senderWidget, bool ctrl);
 
   QMenu* m_contextMenu;
   QPoint m_clickPosition;
@@ -143,7 +140,6 @@ protected:
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)
-
 };
 
 #endif

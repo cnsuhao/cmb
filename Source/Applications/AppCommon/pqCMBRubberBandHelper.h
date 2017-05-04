@@ -8,7 +8,6 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-
 #ifndef __pqCMBRubberBandHelper_h
 #define __pqCMBRubberBandHelper_h
 
@@ -33,10 +32,11 @@ class CMBAPPCOMMON_EXPORT pqCMBRubberBandHelper : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
+
 public:
   // @deprecated Please modify your code to use pqRenderViewSelectionReaction
   // instead.
-  pqCMBRubberBandHelper(QObject* parent=NULL);
+  pqCMBRubberBandHelper(QObject* parent = NULL);
   ~pqCMBRubberBandHelper() override;
 
   /// Returns the currently selected render view.
@@ -87,10 +87,8 @@ public slots:
   /// End rubber band selection.
   /// Has any effect only if active view is a render view.
   void endSelection();
-  void endPick()
-    { this->endSelection(); }
-  void endZoom()
-    { this->endSelection(); }
+  void endPick() { this->endSelection(); }
+  void endZoom() { this->endSelection(); }
 
   /// Called to disable selection.
   void DisabledPush();
@@ -132,10 +130,7 @@ signals:
 
 protected slots:
   void emitEnabledSignals();
-  void delayedSelectionChanged()
-    {
-    this->onSelectionChanged(NULL, 0, NULL);
-    }
+  void delayedSelectionChanged() { this->onSelectionChanged(NULL, 0, NULL); }
 
 protected:
   int setRubberBandOn(int mode);
@@ -167,13 +162,13 @@ protected:
   /********************************************************************************/
   // void vtkSMRenderViewProxy::ClearSelectionCache(bool force/*=false*/)
   //{
-    // We check if we're currently selecting. If that's the case, any non-forced
-    // modifications (i.e. those coming through because of proxy-modifications)
-    // are considered a part of the making/showing selection and hence we
-    // don't clear the selection cache. While this doesn't help us preserve the
-    // cache between separate surface selection invocations, it does help us with
-    // reusing the case when in interactive selection mode.
-      // if ((this->IsSelectionCached && !this->IsInSelectionMode()) || force)
+  // We check if we're currently selecting. If that's the case, any non-forced
+  // modifications (i.e. those coming through because of proxy-modifications)
+  // are considered a part of the making/showing selection and hence we
+  // don't clear the selection cache. While this doesn't help us preserve the
+  // cache between separate surface selection invocations, it does help us with
+  // reusing the case when in interactive selection mode.
+  // if ((this->IsSelectionCached && !this->IsInSelectionMode()) || force)
   /********************************************************************************/
   void clearHardwareSelectionBuffer();
 

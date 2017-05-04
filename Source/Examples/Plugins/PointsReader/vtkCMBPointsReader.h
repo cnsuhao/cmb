@@ -23,8 +23,8 @@
 #include "vtkSmartPointer.h"
 
 #include "vtkBoundingBox.h"
-#include <vector>
 #include <map>
+#include <vector>
 
 class vtkTransform;
 class vtkGeoSphereTransform;
@@ -36,20 +36,20 @@ class vtkFloatArray;
 class vtkCMBPointsReader : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCMBPointsReader *New();
-  vtkTypeMacro(vtkCMBPointsReader,vtkPolyDataAlgorithm);
+  static vtkCMBPointsReader* New();
+  vtkTypeMacro(vtkCMBPointsReader, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   enum FileReadingStatus
-    {
+  {
     READ_OK = 0,
     READ_ERROR,
     READ_ABORT
-    };
+  };
 
   // Description:
   // Name of the file to be read.
-  void SetFileName(const char *filename);
+  void SetFileName(const char* filename);
   vtkGetStringMacro(FileName);
 
   // Description:
@@ -79,8 +79,7 @@ public:
   // Get the number of points in the piece specified by the PieceIndex.  Note,
   // this returns ALL the points in the piece AND the file info must already
   // have been read.
-  int GetNumberOfPointsInPiece()
-    { return this->GetNumberOfPointsInPiece(this->PieceIndex); }
+  int GetNumberOfPointsInPiece() { return this->GetNumberOfPointsInPiece(this->PieceIndex); }
 
   // Description:
   // Add individual pieces and their OnRatio for reading. The pieces will
@@ -120,13 +119,10 @@ public:
   // data is in/out of the ReadBounds (if LimitReadToBounds is true), or for
   // transforming data for the output (or both);  Note, the transform is
   // ignored if neither LimitReadToBounds nor TransformOutputData is true.
-  void SetTransform(vtkTransform *transform);
+  void SetTransform(vtkTransform* transform);
   vtkGetObjectMacro(Transform, vtkTransform);
   void SetTransform(double elements[16]);
-  void ClearTransform()
-    {
-    this->SetTransform(static_cast<vtkTransform*>(0));
-    }
+  void ClearTransform() { this->SetTransform(static_cast<vtkTransform*>(0)); }
 
   // Description:
   // Whether or not to transform the data by this->Transform for the output
@@ -144,8 +140,8 @@ public:
   // Description:
   // The maximum number of points to load if LimitToMaxNumberOfPoints is on/true.
   // Sets a temporary onRatio.
-  vtkSetClampMacro(MaxNumberOfPoints,vtkIdType,1,VTK_INT_MAX);
-  vtkGetMacro(MaxNumberOfPoints,vtkIdType);
+  vtkSetClampMacro(MaxNumberOfPoints, vtkIdType, 1, VTK_INT_MAX);
+  vtkGetMacro(MaxNumberOfPoints, vtkIdType);
 
   // Description:
   // Setting controls whether or not to convert from Lat/Long to x,y,z coordinates
@@ -165,25 +161,21 @@ protected:
   vtkCMBPointsReader();
   ~vtkCMBPointsReader() override;
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int MoveToStartOfPiece(ifstream &fin, int pieceIndex);
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int MoveToStartOfPiece(ifstream& fin, int pieceIndex);
 
-  int ReadPiece(ifstream &fin, int pieceIndex, int onRatio, long totalNumPts,
-    vtkPoints *newPts, vtkCellArray *newVerts,
-    vtkUnsignedCharArray *scalars, vtkFloatArray *intensityArray,
-    vtkUnsignedCharArray *pieceIndexArray);
-
+  int ReadPiece(ifstream& fin, int pieceIndex, int onRatio, long totalNumPts, vtkPoints* newPts,
+    vtkCellArray* newVerts, vtkUnsignedCharArray* scalars, vtkFloatArray* intensityArray,
+    vtkUnsignedCharArray* pieceIndexArray);
 
   // Description:
   // Get file type used to do last read
-  vtkGetMacro(FileType,int);
-  int GetPointInfo(ifstream &fin);
+  vtkGetMacro(FileType, int);
+  int GetPointInfo(ifstream& fin);
   vtkIdType GetEstimatedNumOfOutPoints();
 
-  char *FileName;
+  char* FileName;
   int FileType;
 
   int ValuesPerLine;
@@ -201,17 +193,17 @@ protected:
   bool OutputDataTypeIsDouble;
 
   struct LIDARPieceInfo
-    {
+  {
     LIDARPieceInfo()
-      {
+    {
       this->PiecePointsOffset = 0;
       this->NumPoints = 0;
-      }
+    }
     long PiecePointsOffset;
     long PieceStartOffset;
     vtkIdType NumPoints;
     vtkBoundingBox BBox;
-    };
+  };
 
   std::vector<LIDARPieceInfo> LIDARPieces;
   std::map<int, int> RequestedReadPieces; // < pieceIndex, onRatio>
@@ -219,7 +211,7 @@ protected:
   vtkIdType LastReadPieceOffset;
   int PieceIndex;
 
-  vtkTransform *Transform;
+  vtkTransform* Transform;
 
   bool ConvertFromLatLongToXYZ;
   bool LatLongTransform2Initialized;
@@ -229,8 +221,8 @@ protected:
   bool TransformOutputData;
 
 private:
-  vtkCMBPointsReader(const vtkCMBPointsReader&);  // Not implemented.
-  void operator=(const vtkCMBPointsReader&);  // Not implemented.
+  vtkCMBPointsReader(const vtkCMBPointsReader&); // Not implemented.
+  void operator=(const vtkCMBPointsReader&);     // Not implemented.
   //ETX
 };
 

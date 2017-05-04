@@ -17,9 +17,9 @@
 #ifndef __vtkSGXMLBCSWriter_h
 #define __vtkSGXMLBCSWriter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkXMLWriter.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdTypeArray;
 class vtkDoubleArray;
@@ -30,8 +30,8 @@ class vtkXMLDataElement;
 class VTKCMBIO_EXPORT vtkSGXMLBCSWriter : public vtkXMLWriter
 {
 public:
-  static vtkSGXMLBCSWriter *New();
-  vtkTypeMacro(vtkSGXMLBCSWriter,vtkXMLWriter);
+  static vtkSGXMLBCSWriter* New();
+  vtkTypeMacro(vtkSGXMLBCSWriter, vtkXMLWriter);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   const char* GetDefaultFileExtension() override;
@@ -41,13 +41,13 @@ public:
   int GetDataSetMajorVersion() override;
   int GetDataSetMinorVersion() override;
 
-//BTX
+  //BTX
   void SetCoords(vtkDoubleArray*);
   vtkGetMacro(Coords, vtkDoubleArray*);
 
   void SetModelVertexIds(vtkIdTypeArray*);
   vtkGetMacro(ModelVertexIds, vtkIdTypeArray*);
-//ETX
+  //ETX
 
 protected:
   vtkSGXMLBCSWriter();
@@ -57,8 +57,8 @@ protected:
   const char* GetDataSetName() override;
 
 private:
-  vtkSGXMLBCSWriter(const vtkSGXMLBCSWriter&);  // Not implemented.
-  void operator=(const vtkSGXMLBCSWriter&);  // Not implemented.
+  vtkSGXMLBCSWriter(const vtkSGXMLBCSWriter&); // Not implemented.
+  void operator=(const vtkSGXMLBCSWriter&);    // Not implemented.
 
   // Description:
   // The coordinates of the points from the contour widget.  They are

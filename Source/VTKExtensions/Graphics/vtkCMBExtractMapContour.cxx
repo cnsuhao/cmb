@@ -9,24 +9,22 @@
 //=========================================================================
 #include "vtkCMBExtractMapContour.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkDataArray.h"
-#include "vtkFloatArray.h"
-#include "vtkCellArray.h"
-#include "vtkPointData.h"
-#include "vtkIdList.h"
-#include "vtkCell.h"
-#include "vtkCellData.h"
-#include "vtkErrorCode.h"
 #include "vtkAppendPolyData.h"
+#include "vtkCell.h"
+#include "vtkCellArray.h"
+#include "vtkCellData.h"
+#include "vtkDataArray.h"
+#include "vtkErrorCode.h"
+#include "vtkFloatArray.h"
+#include "vtkIdList.h"
+#include "vtkObjectFactory.h"
+#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 
 #include "smtk/extension/vtk/meshing/vtkCMBPrepareForTriangleMesher.h"
 
 #include "assert.h"
 #include <vtksys/SystemTools.hxx>
-
-
 
 vtkStandardNewMacro(vtkCMBExtractMapContour);
 
@@ -39,8 +37,7 @@ vtkCMBExtractMapContour::~vtkCMBExtractMapContour()
 }
 //-----------------------------------------------------------------------------
 int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
-    vtkInformationVector **inputVector,
-    vtkInformationVector *outputVector)
+  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   vtkPolyData* input = vtkPolyData::GetData(inputVector[0]);
   vtkPolyData* output = vtkPolyData::GetData(outputVector);
@@ -55,7 +52,7 @@ int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
 
   vtkPrepareForMesher* mapInterface = vtkPrepareForMesher::New();
   mapInterface->SetPolyData(input);
-  mapInterface->GetArc(contoursToExtract[0],output);
+  mapInterface->GetArc(contoursToExtract[0], output);
   mapInterface->Delete();
 
   return 1;
@@ -168,7 +165,7 @@ int vtkCMBExtractMapContour::RequestData(vtkInformation* /*request*/,
 //-----------------------------------------------------------------------------
 void vtkCMBExtractMapContour::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << " \n";
 }

@@ -16,26 +16,23 @@
 #ifndef __vtkPVTrackballDolly_h
 #define __vtkPVTrackballDolly_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkCameraManipulator.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBGRAPHICS_EXPORT vtkPVTrackballDolly : public vtkCameraManipulator
 {
 public:
-  static vtkPVTrackballDolly *New();
+  static vtkPVTrackballDolly* New();
   vtkTypeMacro(vtkPVTrackballDolly, vtkCameraManipulator);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Event bindings controlling the effects of pressing mouse buttons
   // or moving the mouse.
-  void OnMouseMove(int x, int y, vtkRenderer *ren,
-                           vtkRenderWindowInteractor *rwi) override;
-  void OnButtonDown(int x, int y, vtkRenderer *ren,
-                            vtkRenderWindowInteractor *rwi) override;
-  void OnButtonUp(int x, int y, vtkRenderer *ren,
-                          vtkRenderWindowInteractor *rwi) override;
+  void OnMouseMove(int x, int y, vtkRenderer* ren, vtkRenderWindowInteractor* rwi) override;
+  void OnButtonDown(int x, int y, vtkRenderer* ren, vtkRenderWindowInteractor* rwi) override;
+  void OnButtonUp(int x, int y, vtkRenderer* ren, vtkRenderWindowInteractor* rwi) override;
 
 protected:
   vtkPVTrackballDolly();
@@ -44,7 +41,7 @@ protected:
   double ZoomScale;
 
   vtkPVTrackballDolly(const vtkPVTrackballDolly&); // Not implemented
-  void operator=(const vtkPVTrackballDolly&); // Not implemented
+  void operator=(const vtkPVTrackballDolly&);      // Not implemented
 };
 
 #endif

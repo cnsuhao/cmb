@@ -14,10 +14,13 @@
 #define _qtCMBAboutDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QDialog>
 #include "cmbSystemConfig.h"
+#include <QDialog>
 
-namespace Ui { class qtAboutDialog; }
+namespace Ui
+{
+class qtAboutDialog;
+}
 
 class QPixmap;
 
@@ -31,7 +34,7 @@ public:
   ~qtCMBAboutDialog() override;
 
   void setVersionText(const QString& versionText);
-  void setPixmap(const QPixmap& pixMap ) ;
+  void setPixmap(const QPixmap& pixMap);
 
 private:
   qtCMBAboutDialog(const qtCMBAboutDialog&);

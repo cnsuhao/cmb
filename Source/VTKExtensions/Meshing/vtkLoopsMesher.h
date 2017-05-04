@@ -46,9 +46,9 @@
 #ifndef __vtkLoopsMesher_h
 #define __vtkLoopsMesher_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBMeshingModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class vtkIdList;
 class vtkPoints;
@@ -60,65 +60,65 @@ class vtkPolyData;
 class VTKCMBMESHING_EXPORT vtkLoopsMesher : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeMacro(vtkLoopsMesher,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkLoopsMesher, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with OnRatio=1, Offset=0. DistanceFactor=3.0,
   // CloseSurface off, and PassLines off.
-  static vtkLoopsMesher *New();
+  static vtkLoopsMesher* New();
 
   // Description:
   // Indicate whether to use multiple loops to help reduce
   // "broomsticking".
-  vtkSetMacro(UseSubLoops,int);
-  vtkGetMacro(UseSubLoops,int);
-  vtkBooleanMacro(UseSubLoops,int);
+  vtkSetMacro(UseSubLoops, int);
+  vtkGetMacro(UseSubLoops, int);
+  vtkBooleanMacro(UseSubLoops, int);
 
   // Description:
   // Indicate whether the resuling mesh should be quads if possible.
   // This only used if the loops contain the same number of points.
-  vtkSetMacro(UseQuads,int);
-  vtkGetMacro(UseQuads,int);
-  vtkBooleanMacro(UseQuads,int);
+  vtkSetMacro(UseQuads, int);
+  vtkGetMacro(UseQuads, int);
+  vtkBooleanMacro(UseQuads, int);
 
   // Description:
   // Indicate whether the generating lines are to be passed to the output.
   // By defualt lines are not passed to the output.
-  vtkSetMacro(PassLines,int);
-  vtkGetMacro(PassLines,int);
-  vtkBooleanMacro(PassLines,int);
+  vtkSetMacro(PassLines, int);
+  vtkGetMacro(PassLines, int);
+  vtkBooleanMacro(PassLines, int);
 
   // Description:
   // Indicate whether the starting points of the loops need to be determined.
   // If set to 0, then its assumes that the 0th point of each loop should be
   // always connected
   // By defualt the loops are not oriented.
-  vtkSetMacro(OrientLoops,int);
-  vtkGetMacro(OrientLoops,int);
-  vtkBooleanMacro(OrientLoops,int);
+  vtkSetMacro(OrientLoops, int);
+  vtkGetMacro(OrientLoops, int);
+  vtkBooleanMacro(OrientLoops, int);
 
 protected:
   vtkLoopsMesher();
   ~vtkLoopsMesher() override;
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int   UseQuads;
-  int   UseSubLoops;
-  int   PassLines;
-  int   OrientLoops;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int UseQuads;
+  int UseSubLoops;
+  int PassLines;
+  int OrientLoops;
 
 private:
-  vtkIdList *Ids;
-  double     Weights[4];
+  vtkIdList* Ids;
+  double Weights[4];
 
-  void  PointWalk(vtkPolyData *output, vtkPoints *inPts,
-                  int npts, vtkIdType *pts, int npts2, vtkIdType *pts2);
+  void PointWalk(
+    vtkPolyData* output, vtkPoints* inPts, int npts, vtkIdType* pts, int npts2, vtkIdType* pts2);
 
 private:
-  vtkLoopsMesher(const vtkLoopsMesher&);  // Not implemented.
-  void operator=(const vtkLoopsMesher&);  // Not implemented.
+  vtkLoopsMesher(const vtkLoopsMesher&); // Not implemented.
+  void operator=(const vtkLoopsMesher&); // Not implemented.
 };
 
 #endif

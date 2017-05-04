@@ -2,15 +2,16 @@
 
 *.sh             crlf=input
 
-*.c              whitespace=tab-in-indent
-*.h              whitespace=tab-in-indent
-*.cxx            whitespace=tab-in-indent
-*.hxx            whitespace=tab-in-indent
-*.txx            whitespace=tab-in-indent
+# Attributes used for formatting.
+[attr]our-c-style   whitespace=tab-in-indent  format.clang-format
+[attr]our-py-style  whitespace=tab-in-indent  format.autopep8
+
+*.cxx   our-c-style
+*.h     our-c-style
+*.hxx   our-c-style
+*.txx   our-c-style
+
+*.py    our-py-style
+
 *.txt            whitespace=tab-in-indent
 *.cmake          whitespace=tab-in-indent
-*.bat           -crlf
-*.cmd           -crlf
-*.jpg           -crlf
-*.pdf           -crlf
-*.png           -crlf

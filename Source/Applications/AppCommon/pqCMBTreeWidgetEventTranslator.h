@@ -8,15 +8,14 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 
-
 #ifndef _pqCMBTreeWidgetEventTranslator_h
 #define _pqCMBTreeWidgetEventTranslator_h
 
 #include "cmbAppCommonExport.h"
 
+#include "cmbSystemConfig.h"
 #include "pqWidgetEventTranslator.h"
 #include <QPoint>
-#include "cmbSystemConfig.h"
 
 /**
 Translates low-level Qt events into high-level ParaView events that can be recorded as test cases.
@@ -29,7 +28,7 @@ class CMBAPPCOMMON_EXPORT pqCMBTreeWidgetEventTranslator : public pqWidgetEventT
   Q_OBJECT
 
 public:
-  pqCMBTreeWidgetEventTranslator(QObject* p=0);
+  pqCMBTreeWidgetEventTranslator(QObject* p = 0);
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 protected slots:

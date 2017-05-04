@@ -13,22 +13,21 @@
 #ifndef __CmbScalarLineSource_h
 #define __CmbScalarLineSource_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBGENERAL_EXPORT vtkCMBScalarLineSource : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCMBScalarLineSource *New();
-  vtkTypeMacro(vtkCMBScalarLineSource,vtkPolyDataAlgorithm);
+  static vtkCMBScalarLineSource* New();
+  vtkTypeMacro(vtkCMBScalarLineSource, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Set/Get the first point of the line
   vtkSetVector3Macro(Point1, double);
   vtkGetVector3Macro(Point1, double);
-
 
   // Set/Get the scalar associated with the first point
   vtkSetMacro(Scalar1, double);
@@ -39,7 +38,6 @@ public:
   vtkSetVector3Macro(Point2, double);
   vtkGetVector3Macro(Point2, double);
 
-
   // Set/Get the scalar associated with the second point
   vtkSetMacro(Scalar2, double);
   vtkGetMacro(Scalar2, double);
@@ -48,7 +46,7 @@ protected:
   vtkCMBScalarLineSource();
   ~vtkCMBScalarLineSource() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   double Point1[3];
   double Point2[3];
@@ -56,8 +54,8 @@ protected:
   double Scalar2;
 
 private:
-  vtkCMBScalarLineSource(const vtkCMBScalarLineSource&);  // Not implemented.
-  void operator=(const vtkCMBScalarLineSource&);  // Not implemented.
+  vtkCMBScalarLineSource(const vtkCMBScalarLineSource&); // Not implemented.
+  void operator=(const vtkCMBScalarLineSource&);         // Not implemented.
 };
 
 #endif

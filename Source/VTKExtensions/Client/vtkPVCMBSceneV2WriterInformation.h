@@ -15,9 +15,9 @@
 #ifndef __vtkPVCMBSceneV2WriterInformation_h
 #define __vtkPVCMBSceneV2WriterInformation_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBClientModule.h" // For export macro
 #include "vtkPVInformation.h"
-#include "cmbSystemConfig.h"
 class vtkStringList;
 
 class VTKCMBCLIENT_EXPORT vtkPVCMBSceneV2WriterInformation : public vtkPVInformation
@@ -40,8 +40,7 @@ public:
   void CopyToStream(vtkClientServerStream*) override;
   void CopyFromStream(const vtkClientServerStream*) override;
 
-
-  const char *GetObjectFileName( int index );
+  const char* GetObjectFileName(int index);
   int GetNumberOfObjectFileNames();
 
   //BTX
@@ -49,12 +48,11 @@ protected:
   vtkPVCMBSceneV2WriterInformation();
   ~vtkPVCMBSceneV2WriterInformation() override;
 
-  vtkStringList *ObjectFileNames;
+  vtkStringList* ObjectFileNames;
 
 private:
-
   vtkPVCMBSceneV2WriterInformation(const vtkPVCMBSceneV2WriterInformation&); // Not implemented
-  void operator=(const vtkPVCMBSceneV2WriterInformation&); // Not implemented
+  void operator=(const vtkPVCMBSceneV2WriterInformation&);                   // Not implemented
   //ETX
 };
 

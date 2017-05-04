@@ -5,8 +5,10 @@
 #ifndef rtvl_refine_hxx
 #define rtvl_refine_hxx
 
-template <unsigned int N> class rtvl_refine_internal;
-template <unsigned int N> class rtvl_tokens;
+template <unsigned int N>
+class rtvl_refine_internal;
+template <unsigned int N>
+class rtvl_tokens;
 
 template <unsigned int N>
 class rtvl_refine
@@ -22,24 +24,23 @@ public:
   /** Compute the initial scale, which, if called (may instead "set") must done
       only "immediately" after construction.  */
   double compute_scale() const;
-  
+
   /** Set the initial scale to a user specified value.  Only do before starting
       the refine process.  Must be > 0. */
   void set_scale(double scale);
-  
+
   /** Build the quad tree.  Don't expect this to be the final resting place for 
       this call, since it is currently required! */
   void build_tree();
 
   /** Compute the # of chunks based on the memory limit (in KB) and a minimum
       of chunks */
-  int initialize_refine_level(unsigned int memory_limit,
-    int requested_min_depth) const;
+  int initialize_refine_level(unsigned int memory_limit, int requested_min_depth) const;
 
-  int refine_next_block(const char *base_filename);
+  int refine_next_block(const char* base_filename);
 
   /** Get refined tokens for the current scale.  */
-  void get_tokens(int level, double *bounds, rtvl_tokens<N> &tokens) const;
+  void get_tokens(int level, double* bounds, rtvl_tokens<N>& tokens) const;
 
   /** Get scale of the specified level  */
   double get_level_scale(int level);

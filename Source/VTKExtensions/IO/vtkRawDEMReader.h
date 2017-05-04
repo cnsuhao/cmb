@@ -13,10 +13,10 @@
 #ifndef __RawDEMReader_h
 #define __RawDEMReader_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBIOModule.h" // For export macro
 #include "vtkDataSetAlgorithm.h"
 #include "vtkSmartPointer.h"
-#include "cmbSystemConfig.h"
 
 #include "vtkBoundingBox.h"
 #include <string>
@@ -33,7 +33,7 @@ class vtkRawDEMReaderInternals;
 
 //BTX
 struct RawDEMReaderFileInfo
-  {
+{
   std::string FileName;
   vtkIdType NumberOfColumns;
   vtkIdType NumberOfRows;
@@ -42,20 +42,19 @@ struct RawDEMReaderFileInfo
   double PointSpacing;
   float NoDataValue;
   vtkIdType Offset[2]; // column and row, from LL of all datasets
-  };
+};
 //ETX
-
 
 class VTKCMBIO_EXPORT vtkRawDEMReader : public vtkDataSetAlgorithm
 {
 public:
-  static vtkRawDEMReader *New();
-  vtkTypeMacro(vtkRawDEMReader,vtkDataSetAlgorithm);
+  static vtkRawDEMReader* New();
+  vtkTypeMacro(vtkRawDEMReader, vtkDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Name of the file to be read.
-  void SetFileName(const char *filename);
+  void SetFileName(const char* filename);
   vtkGetStringMacro(FileName);
 
   // Description:
@@ -79,7 +78,7 @@ public:
   // total number of points in the file, so that the first preview render
   // window is reasonably interactive, which may have 1 Million points [?].
   // This will ONLY be used if this->RequestedReadPieces is empty.
-  vtkSetClampMacro(OnRatio,int,1,VTK_INT_MAX);
+  vtkSetClampMacro(OnRatio, int, 1, VTK_INT_MAX);
   vtkGetMacro(OnRatio, int);
 
   // Description:
@@ -116,13 +115,10 @@ public:
   // data is in/out of the ReadBounds (if LimitReadToBounds is true), or for
   // transforming data for the output (or both);  Note, the transform is
   // ignored if neither LimitReadToBounds nor TransformOutputData is true.
-  void SetTransform(vtkTransform *transform);
+  void SetTransform(vtkTransform* transform);
   vtkGetObjectMacro(Transform, vtkTransform);
   void SetTransform(double elements[16]);
-  void ClearTransform()
-    {
-    this->SetTransform(static_cast<vtkTransform*>(0));
-    }
+  void ClearTransform() { this->SetTransform(static_cast<vtkTransform*>(0)); }
 
   // Description:
   // Whether or not to transform the data by this->Transform for the output
@@ -140,8 +136,8 @@ public:
   // Description:
   // The maximum number of points to load if LimitToMaxNumberOfPoints is on/true.
   // Sets a temporary onRatio.
-  vtkSetClampMacro(MaxNumberOfPoints,vtkIdType,1,VTK_INT_MAX);
-  vtkGetMacro(MaxNumberOfPoints,vtkIdType);
+  vtkSetClampMacro(MaxNumberOfPoints, vtkIdType, 1, VTK_INT_MAX);
+  vtkGetMacro(MaxNumberOfPoints, vtkIdType);
 
   // Description:
   // Setting controls whether or not to convert from Lat/Long to x,y,z coordinates
@@ -190,24 +186,21 @@ protected:
   vtkRawDEMReader();
   ~vtkRawDEMReader() override;
 
-  int RequestInformation(vtkInformation *,
-                         vtkInformationVector **,
-                         vtkInformationVector *) override;
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-  int RequestDataObject(vtkInformation *, vtkInformationVector **,
-                                vtkInformationVector *) override;
-  vtkImageData *AllocateOutputData(vtkDataObject *out);
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestDataObject(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  vtkImageData* AllocateOutputData(vtkDataObject* out);
 
-  void ReadPolyDataOutput(vtkPolyData *output);
+  void ReadPolyDataOutput(vtkPolyData* output);
 
-  void ReadImageDataOutput(vtkImageData *output);
+  void ReadImageDataOutput(vtkImageData* output);
 
-  void ReadData(RawDEMReaderFileInfo &fileInfo,
-    vtkFloatArray *scalars, vtkPoints *pts, vtkCellArray *verts);
+  void ReadData(
+    RawDEMReaderFileInfo& fileInfo, vtkFloatArray* scalars, vtkPoints* pts, vtkCellArray* verts);
 
   void SetupReadExtents();
 
-  char *FileName;
+  char* FileName;
 
   bool FileInfoMode;
   int OnRatio;
@@ -222,7 +215,7 @@ protected:
 
   vtkIdType RealNumberOfOutputPoints;
 
-  vtkTransform *Transform;
+  vtkTransform* Transform;
 
   bool ConvertFromLatLongToXYZ;
   bool TransformForZUp;
@@ -248,7 +241,7 @@ protected:
   double Origin[3];
 
 private:
-  vtkRawDEMReader(const vtkRawDEMReader&);  // Not implemented.
+  vtkRawDEMReader(const vtkRawDEMReader&); // Not implemented.
   void operator=(const vtkRawDEMReader&);  // Not implemented.
   //ETX
 };

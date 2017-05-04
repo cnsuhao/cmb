@@ -11,24 +11,21 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBCrossSection_h
 #define __pqCMBCrossSection_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
-
-class  CMBAPPCOMMON_EXPORT pqCMBCrossSection : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBCrossSection : public pqCMBSceneObjectBase
 {
 public:
   pqCMBCrossSection();
-  pqCMBCrossSection(pqPipelineSource*source,
-              pqRenderView *view, pqServer *server);
+  pqCMBCrossSection(pqPipelineSource* source, pqRenderView* view, pqServer* server);
 
   ~pqCMBCrossSection() override;
-  pqCMBSceneObjectBase *duplicate(pqServer *server, pqRenderView *view,
-                                bool updateRep = true) override;
+  pqCMBSceneObjectBase* duplicate(
+    pqServer* server, pqRenderView* view, bool updateRep = true) override;
   pqCMBSceneObjectBase::enumObjectType getType() const override;
 };
 

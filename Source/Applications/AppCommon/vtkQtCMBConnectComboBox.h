@@ -15,9 +15,9 @@
 #define _vtkQtCMBConnectComboBox_h
 
 #include "cmbAppCommonExport.h"
-#include <QComboBox>
-#include "vtkSmartPointer.h"
 #include "cmbSystemConfig.h"
+#include "vtkSmartPointer.h"
+#include <QComboBox>
 
 class vtkObject;
 class vtkEventQtSlotConnect;
@@ -28,7 +28,6 @@ class CMBAPPCOMMON_EXPORT vtkQtCMBConnectComboBox : public QComboBox
   Q_OBJECT
 
 public:
-
   vtkQtCMBConnectComboBox(QWidget* p = NULL);
   ~vtkQtCMBConnectComboBox() override;
 
@@ -44,7 +43,6 @@ public slots:
 
 protected:
   vtkSmartPointer<vtkEventQtSlotConnect> VTKUserEventConnect;
-
 };
 
 #endif // !_vtkQtCMBConnectComboBox_h

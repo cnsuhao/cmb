@@ -10,8 +10,8 @@
 
 #include "vtkCMBArcSplitOnPositionOperator.h"
 
-#include "vtkCMBArcManager.h"
 #include "vtkCMBArc.h"
+#include "vtkCMBArcManager.h"
 #include "vtkCMBArcSplitOnIndexOperator.h"
 
 #include "vtkObjectFactory.h"
@@ -22,12 +22,11 @@ namespace
 {
 
 bool pointsEqual(double pos1[3], vtkCMBArc::Point pos2, double tol)
-  {
-  return  (( pos1[0] <= pos2[0] + tol) && ( pos1[0] >= pos2[0] - tol)) &&
-          (( pos1[1] <= pos2[1] + tol) && ( pos1[1] >= pos2[1] - tol)) &&
-          (( pos1[2] <= pos2[2] + tol) && ( pos1[2] >= pos2[2] - tol));
-  }
-
+{
+  return ((pos1[0] <= pos2[0] + tol) && (pos1[0] >= pos2[0] - tol)) &&
+    ((pos1[1] <= pos2[1] + tol) && (pos1[1] >= pos2[1] - tol)) &&
+    ((pos1[2] <= pos2[2] + tol) && (pos1[2] >= pos2[2] - tol));
+}
 }
 
 //----------------------------------------------------------------------------
@@ -44,7 +43,6 @@ vtkCMBArcSplitOnPositionOperator::vtkCMBArcSplitOnPositionOperator()
 //----------------------------------------------------------------------------
 vtkCMBArcSplitOnPositionOperator::~vtkCMBArcSplitOnPositionOperator()
 {
-
 }
 
 //----------------------------------------------------------------------------
@@ -63,39 +61,39 @@ bool vtkCMBArcSplitOnPositionOperator::Operate(vtkIdType arcId)
   //we have to reset the CreatedArcId everytime we split
   //so that we can use the same operator for multiple split operations
   this->CreatedArcId = -1;
-  vtkCMBArc *arc = vtkCMBArcManager::GetInstance()->GetArc(arcId);
+  vtkCMBArc* arc = vtkCMBArcManager::GetInstance()->GetArc(arcId);
   if (!arc)
-    {
+  {
     return false;
-    }
+  }
 
-  if ( !this->ValidPosition )
-    {
+  if (!this->ValidPosition)
+  {
     return false;
-    }
+  }
   //go through the points of the arc and split it on the position
   bool foundSplitPoint = false;
   int index = 0;
   vtkCMBArc::Point point;
   arc->InitTraversal();
   while (arc->GetNextPoint(point))
+  {
+    if (pointsEqual(this->SplitPosition, point, this->PositionTolerance))
     {
-    if (pointsEqual(this->SplitPosition, point, this->PositionTolerance) )
-      {
       foundSplitPoint = true;
       break;
-      }
-    index++;
     }
+    index++;
+  }
 
   if (!foundSplitPoint)
-    {
+  {
     return false;
-    }
+  }
 
   //we found the valid point time to split on this point.
   //we defer the split operation to vtkCMBArcSplitOnIndexOperator
-  vtkCMBArcSplitOnIndexOperator *split = vtkCMBArcSplitOnIndexOperator::New();
+  vtkCMBArcSplitOnIndexOperator* split = vtkCMBArcSplitOnIndexOperator::New();
   split->SetIndex(index);
   bool retCode = split->Operate(arcId);
   this->CreatedArcId = split->GetCreatedArcId();
@@ -106,5 +104,5 @@ bool vtkCMBArcSplitOnPositionOperator::Operate(vtkIdType arcId)
 //----------------------------------------------------------------------------
 void vtkCMBArcSplitOnPositionOperator::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 }

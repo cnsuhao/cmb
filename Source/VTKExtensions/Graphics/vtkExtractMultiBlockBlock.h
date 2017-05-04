@@ -17,10 +17,9 @@
 #ifndef __vtkExtractMultiBlockBlock_h
 #define __vtkExtractMultiBlockBlock_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBGraphicsModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
-
 
 class VTKCMBGRAPHICS_EXPORT vtkExtractMultiBlockBlock : public vtkMultiBlockDataSetAlgorithm
 {
@@ -34,27 +33,22 @@ public:
   vtkSetMacro(BlockIndex, int);
   vtkGetMacro(BlockIndex, int);
 
-//BTX
+  //BTX
 protected:
   vtkExtractMultiBlockBlock();
-  ~vtkExtractMultiBlockBlock() override {};
+  ~vtkExtractMultiBlockBlock() override{};
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   /// Implementation of the algorithm.
-  int RequestData(vtkInformation *,
-                          vtkInformationVector **,
-                          vtkInformationVector *) override;
-
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
 private:
   vtkExtractMultiBlockBlock(const vtkExtractMultiBlockBlock&); // Not implemented.
-  void operator=(const vtkExtractMultiBlockBlock&); // Not implemented.
+  void operator=(const vtkExtractMultiBlockBlock&);            // Not implemented.
 
   int BlockIndex;
-//ETX
+  //ETX
 };
 
 #endif
-
-

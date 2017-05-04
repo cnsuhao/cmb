@@ -7,37 +7,37 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+#include "vtkCMBPt123VelocityWriter.h"
 #include "vtkActor.h"
+#include "vtkCMBPt123Reader.h"
 #include "vtkCamera.h"
+#include "vtkDataSetMapper.h"
 #include "vtkExtractLeafBlock.h"
-#include "vtkPolyDataMapper.h"
+#include "vtkGeometryFilter.h"
+#include "vtkMultiBlockDataSet.h"
+#include "vtkNew.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
-#include "vtkDataSetMapper.h"
+#include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkCMBPt123Reader.h"
-#include "vtkCMBPt123VelocityWriter.h"
-#include "vtkGeometryFilter.h"
-#include "vtkMultiBlockDataSet.h"
+#include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTesting.h"
-#include "vtkSmartPointer.h"
-#include "vtkNew.h"
+#include "vtkUnstructuredGrid.h"
 #include <vtksys/SystemTools.hxx>
 
 int main(int argc, char** argv)
 {
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data was not specified.";
     return 1;
-    }
+  }
 
   vtkNew<vtkCMBPt123Reader> reader;
 
@@ -61,25 +61,25 @@ int main(int argc, char** argv)
   vtkSmartPointer<vtkPointData> pd = grid->GetPointData();
   std::string velocityName = "Velocity";
   if (!pd)
-    {
-    std::cerr<<"GetPointData Failed";
+  {
+    std::cerr << "GetPointData Failed";
     return 1;
-    }
+  }
   bool foundVelocity = false;
   for (int i = 0; i < pd->GetNumberOfArrays(); i++)
-    {
+  {
     if (pd->GetArrayName(i) == velocityName)
-      {
+    {
       foundVelocity = true;
       pd->SetActiveVectors(velocityName.c_str());
-      }
     }
+  }
 
   if (!foundVelocity)
-    {
-    std::cerr<<"Velocity Test requires a velocity in PT123 data set";
+  {
+    std::cerr << "Velocity Test requires a velocity in PT123 data set";
     return 1;
-    }
+  }
 
   std::string tmproot = testHelper->GetTempDirectory();
 
@@ -120,38 +120,38 @@ int main(int argc, char** argv)
   destNames.push_back(tmproot + "/pt.outbinary");
 
   if (sourceNames.size() != destNames.size())
-    {
-    std::cerr<<"Problem with source and destination file lists"<<std::endl;
+  {
+    std::cerr << "Problem with source and destination file lists" << std::endl;
     return 1;
-    }
+  }
   for (size_t i = 0; i < sourceNames.size(); i++)
+  {
+    if (!vtksys::SystemTools::CopyFileIfDifferent(sourceNames[i].c_str(), destNames[i].c_str()))
     {
-      if(!vtksys::SystemTools::CopyFileIfDifferent(sourceNames[i].c_str(),
-                                                   destNames[i].c_str()))
-        {
-        std::cerr<<"Copy of "<<sourceNames[i]<<" to "<<destNames[i]<<" failed "<<std::endl;
-        return 1;
-        }
+      std::cerr << "Copy of " << sourceNames[i] << " to " << destNames[i] << " failed "
+                << std::endl;
+      return 1;
     }
+  }
   std::string filename2 = tmproot + "/pt_2d_s_rotation_out.sup";
 
   ofstream supfile(filename2.c_str());
-  supfile <<"2    "<<std::endl;
-  supfile <<"0 0  "<<std::endl;
-  supfile <<"1.0e-5 "<<std::endl;
-  supfile <<"0 "<<std::endl;
-  supfile <<"GEOM  test_s_rotation.2dm"<<std::endl;
-  supfile <<"PTS2  test_s_rotation.pt2"<<std::endl;
-  supfile <<"OBND  test_s_rotation.ob2"<<std::endl;
-  supfile <<"VNAS  test_s_rotation_out.vn"<<std::endl;
-  supfile <<"VNBF   forward_s_rotation.vn2"<<std::endl;
-  supfile<<"VNBB   backward_s_rotation.vn2"<<std::endl;
-  supfile<<"NEMA   test_s_rotation.nemc2"<<std::endl;
-  supfile<<"NEMF   forward_s_rotation.nemc2"<<std::endl;
-  supfile<<"NEMB   backward_s_rotation.nemc2"<<std::endl;
-  supfile<<"SAPT   nebe_45a_n.out2"<<std::endl;
-  supfile<<"SBPT   pt.outbinary"<<std::endl;
-  supfile<<"ENDR   TEST.END"<<std::endl;
+  supfile << "2    " << std::endl;
+  supfile << "0 0  " << std::endl;
+  supfile << "1.0e-5 " << std::endl;
+  supfile << "0 " << std::endl;
+  supfile << "GEOM  test_s_rotation.2dm" << std::endl;
+  supfile << "PTS2  test_s_rotation.pt2" << std::endl;
+  supfile << "OBND  test_s_rotation.ob2" << std::endl;
+  supfile << "VNAS  test_s_rotation_out.vn" << std::endl;
+  supfile << "VNBF   forward_s_rotation.vn2" << std::endl;
+  supfile << "VNBB   backward_s_rotation.vn2" << std::endl;
+  supfile << "NEMA   test_s_rotation.nemc2" << std::endl;
+  supfile << "NEMF   forward_s_rotation.nemc2" << std::endl;
+  supfile << "NEMB   backward_s_rotation.nemc2" << std::endl;
+  supfile << "SAPT   nebe_45a_n.out2" << std::endl;
+  supfile << "SBPT   pt.outbinary" << std::endl;
+  supfile << "ENDR   TEST.END" << std::endl;
   supfile.close();
 
   vtkNew<vtkCMBPt123Reader> reader2;
@@ -170,30 +170,29 @@ int main(int argc, char** argv)
   vtkSmartPointer<vtkPointData> pd2 = grid2->GetPointData();
 
   if (!pd2)
-    {
-    std::cerr<<"GetPointData for reread velocity Failed";
+  {
+    std::cerr << "GetPointData for reread velocity Failed";
     return 1;
-    }
+  }
 
   foundVelocity = false;
   for (int i = 0; i < pd2->GetNumberOfArrays(); i++)
-    {
+  {
     if (pd2->GetArrayName(i) == velocityName)
-      {
+    {
       foundVelocity = true;
       pd2->SetActiveVectors(velocityName.c_str());
-      }
     }
+  }
 
   if (!foundVelocity)
-    {
-    std::cerr<<"Reread velocity not found";
+  {
+    std::cerr << "Reread velocity not found";
     return 1;
-    }
+  }
 
   double tol = 1.0e-4;
-  int retVal = testHelper->CompareAverageOfL2Norm(pd->GetVectors(),pd2->GetVectors(),tol);
+  int retVal = testHelper->CompareAverageOfL2Norm(pd->GetVectors(), pd2->GetVectors(), tol);
 
   return (retVal == vtkTesting::PASSED) ? 0 : 1;
-
 }

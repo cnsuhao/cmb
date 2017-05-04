@@ -49,33 +49,27 @@ vtkLIDARElevationFilter::~vtkLIDARElevationFilter()
 //----------------------------------------------------------------------------
 void vtkLIDARElevationFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
-  os << indent << "Low Point: ("
-     << this->LowPoint[0] << ", "
-     << this->LowPoint[1] << ", "
+  this->Superclass::PrintSelf(os, indent);
+  os << indent << "Low Point: (" << this->LowPoint[0] << ", " << this->LowPoint[1] << ", "
      << this->LowPoint[2] << ")\n";
-  os << indent << "High Point: ("
-     << this->HighPoint[0] << ", "
-     << this->HighPoint[1] << ", "
+  os << indent << "High Point: (" << this->HighPoint[0] << ", " << this->HighPoint[1] << ", "
      << this->HighPoint[2] << ")\n";
-  os << indent << "Scalar Range: ("
-     << this->ScalarRange[0] << ", "
-     << this->ScalarRange[1] << ")\n";
+  os << indent << "Scalar Range: (" << this->ScalarRange[0] << ", " << this->ScalarRange[1]
+     << ")\n";
 }
 
 //-----------------------------------------------------------------------------
 void vtkLIDARElevationFilter::SetTransform(double elements[16])
 {
-  vtkTransform *tmpTransform = vtkTransform::New();
+  vtkTransform* tmpTransform = vtkTransform::New();
   tmpTransform->SetMatrix(elements);
   this->SetTransform(tmpTransform);
   tmpTransform->Delete();
 }
 
 //----------------------------------------------------------------------------
-int vtkLIDARElevationFilter::RequestData(vtkInformation*,
-                                    vtkInformationVector** inputVector,
-                                    vtkInformationVector* outputVector)
+int vtkLIDARElevationFilter::RequestData(
+  vtkInformation*, vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
   // Get the input and output data objects.
   vtkDataSet* input = vtkDataSet::GetData(inputVector[0]);
@@ -83,11 +77,11 @@ int vtkLIDARElevationFilter::RequestData(vtkInformation*,
 
   // Check the size of the input.
   vtkIdType numPts = input->GetNumberOfPoints();
-  if(numPts < 1)
-    {
+  if (numPts < 1)
+  {
     vtkDebugMacro("No input!");
     return 1;
-    }
+  }
 
   // Copy all the input geometry and data to the output.
   output->CopyStructure(input);
@@ -95,63 +89,58 @@ int vtkLIDARElevationFilter::RequestData(vtkInformation*,
   output->GetCellData()->PassData(input->GetCellData());
 
   if (!this->CreateElevation)
-    {
+  {
     return 1;
-    }
+  }
 
   // Allocate space for the elevation scalar data.
-  vtkSmartPointer<vtkFloatArray> newScalars =
-    vtkSmartPointer<vtkFloatArray>::New();
+  vtkSmartPointer<vtkFloatArray> newScalars = vtkSmartPointer<vtkFloatArray>::New();
   newScalars->SetNumberOfTuples(numPts);
 
   // Set up 1D parametric system and make sure it is valid.
-  double diffVector[3] =
-    { this->HighPoint[0] - this->LowPoint[0],
-      this->HighPoint[1] - this->LowPoint[1],
-      this->HighPoint[2] - this->LowPoint[2] };
+  double diffVector[3] = { this->HighPoint[0] - this->LowPoint[0],
+    this->HighPoint[1] - this->LowPoint[1], this->HighPoint[2] - this->LowPoint[2] };
   double length2 = vtkMath::Dot(diffVector, diffVector);
-  if(length2 <= 0)
-    {
+  if (length2 <= 0)
+  {
     vtkErrorMacro("Bad vector, using (0,0,1).");
     diffVector[0] = 0;
     diffVector[1] = 0;
     diffVector[2] = 1;
     length2 = 1.0;
-    }
+  }
 
   // Support progress and abort.
-  vtkIdType tenth = (numPts >= 10? numPts/10 : 1);
-  double numPtsInv = 1.0/numPts;
+  vtkIdType tenth = (numPts >= 10 ? numPts / 10 : 1);
+  double numPtsInv = 1.0 / numPts;
   int abort = 0;
 
   // Compute parametric coordinate and map into scalar range.
   double diffScalar = this->ScalarRange[1] - this->ScalarRange[0];
   vtkDebugMacro("Generating elevation scalars!");
-  for(vtkIdType i=0; i < numPts && !abort; ++i)
-    {
+  for (vtkIdType i = 0; i < numPts && !abort; ++i)
+  {
     // Periodically update progress and check for an abort request.
-    if(i % tenth == 0)
-      {
-      this->UpdateProgress((i+1)*numPtsInv);
+    if (i % tenth == 0)
+    {
+      this->UpdateProgress((i + 1) * numPtsInv);
       abort = this->GetAbortExecute();
-      }
+    }
 
     // Project this input point into the 1D system.
     double x[3];
     input->GetPoint(i, x);
     if (this->Transform)
-      {
+    {
       this->Transform->TransformPoint(x, x);
-      }
-    double v[3] = { x[0] - this->LowPoint[0],
-                    x[1] - this->LowPoint[1],
-                    x[2] - this->LowPoint[2] };
+    }
+    double v[3] = { x[0] - this->LowPoint[0], x[1] - this->LowPoint[1], x[2] - this->LowPoint[2] };
     double s = vtkMath::Dot(v, diffVector) / length2;
     s = (s < 0.0 ? 0.0 : s > 1.0 ? 1.0 : s);
 
     // Store the resulting scalar value.
-    newScalars->SetValue(i, this->ScalarRange[0] + s*diffScalar);
-    }
+    newScalars->SetValue(i, this->ScalarRange[0] + s * diffScalar);
+  }
 
   // Add the new scalars array to the output.
   newScalars->SetName("Elevation");

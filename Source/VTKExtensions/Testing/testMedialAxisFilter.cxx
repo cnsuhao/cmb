@@ -8,12 +8,12 @@
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
 #include "vtkCMBMedialAxisFilter.h"
+#include <vtkSmartPointer.h>
+#include <vtkXMLImageDataReader.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkXMLImageDataReader.h>
-#include <vtkSmartPointer.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
   if (argc != 4)
   {
@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
   std::cout << argv[2] << std::endl;
   vtkSmartPointer<vtkXMLPolyDataReader> polyReader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
   vtkSmartPointer<vtkXMLImageDataReader> imgReader = vtkSmartPointer<vtkXMLImageDataReader>::New();
-  vtkSmartPointer<vtkCMBMedialAxisFilter> medialFilter = vtkSmartPointer<vtkCMBMedialAxisFilter>::New();
+  vtkSmartPointer<vtkCMBMedialAxisFilter> medialFilter =
+    vtkSmartPointer<vtkCMBMedialAxisFilter>::New();
   polyReader->SetFileName(argv[1]);
   polyReader->Update();
   imgReader->SetFileName(argv[2]);
@@ -36,6 +37,6 @@ int main(int argc, char *argv[])
   output->SetFileName(argv[3]);
   output->SetInputData(medialFilter->GetOutput());
   output->Update();
-  
+
   return 0;
 }

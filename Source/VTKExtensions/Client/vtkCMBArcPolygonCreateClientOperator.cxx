@@ -9,14 +9,14 @@
 //=========================================================================
 #include "vtkCMBArcPolygonCreateClientOperator.h"
 
+#include "vtkObjectFactory.h"
 #include "vtkSMArcOperatorProxy.h"
 #include "vtkSMProxy.h"
 #include "vtkSMProxyManager.h"
-#include "vtkObjectFactory.h"
 
-#include "vtkIdTypeArray.h"
 #include "vtkCMBArcPolygonProvider.h"
 #include "vtkCMBPolygonFromArcsOperator.h"
+#include "vtkIdTypeArray.h"
 
 vtkStandardNewMacro(vtkCMBArcPolygonCreateClientOperator);
 
@@ -35,56 +35,54 @@ void vtkCMBArcPolygonCreateClientOperator::AddArc(vtkIdType arcId)
 //---------------------------------------------------------------------------
 vtkCMBArcPolygonCreateClientOperator::~vtkCMBArcPolygonCreateClientOperator()
 {
-  if(this->ArcIds)
-    {
+  if (this->ArcIds)
+  {
     this->ArcIds->Delete();
-    }
+  }
 }
 
 //----------------------------------------------------------------------------
-bool vtkCMBArcPolygonCreateClientOperator::Create(double minAngle,
-  double edgeLength,vtkSMProxy *providerProxy)
+bool vtkCMBArcPolygonCreateClientOperator::Create(
+  double minAngle, double edgeLength, vtkSMProxy* providerProxy)
 {
   if (this->InputArcIds.size() == 0)
-    {
+  {
     return false;
-    }
+  }
 
   vtkSMProxyManager* manager = vtkSMProxyManager::GetProxyManager();
-  vtkSMArcOperatorProxy *proxy = vtkSMArcOperatorProxy::SafeDownCast(
-        manager->NewProxy("CmbArcGroup","PolygonFromArcsOperator"));
-
+  vtkSMArcOperatorProxy* proxy = vtkSMArcOperatorProxy::SafeDownCast(
+    manager->NewProxy("CmbArcGroup", "PolygonFromArcsOperator"));
 
   //send all the arc ids down to the server
-  vtkCMBPolygonFromArcsOperator *polyOperator = vtkCMBPolygonFromArcsOperator::SafeDownCast(
-      proxy->GetClientSideObject());
+  vtkCMBPolygonFromArcsOperator* polyOperator =
+    vtkCMBPolygonFromArcsOperator::SafeDownCast(proxy->GetClientSideObject());
 
   std::list<vtkIdType>::iterator arcIt;
-  for (arcIt = this->InputArcIds.begin(); arcIt!=this->InputArcIds.end();++arcIt)
-    {
+  for (arcIt = this->InputArcIds.begin(); arcIt != this->InputArcIds.end(); ++arcIt)
+  {
     polyOperator->AddArcId(*arcIt);
-    }
+  }
   this->InputArcIds.clear();
-  bool valid = proxy->Operate( );
+  bool valid = proxy->Operate();
 
-  if ( valid )
-    {
+  if (valid)
+  {
     //if it is valid we need to create the representation from it
-    vtkCMBArcPolygonProvider *provider = vtkCMBArcPolygonProvider::SafeDownCast(
-      providerProxy->GetClientSideObject());
+    vtkCMBArcPolygonProvider* provider =
+      vtkCMBArcPolygonProvider::SafeDownCast(providerProxy->GetClientSideObject());
 
-    provider->SetOuterLoopArcIds( polyOperator->GetOuterLoop() );
+    provider->SetOuterLoopArcIds(polyOperator->GetOuterLoop());
 
     vtkIdType size = polyOperator->GetNumberOfInnerLoops();
-    for(vtkIdType i=0; i < size; ++i)
-      {
+    for (vtkIdType i = 0; i < size; ++i)
+    {
       provider->AddInnerLoopArcIds(polyOperator->GetInnerLoop(i));
-      }
+    }
 
     provider->SetMinAngle(minAngle);
     provider->SetEdgeLength(edgeLength);
-    }
-
+  }
 
   proxy->Delete();
   return valid;

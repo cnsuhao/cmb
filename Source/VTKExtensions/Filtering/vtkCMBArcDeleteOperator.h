@@ -14,16 +14,16 @@
 #ifndef __vtkCMBArcDeleteOperator_h
 #define __vtkCMBArcDeleteOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkCMBArcDeleteOperator : public vtkObject
 {
 public:
-  static vtkCMBArcDeleteOperator * New();
-  vtkTypeMacro(vtkCMBArcDeleteOperator,vtkObject);
+  static vtkCMBArcDeleteOperator* New();
+  vtkTypeMacro(vtkCMBArcDeleteOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //Description:
@@ -31,7 +31,7 @@ public:
   //The default mode is real delete which is 0.
   // 1 == marked for delete ( added to the client undo stack )
   // 2 == unmarked for delete ( remove from undo stack )
-  vtkSetMacro(DeleteMode,int);
+  vtkSetMacro(DeleteMode, int);
 
   //Description:
   //Delete the arc id that is passed in
@@ -43,8 +43,8 @@ protected:
   int DeleteMode;
 
 private:
-  vtkCMBArcDeleteOperator(const vtkCMBArcDeleteOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcDeleteOperator&);  // Not implemented.
+  vtkCMBArcDeleteOperator(const vtkCMBArcDeleteOperator&); // Not implemented.
+  void operator=(const vtkCMBArcDeleteOperator&);          // Not implemented.
 };
 
 #endif

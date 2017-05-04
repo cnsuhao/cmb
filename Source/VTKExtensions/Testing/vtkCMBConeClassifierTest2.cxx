@@ -7,37 +7,37 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
 #include "vtkActor.h"
+#include "vtkCMBConeCellClassifier.h"
+#include "vtkCMBConeSource.h"
 #include "vtkCamera.h"
-#include "vtkThreshold.h"
-#include "vtkPolyDataMapper.h"
+#include "vtkDataSetMapper.h"
+#include "vtkGeometryFilter.h"
+#include "vtkNew.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
-#include "vtkDataSetMapper.h"
+#include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 #include "vtkRenderer.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkGeometryFilter.h"
-#include "vtkCMBConeCellClassifier.h"
+#include "vtkSmartPointer.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTesting.h"
-#include "vtkSmartPointer.h"
-#include "vtkCMBConeSource.h"
-#include "vtkNew.h"
-#include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
+#include "vtkThreshold.h"
+#include "vtkUnstructuredGrid.h"
 
 // Tests Intersection Classification
 int main(int argc, char** argv)
 {
   vtkNew<vtkTesting> testHelper;
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data was not specified.";
     return 1;
-    }
+  }
 
   vtkNew<vtkCMBMeshReader> reader;
 
@@ -66,9 +66,7 @@ int main(int argc, char** argv)
   scale[2] = 0.871;
 
   vtkNew<vtkCMBConeCellClassifier> filter;
-  filter->SetInputArrayToProcess(0, 0, 0,
-                                vtkDataObject::FIELD_ASSOCIATION_CELLS,
-                                "Region");
+  filter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, "Region");
   filter->SetBaseCenter(baseCenter);
   filter->SetHeight(1.0);
   filter->SetAxisDirection(axisDir);
@@ -84,9 +82,7 @@ int main(int argc, char** argv)
   vtkNew<vtkThreshold> tfilter;
   tfilter->ThresholdByUpper(9.5);
   tfilter->SetInputConnection(filter->GetOutputPort());
-  tfilter->SetInputArrayToProcess(0, 0, 0,
-                                vtkDataObject::FIELD_ASSOCIATION_CELLS,
-                                "NewIds");
+  tfilter->SetInputArrayToProcess(0, 0, 0, vtkDataObject::FIELD_ASSOCIATION_CELLS, "NewIds");
   vtkNew<vtkGeometryFilter> geoFilter;
   geoFilter->SetInputConnection(tfilter->GetOutputPort());
   vtkNew<vtkPolyDataMapper> pdm;
@@ -124,24 +120,23 @@ int main(int argc, char** argv)
   renderer->AddActor(actor.GetPointer());
   renderer->AddActor(actor1.GetPointer());
   renderer->ResetCamera();
-  renderer->SetBackground(.1,.1,.1);
+  renderer->SetBackground(.1, .1, .1);
 
-  renWin->SetSize(600,600);
+  renWin->SetSize(600, 600);
   iren->Initialize();
   renWin->Render();
 
-
   int retVal = vtkTesting::FAILED;
   if (testHelper->IsFlagSpecified("-V"))
-    {
+  {
     testHelper->SetRenderWindow(renWin.GetPointer());
     retVal = testHelper->RegressionTest(10);
-    }
+  }
 
   if (testHelper->IsInteractiveModeSpecified())
-    {
+  {
     iren->Start();
-    }
+  }
 
   return (retVal == vtkTesting::PASSED) ? 0 : 1;
 }

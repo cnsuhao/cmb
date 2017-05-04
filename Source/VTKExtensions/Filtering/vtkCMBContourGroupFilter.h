@@ -16,22 +16,22 @@
 #ifndef __vtkCMBContourGroupFilter_h
 #define __vtkCMBContourGroupFilter_h
 
+#include "cmbSystemConfig.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkMultiBlockDataSetAlgorithm.h"
-#include "cmbSystemConfig.h"
 #include <map>
 #include <vector>
 
 class VTKCMBFILTERING_EXPORT vtkCMBContourGroupFilter : public vtkMultiBlockDataSetAlgorithm
 {
 public:
-  vtkTypeMacro(vtkCMBContourGroupFilter,vtkMultiBlockDataSetAlgorithm);
+  vtkTypeMacro(vtkCMBContourGroupFilter, vtkMultiBlockDataSetAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with PointIds and CellIds on; and ids being generated
   // as scalars.
-  static vtkCMBContourGroupFilter *New();
+  static vtkCMBContourGroupFilter* New();
 
   // Description:
   // Set the active group to modify
@@ -77,11 +77,9 @@ protected:
   vtkCMBContourGroupFilter();
   ~vtkCMBContourGroupFilter() override;
 
-  int RequestData(vtkInformation *,
-                  vtkInformationVector **,
-                  vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // Description:
   // Check if the valid group is valid
@@ -101,12 +99,12 @@ protected:
     vtkAlgorithm* Polygon;
   };
 
-  std::map<int, std::vector<PolygonInfo*> >Polygons;
+  std::map<int, std::vector<PolygonInfo*> > Polygons;
   std::map<int, int> GroupInvert;
 
 private:
-  vtkCMBContourGroupFilter(const vtkCMBContourGroupFilter&);  // Not implemented.
-  void operator=(const vtkCMBContourGroupFilter&);  // Not implemented.
+  vtkCMBContourGroupFilter(const vtkCMBContourGroupFilter&); // Not implemented.
+  void operator=(const vtkCMBContourGroupFilter&);           // Not implemented.
 };
 
 #endif

@@ -16,8 +16,8 @@
 #include <vtksys/SystemTools.hxx>
 
 #include <smtk/attribute/Attribute.h>
-#include <smtk/attribute/Item.h>
 #include <smtk/attribute/FileItem.h>
+#include <smtk/attribute/Item.h>
 #include <smtk/attribute/System.h>
 #include <smtk/model/Manager.h>
 
@@ -34,22 +34,21 @@
 
 namespace
 {
-  // Description:
-  // Given the attributes serialized into contents, deserialize that
-  // data into manager.
-  void DeserializeSMTK(const char* contents,
-                       smtk::attribute::SystemPtr manager)
-  {
-    smtk::io::AttributeReader xmlr;
-    smtk::io::Logger logger;
-    xmlr.readContents(manager, contents, logger);
-    std::vector<smtk::attribute::DefinitionPtr> definitions;
-    manager->findBaseDefinitions(definitions);
-  }
+// Description:
+// Given the attributes serialized into contents, deserialize that
+// data into manager.
+void DeserializeSMTK(const char* contents, smtk::attribute::SystemPtr manager)
+{
+  smtk::io::AttributeReader xmlr;
+  smtk::io::Logger logger;
+  xmlr.readContents(manager, contents, logger);
+  std::vector<smtk::attribute::DefinitionPtr> definitions;
+  manager->findBaseDefinitions(definitions);
+}
 }
 
 vtkStandardNewMacro(vtkPythonExporter);
-vtkCxxSetObjectMacro(vtkPythonExporter,ModelManagerWrapper,vtkModelManagerWrapper);
+vtkCxxSetObjectMacro(vtkPythonExporter, ModelManagerWrapper, vtkModelManagerWrapper);
 
 vtkPythonExporter::vtkPythonExporter()
 {
@@ -68,15 +67,14 @@ vtkPythonExporter::~vtkPythonExporter()
   this->SetModelManagerWrapper(NULL);
 }
 
-void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
-                                const char* smtkContents,
-                                const char* exportContents)
+void vtkPythonExporter::Operate(
+  vtkModelManagerWrapper* modelWrapper, const char* smtkContents, const char* exportContents)
 {
-  if(!this->AbleToOperate(modelWrapper))
-    {
+  if (!this->AbleToOperate(modelWrapper))
+  {
     this->OperateSucceeded = 0;
     return;
-    }
+  }
 
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
@@ -92,14 +90,13 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
   this->Operate(modelWrapper->GetModelManager(), simManager, exportManager);
 }
 
-void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
-                                const char* smtkContents)
+void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper, const char* smtkContents)
 {
-  if(!this->AbleToOperate(modelWrapper))
-    {
+  if (!this->AbleToOperate(modelWrapper))
+  {
     this->OperateSucceeded = 0;
     return;
-    }
+  }
 
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
@@ -114,13 +111,14 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper,
   this->Operate(modelWrapper->GetModelManager(), manager, exportManager);
 }
 
-template<class IN> std::string to_hex_address(IN* ptr)
+template <class IN>
+std::string to_hex_address(IN* ptr)
 {
   std::stringstream ss;
   ss << std::hex << ptr;
   std::string address;
   ss >> address;
-  if(address[0] == '0' && (address[1] == 'x' || address[1] =='X'))
+  if (address[0] == '0' && (address[1] == 'x' || address[1] == 'X'))
   {
     address = address.substr(2);
   }
@@ -128,26 +126,25 @@ template<class IN> std::string to_hex_address(IN* ptr)
 }
 
 void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
-                                smtk::attribute::SystemPtr manager,
-                                smtk::attribute::SystemPtr exportManager)
+  smtk::attribute::SystemPtr manager, smtk::attribute::SystemPtr exportManager)
 {
 
-//  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");
-//  json << smtk::io::SaveJSON::fromModelManager(modelMgr);
-//  json.close();
+  //  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");
+  //  json << smtk::io::SaveJSON::fromModelManager(modelMgr);
+  //  json.close();
 
   // Check that we have a python script
-  if (!this->GetScript() || strcmp(this->GetScript(),"")==0 )
-    {
+  if (!this->GetScript() || strcmp(this->GetScript(), "") == 0)
+  {
     vtkWarningMacro("Cannot export - no python script specified");
     this->OperateSucceeded = 0;
     return;
-    }
+  }
 
   manager->setRefModelManager(modelMgr);
   exportManager->setRefModelManager(modelMgr);
 
-/*
+  /*
   smtk::attribute::AttributePtr att = manager->findAttribute("Material-0");
   if(att)
   {
@@ -167,21 +164,21 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
 */
   // Set python executable if defined
   if (this->PythonExecutable)
-    {
-      vtkPythonInterpreter::SetProgramName(this->PythonExecutable);
-    }
+  {
+    vtkPythonInterpreter::SetProgramName(this->PythonExecutable);
+  }
 
   // Prepend the paths defined in PythonPath to sys.path
   if (this->PythonPath)
-    {
+  {
     std::string pathscript;
     pathscript += "import sys\n";
     std::vector<vtksys::String> paths;
     paths = vtksys::SystemTools::SplitString(this->PythonPath, ';');
-    for (size_t cc=0; cc < paths.size(); cc++)
-      {
+    for (size_t cc = 0; cc < paths.size(); cc++)
+    {
       if (!paths[cc].empty())
-        {
+      {
         pathscript += "if not ";
         pathscript += paths[cc];
         pathscript += " in sys.path:\n";
@@ -190,12 +187,12 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
         pathscript += ")\n";
 
         vtkPythonInterpreter::RunSimpleString(pathscript.c_str());
-        }
       }
     }
+  }
   std::string path = vtksys::SystemTools::GetFilenamePath(this->Script);
-  if(!path.empty())
-    {
+  if (!path.empty())
+  {
     std::string pathscript;
     pathscript += "import sys\n";
     pathscript += "if not ";
@@ -205,11 +202,11 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
     pathscript += '"' + path + '"';
     pathscript += ")\n";
     vtkPythonInterpreter::RunSimpleString(pathscript.c_str());
-    }
+  }
 
-///***************************************************************///
-/// NOTE: we have to figure out something for discrete/cmb session ///
- /*
+  ///***************************************************************///
+  /// NOTE: we have to figure out something for discrete/cmb session ///
+  /*
   // Initialize GridInfo object
   smtk::model::ModelPtr smtkModel = manager.refModel();
 
@@ -237,13 +234,13 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
     }
   smtkModel->setNativeModelName(name);
 */
-///***************************************************************///
+  ///***************************************************************///
 
   // Initialize ExportSpec object
   smtk::simulation::ExportSpec spec;
   spec.setSimulationAttributes(manager);
   spec.setExportAttributes(exportManager);
-//  spec.setAnalysisGridInfo(gridInfo);
+  //  spec.setAnalysisGridInfo(gridInfo);
 
   std::string runscript;
   std::string script = vtksys::SystemTools::GetFilenameWithoutExtension(this->Script);
@@ -259,7 +256,8 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
 
   std::string spec_address = to_hex_address(&spec);
 
-  runscript += "spec = smtk.simulation.ExportSpec._InternalConverterDoNotUse_('" + spec_address +"')\n";
+  runscript +=
+    "spec = smtk.simulation.ExportSpec._InternalConverterDoNotUse_('" + spec_address + "')\n";
   runscript += script + ".ExportCMB(spec)\n";
   //std::cout << "\nPython script:\n" << runscript << std::endl;
   vtkPythonInterpreter::RunSimpleString(runscript.c_str());
@@ -269,22 +267,22 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
 
 bool vtkPythonExporter::AbleToOperate(vtkModelManagerWrapper* modelWrapper)
 {
-  if(!modelWrapper)
-    {
+  if (!modelWrapper)
+  {
     vtkErrorMacro("Passed in a null model manager wrapper.");
     return false;
-    }
-  if(!this->Script)
-    {
+  }
+  if (!this->Script)
+  {
     vtkErrorMacro("No Python script.");
     return false;
-    }
+  }
   return true;
 }
 
 void vtkPythonExporter::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "OperateSucceeded: " << this->OperateSucceeded << endl;
   os << indent << "Script: " << (this->Script ? this->Script : "(NULL)") << endl;
   os << indent << "PythonPath: " << (this->PythonPath ? this->PythonPath : "(NULL)") << endl;

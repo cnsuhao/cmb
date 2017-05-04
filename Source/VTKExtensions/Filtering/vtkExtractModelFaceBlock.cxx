@@ -9,12 +9,12 @@
 //=========================================================================
 #include "vtkExtractModelFaceBlock.h"
 
+#include "vtkCompositeDataIterator.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkMultiBlockWrapper.h"
 #include "vtkObjectFactory.h"
-#include "vtkCompositeDataIterator.h"
 
 vtkStandardNewMacro(vtkExtractModelFaceBlock);
 
@@ -25,45 +25,42 @@ vtkExtractModelFaceBlock::vtkExtractModelFaceBlock()
 }
 
 //----------------------------------------------------------------------------
-int vtkExtractModelFaceBlock::FillInputPortInformation(int, vtkInformation *info)
+int vtkExtractModelFaceBlock::FillInputPortInformation(int, vtkInformation* info)
 {
   info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkMultiBlockDataSet");
   return 1;
 }
 
 //----------------------------------------------------------------------------
-int vtkExtractModelFaceBlock::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+int vtkExtractModelFaceBlock::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector, vtkInformationVector* outputVector)
 {
-  vtkMultiBlockDataSet *input = vtkMultiBlockDataSet::GetData(inputVector[0], 0);
-  vtkPolyData *output = vtkPolyData::GetData(outputVector, 0);
+  vtkMultiBlockDataSet* input = vtkMultiBlockDataSet::GetData(inputVector[0], 0);
+  vtkPolyData* output = vtkPolyData::GetData(outputVector, 0);
 
   if (!input)
-    {
+  {
     vtkErrorMacro("Input not specified!");
     return 0;
-    }
+  }
 
   vtkMultiBlockWrapper* mbw = vtkMultiBlockWrapper::New();
   mbw->SetMultiBlock(input);
   int blockIndex = mbw->GetModelFaceBlockIndex(this->FaceId);
-  if( blockIndex>=0 && blockIndex < mbw->GetNumberOfModelFaces())
-    {
-    vtkPolyData *block = mbw->GetModelFaceWithIndex(blockIndex);
+  if (blockIndex >= 0 && blockIndex < mbw->GetNumberOfModelFaces())
+  {
+    vtkPolyData* block = mbw->GetModelFaceWithIndex(blockIndex);
     if (block)
-      {
-      output->ShallowCopy( block );
+    {
+      output->ShallowCopy(block);
       mbw->Delete();
       return 1;
-      }
     }
+  }
 
   mbw->Delete();
   vtkErrorMacro("Specified model face id is not found!");
   return 0;
-
 }
 
 //----------------------------------------------------------------------------

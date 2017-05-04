@@ -27,51 +27,49 @@ class QProgressDialog;
 class CMBAPPCOMMON_EXPORT pqCMBSceneV1Reader
 {
 public:
-  pqCMBSceneV1Reader() : Tree(NULL), Progress(NULL){}
+  pqCMBSceneV1Reader()
+    : Tree(NULL)
+    , Progress(NULL)
+  {
+  }
   virtual ~pqCMBSceneV1Reader();
 
-  void setTree(pqCMBSceneTree *tree)
-    {this->Tree = tree;}
+  void setTree(pqCMBSceneTree* tree) { this->Tree = tree; }
 
-  pqCMBSceneTree *getTree() const
-    {return this->Tree;}
+  pqCMBSceneTree* getTree() const { return this->Tree; }
 
-  void setFileName(const char *name)
-    { this->FileName = name;}
-  std::string getFileName() const
-    {return this->FileName;}
+  void setFileName(const char* name) { this->FileName = name; }
+  std::string getFileName() const { return this->FileName; }
 
-  int process(vtkXMLDataElement *root);
+  int process(vtkXMLDataElement* root);
 
-  std::string getStatusMessage() const
-    {return this->Status;}
+  std::string getStatusMessage() const { return this->Status; }
 
-  static int convertToType(const char *tname,
-                           int &surfaceType);
+  static int convertToType(const char* tname, int& surfaceType);
+
 protected:
-  void processTypes(vtkXMLDataElement *);
-  void processFiles(vtkXMLDataElement *);
-  void processTextureFiles(vtkXMLDataElement *);
-  void processObjects(vtkXMLDataElement *);
-  void processObject(vtkXMLDataElement *);
-  pqCMBSceneObjectBase *processVOI(vtkXMLDataElement *elem);
-  pqCMBSceneObjectBase *processLine(vtkXMLDataElement *elem);
-  pqCMBSceneObjectBase *processContour(vtkXMLDataElement *elem);
-  pqCMBSceneObjectBase *processPlane(vtkXMLDataElement *elem);
-  pqCMBSceneObjectBase *processPoints(vtkXMLDataElement *elem);
-  pqCMBSceneObjectBase *processFacetedObject(vtkXMLDataElement *elem,
-                                       int surfaceType);
-  void processConstraints(vtkXMLDataElement *, pqCMBSceneObjectBase *);
-  int processTextureInfo(vtkXMLDataElement *, pqCMBSceneObjectBase *);
-  void appendStatus(const std::string &newStatus);
+  void processTypes(vtkXMLDataElement*);
+  void processFiles(vtkXMLDataElement*);
+  void processTextureFiles(vtkXMLDataElement*);
+  void processObjects(vtkXMLDataElement*);
+  void processObject(vtkXMLDataElement*);
+  pqCMBSceneObjectBase* processVOI(vtkXMLDataElement* elem);
+  pqCMBSceneObjectBase* processLine(vtkXMLDataElement* elem);
+  pqCMBSceneObjectBase* processContour(vtkXMLDataElement* elem);
+  pqCMBSceneObjectBase* processPlane(vtkXMLDataElement* elem);
+  pqCMBSceneObjectBase* processPoints(vtkXMLDataElement* elem);
+  pqCMBSceneObjectBase* processFacetedObject(vtkXMLDataElement* elem, int surfaceType);
+  void processConstraints(vtkXMLDataElement*, pqCMBSceneObjectBase*);
+  int processTextureInfo(vtkXMLDataElement*, pqCMBSceneObjectBase*);
+  void appendStatus(const std::string& newStatus);
 
-  pqCMBSceneTree *Tree;
+  pqCMBSceneTree* Tree;
   std::vector<std::string> FileNames;
   std::vector<std::string> TextureFileNames;
-  std::vector<pqCMBSceneObjectBase *> Sources;
+  std::vector<pqCMBSceneObjectBase*> Sources;
   std::string Status;
   std::string FileName;
-  QProgressDialog *Progress;
+  QProgressDialog* Progress;
 };
 
 #endif /* __pqCMBSceneV1Reader_h */

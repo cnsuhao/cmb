@@ -15,14 +15,14 @@
 
 #include <QDialog>
 
-#include "vtkSMSourceProxy.h"
 #include "cmbSystemConfig.h"
+#include "vtkSMSourceProxy.h"
 
 class pqServer;
 
 namespace Ui
 {
-  class qtLIDARFilterDialog;
+class qtLIDARFilterDialog;
 };
 
 /// Provides an about dialog
@@ -31,7 +31,7 @@ class qtCMBLIDARFilterDialog : public QDialog
   Q_OBJECT
 
 public:
-  qtCMBLIDARFilterDialog(QWidget *parent = NULL);
+  qtCMBLIDARFilterDialog(QWidget* parent = NULL);
   ~qtCMBLIDARFilterDialog() override;
 
   //sets the thresholdSource's values to dialog's values
@@ -43,8 +43,8 @@ public:
   //blocks signals before changing information
   void blockAllChildrenSignals(bool block);
 
-//  void setVersionText(const QString& versionText);
-//  void setPixmap(const QPixmap& pixMap ) ;
+  //  void setVersionText(const QString& versionText);
+  //  void setPixmap(const QPixmap& pixMap ) ;
 
 signals:
   void OkPressed();
@@ -60,13 +60,14 @@ private slots:
   void CheckUseMaxZ();
   void CheckUseMinRGB();
   void CheckUseMaxRGB();
+
 protected:
-  Ui::qtLIDARFilterDialog *InternalWidget;
+  Ui::qtLIDARFilterDialog* InternalWidget;
 
 private:
   qtCMBLIDARFilterDialog(const qtCMBLIDARFilterDialog&);
   qtCMBLIDARFilterDialog& operator=(const qtCMBLIDARFilterDialog&);
-;
+  ;
 };
 
 #endif // !_qtCMBLIDARFilterDialog_h

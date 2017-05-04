@@ -11,8 +11,8 @@
 #ifndef __pqCheckableComboPopupEventTranslator_h
 #define __pqCheckableComboPopupEventTranslator_h
 
-#include "pqWidgetEventTranslator.h"
 #include "cmbSystemConfig.h"
+#include "pqWidgetEventTranslator.h"
 #include <QPoint>
 
 /**
@@ -21,23 +21,21 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class pqCheckableComboPopupEventTranslator :
-  public pqWidgetEventTranslator
+class pqCheckableComboPopupEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
-  
+
 public:
-  pqCheckableComboPopupEventTranslator(QObject* p=0);
-  
+  pqCheckableComboPopupEventTranslator(QObject* p = 0);
+
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
- 
-protected: 
+
+protected:
   QPoint LastPos;
 
 private:
   pqCheckableComboPopupEventTranslator(const pqCheckableComboPopupEventTranslator&);
   pqCheckableComboPopupEventTranslator& operator=(const pqCheckableComboPopupEventTranslator&);
-
 };
 
 #endif // !_pqCheckableComboPopupEventTranslator_h

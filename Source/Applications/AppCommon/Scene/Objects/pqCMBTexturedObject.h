@@ -11,60 +11,47 @@
 // .SECTION Description
 // .SECTION Caveats
 
-
 #ifndef __pqCMBTexturedObject_h
 #define __pqCMBTexturedObject_h
 
-#include "pqCMBSceneObjectBase.h"
 #include "cmbSystemConfig.h"
+#include "pqCMBSceneObjectBase.h"
 
-class  CMBAPPCOMMON_EXPORT pqCMBTexturedObject : public pqCMBSceneObjectBase
+class CMBAPPCOMMON_EXPORT pqCMBTexturedObject : public pqCMBSceneObjectBase
 {
 public:
-
   pqCMBTexturedObject();
-  pqCMBTexturedObject(pqPipelineSource *source,
-                         pqRenderView *view,
-                         pqServer *server);
+  pqCMBTexturedObject(pqPipelineSource* source, pqRenderView* view, pqServer* server);
   ~pqCMBTexturedObject() override;
 
   /// Returns the Bounds of the data. - Returns the output of the Bathymetry
   void getDataBounds(double bounds[6]) const override;
-  pqPipelineSource * getSelectionSource() const override;
-  void setSelectionInput(vtkSMSourceProxy *selectionInput) override;
-  vtkSMSourceProxy *getSelectionInput() const override;
+  pqPipelineSource* getSelectionSource() const override;
+  void setSelectionInput(vtkSMSourceProxy* selectionInput) override;
+  vtkSMSourceProxy* getSelectionInput() const override;
 
   void showElevation(bool flag);
-  void toggleElevation()
-  { this->showElevation(!this->ShowElevation);}
-  bool showingElevation() const
-  { return this->ShowElevation;}
-  const double* getRegistrationPoints()
-  { return this->RegistrationPoints;}
+  void toggleElevation() { this->showElevation(!this->ShowElevation); }
+  bool showingElevation() const { return this->ShowElevation; }
+  const double* getRegistrationPoints() { return this->RegistrationPoints; }
 
-  bool hasTexture() const
-    { return (this->NumberOfRegistrationPoints > 0);}
+  bool hasTexture() const { return (this->NumberOfRegistrationPoints > 0); }
 
-  const QString & getTextureFileName()
-    { return this->TextureFileName;}
+  const QString& getTextureFileName() { return this->TextureFileName; }
 
-  int getNumberOfRegistrationPoints() const
-    { return this->NumberOfRegistrationPoints;}
+  int getNumberOfRegistrationPoints() const { return this->NumberOfRegistrationPoints; }
 
   void getRegistrationPointPair(int i, double xy[2], double st[2]) const;
 
   double getTextureIntensityAtPoint(double pt[3]);
-  void applyBathymetry(pqCMBSceneObjectBase* bathymetrySource,
-    double elevationRadious, bool useHighLimit=false,
-    double eleHigh=0.0, bool useLowLimit=false, double eleLow=0.0);
+  void applyBathymetry(pqCMBSceneObjectBase* bathymetrySource, double elevationRadious,
+    bool useHighLimit = false, double eleHigh = 0.0, bool useLowLimit = false, double eleLow = 0.0);
   void unApplyBathymetry();
   pqCMBSceneObjectBase* getBathymetrySource();
-  double getBathymetryElevationRadious()
-    {return this->ElevationRadious;}
+  double getBathymetryElevationRadious() { return this->ElevationRadious; }
   pqServer* getTextureRegistrationServer(void);
 
-  void setTextureMap(const char *filename, int numberOfRegistrationPoints,
-      double *points);
+  void setTextureMap(const char* filename, int numberOfRegistrationPoints, double* points);
   void unsetTextureMap();
 
 protected:
@@ -80,9 +67,8 @@ protected:
   pqCMBSceneObjectBase* BathymetrySource;
   double ElevationRadious;
   bool ShowElevation;
-  void prepTexturedObject(pqServer *server, pqRenderView *view);
-  void duplicateInternals(pqCMBSceneObjectBase *obj) override;
-
+  void prepTexturedObject(pqServer* server, pqRenderView* view);
+  void duplicateInternals(pqCMBSceneObjectBase* obj) override;
 };
 
 #endif /* __pqCMBTexturedObject_h */

@@ -16,8 +16,8 @@
 #define _pqCMBColorMapDialog_h
 
 #include "cmbAppCommonExport.h"
-#include <QObject>
 #include "cmbSystemConfig.h"
+#include <QObject>
 
 class pqDataRepresentation;
 class QDialog;
@@ -39,9 +39,8 @@ protected slots:
 
 protected:
   int Status;
-  QDialog *MainDialog;
+  QDialog* MainDialog;
   pqProxyWidget* ColorEditor;
-
 };
 
 #endif

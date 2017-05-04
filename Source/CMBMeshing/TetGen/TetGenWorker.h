@@ -14,8 +14,8 @@
 #include <set>
 
 #include <remus/worker/Job.h>
-#include <remus/worker/Worker.h>
 #include <remus/worker/ServerConnection.h>
+#include <remus/worker/Worker.h>
 
 // for TetGen itself
 #include "tetgen.h"
@@ -23,8 +23,8 @@
 class TetGenWorker : public remus::worker::Worker
 {
 public:
-  TetGenWorker(remus::common::FileHandle const& fhandle,
-               remus::worker::ServerConnection const& connection);
+  TetGenWorker(
+    remus::common::FileHandle const& fhandle, remus::worker::ServerConnection const& connection);
 
   //will get a tetgen job from the remus server
   //and call tetgen

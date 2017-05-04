@@ -14,16 +14,16 @@
 #ifndef __vtkCMBArcMergeArcsOperator_h
 #define __vtkCMBArcMergeArcsOperator_h
 
+#include "cmbSystemConfig.h"
+#include "vtkABI.h"
 #include "vtkCMBFilteringModule.h" // For export macro
 #include "vtkObject.h"
-#include "vtkABI.h"
-#include "cmbSystemConfig.h"
 
 class VTKCMBFILTERING_EXPORT vtkCMBArcMergeArcsOperator : public vtkObject
 {
 public:
-  static vtkCMBArcMergeArcsOperator * New();
-  vtkTypeMacro(vtkCMBArcMergeArcsOperator,vtkObject);
+  static vtkCMBArcMergeArcsOperator* New();
+  vtkTypeMacro(vtkCMBArcMergeArcsOperator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   bool Operate(vtkIdType firstId, vtkIdType secondId);
@@ -31,12 +31,11 @@ public:
   //Description:
   //If the merge work this is the ArcId for the newly
   //created arc
-  vtkGetMacro(CreatedArcId,vtkIdType);
+  vtkGetMacro(CreatedArcId, vtkIdType);
 
   //Description:
   //If the merge work this is the ArcId that needs to be deleted
-  vtkGetMacro(ArcIdToDelete,vtkIdType);
-
+  vtkGetMacro(ArcIdToDelete, vtkIdType);
 
 protected:
   vtkCMBArcMergeArcsOperator();
@@ -46,9 +45,9 @@ protected:
   vtkIdType ArcIdToDelete;
 
 private:
-  vtkCMBArcMergeArcsOperator(const vtkCMBArcMergeArcsOperator&);  // Not implemented.
-  void operator=(const vtkCMBArcMergeArcsOperator&);  // Not implemented.
-//ETX
+  vtkCMBArcMergeArcsOperator(const vtkCMBArcMergeArcsOperator&); // Not implemented.
+  void operator=(const vtkCMBArcMergeArcsOperator&);             // Not implemented.
+  //ETX
 };
 
 #endif

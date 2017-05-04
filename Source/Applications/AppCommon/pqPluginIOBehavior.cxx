@@ -13,11 +13,11 @@
 #include "pqPluginManager.h"
 #include "vtkPVProxyDefinitionIterator.h"
 #include "vtkPVXMLElement.h"
-#include "vtkSmartPointer.h"
-#include "vtkSMProxyManager.h"
 #include "vtkSMProxyDefinitionManager.h"
+#include "vtkSMProxyManager.h"
 #include "vtkSMSession.h"
 #include "vtkSMSessionProxyManager.h"
+#include "vtkSmartPointer.h"
 #include "vtkWeakPointer.h"
 #include <vtksys/SystemTools.hxx>
 
@@ -33,53 +33,51 @@ class pqPluginIOBehavior::cmbInternals
 {
 public:
   struct ReaderInfo
-    {
-//    vtkWeakPointer<vtkSMSession> Session;
+  {
+    //    vtkWeakPointer<vtkSMSession> Session;
     std::string Group;
     std::string Name;
     std::vector<std::string> Extensions;
     std::vector<std::string> FilenamePatterns;
     std::string Description;
 
-    void initialize(vtkPVXMLElement* rfHint,
-      const std::string& group, const std::string& name)
-      {
+    void initialize(vtkPVXMLElement* rfHint, const std::string& group, const std::string& name)
+    {
       if (!rfHint)
-        {
+      {
         return;
-        }
+      }
       this->Group = group;
       this->Name = name;
       this->Extensions.clear();
       const char* exts = rfHint->GetAttribute("extensions");
       if (exts)
-        {
-        vtksys::SystemTools::Split(exts, this->Extensions,' ');
-        }
+      {
+        vtksys::SystemTools::Split(exts, this->Extensions, ' ');
+      }
       const char* filename_patterns = rfHint->GetAttribute("filename_patterns");
       if (filename_patterns)
-        {
-        vtksys::SystemTools::Split(filename_patterns, this->FilenamePatterns,' ');
-        }
-      this->Description = rfHint->GetAttribute("file_description");
-//      this->Session = session;
+      {
+        vtksys::SystemTools::Split(filename_patterns, this->FilenamePatterns, ' ');
       }
-    };
+      this->Description = rfHint->GetAttribute("file_description");
+      //      this->Session = session;
+    }
+  };
 
-  void addReader(const std::string& group, const std::string& name,
-    vtkPVXMLElement* hints)
+  void addReader(const std::string& group, const std::string& name, vtkPVXMLElement* hints)
   {
     std::string readerkey = group + name;
-    if(this->Readers.find(readerkey) == this->Readers.end())
-      {
+    if (this->Readers.find(readerkey) == this->Readers.end())
+    {
       this->Readers[readerkey].initialize(hints, group, name);
-//      this->Groups.insert(group);
-      }
+      //      this->Groups.insert(group);
+    }
   }
 
   vtkSMProxy* GetReaderProxy(vtkSMSession* session, const char* groupName, const char* proxyName)
   {
-  return session->GetSessionProxyManager()->GetPrototypeProxy(groupName, proxyName);
+    return session->GetSessionProxyManager()->GetPrototypeProxy(groupName, proxyName);
   }
 
   // The key is a
@@ -97,11 +95,10 @@ pqPluginIOBehavior::pqPluginIOBehavior(QObject* parentObject)
   : Superclass(parentObject)
 {
   this->Internals = new cmbInternals();
-  QObject::connect(pqApplicationCore::instance()->getPluginManager(),
-    SIGNAL(pluginsUpdated()),
+  QObject::connect(pqApplicationCore::instance()->getPluginManager(), SIGNAL(pluginsUpdated()),
     this, SLOT(updateResources()));
   this->Internals->Groups.insert("sources");
-//  this->updateResources();
+  //  this->updateResources();
 }
 
 //-----------------------------------------------------------------------------
@@ -117,65 +114,61 @@ void pqPluginIOBehavior::updateResources()
   // when we change the server we may not have a session yet. that's ok
   // since we'll come back here after the proxy definitions are loaded
   // from that session.
-  if(vtkSMSession* session = proxyManager->GetActiveSession())
-    {
+  if (vtkSMSession* session = proxyManager->GetActiveSession())
+  {
     vtkSMSessionProxyManager* sessionProxyManager = session->GetSessionProxyManager();
     vtkSMProxyDefinitionManager* pdm = sessionProxyManager->GetProxyDefinitionManager();
 
-    for(std::set<std::string>::iterator group=this->Internals->Groups.begin();
-        group!=this->Internals->Groups.end();group++)
-      {
-      vtkPVProxyDefinitionIterator* iter =
-        pdm->NewSingleGroupIterator(group->c_str());
+    for (std::set<std::string>::iterator group = this->Internals->Groups.begin();
+         group != this->Internals->Groups.end(); group++)
+    {
+      vtkPVProxyDefinitionIterator* iter = pdm->NewSingleGroupIterator(group->c_str());
       for (iter->GoToFirstItem(); !iter->IsDoneWithTraversal(); iter->GoToNextItem())
-        {
-        vtkPVXMLElement* hints = sessionProxyManager->GetProxyHints(
-          iter->GetGroupName(), iter->GetProxyName());
+      {
+        vtkPVXMLElement* hints =
+          sessionProxyManager->GetProxyHints(iter->GetGroupName(), iter->GetProxyName());
         if (pqPluginIOBehavior::isPluginReader(hints))
-          {
-          this->Internals->addReader(
-            iter->GetGroupName(), iter->GetProxyName(),
-             hints->FindNestedElementByName("ReaderFactory"));
-          }
+        {
+          this->Internals->addReader(iter->GetGroupName(), iter->GetProxyName(),
+            hints->FindNestedElementByName("ReaderFactory"));
         }
-      iter->Delete();
       }
+      iter->Delete();
     }
+  }
 }
 
 //----------------------------------------------------------------------------
 const char* pqPluginIOBehavior::supportedFileTypes(vtkSMSession* session)
 {
   std::ostringstream all_types;
-  size_t i=0, j=0;
+  size_t i = 0, j = 0;
   cmbInternals::ReaderType::iterator iter;
-  for (iter = this->Internals->Readers.begin();
-    iter != this->Internals->Readers.end(); ++iter, ++i)
-    {
+  for (iter = this->Internals->Readers.begin(); iter != this->Internals->Readers.end(); ++iter, ++i)
+  {
     if (this->Internals->GetReaderProxy(
-        session, iter->second.Group.c_str(), iter->second.Name.c_str()) &&
-        iter->second.Extensions.size() > 0)
-      {
+          session, iter->second.Group.c_str(), iter->second.Name.c_str()) &&
+      iter->second.Extensions.size() > 0)
+    {
       std::ostringstream stream;
       stream << iter->second.Description << " (";
       std::vector<std::string>::const_iterator it;
-      for (it = iter->second.Extensions.begin();
-           it != iter->second.Extensions.end(); ++it, ++j)
-        {
+      for (it = iter->second.Extensions.begin(); it != iter->second.Extensions.end(); ++it, ++j)
+      {
         stream << "*." << (*it);
-        if (j < iter->second.Extensions.size() -1)
-          {
-          stream << " ";
-          }
-        }
-      stream << ")";
-      all_types << stream.str();
-      if (i < this->Internals->Readers.size() -1)
+        if (j < iter->second.Extensions.size() - 1)
         {
-        all_types << ";;";
+          stream << " ";
         }
       }
+      stream << ")";
+      all_types << stream.str();
+      if (i < this->Internals->Readers.size() - 1)
+      {
+        all_types << ";;";
+      }
     }
+  }
 
   this->Internals->SupportedFileTypes = all_types.str();
   return this->Internals->SupportedFileTypes.c_str();
@@ -187,18 +180,15 @@ pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
 {
   pqPluginIOBehavior::FileExtMap readerMap;
   cmbInternals::ReaderType::iterator iter;
-  for (iter = this->Internals->Readers.begin();
-    iter != this->Internals->Readers.end(); ++iter)
-    {
+  for (iter = this->Internals->Readers.begin(); iter != this->Internals->Readers.end(); ++iter)
+  {
     std::vector<std::string>::const_iterator it;
-    for (it = iter->second.Extensions.begin();
-         it != iter->second.Extensions.end(); ++it)
-      {
+    for (it = iter->second.Extensions.begin(); it != iter->second.Extensions.end(); ++it)
+    {
       readerMap.insert((*it).c_str(),
-        QPair<QString, QString>(iter->second.Group.c_str(),
-             iter->second.Name.c_str()));
-      }
+        QPair<QString, QString>(iter->second.Group.c_str(), iter->second.Name.c_str()));
     }
+  }
 
   return readerMap;
 }
@@ -207,5 +197,5 @@ pqPluginIOBehavior::FileExtMap pqPluginIOBehavior::fileExtensionMap(
 bool pqPluginIOBehavior::isPluginReader(vtkPVXMLElement* hints)
 {
   return (hints && hints->FindNestedElementByName("ReaderFactory") &&
-          hints->FindNestedElementByName("CMBPluginReader"));
+    hints->FindNestedElementByName("CMBPluginReader"));
 }

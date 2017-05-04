@@ -9,10 +9,10 @@
 //=========================================================================
 #include "vtkHydroModelPolySource.h"
 
-#include "vtkPolyData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkPolyData.h"
 
 vtkStandardNewMacro(vtkHydroModelPolySource);
 
@@ -30,31 +30,29 @@ vtkHydroModelPolySource::~vtkHydroModelPolySource()
 }
 
 //-----------------------------------------------------------------------------
-void vtkHydroModelPolySource::CopyData(vtkPolyData *source)
+void vtkHydroModelPolySource::CopyData(vtkPolyData* source)
 {
-  this->Source->ShallowCopy( source );
+  this->Source->ShallowCopy(source);
   this->Modified();
 }
 
 //-----------------------------------------------------------------------------
-int vtkHydroModelPolySource::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **vtkNotUsed(inputVector),
-  vtkInformationVector *outputVector)
+int vtkHydroModelPolySource::RequestData(vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector), vtkInformationVector* outputVector)
 {
   // get the ouptut
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
     outputVector->GetInformationObject(0)->Get(vtkDataObject::DATA_OBJECT()));
 
   // now move the input through to the output
-  output->ShallowCopy( this->Source );
+  output->ShallowCopy(this->Source);
   return 1;
 }
 
 //-----------------------------------------------------------------------------
 void vtkHydroModelPolySource::PrintSelf(ostream& os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf(os,indent);
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Source: " << this->Source << "\n";
 }

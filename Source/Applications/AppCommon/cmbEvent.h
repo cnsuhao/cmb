@@ -22,29 +22,20 @@ class CMBAPPCOMMON_EXPORT cmbEvent
 {
 
 public:
-  cmbEvent(): Applied(true)
-    {}
-  virtual ~cmbEvent()
-  {}
+  cmbEvent()
+    : Applied(true)
+  {
+  }
+  virtual ~cmbEvent() {}
   // This method is called to undo the event
-  virtual void undo()
-  {
-    this->Applied = false;
-  }
+  virtual void undo() { this->Applied = false; }
   // This method is called to redo (or replay) the event
-  virtual void redo()
-  {
-    this->Applied = true;
-  }
+  virtual void redo() { this->Applied = true; }
   // Returns true if the event is currently applied
   // i.e. it has not be undone
-  bool isApplied() const
-  {
-    return this->Applied;
-  }
+  bool isApplied() const { return this->Applied; }
 protected:
   bool Applied;
 };
 
 #endif // !_cmbEvent_h
-

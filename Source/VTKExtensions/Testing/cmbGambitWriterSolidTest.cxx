@@ -7,92 +7,81 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
-#include "vtkRenderer.h"
-#include "vtkRenderWindow.h"
-#include "vtkActor.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkPolyData.h"
-#include "vtkSmartPointer.h"
-#include "vtkRenderWindowInteractor.h"
-#include "vtkInteractorStyleSwitch.h"
-#include "vtkDoubleArray.h"
-#include <string>
-#include <math.h>
-#include "vtkTesting.h"
-#include "vtkGAMBITWriter.h"
-#include "vtkGAMBITReader.h"
-#include "vtkGeometryFilter.h"
 #include "smtk/extension/vtk/reader/vtkCMBMeshReader.h"
+#include "vtkActor.h"
+#include "vtkDoubleArray.h"
+#include "vtkGAMBITReader.h"
+#include "vtkGAMBITWriter.h"
+#include "vtkGeometryFilter.h"
+#include "vtkInteractorStyleSwitch.h"
+#include "vtkPolyData.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkRenderer.h"
+#include "vtkSmartPointer.h"
+#include "vtkTesting.h"
+#include <math.h>
+#include <string>
 
 //----------------------------------------------------------------------------
 
-
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    vtkSmartPointer<vtkTesting> testHelper =
-        vtkSmartPointer<vtkTesting>::New();
+  vtkSmartPointer<vtkTesting> testHelper = vtkSmartPointer<vtkTesting>::New();
 
-  testHelper->AddArguments(argc,const_cast<const char **>(argv));
+  testHelper->AddArguments(argc, const_cast<const char**>(argv));
   if (!testHelper->IsFlagSpecified("-T"))
-    {
+  {
     std::cerr << "Error: -T /path/to/test dir was not specified.";
     return 1;
-    }
+  }
 
   if (!testHelper->IsFlagSpecified("-D"))
-    {
+  {
     std::cerr << "Error: -D /path/to/data dir was not specified.";
     return 1;
-    }
+  }
 
   std::string tempRoot = testHelper->GetTempDirectory();
   std::string dataRoot = testHelper->GetDataRoot();
   std::string ifilename = dataRoot + "/HardpointsTest/mesh_hardpoints_test.3dm";
   std::string tfilename = tempRoot + "/gambitVolumeMesh.neu";
-  vtkSmartPointer<vtkRenderWindow> renWin =
-      vtkSmartPointer<vtkRenderWindow>::New();
-  vtkSmartPointer<vtkRenderer> renderer =
-      vtkSmartPointer<vtkRenderer>::New();
+  vtkSmartPointer<vtkRenderWindow> renWin = vtkSmartPointer<vtkRenderWindow>::New();
+  vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
 
   vtkSmartPointer<vtkRenderWindowInteractor> iren =
-      vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    vtkSmartPointer<vtkRenderWindowInteractor>::New();
   vtkSmartPointer<vtkInteractorStyleSwitch> style =
-      vtkSmartPointer<vtkInteractorStyleSwitch>::New();
+    vtkSmartPointer<vtkInteractorStyleSwitch>::New();
   style->SetCurrentStyleToTrackballCamera();
-  iren->SetInteractorStyle( style);
+  iren->SetInteractorStyle(style);
 
   iren->SetRenderWindow(renWin);
-  renWin->AddRenderer( renderer);
+  renWin->AddRenderer(renderer);
 
-  vtkSmartPointer<vtkCMBMeshReader> meshReader =
-      vtkSmartPointer<vtkCMBMeshReader>::New();
+  vtkSmartPointer<vtkCMBMeshReader> meshReader = vtkSmartPointer<vtkCMBMeshReader>::New();
   meshReader->SetFileName(ifilename.c_str());
   meshReader->Update();
 
   // Lets convert the sphere into a GAMBIT surface mesh
-  vtkSmartPointer<vtkGAMBITWriter> writer =
-      vtkSmartPointer<vtkGAMBITWriter>::New();
+  vtkSmartPointer<vtkGAMBITWriter> writer = vtkSmartPointer<vtkGAMBITWriter>::New();
   writer->SetFileName(tfilename.c_str());
   writer->SetInputConnection(meshReader->GetOutputPort());
   writer->Write();
 
   // Lets read in the result
-  vtkSmartPointer<vtkGAMBITReader> reader =
-      vtkSmartPointer<vtkGAMBITReader>::New();
+  vtkSmartPointer<vtkGAMBITReader> reader = vtkSmartPointer<vtkGAMBITReader>::New();
   reader->SetFileName(tfilename.c_str());
 
-  vtkSmartPointer<vtkGeometryFilter> filter =
-      vtkSmartPointer<vtkGeometryFilter>::New();
+  vtkSmartPointer<vtkGeometryFilter> filter = vtkSmartPointer<vtkGeometryFilter>::New();
   filter->SetInputConnection(reader->GetOutputPort());
 
-
-  vtkSmartPointer<vtkPolyDataMapper> mapper =
-      vtkSmartPointer<vtkPolyDataMapper>::New();
-  mapper->SetInputConnection( filter->GetOutputPort() );
-  vtkSmartPointer<vtkActor> actor =
-      vtkSmartPointer<vtkActor>::New();
-  actor->SetMapper( mapper);
-  renderer->AddViewProp( actor);
+  vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  mapper->SetInputConnection(filter->GetOutputPort());
+  vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+  actor->SetMapper(mapper);
+  renderer->AddViewProp(actor);
 
   iren->Initialize();
   renWin->Render();
@@ -101,9 +90,9 @@ int main(int argc, char *argv[])
   int retVal = testHelper->RegressionTest(75);
 
   if (testHelper->IsInteractiveModeSpecified())
-    {
+  {
     iren->Start();
-    }
+  }
 
   return (retVal == vtkTesting::PASSED) ? 0 : 1;
 }

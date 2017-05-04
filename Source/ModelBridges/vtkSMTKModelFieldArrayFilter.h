@@ -12,8 +12,8 @@
 
 #include "ModelBridgeClientModule.h"
 
-#include "vtkMultiBlockDataSetAlgorithm.h"
 #include "smtk/PublicPointerDefs.h"
+#include "vtkMultiBlockDataSetAlgorithm.h"
 
 #include <map>
 #include <string>
@@ -29,11 +29,11 @@ class MODELBRIDGECLIENT_EXPORT vtkSMTKModelFieldArrayFilter : public vtkMultiBlo
 public:
   static vtkSMTKModelFieldArrayFilter* New();
   void PrintSelf(ostream& os, vtkIndent indent) override;
-  vtkTypeMacro(vtkSMTKModelFieldArrayFilter,vtkMultiBlockDataSetAlgorithm);
+  vtkTypeMacro(vtkSMTKModelFieldArrayFilter, vtkMultiBlockDataSetAlgorithm);
 
   // Description:
   // Set model manager wrapper
-  void SetModelManagerWrapper(vtkModelManagerWrapper *modelManager);
+  void SetModelManagerWrapper(vtkModelManagerWrapper* modelManager);
   vtkGetObjectMacro(ModelManagerWrapper, vtkModelManagerWrapper);
 
   // Description:
@@ -61,21 +61,19 @@ protected:
   ~vtkSMTKModelFieldArrayFilter() override;
 
   int RequestData(
-    vtkInformation* request,
-    vtkInformationVector** inInfo,
-    vtkInformationVector* outInfo) override;
-  int FillInputPortInformation(int port, vtkInformation *info) override;
+    vtkInformation* request, vtkInformationVector** inInfo, vtkInformationVector* outInfo) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
   // Reference model Manager wrapper:
   vtkModelManagerWrapper* ModelManagerWrapper;
-  char *AttributeDefinitionType;
-  char *AttributeItemName;
-  char *AttributeSystemContents;
+  char* AttributeDefinitionType;
+  char* AttributeItemName;
+  char* AttributeSystemContents;
   bool AddGroupArray;
-private:
 
+private:
   vtkSMTKModelFieldArrayFilter(const vtkSMTKModelFieldArrayFilter&); // Not implemented.
-  void operator = (const vtkSMTKModelFieldArrayFilter&); // Not implemented.
+  void operator=(const vtkSMTKModelFieldArrayFilter&);               // Not implemented.
 };
 
 #endif // __vtkSMTKModelFieldArrayFilter_h

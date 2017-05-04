@@ -9,9 +9,9 @@
 //=========================================================================
 #include "cmbForwardingSession.h"
 
-#include "smtk/model/EntityRef.h"
 #include "smtk/io/LoadJSON.h"
 #include "smtk/io/SaveJSON.h"
+#include "smtk/model/EntityRef.h"
 #include "smtk/model/RemoteOperator.h"
 
 #include "vtkSMModelManagerProxy.h"
@@ -54,8 +54,7 @@ smtk::model::SessionInfoBits cmbForwardingSession::transcribeInternal(
   return smtk::model::SESSION_NOTHING;
 }
 
-bool cmbForwardingSession::ableToOperateDelegate(
-  smtk::model::RemoteOperatorPtr op)
+bool cmbForwardingSession::ableToOperateDelegate(smtk::model::RemoteOperatorPtr op)
 {
   if (!op)
     return false;
@@ -64,27 +63,23 @@ bool cmbForwardingSession::ableToOperateDelegate(
   cJSON* err = NULL;
   cJSON* res;
 
-  if (
-    !resp ||
-    (err = cJSON_GetObjectItem(resp, "error")) ||
-    !(res = cJSON_GetObjectItem(resp, "result")) ||
-    (res->type != cJSON_True))
-    {
-    if(resp)
+  if (!resp || (err = cJSON_GetObjectItem(resp, "error")) ||
+    !(res = cJSON_GetObjectItem(resp, "result")) || (res->type != cJSON_True))
+  {
+    if (resp)
       cJSON_Delete(resp);
     if (err && err->valuestring && err->valuestring[0])
-      {
+    {
       std::cerr << "Unable to operate: \"" << err->valuestring << "\"\n";
-      }
-    return false;
     }
+    return false;
+  }
 
   cJSON_Delete(resp);
   return true;
 }
 
-smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
-  smtk::model::RemoteOperatorPtr op)
+smtk::model::OperatorResult cmbForwardingSession::operateDelegate(smtk::model::RemoteOperatorPtr op)
 {
   smtk::model::OperatorResult result;
   if (!op)
@@ -94,26 +89,20 @@ smtk::model::OperatorResult cmbForwardingSession::operateDelegate(
   cJSON* err = NULL;
   cJSON* res;
 
-  if (
-    !resp ||
-    (err = cJSON_GetObjectItem(resp, "error")) ||
+  if (!resp || (err = cJSON_GetObjectItem(resp, "error")) ||
     !(res = cJSON_GetObjectItem(resp, "result")) ||
     !smtk::io::LoadJSON::ofOperatorResult(res, result, op))
-    {
-    if(resp)
+  {
+    if (resp)
       cJSON_Delete(resp);
     return op->createResult(smtk::model::OPERATION_FAILED);
-    }
+  }
 
   cJSON_Delete(resp);
   return result;
 }
 
 smtkImplementsModelingKernel(
-  MODELBRIDGECLIENT_EXPORT,
-  cmb_forwarding,
-  "",
-  smtk::model::SessionHasNoStaticSetup,
-  cmbForwardingSession,
-  false /* do not inherit "universal" operators */
-);
+  MODELBRIDGECLIENT_EXPORT, cmb_forwarding, "", smtk::model::SessionHasNoStaticSetup,
+  cmbForwardingSession, false /* do not inherit "universal" operators */
+  );

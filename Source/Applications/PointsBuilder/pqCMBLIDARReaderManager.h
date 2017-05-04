@@ -14,11 +14,11 @@
 #ifndef __pqCMBLIDARReaderManager_h
 #define __pqCMBLIDARReaderManager_h
 
-#include <QObject>
+#include "cmbSystemConfig.h"
+#include "vtkWeakPointer.h"
 #include <QList>
 #include <QMap>
-#include "vtkWeakPointer.h"
-#include "cmbSystemConfig.h"
+#include <QObject>
 
 class pqCMBPointsBuilderMainWindowCore;
 class pqObjectBuilder;
@@ -28,12 +28,12 @@ class pqCMBLIDARPieceObject;
 class vtkSMSourceProxy;
 class pqCMBModifierArcManager;
 
-class pqCMBLIDARReaderManager :  public QObject
+class pqCMBLIDARReaderManager : public QObject
 {
   Q_OBJECT
 
 public:
-  pqCMBLIDARReaderManager(pqCMBPointsBuilderMainWindowCore*,pqObjectBuilder*);
+  pqCMBLIDARReaderManager(pqCMBPointsBuilderMainWindowCore*, pqObjectBuilder*);
   ~pqCMBLIDARReaderManager() override;
 
   bool userRequestsOrigin();
@@ -44,32 +44,27 @@ public:
   void convertFromLatLongToXYZ(int convertFromLatLong);
 
   void limitReadToBounds(bool limitRead);
-  void setReadBounds(QList<QVariant> &values);
+  void setReadBounds(QList<QVariant>& values);
 
   void getDataBounds(double bounds[6]);
 
   int importData(const char* filename, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
-    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-    bool showElevation);
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
 
-  vtkSMSourceProxy *getReaderSourceProxy(const char* filename);
+  vtkSMSourceProxy* getReaderSourceProxy(const char* filename);
 
-  void setReaderTransform(vtkSMSourceProxy* readerProxy,
-    pqCMBLIDARPieceObject *dataObj);
-  void setReaderTransformData(vtkSMSourceProxy* readerProxy,bool transformData);
+  void setReaderTransform(vtkSMSourceProxy* readerProxy, pqCMBLIDARPieceObject* dataObj);
+  void setReaderTransformData(vtkSMSourceProxy* readerProxy, bool transformData);
   void clearTransform(vtkSMSourceProxy* readerProxy);
 
-  void readPieces(pqPipelineSource* reader,
-    QList<QVariant> &pieces, QList<pqPipelineSource*> &pdSources);
+  void readPieces(
+    pqPipelineSource* reader, QList<QVariant>& pieces, QList<pqPipelineSource*>& pdSources);
 
-  void updatePieces(const char* filename,
-    QList<pqCMBLIDARPieceObject*> &pieces,
-    bool forceRead, pqCMBLIDARPieceTable *table, bool clipData,
-    double *clipBounds);
+  void updatePieces(const char* filename, QList<pqCMBLIDARPieceObject*>& pieces, bool forceRead,
+    pqCMBLIDARPieceTable* table, bool clipData, double* clipBounds);
 
-  bool getSourcesForOutput(bool atDisplayRatio,
-    QList<pqCMBLIDARPieceObject*> &Pieces,
-    QList<pqPipelineSource*> &outputSources, bool forceUpdate = false);
+  bool getSourcesForOutput(bool atDisplayRatio, QList<pqCMBLIDARPieceObject*>& Pieces,
+    QList<pqPipelineSource*>& outputSources, bool forceUpdate = false);
 
   void destroyTemporarySources();
 
@@ -77,61 +72,43 @@ public:
   vtkIdType scanLASPiecesInfo(pqPipelineSource* reader);
   void destroyAllReaders();
   QString getFileTitle() const;
-  bool isValidFile(const char *filename);
+  bool isValidFile(const char* filename);
   bool isFileLoaded(QString& filename);
-  bool hasReaderSources()
-  {return this->ReaderSourceMap.count()>0;}
+  bool hasReaderSources() { return this->ReaderSourceMap.count() > 0; }
   vtkIdType scanTotalNumPointsInfo(const QStringList& files, pqPipelineSource* reader = NULL);
-  QMap<QString, pqPipelineSource*>& readerSourceMap()
-    { return this->ReaderSourceMap;}
+  QMap<QString, pqPipelineSource*>& readerSourceMap() { return this->ReaderSourceMap; }
   vtkSMSourceProxy* activeReader();
-  QList<pqCMBLIDARPieceObject *> getFilePieceObjects(
-    const char* filename, QList<pqCMBLIDARPieceObject *> &sourcePieces);
+  QList<pqCMBLIDARPieceObject*> getFilePieceObjects(
+    const char* filename, QList<pqCMBLIDARPieceObject*>& sourcePieces);
 
 protected:
-
   int computeApproximateRepresentingFloatDigits(double min, double max);
-  int importLIDARData(const char* filenmame,pqCMBLIDARPieceTable*,
-                      pqCMBModifierArcManager*,
-                      QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-                      bool showElevation);
-  int importLASData(const char* filenmame,pqCMBLIDARPieceTable*,
-                    pqCMBModifierArcManager*,
-                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-                    bool showElevation);
-  int importDEMData(const char* filenmame,pqCMBLIDARPieceTable*,
-                    pqCMBModifierArcManager*,
-                    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-                    bool showElevation);
-  int importGDALData(const char* filenmame,pqCMBLIDARPieceTable*,
-                     pqCMBModifierArcManager*,
-                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-                     bool showElevation);
-  int importVTPData(const char* filenmame,pqCMBLIDARPieceTable*,
-                     pqCMBModifierArcManager*,
-                     QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&,
-                     bool showElevation);
-  vtkIdType getPieceNumPointsInfo(const char* filename, QList<vtkIdType> &pieceInfo);
+  int importLIDARData(const char* filenmame, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
+  int importLASData(const char* filenmame, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
+  int importDEMData(const char* filenmame, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
+  int importGDALData(const char* filenmame, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
+  int importVTPData(const char* filenmame, pqCMBLIDARPieceTable*, pqCMBModifierArcManager*,
+    QMap<QString, QMap<int, pqCMBLIDARPieceObject*> >&, bool showElevation);
+  vtkIdType getPieceNumPointsInfo(const char* filename, QList<vtkIdType>& pieceInfo);
 
-  int readData(vtkSMSourceProxy* readerProxy,QList<QVariant> &pieces);
-  void updateLIDARPieces(const char* filename,
-    QList<pqCMBLIDARPieceObject*> &pieces,
-    bool forceRead, pqCMBLIDARPieceTable *table, bool clipData,
-    double *clipBounds);
-  void updateLASPieces(const char* filename,
-    QList<pqCMBLIDARPieceObject*> &pieces,
-    bool forceRead, pqCMBLIDARPieceTable *table, bool clipData,
-    double *clipBounds);
-  bool getSourcesForOutputLIDAR(pqPipelineSource* reader,bool atDisplayRatio,
-    QList<pqCMBLIDARPieceObject*> &Pieces,
-    QList<pqPipelineSource*> &outputSources, bool forceUpdate);
-  bool getSourcesForOutputLAS(pqPipelineSource* reader,bool atDisplayRatio,
-    QList<pqCMBLIDARPieceObject*> &Pieces,
-    QList<pqPipelineSource*> &outputSources, bool forceUpdate);
+  int readData(vtkSMSourceProxy* readerProxy, QList<QVariant>& pieces);
+  void updateLIDARPieces(const char* filename, QList<pqCMBLIDARPieceObject*>& pieces,
+    bool forceRead, pqCMBLIDARPieceTable* table, bool clipData, double* clipBounds);
+  void updateLASPieces(const char* filename, QList<pqCMBLIDARPieceObject*>& pieces, bool forceRead,
+    pqCMBLIDARPieceTable* table, bool clipData, double* clipBounds);
+  bool getSourcesForOutputLIDAR(pqPipelineSource* reader, bool atDisplayRatio,
+    QList<pqCMBLIDARPieceObject*>& Pieces, QList<pqPipelineSource*>& outputSources,
+    bool forceUpdate);
+  bool getSourcesForOutputLAS(pqPipelineSource* reader, bool atDisplayRatio,
+    QList<pqCMBLIDARPieceObject*>& Pieces, QList<pqPipelineSource*>& outputSources,
+    bool forceUpdate);
 
-
-  pqCMBPointsBuilderMainWindowCore *Core;
-  pqObjectBuilder    *Builder;
+  pqCMBPointsBuilderMainWindowCore* Core;
+  pqObjectBuilder* Builder;
   // Map for <Filename, readersource >
   QMap<QString, pqPipelineSource*> ReaderSourceMap;
   vtkWeakPointer<vtkSMSourceProxy> ActiveReader;
@@ -146,10 +123,10 @@ protected:
 
 private:
   struct LASPieceInfo
-    {
+  {
     std::string ClassificationName;
     vtkIdType NumberOfPointsInClassification;
-    };
+  };
   std::map<unsigned char, LASPieceInfo> CurrentLASPieces;
   double DEMTransformForZOrigin[2];
   double DEMZRotationAngle;
