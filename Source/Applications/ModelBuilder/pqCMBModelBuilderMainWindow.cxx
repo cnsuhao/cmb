@@ -87,15 +87,23 @@
 #include "SimBuilder/pqSimBuilderUIManager.h"
 #include "SimBuilder/qtSimBuilderUIPanel.h"
 
+#include <vtksys/SystemTools.hxx>
+
 #include "smtk/attribute/MeshSelectionItem.h"
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
+#include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/model/Manager.h"
+#include "smtk/model/Manager.h"
+#include "smtk/model/SessionRef.h"
 #include "smtk/model/SessionRef.h"
 #include "smtk/model/SessionRegistrar.h"
+#include "smtk/model/SessionRegistrar.h"
+#include "smtk/model/StringData.h"
 #include "smtk/model/StringData.h"
 #include <vtksys/SystemTools.hxx>
 
@@ -302,19 +310,13 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
 
   // connect selection filter signals
   QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterMeshes(bool)));
-  QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)), this,
-    SLOT(updateToolBar_Selection(bool)));
-  QObject::connect(this->getMainDialog()->SelectByModels, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterModels(bool)));
-  QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterVolumes(bool)));
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterMeshes(bool)));
   QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterFaces(bool)));
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterFaces(bool)));
   QObject::connect(this->getMainDialog()->SelectByEdges, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterEdges(bool)));
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterEdges(bool)));
   QObject::connect(this->getMainDialog()->SelectByVertices, SIGNAL(toggled(bool)),
-    this->getThisCore()->modelPanel()->selectionManager(), SLOT(filterVertices(bool)));
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterVertices(bool)));
 
   QObject::connect(this->getMainDialog()->actionLoad_Simulation_Template, SIGNAL(triggered()), this,
     SLOT(loadSimulationTemplate()));
@@ -899,7 +901,10 @@ void pqCMBModelBuilderMainWindow::onNewMeshCreated()
 bool pqCMBModelBuilderMainWindow::onCloseSession()
 {
   smtk::common::UUIDs uids;
-  this->getThisCore()->smtkSelectionManager()->getSelectedEntities(uids);
+  if (this->getThisCore()->smtkSelectionManager())
+  {
+    this->getThisCore()->smtkSelectionManager()->getSelectedEntities(uids);
+  }
   auto cmbModelMgr = this->getThisCore()->modelManager();
   auto modelMgrPxy = cmbModelMgr ? cmbModelMgr->managerProxy() : NULL;
   smtk::model::Manager::Ptr mgr = modelMgrPxy->modelManager();

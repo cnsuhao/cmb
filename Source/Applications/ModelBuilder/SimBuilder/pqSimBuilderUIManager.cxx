@@ -102,11 +102,6 @@ void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
 
 void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* parentWidget)
 {
-  // connect qtSelectionManager to qtUIManager
-  if (this->m_ModelPanel && this->m_ModelPanel->selectionManager())
-  {
-    this->m_attUIManager->setSelectionManager(this->m_ModelPanel->selectionManager());
-  }
   if (!view)
   {
     QMessageBox::warning(parentWidget, tr("No Views Warning"),
@@ -121,17 +116,14 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
     SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)), this,
     SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
   // send signal from UIManager to selection manager
-  if (this->m_ModelPanel)
-  {
-    QObject::connect(this->m_attUIManager,
-      SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
-        const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-        const smtk::extension::SelectionModifier, const smtk::model::StringList)),
-      this->m_ModelPanel->selectionManager(),
-      SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-        const smtk::model::DescriptivePhrases&, const smtk::extension::SelectionModifier,
-        const smtk::model::StringList)));
-  }
+  QObject::connect(this->m_attUIManager,
+    SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
+      const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
+      const smtk::extension::SelectionModifier, const std::string&)),
+    qtActiveObjects::instance().smtkSelectionManager().get(),
+    SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+      const smtk::model::DescriptivePhrases&, const smtk::extension::SelectionModifier,
+      const std::string&)));
 
   this->m_attUIManager->setSMTKView(view, parentWidget);
   if (!this->topView())
@@ -154,13 +146,13 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
     QObject::connect(
       qTopAttView, SIGNAL(numOfAttriubtesChanged()), this, SIGNAL(numOfAttriubtesChanged()));
 
-    if (this->m_ModelPanel)
-    {
-      // send message from UIManager to qtAttributeView
-      QObject::connect(this->m_ModelPanel->selectionManager(),
-        SIGNAL(broadcastToAttributeView(const smtk::common::UUIDs&)), qTopAttView,
-        SIGNAL(selectionChanged(const smtk::common::UUIDs&)));
-    }
+    // send message from UIManager to qtAttributeView
+    QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
+      SIGNAL(broadcastToReceivers(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+        const smtk::model::DescriptivePhrases&, const std::string&)),
+      qTopAttView,
+      SIGNAL(relaySelectionToAssiocationWidget(const smtk::model::EntityRefs&,
+        const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&, const std::string&)));
     return;
   }
 
@@ -212,12 +204,13 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
         attSec, SIGNAL(attAssociationChanged()), this, SIGNAL(attAssociationChanged()));
       QObject::connect(
         attSec, SIGNAL(numOfAttriubtesChanged()), this, SIGNAL(numOfAttriubtesChanged()));
-    }
-    if (this->m_ModelPanel)
-    {
-      QObject::connect(this->m_ModelPanel->selectionManager(),
-        SIGNAL(broadcastToAttributeView(const smtk::common::UUIDs&)), attSec,
-        SIGNAL(selectionChanged(const smtk::common::UUIDs&)));
+
+      QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
+        SIGNAL(broadcastToReceivers(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+          const smtk::model::DescriptivePhrases&, const std::string&)),
+        attSec, SIGNAL(relaySelectionToAssiocationWidget(const smtk::model::EntityRefs&,
+                  const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
+                  const std::string&)));
     }
   }
 }
