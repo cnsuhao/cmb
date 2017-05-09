@@ -591,12 +591,14 @@ public:
   int createAuxiliaryRepresentation(const smtk::model::AuxiliaryGeometry& aux, pqRenderView* view)
   {
     if (!pqSMTKUIHelper::isAuxiliaryShownSeparate(aux))
+    {
       return -1;
+    }
 
-    std::string aux_url = aux.url();
-    // if the auxilary is already loaded, just return
+    const std::string aux_url = aux.url();
     if (this->AuxGeoInfos.find(aux_url) != this->AuxGeoInfos.end())
     {
+      // Already loaded
       this->AuxGeoInfos[aux_url].RelatedAuxes.insert(aux.entity());
       return -1;
     }
@@ -621,10 +623,9 @@ public:
 
       QFileInfo fInfo(aux_url.c_str());
       QString lastExt = fInfo.suffix().toLower();
-      bool hasImage =
-        (lastExt == "vti" || lastExt == "dem" || lastExt == "tif" || lastExt == "tiff");
+
       // extract the image out from multiblock so that it can be displayed with Slice representation
-      if (hasImage)
+      if (lastExt == "vti" || lastExt == "dem" || lastExt == "tif" || lastExt == "tiff")
       {
         vtkSMSourceProxy* sourceProxy = vtkSMSourceProxy::SafeDownCast(source->getProxy());
         vtkSMOutputPort* outputPort = sourceProxy->GetOutputPort(static_cast<unsigned int>(0));
@@ -648,17 +649,16 @@ public:
       }
 
       auxgeoinfo.Representation = builder->createDataRepresentation(source->getOutputPort(0), view);
-
       if (auxgeoinfo.Representation)
       {
         auxgeoinfo.Representation->setProperty(
           "smtkUUID", QByteArray((const char*)aux.entity().begin(), (int)aux.entity().size()));
-        bool scalarColoring =
-          (lastExt == "vti" || lastExt == "dem"); // || lastExt== "tif" || lastExt== "tiff")
-        if (scalarColoring)
-        {
+
+        if (lastExt == "vti" || lastExt == "dem")
+        { //  VTK_COLOR_MODE_MAP_SCALARS
           vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "MapScalars").Set(1);
-          // If there is an elevation field on the points then use it.
+
+          // If there is an elevation field on the points then use it
           RepresentationHelperFunctions::CMB_COLOR_REP_BY_ARRAY(
             auxgeoinfo.Representation->getProxy(), "Elevation", vtkDataObject::POINT);
 
@@ -669,10 +669,13 @@ public:
           vtkSMPropertyHelper(lut, "Discretize").Set(0);
           lut->UpdateVTKObjects();
           vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "LookupTable").Set(lut);
-          //vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "SelectionVisibility").Set(0);
         }
-        else
-        {
+        else if (lastExt == "xyz" || lastExt == "pts" || lastExt == "vtp")
+        { // point clouds -> VTK_COLOR_MODE_MAP_SCALARS
+          vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "MapScalars").Set(1);
+        }
+        else if (lastExt == "tif" || lastExt == "tiff")
+        { // geo tiff imagery -> VTK_COLOR_MODE_DIRECT_SCALARS
           vtkSMPropertyHelper(auxgeoinfo.Representation->getProxy(), "MapScalars").Set(0);
         }
 
