@@ -59,6 +59,8 @@
 #include "smtk/mesh/Manager.h"
 #include "smtk/model/CellEntity.h"
 
+#include <array>
+
 class pqSMTKInfoPanel::pqUi : public QObject, public Ui::pqSMTKInfoPanel
 {
 public:
@@ -87,8 +89,8 @@ pqSMTKInfoPanel::pqSMTKInfoPanel(QPointer<pqCMBModelManager> modelManager, QWidg
   QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
     SIGNAL(broadcastToReceivers(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
       const smtk::model::DescriptivePhrases&, const std::string&)),
-    this, SLOT(onSelectionChangedUpdateInfoPanel(
-            const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&)));
+    this, SLOT(onSelectionChangedUpdateInfoPanel(const smtk::model::EntityRefs&,
+            const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&)));
 }
 
 pqSMTKInfoPanel::~pqSMTKInfoPanel()
@@ -515,39 +517,12 @@ void pqSMTKInfoPanel::onCurrentItemChanged(QTreeWidgetItem* item)
   }
 }
 
-namespace
-{
-class MeshAggregate : public smtk::mesh::MeshForEach
-{
-  smtk::mesh::MeshSet Meshes;
-  bool Valid;
-
-public:
-  MeshAggregate(const smtk::mesh::CollectionPtr& collection)
-    : smtk::mesh::MeshForEach()
-    , Meshes(collection, smtk::mesh::Handle())
-    , Valid(collection && collection->isValid())
-  {
-  }
-
-  void forMesh(smtk::mesh::MeshSet& mesh)
-  {
-    if (this->Valid)
-    {
-      this->Valid &= this->Meshes.append(mesh);
-    }
-  }
-
-  smtk::mesh::MeshSet mesh() { return this->Meshes; }
-  bool valid() const { return this->Valid; }
-};
-}
-
 //-----------------------------------------------------------------------------
-void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(
-  const smtk::model::EntityRefs& erefs, const smtk::mesh::MeshSets& meshes)
+void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(const smtk::model::EntityRefs& erefs,
+  const smtk::mesh::MeshSets& meshes, const smtk::model::DescriptivePhrases& desPhrases)
 {
   (void)erefs;
+  (void)desPhrases;
 
   this->Ui->entityType->setText(tr("NA"));
   this->Ui->entityNumberOfCells->setText(tr("NA"));
@@ -555,27 +530,34 @@ void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(
 
   if (!meshes.empty())
   {
-    MeshAggregate aggregate(meshes.begin()->collection());
-    for (const auto& mesh : meshes)
+    std::array<smtk::mesh::HandleRange, 5> ranges;
+    for (auto& mesh : meshes)
     {
-      smtk::mesh::for_each(mesh, aggregate);
+      ranges[0].merge(mesh.cells(smtk::mesh::Dims0).range());
+      ranges[1].merge(mesh.cells(smtk::mesh::Dims1).range());
+      ranges[2].merge(mesh.cells(smtk::mesh::Dims2).range());
+      ranges[3].merge(mesh.cells(smtk::mesh::Dims3).range());
+      ranges[4].merge(mesh.points().range());
     }
 
-    if (aggregate.valid())
+    std::size_t numberOfCells = 0;
+    std::size_t highestDimension = 0;
+    for (std::size_t dimension = 0; dimension <= 3; ++dimension)
     {
-      std::size_t highestDimension = (!aggregate.mesh().cells(smtk::mesh::Dims3).is_empty()
-          ? 3
-          : !aggregate.mesh().cells(smtk::mesh::Dims2).is_empty()
-            ? 2
-            : !aggregate.mesh().cells(smtk::mesh::Dims1).is_empty() ? 1 : 0);
-      QString descriptionByDimension = QString("%1-Dimensional Mesh").arg(highestDimension);
-      this->Ui->entityType->setText(tr(descriptionByDimension.toStdString().c_str()));
-
-      QString numCells = QString("%1").arg(aggregate.mesh().cells().size());
-      this->Ui->entityNumberOfCells->setText(numCells);
-
-      QString numPoints = QString("%1").arg(aggregate.mesh().points().size());
-      this->Ui->entityNumberOfPoints->setText(numPoints);
+      std::size_t numberOfCellsByDimension = ranges[dimension].size();
+      numberOfCells += numberOfCellsByDimension;
+      if (numberOfCellsByDimension != 0)
+      {
+        highestDimension = dimension;
+      }
     }
+    QString descriptionByDimension = QString("%1-Dimensional Mesh").arg(highestDimension);
+    this->Ui->entityType->setText(tr(descriptionByDimension.toStdString().c_str()));
+
+    QString numCells = QString("%1").arg(numberOfCells);
+    this->Ui->entityNumberOfCells->setText(numCells);
+
+    QString numPoints = QString("%1").arg(ranges[4].size());
+    this->Ui->entityNumberOfPoints->setText(numPoints);
   }
 }

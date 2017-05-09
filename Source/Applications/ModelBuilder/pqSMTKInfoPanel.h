@@ -73,8 +73,8 @@ public slots:
 
 protected slots:
   void onCurrentItemChanged(QTreeWidgetItem* item);
-  void onSelectionChangedUpdateInfoPanel(
-    const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&);
+  void onSelectionChangedUpdateInfoPanel(const smtk::model::EntityRefs&,
+    const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&);
 
 private:
   /**
