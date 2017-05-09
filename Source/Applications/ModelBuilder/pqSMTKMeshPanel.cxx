@@ -25,6 +25,7 @@
 #include "smtk/io/SaveJSON.h"
 
 #include "smtk/common/View.h"
+#include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtCollapsibleGroupWidget.h"
 #include "smtk/extension/qt/qtUIManager.h"
 
@@ -203,8 +204,15 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   const bool useInternalFileBrowser = true;
   this->AttUIManager.reset(new smtk::extension::qtUIManager(this->AttSystem));
   this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(), useInternalFileBrowser);
-  QObject::connect(this->AttUIManager.get(), SIGNAL(entitiesSelected(const smtk::common::UUIDs&)),
-    this, SIGNAL(entitiesSelected(const smtk::common::UUIDs&)));
+  // send signal from UIManager to selection manager
+  QObject::connect(this->AttUIManager.get(),
+    SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
+      const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
+      const smtk::extension::SelectionModifier, const std::string&)),
+    qtActiveObjects::instance().smtkSelectionManager().get(),
+    SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+      const smtk::model::DescriptivePhrases&, const smtk::extension::SelectionModifier,
+      const std::string&)));
 
   emit this->meshingPossible(true);
 }
