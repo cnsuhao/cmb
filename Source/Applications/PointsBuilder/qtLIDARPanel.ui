@@ -183,7 +183,7 @@
                </property>
                <property name="icon">
                 <iconset resource="../Resources/Resources.qrc">
-                 <normaloff>:/cmb/pqEyeball16.png</normaloff>:/cmb/pqEyeball16.png</iconset>
+                 <normaloff>:/cmb/pqEyeball.png</normaloff>:/cmb/pqEyeball.png</iconset>
                </property>
                <property name="checkable">
                 <bool>false</bool>

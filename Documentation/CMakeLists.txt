@@ -78,7 +78,7 @@ if (SPHINX_FOUND)
     ModelBuilder/ModelBuilderIcon.png
     ModelBuilder/ModelFaceRightClick.png
     ModelBuilder/ModelTab.png
-    ModelBuilder/pqEyeball16.png
+    ModelBuilder/pqEyeball.png
     ModelBuilder/pqOpen32.png
     ModelBuilder/pqPickCenter24.png
     ModelBuilder/pqResetCamera32.png
@@ -92,7 +92,7 @@ if (SPHINX_FOUND)
     ModelBuilder/pqYPlus24.png
     ModelBuilder/pqZMinus24.png
     ModelBuilder/pqZoomToBox24.png
-    ModelBuilder/pqZoomToSelection24.png
+    ModelBuilder/pqDataScale.png
     ModelBuilder/pqZPlus24.png
   )
 
