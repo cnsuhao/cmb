@@ -155,6 +155,8 @@ pqCMBCommonMainWindow::pqCMBCommonMainWindow()
 {
   this->MainWindowCore = NULL;
   this->Internal->UI.setupUi(this);
+  this->tabifyDockWidget(this->Internal->UI.dockWidget, this->Internal->UI.outputWidget);
+  this->Internal->UI.outputWidget->hide();
   this->Internal->RecentFilesMenu =
     new pqRecentFilesMenu(*this->Internal->UI.menuRecentFiles, this);
 
@@ -470,10 +472,6 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   this->Internal->UI.menu_Tools->addSeparator();
   new pqTimerLogReaction(
     this->Internal->UI.menu_Tools->addAction("Timer Log") << pqSetName("actionToolsTimerLog"));
-  QAction* action = this->Internal->UI.menu_Tools->addAction("&Output Window")
-    << pqSetName("actionToolsOutputWindow");
-  QObject::connect(
-    action, SIGNAL(triggered()), pqApplicationCore::instance(), SLOT(showOutputWindow()));
 
   // Add Ruler
   this->Internal->UI.menu_Tools->addSeparator();

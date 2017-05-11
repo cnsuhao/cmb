@@ -8,7 +8,6 @@
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/ADH/AdHSurfaceWater.crf" />
-  <pqevent object="outputDialog/closeButton" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,1027,301" />
   <pqevent object="qtCMBMainWindow" command="mouseMove" arguments="1,0,0,845,287" />
   <pqevent object="qtCMBMainWindow" command="mouseRelease" arguments="1,0,0,845,287" />
