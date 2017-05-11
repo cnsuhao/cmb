@@ -399,6 +399,7 @@ endif()
     ManipulateCameraElevation
     ManipulateCameraAzimuth
     #Model1meshedBathymetryTest
+    PolygonCreateEdge
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
