@@ -524,8 +524,10 @@ void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(const smtk::model::Entit
   (void)erefs;
   (void)desPhrases;
 
-  this->Ui->entityType->setText(tr("NA"));
-  this->Ui->entityNumberOfCells->setText(tr("NA"));
+  this->Ui->entityNumberOf3DCells->setText(tr("NA"));
+  this->Ui->entityNumberOf2DCells->setText(tr("NA"));
+  this->Ui->entityNumberOf1DCells->setText(tr("NA"));
+  this->Ui->entityNumberOf0DCells->setText(tr("NA"));
   this->Ui->entityNumberOfPoints->setText(tr("NA"));
 
   if (!meshes.empty())
@@ -540,22 +542,17 @@ void pqSMTKInfoPanel::onSelectionChangedUpdateInfoPanel(const smtk::model::Entit
       ranges[4].merge(mesh.points().range());
     }
 
-    std::size_t numberOfCells = 0;
-    std::size_t highestDimension = 0;
-    for (std::size_t dimension = 0; dimension <= 3; ++dimension)
-    {
-      std::size_t numberOfCellsByDimension = ranges[dimension].size();
-      numberOfCells += numberOfCellsByDimension;
-      if (numberOfCellsByDimension != 0)
-      {
-        highestDimension = dimension;
-      }
-    }
-    QString descriptionByDimension = QString("%1-Dimensional Mesh").arg(highestDimension);
-    this->Ui->entityType->setText(tr(descriptionByDimension.toStdString().c_str()));
+    QString num3DCells = QString("%1").arg(ranges[3].size());
+    this->Ui->entityNumberOf3DCells->setText(num3DCells);
 
-    QString numCells = QString("%1").arg(numberOfCells);
-    this->Ui->entityNumberOfCells->setText(numCells);
+    QString num2DCells = QString("%1").arg(ranges[2].size());
+    this->Ui->entityNumberOf2DCells->setText(num2DCells);
+
+    QString num1DCells = QString("%1").arg(ranges[1].size());
+    this->Ui->entityNumberOf1DCells->setText(num1DCells);
+
+    QString num0DCells = QString("%1").arg(ranges[0].size());
+    this->Ui->entityNumberOf0DCells->setText(num0DCells);
 
     QString numPoints = QString("%1").arg(ranges[4].size());
     this->Ui->entityNumberOfPoints->setText(numPoints);
