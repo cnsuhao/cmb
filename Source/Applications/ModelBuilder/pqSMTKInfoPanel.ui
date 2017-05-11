@@ -30,7 +30,7 @@
        <string>Selection</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+       <item alignment="Qt::AlignVCenter">
         <widget class="QGroupBox" name="groupBox_5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -47,53 +47,15 @@
          <property name="title">
           <string>Mesh Information</string>
          </property>
-         <widget class="QLabel" name="label_14">
-          <property name="geometry">
-           <rect>
-            <x>15</x>
-            <y>33</y>
-            <width>35</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Type:</string>
-          </property>
-         </widget>
-         <widget class="QLineEdit" name="entityType">
-          <property name="geometry">
-           <rect>
-            <x>60</x>
-            <y>33</y>
-            <width>123</width>
-            <height>16</height>
-           </rect>
-          </property>
-          <property name="cursor">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="acceptDrops">
-           <bool>false</bool>
-          </property>
-          <property name="styleSheet">
-           <string notr="true">background-color: rgba(0, 0, 0, 0);border: none;</string>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
          <widget class="QLabel" name="label_15">
           <property name="geometry">
            <rect>
-            <x>15</x>
-            <y>60</y>
-            <width>102</width>
+            <x>10</x>
+            <y>45</y>
+            <width>81</width>
             <height>16</height>
            </rect>
           </property>
@@ -104,15 +66,15 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Number of Cells:</string>
+           <string>Mesh Faces:</string>
           </property>
          </widget>
-         <widget class="QLineEdit" name="entityNumberOfCells">
+         <widget class="QLineEdit" name="entityNumberOf2DCells">
           <property name="geometry">
            <rect>
-            <x>130</x>
-            <y>60</y>
-            <width>123</width>
+            <x>100</x>
+            <y>45</y>
+            <width>121</width>
             <height>16</height>
            </rect>
           </property>
@@ -132,9 +94,9 @@
          <widget class="QLabel" name="label_16">
           <property name="geometry">
            <rect>
-            <x>15</x>
-            <y>90</y>
-            <width>110</width>
+            <x>10</x>
+            <y>105</y>
+            <width>81</width>
             <height>16</height>
            </rect>
           </property>
@@ -145,14 +107,14 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Number of Points:</string>
+           <string>Mesh Points:</string>
           </property>
          </widget>
          <widget class="QLineEdit" name="entityNumberOfPoints">
           <property name="geometry">
            <rect>
-            <x>130</x>
-            <y>90</y>
+            <x>100</x>
+            <y>105</y>
             <width>123</width>
             <height>16</height>
            </rect>
@@ -170,12 +132,117 @@
            <bool>true</bool>
           </property>
          </widget>
-         <zorder>entityType</zorder>
-         <zorder>label_15</zorder>
-         <zorder>entityNumberOfCells</zorder>
-         <zorder>label_16</zorder>
-         <zorder>entityNumberOfPoints</zorder>
-         <zorder>label_14</zorder>
+         <widget class="QLabel" name="label_17">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>65</y>
+            <width>81</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Mesh Edges:</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_18">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>85</y>
+            <width>91</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Mesh Vertices:</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="entityNumberOf1DCells">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>65</y>
+            <width>121</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(0, 0, 0, 0);border: none;</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="entityNumberOf0DCells">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>85</y>
+            <width>123</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(0, 0, 0, 0);border: none;</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_19">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>25</y>
+            <width>101</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Mesh Volumes:</string>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="entityNumberOf3DCells">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>25</y>
+            <width>123</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="cursor">
+           <cursorShape>ArrowCursor</cursorShape>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(0, 0, 0, 0);border: none;</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
         </widget>
        </item>
        <item>
