@@ -775,6 +775,8 @@ void pqCMBModelBuilderMainWindow::onSelectionFinished()
 
 void pqCMBModelBuilderMainWindow::onSurfaceRubberBandSelect(bool checked)
 {
+  // turn on the visibility of last selections so we can pick them now
+  this->getThisCore()->modelPanel()->changeSelEntitiesBlockVisibility(true);
   this->getThisCore()->onRubberBandSelect(checked);
 }
 

@@ -21,6 +21,7 @@
 class vtkObject;
 class pqCMBModelManager;
 class pqDataRepresentation;
+class pqMultiBlockInspectorPanel;
 class pqOutputPort;
 class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
@@ -44,11 +45,17 @@ class pqSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
+  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p, pqMultiBlockInspectorPanel* dataInspector);
   ~pqSMTKModelPanel() override;
 
   pqCMBModelManager* modelManager();
   smtk::extension::qtModelView* modelView();
+  /// when entity color is modified, call this function so that selected entities
+  /// block would be set to invisible(face, edge and vertex) so that selection
+  /// color would be properly rendered.
+  /// when starting a new selection, turn on selected entities' block.
+  bool changeSelEntitiesBlockVisibility(bool status);
+
   virtual std::string selectionSourceName() { return this->m_selectionSourceName; }
 
   void setBlockVisibility(const smtk::common::UUID& sessionid, const smtk::common::UUIDs& entids,

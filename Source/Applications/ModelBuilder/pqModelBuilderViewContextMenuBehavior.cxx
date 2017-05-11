@@ -79,6 +79,11 @@ void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* pane
   this->m_modelPanel = panel;
 }
 
+pqMultiBlockInspectorPanel* pqModelBuilderViewContextMenuBehavior::multiBlockInspectorPanel()
+{
+  return this->m_dataInspector;
+}
+
 void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(pqDataRepresentation* rep,
   const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
 {
@@ -728,6 +733,9 @@ void pqModelBuilderViewContextMenuBehavior::getSelectedEntitiesAndMeshes(
 
 void pqModelBuilderViewContextMenuBehavior::hideBlock()
 {
+  // turn on the selected entities visibility first
+  this->m_modelPanel->changeSelEntitiesBlockVisibility(true);
+
   QAction* action = qobject_cast<QAction*>(sender());
   if (!action || !this->m_modelPanel)
   {
@@ -745,6 +753,9 @@ void pqModelBuilderViewContextMenuBehavior::hideBlock()
 
 void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 {
+  // turn on the selected entities visibility first
+  this->m_modelPanel->changeSelEntitiesBlockVisibility(true);
+
   QAction* action = qobject_cast<QAction*>(sender());
   if (!action || !this->m_modelPanel)
   {
@@ -785,6 +796,9 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 
 void pqModelBuilderViewContextMenuBehavior::showAllBlocks()
 {
+  // turn on the selected entities visibility first
+  this->m_modelPanel->changeSelEntitiesBlockVisibility(true);
+
   QAction* action = qobject_cast<QAction*>(sender());
   if (!action || !this->m_modelPanel)
   {

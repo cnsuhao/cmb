@@ -1235,6 +1235,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   QMap<std::string, bool> auxGeoVisibles;
   QMap<std::string, QColor> auxGeoColors;
   smtk::model::EntityRefArray::const_iterator it;
+  bool isAssigningColors;
   for (it = resultEntities->begin(); it != resultEntities->end(); ++it)
   {
     pqSMTKModelInfo* minfo = NULL;
@@ -1245,7 +1246,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
                                curRef.hasIntegerProperty("block_index")) // a geometric entity
       && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
     {
-      pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
+      isAssigningColors = pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
       // this could also be removing colors already being set,
       // so if even the color is invalid, we still record it
       colorEntities[minfo].insert(curRef, color);
@@ -1311,6 +1312,11 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       // minfo->Representation, colorEntities[minfo], minfo->ColorMode);
       minfo->Representation->renderViewEventually();
     }
+  }
+  // render the selection color properly when user assigns a new color
+  if (colorEntities.count() > 0 && isAssigningColors)
+  {
+    this->modelPanel()->changeSelEntitiesBlockVisibility(false);
   }
 
   // update auxiliary visibility
@@ -1586,8 +1592,8 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if (!this->Internal->ModelDock)
   {
-    this->Internal->ModelDock =
-      new pqSMTKModelPanel(this->Internal->smtkModelManager, this->parentWidget());
+    this->Internal->ModelDock = new pqSMTKModelPanel(this->Internal->smtkModelManager,
+      this->parentWidget(), this->Internal->ViewContextBehavior->multiBlockInspectorPanel());
     this->Internal->ViewContextBehavior->setModelPanel(this->Internal->ModelDock);
     if (this->Internal->SimBuilder)
     {
