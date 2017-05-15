@@ -365,6 +365,7 @@ endif()
   set (XML_TESTS_WITH_BASELINES
     AssignColors1
     AxesGrid
+    CloseModel
     CloseSession
     EdgeModification
     #ChesapeakeBayBathymetry
@@ -398,6 +399,7 @@ endif()
     ManipulateCameraElevation
     ManipulateCameraAzimuth
     #Model1meshedBathymetryTest
+    PolygonCreateEdge
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
