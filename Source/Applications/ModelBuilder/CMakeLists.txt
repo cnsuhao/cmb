@@ -366,6 +366,7 @@ endif()
     AssignColors1
     AxesGrid
     CloseModel
+    ChangeVisibilityAfterSelection
     CloseSession
     EdgeModification
     #ChesapeakeBayBathymetry
@@ -398,6 +399,7 @@ endif()
     ManipulateCameraRoll
     ManipulateCameraElevation
     ManipulateCameraAzimuth
+    MultipleSelections
     #Model1meshedBathymetryTest
     PolygonCreateEdge
     ViewportZoom

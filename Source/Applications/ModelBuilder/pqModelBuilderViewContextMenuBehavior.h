@@ -51,6 +51,7 @@ public:
   ~pqModelBuilderViewContextMenuBehavior() override;
 
   void setModelPanel(pqSMTKModelPanel*);
+  pqMultiBlockInspectorPanel* multiBlockInspectorPanel();
 
   void syncBlockVisibility(pqDataRepresentation* rep, const QList<unsigned int>& visBlocks,
     bool visible, vtkIdType numBlocks);
