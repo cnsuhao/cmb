@@ -843,8 +843,8 @@ pqCMBSceneTree* pqCMBModelBuilderMainWindow::getpqCMBSceneTree()
 {
   if (!this->Internal->SceneGeoTree)
   {
-    QPixmap pix(":/cmb/pqEyeball16.png");
-    QPixmap pixd(":/cmb/pqEyeballd16.png");
+    QPixmap pix(":/cmb/pqEyeball.png");
+    QPixmap pixd(":/cmb/pqEyeballClosed.png");
     QPixmap pixs(":/cmb/snapIcon.png");
     QPixmap pixl(":/cmb/lockIcon.png");
 

@@ -32,9 +32,9 @@ qtCMBMeshViewerPanelWidget::qtCMBMeshViewerPanelWidget(QWidget* _p)
 {
   this->Internal = new qtCMBMeshViewerPanelWidgetInternal;
   this->Internal->setupUi(this);
-  QPixmap pix(":/cmb/pqEyeball16.png");
-  QPixmap pixd(":/cmb/pqEyeballd16.png");
-  QPixmap pixa(":/cmb/GrowAccept.png");
+  QPixmap pix(":/cmb/pqEyeball.png");
+  QPixmap pixd(":/cmb/pqEyeballClosed.png");
+  QPixmap pixa(":/cmb/pqCheck.png");
 
   this->Internal->IconVisible = new QIcon(pix);
   this->Internal->IconInvisible = new QIcon(pixd);

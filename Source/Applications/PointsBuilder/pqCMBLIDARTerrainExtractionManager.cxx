@@ -57,8 +57,8 @@
 pqCMBLIDARTerrainExtractionManager::pqCMBLIDARTerrainExtractionManager(
   pqCMBPointsBuilderMainWindowCore* core, qtCMBLIDARPanelWidget* panel)
 {
-  QPixmap pix(":/cmb/pqEyeball16.png");
-  QPixmap pixd(":/cmb/pqEyeballd16.png");
+  QPixmap pix(":/cmb/pqEyeball.png");
+  QPixmap pixd(":/cmb/pqEyeballClosed.png");
   this->IconVisible = new QIcon(pix);
   this->IconInvisible = new QIcon(pixd);
 

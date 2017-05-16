@@ -30,7 +30,7 @@ qtCMBProgressWidget::qtCMBProgressWidget(QWidget* _parent /*=0*/)
 
   this->AbortButton = new QToolButton(this);
   this->AbortButton->setObjectName("AbortButton");
-  this->AbortButton->setIcon(QIcon(QString::fromUtf8(":/cmb/pqDelete16.png")));
+  this->AbortButton->setIcon(QIcon(QString::fromUtf8(":/QtWidgets/Icons/pqDelete16.png")));
   this->AbortButton->setIconSize(QSize(12, 12));
   this->AbortButton->setToolTip(QApplication::translate("Form", "Abort", 0
 #if QT_VERSION < 0x050000
