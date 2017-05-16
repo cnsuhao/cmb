@@ -48,7 +48,7 @@ void vtkPVSMTKMeshInformation::CopyFromObject(vtkObject* obj)
 
   meshsource->GetMeshSet2BlockIdMap(this->Mesh2BlockIdMap);
   this->BlockId2MeshMap.clear();
-  std::map<smtk::mesh::MeshSet, unsigned int>::iterator it = this->Mesh2BlockIdMap.begin();
+  std::map<smtk::mesh::MeshSet, vtkIdType>::iterator it = this->Mesh2BlockIdMap.begin();
   for (; it != this->Mesh2BlockIdMap.end(); ++it)
   {
     this->BlockId2MeshMap[it->second] = it->first;

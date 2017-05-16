@@ -138,7 +138,7 @@ public:
     vtkPVSMTKModelInformation* pvinfo = modelInfo->Info;
     modelInfo->ent_annotations.clear();
     modelInfo->vol_annotations.clear();
-    std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+    std::map<smtk::common::UUID, vtkIdType>::const_iterator it =
       pvinfo->GetUUID2BlockIdMap().begin();
     for (; it != pvinfo->GetUUID2BlockIdMap().end(); ++it)
     {
@@ -357,7 +357,7 @@ public:
           this->ModelInfos[*mit].RepSource);
         pqApplicationCore::instance()->getObjectBuilder()->destroy(
           this->ModelInfos[*mit].ModelSource);
-        std::map<smtk::common::UUID, unsigned int>::const_iterator it;
+        std::map<smtk::common::UUID, vtkIdType>::const_iterator it;
         for (it = this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().begin();
              it != this->ModelInfos[*mit].Info->GetUUID2BlockIdMap().end(); ++it)
         {

@@ -137,7 +137,7 @@ void pqSMTKMeshInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 
   std::vector<int> invis_ids;
 
-  std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator it =
+  std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator it =
     this->Info->GetMesh2BlockIdMap().begin();
 
   for (; it != this->Info->GetMesh2BlockIdMap().end(); ++it)

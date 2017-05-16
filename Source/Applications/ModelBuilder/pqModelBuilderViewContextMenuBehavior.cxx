@@ -84,8 +84,8 @@ pqMultiBlockInspectorPanel* pqModelBuilderViewContextMenuBehavior::multiBlockIns
   return this->m_dataInspector;
 }
 
-void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(pqDataRepresentation* rep,
-  const QList<unsigned int>& visBlocks, bool visible, vtkIdType numBlocks)
+void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
+  pqDataRepresentation* rep, const QList<vtkIdType>& visBlocks, bool visible, vtkIdType numBlocks)
 {
   pqMultiBlockInspectorPanel* panel = this->m_dataInspector;
   if (panel && rep)
@@ -198,7 +198,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     sb->UpdateVTKObjects();
   }
 
-  QList<unsigned int> indices;
+  QList<vtkIdType> indices;
   QColor color;
   if (modinfo)
   {
@@ -209,7 +209,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
       return;
 
     QMap<smtk::model::EntityRef, QColor> colorEntities;
-    std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
+    std::map<smtk::common::UUID, vtkIdType>::const_iterator uit =
       modinfo->Info->GetUUID2BlockIdMap().begin();
     for (; uit != modinfo->Info->GetUUID2BlockIdMap().end(); ++uit)
     {
@@ -269,7 +269,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
   else if (meshinfo)
   {
     QMap<smtk::mesh::MeshSet, QColor> colorMeshes;
-    std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator mit =
+    std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator mit =
       meshinfo->Info->GetMesh2BlockIdMap().begin();
     for (; mit != meshinfo->Info->GetMesh2BlockIdMap().end(); ++mit)
       indices.append(mit->second);
@@ -341,8 +341,8 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   }
 
   // clear all colors
-  QList<unsigned int> indices;
-  std::map<smtk::common::UUID, unsigned int>::const_iterator uit =
+  QList<vtkIdType> indices;
+  std::map<smtk::common::UUID, vtkIdType>::const_iterator uit =
     minfo->Info->GetUUID2BlockIdMap().begin();
   for (; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
   {
@@ -362,7 +362,7 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(pqDataReprese
 
   foreach (const smtk::model::EntityRef& entref, colorEntities.keys())
   {
-    QSet<unsigned int> blockIds;
+    QSet<vtkIdType> blockIds;
     if ((entref.isVolume() && colorMode == vtkModelMultiBlockSource::GetVolumeTagName()) ||
       (entref.isGroup() && colorMode == vtkModelMultiBlockSource::GetGroupTagName()) ||
       (entref.hasIntegerProperty("block_index") &&
@@ -371,7 +371,7 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(pqDataReprese
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, entref);
     }
     if (blockIds.size() > 0)
-      this->syncBlockColor(rep, QList<unsigned int>::fromSet(blockIds), colorEntities[entref]);
+      this->syncBlockColor(rep, QList<vtkIdType>::fromSet(blockIds), colorEntities[entref]);
   }
 }
 
@@ -396,7 +396,7 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(pqDataRepresent
     }
 
     smtk::model::EntityRef entref = meshEntRefs[0];
-    QSet<unsigned int> blockIds;
+    QSet<vtkIdType> blockIds;
     if ((entref.isVolume() && colorMode == vtkModelMultiBlockSource::GetVolumeTagName()) ||
       (entref.isGroup() && colorMode == vtkModelMultiBlockSource::GetGroupTagName()) ||
       (colorMode == vtkModelMultiBlockSource::GetEntityTagName()))
@@ -404,19 +404,19 @@ void pqModelBuilderViewContextMenuBehavior::updateColorForMeshes(pqDataRepresent
       const smtk::model::IntegerList& prop(c->integerProperty(mesh, "block_index"));
       if (!prop.empty() && prop[0] >= 0)
       {
-        unsigned int bidx = prop[0] + 1;
+        vtkIdType bidx = prop[0] + 1;
         blockIds.insert(bidx);
       }
     }
     if (blockIds.size() > 0)
     {
-      this->syncBlockColor(rep, QList<unsigned int>::fromSet(blockIds), colorEntities[mesh]);
+      this->syncBlockColor(rep, QList<vtkIdType>::fromSet(blockIds), colorEntities[mesh]);
     }
   }
 }
 
 void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
-  pqDataRepresentation* rep, const QList<unsigned int>& colorBlocks, const QColor& color)
+  pqDataRepresentation* rep, const QList<vtkIdType>& colorBlocks, const QColor& color)
 {
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
@@ -559,10 +559,9 @@ void pqModelBuilderViewContextMenuBehavior::buildMenuFromSelections()
   this->m_contextMenu->clear();
   if (selNumBlocks > 0)
   {
-    QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator modit =
+    QMap<pqSMTKModelInfo*, QList<vtkIdType> >::const_iterator modit =
       this->m_selModelBlocks.begin();
-    QMap<pqSMTKMeshInfo*, QList<unsigned int> >::const_iterator meshit =
-      this->m_selMeshBlocks.begin();
+    QMap<pqSMTKMeshInfo*, QList<vtkIdType> >::const_iterator meshit = this->m_selMeshBlocks.begin();
 
     if (selNumBlocks > 1)
     {
@@ -715,13 +714,13 @@ void pqModelBuilderViewContextMenuBehavior::getSelectedEntitiesAndMeshes(
 {
   foreach (pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
   {
-    foreach (unsigned int idx, this->m_selModelBlocks[minfo])
+    foreach (vtkIdType idx, this->m_selModelBlocks[minfo])
       sessionBlocks[minfo->SessionId].first.insert(minfo->Info->GetModelEntityId(idx));
   }
 
   foreach (pqSMTKMeshInfo* minfo, this->m_selMeshBlocks.keys())
   {
-    foreach (unsigned int idx, this->m_selMeshBlocks[minfo])
+    foreach (vtkIdType idx, this->m_selMeshBlocks[minfo])
       sessionBlocks[minfo->ModelInfo->SessionId].second.insert(minfo->Info->GetMeshSet(idx - 1));
   }
 }
@@ -765,8 +764,8 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
   QMap<smtk::common::UUID, QPair<smtk::common::UUIDs, smtk::mesh::MeshSets> > blocksVis;
   foreach (pqSMTKModelInfo* minfo, this->m_selModelBlocks.keys())
   {
-    QList<unsigned int> tmpList(this->m_selModelBlocks[minfo]);
-    std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+    QList<vtkIdType> tmpList(this->m_selModelBlocks[minfo]);
+    std::map<smtk::common::UUID, vtkIdType>::const_iterator it =
       minfo->Info->GetUUID2BlockIdMap().begin();
     for (; it != minfo->Info->GetUUID2BlockIdMap().end(); ++it)
     {
@@ -777,8 +776,8 @@ void pqModelBuilderViewContextMenuBehavior::showOnlyBlock()
 
   foreach (pqSMTKMeshInfo* minfo, this->m_selMeshBlocks.keys())
   {
-    QList<unsigned int> tmpList(this->m_selMeshBlocks[minfo]);
-    std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator it =
+    QList<vtkIdType> tmpList(this->m_selMeshBlocks[minfo]);
+    std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator it =
       minfo->Info->GetMesh2BlockIdMap().begin();
     for (; it != minfo->Info->GetMesh2BlockIdMap().end(); ++it)
     {
@@ -863,8 +862,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
   QColor tmpcolor;
   if (m_selModelBlocks.size())
   {
-    QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator it =
-      this->m_selModelBlocks.begin();
+    QMap<pqSMTKModelInfo*, QList<vtkIdType> >::const_iterator it = this->m_selModelBlocks.begin();
     if (it.value().count())
     {
       smtk::common::UUID selID = it.key()->Info->GetModelEntityId(it.value()[0]);
@@ -878,10 +876,10 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
   }
   else if (m_selMeshBlocks.size())
   {
-    QMap<pqSMTKMeshInfo*, QList<unsigned int> >::const_iterator it = this->m_selMeshBlocks.begin();
+    QMap<pqSMTKMeshInfo*, QList<vtkIdType> >::const_iterator it = this->m_selMeshBlocks.begin();
     if (it.key() && it.key()->Info->GetMesh2BlockIdMap().size() && it.value().count())
     {
-      std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator mit =
+      std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator mit =
         it.key()->Info->GetMesh2BlockIdMap().begin();
       if (pqCMBContextMenuHelper::getValidMeshColor(tmpcolor, mit->first))
       {
@@ -941,8 +939,7 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
     return;
   }
 
-  QMap<pqSMTKModelInfo*, QList<unsigned int> >::const_iterator rbit =
-    this->m_selModelBlocks.begin();
+  QMap<pqSMTKModelInfo*, QList<vtkIdType> >::const_iterator rbit = this->m_selModelBlocks.begin();
   smtk::common::UUID entId(action->data().toString().toStdString());
   pqCMBModelManager* modMgr = this->m_modelPanel->modelManager();
   pqSMTKModelInfo* minfo = rbit.key();
@@ -951,7 +948,7 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
 }
 
 QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
-  unsigned int blockIdx, pqSMTKModelInfo* minfo) const
+  vtkIdType blockIdx, pqSMTKModelInfo* minfo) const
 {
   // if there is an entity name in smtk, use that
   if (blockIdx > 0 && minfo)

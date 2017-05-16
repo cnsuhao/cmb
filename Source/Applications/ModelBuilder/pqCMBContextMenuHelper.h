@@ -15,6 +15,7 @@
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/mesh/MeshSet.h"
 #include "smtk/model/EntityRef.h"
+#include "vtkType.h"
 #include <QColor>
 #include <QMap>
 
@@ -27,10 +28,10 @@ class pqCMBContextMenuHelper
 {
 public:
   pqCMBContextMenuHelper() {}
-  static bool getBlockIndex(const smtk::model::EntityRef& eref, unsigned int& flatIndex);
+  static bool getBlockIndex(const smtk::model::EntityRef& eref, vtkIdType& flatIndex);
   /// Fetch children for volum and group entities.
   static void accumulateChildGeometricEntities(
-    QSet<unsigned int>& blockIds, const smtk::model::EntityRef& toplevel);
+    QSet<vtkIdType>& blockIds, const smtk::model::EntityRef& toplevel);
 
   // only use valid color, the rest will be colored
   // randomly with CTF
@@ -46,14 +47,13 @@ public:
 
   // return total number of blocks selected
   static int getSelectedRepBlocks(const QList<pqSMTKModelInfo*>& selModels,
-    const QList<pqSMTKMeshInfo*>& selMeshes,
-    QMap<pqSMTKModelInfo*, QList<unsigned int> >& modelresult,
-    QMap<pqSMTKMeshInfo*, QList<unsigned int> >& meshresult);
+    const QList<pqSMTKMeshInfo*>& selMeshes, QMap<pqSMTKModelInfo*, QList<vtkIdType> >& modelresult,
+    QMap<pqSMTKMeshInfo*, QList<vtkIdType> >& meshresult);
 
   static bool hasSessionOp(const smtk::model::SessionPtr& brSession, const std::string& opname);
 
   static bool startGroupOp(pqCMBModelManager* modMgr, pqSMTKModelInfo* minfo,
-    const std::string& optype, const QList<unsigned int>& addblocks,
+    const std::string& optype, const QList<vtkIdType>& addblocks,
     const smtk::model::Group& modifyGroup);
 
   static void setRepresentationType(pqDataRepresentation* repr, const QString& repType);
