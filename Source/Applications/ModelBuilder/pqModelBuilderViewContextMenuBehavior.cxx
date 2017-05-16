@@ -107,15 +107,6 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
 
         if (ivp)
         {
-          /*
-          vtkPVDataInformation *info = outport->getDataInformation();
-          if(!info)
-            return;
-          vtkPVCompositeDataInformation *compositeInfo =
-            info->GetCompositeDataInformation();
-          if(!compositeInfo || !compositeInfo->GetDataIsComposite())
-            return;
-*/
           vtkIdType nbElems = static_cast<vtkIdType>(ivp->GetNumberOfElements());
           if (nbElems / 2 != numBlocks)
             return;
