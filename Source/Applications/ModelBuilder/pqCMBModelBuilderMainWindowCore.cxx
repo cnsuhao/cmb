@@ -1268,21 +1268,14 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
       if (!prop.empty())
       {
         flatIndex = prop[0];
-        if (curRef.hasVisibility())
-        {
-          const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
-          if (!vprop.empty())
-            visible = (vprop[0] != 0);
-          visBlocks[minfo][visible] << flatIndex;
-        }
+        visible = curRef.visible();
+        visBlocks[minfo][visible] << flatIndex;
       }
     }
     else if (pqSMTKUIHelper::isAuxiliaryShownSeparate(curRef) && curRef.hasVisibility())
     {
       smtk::model::AuxiliaryGeometry aux(curRef);
-      const smtk::model::IntegerList& vprop(curRef.integerProperty("visible"));
-      if (!vprop.empty())
-        visible = (vprop[0] != 0);
+      visible = curRef.visible();
       auxGeoVisibles[aux.url()] = visible;
     }
   }

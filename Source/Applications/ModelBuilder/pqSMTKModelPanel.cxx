@@ -387,6 +387,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 
       // set selected entities's blockId to be invisible, so that the selection color
       // is drawn properly for entities whose dimension are smaller than 3
+
       if (it->dimension() < 3)
       {
         this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
@@ -422,14 +423,17 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
     if (entities.find(entity) == entities.end() && (entity.dimension() < 3) && entity.visible())
     {
       pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(entity);
-      unsigned int blockId;
-      if (entity.hasIntegerProperty("block_index") &&
-        pqCMBContextMenuHelper::getBlockIndex(entity, blockId) &&
-        minfo) // only change visibility when model is still valid
+
+      QSet<unsigned int> blockIds;
+      // for cell entity it would just store blockId which is an intergerProperty
+      pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, entity);
+
+      if (minfo && blockIds.size() > 0) // only change visibility when model is still valid
       {
         // turn on previoulsySelected entities visibility
         this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
-        this->Internal->dataInspector->setBlockVisibility(blockId, true);
+        this->Internal->dataInspector->setBlockVisibility(
+          QList<unsigned int>::fromSet(blockIds), true);
       }
     }
   }
