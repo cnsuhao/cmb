@@ -27,7 +27,6 @@ class pqPipelineRepresentation;
 class pqView;
 class QAction;
 class QMenu;
-class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqEditColorMapReaction;
@@ -51,7 +50,6 @@ public:
   ~pqModelBuilderViewContextMenuBehavior() override;
 
   void setModelPanel(pqSMTKModelPanel*);
-  pqMultiBlockInspectorPanel* multiBlockInspectorPanel();
 
   void syncBlockVisibility(pqDataRepresentation* rep, const QList<vtkIdType>& visBlocks,
     bool visible, vtkIdType numBlocks);
@@ -118,9 +116,6 @@ protected:
   /// dragging state.
   bool eventFilter(QObject* caller, QEvent* e) override;
 
-  /// return the name of the block from its flat index
-  QString lookupBlockName(vtkIdType flatIndex, pqSMTKModelInfo* minfo) const;
-
   virtual void showAllEntitiesAndMeshes(
     const QList<pqSMTKModelInfo*>&, const QList<pqSMTKMeshInfo*>&);
   // \a sessionBlocks is map of <sessionId, < Entities, Meshes> >
@@ -134,7 +129,6 @@ protected:
   QMenu* m_contextMenu;
   QPoint m_clickPosition;
   QPointer<pqSMTKModelPanel> m_modelPanel;
-  pqMultiBlockInspectorPanel* m_dataInspector;
   QPointer<pqEditColorMapReaction> m_colormapReaction;
   QMap<pqSMTKModelInfo*, QList<vtkIdType> > m_selModelBlocks;
   QMap<pqSMTKMeshInfo*, QList<vtkIdType> > m_selMeshBlocks;

@@ -16,7 +16,6 @@
 #include "pqCMBContextMenuHelper.h"
 #include "pqCMBModelManager.h"
 #include "pqEditColorMapReaction.h"
-#include "pqMultiBlockInspectorPanel.h"
 #include "pqPVApplicationCore.h"
 #include "pqPipelineRepresentation.h"
 #include "pqRenderView.h"
@@ -41,6 +40,7 @@
 #include "vtkPVSMTKMeshInformation.h"
 #include "vtkPVSMTKModelInformation.h"
 #include "vtkRenderWindowInteractor.h"
+#include "vtkSMDoubleMapProperty.h"
 #include "vtkSMIntVectorProperty.h"
 #include "vtkSMModelManagerProxy.h"
 #include "vtkSMRenderViewProxy.h"
@@ -60,14 +60,11 @@ pqModelBuilderViewContextMenuBehavior::pqModelBuilderViewContextMenuBehavior(QOb
     SIGNAL(viewAdded(pqView*)), this, SLOT(onViewAdded(pqView*)));
   this->m_contextMenu = new QMenu();
   this->m_contextMenu << pqSetName("PipelineContextMenu");
-  this->m_dataInspector = new pqMultiBlockInspectorPanel(NULL);
-  this->m_dataInspector->setVisible(false);
 }
 
 pqModelBuilderViewContextMenuBehavior::~pqModelBuilderViewContextMenuBehavior()
 {
   delete this->m_contextMenu;
-  delete this->m_dataInspector;
   if (this->m_colormapReaction)
   {
     delete this->m_colormapReaction;
@@ -79,23 +76,13 @@ void pqModelBuilderViewContextMenuBehavior::setModelPanel(pqSMTKModelPanel* pane
   this->m_modelPanel = panel;
 }
 
-pqMultiBlockInspectorPanel* pqModelBuilderViewContextMenuBehavior::multiBlockInspectorPanel()
-{
-  return this->m_dataInspector;
-}
-
 void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
   pqDataRepresentation* rep, const QList<vtkIdType>& visBlocks, bool visible, vtkIdType numBlocks)
 {
-  pqMultiBlockInspectorPanel* panel = this->m_dataInspector;
-  if (panel && rep)
+  if (rep)
   {
-    pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
-    pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
-
-    pqOutputPort* outport = rep->getOutputPortFromInput();
-    panel->onPortChanged(outport);
-    panel->onRepresentationChanged(rep);
+    vtkSMIntVectorProperty* visProp =
+      vtkSMIntVectorProperty::SafeDownCast(rep->getProxy()->GetProperty("BlockVisibility"));
 
     if (visible && visBlocks.count() && rep)
     {
@@ -103,16 +90,15 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
       rep->setVisible(visible);
     }
 
-    panel->setBlockVisibility(visBlocks, visible);
+    foreach (vtkIdType block, visBlocks)
+    {
+      visProp->SetElement(block, visible);
+    }
 
     if (!visible)
     {
-      if (outport)
-      {
-        outport->setSelectionInput(0, 0);
-      }
       // if all blocks are off, the rep should be invisible
-      if (rep && outport)
+      if (rep)
       {
         vtkSMProxy* proxy = rep->getProxy();
         vtkSMProperty* blockVisibilityProperty = proxy->GetProperty("BlockVisibility");
@@ -147,9 +133,6 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
         }
       }
     }
-
-    panel->onRepresentationChanged(prevRep);
-    panel->onPortChanged(prevOutport);
   }
 }
 
@@ -158,9 +141,6 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
-  pqMultiBlockInspectorPanel* datapanel = this->m_dataInspector;
-  if (!datapanel)
-    return;
   // active rep
   pqDataRepresentation* activeRep = pqActiveObjects::instance().activeRepresentation();
   pqSMTKModelInfo* modinfo = NULL;
@@ -198,7 +178,6 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     sb->UpdateVTKObjects();
   }
 
-  QList<vtkIdType> indices;
   QColor color;
   if (modinfo)
   {
@@ -211,12 +190,14 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     QMap<smtk::model::EntityRef, QColor> colorEntities;
     std::map<smtk::common::UUID, vtkIdType>::const_iterator uit =
       modinfo->Info->GetUUID2BlockIdMap().begin();
+    vtkSMProxy* proxy = activeRep->getProxy();
+    vtkSMDoubleMapProperty* colorProp =
+      vtkSMDoubleMapProperty::SafeDownCast(proxy->GetProperty("BlockColor"));
+    // clear all colors
     for (; uit != modinfo->Info->GetUUID2BlockIdMap().end(); ++uit)
     {
-      indices.append(uit->second);
+      colorProp->RemoveElement(uit->second);
     }
-    // clear all colors
-    datapanel->clearBlockColor(indices);
 
     if (colorMode == vtkModelMultiBlockSource::GetVolumeTagName())
     {
@@ -271,10 +252,14 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     QMap<smtk::mesh::MeshSet, QColor> colorMeshes;
     std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator mit =
       meshinfo->Info->GetMesh2BlockIdMap().begin();
-    for (; mit != meshinfo->Info->GetMesh2BlockIdMap().end(); ++mit)
-      indices.append(mit->second);
+    vtkSMProxy* proxy = activeRep->getProxy();
+    vtkSMDoubleMapProperty* colorProp =
+      vtkSMDoubleMapProperty::SafeDownCast(proxy->GetProperty("BlockColor"));
     // clear all colors
-    datapanel->clearBlockColor(indices);
+    for (; mit != meshinfo->Info->GetMesh2BlockIdMap().end(); ++mit)
+    {
+      colorProp->RemoveElement(mit->second);
+    }
 
     // if colorby-entity, get meshes' color,
     for (mit = meshinfo->Info->GetMesh2BlockIdMap().begin();
@@ -310,10 +295,6 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
-  pqMultiBlockInspectorPanel* datapanel = this->m_dataInspector;
-  if (!datapanel)
-    return;
-
   // active rep
   pqSMTKModelInfo* minfo = this->m_modelPanel->modelManager()->activateModelRepresentation();
   if (!minfo)
@@ -341,14 +322,15 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   }
 
   // clear all colors
-  QList<vtkIdType> indices;
   std::map<smtk::common::UUID, vtkIdType>::const_iterator uit =
     minfo->Info->GetUUID2BlockIdMap().begin();
+  vtkSMProxy* proxy = activeRep->getProxy();
+  vtkSMDoubleMapProperty* colorProp =
+    vtkSMDoubleMapProperty::SafeDownCast(proxy->GetProperty("BlockColor"));
   for (; uit != minfo->Info->GetUUID2BlockIdMap().end(); ++uit)
   {
-    indices.append(uit->second);
+    colorProp->RemoveElement(uit->second);
   }
-  datapanel->clearBlockColor(indices);
 
   this->m_modelPanel->modelManager()->colorRepresentationByAttribute(
     activeRep, attSys, attdeftype, itemname);
@@ -421,27 +403,31 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
 
-  pqMultiBlockInspectorPanel* panel = this->m_dataInspector;
-  if (panel && rep)
+  if (rep)
   {
-    pqOutputPort* prevOutport = pqActiveObjects::instance().activePort();
-    pqDataRepresentation* prevRep = pqActiveObjects::instance().activeRepresentation();
+    vtkSMProxy* proxy = rep->getProxy();
+    vtkSMDoubleMapProperty* colorProp =
+      vtkSMDoubleMapProperty::SafeDownCast(proxy->GetProperty("BlockColor"));
+    vtkSMDoubleMapProperty* opacityProp =
+      vtkSMDoubleMapProperty::SafeDownCast(proxy->GetProperty("BlockOpacity"));
 
-    panel->onRepresentationChanged(rep);
-    panel->onPortChanged(rep->getOutputPortFromInput());
     if (color.isValid())
     {
-      panel->setBlockColor(colorBlocks, color);
-      panel->setBlockOpacity(colorBlocks, color.alphaF());
+      foreach (vtkIdType block, colorBlocks)
+      {
+        double rgb[3] = { color.redF(), color.greenF(), color.blueF() };
+        colorProp->SetElements(block, rgb);
+        opacityProp->SetElement(block, color.alphaF());
+      }
     }
     else
     {
-      panel->clearBlockColor(colorBlocks);
-      panel->clearBlockOpacity(colorBlocks);
+      foreach (vtkIdType block, colorBlocks)
+      {
+        colorProp->RemoveElement(block);
+        opacityProp->RemoveElement(block);
+      }
     }
-
-    panel->onRepresentationChanged(prevRep);
-    panel->onPortChanged(prevOutport);
   }
 }
 
@@ -888,7 +874,7 @@ void pqModelBuilderViewContextMenuBehavior::setBlockColor()
     }
   }
 
-  QColor color = QColorDialog::getColor(currentColor, this->m_dataInspector, "Choose Block Color",
+  QColor color = QColorDialog::getColor(currentColor, NULL, "Choose Block Color",
     QColorDialog::DontUseNativeDialog | QColorDialog::ShowAlphaChannel);
   if (color.isValid())
   {
@@ -945,31 +931,4 @@ void pqModelBuilderViewContextMenuBehavior::addToGroup(QAction* action)
   pqSMTKModelInfo* minfo = rbit.key();
   pqCMBContextMenuHelper::startGroupOp(modMgr, minfo, "Modify", this->m_selModelBlocks[minfo],
     smtk::model::Group(modMgr->managerProxy()->modelManager(), entId));
-}
-
-QString pqModelBuilderViewContextMenuBehavior::lookupBlockName(
-  vtkIdType blockIdx, pqSMTKModelInfo* minfo) const
-{
-  // if there is an entity name in smtk, use that
-  if (blockIdx > 0 && minfo)
-  {
-    smtk::common::UUID entId = minfo->Info->GetModelEntityId(blockIdx - 1);
-    const smtk::model::EntityRef entity(
-      this->m_modelPanel->modelManager()->managerProxy()->modelManager(), entId);
-    if (entity.isValid())
-    {
-      return entity.name().c_str();
-    }
-  }
-
-  // else fall back to multiblock data representation
-  pqMultiBlockInspectorPanel* panel = this->m_dataInspector;
-  if (panel)
-  {
-    return panel->lookupBlockName(blockIdx);
-  }
-  else
-  {
-    return QString();
-  }
 }

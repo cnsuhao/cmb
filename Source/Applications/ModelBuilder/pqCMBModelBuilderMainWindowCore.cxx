@@ -67,7 +67,6 @@
 #include "pqCMBSceneReader.h"
 #include "pqCMBSceneTree.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
-#include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKInfoPanel.h"
 #include "pqSMTKMeshInfo.h"
 #include "pqSMTKMeshPanel.h"
@@ -1585,8 +1584,8 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if (!this->Internal->ModelDock)
   {
-    this->Internal->ModelDock = new pqSMTKModelPanel(this->Internal->smtkModelManager,
-      this->parentWidget(), this->Internal->ViewContextBehavior->multiBlockInspectorPanel());
+    this->Internal->ModelDock =
+      new pqSMTKModelPanel(this->Internal->smtkModelManager, this->parentWidget());
     this->Internal->ViewContextBehavior->setModelPanel(this->Internal->ModelDock);
     if (this->Internal->SimBuilder)
     {
