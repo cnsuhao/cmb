@@ -309,6 +309,11 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   this->getMainDialog()->toolBar_Selection->addAction(this->getMainDialog()->SelectByVertices);
 
   // connect selection filter signals
+  QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)), this,
+    SLOT(updateToolBar_Selection(bool)));
+  QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
+    this->getThisCore(), SLOT(changeMeshRepresentationPickability(bool)));
+
   QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
     qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterMeshes(bool)));
   QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
@@ -896,6 +901,10 @@ void pqCMBModelBuilderMainWindow::onModelRepresentationAdded(pqDataRepresentatio
 
 void pqCMBModelBuilderMainWindow::onNewMeshCreated()
 {
+  if (!this->getMainDialog()->SelectByMeshes->isChecked())
+  {
+    this->getThisCore()->changeMeshRepresentationPickability(false);
+  }
   this->getThisCore()->modelPanel()->show();
   this->getThisCore()->modelPanel()->raise();
 }

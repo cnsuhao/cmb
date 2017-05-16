@@ -1698,6 +1698,16 @@ void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
   }
 }
 
+void pqCMBModelBuilderMainWindowCore::changeMeshRepresentationPickability(bool status)
+{
+  // get meshRepresentations
+  QList<pqDataRepresentation*> meshReps = this->Internal->smtkModelManager->meshRepresentations();
+  for (int i = 0; i < meshReps.size(); ++i)
+  {
+    pqSMAdaptor::setElementProperty(meshReps.at(i)->getProxy()->GetProperty("Pickable"), status);
+  }
+}
+
 void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
 {
   this->getSimBuilder()->uiManager()->setModelManager(
