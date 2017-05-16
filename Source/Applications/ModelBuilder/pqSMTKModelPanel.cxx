@@ -47,7 +47,6 @@
 
 #include "pqCMBContextMenuHelper.h"
 #include "pqCMBModelManager.h"
-#include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKModelInfo.h"
 #include <pqActiveObjects.h>
 #include <pqApplicationCore.h>
@@ -101,7 +100,6 @@ public:
   bool ignorePropertyChange;
   smtk::model::EntityRefs previouslySelectedEntities;
   QList<vtkIdType> invisibleBlockIdsOfSelectionEntities;
-  QPointer<pqMultiBlockInspectorPanel> dataInspector;
 
   // [meshItem, <opName, sessionId>]
   QMap<QPointer<smtk::extension::qtMeshSelectionItem>, QPair<std::string, smtk::common::UUID> >
@@ -109,7 +107,6 @@ public:
   QPointer<smtk::extension::qtMeshSelectionItem> CurrentMeshSelectItem;
 
   qInternal() { this->ModelLoaded = false; }
-  ~qInternal() { delete this->dataInspector; }
 
   pqOutputPort* setSelectionInput(
     vtkSMProxy* selectionSource, const std::set<vtkIdType>& ids, pqPipelineSource* source)
@@ -142,14 +139,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-pqSMTKModelPanel::pqSMTKModelPanel(
-  pqCMBModelManager* mmgr, QWidget* p, pqMultiBlockInspectorPanel* dataInspector)
+pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
   : QDockWidget(p)
 {
   this->Internal = new pqSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
-  this->Internal->dataInspector = dataInspector;
 
   // see resetUI for selection logic detail
   QObject::connect(this,
@@ -206,9 +201,12 @@ bool pqSMTKModelPanel::changeSelEntitiesBlockVisibility(bool status)
   pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
   if (this->Internal->invisibleBlockIdsOfSelectionEntities.size() > 0 && rep)
   {
-    this->Internal->dataInspector->onRepresentationChanged(rep);
-    this->Internal->dataInspector->setBlockVisibility(
-      this->Internal->invisibleBlockIdsOfSelectionEntities, status);
+    vtkSMIntVectorProperty* visProp =
+      vtkSMIntVectorProperty::SafeDownCast(rep->getProxy()->GetProperty("BlockVisibility"));
+    foreach (vtkIdType block, this->Internal->invisibleBlockIdsOfSelectionEntities)
+    {
+      visProp->SetElement(block, status);
+    }
     return true;
   }
   return false;
@@ -390,11 +388,11 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 
       if (it->dimension() < 3)
       {
-        this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
-        this->Internal->dataInspector->setBlockVisibility(
-          QList<vtkIdType>::fromSet(blockIds), false);
+        vtkSMIntVectorProperty* visProp =
+          vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
         foreach (vtkIdType blockId, blockIds)
         {
+          visProp->SetElement(blockId, false);
           blockIdsTobeInvisible.append(blockId);
         }
       }
@@ -430,10 +428,11 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 
       if (minfo && blockIds.size() > 0) // only change visibility when model is still valid
       {
+        selRep = minfo->Representation->getProxy();
+        vtkSMIntVectorProperty* visProp =
+          vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
         // turn on previoulsySelected entities visibility
-        this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
-        this->Internal->dataInspector->setBlockVisibility(
-          QList<unsigned int>::fromSet(blockIds), true);
+        visProp->SetElement(blockId, true);
       }
     }
   }
