@@ -52,7 +52,7 @@ public:
 
   // Description:
   // return Mesh to BlockId map for all blocks
-  const std::map<smtk::mesh::MeshSet, unsigned int>& GetMesh2BlockIdMap() const
+  const std::map<smtk::mesh::MeshSet, vtkIdType>& GetMesh2BlockIdMap() const
   {
     return this->Mesh2BlockIdMap;
   }
@@ -61,7 +61,7 @@ protected:
   vtkPVSMTKMeshInformation();
   ~vtkPVSMTKMeshInformation() override;
 
-  std::map<smtk::mesh::MeshSet, unsigned int> Mesh2BlockIdMap;
+  std::map<smtk::mesh::MeshSet, vtkIdType> Mesh2BlockIdMap;
   std::map<unsigned int, smtk::mesh::MeshSet> BlockId2MeshMap;
   smtk::common::UUID m_ModelUUID;
   smtk::common::UUID m_MeshCollectionId;

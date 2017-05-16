@@ -125,7 +125,7 @@ void pqSMTKModelInfo::updateBlockInfo(smtk::model::ManagerPtr mgr)
 
   std::vector<int> invis_ids;
 
-  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+  std::map<smtk::common::UUID, vtkIdType>::const_iterator it =
     this->Info->GetUUID2BlockIdMap().begin();
 
   for (; it != this->Info->GetUUID2BlockIdMap().end(); ++it)

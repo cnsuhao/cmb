@@ -52,7 +52,7 @@ public:
   // Description:
   // return UUIDs to BlockId map for all blocks
   // virtual smtk::common::UUIDs GetBlockUUIDs() const;
-  const std::map<smtk::common::UUID, unsigned int>& GetUUID2BlockIdMap() const
+  const std::map<smtk::common::UUID, vtkIdType>& GetUUID2BlockIdMap() const
   {
     return this->UUID2BlockIdMap;
   }
@@ -61,8 +61,8 @@ protected:
   vtkPVSMTKModelInformation();
   ~vtkPVSMTKModelInformation() override;
 
-  std::map<smtk::common::UUID, unsigned int> UUID2BlockIdMap;
-  std::map<unsigned int, smtk::common::UUID> BlockId2UUIDMap;
+  std::map<smtk::common::UUID, vtkIdType> UUID2BlockIdMap;
+  std::map<vtkIdType, smtk::common::UUID> BlockId2UUIDMap;
   smtk::common::UUID m_ModelUUID;
 
 private:

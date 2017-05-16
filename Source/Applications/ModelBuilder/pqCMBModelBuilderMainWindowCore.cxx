@@ -1229,7 +1229,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   // The result could be from multiple models.
   // For example, if Session(s) is clicked to change visibility or color,
   // all models under it should change
-  QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > > visBlocks;
+  QMap<pqSMTKModelInfo*, QMap<bool, QList<vtkIdType> > > visBlocks;
   QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> > colorEntities;
   // Map for aux-geo-url visibility
   QMap<std::string, bool> auxGeoVisibles;
@@ -1346,7 +1346,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   // The result could be from multiple collections.
   // For example, if Session(s) is clicked to change visibility or color,
   // all meshes under it should change
-  QMap<pqSMTKMeshInfo*, QMap<bool, QList<unsigned int> > > visBlocks;
+  QMap<pqSMTKMeshInfo*, QMap<bool, QList<vtkIdType> > > visBlocks;
   QMap<pqSMTKMeshInfo*, QMap<smtk::mesh::MeshSet, QColor> > colorEntities;
   QString lastColorMode;
 

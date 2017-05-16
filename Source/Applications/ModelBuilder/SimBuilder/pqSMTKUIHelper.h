@@ -199,7 +199,7 @@ inline vtkSelectionNode* gatherSelectionNode(
 }
 
 inline int fillSelectionIdList(
-  QList<unsigned int>& result, vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
+  QList<vtkIdType>& result, vtkUnsignedIntArray* blockIds, vtkSMPropertyHelper* selIDs)
 {
   int total = 0;
   if (blockIds)

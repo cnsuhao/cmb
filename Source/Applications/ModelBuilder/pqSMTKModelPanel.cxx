@@ -100,7 +100,7 @@ public:
   QPointer<QShortcut> ClearSelection;
   bool ignorePropertyChange;
   smtk::model::EntityRefs previouslySelectedEntities;
-  QList<unsigned int> invisibleBlockIdsOfSelectionEntities;
+  QList<vtkIdType> invisibleBlockIdsOfSelectionEntities;
   QPointer<pqMultiBlockInspectorPanel> dataInspector;
 
   // [meshItem, <opName, sessionId>]
@@ -367,7 +367,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   // mechanism paints in the order in which representations are modified. Turn off
   // selected blocks in the original representation to avoid z-fighting and overdraw.
 
-  QList<unsigned int> blockIdsTobeInvisible;
+  QList<vtkIdType> blockIdsTobeInvisible;
 
   for (smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
   {
@@ -382,7 +382,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       }
       selRep->UpdateVTKObjects();
 
-      QSet<unsigned int> blockIds;
+      QSet<vtkIdType> blockIds;
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
 
       // set selected entities's blockId to be invisible, so that the selection color
@@ -392,8 +392,8 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       {
         this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
         this->Internal->dataInspector->setBlockVisibility(
-          QList<unsigned int>::fromSet(blockIds), false);
-        foreach (unsigned int blockId, blockIds)
+          QList<vtkIdType>::fromSet(blockIds), false);
+        foreach (vtkIdType blockId, blockIds)
         {
           blockIdsTobeInvisible.append(blockId);
         }
