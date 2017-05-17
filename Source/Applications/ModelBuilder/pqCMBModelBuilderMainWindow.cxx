@@ -314,6 +314,10 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
   QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
     this->getThisCore(), SLOT(changeMeshRepresentationPickability(bool)));
 
+  QObject::connect(this->getMainDialog()->SelectByModels, SIGNAL(toggled(bool)),
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterModels(bool)));
+  QObject::connect(this->getMainDialog()->SelectByVolumes, SIGNAL(toggled(bool)),
+    qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterVolumes(bool)));
   QObject::connect(this->getMainDialog()->SelectByMeshes, SIGNAL(toggled(bool)),
     qtActiveObjects::instance().smtkSelectionManager().get(), SLOT(filterMeshes(bool)));
   QObject::connect(this->getMainDialog()->SelectByFaces, SIGNAL(toggled(bool)),
