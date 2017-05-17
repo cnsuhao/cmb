@@ -385,6 +385,7 @@ endif()
     FlipViewZ
     ShowCenter
     #Simple2dmBathymetryTest
+    SelectionFilterTest
     SelectionWithMeshFilterDisabled
     SelectObjectByBox
     Rotate2D
