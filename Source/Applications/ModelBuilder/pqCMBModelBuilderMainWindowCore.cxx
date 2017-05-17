@@ -1600,8 +1600,8 @@ pqSMTKMeshPanel* pqCMBModelBuilderMainWindowCore::meshPanel()
 {
   if (!this->Internal->MeshDock)
   {
-    this->Internal->MeshDock = new pqSMTKMeshPanel(
-      this->Internal->smtkModelManager, this->meshServiceMonitor(), this->parentWidget());
+    this->Internal->MeshDock = new pqSMTKMeshPanel(this->Internal->smtkModelManager,
+      this->meshServiceMonitor(), this->parentWidget(), this->modelPanel());
     // connect the entity selection from mesh panel, so that the model
     // tree view and render window will show entites being selected
   }

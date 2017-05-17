@@ -13,6 +13,7 @@
 #include <QPointer>
 
 class pqCMBModelManager;
+class pqSMTKModelPanel;
 class qtCMBMeshingMonitor;
 class qtRemusMesherSelector;
 class QTextEdit;
@@ -23,6 +24,8 @@ namespace smtk
 namespace extension
 {
 class qtUIManager;
+class qtModelEntityItem;
+class qtModelView;
 }
 }
 namespace smtk
@@ -44,8 +47,8 @@ class pqSMTKMeshPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  pqSMTKMeshPanel(
-    QPointer<pqCMBModelManager> mmgr, QPointer<qtCMBMeshingMonitor> monitor, QWidget* p);
+  pqSMTKMeshPanel(QPointer<pqCMBModelManager> mmgr, QPointer<qtCMBMeshingMonitor> monitor,
+    QWidget* p, pqSMTKModelPanel* mp);
   ~pqSMTKMeshPanel() override;
 
   QPointer<pqCMBModelManager> modelManager();
@@ -55,6 +58,10 @@ public:
 protected slots:
   void displayRequirements(const smtk::model::Model& model, const QString& workerName,
     const remus::proto::JobRequirements& reqs);
+
+  void onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem);
+  void onRequestEntityAssociation();
+  void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
 
   void clearActiveModel();
 
@@ -88,6 +95,9 @@ private:
 
   smtk::model::Model ActiveModel;
   remus::proto::JobRequirements ActiveRequirements;
+
+  // used for referencing qtModelView and highlighting entities
+  pqSMTKModelPanel* modelPanel;
 
   struct AttCacheKey
   {
