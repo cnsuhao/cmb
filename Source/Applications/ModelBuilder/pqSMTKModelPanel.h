@@ -85,11 +85,12 @@ public slots:
   void requestEntitySelection(const smtk::common::UUIDs& uuids);
   void cancelOperation(const smtk::model::OperatorPtr&);
   bool removeClosedSession(const smtk::model::SessionRef& sref);
-
-protected slots:
+  /// meshPanel also uses this function to update render view
   void onSelectionChangedUpdateRenderView(const smtk::model::EntityRefs& selEntites,
     const smtk::mesh::MeshSets& selMeshes, const smtk::model::DescriptivePhrases& DesPhrases,
     const std::string& incomingSelectionSource);
+
+protected slots:
   void selectEntityRepresentations(const smtk::model::EntityRefs& entities);
   void selectMeshRepresentations(const smtk::mesh::MeshSets&);
   void onFileItemCreated(smtk::extension::qtFileItem* fileItem);

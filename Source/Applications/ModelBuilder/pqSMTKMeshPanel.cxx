@@ -9,6 +9,9 @@
 //=========================================================================
 #include "pqSMTKMeshPanel.h"
 
+#include "SimBuilder/pqSMTKUIHelper.h"
+#include "pqSMTKModelPanel.h"
+
 #include "smtk/model/Manager.h"
 #include "smtk/model/Operator.h"
 
@@ -51,8 +54,8 @@
 using namespace std;
 using namespace smtk::model;
 
-pqSMTKMeshPanel::pqSMTKMeshPanel(
-  QPointer<pqCMBModelManager> modelManager, QPointer<qtCMBMeshingMonitor> monitor, QWidget* p)
+pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
+  QPointer<qtCMBMeshingMonitor> monitor, QWidget* p, pqSMTKModelPanel* mp)
   : QDockWidget(p)
   , ModelManager(modelManager)
   , MeshMonitor(monitor)
@@ -67,6 +70,8 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(
   , CachedAttributes()
 {
   this->setObjectName("smtkMeshDockWidget");
+
+  this->modelPanel = mp;
 
   //construct a widget that holds all the three sections
   //of the mesh panel. Since the meshWidget is parented to the panel
@@ -213,8 +218,80 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
     SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
       const smtk::model::DescriptivePhrases&, const smtk::extension::SelectionModifier,
       const std::string&)));
+  // connect signal and slot for qtModelEntityItem
+  QObject::connect(this->AttUIManager.get(),
+    SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)), this,
+    SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
 
   emit this->meshingPossible(true);
+}
+
+void pqSMTKMeshPanel::onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem)
+{
+  if (entItem)
+  {
+    // associated with selected entities
+    QObject::connect(
+      entItem, SIGNAL(requestEntityAssociation()), this, SLOT(onRequestEntityAssociation()));
+    // highlight hoovering entity
+    QObject::connect(entItem, SIGNAL(entityListHighlighted(const smtk::common::UUIDs&)), this,
+      SLOT(onRequestEntitySelection(const smtk::common::UUIDs&)));
+    // send selection to smtkSelectionManager
+    QObject::connect(entItem,
+      SIGNAL(sendSelectionFromModelEntityToSelectionManager(const smtk::model::EntityRefs&,
+        const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
+        const smtk::extension::SelectionModifier, const std::string)),
+      qtActiveObjects::instance().smtkSelectionManager().get(),
+      SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
+        const smtk::model::DescriptivePhrases&, const smtk::extension::SelectionModifier,
+        const std::string)));
+  }
+}
+
+void pqSMTKMeshPanel::onRequestEntityAssociation()
+{
+  smtk::extension::qtModelEntityItem* const entItem =
+    qobject_cast<smtk::extension::qtModelEntityItem*>(QObject::sender());
+  if (!entItem)
+  {
+    return;
+  }
+  if (this->modelPanel)
+  {
+    pqSMTKUIHelper::process_smtkModelEntityItemSelectionRequest(
+      entItem, this->modelPanel->modelView());
+  }
+}
+
+void pqSMTKMeshPanel::onRequestEntitySelection(const smtk::common::UUIDs& uuids)
+{
+  // used to hight entity in operator dialog
+
+  // combine current selecton
+  smtk::common::UUIDs uuidsCombined;
+  if (qtActiveObjects::instance().smtkSelectionManager())
+  {
+    qtActiveObjects::instance().smtkSelectionManager()->getSelectedEntities(uuidsCombined);
+  }
+  for (auto uuid : uuids)
+  {
+    uuidsCombined.insert(uuid);
+  }
+
+  // update render view + model tree
+  smtk::model::EntityRefs entities;
+  for (const auto& uuid : uuidsCombined)
+  {
+    smtk::model::EntityRef ent(this->modelManager()->managerProxy()->modelManager(), uuid);
+    entities.insert(ent);
+  }
+  if (this->modelPanel)
+  {
+    this->modelPanel->onSelectionChangedUpdateRenderView(
+      entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases(), std::string());
+    this->modelPanel->modelView()->onSelectionChangedUpdateModelTree(
+      entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases(), std::string());
+  }
 }
 
 void pqSMTKMeshPanel::clearActiveModel()
