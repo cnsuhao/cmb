@@ -14,6 +14,12 @@ import sys
 from pprint import pprint
 import smtk
 from smtk.simple import *
+if smtk.wrappingProtocol() == 'pybind11':
+    import smtk.bridge.cgm
+    import smtk.bridge.discrete
+    import smtk.bridge.exodus
+    import smtk.model
+    import smtk.attribute
 
 
 def verifyAssociation():
@@ -62,7 +68,11 @@ def verifyAssociation():
 
     # rs now contains the CRF
     resource = rs.get('simbuilder')
-    attSystem = smtk.attribute.System.CastTo(resource)
+    if smtk.wrappingProtocol() == "pybind11":
+        attSystem = resource
+    else:
+        attSystem = smtk.attribute.System.CastTo(resource)
+
     attributeTypes = attSystem.definitions()
 
     # list of tuples with attribute instance names and entity names
