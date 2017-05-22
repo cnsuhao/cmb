@@ -60,43 +60,23 @@ void qtRemusMesherSelector::rebuildModelList(bool shouldRebuild)
   smtk::model::EntityRefArray allModels =
     this->ModelManager->findEntitiesOfType(smtk::model::MODEL_ENTITY);
 
-  //First determine if the models need to be cleared
-  bool rebuild = true;
-  if (static_cast<int>(allModels.size()) == this->Internal->cb_models->count())
+  this->Internal->cb_models->blockSignals(true);
+  this->Internal->cb_models->clear();
+
+  //fill the model combo box based on the contents of the model Manager.
+  smtk::model::EntityRefArray::const_iterator i;
+  for (i = allModels.begin(); i != allModels.end(); ++i)
   {
-    rebuild = false;
-    int index = 0;
-    smtk::model::EntityRefArray::const_iterator i;
-    for (i = allModels.begin(); i != allModels.end() && rebuild == false; ++i, ++index)
+    smtk::model::Model model = i->as<smtk::model::Model>();
+    if (model.isValid())
     {
-      smtk::model::Model new_model = i->as<smtk::model::Model>();
-      smtk::model::Model current_model =
-        fromItemData<smtk::model::Model>(this->Internal->cb_models, index);
-      rebuild = !(new_model == current_model);
+      std::stringstream fancyModelName;
+      fancyModelName << i->name() << " (" << i->dimension() << "D)";
+      this->Internal->cb_models->addItem(
+        QString::fromStdString(fancyModelName.str()), QVariant::fromValue(model));
     }
   }
-
-  if (rebuild)
-  {
-    this->Internal->cb_models->blockSignals(true);
-    this->Internal->cb_models->clear();
-
-    //fill the model combo box based on the contents of the model Manager.
-    //todo, everytime a new model is added/removed we need to refresh this list
-    smtk::model::EntityRefArray::const_iterator i;
-    for (i = allModels.begin(); i != allModels.end(); ++i)
-    {
-      smtk::model::Model model = i->as<smtk::model::Model>();
-      if (model.isValid())
-      {
-        std::stringstream fancyModelName;
-        fancyModelName << i->name() << " (" << i->dimension() << "D)";
-        this->Internal->cb_models->addItem(
-          QString::fromStdString(fancyModelName.str()), QVariant::fromValue(model));
-      }
-    }
-    this->Internal->cb_models->blockSignals(false);
-  }
+  this->Internal->cb_models->blockSignals(false);
 
   this->modelChanged(this->Internal->cb_models->currentIndex());
 }
