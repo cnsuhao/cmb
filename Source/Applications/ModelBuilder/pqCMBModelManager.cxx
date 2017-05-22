@@ -827,7 +827,9 @@ public:
       }
     }
     if (meshRemoved)
+    {
       view->render();
+    }
   }
 
   // If the group has already been removed from the model, the modelInfo(entityID)
@@ -1851,6 +1853,19 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
   smtk::model::AuxiliaryGeometries newSeparateAuxGeos;
   smtk::common::UUIDs remSeparateAuxGeos;
 
+  // remove expunged mesh collection representations
+  smtk::attribute::MeshItem::Ptr remMeshes = result->findMesh("mesh_expunged");
+  if (remMeshes)
+  {
+    smtk::common::UUIDs meshcollections;
+    smtk::mesh::MeshList::const_iterator mit;
+    for (mit = remMeshes->begin(); mit != remMeshes->end(); ++mit)
+    {
+      meshcollections.insert((*mit).collection()->entity());
+    }
+    this->Internal->removeMeshRepresentations(pxy->modelManager()->meshes(), meshcollections, view);
+  }
+
   pqSMTKModelInfo* minfo = NULL;
   smtk::attribute::ModelEntityItem::Ptr remEntities = result->findModelEntity("expunged");
   smtk::model::EntityRefArray::const_iterator it;
@@ -1988,19 +2003,6 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
     }
   }
   this->Internal->removeModelRepresentations(remmodels, view, pxy);
-
-  // remove expunged mesh collection representations
-  smtk::attribute::MeshItem::Ptr remMeshes = result->findMesh("mesh_expunged");
-  if (remMeshes)
-  {
-    smtk::common::UUIDs meshcollections;
-    smtk::mesh::MeshList::const_iterator mit;
-    for (mit = remMeshes->begin(); mit != remMeshes->end(); ++mit)
-    {
-      meshcollections.insert((*mit).collection()->entity());
-    }
-    this->Internal->removeMeshRepresentations(pxy->modelManager()->meshes(), meshcollections, view);
-  }
 
   smtk::model::Models modelEnts =
     pxy->modelManager()->entitiesMatchingFlagsAs<smtk::model::Models>(smtk::model::MODEL_ENTITY);
