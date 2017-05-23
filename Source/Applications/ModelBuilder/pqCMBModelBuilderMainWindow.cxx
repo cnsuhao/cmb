@@ -20,6 +20,7 @@
 #include "pqColorToolbar.h"
 #include "pqContextMenuEventTranslator.h"
 #include "pqDataRepresentation.h"
+#include "pqDesktopServicesReaction.h"
 #include "pqEditColorMapReaction.h"
 #include "pqModelTreeViewEventPlayer.h"
 #include "pqModelTreeViewEventTranslator.h"
@@ -245,6 +246,7 @@ pqCMBModelBuilderMainWindow::pqCMBModelBuilderMainWindow()
   this->updateEnableState();
   this->initProjectManager();
   this->MainWindowCore->applyAppSettings();
+  this->customizeHelpMenu();
 }
 
 pqCMBModelBuilderMainWindow::~pqCMBModelBuilderMainWindow()
@@ -572,6 +574,37 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->action_Save_As->setVisible(false);
 
   this->getMainDialog()->action_Close_Session->setEnabled(false);
+}
+
+void pqCMBModelBuilderMainWindow::customizeHelpMenu()
+{
+#if defined(_WIN32) || defined(__APPLE__)
+  const QString docsPath = QCoreApplication::applicationDirPath() + "/../doc/";
+#else
+  const QString appdir = QCoreApplication::applicationDirPath();
+  const QString docsPath = QFileInfo(appdir).fileName() == "bin"
+    ?
+    /* w/o shared forwarding */ appdir + "/../share/cmb/doc/"
+    :
+    /* w/ shared forwarding  */ appdir + "/../../share/cmb/doc/";
+#endif
+
+  const QString iconPath = ":/pqWidgets/Icons/pdf.png";
+  Ui::qtCMBMainWindow* ui = this->getMainDialog();
+
+  QAction* actCMBGuide = ui->menu_Help->addAction(QIcon(iconPath), "CMB Guide");
+  actCMBGuide->setObjectName("actCMBGuide");
+  actCMBGuide->setShortcut(QKeySequence::HelpContents);
+  new pqDesktopServicesReaction(QUrl::fromLocalFile(docsPath + "CMBUsersGuide.pdf"), actCMBGuide);
+
+  QAction* actSMTKGuide = ui->menu_Help->addAction(QIcon(iconPath), "SMTK Guide");
+  actSMTKGuide->setObjectName("actSMTKGuide");
+  new pqDesktopServicesReaction(QUrl::fromLocalFile(docsPath + "SMTKUsersGuide.pdf"), actSMTKGuide);
+
+  // Remove the help action provided by the baseclass as it is currently broken
+  // in ModelBuilder (issue#149)
+  ui->menu_Help->removeAction(ui->action_Help);
+  ui->action_Help->deleteLater();
 }
 
 void pqCMBModelBuilderMainWindow::updateEnableState()

@@ -177,6 +177,10 @@ private:
 
   pqCMBModelBuilderMainWindowCore* getThisCore();
 
+  // Customizes the default help menu to expose the PDF user guides. This method
+  // also removes access to the legacy help panel provided by the base class.
+  void customizeHelpMenu();
+
   class vtkInternal;
   vtkInternal* Internal;
 };

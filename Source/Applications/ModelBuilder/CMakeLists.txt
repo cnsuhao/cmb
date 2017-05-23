@@ -357,7 +357,6 @@ endif()
   #Tests that don't work on Apple
 
   set (APPLE_EXCLUDE_TESTS
-    HelpDialog
     )
   set (APPLE_ONLY_TESTS
     )
@@ -436,7 +435,6 @@ endif()
 
   set (TESTS_WITHOUT_BASELINES
     AboutDialog
-    HelpDialog
     AttributeOptionalItemUI
     LoadCRFWithoutModel
     )
