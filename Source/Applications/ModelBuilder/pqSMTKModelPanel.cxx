@@ -603,7 +603,7 @@ void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
 {
   // used to hight entity in operator dialog
 
-  // combine current selecton
+  // combine current selection
   smtk::common::UUIDs uuidsCombined;
   if (qtActiveObjects::instance().smtkSelectionManager())
   {
@@ -623,8 +623,11 @@ void pqSMTKModelPanel::requestEntitySelection(const smtk::common::UUIDs& uuids)
   }
   this->onSelectionChangedUpdateRenderView(
     entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases(), std::string());
-  this->modelView()->onSelectionChangedUpdateModelTree(
-    entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases(), std::string());
+  if (this->modelView())
+  {
+    this->modelView()->onSelectionChangedUpdateModelTree(
+      entities, smtk::mesh::MeshSets(), smtk::model::DescriptivePhrases(), std::string());
+  }
 }
 
 void pqSMTKModelPanel::addMeshSelectionOperation(smtk::extension::qtMeshSelectionItem* meshItem,
