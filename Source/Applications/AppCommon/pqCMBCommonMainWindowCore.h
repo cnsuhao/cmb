@@ -60,6 +60,7 @@ class pqSettings;
 class qtCMBApplicationOptions;
 class qtCMBApplicationOptionsDialog;
 class qtCMBMeshingMonitor;
+class pqCMBRenderLog;
 
 class QAction;
 class QDockWidget;
@@ -189,6 +190,9 @@ public:
 
   /// Return true if the camera is in 2D mode
   bool isUsing2DCameraInteraction() const;
+
+  /// Return the Render Log
+  pqCMBRenderLog* renderLog();
 
 signals:
   void enableVariableToolbar(bool);
