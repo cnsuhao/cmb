@@ -27,7 +27,6 @@ class pqPipelineRepresentation;
 class pqView;
 class QAction;
 class QMenu;
-class pqMultiBlockInspectorPanel;
 class pqCMBModelManager;
 class pqSMTKModelPanel;
 class pqEditColorMapReaction;
@@ -51,12 +50,11 @@ public:
   ~pqModelBuilderViewContextMenuBehavior() override;
 
   void setModelPanel(pqSMTKModelPanel*);
-  pqMultiBlockInspectorPanel* multiBlockInspectorPanel();
 
-  void syncBlockVisibility(pqDataRepresentation* rep, const QList<unsigned int>& visBlocks,
+  void syncBlockVisibility(pqDataRepresentation* rep, const QList<vtkIdType>& visBlocks,
     bool visible, vtkIdType numBlocks);
   void syncBlockColor(
-    pqDataRepresentation* rep, const QList<unsigned int>& colorBlocks, const QColor&);
+    pqDataRepresentation* rep, const QList<vtkIdType>& colorBlocks, const QColor&);
   virtual void colorByEntity(const QString&);
   virtual void colorByAttribute(
     smtk::attribute::SystemPtr attSys, const QString& attdeftype, const QString& itemname);
@@ -66,7 +64,7 @@ public:
     const QMap<smtk::mesh::MeshSet, QColor>& colorEntities);
 
 signals:
-  void representationBlockPicked(pqDataRepresentation*, unsigned int, bool ctrlKey);
+  void representationBlockPicked(pqDataRepresentation*, vtkIdType, bool ctrlKey);
 
 protected slots:
   /// Called when a new view is added. We add actions to the widget for context
@@ -107,7 +105,7 @@ protected:
   /// called to build the context menu for the given representation. If the
   /// picked representation was a composite data set the block index of the
   /// selected block will be passed in blockIndex.
-  //virtual void buildMenu(pqDataRepresentation* repr, unsigned int blockIndex);
+  //virtual void buildMenu(pqDataRepresentation* repr, vtkIdType blockIndex);
 
   /// build the context menu based on model selections.
   virtual void buildMenuFromSelections();
@@ -117,9 +115,6 @@ protected:
   /// to eat away the right button release, leaving the render window in a
   /// dragging state.
   bool eventFilter(QObject* caller, QEvent* e) override;
-
-  /// return the name of the block from its flat index
-  QString lookupBlockName(unsigned int flatIndex, pqSMTKModelInfo* minfo) const;
 
   virtual void showAllEntitiesAndMeshes(
     const QList<pqSMTKModelInfo*>&, const QList<pqSMTKMeshInfo*>&);
@@ -134,10 +129,9 @@ protected:
   QMenu* m_contextMenu;
   QPoint m_clickPosition;
   QPointer<pqSMTKModelPanel> m_modelPanel;
-  pqMultiBlockInspectorPanel* m_dataInspector;
   QPointer<pqEditColorMapReaction> m_colormapReaction;
-  QMap<pqSMTKModelInfo*, QList<unsigned int> > m_selModelBlocks;
-  QMap<pqSMTKMeshInfo*, QList<unsigned int> > m_selMeshBlocks;
+  QMap<pqSMTKModelInfo*, QList<vtkIdType> > m_selModelBlocks;
+  QMap<pqSMTKMeshInfo*, QList<vtkIdType> > m_selMeshBlocks;
 
 private:
   Q_DISABLE_COPY(pqModelBuilderViewContextMenuBehavior)

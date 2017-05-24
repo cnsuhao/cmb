@@ -2,7 +2,6 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_Tools" />
   <pqevent object="qtCMBMainWindow/menubar/menu_Tools" command="activate" arguments="actionLock_View_Size" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/0QScrollBar0" command="mouseWheel" arguments="2,0,0,23,377" />
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/mesh/2d/test2D.2dm" />
@@ -32,4 +31,5 @@
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.3.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/3:0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/3:0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/ClearSelection" command="activate" arguments="" />
 </pqevents>

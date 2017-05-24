@@ -67,7 +67,6 @@
 #include "pqCMBSceneReader.h"
 #include "pqCMBSceneTree.h"
 #include "pqModelBuilderViewContextMenuBehavior.h"
-#include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKInfoPanel.h"
 #include "pqSMTKMeshInfo.h"
 #include "pqSMTKMeshPanel.h"
@@ -1092,8 +1091,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
     SLOT(onNewModelsCreationFinished()));
 
   QObject::connect(this->Internal->ViewContextBehavior,
-    SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)), this,
-    SLOT(selectRepresentationBlock(pqDataRepresentation*, unsigned int, bool)));
+    SIGNAL(representationBlockPicked(pqDataRepresentation*, vtkIdType, bool)), this,
+    SLOT(selectRepresentationBlock(pqDataRepresentation*, vtkIdType, bool)));
 
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
@@ -1229,7 +1228,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   // The result could be from multiple models.
   // For example, if Session(s) is clicked to change visibility or color,
   // all models under it should change
-  QMap<pqSMTKModelInfo*, QMap<bool, QList<unsigned int> > > visBlocks;
+  QMap<pqSMTKModelInfo*, QMap<bool, QList<vtkIdType> > > visBlocks;
   QMap<pqSMTKModelInfo*, QMap<smtk::model::EntityRef, QColor> > colorEntities;
   // Map for aux-geo-url visibility
   QMap<std::string, bool> auxGeoVisibles;
@@ -1346,7 +1345,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedMeshes(
   // The result could be from multiple collections.
   // For example, if Session(s) is clicked to change visibility or color,
   // all meshes under it should change
-  QMap<pqSMTKMeshInfo*, QMap<bool, QList<unsigned int> > > visBlocks;
+  QMap<pqSMTKMeshInfo*, QMap<bool, QList<vtkIdType> > > visBlocks;
   QMap<pqSMTKMeshInfo*, QMap<smtk::mesh::MeshSet, QColor> > colorEntities;
   QString lastColorMode;
 
@@ -1585,8 +1584,8 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
 {
   if (!this->Internal->ModelDock)
   {
-    this->Internal->ModelDock = new pqSMTKModelPanel(this->Internal->smtkModelManager,
-      this->parentWidget(), this->Internal->ViewContextBehavior->multiBlockInspectorPanel());
+    this->Internal->ModelDock =
+      new pqSMTKModelPanel(this->Internal->smtkModelManager, this->parentWidget());
     this->Internal->ViewContextBehavior->setModelPanel(this->Internal->ModelDock);
     if (this->Internal->SimBuilder)
     {
@@ -1637,7 +1636,7 @@ void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObje
 }
 
 void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
-  pqDataRepresentation* repr, unsigned int blockIndex, bool ctrlKey)
+  pqDataRepresentation* repr, vtkIdType blockIndex, bool ctrlKey)
 {
   if (!repr)
     return;

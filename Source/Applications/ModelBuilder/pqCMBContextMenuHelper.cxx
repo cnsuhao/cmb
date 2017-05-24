@@ -51,8 +51,7 @@
 
 const std::string pqCMBContextMenuHelper::s_internal_groupOpName = "entity group";
 
-bool pqCMBContextMenuHelper::getBlockIndex(
-  const smtk::model::EntityRef& eref, unsigned int& flatIndex)
+bool pqCMBContextMenuHelper::getBlockIndex(const smtk::model::EntityRef& eref, vtkIdType& flatIndex)
 {
   const smtk::model::IntegerList& prop(eref.integerProperty("block_index"));
   if (!prop.empty() && prop[0] >= 0)
@@ -65,9 +64,9 @@ bool pqCMBContextMenuHelper::getBlockIndex(
 
 /// Fetch children for volum and group entities.
 void pqCMBContextMenuHelper::accumulateChildGeometricEntities(
-  QSet<unsigned int>& blockIds, const smtk::model::EntityRef& toplevel)
+  QSet<vtkIdType>& blockIds, const smtk::model::EntityRef& toplevel)
 {
-  unsigned int bidx = -1;
+  vtkIdType bidx = -1;
   if (toplevel.isVolume())
   { // Add free cells
     smtk::model::Faces faces = toplevel.as<smtk::model::Volume>().faces();
@@ -172,9 +171,8 @@ bool pqCMBContextMenuHelper::validMeshColorMode(
 // return total number of blocks selected
 
 int pqCMBContextMenuHelper::getSelectedRepBlocks(const QList<pqSMTKModelInfo*>& selModels,
-  const QList<pqSMTKMeshInfo*>& selMeshes,
-  QMap<pqSMTKModelInfo*, QList<unsigned int> >& modelresult,
-  QMap<pqSMTKMeshInfo*, QList<unsigned int> >& meshresult)
+  const QList<pqSMTKMeshInfo*>& selMeshes, QMap<pqSMTKModelInfo*, QList<vtkIdType> >& modelresult,
+  QMap<pqSMTKMeshInfo*, QList<vtkIdType> >& meshresult)
 {
   int totalBlocks = 0;
   foreach (pqSMTKModelInfo* modinfo, selModels)
@@ -246,7 +244,7 @@ bool pqCMBContextMenuHelper::hasSessionOp(
 }
 
 bool pqCMBContextMenuHelper::startGroupOp(pqCMBModelManager* modMgr, pqSMTKModelInfo* minfo,
-  const std::string& optype, const QList<unsigned int>& addblocks,
+  const std::string& optype, const QList<vtkIdType>& addblocks,
   const smtk::model::Group& modifyGroup)
 {
   smtk::model::ManagerPtr mgr = modMgr->managerProxy()->modelManager();
@@ -303,7 +301,7 @@ bool pqCMBContextMenuHelper::startGroupOp(pqCMBModelManager* modMgr, pqSMTKModel
     bool hasFace = false, hasVol = false;
     smtk::model::EntityRefArray selEntRefs;
     smtk::common::UUID uid;
-    foreach (unsigned int bid, addblocks)
+    foreach (vtkIdType bid, addblocks)
     {
       uid = minfo->Info->GetModelEntityId(bid);
       smtk::model::EntityRef entref(mgr, uid);
@@ -385,7 +383,7 @@ void pqCMBContextMenuHelper::getAllEntityIds(
   for (smtk::model::Groups::iterator git = groups.begin(); git != groups.end(); ++git)
     entids.insert((*git).entity());
 
-  std::map<smtk::common::UUID, unsigned int>::const_iterator it =
+  std::map<smtk::common::UUID, vtkIdType>::const_iterator it =
     minfo->Info->GetUUID2BlockIdMap().begin();
   for (; it != minfo->Info->GetUUID2BlockIdMap().end(); ++it)
     entids.insert(it->first);
@@ -407,7 +405,7 @@ void pqCMBContextMenuHelper::getAllMeshSets(
   if (!dim1Group.is_empty())
     meshes.insert(dim1Group);
 
-  std::map<smtk::mesh::MeshSet, unsigned int>::const_iterator it =
+  std::map<smtk::mesh::MeshSet, vtkIdType>::const_iterator it =
     minfo->Info->GetMesh2BlockIdMap().begin();
   for (; it != minfo->Info->GetMesh2BlockIdMap().end(); ++it)
   {

@@ -21,7 +21,6 @@
 class vtkObject;
 class pqCMBModelManager;
 class pqDataRepresentation;
-class pqMultiBlockInspectorPanel;
 class pqOutputPort;
 class vtkSMIntVectorProperty;
 class vtkSMDoubleMapProperty;
@@ -45,7 +44,7 @@ class pqSMTKModelPanel : public QDockWidget
 {
   Q_OBJECT
 public:
-  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p, pqMultiBlockInspectorPanel* dataInspector);
+  pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p);
   ~pqSMTKModelPanel() override;
 
   pqCMBModelManager* modelManager();

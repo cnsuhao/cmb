@@ -47,7 +47,6 @@
 
 #include "pqCMBContextMenuHelper.h"
 #include "pqCMBModelManager.h"
-#include "pqMultiBlockInspectorPanel.h"
 #include "pqSMTKModelInfo.h"
 #include <pqActiveObjects.h>
 #include <pqApplicationCore.h>
@@ -100,8 +99,7 @@ public:
   QPointer<QShortcut> ClearSelection;
   bool ignorePropertyChange;
   smtk::model::EntityRefs previouslySelectedEntities;
-  QList<unsigned int> invisibleBlockIdsOfSelectionEntities;
-  QPointer<pqMultiBlockInspectorPanel> dataInspector;
+  QList<vtkIdType> invisibleBlockIdsOfSelectionEntities;
 
   // [meshItem, <opName, sessionId>]
   QMap<QPointer<smtk::extension::qtMeshSelectionItem>, QPair<std::string, smtk::common::UUID> >
@@ -109,7 +107,6 @@ public:
   QPointer<smtk::extension::qtMeshSelectionItem> CurrentMeshSelectItem;
 
   qInternal() { this->ModelLoaded = false; }
-  ~qInternal() { delete this->dataInspector; }
 
   pqOutputPort* setSelectionInput(
     vtkSMProxy* selectionSource, const std::set<vtkIdType>& ids, pqPipelineSource* source)
@@ -142,14 +139,12 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-pqSMTKModelPanel::pqSMTKModelPanel(
-  pqCMBModelManager* mmgr, QWidget* p, pqMultiBlockInspectorPanel* dataInspector)
+pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
   : QDockWidget(p)
 {
   this->Internal = new pqSMTKModelPanel::qInternal();
   this->setObjectName("smtkModelDockWidget");
   this->Internal->smtkManager = mmgr;
-  this->Internal->dataInspector = dataInspector;
 
   // see resetUI for selection logic detail
   QObject::connect(this,
@@ -206,9 +201,13 @@ bool pqSMTKModelPanel::changeSelEntitiesBlockVisibility(bool status)
   pqDataRepresentation* rep = pqActiveObjects::instance().activeRepresentation();
   if (this->Internal->invisibleBlockIdsOfSelectionEntities.size() > 0 && rep)
   {
-    this->Internal->dataInspector->onRepresentationChanged(rep);
-    this->Internal->dataInspector->setBlockVisibility(
-      this->Internal->invisibleBlockIdsOfSelectionEntities, status);
+    vtkSMIntVectorProperty* visProp =
+      vtkSMIntVectorProperty::SafeDownCast(rep->getProxy()->GetProperty("BlockVisibility"));
+    foreach (vtkIdType blockId, this->Internal->invisibleBlockIdsOfSelectionEntities)
+    {
+      vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), static_cast<int>(status));
+    }
+    rep->getProxy()->UpdateVTKObjects();
     return true;
   }
   return false;
@@ -367,7 +366,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   // mechanism paints in the order in which representations are modified. Turn off
   // selected blocks in the original representation to avoid z-fighting and overdraw.
 
-  QList<unsigned int> blockIdsTobeInvisible;
+  QList<vtkIdType> blockIdsTobeInvisible;
 
   for (smtk::model::EntityRefs::const_iterator it = entities.begin(); it != entities.end(); ++it)
   {
@@ -382,7 +381,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       }
       selRep->UpdateVTKObjects();
 
-      QSet<unsigned int> blockIds;
+      QSet<vtkIdType> blockIds;
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, *it);
 
       // set selected entities's blockId to be invisible, so that the selection color
@@ -390,13 +389,14 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
 
       if (it->dimension() < 3)
       {
-        this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
-        this->Internal->dataInspector->setBlockVisibility(
-          QList<unsigned int>::fromSet(blockIds), false);
-        foreach (unsigned int blockId, blockIds)
+        vtkSMIntVectorProperty* visProp =
+          vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
+        foreach (vtkIdType blockId, blockIds)
         {
+          vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), 0);
           blockIdsTobeInvisible.append(blockId);
         }
+        selRep->UpdateVTKObjects();
       }
 
       selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
@@ -424,16 +424,21 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
     {
       pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(entity);
 
-      QSet<unsigned int> blockIds;
+      QSet<vtkIdType> blockIds;
       // for cell entity it would just store blockId which is an intergerProperty
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, entity);
 
       if (minfo && blockIds.size() > 0) // only change visibility when model is still valid
       {
+        selRep = minfo->Representation->getProxy();
+        vtkSMIntVectorProperty* visProp =
+          vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
         // turn on previoulsySelected entities visibility
-        this->Internal->dataInspector->onRepresentationChanged(minfo->Representation);
-        this->Internal->dataInspector->setBlockVisibility(
-          QList<unsigned int>::fromSet(blockIds), true);
+        foreach (vtkIdType blockId, blockIds)
+        {
+          vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), 1);
+        }
+        selRep->UpdateVTKObjects();
       }
     }
   }

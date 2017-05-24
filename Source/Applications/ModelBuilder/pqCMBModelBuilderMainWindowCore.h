@@ -175,7 +175,7 @@ public slots:
   bool processOperatorResult(const smtk::model::OperatorResult& result,
     const smtk::model::SessionRef& sref, bool hasNewModels, bool bModelGeometryChanged,
     bool hasNewMeshes);
-  void selectRepresentationBlock(pqDataRepresentation*, unsigned int, bool ctrlKey);
+  void selectRepresentationBlock(pqDataRepresentation*, vtkIdType, bool ctrlKey);
   void changeMeshRepresentationPickability(bool status);
 
   // Called to show the settings dialog.

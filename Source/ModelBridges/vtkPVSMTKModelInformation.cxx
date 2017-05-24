@@ -17,6 +17,7 @@
 #include "vtkDataSet.h"
 #include "vtkObjectFactory.h"
 
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "vtkPVSMTKModelSource.h"
 
 vtkStandardNewMacro(vtkPVSMTKModelInformation);
@@ -48,7 +49,7 @@ void vtkPVSMTKModelInformation::CopyFromObject(vtkObject* obj)
 
   modelsource->GetUUID2BlockIdMap(this->UUID2BlockIdMap);
   this->BlockId2UUIDMap.clear();
-  std::map<smtk::common::UUID, unsigned int>::iterator it = this->UUID2BlockIdMap.begin();
+  std::map<smtk::common::UUID, vtkIdType>::iterator it = this->UUID2BlockIdMap.begin();
   for (; it != this->UUID2BlockIdMap.end(); ++it)
   {
     this->BlockId2UUIDMap[it->second] = it->first;

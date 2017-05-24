@@ -28,4 +28,5 @@
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/AssignColorsParameters/ChoosePaletteBtn" command="activate" arguments="" />
   <pqevent object="pqPresetDialog/gradients" command="setCurrent" arguments="14.0" />
   <pqevent object="pqPresetDialog/apply" command="activate" arguments="" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/ClearSelection" command="activate" arguments="" />
 </pqevents>
