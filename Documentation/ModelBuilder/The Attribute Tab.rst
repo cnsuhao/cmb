@@ -1,13 +1,12 @@
-
 .. _attribute-tab:
 .. index:: Attribute Tab
 
 The Attribute Tab
 =================
 
-This tab only appears once attribute data has been loaded.
+This tab only appears when attribute data has been loaded.
 
-Along the right side of the Attribute Tab is one or more tabs. These are defined and generated based off of the loaded attribute file.
+There are one or more tabs along the right side of the attribute tab. These are defined and generated based on the loaded attribute file.
 
 These tabs come in two variants: Attribute and Instanced.
 
@@ -41,5 +40,5 @@ The figure below shows a sample tab with a set of constants global to the entire
 	:align: center
 
 .. seealso::
-	
-	`SMTK Template File Reference <http://smtk.readthedocs.org/en/latest/userguide/attribute/file-syntax.html>`_  for populating the Attribute Tab 
+
+	`SMTK Template File Reference <http://smtk.readthedocs.org/en/latest/userguide/attribute/file-syntax.html>`_  for populating the Attribute Tab

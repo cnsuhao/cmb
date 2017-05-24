@@ -1,4 +1,4 @@
-
+.. _toolbars:
 .. index:: Toolbars
 
 Default Toolbar Buttons
@@ -16,13 +16,13 @@ File IO
 Camera Controls
 ^^^^^^^^^^^^^^^
 
-|pqResetCamera32| Reset the camera to the default view
+|pqResetCamera| Reset the camera to the default view
 
 |pqXMinus24| |pqXPlus24| |pqYMinus24| |pqYPlus24| |pqZMinus24| |pqZPlus24| Change the camera to the respective axis
 
-|pqZoomToBox24| Zoom the camera view to a user-selected box
+|pqZoomToSelection| Zoom the selected entity
 
-|pqDataScale| Zoom the camera view to a user-selected box and select the elements within the box
+|pqZoomToData| Zoom the camera view to a user-selected box and select the elements within the box
 
 |pqShowCenterAxes24| Show a 3D orientation indicator of the camera's center
 
@@ -39,12 +39,22 @@ Selection
 
 |pqSelect32| Allow the user to select an objects and faces with a box
 
+|Meshes| Allow the user to select meshes in the box selection
+
+|Models| Allow the user to select models in the box selection
+
+|Volumes| A filter to select volumes
+
+|Faces| A filter to select faces
+
+|Vertices| A filter to select vertices
+
 Color
 ^^^^^
 
-|ColorBy| Color each {entity, group, volume, attribute} with a unique color
+|ColorBy| Color each entity, group, volume, attribute with a unique color
 
-|pqScalarBar24| Show a legend of every item and its corresponding color
+|pqScalarBar24| Show a legend of the colors, only valid when the model is colored by attributes
 
 .. |CameraManipulationStyle| image:: images/CameraManipulationStyle.png
 .. |ColorBy| image:: images/ColorBy.png
@@ -53,7 +63,7 @@ Color
 .. |pqOpen32| image:: images/pqOpen32.png
 	:scale: 75%
 .. |pqPickCenter24| image:: images/pqPickCenter24.png
-.. |pqResetCamera32| image:: images/pqResetCamera32.png
+.. |pqResetCamera| image:: images/pqResetCamera.png
 	:scale: 75%
 .. |pqResetCenter24| image:: images/pqResetCenter24.png
 .. |pqScalarBar24| image:: images/pqScalarBar24.png
@@ -65,7 +75,11 @@ Color
 .. |pqYMinus24| image:: images/pqYMinus24.png
 .. |pqYPlus24| image:: images/pqYPlus24.png
 .. |pqZMinus24| image:: images/pqZMinus24.png
-.. |pqZoomToBox24| image:: images/pqZoomToBox24.png
-.. |pqDataScale| image:: images/pqDataScale.png
+.. |pqZoomToSelection| image:: images/pqZoomToSelection.png
+.. |pqZoomToData| image:: images/pqZoomToData.png
 .. |pqZPlus24| image:: images/pqZPlus24.png
-
+.. |Meshes| image:: images/Meshes.png
+.. |Models| image:: images/Models.png
+.. |Volumes| image:: images/Volumes.png
+.. |Faces| image:: images/Faces.png
+.. |Vertices| image:: images/Vertices.png

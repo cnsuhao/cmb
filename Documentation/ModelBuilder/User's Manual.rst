@@ -9,6 +9,3 @@ User's Manual
    Getting Started
    Loading and Saving Simulations
    Session Operators
-
-.. todo::
-	Add more use case documentation

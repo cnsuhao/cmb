@@ -1,88 +1,140 @@
+.. index:: discrete-session
+
+.. _discrete-session:
+
 Discrete Session
 ================
+The *discrete session* is backed by the `VTK <http://www.vtk.org/>`_. VTK data
+structures are used to represent the geometry. The model could be either 2D
+or 3D. In this section, we introduce some features of the *discrete session*,
+however, they are not necessarily exclusive to the it.
 
-Edit Bathymetry
----------------
-This allows for adding depth to 2D models. 
+Add Auxiliary Geometry
+----------------------
+As mentioned in :ref:`The Polygon Session <polygon-session>`, auxiliary geometry
+can be added to the model. To illustrate this, open up
+`ChesapeakeBayContour.cmb
+<https://gitlab.kitware.com/cmb/cmb-testing-data/tree/master/model/2d/cmb>`_,
+then click Model - Add Auxiliary Geometry, and select `ChesapeakeBay100x100
+<https://gitlab.kitware.com/cmb/cmb-testing-data/tree/master/dem>`_. You should
+see both the model and auxiliary geometry on the screen.
 
-Radius for Averaging Elevation: The search radius for every point in search for other points to modify
+.. findfigure:: DiscreteSessionAuxiliary.*
+	:align: center
+	:scale: 75%
 
-Set Highest/Lowest Elevation: Set a hard cap for the generated elevation
+Once we loaded an auxiliary geometry, we can do more things with it. For example,
+apply bathymetry. Before that, let us scale our model first, because in this
+particular example, the size of the model was scaled but the bathymetry data was
+not. Go to the Display tab and enter (200, 200, 1) in the "Scale".
 
-The "Remove Bathymetry" option reverts this elevation operation
+.. findfigure:: DiscreteSessionScale.*
+	:align: center
+	:scale: 50%
 
-Entity Group
+Apply Bathymetry
+----------------
+This allows for adding depth to 2D models. Right-click on the model in the entity
+tree, select Mesh - Apply Bathymetry. In the following window, select the operation:
+bathymetry can be applied to model or mesh or both. Here we choose model only.
+Then specify the auxiliary geometry to be used and the radius for averaging
+elevation, which is the search radius of every point to look for other points to
+modify. Highest/Lowest Elevation can be used to set a hard cap for the generated
+elevation.
+
+.. findfigure:: DiscreteSessionBathymetry.*
+	:align: center
+	:scale: 60%
+
+Toggle to 3D view, you can see the bathymetry is applied to the model as
+Z-coordinate. The "Remove Bathymetry" option reverts this elevation operation.
+
+Create Edges
 ------------
-Create Group: Creates a group based on the currently selected entities.
+This creates edges on the boundaries between faces. Use
+`smooth_surface.cmb <https://gitlab.kitware.com/cmb/cmb-testing-data/tree/master/model/3d/cmb>`_
+as an example, right-click on the model and select create edges, and specify the
+model in the next window, the edges will be automatically created at the
+intersections of faces. The following figures show the entity tree before and
+after the Create Edges operation.
 
-..Note:: 2D models create groups of edges, 3D models create groups of faces
+.. findfigure:: DiscreteSessionCreateEdges1.*
+	:align: center
+	:scale: 75%
 
-Modify Group: Add/remove entities from an existing group
-
-Remove Group: Remove an existing group
-
-Grow
-----
-(3D models only)
-
-Select triangles of a model.
-
-.. findfigure:: pqGrowCell32.*
-	:align: right
-
-Select triangle
-
-.. findfigure:: pqGrowCellPlus32.*
-
-Add to current selection
-
-.. findfigure:: pqGrowCellMinus32.*
-
-Remove from current selection
-
-.. findfigure:: pqCancel32.*
-
-Clear selection
-
-.. findfigure:: ExtractFacet24.*
-
-.. todo:: todo
-
-Feature Angle: The maximum angle difference for selection
-
-.. Note:: If a box select is used, the feature angle is ignored and all triangles in
-	the box selection are selected.
-
-Import
-------
-Shape files being imported can specify the boundary type
-
-Merge Face
-----------
-Combine faces of a model
-
-Mesh
-----
-.. todo:: todo
+.. findfigure:: DiscreteSessionCreateEdges2.*
+	:align: center
+	:scale: 75%
 
 Modify Edge
 -----------
-Using a box selection, create a new vertex
+Continue with the smooth_surface example, we introduce the Modify Edge operation.
+This operation can easily split an edge by adding a vertex on it. For example,
+box-select Edge 12 in the viewport, a new vertex will be added to where you
+selected the edge. Further look at the entity tree, and notice that a new Edge
+(Edge 18) has been created out of Edge 12.
 
-Read
+.. findfigure:: DiscreteSessionModifyEdge1.*
+	:align: center
+	:scale: 75%
+
+.. findfigure:: DiscreteSessionModifyEdge2.*
+	:align: center
+	:scale: 50%
+
+Furthermore, if you click on "Apply" on the Modify Edge panel again, the operation
+will be reverted.
+
+Grow
 ----
-Open files with the same functionality as File-Open
+Grow is used for selecting a group of adjacent faces: select one face as a seed,
+specify a criteria, ModelBuilder will pick the neighboring faces of the selected
+faces recursively, until the angle between the norms of the selected face and its
+neighbor exceeds the criteria. This feature only works in 3D.
 
-Set Property
-------------
-Set a property of the selected entity (e.g. visibility, color)
+For example, clicking on one small face on the outer cylindrical surface in `pmdc.cmb
+<https://gitlab.kitware.com/cmb/cmb-testing-data/tree/master/model/3d/cmb>`_
+in grow operation selects the whole cylindrical surface.
+
+.. findfigure:: DiscreteSessionGrow.*
+	:align: center
+	:scale: 75%
 
 Split Face
 ----------
-(3D only)
+Selecting a face and splitting it using the feature angle. The mechanism is
+similar to "Grow" where the feature angle is used as a criteria to detect the
+neighboring faces.
 
-Split all triangles that are greater than -feature angle- apart into separate faces.
+Merge Face
+----------
+This operation can be used to combine adjacent faces. Let us reopen
+smooth_surface.cmb and color the faces in the model so that we can easily see
+the face identities.
+
+.. findfigure:: DiscreteSessionMergeFace1.*
+	:align: center
+	:scale: 75%
+
+Now right-click on the model in the entity tree and select "merge face". Specify
+Face4 as the source cell and Face5 as the target cell and hit "Apply". As shown
+in the figure below, you can see that those two faces are merged by noticing
+they have the same color. (or you can check the entity list)
+
+.. findfigure:: DiscreteSessionMergeFace2.*
+	:align: center
+	:scale: 75%
+
+Entity Group
+------------
+This operation creates a group based on the currently selected entities.
+In 2D models it creates groups of edges, while in 3D models it creates groups of
+faces. The groups can be edited through Modify Group and Remove Group.
+
+Read
+----
+This opens a new model, which is equivalent to File-Open.
 
 Write
 -----
-Write out the selected entities. Same operation as File-Save Simulation but works on any entity (e.g. a face).
+This saves the current model.
