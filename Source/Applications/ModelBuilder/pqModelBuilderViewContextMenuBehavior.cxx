@@ -90,10 +90,11 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockVisibility(
       rep->setVisible(visible);
     }
 
-    foreach (vtkIdType block, visBlocks)
+    foreach (vtkIdType blockId, visBlocks)
     {
-      visProp->SetElement(block, visible);
+      vtkSMPropertyHelper(visProp).SetStatus(blockId, visible);
     }
+    rep->getProxy()->UpdateVTKObjects();
 
     if (!visible)
     {

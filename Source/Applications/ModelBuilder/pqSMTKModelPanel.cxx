@@ -203,10 +203,11 @@ bool pqSMTKModelPanel::changeSelEntitiesBlockVisibility(bool status)
   {
     vtkSMIntVectorProperty* visProp =
       vtkSMIntVectorProperty::SafeDownCast(rep->getProxy()->GetProperty("BlockVisibility"));
-    foreach (vtkIdType block, this->Internal->invisibleBlockIdsOfSelectionEntities)
+    foreach (vtkIdType blockId, this->Internal->invisibleBlockIdsOfSelectionEntities)
     {
-      visProp->SetElement(block, status);
+      vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), static_cast<int>(status));
     }
+    rep->getProxy()->UpdateVTKObjects();
     return true;
   }
   return false;
@@ -392,9 +393,10 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
           vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
         foreach (vtkIdType blockId, blockIds)
         {
-          visProp->SetElement(blockId, false);
+          vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), 0);
           blockIdsTobeInvisible.append(blockId);
         }
+        selRep->UpdateVTKObjects();
       }
 
       selmodelblocks[minfo].insert(blockIds.begin(), blockIds.end());
@@ -422,7 +424,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
     {
       pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(entity);
 
-      QSet<unsigned int> blockIds;
+      QSet<vtkIdType> blockIds;
       // for cell entity it would just store blockId which is an intergerProperty
       pqCMBContextMenuHelper::accumulateChildGeometricEntities(blockIds, entity);
 
@@ -432,7 +434,11 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
         vtkSMIntVectorProperty* visProp =
           vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
         // turn on previoulsySelected entities visibility
-        visProp->SetElement(blockId, true);
+        foreach (vtkIdType blockId, blockIds)
+        {
+          vtkSMPropertyHelper(visProp).SetStatus(static_cast<int>(blockId), 1);
+        }
+        selRep->UpdateVTKObjects();
       }
     }
   }
