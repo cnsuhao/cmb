@@ -17,6 +17,7 @@
 #include "vtkDataSet.h"
 #include "vtkObjectFactory.h"
 
+#include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "vtkPVSMTKModelSource.h"
 
 vtkStandardNewMacro(vtkPVSMTKModelInformation);

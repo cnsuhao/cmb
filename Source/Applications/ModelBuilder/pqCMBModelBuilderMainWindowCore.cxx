@@ -1091,8 +1091,8 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
     SLOT(onNewModelsCreationFinished()));
 
   QObject::connect(this->Internal->ViewContextBehavior,
-    SIGNAL(representationBlockPicked(pqDataRepresentation*, unsigned int, bool)), this,
-    SLOT(selectRepresentationBlock(pqDataRepresentation*, unsigned int, bool)));
+    SIGNAL(representationBlockPicked(pqDataRepresentation*, vtkIdType, bool)), this,
+    SLOT(selectRepresentationBlock(pqDataRepresentation*, vtkIdType, bool)));
 
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
@@ -1636,7 +1636,7 @@ void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObje
 }
 
 void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(
-  pqDataRepresentation* repr, unsigned int blockIndex, bool ctrlKey)
+  pqDataRepresentation* repr, vtkIdType blockIndex, bool ctrlKey)
 {
   if (!repr)
     return;

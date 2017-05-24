@@ -12,4 +12,5 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.580925,0.393983,2,0,0)" />
   <pqevent object="PipelineContextMenu" command="activate" arguments="Hide Selected" />
   <pqevent object="PipelineContextMenu" command="activate" arguments="Show All Models" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/ClearSelection" command="activate" arguments="" />
 </pqevents>
