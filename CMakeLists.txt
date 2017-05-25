@@ -30,7 +30,9 @@ if(BUILD_TESTING)
   include(CTest)
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+  ${CMAKE_CURRENT_SOURCE_DIR}/CMake
+  ${CMAKE_CURRENT_SOURCE_DIR}/Source/CMake)
 
 add_subdirectory(ThirdParty)
 add_subdirectory(Source)

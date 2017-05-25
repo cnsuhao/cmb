@@ -40,7 +40,43 @@ macro(cleanup_bundle app app_root libdir)
   file(GLOB_RECURSE dylibs ${libdir}/*.dylib)
   file(GLOB_RECURSE solibs ${libdir}/*.so)
 
-  file(INSTALL ${dylibs} ${solibs}
+  # third party libs are installed using the CMAKE_INSTALL_PREFIX. Let's include
+  # them too.
+  file(GLOB_RECURSE thirdparty_dylibs ${CMAKE_INSTALL_PREFIX}/lib/*.dylib)
+  file(GLOB_RECURSE thirdparty_solibs ${CMAKE_INSTALL_PREFIX}/lib/*.so)
+
+  list(APPEND dylibs ${thirdparty_dylibs})
+  list(APPEND solibs ${thirdparty_solibs})
+
+  list(REMOVE_DUPLICATES dylibs)
+  list(REMOVE_DUPLICATES solibs)
+
+  # some of the .dylibs are actually plugins. These need to be installed in the
+  # plugins directory so they are automatically found by the app. We also adjust
+  # their id to reflect this change.
+  foreach(lib IN LISTS dylibs)
+    # We assume that all plugins match the pattern "###Plugin.dylib". Plugins
+    # are put in the Libraries directory and symlinked to the plugins directory
+    # so the plugin manager can find them.
+    if (${lib} MATCHES "Plugin.dylib")
+      file(INSTALL ${lib}
+        DESTINATION ${app_root}/Contents/Libraries
+        USE_SOURCE_PERMISSIONS)
+      get_filename_component(libname ${lib} NAME)
+      execute_process(COMMAND install_name_tool -id
+        @executable_path/../Libraries/${libname}
+        ${app_root}/Contents/Libraries/${libname})
+      execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+        ${app_root}/Contents/Libraries/${libname}
+        ${app_root}/Contents/MacOS/plugins/${libname})
+    else ()
+      file(INSTALL ${lib}
+        DESTINATION ${app_root}/Contents/Libraries
+        USE_SOURCE_PERMISSIONS)
+      endif ()
+    endforeach ()
+
+  file(INSTALL ${solibs}
        DESTINATION ${app_root}/Contents/Libraries
        USE_SOURCE_PERMISSIONS)
 
