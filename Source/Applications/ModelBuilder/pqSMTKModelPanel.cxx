@@ -387,7 +387,7 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
       // set selected entities's blockId to be invisible, so that the selection color
       // is drawn properly for entities whose dimension are smaller than 3
 
-      if (it->dimension() < 3)
+      if (it->dimension() < 3 || it->hasTessellation())
       {
         vtkSMIntVectorProperty* visProp =
           vtkSMIntVectorProperty::SafeDownCast(selRep->GetProperty("BlockVisibility"));
@@ -420,7 +420,8 @@ void pqSMTKModelPanel::selectEntityRepresentations(const smtk::model::EntityRefs
   // turn on the visibility of previously selEntities that are no longer selected
   for (const auto& entity : this->Internal->previouslySelectedEntities)
   {
-    if (entities.find(entity) == entities.end() && (entity.dimension() < 3) && entity.visible())
+    if (entities.find(entity) == entities.end() &&
+      (entity.dimension() < 3 || entity.hasTessellation()) && entity.visible())
     {
       pqSMTKModelInfo* minfo = this->Internal->smtkManager->modelInfo(entity);
 
