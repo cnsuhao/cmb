@@ -68,6 +68,7 @@
 #include <pqFileDialog.h>
 
 #include "pqActiveObjects.h"
+#include "pqCMBRenderLog.h"
 #include "pqCMBTreeWidgetEventTranslator.h"
 #include "pqEventTranslator.h"
 #include "pqPVApplicationCore.h"
@@ -202,6 +203,7 @@ public:
     , StatusBar(0)
     , ProjectManager(NULL)
     , MeshingMonitor(NULL)
+    , RenderLog(new pqCMBRenderLog)
   {
   }
 
@@ -271,6 +273,8 @@ public:
   // Stack for holding the "saved" camera interaction modes  The bool
   // reflects the fact if the mode was 2D or not
   std::stack<bool> CameraInteractionStack;
+
+  QPointer<pqCMBRenderLog> RenderLog;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1014,6 +1018,11 @@ void pqCMBCommonMainWindowCore::enableCameraInteractionModeChanges(bool mode)
 bool pqCMBCommonMainWindowCore::isUsing2DCameraInteraction() const
 {
   return (this->Internal->CameraManipulationMode == pqCMBCommonMainWindowCore::vtkInternal::TwoD);
+}
+
+pqCMBRenderLog* pqCMBCommonMainWindowCore::renderLog()
+{
+  return this->Internal->RenderLog;
 }
 
 void pqCMBCommonMainWindowCore::set2DCameraInteraction()

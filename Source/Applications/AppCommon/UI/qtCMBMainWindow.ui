@@ -240,7 +240,16 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="margin">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
       <number>0</number>
      </property>
      <item>
@@ -253,18 +262,9 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="outputWidget">
-   <property name="windowTitle">
-    <string>Output Messages</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="pqOutputWidget" name="dockWidgetContents_3"/>
-  </widget>
   <action name="action_Save_Data">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqSave32.png</normaloff>:/pqWidgets/Icons/pqSave32.png</iconset>
    </property>
    <property name="text">
@@ -305,7 +305,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqSelect32.png</normaloff>:/pqWidgets/Icons/pqSelect32.png</iconset>
    </property>
    <property name="text">
@@ -317,7 +317,7 @@
   </action>
   <action name="actionReset_Camera">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqResetCamera.png</normaloff>:/pqWidgets/Icons/pqResetCamera.png</iconset>
    </property>
    <property name="text">
@@ -326,7 +326,7 @@
   </action>
   <action name="actionView_Positive_X">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqXPlus.png</normaloff>:/pqWidgets/Icons/pqXPlus.png</iconset>
    </property>
    <property name="text">
@@ -338,7 +338,7 @@
   </action>
   <action name="actionView_Negative_X">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqXMinus.png</normaloff>:/pqWidgets/Icons/pqXMinus.png</iconset>
    </property>
    <property name="text">
@@ -350,7 +350,7 @@
   </action>
   <action name="actionView_Positive_Y">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqYPlus.png</normaloff>:/pqWidgets/Icons/pqYPlus.png</iconset>
    </property>
    <property name="text">
@@ -362,7 +362,7 @@
   </action>
   <action name="actionView_Negative_Y">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqYMinus.png</normaloff>:/pqWidgets/Icons/pqYMinus.png</iconset>
    </property>
    <property name="text">
@@ -374,7 +374,7 @@
   </action>
   <action name="actionView_Positive_Z">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqZPlus.png</normaloff>:/pqWidgets/Icons/pqZPlus.png</iconset>
    </property>
    <property name="text">
@@ -386,7 +386,7 @@
   </action>
   <action name="actionView_Negative_Z">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqZMinus.png</normaloff>:/pqWidgets/Icons/pqZMinus.png</iconset>
    </property>
    <property name="text">
@@ -404,7 +404,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqShowCenterAxes.png</normaloff>:/pqWidgets/Icons/pqShowCenterAxes.png</iconset>
    </property>
    <property name="text">
@@ -419,7 +419,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqResetCenter.png</normaloff>:/pqWidgets/Icons/pqResetCenter.png</iconset>
    </property>
    <property name="text">
@@ -437,7 +437,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqPickCenter.png</normaloff>:/pqWidgets/Icons/pqPickCenter.png</iconset>
    </property>
    <property name="text">
@@ -460,7 +460,7 @@
   </action>
   <action name="action_Open_File">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqOpen32.png</normaloff>:/pqWidgets/Icons/pqOpen32.png</iconset>
    </property>
    <property name="text">
@@ -492,7 +492,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqScalarBar32.png</normaloff>:/pqWidgets/Icons/pqScalarBar32.png</iconset>
    </property>
    <property name="text">
@@ -563,7 +563,7 @@
   </action>
   <action name="action_Save_As">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqSave32.png</normaloff>:/pqWidgets/Icons/pqSave32.png</iconset>
    </property>
    <property name="text">
@@ -717,7 +717,7 @@
   </action>
   <action name="actionGrow_Clear">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqCancel32.png</normaloff>:/pqWidgets/Icons/pqCancel32.png</iconset>
    </property>
    <property name="text">
@@ -814,7 +814,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqZoomToSelection.png</normaloff>:/pqWidgets/Icons/pqZoomToSelection.png</iconset>
    </property>
    <property name="text">
@@ -899,7 +899,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqSurfaceSelectionPoint24.png</normaloff>:/pqWidgets/Icons/pqSurfaceSelectionPoint24.png</iconset>
    </property>
    <property name="text">
@@ -936,7 +936,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../Resources/Resources.qrc">
+    <iconset>
      <normaloff>:/cmb/FrustumSelectionCell.png</normaloff>:/cmb/FrustumSelectionCell.png</iconset>
    </property>
    <property name="text">
@@ -984,7 +984,7 @@
   </action>
   <action name="actionServerConnect">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqConnect32.png</normaloff>:/pqWidgets/Icons/pqConnect32.png</iconset>
    </property>
    <property name="text">
@@ -996,7 +996,7 @@
   </action>
   <action name="actionServerDisconnect">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqDisconnect32.png</normaloff>:/pqWidgets/Icons/pqDisconnect32.png</iconset>
    </property>
    <property name="text">
@@ -1105,7 +1105,7 @@
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqUndo32.png</normaloff>:/pqWidgets/Icons/pqUndo32.png</iconset>
    </property>
    <property name="text">
@@ -1117,7 +1117,7 @@
   </action>
   <action name="actionRedo">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqRedo32.png</normaloff>:/pqWidgets/Icons/pqRedo32.png</iconset>
    </property>
    <property name="text">
@@ -1218,7 +1218,7 @@
   </action>
   <action name="actionExtract_Subset">
    <property name="icon">
-    <iconset resource="../../Resources/Resources.qrc">
+    <iconset>
      <normaloff>:/cmb/ExtractSubset24.png</normaloff>:/cmb/ExtractSubset24.png</iconset>
    </property>
    <property name="text">
@@ -1322,7 +1322,7 @@
   </action>
   <action name="actionEdit_Color_Map">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqEditColor24.png</normaloff>:/pqWidgets/Icons/pqEditColor24.png</iconset>
    </property>
    <property name="text">
@@ -1361,7 +1361,7 @@
   </action>
   <action name="actionView_Rotate_90_cw">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqRotateCameraCW.png</normaloff>:/pqWidgets/Icons/pqRotateCameraCW.png</iconset>
    </property>
    <property name="text">
@@ -1373,7 +1373,7 @@
   </action>
   <action name="actionView_Rotate_90_ccw">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqRotateCameraCCW.png</normaloff>:/pqWidgets/Icons/pqRotateCameraCCW.png</iconset>
    </property>
    <property name="text">
@@ -1400,7 +1400,7 @@
   </action>
   <action name="actionZoomToSelection">
    <property name="icon">
-    <iconset resource="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc">
+    <iconset>
      <normaloff>:/pqWidgets/Icons/pqZoomToData.png</normaloff>:/pqWidgets/Icons/pqZoomToData.png</iconset>
    </property>
    <property name="text">
@@ -1612,14 +1612,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>pqOutputWidget</class>
-   <extends>QWidget</extends>
-   <header>pqOutputWidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../../Resources/Resources.qrc"/>
   <include location="../../../../../../paraview/src/Qt/Components/Resources/pqComponents.qrc"/>

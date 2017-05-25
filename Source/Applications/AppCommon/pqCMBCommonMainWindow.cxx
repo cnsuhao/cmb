@@ -24,6 +24,7 @@
 #include <QtDebug>
 
 #include "pqApplicationCore.h"
+#include "pqCMBRenderLog.h"
 #include "pqCMBRubberBandHelper.h"
 #include "pqCameraReaction.h"
 #include "pqColorMapEditor.h"
@@ -155,8 +156,6 @@ pqCMBCommonMainWindow::pqCMBCommonMainWindow()
 {
   this->MainWindowCore = NULL;
   this->Internal->UI.setupUi(this);
-  this->tabifyDockWidget(this->Internal->UI.dockWidget, this->Internal->UI.outputWidget);
-  this->Internal->UI.outputWidget->hide();
   this->Internal->RecentFilesMenu =
     new pqRecentFilesMenu(*this->Internal->UI.menuRecentFiles, this);
 
@@ -577,6 +576,10 @@ void pqCMBCommonMainWindow::initMainWindowCore()
   // setup some statusBar stuff
   // this->MainWindowCore->setupProcessBar(this->statusBar());
   this->onViewChanged();
+
+  // Connect the render log to the update log window.
+  QObject::connect(this->MainWindowCore->renderLog(), SIGNAL(renderLog(const smtk::io::Logger&)),
+    this, SLOT(updateLog(const smtk::io::Logger&)));
 
   //setup universal shortcuts for all the suite applications
   //these all must come after we call onViewChanged!
