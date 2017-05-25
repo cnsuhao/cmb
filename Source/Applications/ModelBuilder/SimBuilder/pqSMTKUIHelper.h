@@ -45,12 +45,12 @@
 namespace pqSMTKUIHelper
 {
 
-inline void process_smtkFileItemRequest(
+inline bool process_smtkFileItemRequest(
   smtk::extension::qtFileItem* fileItem, pqServer* server, QWidget* parent_Widget = NULL)
 {
   if (!fileItem)
   {
-    return;
+    return false;
   }
 
   QString filters;
@@ -95,7 +95,9 @@ inline void process_smtkFileItemRequest(
   {
     QStringList files = file_dialog.getSelectedFiles();
     fileItem->setInputValue(files[0]);
+    return true;
   }
+  return false;
 }
 
 inline void process_smtkModelEntityItemSelectionRequest(

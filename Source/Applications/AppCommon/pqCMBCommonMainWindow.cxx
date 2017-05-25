@@ -228,6 +228,9 @@ pqCMBCommonMainWindow::pqCMBCommonMainWindow()
   this->getMainDialog()->actionRedo->setShortcuts(QKeySequence::Redo);
   this->getMainDialog()->actionUndo->setShortcuts(QKeySequence::Undo);
 
+  // Turn off the "Save a copy" menu item by default (ModelBuilder will turn it on)
+  this->getMainDialog()->action_Save_A_Copy->setVisible(false);
+
 #ifdef __APPLE__
   this->Internal->prevNativeMenuBar = this->menuBar()->isNativeMenuBar();
 #endif
@@ -658,6 +661,7 @@ void pqCMBCommonMainWindow::updateEnableState(bool data_loaded)
 {
   this->Internal->UI.action_Save_Data->setEnabled(data_loaded);
   this->Internal->UI.action_Save_As->setEnabled(data_loaded);
+  this->Internal->UI.action_Save_A_Copy->setEnabled(data_loaded);
   this->Internal->UI.action_Close->setEnabled(data_loaded);
 
   this->Internal->UI.faceParametersDock->setEnabled(data_loaded);
@@ -692,6 +696,7 @@ void pqCMBCommonMainWindow::onEnableMenuItems(bool state)
   this->getMainDialog()->action_Close->setEnabled(state);
   this->getMainDialog()->action_Save_Data->setEnabled(state);
   this->getMainDialog()->action_Save_As->setEnabled(state);
+  this->getMainDialog()->action_Save_A_Copy->setEnabled(state);
   this->getMainDialog()->action_Export->setEnabled(state);
   this->getMainDialog()->menuRecentFiles->setEnabled(state);
 }

@@ -528,6 +528,9 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
 
 void pqCMBModelBuilderMainWindow::setupMenuActions()
 {
+  // Un-hide the "Save a copy" action in the "File" menu.
+  this->getMainDialog()->action_Save_A_Copy->setVisible(true);
+
   // Add actions to "File" menu.
   // Scene File actions
   this->getMainDialog()->menu_File->insertAction(
@@ -570,8 +573,14 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
   this->getMainDialog()->menu_File->insertSeparator(this->getMainDialog()->action_Exit);
 
   // The "Save" should go through "write" operation of sessions
-  this->getMainDialog()->action_Save_Data->setVisible(false);
-  this->getMainDialog()->action_Save_As->setVisible(false);
+  //this->getMainDialog()->action_Save_Data->setVisible(false);
+  //this->getMainDialog()->action_Save_As->setVisible(false);
+  QObject::connect(this->getMainDialog()->action_Save_Data, SIGNAL(triggered()),
+    this->getThisCore(), SLOT(onSave()));
+  QObject::connect(this->getMainDialog()->action_Save_As, SIGNAL(triggered()), this->getThisCore(),
+    SLOT(onSaveAs()));
+  QObject::connect(this->getMainDialog()->action_Save_A_Copy, SIGNAL(triggered()),
+    this->getThisCore(), SLOT(onSaveACopy()));
 
   this->getMainDialog()->action_Close_Session->setEnabled(false);
 }

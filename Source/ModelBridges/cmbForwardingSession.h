@@ -25,6 +25,8 @@ public:
 
   ~cmbForwardingSession() override;
 
+  virtual std::string defaultFileExtension(const smtk::model::Model& model) const;
+
   vtkSMModelManagerProxy* proxy() { return this->m_proxy; }
   virtual void setProxy(vtkSMModelManagerProxy* proxy);
 
