@@ -1782,6 +1782,10 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     result, sessId, hasNewModels, bModelGeometryChanged, hasNewMeshes, emptySessions);
   if (success)
   {
+    if (brOp->name() == "save smtk model")
+    { // Add loaded file to "recent" menu
+      emit fileOpenedSuccessfully(brOp->findFile("filename")->value(0));
+    }
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
     emit this->operationFinished(result, sref, hasNewModels, bModelGeometryChanged, hasNewMeshes);
   }
