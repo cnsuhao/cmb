@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cmb-resources>
+  <attribute id="simbuilder" role="instance">
+    <SMTK_AttributeSystem Version="2">
+      <Categories>
+        <Cat>Category1</Cat>
+        <Cat>Category2</Cat>
+      </Categories>
+      <Analyses>
+        <Analysis Type="Analysis1">
+          <Cat>Category2</Cat>
+        </Analysis>
+        <Analysis Type="Analysis2">
+          <Cat>Category1</Cat>
+        </Analysis>
+      </Analyses>
+      <Definitions>
+        <AttDef Type="Definition1" Label="Definition1" BaseType="" Version="0" Unique="true">
+          <ItemDefinitions>
+            <Double Name="d1" Label="Double 1:" Version="0" NumberOfRequiredValues="1" Units="d1Units">
+              <Categories>
+                <Cat>Category1</Cat>
+              </Categories>
+            </Double>
+          </ItemDefinitions>
+        </AttDef>
+        <AttDef Type="Definition2" Label="Definition2" BaseType="" Version="0" Unique="true">
+          <ItemDefinitions>
+            <String Name="s2" Label="String 2:" Version="0" NumberOfRequiredValues="1">
+              <Categories>
+                <Cat>Category2</Cat>
+              </Categories>
+            </String>
+            <Double Name="d2" Label="Double 2:" Version="0" NumberOfRequiredValues="1" Units="d2Units">
+              <Categories>
+                <Cat>Category1</Cat>
+              </Categories>
+            </Double>
+          </ItemDefinitions>
+        </AttDef>
+      </Definitions>
+      <Attributes>
+        <Att Name="Definition1" Type="Definition1">
+          <Items>
+            <Double Name="d1">1.234</Double>
+          </Items>
+        </Att>
+        <Att Name="Definition2" Type="Definition2">
+          <Items>
+            <Double Name="d2">3.333</Double>
+            <String Name="s2">Hello World</String>
+          </Items>
+        </Att>
+      </Attributes>
+      <Views>
+        <View Type="Group" Title="SimBuilder" TopLevel="true">
+          <DefaultColor>1., 1., 0.5, 1.</DefaultColor>
+          <InvalidColor>1, 0.5, 0.5, 1</InvalidColor>
+          <Views>
+            <View Title="Tab1" />
+            <View Title="Tab2" />
+          </Views>
+        </View>
+        <View Type="Instanced" Title="Tab1">
+          <InstancedAttributes>
+            <Att Name="Tab1" Type="Definition1" />
+          </InstancedAttributes>
+        </View>
+        <View Type="Attribute" Title="Tab2"  >
+          <AttributeTypes>
+            <Att Name="Tab2" Type="Definition2" />
+          </AttributeTypes>
+        </View>
+      </Views>
+    </SMTK_AttributeSystem>
+  </attribute>
+
+  <attribute id="export" role="template">
+    <SMTK_AttributeSystem Version="2">
+      <!--**********  Category and Analysis Information ***********-->
+      <!--**********  Attribute Definitions ***********-->
+      <Definitions>
+        <AttDef Type="ExportSpec" BaseType="" Version="0" Unique="true">
+          <ItemDefinitions>
+            <File Name="OutputFile" Label="Output file (*.bc)" Version="0" NumberOfRequiredValues="1" FileFilters="BC files (*.bc);;All files (*.*)">
+              <:anonymous />
+            </File>
+            <String Name="AnalysisTypes" Label="Analysis Types" Version="0" AdvanceLevel="99" NumberOfRequiredValues="1" Extensible="true" />
+            <File Name="PythonScript" Label="Python script" Version="0" AdvanceLevel="1" NumberOfRequiredValues="1" ShouldExist="true" FileFilters="Python files (*.py);;All files (*.*)">
+              <:anonymous />
+            </File>
+          </ItemDefinitions>
+        </AttDef>
+      </Definitions>
+      <!--**********  Attribute Instances ***********-->
+      <Attributes />
+      <!--********** Workflow Views ***********-->
+      <Views>
+        <View Type="Instanced" Title="ExportSpec" TopLevel="true">
+          <InstancedAttributes>
+            <Att Name="Options" Type="ExportSpec" />
+          </InstancedAttributes>
+        </View>
+      </Views>
+    </SMTK_AttributeSystem>
+  </attribute>
+</cmb-resources>

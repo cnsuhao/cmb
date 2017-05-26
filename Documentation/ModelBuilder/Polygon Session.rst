@@ -68,8 +68,29 @@ If you want to create an edge with exact coordinates, use Edge - Create from
 Points. A tabular will be available to enter point coordinates. If vertices are
 already created, you can form edges through them by using Edge - Create from
 Vertices. If we have auxiliary geometry imported, we can even create edge from
-the contours. See :ref:`The Discrete Session <discrete-session>` for more
-instructions.
+the contours. To show this, we first load an auxiliary geometry through
+Model - Add Auxiliary Geometry. See :ref:`The Discrete Session
+<discrete-session>` for more instructions. Here is a figure of an auxiliary
+geometry:
+
+.. findfigure:: ExtractEdgesStep1.*
+	:align: center
+	:scale: 75%
+
+Now, right-click on the model and select Edge - Create From Contours, in the
+following window specify the auxiliary geometry, and click "Launch Contour
+Preview". A contour generator will appear, which lets you to specify the
+opacity, contour value and minimum line length.
+
+|ExtractEdgesStep2| |ExtractEdgesStep3|
+
+It is a good idea to turn down the image opacity in the preview, so that you
+can see the contour more clearly. The "Contour Value" is the data value that you
+want to extract at; the generated line segments that is shorter than the
+"Minimum Line Length" will be trimmed off. Once the contours are computed, you
+can find the number of connected contours and number of points on those contours
+in the same window. Click "Accept" if you are satisfied with the result.
+You will see edges and vertices created in your polygon model.
 
 An edge can be reshaped using "Edge - Reshape". To do so, right-click on the
 model tree and select "Edge - Reshape". Then click on "select edge to edit" and
@@ -139,3 +160,9 @@ Bathymetry can be applied to mesh through Mesh - Apply Bathymetry. We save
 this feature for :ref:`The Discrete Session <discrete-session>` as well.
 
 .. |pqScalarBar24| image:: images/pqScalarBar24.png
+
+.. |ExtractEdgesStep2| image:: images/ExtractEdgesStep2.png
+	:width: 48%
+
+.. |ExtractEdgesStep3| image:: images/ExtractEdgesStep3.png
+	:width: 48%

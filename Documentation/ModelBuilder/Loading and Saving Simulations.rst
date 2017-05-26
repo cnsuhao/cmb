@@ -1,3 +1,4 @@
+.. _using-simulation-template:
 .. index:: Simulations
 
 Using Simulation Template
