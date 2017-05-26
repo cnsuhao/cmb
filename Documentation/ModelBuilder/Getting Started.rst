@@ -1,15 +1,9 @@
 Getting Started
 ===============
 This section aims to present the basic operations in ModelBuilder and familiarize
-the user with the logic of ModelBuilder using the following examples.
-
-+------------+---------------+
-| Filename   | Download Link |
-+============+===============+
-| test2D.cmb | test2D_       |
-+------------+---------------+
-| sample.crf | sample_       |
-+------------+---------------+
+the user with the logic of ModelBuilder using the following examples:
+`test2D.cmb <https://gitlab.kitware.com/cmb/cmb-testing-data/blob/master/model/2d/cmb/>`_
+and :download:`sample.crf <samples/sample.crf>`.
 
 When opening ModelBuilder, the window will look similar to the figure below:
 
@@ -163,5 +157,3 @@ saving it.
   :width: 48%
 .. |AttributeCategory2| image:: images/AttributeCategory2.png
   :width: 48%
-.. _test2D: https://gitlab.kitware.com/cmb/cmb-testing-data/blob/master/model/2d/cmb/
-.. _sample: https://gitlab.kitware.com/snippets/3

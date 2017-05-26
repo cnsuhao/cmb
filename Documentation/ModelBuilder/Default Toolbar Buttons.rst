@@ -8,31 +8,36 @@ ModelBuilder by default starts with four toolbars open: File IO, Camera Controls
 
 File IO
 ^^^^^^^
-|pqOpen32| Open a file.
-
-.. Note::
-	to open a file, a :ref:`plugin <load-plugins>` with the appropriate reader must be loaded
+|pqOpen32| Open a model or simulation template.
 
 Camera Controls
 ^^^^^^^^^^^^^^^
 
-|pqResetCamera| Reset the camera to the default view
-
-|pqXMinus24| |pqXPlus24| |pqYMinus24| |pqYPlus24| |pqZMinus24| |pqZPlus24| Change the camera to the respective axis
-
-|pqZoomToSelection| Zoom the selected entity
-
-|pqZoomToData| Zoom the camera view to a user-selected box and select the elements within the box
-
-|pqShowCenterAxes24| Show a 3D orientation indicator of the camera's center
-
-|pqResetCenter24| Reset the camera center to the default
-
-|pqPickCenter24| Allow the user to manually click and define a camera center
-
-|LinkCenterAndFocal| Make future manipulations of the camera view rotate around the current camera center.
-
 |CameraManipulationStyle| Toggle between 2D and 3D camera interaction.
+
+|pqResetCamera| Reset the camera to the default view.
+
+|pqZoomToData| Zoom the camera view to a user-selected box and select the elements within the box.
+
+|pqXMinus24| |pqXPlus24| |pqYMinus24| |pqYPlus24| |pqZMinus24| |pqZPlus24| Set the camera to the respective axis.
+
+|pqRotateCameraCW24| Rotate the camera view 90 degrees clockwise.
+
+|pqRotateCameraCCW24| Rotate the camera view 90 degrees counter-clockwise.
+
+|pqZoomToSelection| Zoom the selected entity.
+
+|AxesGrid| Show axes grid
+
+|pqShowCenterAxes24| Show a 3D orientation indicator of the camera's center.
+
+|pqResetCenter24| Reset the camera center to the default.
+
+|pqPickCenter24| Allow the user to manually click and define a camera center.
+
+|LinkCenterAndFocal| If checked, the camera focal point will also be changed to the
+rotation center when a new center is set with |pqPickCenter24|.
+
 
 Selection
 ^^^^^^^^^
@@ -46,6 +51,8 @@ Selection
 |Volumes| A filter to select volumes
 
 |Faces| A filter to select faces
+
+|Edges| A filter to select edges
 
 |Vertices| A filter to select vertices
 
@@ -82,4 +89,8 @@ Color
 .. |Models| image:: images/Models.png
 .. |Volumes| image:: images/Volumes.png
 .. |Faces| image:: images/Faces.png
+.. |Edges| image:: images/Edges.png
 .. |Vertices| image:: images/Vertices.png
+.. |AxesGrid| image:: images/AxesGrid.png
+.. |pqRotateCameraCW24| image:: images/pqRotateCameraCW24.png
+.. |pqRotateCameraCCW24| image:: images/pqRotateCameraCCW24.png
