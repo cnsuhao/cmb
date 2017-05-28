@@ -826,6 +826,13 @@ bool pqCMBModelBuilderMainWindowCore::onCloseSession(const smtk::model::SessionR
   return false;
 }
 
+/// Helper signalled whenever "save smtk model" is invoked successfully
+void pqCMBModelBuilderMainWindowCore::addModelFileToRecentList(const std::string& url)
+{
+  pqCMBRecentlyUsedResourceLoaderImplementatation::addModelFileToRecentResources(
+    this->getActiveServer(), QString::fromStdString(url));
+}
+
 /// Attempt to save the selected model(s)
 void pqCMBModelBuilderMainWindowCore::onSave()
 {
@@ -1152,6 +1159,10 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
     this->smtkSelectionManager()->setModelManager(
       this->Internal->smtkModelManager->managerProxy()->modelManager());
   }
+
+  QObject::connect(this->Internal->smtkModelManager,
+    SIGNAL(fileOpenedSuccessfully(const std::string&)), this,
+    SLOT(addModelFileToRecentList(const std::string&)));
 
   QObject::connect(this->Internal->smtkModelManager,
     SIGNAL(operationFinished(

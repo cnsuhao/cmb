@@ -121,6 +121,7 @@ signals:
   void sessionIsNowEmpty(const smtk::model::SessionRef&);
   void newModelCreated(const smtk::model::EntityRef& newModel);
   void newModelsCreationFinished();
+  void fileOpenedSuccessfully(const std::string& url);
 
 public slots:
   void clear();

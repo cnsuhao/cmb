@@ -165,19 +165,15 @@ public:
     bool loadOK = true;
     if (this->ModelInfos.find(model.entity()) == this->ModelInfos.end())
     {
-      // if this is a submodel, we don't want it to be child of the session.
-      // Instead its parent should be the child of the session.
+      auto sessModels = sref.models<std::set<smtk::model::Model> >();
       if (!model.parent().isModel())
-      {
-        model.setSession(smtk::model::SessionRef());
-        if (model.parent().isValid())
-        { // The model knows its session but the session didn't know about the model.
+      { // The model is a top-level model...
+        if (sessModels.find(model) == sessModels.end() || model.session() != sref)
+        { // ... but it isn't properly connection to the session
+          model.setSession(smtk::model::SessionRef());
           model.removeArrangement(smtk::model::SUBSET_OF);
           smtk::model::SessionRef mutableSession(sref);
           mutableSession.addModel(model);
-        }
-        else
-        {
           model.setSession(sref);
         }
       }
@@ -1782,6 +1778,10 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     result, sessId, hasNewModels, bModelGeometryChanged, hasNewMeshes, emptySessions);
   if (success)
   {
+    if (brOp->name() == "save smtk model")
+    { // Add loaded file to "recent" menu
+      emit fileOpenedSuccessfully(brOp->findFile("filename")->value(0));
+    }
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
     emit this->operationFinished(result, sref, hasNewModels, bModelGeometryChanged, hasNewMeshes);
   }

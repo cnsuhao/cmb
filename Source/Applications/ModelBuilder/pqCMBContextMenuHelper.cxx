@@ -67,7 +67,7 @@ void pqCMBContextMenuHelper::accumulateChildGeometricEntities(
   QSet<vtkIdType>& blockIds, const smtk::model::EntityRef& toplevel)
 {
   vtkIdType bidx = -1;
-  if (toplevel.isVolume())
+  if (toplevel.isVolume() && !toplevel.hasIntegerProperty("block_index"))
   { // Add free cells
     smtk::model::Faces faces = toplevel.as<smtk::model::Volume>().faces();
     // Find all boundaries of all free cells

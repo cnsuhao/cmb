@@ -117,6 +117,7 @@ public slots:
   void onCloseData() override { this->onCloseData(false); }
   void onCloseData(bool modelOnly);
   bool onCloseSession(const smtk::model::SessionRef&);
+  void addModelFileToRecentList(const std::string& url);
 
   /**\brief Attempt to save the active model.
     *
