@@ -438,6 +438,7 @@ endif()
     AboutDialog
     AttributeOptionalItemUI
     LoadCRFWithoutModel
+    UnsavedWorkWarningPref
     )
 
   set (TEST_WITH_POSTPROCESS

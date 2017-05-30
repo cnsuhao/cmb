@@ -702,6 +702,11 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
     return false;
   }
 
+  if (!this->Internal->AppOptions->askBeforeDiscardingChanges())
+  {
+    return false;
+  }
+
   std::string actionUpper = action;
   if (!actionUpper.empty())
   {
@@ -749,18 +754,24 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
     cancelDialog.setObjectName("UnsavedWork");
     auto lv = new QVBoxLayout;
     auto lh = new QHBoxLayout;
+    auto ld = new QHBoxLayout;
     if (numUnsaved > 5)
     {
       msg << "<li>... and " << (numUnsaved - 5) << " more.</li>";
     }
     msg << "</ul>Click cancel and save your data or " << action << " to continue.";
     auto message = new QLabel(msg.str().c_str(), &cancelDialog);
+    auto dontask = new QCheckBox("Do not ask again.");
     auto baction = new QPushButton(actionUpper.c_str());
     auto bcancel = new QPushButton("Cancel");
     lh->addWidget(baction);
     lh->addStretch(10);
     lh->addWidget(bcancel);
     lv->addWidget(message);
+    ld->addStretch(10);
+    ld->addWidget(dontask);
+    ld->addStretch(10);
+    lv->addLayout(ld);
     lv->addLayout(lh);
     cancelDialog.setLayout(lv);
     baction->setDefault(false);
@@ -770,8 +781,15 @@ bool pqCMBModelBuilderMainWindowCore::abortActionForUnsavedWork(
     bcancel->setObjectName("Cancel");
     cancelDialog.show();
     bcancel->setFocus();
+    dontask->setChecked(false); // We can't display the popup except in this state initially.
+    dontask->setToolTip("Check here and the popup will not warn you again until you\n"
+                        "re-enable the app-specific ModelBuilder preference named\n"
+                        "\"Ask before discarding unsaved changes.\"");
+    dontask->setFocusPolicy(Qt::ClickFocus); // Don't let users accidentally enable this.
     QObject::connect(baction, SIGNAL(released()), &cancelDialog, SLOT(accept()));
     QObject::connect(bcancel, SIGNAL(released()), &cancelDialog, SLOT(reject()));
+    QObject::connect(dontask, SIGNAL(toggled(bool)), this->Internal->AppOptions,
+      SLOT(setDoNotAskBeforeDiscardingChanges(bool)));
     if (cancelDialog.exec() == QDialog::Accepted)
     {
       return false;

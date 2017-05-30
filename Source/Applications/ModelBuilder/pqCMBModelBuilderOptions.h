@@ -49,9 +49,17 @@ public:
   bool sessionCentricModeling();
   bool createDefaultSessionModel();
   bool autoSwitchCameraManipulator();
+  bool askBeforeDiscardingChanges();
 
 protected slots:
   void chooseSimBuilderTemplateDirectory();
+
+  void setAskBeforeDiscardingChanges(bool doAsk);
+  // As a convenience for pqCMBModelBuilderMainWindowCore's popup, provide a variant of the above.
+  void setDoNotAskBeforeDiscardingChanges(bool dontAsk)
+  {
+    this->setAskBeforeDiscardingChanges(!dontAsk);
+  }
 
 private:
   class pqInternal;

@@ -80,6 +80,8 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget* widgetParent)
     SLOT(chooseSimBuilderTemplateDirectory()));
   QObject::connect(this->Internal->sessionCentricModelingBox, SIGNAL(stateChanged(int)), this,
     SIGNAL(changesAvailable()));
+  QObject::connect(this->Internal->askBeforeDiscardingChangesBox, SIGNAL(stateChanged(int)), this,
+    SIGNAL(changesAvailable()));
   QObject::connect(this->Internal->defaultSessionModelBox, SIGNAL(stateChanged(int)), this,
     SIGNAL(changesAvailable()));
   QObject::connect(this->Internal->autoSwitchManipulatorBox, SIGNAL(stateChanged(int)), this,
@@ -142,6 +144,9 @@ void pqCMBModelBuilderOptions::applyChanges()
   settings->setValue(
     "ModelBuilder/CreateDefaultSessionModel", this->Internal->defaultSessionModelBox->isChecked());
 
+  // ask before discarding unsaved work (close data, close session, or quit)
+  this->setAskBeforeDiscardingChanges(this->Internal->askBeforeDiscardingChangesBox->isChecked());
+
   // automatically switch camera manipulator mode
   settings->setValue("ModelBuilder/AutoSwitchCameraManipulator",
     this->Internal->autoSwitchManipulatorBox->isChecked());
@@ -170,6 +175,8 @@ void pqCMBModelBuilderOptions::resetChanges()
   this->Internal->dirSBTemplates->setText(this->defaultSimBuilderTemplateDirectory().c_str());
 
   this->Internal->sessionCentricModelingBox->setChecked(this->sessionCentricModeling());
+
+  this->Internal->askBeforeDiscardingChangesBox->setChecked(this->askBeforeDiscardingChanges());
 
   // create default session model
   this->Internal->defaultSessionModelBox->setChecked(this->createDefaultSessionModel());
@@ -232,6 +239,13 @@ bool pqCMBModelBuilderOptions::sessionCentricModeling()
   return settings->value("ModelBuilder/SessionCentricModeling", false).toBool();
 }
 
+bool pqCMBModelBuilderOptions::askBeforeDiscardingChanges()
+{
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  // default to true
+  return settings->value("ModelBuilder/AskBeforeDiscardingChanges", true).toBool();
+}
+
 bool pqCMBModelBuilderOptions::createDefaultSessionModel()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
@@ -258,4 +272,12 @@ void pqCMBModelBuilderOptions::chooseSimBuilderTemplateDirectory()
     this->Internal->dirSBTemplates->setText(dialog.getSelectedFiles()[0]);
     emit this->changesAvailable();
   }
+}
+
+void pqCMBModelBuilderOptions::setAskBeforeDiscardingChanges(bool doAsk)
+{
+  // Update both the settings and the UI:
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  settings->setValue("ModelBuilder/AskBeforeDiscardingChanges", doAsk);
+  this->Internal->askBeforeDiscardingChangesBox->setChecked(doAsk);
 }
