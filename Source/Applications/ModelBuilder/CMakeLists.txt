@@ -404,6 +404,7 @@ endif()
     MultipleSelections
     #Model1meshedBathymetryTest
     PolygonCreateEdge
+    PolygonReshapeEdge
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
