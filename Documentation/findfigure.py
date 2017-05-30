@@ -21,6 +21,8 @@ from docutils.parsers.rst import directives, states
 from docutils.parsers.rst.directives.images import Image, Figure
 import sphinx.builders
 
+rememberedApp = None
+
 
 class FindImageDirective(Image):
 
@@ -33,10 +35,7 @@ class FindImageDirective(Image):
         if not os.path.isabs(reference):
             # A relative path means we should search for the image
             # Find the builder-specific path-list to search:
-            bname = env.app.builder.name
-            if bname in sphinx.builders.BUILTIN_BUILDERS:
-                bname = sphinx.builders.BUILTIN_BUILDERS[bname][
-                    0]  # Get a simplified name (htmlhelp->html, etc)
+            bname = rememberedApp.builder.format if rememberedApp != None else env.app.builder.name
 
             if bname in env.app.config.findfigure_paths:
                 searchdirs = env.app.config.findfigure_paths[bname]
@@ -97,10 +96,7 @@ class FindFigureDirective(Figure):
         if not os.path.isabs(reference):
             # A relative path means we should search for the image
             # Find the builder-specific path-list to search:
-            bname = env.app.builder.name
-            if bname in sphinx.builders.BUILTIN_BUILDERS:
-                bname = sphinx.builders.BUILTIN_BUILDERS[bname][
-                    0]  # Get a simplified name (htmlhelp->html, etc)
+            bname = rememberedApp.builder.format if rememberedApp != None else env.app.builder.name
 
             if bname in env.app.config.findfigure_paths:
                 searchdirs = env.app.config.findfigure_paths[bname]
@@ -210,3 +206,4 @@ def setup(app):
                          }, 'env')
     app.add_directive('findimage', FindImageDirective)
     app.add_directive('findfigure', FindFigureDirective)
+    rememberedApp = app
