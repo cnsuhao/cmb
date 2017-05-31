@@ -420,6 +420,7 @@ void pqModelBuilderViewContextMenuBehavior::syncBlockColor(
         opacityProp->RemoveElement(block);
       }
     }
+    proxy->UpdateVTKObjects();
   }
 }
 

@@ -388,6 +388,7 @@ endif()
     SelectionFilterTest
     SelectionWithMeshFilterDisabled
     SelectObjectByBox
+    SwitchColorByOptions
     Rotate2D
     Rotate3D
     RendererPoints
