@@ -243,6 +243,11 @@ set_target_properties(ModelBuilder PROPERTIES AUTOMOC TRUE)
 #before the help has been generated
 add_dependencies(ModelBuilder CMBSuiteHelp)
 
+target_include_directories(ModelBuilder
+  PRIVATE
+    ${Boost_INCLUDE_DIRS}
+)
+
 target_link_libraries(ModelBuilder
 LINK_PRIVATE
   cmbAppCommon
@@ -254,6 +259,7 @@ LINK_PRIVATE
   smtkCore
   ModelBridge_Plugin
   vtkSMTKSourceExt
+  ${Boost_LIBRARIES}
   )
 
 #------------------------------------------------------------------------------

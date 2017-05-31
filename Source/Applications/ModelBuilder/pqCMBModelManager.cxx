@@ -78,6 +78,10 @@
 
 #include "vtksys/SystemTools.hxx"
 
+#define BOOST_ALL_DYN_LINK true
+#define BOOST_FILESYSTEM_VERSION 3
+#include "boost/filesystem.hpp"
+
 #include <QByteArray>
 #include <QDebug>
 #include <map>
@@ -1779,8 +1783,9 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
   if (success)
   {
     if (brOp->name() == "save smtk model")
-    { // Add loaded file to "recent" menu
-      emit fileOpenedSuccessfully(brOp->findFile("filename")->value(0));
+    { // Add saved file to "recent" menu
+      ::boost::filesystem::path savedFile(brOp->findFile("filename")->value(0));
+      emit fileOpenedSuccessfully(savedFile.make_preferred().string());
     }
     smtk::model::SessionRef sref(pxy->modelManager(), sessId);
     emit this->operationFinished(result, sref, hasNewModels, bModelGeometryChanged, hasNewMeshes);
