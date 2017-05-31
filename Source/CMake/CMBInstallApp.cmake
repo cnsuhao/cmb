@@ -51,6 +51,10 @@ macro(cleanup_bundle app app_root libdir)
   list(REMOVE_DUPLICATES dylibs)
   list(REMOVE_DUPLICATES solibs)
 
+  # We need to create the plugins directory before we symlink our plugins into
+  # it.
+  execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${app_root}/Contents/MacOS/plugins)
+
   # some of the .dylibs are actually plugins. These need to be installed in the
   # plugins directory so they are automatically found by the app. We also adjust
   # their id to reflect this change.
