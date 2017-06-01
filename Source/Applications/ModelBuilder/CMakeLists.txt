@@ -196,6 +196,7 @@ set(CMB_ALL_PLUGINS
     smtkRemusMeshOperatorPlugin
     smtkVTKOperatorsPlugin
     smtkPQOperatorViewsPlugin
+    smtkOpenCVPlugin
 )
 
 set(CMB_AUTOLOAD_PLUGINLIST)
