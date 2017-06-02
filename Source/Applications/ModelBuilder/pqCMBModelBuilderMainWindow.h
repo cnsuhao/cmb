@@ -76,6 +76,8 @@ protected slots:
   // Description:
   // slots for update toobar_selection from mesh togglability
   void updateToolBar_Selection(bool checked);
+  // slots for update toobar_selection from operator
+  void updateToolBar_Selection(const smtk::model::OperatorPtr& brOp);
 
   // Description:
   // Slots for smtk related signals.

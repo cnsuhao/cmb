@@ -41,7 +41,13 @@
 #include "pqSetName.h"
 #include "pqTestUtility.h"
 #include "pqWaitCursor.h"
+#include "smtk/attribute/ModelEntityItemDefinition.h"
+#include "smtk/extension/qt/qtModelOperationWidget.h"
+#include "smtk/extension/qt/qtOperatorDockWidget.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
+#include "smtk/model/EntityTypeBits.h"
+#include "smtk/model/Group.h"
+#include "smtk/model/Operator.h"
 
 #ifdef ENABLE_JOBS_PANEL
 #include "qtJobsPanel.h"
@@ -94,7 +100,6 @@
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 #include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
-#include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtModelView.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
@@ -927,6 +932,11 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
             smtk::extension::qtMeshSelectionItem*, const std::string&, const smtk::common::UUID&)),
     Qt::UniqueConnection);
 
+  // update selection filter toolbar when switching operators
+  QObject::connect(this->getThisCore()->modelPanel()->modelView()->operatorsWidget(),
+    SIGNAL(operatorSet(const smtk::model::OperatorPtr&)), this,
+    SLOT(updateToolBar_Selection(const smtk::model::OperatorPtr&)), Qt::UniqueConnection);
+
   // If there is no dock panel yet, this is the first time, so init
   // default panels
   this->initUIPanel(qtCMBPanelsManager::MODEL);
@@ -1550,6 +1560,55 @@ void pqCMBModelBuilderMainWindow::updateToolBar_Selection(bool checked)
       this->getMainDialog()->SelectByEdges->setChecked(this->Internal->toolBar_Selection[3]);
       this->getMainDialog()->SelectByVertices->setChecked(this->Internal->toolBar_Selection[4]);
       this->Internal->toolBar_Selection.clear();
+    }
+  }
+}
+
+void pqCMBModelBuilderMainWindow::updateToolBar_Selection(const smtk::model::OperatorPtr& brOp)
+{
+  if (brOp && brOp->specification())
+  { // FIXME it should recursively update all modelEntityItems in the attribute
+    // assigned to haocheng. Deadline June 8th 2017
+    if (smtk::attribute::ModelEntityItemPtr association = brOp->specification()->associations())
+    {
+      // reset toolbar
+      this->getMainDialog()->SelectByModels->setChecked(false);
+      this->getMainDialog()->SelectByVolumes->setChecked(false);
+      this->getMainDialog()->SelectByFaces->setChecked(false);
+      this->getMainDialog()->SelectByEdges->setChecked(false);
+      this->getMainDialog()->SelectByVertices->setChecked(false);
+      this->getMainDialog()->SelectByMeshes->setChecked(false);
+
+      smtk::model::BitFlags mask = association->definition()->membershipMask();
+
+      if (smtk::model::doesMaskAllowModelEntities(mask))
+      {
+        this->getMainDialog()->SelectByModels->setChecked(true);
+      }
+      if (smtk::model::doesMaskAllowVolumeEntities(mask))
+      {
+        this->getMainDialog()->SelectByVolumes->setChecked(true);
+      }
+      if (smtk::model::doesMaskAllowFaceEntities(mask))
+      {
+        this->getMainDialog()->SelectByFaces->setChecked(true);
+      }
+      if (smtk::model::doesMaskAllowEdgeEntities(mask))
+      {
+        this->getMainDialog()->SelectByEdges->setChecked(true);
+      }
+      if (smtk::model::doesMaskAllowVertexEntities(mask))
+      {
+        this->getMainDialog()->SelectByVertices->setChecked(true);
+      }
+      if ((smtk::model::doesMaskAllowCellEntities(mask)) && !(mask & smtk::model::ANY_DIMENSION))
+      { // check a purely cell membership mask
+        this->getMainDialog()->SelectByModels->setChecked(true);
+        this->getMainDialog()->SelectByVolumes->setChecked(true);
+        this->getMainDialog()->SelectByFaces->setChecked(true);
+        this->getMainDialog()->SelectByEdges->setChecked(true);
+        this->getMainDialog()->SelectByVertices->setChecked(true);
+      }
     }
   }
 }
