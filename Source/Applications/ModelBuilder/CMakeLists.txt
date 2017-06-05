@@ -371,6 +371,7 @@ endif()
 
   set (XML_TESTS_WITH_BASELINES
     AssignColors1
+    AuxiliaryPolydata
     AxesGrid
     CloseModel
     ChangeVisibilityAfterSelection
@@ -412,7 +413,15 @@ endif()
     MultipleSelections
     #Model1meshedBathymetryTest
     PolygonCreateEdge
+    PolygonCreateEdgeFromPoints
+    PolygonCreateFaceDisjoint
+    PolygonCreateFaceFromElevation
+    PolygonCreateFaceFromImage
+    PolygonCreateFaceNested
+    PolygonCreateFaceOverlap
+    PolygonCreateFaceSimple
     PolygonReshapeEdge
+    PolygonSplitEdge
     ViewportZoom
     ObjectlessCenterRotation
     RotateAlongPickedCenter
