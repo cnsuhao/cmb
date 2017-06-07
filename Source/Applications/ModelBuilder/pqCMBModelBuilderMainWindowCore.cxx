@@ -84,6 +84,7 @@
 #include "smtk/attribute/StringItem.h"
 #include "smtk/attribute/System.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
+#include "smtk/extension/paraview/operators/smtkExportModelView.h"
 #include "smtk/extension/paraview/operators/smtkSaveModelView.h"
 #include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtAttributeDisplay.h"
@@ -169,8 +170,8 @@ public:
     }
   }
 
-  /// Bring up the "save smtk model" operator panel and fill in defaults
-  smtkSaveModelView* prepareSaveOp(pqCMBModelBuilderMainWindowCore* self)
+  /// Bring up the "save smtk model" or "export smtk model" operator panel and fill in defaults
+  smtkModelIOView* prepareSaveOp(pqCMBModelBuilderMainWindowCore* self, const std::string& opname)
   {
     smtk::shared_ptr<smtk::extension::qtSelectionManager> selManager =
       qtActiveObjects::instance().smtkSelectionManager();
@@ -205,12 +206,12 @@ public:
 
     smtk::extension::qtModelOperationWidget* mow = this->ModelDock->modelView()->operatorsWidget();
     smtk::model::SessionRef sref = modelsToSave.begin()->session();
-    if (!mow->setCurrentOperator("save smtk model", sref.session()))
+    if (!mow->setCurrentOperator(opname.c_str(), sref.session()))
     {
       std::cout << "  No operator!\n";
     }
-    smtk::model::OperatorPtr saveOp = mow->existingOperator("save smtk model");
-    auto opview = dynamic_cast<smtkSaveModelView*>(mow->existingOperatorView("save smtk model"));
+    smtk::model::OperatorPtr saveOp = mow->existingOperator(opname);
+    auto opview = dynamic_cast<smtkModelIOView*>(mow->existingOperatorView(opname));
     //saveOp->findString("mode")->setDiscreteIndex(0, 0);
     mv->requestOperation(saveOp, true);
 
@@ -854,8 +855,7 @@ void pqCMBModelBuilderMainWindowCore::addModelFileToRecentList(const std::string
 /// Attempt to save the selected model(s)
 void pqCMBModelBuilderMainWindowCore::onSave()
 {
-  std::cout << "Save:\n";
-  auto opview = this->Internal->prepareSaveOp(this);
+  auto opview = this->Internal->prepareSaveOp(this, "save smtk model");
 
   if (opview)
   {
@@ -868,8 +868,7 @@ void pqCMBModelBuilderMainWindowCore::onSave()
 
 void pqCMBModelBuilderMainWindowCore::onSaveAs()
 {
-  std::cout << "Save as:\n";
-  auto opview = this->Internal->prepareSaveOp(this);
+  auto opview = this->Internal->prepareSaveOp(this, "save smtk model");
 
   if (opview)
   {
@@ -880,10 +879,9 @@ void pqCMBModelBuilderMainWindowCore::onSaveAs()
   }
 }
 
-void pqCMBModelBuilderMainWindowCore::onSaveACopy()
+void pqCMBModelBuilderMainWindowCore::onExport()
 {
-  std::cout << "Save a copy:\n";
-  auto opview = this->Internal->prepareSaveOp(this);
+  auto opview = this->Internal->prepareSaveOp(this, "export smtk model");
 
   if (opview)
   {

@@ -133,7 +133,7 @@ public slots:
   void onSaveAs();
 
   /// Attempt to save the selected model(s) to a new file, copying all related data.
-  void onSaveACopy();
+  void onExport();
 
   void clearSimBuilder();
   void resetSimulationModel();
