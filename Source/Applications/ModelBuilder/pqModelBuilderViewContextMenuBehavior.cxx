@@ -149,6 +149,10 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     modinfo = this->m_modelPanel->modelManager()->modelInfo(activeRep);
     meshinfo = this->m_modelPanel->modelManager()->meshInfo(activeRep);
   }
+  if (!activeRep)
+  {
+    return; // nothing to do
+  }
 
   if (!modinfo && !meshinfo)
     return;
