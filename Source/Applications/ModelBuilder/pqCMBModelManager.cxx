@@ -12,6 +12,7 @@
 
 #include "vtkDataObject.h"
 #include "vtkDiscreteLookupTable.h"
+#include "vtkNew.h"
 #include "vtkPVDataInformation.h"
 #include "vtkPVSMTKMeshInformation.h"
 #include "vtkPVSMTKModelInformation.h"
@@ -24,6 +25,7 @@
 #include "vtkSMRepresentationProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkSMTransferFunctionManager.h"
 #include "vtkSmartPointer.h"
 
 #include "SimBuilder/pqSMTKUIHelper.h"
@@ -885,6 +887,11 @@ public:
     this->Entity2Models.clear();
     this->ModelInfos.clear();
     this->AuxGeoInfos.clear();
+    //FIXME: if CMB uses multiple views, use a loop here. See pqDeleteReaction::deleteSource
+    // clear all scalar bars in the rendering window
+    vtkNew<vtkSMTransferFunctionManager> tmgr;
+    tmgr->UpdateScalarBars(pqActiveObjects::instance().activeView()->getProxy(),
+      vtkSMTransferFunctionManager::HIDE_UNUSED_SCALAR_BARS);
   }
 
   qInternal(pqServer* server)

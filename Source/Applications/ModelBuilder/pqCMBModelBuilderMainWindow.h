@@ -114,6 +114,7 @@ protected slots:
 
   void onLoadScene();
   void onUnloadScene();
+  void onScalarBarChanged();
   void onSceneFileLoaded();
 
   // Description
