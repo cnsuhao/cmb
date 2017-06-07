@@ -533,8 +533,8 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
 
 void pqCMBModelBuilderMainWindow::setupMenuActions()
 {
-  // Un-hide the "Save a copy" action in the "File" menu.
-  this->getMainDialog()->action_Save_A_Copy->setVisible(true);
+  // Un-hide the "Export Model" action in the "File" menu.
+  this->getMainDialog()->action_Export_Model->setVisible(true);
 
   // Add actions to "File" menu.
   // Scene File actions
@@ -584,8 +584,8 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
     this->getThisCore(), SLOT(onSave()));
   QObject::connect(this->getMainDialog()->action_Save_As, SIGNAL(triggered()), this->getThisCore(),
     SLOT(onSaveAs()));
-  QObject::connect(this->getMainDialog()->action_Save_A_Copy, SIGNAL(triggered()),
-    this->getThisCore(), SLOT(onSaveACopy()));
+  QObject::connect(this->getMainDialog()->action_Export_Model, SIGNAL(triggered()),
+    this->getThisCore(), SLOT(onExport()));
 
   this->getMainDialog()->action_Close_Session->setEnabled(false);
 }

@@ -195,7 +195,7 @@
     <addaction name="separator"/>
     <addaction name="action_Save_Data"/>
     <addaction name="action_Save_As"/>
-    <addaction name="action_Save_A_Copy"/>
+    <addaction name="action_Export_Model"/>
     <addaction name="action_Export"/>
     <addaction name="action_Close"/>
     <addaction name="action_Close_Session"/>
@@ -571,13 +571,13 @@
     <string>Save As</string>
    </property>
   </action>
-  <action name="action_Save_A_Copy">
+  <action name="action_Export_Model">
    <property name="icon">
     <iconset resource="../../Resources/Resources.qrc">
      <normaloff>:/cmb/pqSave32.png</normaloff>:/cmb/pqSave32.png</iconset>
    </property>
    <property name="text">
-    <string>Save A Copy</string>
+    <string>Export Model</string>
    </property>
   </action>
   <action name="actionCreate_Omicron_Input">
