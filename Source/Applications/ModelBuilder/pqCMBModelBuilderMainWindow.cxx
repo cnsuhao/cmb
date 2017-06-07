@@ -66,6 +66,7 @@
 #include "vtkSMRenderViewProxy.h"
 #include "vtkSMSessionProxyManager.h"
 #include "vtkSMSourceProxy.h"
+#include "vtkSMTransferFunctionManager.h"
 #include "vtkStringArray.h"
 #include "vtkVariant.h"
 
@@ -169,6 +170,7 @@ public:
   QStringList TextureFiles;
   QPointer<QAction> ChangeTextureAction;
   QMap<qtCMBPanelsManager::PanelType, QDockWidget*> CurrentDockWidgets;
+  pqScalarBarVisibilityReaction* ScalarBar;
 
   template <typename T, typename U>
   void createSessionCentricMenus(T core, U self)
@@ -492,6 +494,14 @@ void pqCMBModelBuilderMainWindow::onUnloadScene()
   this->updateEnableState();
 }
 
+void pqCMBModelBuilderMainWindow::onScalarBarChanged()
+{
+  //FIXME: if CMB uses multiple views, use a loop here. See pqDeleteReaction::deleteSource
+  vtkNew<vtkSMTransferFunctionManager> tmgr;
+  tmgr->UpdateScalarBars(pqActiveObjects::instance().activeView()->getProxy(),
+    vtkSMTransferFunctionManager::HIDE_UNUSED_SCALAR_BARS);
+}
+
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
   this->Internal->Model2DToolbar = NULL;
@@ -516,7 +526,10 @@ void pqCMBModelBuilderMainWindow::setupToolbars()
     SLOT(onColorByModeChanged(const QString&)));
 
   colorToolbar->addAction(this->getMainDialog()->actionScalarBarVisibility);
-  new pqScalarBarVisibilityReaction(this->getMainDialog()->actionScalarBarVisibility);
+  this->Internal->ScalarBar =
+    new pqScalarBarVisibilityReaction(this->getMainDialog()->actionScalarBarVisibility);
+  QObject::connect(
+    this->Internal->ScalarBar->parentAction(), SIGNAL(changed()), this, SLOT(onScalarBarChanged()));
 
   //  colorToolbar->addAction(this->getMainDialog()->actionEdit_Color_Map);
   //  new pqEditColorMapReaction(

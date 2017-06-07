@@ -1824,6 +1824,7 @@ void pqCMBModelBuilderMainWindowCore::changeMeshRepresentationPickability(bool s
   for (int i = 0; i < meshReps.size(); ++i)
   {
     pqSMAdaptor::setElementProperty(meshReps.at(i)->getProxy()->GetProperty("Pickable"), status);
+    meshReps.at(i)->getProxy()->UpdateVTKObjects();
   }
 }
 

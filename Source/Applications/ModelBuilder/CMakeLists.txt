@@ -375,6 +375,7 @@ endif()
     AxesGrid
     CloseModel
     ChangeVisibilityAfterSelection
+    ChangeScalarBars
     CloseSession
     EdgeModification
     #ChesapeakeBayBathymetry
