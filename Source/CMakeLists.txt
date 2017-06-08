@@ -56,10 +56,6 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 #########################################################################
 # Testing and dashboard setup
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
-  ${ConceptualModelBuilder_BINARY_DIR}/CTestCustom.cmake)
-
-
 if(BUILD_TESTING)
   set(CMB_TEST_DIR ${ConceptualModelBuilder_BINARY_DIR}/Testing/Temporary)
   make_directory(${CMB_TEST_DIR})

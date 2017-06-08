@@ -30,6 +30,14 @@ if(BUILD_TESTING)
   include(CTest)
 endif()
 
+# Add options for performing code coverage tests.
+include(${CMAKE_CURRENT_SOURCE_DIR}/Source/CMake/CMBCoverage.cmake)
+
+# Do not report some warnings from generated code to the dashboard:
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   ${CMAKE_CURRENT_SOURCE_DIR}/CMake
   ${CMAKE_CURRENT_SOURCE_DIR}/Source/CMake)
