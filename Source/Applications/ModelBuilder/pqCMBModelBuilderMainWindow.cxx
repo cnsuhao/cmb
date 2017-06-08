@@ -502,6 +502,28 @@ void pqCMBModelBuilderMainWindow::onScalarBarChanged()
     vtkSMTransferFunctionManager::HIDE_UNUSED_SCALAR_BARS);
 }
 
+void pqCMBModelBuilderMainWindow::onCameraInteractionModeChangeTo2D(bool mode)
+{
+  // Call AppCommon's slot for this signal
+  pqCMBCommonMainWindow::onCameraInteractionModeChangeTo2D(mode);
+
+  // If in 2D mode, squash 3-D meshes by setting the Z scale to 0. Otherwise, apply unit scaling.
+  QList<QVariant> scale;
+  scale.append(1.);               // x
+  scale.append(1.);               // y
+  scale.append((mode ? 0. : 1.)); // z
+
+  // get meshRepresentations
+  QList<pqDataRepresentation*> meshReps =
+    this->getThisCore()->modelManager()->meshRepresentations();
+  for (int i = 0; i < meshReps.size(); ++i)
+  {
+    pqSMAdaptor::setMultipleElementProperty(
+      meshReps.at(i)->getProxy()->GetProperty("Scale"), scale);
+    meshReps.at(i)->getProxy()->UpdateVTKObjects();
+  }
+}
+
 void pqCMBModelBuilderMainWindow::setupToolbars()
 {
   this->Internal->Model2DToolbar = NULL;

@@ -90,6 +90,7 @@ protected slots:
   void onRequestMeshEdgePointSelection(const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
   void onMeshSelectionItemCreated(smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
+  void onCameraInteractionModeChangeTo2D(bool);
 
   // Description:
   // Updates the enable state of various menus.
