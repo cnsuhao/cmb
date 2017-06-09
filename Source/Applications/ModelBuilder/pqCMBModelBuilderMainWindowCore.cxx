@@ -862,7 +862,10 @@ void pqCMBModelBuilderMainWindowCore::onSave()
     opview->setModeToPreview("save");
     opview->setEmbedData(false);
     opview->setRenameModels(false);
-    opview->attemptSave("save");
+    if (opview->attemptSave("save"))
+    { // Success; now return the operator panel to its previous op or hide it.
+      this->modelPanel()->modelView()->showPreviousOpOrHide();
+    }
   }
 }
 
@@ -875,7 +878,10 @@ void pqCMBModelBuilderMainWindowCore::onSaveAs()
     opview->setModeToPreview("save as");
     opview->setEmbedData(false);
     opview->setRenameModels(true);
-    opview->chooseFile("save as");
+    if (opview->chooseFile("save as"))
+    { // Success; now return the operator panel to its previous op or hide it.
+      this->modelPanel()->modelView()->showPreviousOpOrHide();
+    }
   }
 }
 
@@ -888,7 +894,10 @@ void pqCMBModelBuilderMainWindowCore::onExport()
     opview->setModeToPreview("save a copy");
     opview->setEmbedData(true);
     opview->setRenameModels(true);
-    opview->chooseFile("save a copy");
+    if (opview->chooseFile("save a copy"))
+    { // Success; now return the operator panel to its previous op or hide it.
+      this->modelPanel()->modelView()->showPreviousOpOrHide();
+    }
   }
 }
 
