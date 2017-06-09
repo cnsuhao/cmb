@@ -129,7 +129,7 @@ protected slots:
   // Description:
   // Reaction to changing the camera interaction mode to either 2D or 3D
   // If mode is true the camera is in 2D mode - if false it is 3D
-  void onCameraInteractionModeChangeTo2D(bool);
+  virtual void onCameraInteractionModeChangeTo2D(bool);
   // Description:
   // Reaction to locking and unlocking the camera interaction mode.
   void onEnableCameraInteractionModeChanges(bool);
