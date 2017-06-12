@@ -2244,6 +2244,17 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
       }
     }
     this->Internal->removeModelRepresentations(remmodels, view, pxy);
+
+    // Remove all meshes associated with this session
+    smtk::common::UUIDs meshcollections;
+    smtk::mesh::Manager::const_iterator cit;
+    for (cit = sref.session()->meshManager()->collectionBegin();
+         cit != sref.session()->meshManager()->collectionEnd(); ++cit)
+    {
+      meshcollections.insert((*cit).first);
+    }
+    this->Internal->removeMeshRepresentations(sref.session()->meshManager(), meshcollections, view);
+
     // Signal the UI to remove the session from the model tree:
     emit sessionClosing(sref);
 
