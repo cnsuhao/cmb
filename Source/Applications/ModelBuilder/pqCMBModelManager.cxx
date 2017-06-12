@@ -2232,9 +2232,16 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
     // Remove the session from the client side:
     smtk::model::Models modelsToErase(sref.models<smtk::model::Models>());
     smtk::common::UUIDs remmodels;
+
     for (auto mit : modelsToErase)
     {
       remmodels.insert(mit.entity());
+      // Remove auxiliaryGeometries assoicated with the current model
+      smtk::model::AuxiliaryGeometries auxs = mit.auxiliaryGeometry();
+      for (smtk::model::AuxiliaryGeometries::iterator ait = auxs.begin(); ait != auxs.end(); ++ait)
+      {
+        this->Internal->removeAuxiliaryRepresentation(ait->entity(), view);
+      }
     }
     this->Internal->removeModelRepresentations(remmodels, view, pxy);
     // Signal the UI to remove the session from the model tree:
