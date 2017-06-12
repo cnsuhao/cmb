@@ -377,6 +377,7 @@ endif()
     ChangeVisibilityAfterSelection
     ChangeScalarBars
     CloseSession
+    CloseSessionWithAux
     EdgeModification
     #ChesapeakeBayBathymetry
     OpenCMBFile
