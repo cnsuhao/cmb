@@ -1617,7 +1617,7 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
 
   if (hasNewModels)
   {
-    this->activeRenderView()->resetCamera();
+    this->modelManager()->resetActiveCameraIfAllowable();
     emit this->newModelCreated();
   }
   this->activeRenderView()->render();

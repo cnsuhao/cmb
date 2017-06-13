@@ -25,6 +25,9 @@
 
     <SourceProxy name="SMTKModelSource" class="vtkPVSMTKModelSource">
 
+      <OutputPort name="Entities" index="0" />
+      <OutputPort name="Instances" index="1" />
+
       <StringVectorProperty
         name="ModelEntityID"
         command="SetModelEntityID"
