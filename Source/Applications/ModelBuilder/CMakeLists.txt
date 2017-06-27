@@ -575,13 +575,16 @@ endif()
 
     # SimExport tests
     # Use paraview's python build, since it is linked with superbuild libs
-    set(pvpython pvpython-NOTFOUND)
+    set(pvpython_exe pvpython-NOTFOUND)
     if (APPLE)
-      find_program(pvpython pvpython ${CMB_SUPERBUILD_DEVELOPER_ROOT}/Applications/paraview.app/Contents/bin)
+      find_program(pvpython_exe pvpython ${CMB_SUPERBUILD_DEVELOPER_ROOT}/Applications/paraview.app/Contents/bin)
+    elseif(WIN32)
+      # If running on windows, just use the regular python
+      set(pvpython_exe ${PYTHON_EXECUTABLE})
     else()
-      find_program(pvpython pvpython ${CMB_SUPERBUIDL_DEVELOPER_ROOT}/bin)
+      find_program(pvpython_exe pvpython ${CMB_SUPERBUILD_DEVELOPER_ROOT}/bin)
     endif()
-    if (NOT pvpython)
+    if (NOT pvpython_exe)
       message(FATAL_ERROR "Unable to find pvpython for SimExport tests")
     endif()
     #message("Using pvpython at ${pvpython}")
@@ -599,7 +602,7 @@ endif()
         $<TARGET_FILE:ModelBuilder>
         ${CMB_TEST_DIR}
         ${TEST_XML}/${test}.xml
-        ${pvpython}
+        ${pvpython_exe}
         ${TEST_PYTHON}/VerifySimExport.py
         ${CMB_TEST_DATA_ROOT})
       set_tests_properties(${PROJECT_NAME}${test}Py
