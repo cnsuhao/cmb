@@ -253,6 +253,8 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   runscript += "else:\n";
   runscript += "  import " + script + "\n";
   runscript += "import smtk\n";
+  runscript += "if smtk.wrappingProtocol() == 'pybind11':\n";
+  runscript += "  import smtk.simulation\n";
 
   std::string spec_address = to_hex_address(&spec);
 
