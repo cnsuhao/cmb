@@ -13,8 +13,6 @@ import os
 import sys
 from pprint import pprint
 import filecmp
-import smtk
-from smtk.simple import *
 
 
 def verifyExport():
@@ -42,13 +40,21 @@ def verifyExport():
     basefile = os.path.join(baselinedir, 'test.bc')
     testfile = os.path.join(testDir, testName + '.bc')
 
+    if not os.path.isfile(basefile):
+        print("No base file", basefile, "!")
+        return -1
+
+    if not os.path.isfile(testfile):
+        print("No test file", testfile, "!")
+        return -2
+
     # compare files, return 0 if contents are the same
     if filecmp.cmp(basefile, testfile):
         print("Output is the same!")
         return 0
     else:
         print("Output not the same!")
-        return -1
+        return -3
 
 
 def verifyAdHShallow(baselinedir, testDir, testName):
@@ -70,18 +76,18 @@ def verifyAdHShallow(baselinedir, testDir, testName):
     cmp_bc = filecmp.cmp(basefile_bc, testfile_bc)
     if not (cmp_bc):
         print("ERROR: .bc output not the same!")
-        retval = -1
+        retval = -4
 
     # Compare .mt files
     cmp_mt = filecmp.cmp(basefile_mt, testfile_mt)
     if not cmp_mt:
         print("ERROR: .mt output not the same!")
-        retval = -1
+        retval = -5
 
     # Check that .2dm file exists
     if not os.path.isfile(testfile_2dm):
         print('ERROR: missing 2dm file %s' % testfile_2dm)
-        retval = -1
+        retval = -6
 
     # Todo check .hot file
 
@@ -101,7 +107,7 @@ def verifyExportSimProteus(baselinedir, testDir, testName):
         return 0
     else:
         print("Output not the same!")
-        return -1
+        return -7
 
 
 def test():
