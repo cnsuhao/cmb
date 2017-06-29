@@ -368,6 +368,13 @@ endif()
     )
   set (APPLE_ONLY_TESTS
     )
+  set (CGM_SESSION_TESTS
+    )
+  if (SMTK_ENABLE_CGM_SESSION)
+    list(APPEND CGM_SESSION_TESTS
+      ZoomToSelectionSTP
+    )
+  endif()
 
   set (XML_TESTS_WITH_BASELINES
     AssignColors1
@@ -451,7 +458,7 @@ endif()
     AuxGeoDEM
     DeleteAuxGeom
     ZoomToSelectionCMB
-    ZoomToSelectionSTP
+    ${CGM_SESSION_TESTS}
     )
 
   set (TESTS_WITHOUT_BASELINES
