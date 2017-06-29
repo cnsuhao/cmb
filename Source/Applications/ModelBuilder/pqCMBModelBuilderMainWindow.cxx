@@ -1002,6 +1002,7 @@ void pqCMBModelBuilderMainWindow::onNewMeshCreated()
 
 bool pqCMBModelBuilderMainWindow::onCloseSession()
 {
+  // We first look to close the session associated with any selected objects.
   smtk::common::UUIDs uids;
   if (this->getThisCore()->smtkSelectionManager())
   {
@@ -1030,6 +1031,19 @@ bool pqCMBModelBuilderMainWindow::onCloseSession()
     }
   }
 
+  // If there is no session (or entity belonging to a session) selected,
+  // we next look to the session associated with the active model.
+  if (!sref.isValid())
+  {
+    smtk::model::Model activeModel = qtActiveObjects::instance().activeModel();
+    if (activeModel.isValid())
+    {
+      sref = activeModel.owningSession();
+      mgr = activeModel.manager();
+    }
+  }
+
+  // If there is still no session, we print a warning and return false.
   if (!sref.isValid())
   {
     smtkWarningMacro(mgr->log(), "You must select a session you wish to close in the model panel.");
