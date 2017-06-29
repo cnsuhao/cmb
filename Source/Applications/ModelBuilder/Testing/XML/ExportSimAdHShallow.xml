@@ -65,7 +65,7 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,8,86" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,12,118" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,12,118" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame5/1QFrame0/1QPushButton0" command="activate" arguments="" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/ADH/AdHShallowWater.py" />
   <pqevent object="SimulationExportDialog/ExportButtonBox/1QPushButton0" command="activate" arguments="" />
 </pqevents>
