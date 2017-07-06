@@ -156,9 +156,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
 
   if (!modinfo && !meshinfo)
     return;
-  if ((modinfo && modinfo->ColorMode == colorMode) ||
-    (meshinfo && meshinfo->ColorMode == colorMode))
-    return;
+
   QStringList list;
   this->m_modelPanel->modelManager()->supportedColorByModes(list);
   if (!list.contains(colorMode))
