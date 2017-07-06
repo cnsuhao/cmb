@@ -311,11 +311,6 @@ bool pqSMTKMeshPanel::submitMeshJob()
   smtk::io::Logger inputLogger;
   smtk::io::AttributeWriter writer;
   std::string serializedAttributes;
-  // First lets change the Mesh Button to reflect that we are mesh
-  this->MeshButton->setText("Meshing ...");
-  this->MeshButton->setEnabled(false);
-  QCoreApplication::processEvents();
-  this->MeshButton->repaint();
   //yes this returns false for being a valid, and true when an error occurs
   bool serialized = !writer.writeContents(this->AttSystem, serializedAttributes, inputLogger);
   if (!serialized)
@@ -354,16 +349,21 @@ bool pqSMTKMeshPanel::submitMeshJob()
     //send to the operator the serialized instance information
     meshSpecification->findString("meshingControlAttributes")->setValue(serializedAttributes);
 
+    this->MeshButton->setText("Meshing ...");
+    this->MeshButton->setEnabled(false);
+    QCoreApplication::processEvents();
+    this->MeshButton->repaint();
+
     const bool meshCreated = this->ModelManager->startOperation(meshOp);
+
+    this->MeshButton->setText("Mesh");
+    this->MeshButton->setEnabled(true);
 
     if (!meshCreated)
     {
       return false;
     }
   }
-  // Finally lets change the Mesh Button to reflect that we are done meshing
-  this->MeshButton->setText("Mesh");
-  this->MeshButton->setEnabled(true);
 
   return true;
 }
