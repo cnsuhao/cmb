@@ -13,6 +13,8 @@
 
 #include <QObject>
 
+#include "pqOutputWidget.h"
+
 #include "smtk/extension/qt/qtEmittingStringBuffer.h"
 
 #include "smtk/extension/vtk/io/RedirectOutput.h"
@@ -28,6 +30,10 @@ public:
   {
     // Redirect all VTK output to the logger.
     smtk::extension::vtk::io::RedirectVTKOutputTo(this->Logger);
+
+    // Redirect all Qt output to the the VTK output window, which now gets sent
+    // to the logger.
+    pqOutputWidget::installQMessageHandler();
 
     // Pass the ostream to the logger, and set it to be owned by the logger.
     this->Logger.setFlushToStream(new std::ostream(&this->Stringbuf), true, false);
