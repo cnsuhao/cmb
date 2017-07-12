@@ -876,7 +876,7 @@ void pqCMBModelBuilderMainWindowCore::onSaveAs()
   if (opview)
   {
     opview->setModeToPreview("save as");
-    opview->setEmbedData(false);
+    opview->setEmbedData(true);
     opview->setRenameModels(true);
     if (opview->chooseFile("save as"))
     { // Success; now return the operator panel to its previous op or hide it.
