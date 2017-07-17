@@ -89,8 +89,9 @@ public:
   bool DetermineFileReader(const std::string& filename, std::string& bridgeType,
     std::string& engineType, const smtk::model::StringData& bridgeTypes);
   pqServer* server();
-  void updateModelRepresentation(const smtk::model::EntityRef& model);
-  void updateModelRepresentation(pqSMTKModelInfo* minfo);
+  /// Update the representation for the model, returning true if the model was previously empty but now has renderable entities.
+  bool updateModelRepresentation(const smtk::model::EntityRef& model);
+  bool updateModelRepresentation(pqSMTKModelInfo* minfo);
   void updateModelMeshRepresentations(const smtk::model::Model& model);
 
   pqSMTKMeshInfo* meshInfo(const smtk::mesh::MeshSet& mesh);
@@ -104,6 +105,11 @@ public:
 
   /// A convenience method to sort models alphabetically and return the first one
   smtk::model::Model sortExistingModels(smtk::model::Models& models);
+
+  /// Resets the active-view's camera the first time this method is called and not again until allowActiveCameraReset().
+  bool resetActiveCameraIfAllowable();
+  /// Make the next (and only the next) call to resetActiveCameraIfAllowable() change the camera.
+  void allowActiveCameraReset();
 signals:
   void newModelManagerProxy(
     vtkSMModelManagerProxy*); // Emitted each time a new model manager is created on the server.

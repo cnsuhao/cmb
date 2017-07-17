@@ -107,6 +107,33 @@ public:
   std::vector<vtkTuple<double, 3> > LUTColors;
   QPointer<pqDataRepresentation> ActiveRepresentation;
   QPointer<pqDataRepresentation> previousActiveRepresentation;
+  bool m_allowCameraReset;
+
+  void allowActiveCameraReset() { m_allowCameraReset = true; }
+
+  bool resetActiveCameraIfAllowable()
+  {
+    if (m_allowCameraReset)
+    {
+      pqRenderView* rvw = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
+      if (rvw)
+      {
+        bool haveSomethingToRender = false;
+        for (auto modIt : this->ModelInfos)
+        {
+          haveSomethingToRender |= (modIt.second.numberOfTessellatedEntities() > 0);
+        }
+        haveSomethingToRender |= !this->AuxGeoInfos.empty();
+        if (haveSomethingToRender)
+        {
+          m_allowCameraReset = false;
+          rvw->resetCamera();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   void updateEntityGroupFieldArrayAndAnnotations(const smtk::model::EntityRef& model)
   {
@@ -201,8 +228,7 @@ public:
       }
     }
 
-    if (this->ModelInfos[model.entity()].ModelSource == NULL &&
-      (model.cells().size() > 0 || hasAuxGeoAsBlockInModel || model.groups().size() > 0))
+    if (this->ModelInfos[model.entity()].ModelSource == NULL)
     {
       pqDataRepresentation* rep = NULL;
       pqApplicationCore* core = pqApplicationCore::instance();
@@ -231,6 +257,7 @@ public:
         repSrc->getProxy()->UpdateVTKObjects();
         repSrc->updatePipeline();
 
+        // Model representation
         rep = builder->createDataRepresentation(repSrc->getOutputPort(0), view);
         if (rep)
         {
@@ -244,6 +271,28 @@ public:
             rep->getProxy(), NULL, vtkDataObject::FIELD);
           rep->setProperty("smtkUUID",
             QByteArray((const char*)model.entity().begin(), (int)model.entity().size()));
+
+          // Glyph-mapper for any Instance entities:
+          auto glyphRep = builder->createDataRepresentation(
+            modelSrc->getOutputPort(vtkModelMultiBlockSource::INSTANCE_PORT), view);
+          if (glyphRep)
+          {
+            this->ModelInfos[model.entity()].setGlyphRep(glyphRep);
+            glyphRep->setProperty("smtkUUID",
+              QByteArray((const char*)model.entity().begin(), (int)model.entity().size()));
+            pqSMAdaptor::setEnumerationProperty(
+              glyphRep->getProxy()->GetProperty("Representation"), "3D Glyphs");
+            pqSMAdaptor::setInputProperty(glyphRep->getProxy()->GetProperty("GlyphType"),
+              modelSrc->getProxy(), vtkModelMultiBlockSource::PROTOTYPE_PORT);
+            //pqSMAdaptor::setElementProperty(glyphRep->getProxy()->GetProperty("UseGlyphTable"), 1);
+            pqSMAdaptor::setElementProperty(
+              glyphRep->getProxy()->GetProperty("UseCompositeGlyphTable"), 1);
+            pqSMAdaptor::setElementProperty(
+              glyphRep->getProxy()->GetProperty("GlyphTableIndexArray"), "instance source");
+            glyphRep->getProxy()->UpdateVTKObjects();
+            glyphRep->renderViewEventually();
+            //Need to set GlyphType to PipelineConnection and set Source to our model multiblock...
+          }
         }
       }
       loadOK = (rep != NULL);
@@ -396,16 +445,17 @@ public:
     }
   }
 
-  void updateModelRepresentation(const smtk::model::EntityRef& model)
+  bool updateModelRepresentation(const smtk::model::EntityRef& model)
   {
     if (this->ModelInfos.find(model.entity()) == this->ModelInfos.end() ||
       this->ModelInfos[model.entity()].ModelSource == NULL)
     {
-      return;
+      return false;
     }
 
     pqSMTKModelInfo* modelInfo = &this->ModelInfos[model.entity()];
     pqPipelineSource* modelSrc = modelInfo->ModelSource;
+    bool previouslyEmpty = modelInfo->numberOfTessellatedEntities() <= 0;
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID").Set("");
     modelSrc->getProxy()->UpdateVTKObjects();
     vtkSMPropertyHelper(modelSrc->getProxy(), "ModelEntityID")
@@ -427,7 +477,17 @@ public:
     // output port.
     modelInfo->RepSource->updatePipeline();
 
+    // If the model source has its first renderable item, return true to indicate
+    // that the camera should probably be reset
+    bool needCameraReset = modelInfo->numberOfTessellatedEntities() > 0 && previouslyEmpty;
+
+    if (needCameraReset)
+    {
+      this->resetActiveCameraIfAllowable();
+    }
+
     modelInfo->Representation->renderViewEventually();
+    return needCameraReset;
   }
 
   void createMeshRepresentation(smtk::model::ManagerPtr manager,
@@ -896,6 +956,7 @@ public:
 
   qInternal(pqServer* server)
     : Server(server)
+    , m_allowCameraReset(true)
   {
     // this->rebuildColorTable(256);
   }
@@ -1640,19 +1701,19 @@ void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep
 */
 }
 
-void pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
+bool pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
 {
   this->clearModelSelections();
-  this->Internal->updateModelRepresentation(model);
+  return this->Internal->updateModelRepresentation(model);
 }
 
-void pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
+bool pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)
 {
   if (!modinfo)
-    return;
+    return false;
   smtk::model::EntityRef model(
     this->Internal->ManagerProxy->modelManager(), modinfo->Info->GetModelUUID());
-  this->updateModelRepresentation(model);
+  return this->updateModelRepresentation(model);
 }
 
 void pqCMBModelManager::updateModelMeshRepresentations(const smtk::model::Model& model)
@@ -1985,9 +2046,21 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
       {
         groupChangedModels.insert(minfo->Info->GetModelUUID());
       }
-      else if (it->isAuxiliaryGeometry() && pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+      else if (it->isAuxiliaryGeometry())
       {
-        newSeparateAuxGeos.push_back(it->as<smtk::model::AuxiliaryGeometry>());
+        if (pqSMTKUIHelper::isAuxiliaryShownSeparate(*it))
+        {
+          newSeparateAuxGeos.push_back(it->as<smtk::model::AuxiliaryGeometry>());
+        }
+        else
+        {
+          geometryChangedModels.insert(it->owningModel().entity());
+        }
+      }
+      else if (it->isInstance())
+      {
+        geometryChangedModels.insert(it->owningModel().entity());
+        this->Internal->Entity2Models[it->entity()] = it->owningModel().entity();
       }
     }
     // inform modelBuilderMainWindowCore
@@ -2055,7 +2128,7 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
       // update representation
       else if (geometryChangedModels.find(modit->entity()) != geometryChangedModels.end())
       {
-        this->updateModelRepresentation(*modit);
+        hasNewModels |= this->updateModelRepresentation(*modit);
         this->updateModelMeshRepresentations(*modit);
       }
       // update group LUT
@@ -2195,6 +2268,8 @@ void pqCMBModelManager::clear()
   this->Internal->ManagerProxy = NULL;
   // Reset current model
   qtActiveObjects::instance().setActiveModel(smtk::model::Model());
+  // Allow the camera to be reset when auxiliary geometry is created.
+  this->allowActiveCameraReset();
   // Actually all models have been cleared.
   emit currentModelCleared();
 }
@@ -2260,7 +2335,12 @@ bool pqCMBModelManager::closeSession(const smtk::model::SessionRef& sref)
 
     // Remove the session (and all its entities) from both the
     // client and the server side model managers:
-    return pxy->endSession(sref.entity());
+    bool result = pxy->endSession(sref.entity());
+    if (result && pxy->numberOfRemoteSessions() == 0)
+    {
+      this->allowActiveCameraReset();
+    }
+    return result;
   }
   return false;
 }
@@ -2363,4 +2443,14 @@ void pqCMBModelManager::setActiveModelSource(const smtk::common::UUID& entid)
 smtk::model::Model pqCMBModelManager::sortExistingModels(smtk::model::Models& models)
 {
   return this->Internal->InternalSortExistingModels(models);
+}
+
+bool pqCMBModelManager::resetActiveCameraIfAllowable()
+{
+  return this->Internal->resetActiveCameraIfAllowable();
+}
+
+void pqCMBModelManager::allowActiveCameraReset()
+{
+  this->Internal->allowActiveCameraReset();
 }

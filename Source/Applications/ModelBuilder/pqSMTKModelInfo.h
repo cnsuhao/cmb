@@ -55,6 +55,7 @@ public:
     const std::string& filename, smtk::model::ManagerPtr);
   void updateBlockInfo(smtk::model::ManagerPtr mgr);
   bool hasAnalysisMesh() const;
+  void setGlyphRep(pqDataRepresentation* rep);
 
   std::size_t numberOfTessellatedEntities() const;
 
@@ -71,6 +72,7 @@ public:
   QPointer<pqPipelineSource> ModelSource;
   QPointer<pqPipelineSource> RepSource;
   QPointer<pqDataRepresentation> Representation;
+  QPointer<pqDataRepresentation> GlyphRepresentation;
   std::string FileName;
   smtk::common::UUID SessionId;
   std::vector<std::string> ent_annotations;
