@@ -228,6 +228,10 @@ pqCMBCommonMainWindow::pqCMBCommonMainWindow()
   this->getMainDialog()->actionRedo->setShortcuts(QKeySequence::Redo);
   this->getMainDialog()->actionUndo->setShortcuts(QKeySequence::Undo);
 
+  // By default we want the close session action to be hidden (we might get rid of it
+  // all together at some point
+  this->getMainDialog()->action_Close_Session->setVisible(false);
+
   // Turn off the "Export Model" menu item by default (ModelBuilder will turn it on)
   this->getMainDialog()->action_Export_Model->setVisible(false);
 
