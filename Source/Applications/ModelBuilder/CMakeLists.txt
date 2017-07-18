@@ -383,8 +383,6 @@ endif()
     CloseModel
     ChangeVisibilityAfterSelection
     ChangeScalarBars
-    CloseSession
-    CloseSessionWithAux
     EdgeModification
     #ChesapeakeBayBathymetry
     OpenCMBFile
