@@ -51,6 +51,7 @@
 #include "smtk/attribute/MeshSelectionItemDefinition.h"
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/attribute/StringItem.h"
+#include "smtk/attribute/VoidItem.h"
 #include "smtk/common/UUID.h"
 #include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
@@ -89,10 +90,26 @@
 #include <map>
 #include <set>
 
+// A class that restores its target object to its original value once this class's instance goes out of scope.
+template <typename T>
+class smtkRestoreAtEndOfScope
+{
+public:
+  smtkRestoreAtEndOfScope(T& object)
+  {
+    m_valueToRestore = object;
+    m_location = &object;
+  }
+  ~smtkRestoreAtEndOfScope() { *m_location = m_valueToRestore; }
+
+  T* m_location;
+  T m_valueToRestore;
+};
+
 class pqCMBModelManager::qInternal
 {
 public:
-  // <ModelEnity, modelInfo>
+  // <ModelEntity, modelInfo>
   std::map<smtk::common::UUID, pqSMTKModelInfo> ModelInfos;
   typedef std::map<smtk::common::UUID, pqSMTKModelInfo>::iterator itModelInfo;
   typedef std::map<smtk::common::UUID, pqSMTKMeshInfo>::iterator itMeshInfo;
@@ -108,11 +125,20 @@ public:
   QPointer<pqDataRepresentation> ActiveRepresentation;
   QPointer<pqDataRepresentation> previousActiveRepresentation;
   bool m_allowCameraReset;
+  bool m_operatorPreventsCameraReset; // Assumed true by default.
 
   void allowActiveCameraReset() { m_allowCameraReset = true; }
 
   bool resetActiveCameraIfAllowable()
   {
+    // If we are processing an operator's result and it says to disallow resets, do not reset.
+    // This lets operators which create model geometry interactively prevent camera resets that
+    // might surprise the user.
+    if (m_operatorPreventsCameraReset)
+    {
+      return false;
+    }
+
     if (m_allowCameraReset)
     {
       pqRenderView* rvw = qobject_cast<pqRenderView*>(pqActiveObjects::instance().activeView());
@@ -957,6 +983,7 @@ public:
   qInternal(pqServer* server)
     : Server(server)
     , m_allowCameraReset(true)
+    , m_operatorPreventsCameraReset(false)
   {
     // this->rebuildColorTable(256);
   }
@@ -1805,6 +1832,9 @@ smtk::model::OperatorPtr pqCMBModelManager::createFileOperator(const std::string
 
 bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
 {
+  smtkRestoreAtEndOfScope<bool> denyCameraReset(this->Internal->m_operatorPreventsCameraReset);
+  this->Internal->m_operatorPreventsCameraReset = true; // until we are told otherwise
+
   this->initialize();
   if (!this->Internal->ManagerProxy || !brOp)
   {
@@ -1897,6 +1927,11 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
   const smtk::common::UUID& sessionId, bool& hasNewModels, bool& bModelGeometryChanged,
   bool& hasNewMeshes, std::set<smtk::model::SessionRef>& emptySessions)
 {
+  this->Internal->m_operatorPreventsCameraReset =
+    result->findVoid("allow camera reset") && result->findVoid("allow camera reset")->isEnabled()
+    ? false
+    : true;
+
   smtk::io::Logger log;
   smtk::attribute::StringItem::Ptr logItem;
   if (result && (logItem = result->findString("log")) && logItem->numberOfValues() > 0)
