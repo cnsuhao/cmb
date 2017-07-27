@@ -60,20 +60,31 @@ if(BUILD_TESTING)
   set(CMB_TEST_DIR ${ConceptualModelBuilder_BINARY_DIR}/Testing/Temporary)
   make_directory(${CMB_TEST_DIR})
 
+  unset(CMB_TEST_DATA_ROOT CACHE)
+  file(READ "${CMAKE_SOURCE_DIR}/data/cmb-data" data)
+  if (NOT data STREQUAL "\n")
+    message(WARNING
+      "Testing is enabled, but the data is not available. Use git-lfs in order "
+      "to obtain the testing data.")
+    set(CMB_TEST_DATA_ROOT)
+  else ()
+    file(READ "${CMAKE_SOURCE_DIR}/ThirdParty/SMTK/data/smtk-data" smtk_data)
+    if (NOT smtk_data STREQUAL "\n")
+      message(WARNING
+        "CMB's data is available, but SMTK's is not. Use git-lfs in the "
+        "submodule in order to obtain all of the testing data.")
+      set(CMB_TEST_DATA_ROOT)
+    else ()
+      set(CMB_TEST_DATA_ROOT "${CMAKE_SOURCE_DIR}")
+    endif ()
+  endif ()
+
   #add the first test which is for checking the copyright
   add_test(NAME CopyrightStatement
     COMMAND ${CMAKE_COMMAND}
         "-DConceptualModelBuilder_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/CheckCopyright.cmake")
 endif()
-
-# Configure data directory
-find_path(CMB_TEST_DATA_ROOT cmb-testing-data.marker
-  $ENV{CMB_TEST_DATA_ROOT}
-  )
-
-get_filename_component(CMB_TEST_DATA_ROOT "${CMB_TEST_DATA_ROOT}" ABSOLUTE)
-mark_as_advanced(CMB_TEST_DATA_ROOT)
 
 set(CMB_TEST_PLUGIN_PATHS ${CMB_TEST_PLUGIN_PATHS} CACHE STRING
    "Semi-colon seperated paths for testing plugins.")
