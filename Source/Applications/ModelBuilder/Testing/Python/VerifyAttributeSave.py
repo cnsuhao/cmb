@@ -15,9 +15,7 @@ from pprint import pprint
 import smtk
 from smtk.simple import *
 if smtk.wrappingProtocol() == 'pybind11':
-    import smtk.bridge.cgm
     import smtk.bridge.discrete
-    import smtk.bridge.exodus
     import smtk.model
     import smtk.attribute
 
