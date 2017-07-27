@@ -6,7 +6,7 @@
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="0.0" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="3.0" />
   -->
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/3d/cmb/simplebox.cmb" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
 
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
@@ -14,12 +14,12 @@
   <!--
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="0.0" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="10.0" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="6.0" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Proteus" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/Proteus" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog/mainSplitter/layoutWidget/Files" command="setCurrent" arguments="0.0" />
   -->
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Proteus/ProteusPoisson.crf" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/Proteus/ProteusPoisson.crf" />
   <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Attribute" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabNumerics/qt_scrollarea_viewport/1QWidget0/1QTabWidget0/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="FEM" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabNumerics/qt_scrollarea_viewport/1QWidget0/1QTabWidget0/qt_tabwidget_stackedwidget/tabFEM/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame0/1QCheckBox0" command="set_boolean" arguments="true" />
@@ -51,7 +51,7 @@
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="actionExport_Simulation_File" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame1/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <!--pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog/mainSplitter/widget/Files" command="setCurrent" arguments="0.0" /-->
-  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Proteus/ProteusPoisson.py" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/Proteus/ProteusPoisson.py" />
   <pqevent object="SimulationExportDialog" command="key" arguments="16777249" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame0/1QLineEdit0" command="key" arguments="67" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1QFrame0/1QLineEdit0" command="key" arguments="16777249" />

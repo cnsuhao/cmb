@@ -2,5 +2,5 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/MercedRiverScene/MercedRiver.sg" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/scene/MercedRiverScene/MercedRiver.sg" />
 </pqevents>

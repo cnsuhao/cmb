@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
     <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+    <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/smooth_surface.cmb" />
   <pqevent object="qtCMBMainWindow/menubar/menuEdit" command="activate" arguments="actionGrow_AcceptNG" />
   <pqevent object="qtCMBMainWindow/growPick_Toolbar/qt_toolbar_ext_button" command="set_boolean" arguments="true" />
   <pqevent object="qtCMBMainWindow" command="pause" arguments="3000" />

@@ -4,7 +4,7 @@
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="remove" arguments="$PARAVIEW_TEST_ROOT/smooth_surface.vtk" />
   <pqevent object="qtCMBMainWindow/FileOpenDialog" command="cancelled" arguments="" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_As" />
   <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/packageScene.sg" />
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />

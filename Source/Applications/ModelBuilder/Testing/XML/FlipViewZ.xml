@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/exodus/sx_bar_hex.exo" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/3d/exodus/sx_bar_hex.exo" />
   <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
 </pqevents>

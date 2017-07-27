@@ -2,10 +2,10 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/3d/cmb/simplebox.cmb" />
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/SampleAttributes/CTB.sbt" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/SampleAttributes/CTB.sbt" />
   <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Attribute" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame1/1QPushButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/SimBuilderDockWidget/scrollArea/qt_scrollarea_viewport/attScrollWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabFunctions/qt_scrollarea_viewport/1QWidget0/1QSplitter0/1QFrame0/1smtk::extension::qtTableWidget0" command="mousePress" arguments="1,1,0,8,19,/3:0" />
@@ -50,7 +50,7 @@
   <pqevent object="SimulationExportDialog/1QFrame0/AnalysisTypesWidget/1QRadioButton3" command="set_boolean" arguments="true" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/1QComboBox0" command="set_string" arguments="Advanced" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabExportSpec/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame0/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/PythonExporters/CTB.py" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/PythonExporters/CTB.py" />
   
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QTabWidget0/qt_tabwidget_stackedwidget/tabExportSpec/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QFrame1/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ExportSimCTB.bc" />

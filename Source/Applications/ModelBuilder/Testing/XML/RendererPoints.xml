@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/3d/cmb/simplebox.cmb" />
   <pqevent object="qtCMBMainWindow/1QTabBar0" command="set_tab_with_text" arguments="Display" />
   <pqevent object="qtCMBMainWindow/DisplaydockWidget/scrollArea/qt_scrollarea_viewport/dockscrollWidget/1QWidget0/1pqProxyWidget0/Representation/displayRepresentationWidget/comboBox" command="activated" arguments="Points" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.567742,0.412926,1,1,0)" />

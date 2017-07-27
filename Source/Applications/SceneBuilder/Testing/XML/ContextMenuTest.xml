@@ -2,7 +2,7 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/scene/BasicScene_12_20_07/SceneGen.osd.txt" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.339623,0.244763,2,2,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.339623,0.244763,2,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.339623,0.244763,2,0,0)" />

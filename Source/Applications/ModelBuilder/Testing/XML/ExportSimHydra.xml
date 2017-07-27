@@ -2,12 +2,12 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/3d/cmb/simplebox.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/3d/cmb/simplebox.cmb" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
 
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Hydra/Hydra.crf" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/Hydra/Hydra.crf" />
   <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,1026,427" />
   <pqevent object="qtCMBMainWindow" command="mouseMove" arguments="1,0,0,632,449" />
   <pqevent object="qtCMBMainWindow" command="mouseRelease" arguments="1,0,0,632,449" />
@@ -68,7 +68,7 @@
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0/privateEntityComboViewContainer/1QComboBoxListView0" command="mouseRelease" arguments="1,0,0,91,11,/1:0" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame0/1smtk::extension::qtModelEntityItemCombo0" command="hidePopup" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame2/1QFrame0/1QPushButton0" command="activate" arguments="" />
-  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/Hydra/Hydra.py" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/Hydra/Hydra.py" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame3/1QFrame0/1QPushButton0" command="activate" arguments="" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_TEST_ROOT/ExportSimHydra.bc" />
   <pqevent object="SimulationExportDialog/ExportButtonBox/1QPushButton0" command="activate" arguments="" />

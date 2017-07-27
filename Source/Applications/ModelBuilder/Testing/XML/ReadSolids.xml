@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/BasicScene_12_20_07/cyl_frame.2dm" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/BasicScene_12_20_07/cyl_frame.2dm" />
   <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Regions" />
   <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Domain Sets" />
   <pqevent object="qtCMBMainWindow/toolBar_Selection/selectByModelEntityTypeBox" command="set_string" arguments="Model Faces" />

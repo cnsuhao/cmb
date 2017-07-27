@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/smooth_surface.cmb" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mousePress" arguments="1,1,0,41,8,/0:0" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Model/frameMaterails/frameMaterialTree/materialTreeWidget" command="mouseRelease" arguments="1,0,0,41,8,/0:0" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab" arguments="1" />

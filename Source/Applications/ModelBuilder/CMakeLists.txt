@@ -346,7 +346,7 @@ if(BUILD_TESTING)
  set(TEST_XML ${ModelBuilder_SOURCE_DIR}/Testing/XML)
  set(TEST_SIMBUILDER_XML ${ModelBuilder_SOURCE_DIR}/SimBuilder/XML)
  set(TEST_PYTHON ${ModelBuilder_SOURCE_DIR}/Testing/Python)
- set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/baseline/cmb_application)
+ set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/data/baseline/cmb_application)
 
 # Need path to python executable
 find_package(PythonInterp)

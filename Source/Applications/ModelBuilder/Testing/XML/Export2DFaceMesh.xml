@@ -4,7 +4,7 @@
   <pqevent object="FileOpenDialog" command="remove" arguments="tempExport2DFaceMesh.2dm" />
   <pqevent object="FileOpenDialog" command="cancelled" arguments="" />
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/2d/cmb/test2D.cmb" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_tabbar" command="set_tab" arguments="2" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshMinAngle" command="set_string" arguments="30" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab/splitterLayout/groupBoxMaterial/tabWidget_2/qt_tabwidget_stackedwidget/tab_Mesh/groupBox_MeshGlobal/lineEdit_MeshGlobalLen" command="key" arguments="46" />

@@ -25,7 +25,8 @@ def verifyExport():
     testScript = sys.argv[2]
     testName = os.path.basename(testScript)[:-4]  # get filename, strip '.xml'
 
-    datadir = os.path.join(sys.argv[1], 'simulation_export')
+    datadir = os.path.join(
+        sys.argv[1], 'ThirdParty', 'SMTK', 'data', 'simulation_export')
     baselinedir = os.path.join(datadir, testName + 'Test')
     # baselinedir now contains the folder with the baselines to diff against
 

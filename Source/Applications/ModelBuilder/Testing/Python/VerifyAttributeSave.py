@@ -38,7 +38,8 @@ def verifyAssociation():
     try:
         datadir = sys.argv[1]
         print("datadir=%s" % datadir)
-        modelpath = os.path.join(datadir, 'model', '2d', 'cmb', 'test2D.cmb')
+        modelpath = os.path.join(
+            datadir, 'ThirdParty', 'SMTK', 'data', 'model', '2d', 'cmb', 'test2D.cmb')
     except:
         print 'Failed to determine model path'
         return -1
