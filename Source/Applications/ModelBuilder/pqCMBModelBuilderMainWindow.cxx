@@ -43,7 +43,6 @@
 #include "pqWaitCursor.h"
 #include "smtk/attribute/ModelEntityItemDefinition.h"
 #include "smtk/extension/qt/qtModelOperationWidget.h"
-#include "smtk/extension/qt/qtOperatorDockWidget.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/model/EntityTypeBits.h"
 #include "smtk/model/Group.h"
@@ -977,8 +976,15 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
   this->initUIPanel(qtCMBPanelsManager::MODEL);
   this->initUIPanel(qtCMBPanelsManager::MESH);
   this->initUIPanel(qtCMBPanelsManager::INFO);
-  this->initUIPanel(qtCMBPanelsManager::DISPLAY);
-  this->initUIPanel(qtCMBPanelsManager::COLORMAP);
+  /* There is a strange bug with Qt 4 and Qt5 in terms of the interaction between the model view panel
+     and the operator dock widget when the operator dock widget is docked along side the model view panel.
+     The result is that there seems to be no way for the model view panel to be "raised" when creating a new
+     model or loading in a model file.  The work around is to close the model view panel and then reshow it.
+     This seems to "fix" the issue */
+
+  this->getThisCore()->modelPanel()->close();
+  this->getThisCore()->modelPanel()->show();
+  this->getThisCore()->modelPanel()->raise();
 
   this->updateEnableState();
 }
@@ -986,8 +992,17 @@ void pqCMBModelBuilderMainWindow::onNewModelCreated()
 void pqCMBModelBuilderMainWindow::onModelRepresentationAdded(pqDataRepresentation* rep)
 {
   (void)rep;
-  this->initUIPanel(qtCMBPanelsManager::DISPLAY, false);
-  this->initUIPanel(qtCMBPanelsManager::COLORMAP, false);
+  // If there is no dock panel yet, this is the first time, so init
+  // default panels - note that in the case of a model loaded in
+  // from file - this slot will get called prior to the new model create slot.  As a result
+  // the Display and ColorMap tab gets displayed before the Model, Mesh, and Info Dock Widgets which
+  // doesn't look proper do the way to fix this is init the main panels - Note that if the dock
+  // panels are already initialized, initUIPanel is a no-op
+  this->initUIPanel(qtCMBPanelsManager::MODEL);
+  this->initUIPanel(qtCMBPanelsManager::MESH);
+  this->initUIPanel(qtCMBPanelsManager::INFO);
+  this->initUIPanel(qtCMBPanelsManager::DISPLAY);
+  this->initUIPanel(qtCMBPanelsManager::COLORMAP);
 }
 
 void pqCMBModelBuilderMainWindow::onNewMeshCreated()
@@ -1108,6 +1123,8 @@ void pqCMBModelBuilderMainWindow::onSimFileLoaded(const char* vtkNotUsed(filenam
   }
   this->UpdateInfoTable();
   this->updateEnableState();
+  this->getThisCore()->getSimBuilder()->GetUIPanel()->show();
+  this->getThisCore()->getSimBuilder()->GetUIPanel()->raise();
 }
 
 void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
@@ -1115,7 +1132,9 @@ void pqCMBModelBuilderMainWindow::onSceneFileLoaded()
   this->updateEnableState();
   // If there is no dock panel yet, this is the first time, so init
   // default panels
-  this->initUIPanel(qtCMBPanelsManager::SCENE);
+  auto dw = this->initUIPanel(qtCMBPanelsManager::SCENE);
+  dw->show();
+  dw->raise();
   //  this->initUIPanel(qtCMBPanelsManager::INFO);
   //  this->initUIPanel(qtCMBPanelsManager::DISPLAY);
 }
@@ -1299,7 +1318,6 @@ QDockWidget* pqCMBModelBuilderMainWindow::initUIPanel(
         colorWidget->setDataRepresentation(rep);
         dw = panelManager->createDockWidget(this, colorWidget,
           qtCMBPanelsManager::type2String(enType), Qt::RightDockWidgetArea, lastdw);
-        dw->show();
         pqApplicationCore::instance()->unRegisterManager("COLOR_EDITOR_PANEL");
         pqApplicationCore::instance()->registerManager("COLOR_EDITOR_PANEL", dw);
         this->Internal->CurrentDockWidgets[enType] = dw;
