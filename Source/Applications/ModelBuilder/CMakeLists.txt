@@ -375,6 +375,13 @@ endif()
       ZoomToSelectionSTP
     )
   endif()
+  set (SMTK_VXL_TESTS
+    )
+  if (SMTK_ENABLE_VXL_SUPPORT)
+    list(APPEND SMTK_VXL_TESTS
+      TerrainExtractionPts
+      )
+  endif()
 
   set (XML_TESTS_WITH_BASELINES
     AssignColors1
@@ -457,6 +464,7 @@ endif()
     DeleteAuxGeom
     ZoomToSelectionCMB
     ${CGM_SESSION_TESTS}
+    ${SMTK_VXL_TESTS}
     )
 
   set (TESTS_WITHOUT_BASELINES
