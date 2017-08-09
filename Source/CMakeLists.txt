@@ -134,9 +134,6 @@ pv_setup_module_environment("ConceptualModelBuilder")
 #get to set them all over again.
 include(CMBInstallRules)
 
-# This will build rtvl, which is linked from Filtering.
-add_subdirectory(LIDAR)
-
 #########################################################################
 # Meshing support
 #configure meshing components before
@@ -177,7 +174,7 @@ configure_file(CMBConfigVersion.cmake.in CMBConfigVersion.cmake @ONLY)
 get_property(_vtk_targets GLOBAL PROPERTY VTK_TARGETS)
 if (_vtk_targets)
   list(REMOVE_DUPLICATES _vtk_targets)
-  export(TARGETS ${_vtk_targets} rtvl FILE
+  export(TARGETS ${_vtk_targets} FILE
     ${ConceptualModelBuilder_BINARY_DIR}/../CMBTargets.cmake)
 endif()
 unset(_vtk_targets)

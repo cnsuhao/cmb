@@ -32,5 +32,4 @@ The following files and directories under the Source directory come from third p
 contents of these for details on the specifics of their respective
 licenses.
 - - - - - - - - - - - - - - - - - - - - - - - - do not remove this line
-LIDAR/rtvl
 CMake/FindUUID.cmake

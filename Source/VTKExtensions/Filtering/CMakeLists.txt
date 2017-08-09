@@ -63,6 +63,8 @@ target_include_directories(vtkCMBFiltering
 target_link_libraries(vtkCMBFiltering
             PRIVATE
               rtvl ${OpenCV_LIBS}
+              rgtl
+              vnl
               vtkIOImage
               vtkSMTKReaderExt # for vtkLIDARReader
               vtkSMTKFilterExt
