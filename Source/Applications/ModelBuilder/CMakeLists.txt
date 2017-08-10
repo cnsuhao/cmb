@@ -197,6 +197,7 @@ set(CMB_ALL_PLUGINS
     smtkVTKOperatorsPlugin
     smtkPQOperatorViewsPlugin
     smtkOpenCVPlugin
+    smtkVXLOperatorViewsPlugin
 )
 
 set(CMB_AUTOLOAD_PLUGINLIST)
