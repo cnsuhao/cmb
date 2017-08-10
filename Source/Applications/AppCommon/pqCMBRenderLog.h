@@ -33,7 +33,7 @@ public:
 
     // Redirect all Qt output to the the VTK output window, which now gets sent
     // to the logger.
-    pqOutputWidget::installQMessageHandler();
+    MessageHandler::install();
 
     // Pass the ostream to the logger, and set it to be owned by the logger.
     this->Logger.setFlushToStream(new std::ostream(&this->Stringbuf), true, false);
