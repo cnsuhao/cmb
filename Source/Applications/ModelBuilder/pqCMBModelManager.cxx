@@ -2066,6 +2066,13 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
         // The new models will be handled later on by checking all the models
         // in the Manager against the internal ModelInfos map here
         hasNewModels = true;
+
+        // If our model is a new submodel, then we flag the parent model has
+        // having changed.
+        if (it->as<smtk::model::Model>().parent().isModel())
+        {
+          geometryChangedModels.insert(it->owningModel().entity());
+        }
         continue;
       }
       else if (it->isSessionRef())
