@@ -2061,8 +2061,20 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
       if (it->isModel())
       {
         ++numNewModels;
-        // inform modelBuilderMainWindowCore that we have new model
-        emit newModelCreated(*it);
+
+        // If our model is a new submodel, then we flag the parent model has
+        // having changed.
+        if (it->as<smtk::model::Model>().parent().isModel())
+        {
+          geometryChangedModels.insert(it->owningModel().entity());
+          emit newModelCreated(it->as<smtk::model::Model>().parent());
+        }
+        else
+        {
+          // inform modelBuilderMainWindowCore that we have new model
+          emit newModelCreated(*it);
+        }
+
         int dim = it->embeddingDimension();
         emit newModelWithDimension(dim);
         haveEmittedDimensionality = (dim == 2 || dim == 3);
