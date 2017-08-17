@@ -21,6 +21,7 @@
 #include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/attribute/System.h"
+#include "smtk/common/View.h"
 #include "smtk/extension/qt/qtBaseView.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/io/AttributeReader.h"
@@ -177,6 +178,107 @@ std::string SimBuilderExportDialog::getPythonScript() const
   return script;
 }
 
+// Updates python script item to absolute path, based on input file info
+// Input fileInfo should refer to file that loaded ExportAttSystem
+bool SimBuilderExportDialog::updatePythonScriptItem(const QFileInfo& fileInfo)
+{
+  if (!this->ExportAttSystem)
+  {
+    return false;
+  }
+
+  // Check for ExportSpec attribute
+  smtk::attribute::AttributePtr specAtt;
+  smtk::attribute::FileItemDefinitionPtr scriptItemDef; // might need this below
+  std::vector<smtk::attribute::AttributePtr> attList =
+    this->ExportAttSystem->findAttributes("ExportSpec");
+  if (!attList.empty())
+  {
+    specAtt = attList[0];
+  }
+  else
+  {
+    // No ExportSpec att, so check for def
+    smtk::attribute::DefinitionPtr specDef = this->ExportAttSystem->findDefinition("ExportSpec");
+    if (!specDef)
+    {
+      qWarning() << "Export template missing ExportSpec definition";
+      return false;
+    }
+
+    // See if there is a PythonScript item
+    int scriptItemPosition = specDef->findItemPosition("PythonScript");
+    if (scriptItemPosition < 0)
+    {
+      qWarning() << "ExportSpec definition missing PythonScript item";
+      return false;
+    }
+    smtk::attribute::ItemDefinitionPtr itemDef = specDef->itemDefinition(scriptItemPosition);
+
+    scriptItemDef = smtk::dynamic_pointer_cast<smtk::attribute::FileItemDefinition>(itemDef);
+    if (!scriptItemDef)
+    {
+      qWarning() << "PythonScript item is not a FileItemDefinition";
+      return false;
+    }
+
+    // And get the name used in the InstancedView to display ExportSpec
+    std::string specName = this->findInstancedAttName("ExportSpec");
+    if (specName.empty())
+    {
+      qWarning() << "ExportSpec type missing from Views";
+      return false;
+    }
+
+    // Create the ExportSpec attribute
+    specAtt = this->ExportAttSystem->createAttribute(specName, specDef);
+  } // else (attList.empty())
+
+  // Get the python script item
+  smtk::attribute::FileItemPtr scriptItem = specAtt->findFile("PythonScript");
+  if (!scriptItem)
+  {
+    qWarning() << "ExportSpec attribute missing PythonScript item";
+    return false;
+  }
+
+  // See if we should/can update the script item
+  std::string scriptValue = scriptItem->value();
+  // If value empty, check for default value
+  if (scriptValue.empty() && (!!scriptItemDef) && scriptItemDef->hasDefault())
+  {
+    scriptValue = scriptItemDef->defaultValue();
+  }
+
+  // Check again
+  if (scriptValue.empty())
+  {
+    qWarning() << "No value found for python script";
+    return false; // no filename
+  }
+
+  // OK, now we can look for the script in the same directory as fileInfo
+  QFileInfo scriptInfo(scriptValue.c_str());
+  if (scriptInfo.isAbsolute())
+  {
+    return false; // don't overwrite absolute path
+  }
+
+  // Check for script in same directory as fileInfo arg
+  QDir folder = fileInfo.absoluteDir();
+  QString scriptQString = QString::fromStdString(scriptValue);
+  if (folder.exists(scriptQString))
+  {
+    QString scriptPath = folder.filePath(scriptQString);
+    qDebug() << "Setting export script to" << scriptPath;
+    scriptItem->setValue(scriptPath.toStdString());
+    return true; // updated
+  }
+
+  // (else)
+  return false; // didn't update
+}
+
 // [Slot] Handles analysis selection from radio buttons
 void SimBuilderExportDialog::analysisSelected()
 {
@@ -274,7 +376,7 @@ void SimBuilderExportDialog::updatePanel()
 
   // std::string filename("export.sbt");
   // hasError =
-  //   attWriter.write(*this->ExportAttSystem, filename, logger);
+  //   attWriter.write(this->ExportAttSystem, filename, logger);
   // std::cout << "Wrote " << filename  << std::endl;
 
   // Reload into export panel
@@ -287,21 +389,6 @@ void SimBuilderExportDialog::updatePanel()
     return;
   }
 
-  // If python script def has default value, look for script on local filesystem
-  std::string scriptPath;
-  smtk::attribute::FileItemDefinitionPtr fileDef =
-    this->getPythonScriptDef(this->ExportUIManager->attributeSystem());
-  if (fileDef && fileDef->hasDefault())
-  {
-    scriptPath = this->findPythonScriptPath(fileDef->defaultValue());
-    if (scriptPath.empty())
-    {
-      // Not found: unset the default value, so that UI shows it missing
-      fileDef->setDefaultValue("");
-      fileDef->unsetDefaultValue();
-    }
-  }
-
   // Get toplevel view
   smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
   if (!topView)
@@ -309,15 +396,7 @@ void SimBuilderExportDialog::updatePanel()
     QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
     return;
   }
-
   this->ExportUIManager->setSMTKView(topView, this->ContentWidget);
-
-  // Initialize script path
-  if (!scriptPath.empty())
-  {
-    smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
-    fileItem->setValue(0, scriptPath);
-  }
 
   // Update selection widget for analysis types
   this->SelectedAnalyses.clear();
@@ -606,4 +685,72 @@ std::string SimBuilderExportDialog::findPythonScriptPath(
     QMessageBox::critical(NULL, "Export Error", QString::fromStdString(ss.str()));
   }
   return std::string();
+}
+
+std::string SimBuilderExportDialog::findInstancedAttName(const std::string& attType) const
+{
+  std::string attName; // return value
+
+  // This method traverses the export attribute system views, looking
+  // for an instanced attribute of a given type. It will return the first one found.
+  // It is intended to be called by the updatePythonScriptItem() method.
+  // The basic instanced view structure is:
+  //   <View Type="Instanced">
+  //     <InstancedAttributes>
+  //       <Att Name=  Type=>
+  std::string thisAttName;
+  std::string thisAttType;
+  const std::map<std::string, smtk::common::ViewPtr>& views = this->ExportAttSystem->views();
+  std::map<std::string, smtk::common::ViewPtr>::const_iterator viewIter = views.cbegin();
+  for (; viewIter != views.cend(); ++viewIter)
+  {
+    const smtk::common::ViewPtr view = viewIter->second;
+    if (view->type() != "Instanced")
+    {
+      continue; // skip non-instance view
+    }
+
+    // Get <InstancedAttributes> element
+    int index = view->details().findChild("InstancedAttributes");
+    if (index < 0)
+    {
+      qWarning() << "Instanced View missing InstancedAttributes";
+      continue;
+    }
+    smtk::common::View::Component& instancedAttsComp = view->details().child(index);
+
+    // Traverse <Att> elements
+    std::size_t i, n = instancedAttsComp.numberOfChildren();
+    for (i = 0; i < n; ++i)
+    {
+      smtk::common::View::Component& attComp = instancedAttsComp.child(i);
+      if (attComp.name() != "Att")
+      {
+        continue;
+      }
+
+      if (!attComp.attribute("Type", thisAttType))
+      {
+        continue;
+      }
+
+      if (thisAttType != attType)
+      {
+        continue;
+      }
+
+      if (!attComp.attribute("Name", thisAttName))
+      {
+        qWarning() << "Missing Name for <Att> with Type" << attType.c_str();
+        continue;
+      }
+      else
+      {
+        return thisAttName;
+      }
+
+    } // for (i)
+  }   // for (viewIter)
+
+  return attName; // attType wasn't found
 }

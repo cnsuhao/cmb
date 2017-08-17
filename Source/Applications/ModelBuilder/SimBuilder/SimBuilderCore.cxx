@@ -53,6 +53,7 @@
 
 #include <QAbstractButton>
 #include <QApplication>
+#include <QDebug>
 #include <QDir>
 #include <QFileInfo>
 #include <QLayout>
@@ -512,17 +513,14 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
       return 0;
     }
   }
-  /*
-  vtkDiscreteModel* model = this->CMBModel ? this->CMBModel->getModel() : NULL;
-  bool ignoreModel = false;
-  if(this->LoadingScenario || (this->CMBModel && !this->CMBModel->hasGeometryEntity()))
-    {
-    ignoreModel = true;
-    }
-  this->updateCMBModelWithScenario(false);
-  this->updateCMBModelItems(model,
-    this->CMBModel ? this->CMBModel->getModelWrapper() : NULL);
-*/
+
+  // Update the export atts' python script item, based on the folder
+  // where the resource file was loaded.
+  if (!this->ExportDialog->updatePythonScriptItem(finfo))
+  {
+    qWarning() << "Did NOT update python script item";
+  }
+
   if (this->IsSimModelLoaded)
   {
     emit this->newSimFileLoaded(info->GetFileName());
