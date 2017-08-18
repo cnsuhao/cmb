@@ -209,6 +209,10 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   const bool useInternalFileBrowser = true;
   this->AttUIManager.reset(new smtk::extension::qtUIManager(this->AttSystem));
   this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(), useInternalFileBrowser);
+  QObject::connect(this->AttUIManager.get(),
+    SIGNAL(viewUIChanged(smtk::extension::qtBaseView*, smtk::attribute::ItemPtr)), this,
+    SLOT(onAttributeSystemModified()));
+
   // send signal from UIManager to selection manager
   QObject::connect(this->AttUIManager.get(),
     SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
@@ -224,6 +228,15 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
     SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
 
   emit this->meshingPossible(true);
+}
+
+void pqSMTKMeshPanel::onAttributeSystemModified()
+{
+  std::vector<smtk::attribute::AttributePtr> atts;
+  this->AttSystem->attributes(atts);
+  bool valid = std::accumulate(atts.begin(), atts.end(), true,
+    [](bool b, smtk::attribute::AttributePtr a) { return b &= a->isValid(); });
+  this->MeshButton->setEnabled(valid);
 }
 
 void pqSMTKMeshPanel::onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem)
