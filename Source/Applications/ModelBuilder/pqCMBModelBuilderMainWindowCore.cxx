@@ -1228,6 +1228,12 @@ void pqCMBModelBuilderMainWindowCore::onServerCreationFinished(pqServer* server)
     SIGNAL(representationBlockPicked(pqDataRepresentation*, vtkIdType, bool)), this,
     SLOT(selectRepresentationBlock(pqDataRepresentation*, vtkIdType, bool)));
 
+  /* When model representation is updated, call onColorByModeChanged to update
+   * entities' default color
+    */
+  QObject::connect(this->Internal->smtkModelManager, &pqCMBModelManager::modelRepresentationUpdated,
+    [this] { this->onColorByModeChanged(this->Internal->ColorByComboBox->currentText()); });
+
   // We need to block this so that the display and info panel only
   // works on the model geometry, not scene, or anyting else
   //  pqActiveObjects::instance().disconnect(this->activeRenderView());
@@ -1374,18 +1380,18 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
     pqSMTKModelInfo* minfo = NULL;
     smtk::model::EntityRef curRef(mgr, it->entity());
     // take care of potential coloring related changes
-    QColor color;
     if (curRef.hasColor() && (curRef.isVolume() || curRef.isGroup() ||
                                curRef.hasIntegerProperty("block_index")) // a geometric entity
       && (minfo = this->Internal->smtkModelManager->modelInfo(curRef)))
     {
+      QColor color;
+      // This could also be removing colors already being set,
       isAssigningColors = pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
-      // this could also be removing colors already being set,
-      // so if even the color is invalid, we still record it
       colorEntities[minfo].insert(curRef, color);
     }
     else if (pqSMTKUIHelper::isAuxiliaryShownSeparate(curRef) && curRef.hasColor())
     {
+      QColor color;
       pqCMBContextMenuHelper::getValidEntityColor(color, curRef);
       smtk::model::AuxiliaryGeometry aux(curRef);
       auxGeoColors[aux.url()] = color;
@@ -1443,6 +1449,7 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   if (colorEntities.count() > 0 && isAssigningColors)
   {
     this->modelPanel()->changeSelEntitiesBlockVisibility(false);
+    qtActiveObjects::instance().smtkSelectionManager()->clearAllSelections();
   }
 
   // update auxiliary visibility
@@ -1767,6 +1774,10 @@ pqCMBDisplayProxyEditor* pqCMBModelBuilderMainWindowCore::getAppearanceEditor()
 void pqCMBModelBuilderMainWindowCore::buildRenderWindowContextMenuBehavior(QObject* parent_widget)
 {
   this->Internal->ViewContextBehavior = new pqModelBuilderViewContextMenuBehavior(parent_widget);
+  // When user changes default color, update entities in the render view
+  QObject::connect(this->userPreferences(), &pqCMBModelBuilderOptions::updateEntityColor,
+    this->Internal->ViewContextBehavior,
+    [this] { this->onColorByModeChanged(this->Internal->ColorByComboBox->currentText()); });
 }
 
 void pqCMBModelBuilderMainWindowCore::selectRepresentationBlock(

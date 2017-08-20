@@ -128,6 +128,7 @@ signals:
   void newModelCreated(const smtk::model::EntityRef& newModel);
   void newModelsCreationFinished();
   void fileOpenedSuccessfully(const std::string& url);
+  void modelRepresentationUpdated();
 
 public slots:
   void clear();

@@ -9,12 +9,14 @@
 //=========================================================================
 #include "pqCMBContextMenuHelper.h"
 #include "SimBuilder/pqSMTKUIHelper.h"
+#include "pqApplicationCore.h"
 #include "pqCMBModelManager.h"
 #include "pqDataRepresentation.h"
 #include "pqRepresentationHelperFunctions.h"
 #include "pqSMAdaptor.h"
 #include "pqSMTKMeshInfo.h"
 #include "pqSMTKModelInfo.h"
+#include "pqSettings.h"
 
 #include "vtkDataObject.h"
 #include "vtkPVSMTKMeshInformation.h"
@@ -99,7 +101,7 @@ void pqCMBContextMenuHelper::accumulateChildGeometricEntities(
     blockIds.insert(bidx);
 }
 
-// only use valid color, the rest will be colored white
+// only use valid color, the rest will be colored by default color
 bool pqCMBContextMenuHelper::getValidEntityColor(
   QColor& color, const smtk::model::EntityRef& entref)
 {
@@ -110,7 +112,7 @@ bool pqCMBContextMenuHelper::getValidEntityColor(
     color.setRgbF(rgba[0], rgba[1], rgba[2], rgba[3]);
     return true;
   }
-  // if the color is invalid, it might got assigned by ENTITY_LIST. Look up the
+  // If the color is invalid, it might got assigned by ENTITY_LIST. Look up the
   // default color from the entity's model properties.
   if (entref.owningModel().isValid())
   {
@@ -119,11 +121,38 @@ bool pqCMBContextMenuHelper::getValidEntityColor(
     colorName += " color";
     if (model.hasFloatProperty(colorName))
     {
-      rgba = model.floatProperty(colorName);
-      float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
-      // alpha can't be zero
-      alpha = alpha == 0. ? 1.0 : alpha;
-      color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
+      smtk::model::FloatList rgbaModel = model.floatProperty(colorName);
+      // Check if user has invalidate the entity list color.
+      // Refer to qtModelView::changeEntityColor for detail
+      if (rgbaModel.size() == 4 && rgbaModel[3] != -2.0)
+      {
+        float alpha = rgbaModel.size() == 4 ? std::max(0., std::min(rgbaModel[3], 1.0)) : 1.;
+        // alpha can't be zero
+        alpha = alpha == 0. ? 1.0 : alpha;
+        color.setRgbF(rgbaModel[0], rgbaModel[1], rgbaModel[2], alpha);
+        return true;
+      }
+    }
+  }
+  // Use default color specified by user in the settings when entref does not
+  // have a color or user resets it to default color
+  // FIXME: For now there is no way to remove string property on the client side,
+  if (!entref.hasColor() || (rgba.size() == 4 && rgba[3] == -1))
+  {
+    pqSettings* settings = pqApplicationCore::instance()->settings();
+    if (entref.isFace())
+    {
+      color = settings->value("ModelBuilder/FaceColor", QColor()).value<QColor>();
+      return true;
+    }
+    else if (entref.isEdge())
+    {
+      color = settings->value("ModelBuilder/EdgeColor", QColor()).value<QColor>();
+      return true;
+    }
+    else if (entref.isVertex())
+    {
+      color = settings->value("ModelBuilder/VertexColor", QColor()).value<QColor>();
       return true;
     }
   }

@@ -199,6 +199,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
       smtk::model::CellEntities modVols = activeModel.cells();
       for (smtk::model::CellEntities::iterator it = modVols.begin(); it != modVols.end(); ++it)
       {
+        // Check hasColor first to stop querying entity's default color
         if (it->isVolume() && it->hasColor() &&
           pqCMBContextMenuHelper::getValidEntityColor(color, *it))
         {
@@ -212,6 +213,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
       smtk::model::Groups modGroups = activeModel.groups();
       for (smtk::model::Groups::iterator it = modGroups.begin(); it != modGroups.end(); ++it)
       {
+        // Check hasColor first to stop querying entity's default color
         if (it->hasColor() && pqCMBContextMenuHelper::getValidEntityColor(color, *it))
         {
           colorEntities[*it] = color;
@@ -220,12 +222,12 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
     }
     else if (colorMode == vtkModelMultiBlockSource::GetEntityTagName())
     {
-      // if colorby-entity, get entities' color,
+      // if color by entity, get entities' color,
       for (uit = modinfo->Info->GetUUID2BlockIdMap().begin();
            uit != modinfo->Info->GetUUID2BlockIdMap().end(); ++uit)
       {
         smtk::model::EntityRef eref(activeModel.manager(), uit->first);
-        if (eref.hasColor() && pqCMBContextMenuHelper::getValidEntityColor(color, eref))
+        if (pqCMBContextMenuHelper::getValidEntityColor(color, eref))
         {
           colorEntities[eref] = color;
         }
