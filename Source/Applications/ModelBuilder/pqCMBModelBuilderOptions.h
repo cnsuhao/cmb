@@ -44,12 +44,15 @@ public:
   std::string default3DModelFaceColorMode();
   std::string default2DModelFaceColorMode();
   std::string default2DModelEdgeColorMode();
+  QColor defaultFaceColor();
   QColor defaultEdgeColor();
-  QColor defaultPolygonColor();
+  QColor defaultVertexColor();
   bool sessionCentricModeling();
   bool createDefaultSessionModel();
   bool autoSwitchCameraManipulator();
   bool askBeforeDiscardingChanges();
+signals:
+  void updateEntityColor();
 
 protected slots:
   void chooseSimBuilderTemplateDirectory();

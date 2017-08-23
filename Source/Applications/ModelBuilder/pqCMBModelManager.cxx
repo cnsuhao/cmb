@@ -1731,7 +1731,10 @@ void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep
 bool pqCMBModelManager::updateModelRepresentation(const smtk::model::EntityRef& model)
 {
   this->clearModelSelections();
-  return this->Internal->updateModelRepresentation(model);
+  bool result = this->Internal->updateModelRepresentation(model);
+  // Update entity's default color by calling ColorByMode
+  emit modelRepresentationUpdated();
+  return result;
 }
 
 bool pqCMBModelManager::updateModelRepresentation(pqSMTKModelInfo* modinfo)

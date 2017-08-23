@@ -33,8 +33,9 @@ public:
   static void accumulateChildGeometricEntities(
     QSet<vtkIdType>& blockIds, const smtk::model::EntityRef& toplevel);
 
-  // only use valid color, the rest will be colored
-  // randomly with CTF
+  // Use valid color specified by user, the rest will be colored by default
+  // color in settings
+  // Call entref.hasColor() beforehand to stop querying default color
   static bool getValidEntityColor(QColor& color, const smtk::model::EntityRef& entref);
 
   // only use valid color, the rest will be colored

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>538</width>
-    <height>266</height>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,72 +21,20 @@
      </property>
      <widget class="QWidget" name="ModelBuilder">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0" colspan="2">
-        <widget class="QLabel" name="label_4">
+       <item row="8" column="0" colspan="3">
+        <widget class="QCheckBox" name="askBeforeDiscardingChangesBox">
          <property name="text">
-          <string>Default 3D Model Face Color Mode:</string>
+          <string>Ask Before Discarding Unsaved Changes</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="Default3DFaceColorMode">
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Model Face</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Region</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Domain Set</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Boundary Condition Set</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QLabel" name="label_5">
+       <item row="3" column="2">
+        <widget class="pqColorChooserButton" name="DefaultVertexColor">
          <property name="text">
-          <string>Default 2D Model Face Color Mode:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QComboBox" name="Default2DFaceColorMode">
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Polygon</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Domain Set</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Default 2D Model Edge Color Mode:</string>
+          <string>Vertex Color</string>
          </property>
         </widget>
        </item>
@@ -119,73 +67,14 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="pqColorChooserButton" name="DefaultEdgeColor">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="ModelFaceColorMode3D">
          <property name="text">
-          <string>2D Edge Color</string>
+          <string>Default 3D Model Face Color Mode:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="2">
-        <widget class="pqColorChooserButton" name="DefaultPolygonColor">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>2D Face Color</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="3">
-        <widget class="QCheckBox" name="defaultSessionModelBox">
-         <property name="text">
-          <string>Create Default Model If Possible When Creating New Session</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QCheckBox" name="sessionCentricModelingBox">
-         <property name="text">
-          <string>Session-Centric Modeling</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0" colspan="3">
-        <widget class="QCheckBox" name="autoSwitchManipulatorBox">
-         <property name="text">
-          <string>Switch Between 2-D/3-D Camera Controls  As Models Are Loaded</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="3">
-        <widget class="QCheckBox" name="askBeforeDiscardingChangesBox">
-         <property name="text">
-          <string>Ask Before Discarding Unsaved Changes</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
+       <item row="9" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -197,6 +86,124 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QLabel" name="ModelEdgeColorMode2D">
+         <property name="text">
+          <string>Default 2D Model Edge Color Mode:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="3">
+        <widget class="QCheckBox" name="autoSwitchManipulatorBox">
+         <property name="text">
+          <string>Switch Between 2-D/3-D Camera Controls  As Models Are Loaded</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QComboBox" name="Default3DFaceColorMode">
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Model Face</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Region</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Domain Set</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Boundary Condition Set</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="3">
+        <widget class="QCheckBox" name="defaultSessionModelBox">
+         <property name="text">
+          <string>Create Default Model If Possible When Creating New Session</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="pqColorChooserButton" name="DefaultFaceColor">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Face Color</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2">
+        <widget class="QLabel" name="ModelFaceColorMode2D">
+         <property name="text">
+          <string>Default 2D Model Face Color Mode:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="pqColorChooserButton" name="DefaultEdgeColor">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Edge Color</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="Default2DFaceColorMode">
+         <item>
+          <property name="text">
+           <string>None</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Polygon</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Domain Set</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="6" column="0" colspan="2">
+        <widget class="QCheckBox" name="sessionCentricModelingBox">
+         <property name="text">
+          <string>Session-Centric Modeling</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -243,8 +250,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>stackedWidget</zorder>
-  <zorder>askBeforeDiscardingChangesBox</zorder>
  </widget>
  <customwidgets>
   <customwidget>

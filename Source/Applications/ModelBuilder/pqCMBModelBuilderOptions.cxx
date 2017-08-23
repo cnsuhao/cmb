@@ -60,6 +60,14 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget* widgetParent)
 
   this->Internal = new pqInternal;
   this->Internal->setupUi(this);
+  this->Internal->ModelFaceColorMode3D->setVisible(false);
+  this->Internal->Default3DFaceColorMode->setVisible(false);
+  this->Internal->ModelFaceColorMode2D->setVisible(false);
+  this->Internal->Default2DFaceColorMode->setVisible(false);
+  this->Internal->ModelEdgeColorMode2D->setVisible(false);
+  this->Internal->Default2DEdgeColorMode->setVisible(false);
+  // Cannot change MinimumWidth in qtCreator
+  this->Internal->DefaultVertexColor->setMinimumWidth(149);
 
   // start fresh
   this->resetChanges();
@@ -71,9 +79,11 @@ pqCMBModelBuilderOptions::pqCMBModelBuilderOptions(QWidget* widgetParent)
     SIGNAL(changesAvailable()));
   QObject::connect(this->Internal->Default2DEdgeColorMode, SIGNAL(currentIndexChanged(int)), this,
     SIGNAL(changesAvailable()));
+  QObject::connect(this->Internal->DefaultFaceColor, SIGNAL(chosenColorChanged(const QColor&)),
+    this, SIGNAL(changesAvailable()));
   QObject::connect(this->Internal->DefaultEdgeColor, SIGNAL(chosenColorChanged(const QColor&)),
     this, SIGNAL(changesAvailable()));
-  QObject::connect(this->Internal->DefaultPolygonColor, SIGNAL(chosenColorChanged(const QColor&)),
+  QObject::connect(this->Internal->DefaultVertexColor, SIGNAL(chosenColorChanged(const QColor&)),
     this, SIGNAL(changesAvailable()));
 
   QObject::connect(this->Internal->dirTemplateBrowserButton, SIGNAL(clicked()), this,
@@ -132,9 +142,10 @@ void pqCMBModelBuilderOptions::applyChanges()
   settings->setValue("ModelBuilder/Default2DModelEdgeColorMode",
     this->Internal->Default2DEdgeColorMode->currentText());
   // colors
+  settings->setValue("ModelBuilder/FaceColor", this->Internal->DefaultFaceColor->chosenColor());
   settings->setValue("ModelBuilder/EdgeColor", this->Internal->DefaultEdgeColor->chosenColor());
-  settings->setValue(
-    "ModelBuilder/PolygonColor", this->Internal->DefaultPolygonColor->chosenColor());
+  settings->setValue("ModelBuilder/VertexColor", this->Internal->DefaultVertexColor->chosenColor());
+  emit updateEntityColor();
 
   // show top-level sessions
   settings->setValue(
@@ -167,10 +178,13 @@ void pqCMBModelBuilderOptions::resetChanges()
   index = (index == -1) ? 0 : index;
   this->Internal->Default2DEdgeColorMode->setCurrentIndex(index);
 
+  QColor fcolor = this->defaultFaceColor();
+  this->Internal->DefaultFaceColor->setChosenColor(fcolor);
   QColor ecolor = this->defaultEdgeColor();
   this->Internal->DefaultEdgeColor->setChosenColor(ecolor);
-  QColor pcolor = this->defaultPolygonColor();
-  this->Internal->DefaultPolygonColor->setChosenColor(pcolor);
+  QColor vcolor = this->defaultVertexColor();
+  this->Internal->DefaultVertexColor->setChosenColor(vcolor);
+  emit updateEntityColor();
 
   this->Internal->dirSBTemplates->setText(this->defaultSimBuilderTemplateDirectory().c_str());
 
@@ -217,19 +231,25 @@ std::string pqCMBModelBuilderOptions::default2DModelEdgeColorMode()
     .toStdString();
 }
 
-QColor pqCMBModelBuilderOptions::defaultPolygonColor()
+QColor pqCMBModelBuilderOptions::defaultFaceColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
   // default to white
-  return settings->value("ModelBuilder/PolygonColor", QColor::fromRgbF(1.0, 1.0, 1.0))
-    .value<QColor>();
+  return settings->value("ModelBuilder/FaceColor", QColor()).value<QColor>();
 }
 
 QColor pqCMBModelBuilderOptions::defaultEdgeColor()
 {
   pqSettings* settings = pqApplicationCore::instance()->settings();
   // default to white
-  return settings->value("ModelBuilder/EdgeColor", QColor::fromRgbF(1.0, 1.0, 1.0)).value<QColor>();
+  return settings->value("ModelBuilder/EdgeColor", QColor()).value<QColor>();
+}
+
+QColor pqCMBModelBuilderOptions::defaultVertexColor()
+{
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  // default to white
+  return settings->value("ModelBuilder/VertexColor", QColor()).value<QColor>();
 }
 
 bool pqCMBModelBuilderOptions::sessionCentricModeling()
