@@ -9,14 +9,12 @@
 //=========================================================================
 #include "pqCMBContextMenuHelper.h"
 #include "SimBuilder/pqSMTKUIHelper.h"
-#include "pqApplicationCore.h"
 #include "pqCMBModelManager.h"
 #include "pqDataRepresentation.h"
 #include "pqRepresentationHelperFunctions.h"
 #include "pqSMAdaptor.h"
 #include "pqSMTKMeshInfo.h"
 #include "pqSMTKModelInfo.h"
-#include "pqSettings.h"
 
 #include "vtkDataObject.h"
 #include "vtkPVSMTKMeshInformation.h"
@@ -49,6 +47,7 @@
 #include "smtk/model/StringData.h"
 #include "smtk/model/Volume.h"
 
+#include "smtk/extension/qt/qtEntityItemModel.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 
 const std::string pqCMBContextMenuHelper::s_internal_groupOpName = "entity group";
@@ -139,20 +138,19 @@ bool pqCMBContextMenuHelper::getValidEntityColor(
   // FIXME: For now there is no way to remove string property on the client side,
   if (!entref.hasColor() || (rgba.size() == 4 && rgba[3] == -1))
   {
-    pqSettings* settings = pqApplicationCore::instance()->settings();
     if (entref.isFace())
     {
-      color = settings->value("ModelBuilder/FaceColor", QColor()).value<QColor>();
+      color = smtk::extension::QEntityItemModel::defaultEntityColor("Face");
       return true;
     }
     else if (entref.isEdge())
     {
-      color = settings->value("ModelBuilder/EdgeColor", QColor()).value<QColor>();
+      color = smtk::extension::QEntityItemModel::defaultEntityColor("Edge");
       return true;
     }
     else if (entref.isVertex())
     {
-      color = settings->value("ModelBuilder/VertexColor", QColor()).value<QColor>();
+      color = smtk::extension::QEntityItemModel::defaultEntityColor("Vertex");
       return true;
     }
   }

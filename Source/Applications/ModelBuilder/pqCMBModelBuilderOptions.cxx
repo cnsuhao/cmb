@@ -34,6 +34,8 @@
 #include "vtkSMProxyManager.h"
 #include "vtkSMSessionProxyManager.h"
 
+#include "smtk/extension/qt/qtEntityItemModel.h"
+
 #include <QDir>
 #include <QDoubleValidator>
 #include <QMenu>
@@ -142,9 +144,19 @@ void pqCMBModelBuilderOptions::applyChanges()
   settings->setValue("ModelBuilder/Default2DModelEdgeColorMode",
     this->Internal->Default2DEdgeColorMode->currentText());
   // colors
+  // Store entity color on pqSettings for bookkeeping
   settings->setValue("ModelBuilder/FaceColor", this->Internal->DefaultFaceColor->chosenColor());
+
   settings->setValue("ModelBuilder/EdgeColor", this->Internal->DefaultEdgeColor->chosenColor());
+
   settings->setValue("ModelBuilder/VertexColor", this->Internal->DefaultVertexColor->chosenColor());
+
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Face", this->Internal->DefaultFaceColor->chosenColor());
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Edge", this->Internal->DefaultEdgeColor->chosenColor());
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Vertex", this->Internal->DefaultVertexColor->chosenColor());
   emit updateEntityColor();
 
   // show top-level sessions
@@ -177,6 +189,15 @@ void pqCMBModelBuilderOptions::resetChanges()
   index = this->Internal->Default2DEdgeColorMode->findText(str2dmodeledgecolor);
   index = (index == -1) ? 0 : index;
   this->Internal->Default2DEdgeColorMode->setCurrentIndex(index);
+
+  // When ModelBuilder starts up, pass colors in pqSettings to QEntityItemModel
+  pqSettings* settings = pqApplicationCore::instance()->settings();
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Face", settings->value("ModelBuilder/FaceColor", QColor()).value<QColor>());
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Edge", settings->value("ModelBuilder/EdgeColor", QColor()).value<QColor>());
+  smtk::extension::QEntityItemModel::setDefaultEntityColor(
+    "Vertex", settings->value("ModelBuilder/VertexColor", QColor()).value<QColor>());
 
   QColor fcolor = this->defaultFaceColor();
   this->Internal->DefaultFaceColor->setChosenColor(fcolor);
@@ -233,23 +254,17 @@ std::string pqCMBModelBuilderOptions::default2DModelEdgeColorMode()
 
 QColor pqCMBModelBuilderOptions::defaultFaceColor()
 {
-  pqSettings* settings = pqApplicationCore::instance()->settings();
-  // default to white
-  return settings->value("ModelBuilder/FaceColor", QColor()).value<QColor>();
+  return smtk::extension::QEntityItemModel::defaultEntityColor("Face");
 }
 
 QColor pqCMBModelBuilderOptions::defaultEdgeColor()
 {
-  pqSettings* settings = pqApplicationCore::instance()->settings();
-  // default to white
-  return settings->value("ModelBuilder/EdgeColor", QColor()).value<QColor>();
+  return smtk::extension::QEntityItemModel::defaultEntityColor("Edge");
 }
 
 QColor pqCMBModelBuilderOptions::defaultVertexColor()
 {
-  pqSettings* settings = pqApplicationCore::instance()->settings();
-  // default to white
-  return settings->value("ModelBuilder/VertexColor", QColor()).value<QColor>();
+  return smtk::extension::QEntityItemModel::defaultEntityColor("Vertex");
 }
 
 bool pqCMBModelBuilderOptions::sessionCentricModeling()
