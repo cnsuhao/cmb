@@ -57,6 +57,7 @@ vtkPythonExporter::vtkPythonExporter()
   this->PythonPath = 0;
   this->PythonExecutable = 0;
   this->ModelManagerWrapper = NULL;
+  this->SMTKExportSpec = new smtk::simulation::ExportSpec;
 }
 
 vtkPythonExporter::~vtkPythonExporter()
@@ -65,6 +66,11 @@ vtkPythonExporter::~vtkPythonExporter()
   this->SetPythonPath(0);
   this->SetPythonExecutable(0);
   this->SetModelManagerWrapper(NULL);
+
+  // Do NOT delete SMTKExportSpec, since this will be deleted
+  // by python  directly. This is a side-effect of the "do not use"
+  // logic for passing ExportSpec to python. This will be obviated once
+  // we convert export to an operator.
 }
 
 void vtkPythonExporter::Operate(
@@ -100,7 +106,6 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper, const char
 
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
-  // create the attributes from smtkContents
   // create the attributes from smtkContents
   auto manager = smtk::attribute::System::create();
   manager->setRefModelManager(modelWrapper->GetModelManager());
@@ -237,10 +242,8 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   ///***************************************************************///
 
   // Initialize ExportSpec object
-  smtk::simulation::ExportSpec spec;
-  spec.setSimulationAttributes(manager);
-  spec.setExportAttributes(exportManager);
-  //  spec.setAnalysisGridInfo(gridInfo);
+  this->SMTKExportSpec->setSimulationAttributes(manager);
+  this->SMTKExportSpec->setExportAttributes(exportManager);
 
   std::string runscript;
   std::string script = vtksys::SystemTools::GetFilenameWithoutExtension(this->Script);
@@ -256,7 +259,7 @@ void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
   runscript += "if smtk.wrappingProtocol() == 'pybind11':\n";
   runscript += "  import smtk.simulation\n";
 
-  std::string spec_address = to_hex_address(&spec);
+  std::string spec_address = to_hex_address(this->SMTKExportSpec);
 
   runscript +=
     "spec = smtk.simulation.ExportSpec._InternalConverterDoNotUse_('" + spec_address + "')\n";
