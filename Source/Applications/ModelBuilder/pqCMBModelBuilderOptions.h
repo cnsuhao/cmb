@@ -44,6 +44,7 @@ public:
   std::string default3DModelFaceColorMode();
   std::string default2DModelFaceColorMode();
   std::string default2DModelEdgeColorMode();
+  // Color is stored on QEntityItemModel so smtk does not need to tether Qt and PV
   QColor defaultFaceColor();
   QColor defaultEdgeColor();
   QColor defaultVertexColor();
