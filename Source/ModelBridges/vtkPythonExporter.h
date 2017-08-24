@@ -24,6 +24,13 @@
 #include <vector>  // for callback method for SMTK Model
 
 class vtkModelManagerWrapper;
+namespace smtk
+{
+namespace simulation
+{
+class ExportSpec;
+}
+}
 
 class MODELBRIDGECLIENT_EXPORT vtkPythonExporter : public vtkObject
 {
@@ -77,6 +84,7 @@ protected:
   char* Script;
   char* PythonPath;
   char* PythonExecutable;
+  smtk::simulation::ExportSpec* SMTKExportSpec;
 
 private:
   vtkPythonExporter(const vtkPythonExporter&); // Not implemented.
