@@ -20,6 +20,7 @@
 
 #include "smtk/PublicPointerDefs.h"
 
+#include <QFileInfo>
 #include <QObject>
 #include <QPointer>
 #include <string>
@@ -49,6 +50,7 @@ public:
   void setActiveServer(pqServer* server);
   int exec();
   std::string getPythonScript() const;
+  bool updatePythonScriptItem(const QFileInfo& fileInfo);
 
 protected slots:
   void analysisSelected();
@@ -67,6 +69,7 @@ protected:
     smtk::attribute::FileItemPtr fileItem, bool warnIfMissing = false) const;
   smtk::attribute::ItemPtr getExportSpecItem(
     const std::string& name, bool warnIfMissing = false) const;
+  std::string findInstancedAttName(const std::string& attType) const;
 
 private:
   int Status;
