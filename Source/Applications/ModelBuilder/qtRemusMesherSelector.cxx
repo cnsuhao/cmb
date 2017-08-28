@@ -11,6 +11,8 @@
 
 #include "ui_qtMesherSelector.h"
 
+#include "smtk/extension/qt/qtActiveObjects.h"
+
 //needed to use remus requirements inside a qvariant
 Q_DECLARE_METATYPE(remus::proto::JobRequirements)
 //needed to use smtk::model::Model inside a qvariant
@@ -74,6 +76,11 @@ void qtRemusMesherSelector::rebuildModelList(bool shouldRebuild)
       fancyModelName << i->name() << " (" << i->dimension() << "D)";
       this->Internal->cb_models->addItem(
         QString::fromStdString(fancyModelName.str()), QVariant::fromValue(model));
+      // Set the index of the model combobox to be the active model
+      if (model.entity() == qtActiveObjects::instance().activeModel().entity())
+      {
+        this->Internal->cb_models->setCurrentIndex((this->Internal->cb_models->count() - 1));
+      }
     }
   }
   this->Internal->cb_models->blockSignals(false);
