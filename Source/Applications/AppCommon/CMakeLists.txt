@@ -188,6 +188,7 @@ add_library(cmbAppCommon
   qtCMBProfileWedgeFunctionWidget.h
   qtCMBProjectServerManager.cxx
   qtCMBProjectServerManager.h
+  pqCMBRenderLog.cxx
   pqCMBRenderLog.h
   qtCMBTreeWidget.cxx
   qtCMBTreeWidget.h

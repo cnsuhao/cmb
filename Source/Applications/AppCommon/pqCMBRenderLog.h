@@ -7,6 +7,13 @@
 //  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 //  PURPOSE.  See the above copyright notice for more information.
 //=========================================================================
+// .NAME qtCMBRenderLog - a render log for the log window in CMB applications.
+// .SECTION Description
+//  This class contains an SMTK logger that is connected to the main log window
+//  of CMB applications via a qtEmittingStringBuffer (a string buffer that emits
+// whenever it is updated). It also makes the one-time connection between Qt
+// output and VTK's output and between VTK's output and its internal logger.
+// .SECTION Caveats
 
 #ifndef _pqCMBRenderLog_h
 #define _pqCMBRenderLog_h
@@ -16,9 +23,6 @@
 #include "pqOutputWidget.h"
 
 #include "smtk/extension/qt/qtEmittingStringBuffer.h"
-
-#include "smtk/extension/vtk/io/RedirectOutput.h"
-
 #include "smtk/io/Logger.h"
 
 class pqCMBRenderLog : public QObject
@@ -26,32 +30,12 @@ class pqCMBRenderLog : public QObject
   Q_OBJECT
 
 public:
-  pqCMBRenderLog()
-  {
-    // Redirect all VTK output to the logger.
-    smtk::extension::vtk::io::RedirectVTKOutputTo(this->Logger);
+  pqCMBRenderLog();
 
-    // Redirect all Qt output to the the VTK output window, which now gets sent
-    // to the logger.
-    MessageHandler::install();
-
-    // Pass the ostream to the logger, and set it to be owned by the logger.
-    this->Logger.setFlushToStream(new std::ostream(&this->Stringbuf), true, false);
-
-    // Connect the emitting string buffer's flush signal to our onUpdate slot,
-    // which in turn emits our log and then clears its contents.
-    QObject::connect(&this->Stringbuf, SIGNAL(flush()), this, SLOT(onUpdate()));
-  }
-
-  virtual ~pqCMBRenderLog() {}
+  virtual ~pqCMBRenderLog();
 
 public slots:
-  // Emit the log and then clear its contents.
-  void onUpdate()
-  {
-    emit renderLog(this->Logger);
-    this->Logger.reset();
-  }
+  void onUpdate();
 
 signals:
   void renderLog(const smtk::io::Logger&);
