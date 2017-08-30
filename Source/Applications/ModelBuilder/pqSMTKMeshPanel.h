@@ -60,6 +60,11 @@ protected slots:
     const remus::proto::JobRequirements& reqs);
 
   void onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem);
+
+  // Whenever the attribute system is modified, toggle the mesh button's
+  // availability according to the attribute system's validity
+  void onAttributeSystemModified();
+
   void onRequestEntityAssociation();
   void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
 
