@@ -51,6 +51,8 @@
 #include "qtCMBMeshingMonitor.h"
 #include "qtRemusMesherSelector.h"
 
+#include <numeric>
+
 using namespace std;
 using namespace smtk::model;
 
