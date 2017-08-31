@@ -11,7 +11,6 @@
   <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mousePress" arguments="1,1,0,295,19" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mouseMove" arguments="1,0,0,285,9" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mouseRelease" arguments="1,0,0,285,9" />
-  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/polygonEdgeOpEditor/1QFrame0/1QToolButton0" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.41,0.29,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.41,0.29,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.41,0.29,1,0,0)" />
