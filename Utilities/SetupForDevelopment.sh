@@ -17,3 +17,6 @@ git config branch.master.rebase true
 # Record the version of this setup so Scripts/pre-commit can check it.
 SetupForDevelopment_VERSION=2
 git config hooks.SetupForDevelopment ${SetupForDevelopment_VERSION}
+
+echo "Setting up SMTK's development environment..."
+ThirdParty/SMTK/utilities/SetupForDevelopment.sh
