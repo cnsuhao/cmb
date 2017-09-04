@@ -133,7 +133,7 @@ table which allows you to insert multiple instances while Tab 1 does not. These
 are due to the different types used in their views (coded in sample.crf).
 
 Select File-Save Simulation to save attributes as a CRF file. To export the
-attributes as simulation inputs, click on File-Export Simulation File, the
+attributes as simulation inputs, click on File-Export Simulation Files, the
 export interface designed in the template that contains two analysis will be shown:
 
 .. findfigure:: AttributeExport.*
