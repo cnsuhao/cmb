@@ -1304,7 +1304,7 @@
   </action>
   <action name="actionExport_Simulation_File">
    <property name="text">
-    <string>Export Simulation File</string>
+    <string>Export Simulation Files</string>
    </property>
    <property name="toolTip">
     <string>Export simulation instance file to a specific simulation format </string>
