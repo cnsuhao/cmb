@@ -43,7 +43,7 @@ public:
     pqCMBSceneNode* parentNode, QWidget* parent = NULL, Qt::WindowFlags flags = 0);
   ~qtCMBGenerateContoursDialog() override;
 
-  int exec();
+  int exec() override;
 
 protected slots:
   void generateContours();
