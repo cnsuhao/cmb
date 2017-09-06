@@ -68,7 +68,7 @@ public slots:
 
 protected slots:
 
-  virtual void onAskedToExit();
+  void onAskedToExit() override;
 
   void onShowCenterAxisChanged(bool enabled);
   void onActiveRepresentationChanged(pqDataRepresentation*);
@@ -90,7 +90,7 @@ protected slots:
   void onRequestMeshEdgePointSelection(const smtk::attribute::MeshSelectionItemPtr& meshSelectItem);
   void onMeshSelectionItemCreated(smtk::extension::qtMeshSelectionItem* meshItem,
     const std::string& opName, const smtk::common::UUID& uuid);
-  void onCameraInteractionModeChangeTo2D(bool);
+  void onCameraInteractionModeChangeTo2D(bool) override;
 
   // Description:
   // Updates the enable state of various menus.
@@ -173,7 +173,7 @@ protected:
   pqSearchBox* createSearchBox();
 
   // Prevent window-close with unsaved models
-  void closeEvent(QCloseEvent* event);
+  void closeEvent(QCloseEvent* event) override;
 
 private:
   pqCMBModelBuilderMainWindow(const pqCMBModelBuilderMainWindow&); // Not implemented.
