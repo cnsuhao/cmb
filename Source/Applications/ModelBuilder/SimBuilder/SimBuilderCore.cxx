@@ -229,7 +229,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*s
   xmlr.setSearchPaths(searchPaths);
   smtk::io::Logger logger;
   bool errStatus =
-    xmlr.readContents(this->uiManager()->attributeSystem(), info->GetFileContents(), logger);
+    xmlr.readContents(this->uiManager()->attributeCollection(), info->GetFileContents(), logger);
 
   if (errStatus)
   {
@@ -238,7 +238,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*s
   }
 
   // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
+  smtk::common::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());
@@ -278,7 +278,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*s
 */
 
   // Update export dialog
-  this->ExportDialog->setSimAttSystem(this->uiManager()->attributeSystem());
+  this->ExportDialog->setSimAttCollection(this->uiManager()->attributeCollection());
   this->setDefaultExportTemplate();
 
   this->IsSimModelLoaded = true;
@@ -339,11 +339,11 @@ int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
   {
     // Initialize ResourceSet
     smtk::common::ResourceSet resources;
-    smtk::attribute::SystemPtr simSystem = this->uiManager()->attributeSystem();
-    resources.addResource(simSystem, "simbuilder", "", smtk::common::ResourceSet::INSTANCE);
-    smtk::attribute::SystemPtr expSystem =
-      this->ExportDialog->exportAttSystem(true); // use baseline atts
-    resources.addResource(expSystem, "export", "", smtk::common::ResourceSet::TEMPLATE);
+    smtk::attribute::CollectionPtr simCollection = this->uiManager()->attributeCollection();
+    resources.addResource(simCollection, "simbuilder", "", smtk::common::ResourceSet::INSTANCE);
+    smtk::attribute::CollectionPtr expCollection =
+      this->ExportDialog->exportAttCollection(true); // use baseline atts
+    resources.addResource(expCollection, "export", "", smtk::common::ResourceSet::TEMPLATE);
 
     // Serialize ResourceSet
     smtk::io::ResourceSetWriter resourceWriter;
@@ -353,7 +353,7 @@ int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
   {
     // SimBuilderWriter xmlw;
     smtk::io::AttributeWriter xmlw;
-    errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(), filecontents, logger);
+    errStatus = xmlw.writeContents(this->uiManager()->attributeCollection(), filecontents, logger);
   }
 
   if (errStatus)
@@ -444,11 +444,11 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   std::string linkStartDir = finfo.absoluteDir().path().toStdString();
   resources.setLinkStartPath(linkStartDir);
 
-  // Instantiate reader and std::map for current attribute systems
+  // Instantiate reader and std::map for current attribute collections
   smtk::io::ResourceSetReader resourceReader;
   std::map<std::string, smtk::common::ResourcePtr> resourceMap;
-  resourceMap["simbuilder"] = this->uiManager()->attributeSystem();
-  //resourceMap["export"] = this->GetExportPanel()->uiManager()->attributeSystem();
+  resourceMap["simbuilder"] = this->uiManager()->attributeCollection();
+  //resourceMap["export"] = this->GetExportPanel()->uiManager()->attributeCollection();
 
   // Read input
   smtk::io::Logger logger;
@@ -463,7 +463,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   }
 
   // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->uiManager()->attributeSystem()->findTopLevelView();
+  smtk::common::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());
@@ -487,7 +487,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   std::string simLink;
   if (resources.resourceInfo("simbuilder", simType, simRole, simState, simLink))
   {
-    this->ExportDialog->setSimAttSystem(this->uiManager()->attributeSystem());
+    this->ExportDialog->setSimAttCollection(this->uiManager()->attributeCollection());
     this->IsSimModelLoaded = true;
     this->CurrentSimFile = info->GetFileName();
   }
@@ -501,9 +501,9 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   {
     smtk::common::ResourcePtr expResource;
     resources.get("export", expResource);
-    smtk::attribute::SystemPtr expSystem =
-      smtk::dynamic_pointer_cast<smtk::attribute::System>(expResource);
-    this->ExportDialog->setExportAttSystem(expSystem);
+    smtk::attribute::CollectionPtr expCollection =
+      smtk::dynamic_pointer_cast<smtk::attribute::Collection>(expResource);
+    this->ExportDialog->setExportAttCollection(expCollection);
   }
   else
   {
@@ -528,21 +528,21 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   return 1;
 }
 
-// Loads hard-coded default export template (att system)
+// Loads hard-coded default export template (att collection)
 // Returns true if logger has errors
 bool SimBuilderCore::setDefaultExportTemplate()
 {
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
-  smtk::attribute::SystemPtr system = smtk::attribute::System::create();
-  bool hasErrors = attributeReader.readContents(system, defaultExportTemplateString, logger);
+  smtk::attribute::CollectionPtr collection = smtk::attribute::Collection::create();
+  bool hasErrors = attributeReader.readContents(collection, defaultExportTemplateString, logger);
   if (hasErrors)
   {
     std::cerr << "Error loading default export resource:\n"
               << logger.convertToString() << std::endl;
     QMessageBox::warning(this->GetUIPanel(), "ERROR", "Error loading default export template");
   }
-  this->ExportDialog->setExportAttSystem(system);
+  this->ExportDialog->setExportAttCollection(collection);
   smtkDebugMacro(logger, "Initialized ExportPanel to default template");
   return hasErrors;
 }
@@ -638,17 +638,19 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
       }
     }
 */
-  smtk::attribute::SystemPtr attSystem = this->uiManager()->attributeSystem();
-  if (!attSystem)
+  smtk::attribute::CollectionPtr attCollection = this->uiManager()->attributeCollection();
+  if (!attCollection)
   {
-    QMessageBox::warning(NULL, "Export Warning!", "Cannot export - no attribute system available!");
+    QMessageBox::warning(
+      NULL, "Export Warning!", "Cannot export - no attribute collection available!");
     return;
   }
 
-  smtk::attribute::SystemPtr expSystem = this->ExportDialog->exportAttSystem();
-  if (!expSystem)
+  smtk::attribute::CollectionPtr expCollection = this->ExportDialog->exportAttCollection();
+  if (!expCollection)
   {
-    QMessageBox::warning(NULL, "Export Warning!", "Cannot export - no *export* system available!");
+    QMessageBox::warning(
+      NULL, "Export Warning!", "Cannot export - no *export* collection available!");
     return;
   }
 
@@ -678,7 +680,8 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
     std::string simContents;
     smtk::io::AttributeWriter xmlw;
     smtk::io::Logger logger;
-    bool errStatus = xmlw.writeContents(this->uiManager()->attributeSystem(), simContents, logger);
+    bool errStatus =
+      xmlw.writeContents(this->uiManager()->attributeCollection(), simContents, logger);
     if (errStatus)
     {
       QMessageBox::warning(
@@ -688,7 +691,8 @@ void SimBuilderCore::ExportSimFile(vtkSMModelManagerProxy* mmproxy)
     }
 
     std::string exportContents;
-    errStatus = xmlw.writeContents(this->ExportDialog->exportAttSystem(), exportContents, logger);
+    errStatus =
+      xmlw.writeContents(this->ExportDialog->exportAttCollection(), exportContents, logger);
     if (errStatus)
     {
       QMessageBox::warning(

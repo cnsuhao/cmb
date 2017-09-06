@@ -18,7 +18,7 @@
 
 #include "ModelBridgeClientModule.h"
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/attribute/System.h"
+#include "smtk/attribute/Collection.h"
 #include "vtkObject.h"
 #include <utility> // for pair in callback method for SMTK model
 #include <vector>  // for callback method for SMTK Model
@@ -47,8 +47,9 @@ public:
     vtkModelManagerWrapper* modelMgrWrapper, const char* smtkContents, const char* exportContents);
 
   // This method is for standalone & test apps
-  virtual void Operate(smtk::model::ManagerPtr mgr, smtk::attribute::SystemPtr simulationAttributes,
-    smtk::attribute::SystemPtr exportAttributes);
+  virtual void Operate(smtk::model::ManagerPtr mgr,
+    smtk::attribute::CollectionPtr simulationAttributes,
+    smtk::attribute::CollectionPtr exportAttributes);
 
   // Description:
   // Returns success (1) or failue (0) for Operation.

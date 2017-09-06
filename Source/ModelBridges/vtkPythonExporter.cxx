@@ -16,9 +16,9 @@
 #include <vtksys/SystemTools.hxx>
 
 #include <smtk/attribute/Attribute.h>
+#include <smtk/attribute/Collection.h>
 #include <smtk/attribute/FileItem.h>
 #include <smtk/attribute/Item.h>
-#include <smtk/attribute/System.h>
 #include <smtk/model/Manager.h>
 
 #include <smtk/io/AttributeReader.h>
@@ -37,7 +37,7 @@ namespace
 // Description:
 // Given the attributes serialized into contents, deserialize that
 // data into manager.
-void DeserializeSMTK(const char* contents, smtk::attribute::SystemPtr manager)
+void DeserializeSMTK(const char* contents, smtk::attribute::CollectionPtr manager)
 {
   smtk::io::AttributeReader xmlr;
   smtk::io::Logger logger;
@@ -85,11 +85,11 @@ void vtkPythonExporter::Operate(
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
   // create the attributes from smtkContents
-  auto simManager = smtk::attribute::System::create();
+  auto simManager = smtk::attribute::Collection::create();
   simManager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, simManager);
 
-  auto exportManager = smtk::attribute::System::create();
+  auto exportManager = smtk::attribute::Collection::create();
   exportManager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(exportContents, exportManager);
 
@@ -107,12 +107,12 @@ void vtkPythonExporter::Operate(vtkModelManagerWrapper* modelWrapper, const char
   // NOTE: We need to set the model manager BEFORE deseriazlize, so that
   // all the ModelEntityItems have associated EntityRefs properly initialized.
   // create the attributes from smtkContents
-  auto manager = smtk::attribute::System::create();
+  auto manager = smtk::attribute::Collection::create();
   manager->setRefModelManager(modelWrapper->GetModelManager());
   DeserializeSMTK(smtkContents, manager);
 
   // Create empty export manager
-  auto exportManager = smtk::attribute::System::create();
+  auto exportManager = smtk::attribute::Collection::create();
   this->Operate(modelWrapper->GetModelManager(), manager, exportManager);
 }
 
@@ -131,7 +131,7 @@ std::string to_hex_address(IN* ptr)
 }
 
 void vtkPythonExporter::Operate(smtk::model::ManagerPtr modelMgr,
-  smtk::attribute::SystemPtr manager, smtk::attribute::SystemPtr exportManager)
+  smtk::attribute::CollectionPtr manager, smtk::attribute::CollectionPtr exportManager)
 {
 
   //  std::ofstream json("/Users/yuminyuan/Downloads/hydrafiles/exportModelManager.json");

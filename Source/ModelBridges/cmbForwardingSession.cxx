@@ -24,7 +24,7 @@ cmbForwardingSession::cmbForwardingSession()
   // Let's clear out the attribute system so there are no
   // pre-existing operation definitions - the operators
   // should come from what ever session we are actually using.
-  this->m_operatorSys = smtk::attribute::System::create();
+  this->m_operatorCollection = smtk::attribute::Collection::create();
 }
 
 cmbForwardingSession::~cmbForwardingSession()

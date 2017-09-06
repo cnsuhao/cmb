@@ -46,9 +46,9 @@ public:
   vtkGetStringMacro(AttributeItemName);
 
   // Description:
-  // Set/Get the AttributeSystemContents.
-  vtkSetStringMacro(AttributeSystemContents);
-  vtkGetStringMacro(AttributeSystemContents);
+  // Set/Get the AttributeCollectionContents.
+  vtkSetStringMacro(AttributeCollectionContents);
+  vtkGetStringMacro(AttributeCollectionContents);
 
   // Description:
   // If true, the 'Group' field data will be recreated.
@@ -68,7 +68,7 @@ protected:
   vtkModelManagerWrapper* ModelManagerWrapper;
   char* AttributeDefinitionType;
   char* AttributeItemName;
-  char* AttributeSystemContents;
+  char* AttributeCollectionContents;
   bool AddGroupArray;
 
 private:

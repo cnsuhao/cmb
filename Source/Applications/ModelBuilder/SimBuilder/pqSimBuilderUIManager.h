@@ -40,7 +40,7 @@ class pqSimBuilderUIManager : public QObject
 public:
   pqSimBuilderUIManager(QObject* parent = NULL);
   ~pqSimBuilderUIManager() override;
-  smtk::attribute::SystemPtr attributeSystem() const { return this->m_AttSystem; }
+  smtk::attribute::CollectionPtr attributeCollection() const { return this->m_AttCollection; }
   smtk::extension::qtUIManager* attributeUIManager() const { return this->m_attUIManager; }
 
   void setServer(pqServer* s) { this->ActiveServer = s; }
@@ -74,7 +74,7 @@ protected slots:
 protected:
   pqServer* ActiveServer;
   pqRenderView* RenderView;
-  smtk::attribute::SystemPtr m_AttSystem;
+  smtk::attribute::CollectionPtr m_AttCollection;
   smtk::extension::qtUIManager* m_attUIManager;
   QPointer<pqSMTKModelPanel> m_ModelPanel;
 

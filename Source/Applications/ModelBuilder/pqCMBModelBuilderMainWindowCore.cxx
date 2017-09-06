@@ -78,11 +78,11 @@
 #include "vtkPVSceneGenFileInformation.h"
 
 #include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/Collection.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/attribute/System.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
 #include "smtk/extension/paraview/operators/smtkExportModelView.h"
 #include "smtk/extension/paraview/operators/smtkSaveModelView.h"
@@ -1293,9 +1293,9 @@ void pqCMBModelBuilderMainWindowCore::updateScalarBarWidget(
     if (show)
     {
       pqSimBuilderUIManager* simUIManager = this->getSimBuilder()->uiManager();
-      smtk::attribute::SystemPtr attSystem = simUIManager->attributeSystem();
+      smtk::attribute::CollectionPtr attCollection = simUIManager->attributeCollection();
       std::vector<smtk::attribute::AttributePtr> result;
-      attSystem->findDefinitionAttributes(strDefType.toStdString(), result);
+      attCollection->findDefinitionAttributes(strDefType.toStdString(), result);
 
       QList<QVariant> annotationList;
       QList<QColor> indexColors;
@@ -1713,7 +1713,7 @@ void pqCMBModelBuilderMainWindowCore::colorByAttributeFieldSelected(
   const QString& attdeftype, const QString& itemname)
 {
   this->Internal->ViewContextBehavior->colorByAttribute(
-    this->getSimBuilder()->uiManager()->attributeSystem(), attdeftype, itemname);
+    this->getSimBuilder()->uiManager()->attributeCollection(), attdeftype, itemname);
 }
 
 void pqCMBModelBuilderMainWindowCore::updateSMTKSelection()

@@ -67,8 +67,8 @@ public:
     const QMap<smtk::model::EntityRef, QColor>& colorEntities, const QString& colorByMode);
   void updateAttributeColorTable(pqDataRepresentation* rep, vtkSMProxy* lutProxy,
     const QMap<std::string, QColor>& colorAtts, const std::vector<std::string>& annList);
-  void colorRepresentationByAttribute(pqDataRepresentation* rep, smtk::attribute::SystemPtr attSys,
-    const QString& attDef, const QString& attItem);
+  void colorRepresentationByAttribute(pqDataRepresentation* rep,
+    smtk::attribute::CollectionPtr attCollection, const QString& attDef, const QString& attItem);
 
   pqSMTKModelInfo* modelInfo(const smtk::model::EntityRef& entity);
   pqSMTKModelInfo* modelInfo(pqDataRepresentation* rep);

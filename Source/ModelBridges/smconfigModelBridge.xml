@@ -120,8 +120,8 @@
         number_of_elements="1">
       </StringVectorProperty>
       <StringVectorProperty
-        name="AttributeSystemContents"
-        command="SetAttributeSystemContents"
+        name="AttributeCollectionContents"
+        command="SetAttributeCollectionContents"
         number_of_elements="1">
       </StringVectorProperty>
 
