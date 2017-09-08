@@ -17,10 +17,10 @@
 #include <sstream>
 
 #include <smtk/attribute/Attribute.h>
+#include <smtk/attribute/Collection.h>
 #include <smtk/attribute/Definition.h>
 #include <smtk/attribute/DoubleItem.h>
 #include <smtk/attribute/IntItem.h>
-#include <smtk/attribute/System.h>
 #include <smtk/io/AttributeReader.h>
 #include <smtk/io/AttributeWriter.h>
 #include <smtk/io/Logger.h>
@@ -127,7 +127,7 @@ std::string make_tetgenFlags(const remus::proto::JobContent& rawInstance)
   //YY Preserve Surface Mesh
   const std::string default_flags = "pzMAYY";
 
-  smtk::attribute::System manager;
+  smtk::attribute::Collection manager;
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
 
@@ -456,7 +456,7 @@ void TetGenWorker::meshJob()
   detail::send_jobProgress(this, j, "Constructing TetGen Input Mesh");
   detail::tetgen_wrapper tetInfo = detail::make_tetgenInput(discreteMeshData);
 
-  //2. Parse the attribute system to build the tetgen command line arguments
+  //2. Parse the attribute collection to build the tetgen command line arguments
   detail::send_jobProgress(this, j, "Constructing TetGen Control Flags");
   const std::string tetoptions = detail::make_tetgenFlags(rawInstance);
   std::cout << "tetoptions: " << tetoptions << std::endl;

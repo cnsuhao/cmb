@@ -14,13 +14,13 @@
 #include "SimBuilderExportDialog.h"
 
 #include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/Collection.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/FileItem.h"
 #include "smtk/attribute/FileItemDefinition.h"
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/attribute/System.h"
 #include "smtk/common/View.h"
 #include "smtk/extension/qt/qtBaseView.h"
 #include "smtk/extension/qt/qtUIManager.h"
@@ -104,7 +104,7 @@ SimBuilderExportDialog::~SimBuilderExportDialog()
 
 int SimBuilderExportDialog::exec()
 {
-  if (!this->SimAttSystem)
+  if (!this->SimAttCollection)
   {
     QMessageBox::warning(NULL, "Export Error",
       "Cannot export becauuse no simulation template or attributes have been loaded",
@@ -165,7 +165,7 @@ int SimBuilderExportDialog::exec()
   return status;
 }
 
-// Returns python script "value" as stored in the export attribute system
+// Returns python script "value" as stored in the export attribute collection
 std::string SimBuilderExportDialog::getPythonScript() const
 {
   smtk::attribute::FileItemPtr fileItem = this->getPythonScriptItem();
@@ -179,10 +179,10 @@ std::string SimBuilderExportDialog::getPythonScript() const
 }
 
 // Updates python script item to absolute path, based on input file info
-// Input fileInfo should refer to file that loaded ExportAttSystem
+// Input fileInfo should refer to file that loaded ExportAttCollection
 bool SimBuilderExportDialog::updatePythonScriptItem(const QFileInfo& fileInfo)
 {
-  if (!this->ExportAttSystem)
+  if (!this->ExportAttCollection)
   {
     return false;
   }
@@ -191,7 +191,7 @@ bool SimBuilderExportDialog::updatePythonScriptItem(const QFileInfo& fileInfo)
   smtk::attribute::AttributePtr specAtt;
   smtk::attribute::FileItemDefinitionPtr scriptItemDef; // might need this below
   std::vector<smtk::attribute::AttributePtr> attList =
-    this->ExportAttSystem->findAttributes("ExportSpec");
+    this->ExportAttCollection->findAttributes("ExportSpec");
   if (!attList.empty())
   {
     specAtt = attList[0];
@@ -199,7 +199,8 @@ bool SimBuilderExportDialog::updatePythonScriptItem(const QFileInfo& fileInfo)
   else
   {
     // No ExportSpec att, so check for def
-    smtk::attribute::DefinitionPtr specDef = this->ExportAttSystem->findDefinition("ExportSpec");
+    smtk::attribute::DefinitionPtr specDef =
+      this->ExportAttCollection->findDefinition("ExportSpec");
     if (!specDef)
     {
       qWarning() << "Export template missing ExportSpec definition";
@@ -231,7 +232,7 @@ bool SimBuilderExportDialog::updatePythonScriptItem(const QFileInfo& fileInfo)
     }
 
     // Create the ExportSpec attribute
-    specAtt = this->ExportAttSystem->createAttribute(specName, specDef);
+    specAtt = this->ExportAttCollection->createAttribute(specName, specDef);
   } // else (attList.empty())
 
   // Get the python script item
@@ -325,28 +326,28 @@ void SimBuilderExportDialog::multipleSelectChanged(int state)
   this->AnalysisButtonGroup->setExclusive(!boolState);
 }
 
-// Returns the export attribute system
+// Returns the export attribute collection
 // When the baseline flag is true, return the original/initial attributes
 // loaded in the dialog, otherwise return the copy used in the export panel
 // (which might be empty, or might have been edited).
-smtk::attribute::SystemPtr SimBuilderExportDialog::exportAttSystem(bool baseline) const
+smtk::attribute::CollectionPtr SimBuilderExportDialog::exportAttCollection(bool baseline) const
 {
   if (baseline)
   {
-    return this->ExportAttSystem;
+    return this->ExportAttCollection;
   }
-  return this->ExportUIManager->attributeSystem();
+  return this->ExportUIManager->attributeCollection();
 }
 
-void SimBuilderExportDialog::setExportAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setExportAttCollection(smtk::attribute::CollectionPtr collection)
 {
-  this->ExportAttSystem = system;
+  this->ExportAttCollection = collection;
   this->IsPanelSet = false;
 }
 
-void SimBuilderExportDialog::setSimAttSystem(smtk::attribute::SystemPtr system)
+void SimBuilderExportDialog::setSimAttCollection(smtk::attribute::CollectionPtr collection)
 {
-  this->SimAttSystem = system;
+  this->SimAttCollection = collection;
   this->IsPanelSet = false;
 }
 
@@ -355,34 +356,34 @@ void SimBuilderExportDialog::setActiveServer(pqServer* server)
   this->ActiveServer = server;
 }
 
-// Rebuilds ExportSystem with copy of ExportAttSystem,
+// Rebuilds ExportCollection with copy of ExportAttCollection,
 // For now, does brute-force copy
 void SimBuilderExportDialog::updatePanel()
 {
-  // Blow away current export system
+  // Blow away current export collection
   if (this->ExportUIManager)
   {
     delete this->ExportUIManager;
   }
   this->ExportUIManager = new pqSimBuilderUIManager();
-  this->ExportUIManager->setModelManager(this->SimAttSystem->refModelManager());
+  this->ExportUIManager->setModelManager(this->SimAttCollection->refModelManager());
 
-  // Serialize export system
+  // Serialize export collection
   smtk::io::Logger logger;
   smtk::io::AttributeWriter attWriter;
-  std::string serializedSystem;
+  std::string serializedCollection;
   bool hasError;
-  hasError = attWriter.writeContents(this->ExportAttSystem, serializedSystem, logger);
+  hasError = attWriter.writeContents(this->ExportAttCollection, serializedCollection, logger);
 
   // std::string filename("export.sbt");
   // hasError =
-  //   attWriter.write(this->ExportAttSystem, filename, logger);
+  //   attWriter.write(this->ExportAttCollection, filename, logger);
   // std::cout << "Wrote " << filename  << std::endl;
 
   // Reload into export panel
   smtk::io::AttributeReader attReader;
-  hasError =
-    attReader.readContents(this->ExportUIManager->attributeSystem(), serializedSystem, logger);
+  hasError = attReader.readContents(
+    this->ExportUIManager->attributeCollection(), serializedCollection, logger);
   if (hasError)
   {
     QMessageBox::critical(NULL, "Export Error", QString::fromStdString(logger.convertToString()));
@@ -390,7 +391,7 @@ void SimBuilderExportDialog::updatePanel()
   }
 
   // Get toplevel view
-  smtk::common::ViewPtr topView = this->ExportUIManager->attributeSystem()->findTopLevelView();
+  smtk::common::ViewPtr topView = this->ExportUIManager->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
@@ -408,7 +409,7 @@ void SimBuilderExportDialog::updatePanel()
 // Rebuilds selection list of analyis types
 void SimBuilderExportDialog::updateAnalysisTypesWidget()
 {
-  if (!this->SimAttSystem)
+  if (!this->SimAttCollection)
   {
     // No attributes - should we warn the user?
     return;
@@ -448,8 +449,8 @@ void SimBuilderExportDialog::updateAnalysisTypesWidget()
   QLabel* label = new QLabel("<strong>Select Analysis Type</strong>", this->AnalysisTypesWidget);
   frameLayout->addWidget(label);
 
-  // Construct list of analysis types from simulation attribute system
-  std::map<std::string, std::set<std::string> > analysisMap = this->SimAttSystem->analyses();
+  // Construct list of analysis types from simulation attribute collection
+  std::map<std::string, std::set<std::string> > analysisMap = this->SimAttCollection->analyses();
   if (analysisMap.empty())
   {
     return;
@@ -503,9 +504,9 @@ void SimBuilderExportDialog::updateAnalysisTypesWidget()
 
 // Retrieves PythonScript item definition from export attributes
 smtk::attribute::FileItemDefinitionPtr SimBuilderExportDialog::getPythonScriptDef(
-  const smtk::attribute::SystemPtr attributeSystem, bool warnIfMissing) const
+  const smtk::attribute::CollectionPtr attributeCollection, bool warnIfMissing) const
 {
-  smtk::attribute::DefinitionPtr exportDef = attributeSystem->findDefinition("ExportSpec");
+  smtk::attribute::DefinitionPtr exportDef = attributeCollection->findDefinition("ExportSpec");
   if (!exportDef)
   {
     if (warnIfMissing)
@@ -559,8 +560,8 @@ smtk::attribute::FileItemPtr SimBuilderExportDialog::getPythonScriptItem(bool wa
 smtk::attribute::ItemPtr SimBuilderExportDialog::getExportSpecItem(
   const std::string& name, bool warnIfMissing) const
 {
-  smtk::attribute::SystemPtr system = this->ExportUIManager->attributeSystem();
-  if (!system)
+  smtk::attribute::CollectionPtr collection = this->ExportUIManager->attributeCollection();
+  if (!collection)
   {
     if (warnIfMissing)
     {
@@ -570,7 +571,7 @@ smtk::attribute::ItemPtr SimBuilderExportDialog::getExportSpecItem(
   }
 
   std::vector<smtk::attribute::AttributePtr> attList;
-  system->findAttributes("ExportSpec", attList);
+  collection->findAttributes("ExportSpec", attList);
   if (attList.size() < 1)
   {
     if (warnIfMissing)
@@ -691,7 +692,7 @@ std::string SimBuilderExportDialog::findInstancedAttName(const std::string& attT
 {
   std::string attName; // return value
 
-  // This method traverses the export attribute system views, looking
+  // This method traverses the export attribute collection views, looking
   // for an instanced attribute of a given type. It will return the first one found.
   // It is intended to be called by the updatePythonScriptItem() method.
   // The basic instanced view structure is:
@@ -700,7 +701,7 @@ std::string SimBuilderExportDialog::findInstancedAttName(const std::string& attT
   //       <Att Name=  Type=>
   std::string thisAttName;
   std::string thisAttType;
-  const std::map<std::string, smtk::common::ViewPtr>& views = this->ExportAttSystem->views();
+  const std::map<std::string, smtk::common::ViewPtr>& views = this->ExportAttCollection->views();
   std::map<std::string, smtk::common::ViewPtr>::const_iterator viewIter = views.cbegin();
   for (; viewIter != views.cend(); ++viewIter)
   {

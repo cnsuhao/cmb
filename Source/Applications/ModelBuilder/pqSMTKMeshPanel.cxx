@@ -15,11 +15,11 @@
 #include "smtk/model/Manager.h"
 #include "smtk/model/Operator.h"
 
+#include "smtk/attribute/Collection.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/ModelEntityItem.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/attribute/System.h"
 
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
@@ -65,7 +65,7 @@ pqSMTKMeshPanel::pqSMTKMeshPanel(QPointer<pqCMBModelManager> modelManager,
       modelManager->managerProxy()->modelManager(), monitor->connection(), this))
   , RequirementsWidget(new QWidget(this))
   , SubmitterWidget(new QWidget(this))
-  , AttSystem()
+  , AttCollection()
   , AttUIManager()
   , ActiveModel()
   , ActiveRequirements()
@@ -156,8 +156,8 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   const QString& vtkNotUsed(workerName), const remus::proto::JobRequirements& reqs)
 {
 
-  if (modelToDisplay == this->ActiveModel && reqs == this->ActiveRequirements && this->AttSystem &&
-    this->AttUIManager)
+  if (modelToDisplay == this->ActiveModel && reqs == this->ActiveRequirements &&
+    this->AttCollection && this->AttUIManager)
   {
     //We don't need to clear anything!, use the existing setup we build
     //before. This only works if the AttUIManager hasn't been cleared, which
@@ -168,7 +168,7 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   }
 
   //This check requires
-  if (this->AttSystem)
+  if (this->AttCollection)
   {
     //At this point we need to cache the current attributes the user
     //could be filling out the requirements for a given mesher and switch
@@ -177,15 +177,15 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
     smtk::io::AttributeWriter writer;
     std::string serializedAttributes;
 
-    writer.writeContents(this->AttSystem, serializedAttributes, inputLogger);
+    writer.writeContents(this->AttCollection, serializedAttributes, inputLogger);
     this->cacheAtts(serializedAttributes);
   }
 
   //each time a new mesher is selected this needs to rebuild the UI
   this->ActiveModel = modelToDisplay;
   this->ActiveRequirements = reqs;
-  this->AttSystem = smtk::attribute::System::create();
-  this->AttSystem->setRefModelManager(this->ModelManager->managerProxy()->modelManager());
+  this->AttCollection = smtk::attribute::Collection::create();
+  this->AttCollection->setRefModelManager(this->ModelManager->managerProxy()->modelManager());
 
   smtk::io::AttributeReader reader;
   smtk::io::Logger inputLogger;
@@ -193,27 +193,27 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   bool err = false;
   if (this->hasCachedAtts(reqs))
   {
-    reader.readContents(this->AttSystem, this->fetchCachedAtts(), inputLogger);
+    reader.readContents(this->AttCollection, this->fetchCachedAtts(), inputLogger);
   }
   else if (reqs.sourceType() == (remus::common::ContentSource::File))
   { //the requirements are the file name so pass that to the attribute reader
     const std::string p(reqs.requirements(), reqs.requirementsSize());
-    err = reader.read(this->AttSystem, p, true, inputLogger);
+    err = reader.read(this->AttCollection, p, true, inputLogger);
   }
   else
   { //the requirements are in memory xml contents
 
     err = reader.readContents(
-      this->AttSystem, reqs.requirements(), reqs.requirementsSize(), inputLogger);
+      this->AttCollection, reqs.requirements(), reqs.requirementsSize(), inputLogger);
   }
 
-  smtk::common::ViewPtr root = this->AttSystem->findTopLevelView();
+  smtk::common::ViewPtr root = this->AttCollection->findTopLevelView();
   const bool useInternalFileBrowser = true;
-  this->AttUIManager.reset(new smtk::extension::qtUIManager(this->AttSystem));
+  this->AttUIManager.reset(new smtk::extension::qtUIManager(this->AttCollection));
   this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(), useInternalFileBrowser);
   QObject::connect(this->AttUIManager.get(),
     SIGNAL(viewUIChanged(smtk::extension::qtBaseView*, smtk::attribute::ItemPtr)), this,
-    SLOT(onAttributeSystemModified()));
+    SLOT(onAttributeCollectionModified()));
 
   // send signal from UIManager to selection manager
   QObject::connect(this->AttUIManager.get(),
@@ -232,10 +232,10 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
   emit this->meshingPossible(true);
 }
 
-void pqSMTKMeshPanel::onAttributeSystemModified()
+void pqSMTKMeshPanel::onAttributeCollectionModified()
 {
   std::vector<smtk::attribute::AttributePtr> atts;
-  this->AttSystem->attributes(atts);
+  this->AttCollection->attributes(atts);
   bool valid = std::accumulate(atts.begin(), atts.end(), true,
     [](bool b, smtk::attribute::AttributePtr a) { return b &= a->isValid(); });
   this->MeshButton->setEnabled(valid);
@@ -327,7 +327,7 @@ bool pqSMTKMeshPanel::submitMeshJob()
   smtk::io::AttributeWriter writer;
   std::string serializedAttributes;
   //yes this returns false for being a valid, and true when an error occurs
-  bool serialized = !writer.writeContents(this->AttSystem, serializedAttributes, inputLogger);
+  bool serialized = !writer.writeContents(this->AttCollection, serializedAttributes, inputLogger);
   if (!serialized)
   {
     return false;

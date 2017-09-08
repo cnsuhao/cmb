@@ -69,18 +69,18 @@ def verifyAssociation():
     # rs now contains the CRF
     resource = rs.get('simbuilder')
     if smtk.wrappingProtocol() == "pybind11":
-        attSystem = resource
+        attCollection = resource
     else:
-        attSystem = smtk.attribute.System.CastTo(resource)
+        attCollection = smtk.attribute.System.CastTo(resource)
 
-    attributeTypes = attSystem.definitions()
+    attributeTypes = attCollection.definitions()
 
     # list of tuples with attribute instance names and entity names
     matches = list()
 
     print "attributeTypes:"
     for aType in attributeTypes:
-        defs = attSystem.findAttributes(aType.type())
+        defs = attCollection.findAttributes(aType.type())
         print aType.type()
         for attribute in defs:
             print " ", attribute.name(), "| Associations:", attribute.associations()

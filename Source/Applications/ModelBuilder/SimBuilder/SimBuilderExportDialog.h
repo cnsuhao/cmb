@@ -9,7 +9,7 @@
 //=========================================================================
 // .NAME SimBuilderExportDialog - Options for exporting CMB simulation file.
 // .SECTION Description
-// Dialog is customized by input smtk::attribute::System
+// Dialog is customized by input smtk::attribute::Collection
 // .SECTION Caveats
 
 #ifndef __SimBuilderExportDialog_h
@@ -43,9 +43,9 @@ public:
   ~SimBuilderExportDialog() override;
 
   QWidget* contentWidget() const { return this->ContentWidget; }
-  smtk::attribute::SystemPtr exportAttSystem(bool baseline = false) const;
-  void setExportAttSystem(smtk::attribute::SystemPtr system);
-  void setSimAttSystem(smtk::attribute::SystemPtr system);
+  smtk::attribute::CollectionPtr exportAttCollection(bool baseline = false) const;
+  void setExportAttCollection(smtk::attribute::CollectionPtr collection);
+  void setSimAttCollection(smtk::attribute::CollectionPtr collection);
 
   void setActiveServer(pqServer* server);
   int exec();
@@ -63,7 +63,7 @@ protected:
   void updatePanel();
   void updateAnalysisTypesWidget();
   smtk::attribute::FileItemDefinitionPtr getPythonScriptDef(
-    const smtk::attribute::SystemPtr attributeSystem, bool warnIfMissing = false) const;
+    const smtk::attribute::CollectionPtr attributeCollection, bool warnIfMissing = false) const;
   smtk::attribute::FileItemPtr getPythonScriptItem(bool warnIfMissing = false) const;
   std::string getPythonScriptPath(
     smtk::attribute::FileItemPtr fileItem, bool warnIfMissing = false) const;
@@ -79,8 +79,8 @@ private:
   QWidget* ContentWidget;
   QButtonGroup* AnalysisButtonGroup;
   QPointer<pqServer> ActiveServer;
-  smtk::attribute::SystemPtr SimAttSystem;
-  smtk::attribute::SystemPtr ExportAttSystem;
+  smtk::attribute::CollectionPtr SimAttCollection;
+  smtk::attribute::CollectionPtr ExportAttCollection;
   QPointer<pqSimBuilderUIManager> ExportUIManager;
   // Indicates if ExportPanel has been updated to current inputs
   bool IsPanelSet;

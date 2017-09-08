@@ -61,9 +61,9 @@ protected slots:
 
   void onModelEntityItemCreated(smtk::extension::qtModelEntityItem* entItem);
 
-  // Whenever the attribute system is modified, toggle the mesh button's
-  // availability according to the attribute system's validity
-  void onAttributeSystemModified();
+  // Whenever the attribute collection is modified, toggle the mesh button's
+  // availability according to the attribute collection's validity
+  void onAttributeCollectionModified();
 
   void onRequestEntityAssociation();
   void onRequestEntitySelection(const smtk::common::UUIDs& uuids);
@@ -95,7 +95,7 @@ private:
   QPointer<QTextEdit> ResultLog;
   QPointer<QPushButton> MeshButton;
 
-  smtk::attribute::SystemPtr AttSystem;
+  smtk::attribute::CollectionPtr AttCollection;
   smtk::shared_ptr<smtk::extension::qtUIManager> AttUIManager;
 
   smtk::model::Model ActiveModel;

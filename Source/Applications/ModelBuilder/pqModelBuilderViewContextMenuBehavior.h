@@ -56,8 +56,8 @@ public:
   void syncBlockColor(
     pqDataRepresentation* rep, const QList<vtkIdType>& colorBlocks, const QColor&);
   virtual void colorByEntity(const QString&);
-  virtual void colorByAttribute(
-    smtk::attribute::SystemPtr attSys, const QString& attdeftype, const QString& itemname);
+  virtual void colorByAttribute(smtk::attribute::CollectionPtr attCollection,
+    const QString& attdeftype, const QString& itemname);
   virtual void updateColorForEntities(pqDataRepresentation* rep, const QString& colorMode,
     const QMap<smtk::model::EntityRef, QColor>& colorEntities);
   virtual void updateColorForMeshes(pqDataRepresentation* rep, const QString& colorMode,

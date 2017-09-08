@@ -286,7 +286,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByEntity(const QString& colorMo
 }
 
 void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
-  smtk::attribute::SystemPtr attSys, const QString& attdeftype, const QString& itemname)
+  smtk::attribute::CollectionPtr attCollection, const QString& attdeftype, const QString& itemname)
 {
   if (!this->m_modelPanel || !this->m_modelPanel->modelManager())
     return;
@@ -329,7 +329,7 @@ void pqModelBuilderViewContextMenuBehavior::colorByAttribute(
   }
 
   this->m_modelPanel->modelManager()->colorRepresentationByAttribute(
-    activeRep, attSys, attdeftype, itemname);
+    activeRep, attCollection, attdeftype, itemname);
 }
 
 void pqModelBuilderViewContextMenuBehavior::updateColorForEntities(pqDataRepresentation* rep,

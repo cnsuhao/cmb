@@ -1587,7 +1587,7 @@ void pqCMBModelManager::updateAttributeColorTable(pqDataRepresentation* rep, vtk
 }
 
 void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep,
-  smtk::attribute::SystemPtr attsys, const QString& attDefType, const QString& attItemName)
+  smtk::attribute::CollectionPtr attsys, const QString& attDefType, const QString& attItemName)
 {
   // set rep colorByArray("...")
   pqSMTKModelInfo* modInfo = this->modelInfo(rep);
@@ -1625,14 +1625,14 @@ void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep
   vtkSMSourceProxy* smSource = vtkSMSourceProxy::SafeDownCast(modInfo->RepSource->getProxy());
   vtkSMPropertyHelper(smSource, "AttributeDefinitionType").Set("");
   vtkSMPropertyHelper(smSource, "AttributeItemName").Set("");
-  vtkSMPropertyHelper(smSource, "AttributeSystemContents").Set("");
+  vtkSMPropertyHelper(smSource, "AttributeCollectionContents").Set("");
   vtkSMPropertyHelper(smSource, "AddGroupArray").Set(0);
   smSource->UpdateVTKObjects();
 
   vtkSMPropertyHelper(smSource, "AttributeDefinitionType").Set(attDefType.toStdString().c_str());
   if (!attItemName.isEmpty())
     vtkSMPropertyHelper(smSource, "AttributeItemName").Set(attItemName.toStdString().c_str());
-  vtkSMPropertyHelper(smSource, "AttributeSystemContents").Set(simContents.c_str());
+  vtkSMPropertyHelper(smSource, "AttributeCollectionContents").Set(simContents.c_str());
 
   //  smSource->InvokeCommand("MarkDirty");
   smSource->UpdateVTKObjects();

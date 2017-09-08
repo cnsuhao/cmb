@@ -281,7 +281,7 @@
     <string>Close Data</string>
    </property>
    <property name="toolTip">
-    <string>Close all models and attribute systems</string>
+    <string>Close all models and attribute collections</string>
    </property>
   </action>
   <action name="action_Exit">

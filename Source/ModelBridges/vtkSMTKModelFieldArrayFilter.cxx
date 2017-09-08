@@ -24,13 +24,13 @@
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/attribute/Attribute.h"
+#include "smtk/attribute/Collection.h"
 #include "smtk/attribute/Definition.h"
 #include "smtk/attribute/DoubleItem.h"
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/attribute/System.h"
 #include "smtk/common/UUID.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/io/AttributeReader.h"
@@ -49,7 +49,7 @@ vtkSMTKModelFieldArrayFilter::vtkSMTKModelFieldArrayFilter()
   this->ModelManagerWrapper = NULL;
   this->AttributeDefinitionType = NULL;
   this->AttributeItemName = NULL;
-  this->AttributeSystemContents = NULL;
+  this->AttributeCollectionContents = NULL;
   this->AddGroupArray = false;
 }
 
@@ -58,7 +58,7 @@ vtkSMTKModelFieldArrayFilter::~vtkSMTKModelFieldArrayFilter()
   this->SetModelManagerWrapper(NULL);
   this->SetAttributeDefinitionType(NULL);
   this->SetAttributeItemName(NULL);
-  this->SetAttributeSystemContents(NULL);
+  this->SetAttributeCollectionContents(NULL);
 }
 
 void vtkSMTKModelFieldArrayFilter::PrintSelf(ostream& os, vtkIndent indent)
@@ -71,8 +71,8 @@ void vtkSMTKModelFieldArrayFilter::PrintSelf(ostream& os, vtkIndent indent)
   os << indent
      << "AttributeItemName: " << (this->AttributeItemName ? this->AttributeItemName : "null")
      << "\n";
-  os << indent << "AttributeSystemContents: "
-     << (this->AttributeSystemContents ? this->AttributeSystemContents : "null") << "\n";
+  os << indent << "AttributeCollectionContents: "
+     << (this->AttributeCollectionContents ? this->AttributeCollectionContents : "null") << "\n";
 }
 
 int vtkSMTKModelFieldArrayFilter::FillInputPortInformation(int, vtkInformation* info)
@@ -125,7 +125,7 @@ static void internal_AddBlockGroupInfo(
 }
 
 void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
-  const smtk::model::ManagerPtr& vtkNotUsed(modelMan), const smtk::attribute::SystemPtr& attsys,
+  const smtk::model::ManagerPtr& vtkNotUsed(modelMan), const smtk::attribute::CollectionPtr& attsys,
   const char* attDefType, const char* attItemName)
 {
   if (!objBlock)
@@ -238,16 +238,17 @@ int vtkSMTKModelFieldArrayFilter::RequestData(
     iter->Delete();
   }
 
-  if (this->AttributeDefinitionType == NULL || this->AttributeSystemContents == NULL)
+  if (this->AttributeDefinitionType == NULL || this->AttributeCollectionContents == NULL)
   {
     return 1;
   }
-  //  smtk::attribute::System* attsys = modelMan->attributeSystem();
+  //  smtk::attribute::Collection* attsys = modelMan->attributeCollection();
 
   smtk::io::AttributeReader attributeReader;
   smtk::io::Logger logger;
-  smtk::attribute::SystemPtr attsys = smtk::attribute::System::create();
-  bool hasErrors = attributeReader.readContents(attsys, this->GetAttributeSystemContents(), logger);
+  smtk::attribute::CollectionPtr attsys = smtk::attribute::Collection::create();
+  bool hasErrors =
+    attributeReader.readContents(attsys, this->GetAttributeCollectionContents(), logger);
   if (hasErrors)
   {
     std::cerr << logger.convertToString() << std::endl;

@@ -55,8 +55,8 @@ pqSimBuilderUIManager::pqSimBuilderUIManager(QObject* parent)
 {
   this->ActiveServer = NULL;
   this->RenderView = NULL;
-  this->m_AttSystem = smtk::attribute::System::create();
-  this->m_attUIManager = new smtk::extension::qtUIManager(this->m_AttSystem);
+  this->m_AttCollection = smtk::attribute::Collection::create();
+  this->m_attUIManager = new smtk::extension::qtUIManager(this->m_AttCollection);
   this->Internals = new pqSimBuilderUIManagerInternals;
   // switching active model would update all model views
   QObject::connect(&qtActiveObjects::instance(), SIGNAL(activeModelChanged()), this->m_attUIManager,
@@ -67,7 +67,7 @@ pqSimBuilderUIManager::~pqSimBuilderUIManager()
 {
   delete this->Internals;
 
-  this->m_AttSystem = smtk::attribute::SystemPtr();
+  this->m_AttCollection = smtk::attribute::CollectionPtr();
   if (this->m_attUIManager != NULL)
   {
     this->m_attUIManager->disconnect();
@@ -92,7 +92,7 @@ void pqSimBuilderUIManager::setModelManager(smtk::model::ManagerPtr refModelMgr)
   {
     this->Internals->ModelMgr = refModelMgr;
   }
-  this->m_AttSystem->setRefModelManager(refModelMgr);
+  this->m_AttCollection->setRefModelManager(refModelMgr);
 }
 
 void pqSimBuilderUIManager::setModelPanel(pqSMTKModelPanel* panel)
