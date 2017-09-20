@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/TestingScene/SampleScene.sg" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/TestingScene/SampleScene.sg" />
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton2" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton3" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/toolBar_View/1QToolButton4" command="activate" arguments="" />

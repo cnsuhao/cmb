@@ -58,15 +58,15 @@ target_link_libraries(testDataReader ${testing_libraries})
 add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 
 add_short_test(TestLIDARReaderPiece LIDARConverter
-        ${CMB_TEST_DATA_ROOT}/LIDAR/LIDARTest.pts
+        ${CMB_TEST_DATA_ROOT}/data/LIDAR/LIDARTest.pts
         ${CMB_TEST_DIR}/testSplit 3 1)
 
 add_short_test(TestLIDARReaderAppend LIDARConverter
-        ${CMB_TEST_DATA_ROOT}/LIDAR/LIDARTest.pts
+        ${CMB_TEST_DATA_ROOT}/data/LIDAR/LIDARTest.pts
         ${CMB_TEST_DIR}/testAppend append 5)
 
 add_short_test(TestLIDARReaderBinary LIDARConverter
-        ${CMB_TEST_DATA_ROOT}/LIDAR/smooth_surface.bin
+        ${CMB_TEST_DATA_ROOT}/data/LIDAR/smooth_surface.bin
         ${CMB_TEST_DIR}/testBinary append 2)
 
 add_short_test(PrintAllExtensions
@@ -112,7 +112,7 @@ ENDFOREACH(test)
 if ( TARGET paraview )
 
   set( PV_TEST_XML_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-  set( PV_TEST_IMG_DIR ${CMB_TEST_DATA_ROOT}/baseline/cmb_application )
+  set( PV_TEST_IMG_DIR ${CMB_TEST_DATA_ROOT}/data/baseline/cmb_application )
 
   # Tests that don't work on Apple
   set( APPLE_EXCLUDE_TESTS

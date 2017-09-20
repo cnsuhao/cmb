@@ -4,7 +4,7 @@
   <pqevent object="FileOpenDialog" command="remove" arguments="tempContourfile.vtm" />
   <pqevent object="FileOpenDialog" command="cancelled" arguments="" />
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/point_cloud/LIDARTest.pts" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/point_cloud/LIDARTest.pts" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/groupBoxFilters" command="mousePress" arguments="1,1,0,16,9" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/groupBoxFilters" command="mouseRelease" arguments="1,0,0,16,9" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtLIDARPanel/tabWidget/qt_tabwidget_stackedwidget/tabData/groupBoxFilters/tabWidget_Filters/qt_tabwidget_tabbar" command="set_tab" arguments="1" />

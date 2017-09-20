@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/2d/cmb/test2D.cmb" />
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/../Applications/ModelBuilder/SimBuilder/XML/EMS.crf" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/XML/EMS.crf" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_tabbar" command="set_tab_with_text" arguments="SimBuilder" />
     <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabGlobals/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QGroupBox0/1QFrame0/1QFrame0/1QLineEdit0" command="set_string" arguments="1" />
   <pqevent object="qtCMBMainWindow/faceParametersDock/dockWidgetContents_2/qtCMBPanel/tabWidget/qt_tabwidget_stackedwidget/tab_SimBuilder/rootScrollArea/qt_scrollarea_viewport/1QFrame0/1QTabWidget0/qt_tabwidget_stackedwidget/tabGlobals/qt_scrollarea_viewport/1QWidget0/1QFrame0/1QFrame0/1QGroupBox0/1QFrame0/1QFrame1/1QLineEdit0" command="key" arguments="16777217" />

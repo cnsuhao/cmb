@@ -2,7 +2,7 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/toolBar/1QToolButton1" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/smooth_surface.vtk" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.51816,0.760638,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.646489,0.75,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.646489,0.75,1,0,0)" />

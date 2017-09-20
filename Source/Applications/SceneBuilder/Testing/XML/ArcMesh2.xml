@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/pueblo.map" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/pueblo.map" />
   <pqevent object="qtCMBMainWindow/actionView_Negative_Z" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/actionReset_Camera" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/action_Select" command="set_boolean" arguments="true" />

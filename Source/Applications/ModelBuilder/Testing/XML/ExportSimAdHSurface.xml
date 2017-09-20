@@ -2,12 +2,12 @@
 <pqevents>
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/model/2d/cmb/test2D.cmb" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/model/2d/cmb/test2D.cmb" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/comboBoxViewBy" command="activated" arguments="Topology View" />
 
   <pqevent object="qtCMBMainWindow/menubar" command="activate" arguments="menu_File" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Open_File" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/ADH/AdHSurfaceWater.crf" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/ADH/AdHSurfaceWater.crf" />
   <pqevent object="qtCMBMainWindow" command="mousePress" arguments="1,1,0,1027,301" />
   <pqevent object="qtCMBMainWindow" command="mouseMove" arguments="1,0,0,845,287" />
   <pqevent object="qtCMBMainWindow" command="mouseRelease" arguments="1,0,0,845,287" />
@@ -96,7 +96,7 @@
   <!--pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/FileBrowsingFrame/1QFrame0/1QPushButton0" command="activate" arguments="" /-->
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/1QFrame0/1QPushButton0" command="activate" arguments="" />
 
-  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/simulation_workflow/ADH/AdHSurfaceWater.py" />
+  <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/data/simulation-workflows/ADH/AdHSurfaceWater.py" />
   <!--
   <pqevent object="SimulationExportDialog/ExportContentWidget/SimBuilder Select File Dialog" command="filesSelected" arguments="/media/ssd/sim/cmb_core/gitlab/workflows-adh/ADH/AdHSurfaceWater.py" />
   <pqevent object="SimulationExportDialog/ExportContentWidget/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/1QFrame0/1QFrame4/FileBrowsingFrame/1QFrame0/1QComboBox0" command="set_string" arguments="/media/ssd/sim/cmb_core/gitlab/workflows-adh/ADH/AdHSurfaceWater.py" />

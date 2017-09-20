@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <pqevents>
   <pqevent object="qtCMBMainWindow/action_Open_File" command="activate" arguments="" />
-  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/smooth_surface.vtk" />
+  <pqevent object="qtCMBMainWindow/FileOpenDialog" command="filesSelected" arguments="$PARAVIEW_DATA_ROOT/ThirdParty/SMTK/data/smooth_surface.vtk" />
   <pqevent object="qtCMBMainWindow/menubar/menu_File" command="activate" arguments="action_Save_BCSs" />
   <pqevent object="qtCMBMainWindow/FileSaveDialog" command="filesSelected" arguments="tempCMBBCS" />
 </pqevents>
