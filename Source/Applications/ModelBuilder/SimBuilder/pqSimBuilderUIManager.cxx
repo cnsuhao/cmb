@@ -144,7 +144,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
     QObject::connect(
       qTopAttView, SIGNAL(attAssociationChanged()), this, SIGNAL(attAssociationChanged()));
     QObject::connect(
-      qTopAttView, SIGNAL(numOfAttriubtesChanged()), this, SIGNAL(numOfAttriubtesChanged()));
+      qTopAttView, SIGNAL(numOfAttributesChanged()), this, SIGNAL(numOfAttributesChanged()));
 
     // send message from UIManager to qtAttributeView
     QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
@@ -203,7 +203,7 @@ void pqSimBuilderUIManager::setSMTKView(smtk::common::ViewPtr view, QWidget* par
       QObject::connect(
         attSec, SIGNAL(attAssociationChanged()), this, SIGNAL(attAssociationChanged()));
       QObject::connect(
-        attSec, SIGNAL(numOfAttriubtesChanged()), this, SIGNAL(numOfAttriubtesChanged()));
+        attSec, SIGNAL(numOfAttributesChanged()), this, SIGNAL(numOfAttributesChanged()));
 
       QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
         SIGNAL(broadcastToReceivers(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,

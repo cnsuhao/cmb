@@ -58,7 +58,7 @@ public:
   void getAttributeDefinitions(QMap<QString, QList<smtk::attribute::DefinitionPtr> >& attDefMap);
 
 signals:
-  void numOfAttriubtesChanged();
+  void numOfAttributesChanged();
   void attColorChanged();
   void attAssociationChanged();
 
