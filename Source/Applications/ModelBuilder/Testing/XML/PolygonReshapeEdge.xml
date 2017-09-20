@@ -27,6 +27,10 @@
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.15,0.173333,1,0,0)" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/smtkArcWidget/Finished" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QComboBox0" command="activated" arguments="Edge - Split" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mousePress" arguments="1,1,0,338,20" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mouseMove" arguments="1,0,0,328,10" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget" command="mouseRelease" arguments="1,0,0,328,10" />
+  <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/pqSplitEdgeWidget/1QToolButton0" command="set_boolean" arguments="true" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mousePress" arguments="(0.18,0.833333,1,1,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseMove" arguments="(0.18,0.833333,1,0,0)" />
   <pqevent object="qtCMBMainWindow/Viewport" command="mouseRelease" arguments="(0.18,0.833333,1,0,0)" />
