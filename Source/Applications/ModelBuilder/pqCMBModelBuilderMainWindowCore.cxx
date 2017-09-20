@@ -1732,6 +1732,12 @@ pqSMTKModelPanel* pqCMBModelBuilderMainWindowCore::modelPanel()
     {
       this->Internal->SimBuilder->uiManager()->setModelPanel(this->Internal->ModelDock);
     }
+
+    QObject::connect(this->Internal->smtkModelManager,
+      SIGNAL(operationFinished(
+        const smtk::model::OperatorResult&, const smtk::model::SessionRef&, bool, bool, bool)),
+      this->modelPanel()->modelView(),
+      SIGNAL(operationFinished(const smtk::model::OperatorResult&)));
   }
   return this->Internal->ModelDock;
 }
