@@ -90,6 +90,7 @@
 #include "smtk/extension/qt/qtAttributeDisplay.h"
 #include "smtk/extension/qt/qtModelOperationWidget.h"
 #include "smtk/extension/qt/qtModelView.h"
+#include "smtk/extension/qt/qtOperatorDockWidget.h"
 #include "smtk/extension/qt/qtSelectionManager.h"
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
 #include "smtk/mesh/Collection.h"
@@ -855,6 +856,7 @@ void pqCMBModelBuilderMainWindowCore::addModelFileToRecentList(const std::string
 /// Attempt to save the selected model(s)
 void pqCMBModelBuilderMainWindowCore::onSave()
 {
+  bool wasHidden = this->isOperatorPanelHidden();
   auto opview = this->Internal->prepareSaveOp(this, "save smtk model");
 
   if (opview)
@@ -864,13 +866,14 @@ void pqCMBModelBuilderMainWindowCore::onSave()
     opview->setRenameModels(false);
     if (opview->attemptSave("save"))
     { // Success; now return the operator panel to its previous op or hide it.
-      this->modelPanel()->modelView()->showPreviousOpOrHide();
+      this->modelPanel()->modelView()->showPreviousOpOrHide(wasHidden);
     }
   }
 }
 
 void pqCMBModelBuilderMainWindowCore::onSaveAs()
 {
+  bool wasHidden = this->isOperatorPanelHidden();
   auto opview = this->Internal->prepareSaveOp(this, "save smtk model");
 
   if (opview)
@@ -880,13 +883,14 @@ void pqCMBModelBuilderMainWindowCore::onSaveAs()
     opview->setRenameModels(true);
     if (opview->chooseFile("save as"))
     { // Success; now return the operator panel to its previous op or hide it.
-      this->modelPanel()->modelView()->showPreviousOpOrHide();
+      this->modelPanel()->modelView()->showPreviousOpOrHide(wasHidden);
     }
   }
 }
 
 void pqCMBModelBuilderMainWindowCore::onExport()
 {
+  bool wasHidden = this->isOperatorPanelHidden();
   auto opview = this->Internal->prepareSaveOp(this, "export smtk model");
 
   if (opview)
@@ -896,7 +900,7 @@ void pqCMBModelBuilderMainWindowCore::onExport()
     opview->setRenameModels(true);
     if (opview->chooseFile("save a copy"))
     { // Success; now return the operator panel to its previous op or hide it.
-      this->modelPanel()->modelView()->showPreviousOpOrHide();
+      this->modelPanel()->modelView()->showPreviousOpOrHide(wasHidden);
     }
   }
 }
@@ -1466,6 +1470,12 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
         auxInfo->Representation, auxGeoColors[aux_url]);
     }
   }
+}
+
+bool pqCMBModelBuilderMainWindowCore::isOperatorPanelHidden()
+{
+  bool opVisible = this->modelPanel()->modelView()->operatorsDock()->isVisible();
+  return !opVisible;
 }
 
 // we may need to update mesh representation for display properties
