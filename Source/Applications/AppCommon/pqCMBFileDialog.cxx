@@ -296,6 +296,11 @@ pqCMBFileDialog::pqCMBFileDialog(pqServer* server, QWidget* p, const QString& ti
     style()->standardPixmap(QStyle::SP_FileDialogNewFolder));
   this->Implementation->Ui.CreateFolder->setDisabled(true);
 
+  // Enable file details in the underlying model so that the server is queried
+  // accordingly. Note that this is disabled by default on ParaView becaue of
+  // performance concerns when there are many files in a directory (see
+  // utilities.xml and pqFileDialogModel.cxx).
+  this->Implementation->Model->setShowDetailedInfo(true);
   this->Implementation->Ui.Files->setModel(&this->Implementation->FileFilter);
   this->Implementation->Ui.Files->setSelectionBehavior(QAbstractItemView::SelectRows);
 
