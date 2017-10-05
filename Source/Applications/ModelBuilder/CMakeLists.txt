@@ -348,21 +348,6 @@ if(BUILD_TESTING)
  set(TEST_PYTHON ${ModelBuilder_SOURCE_DIR}/Testing/Python)
  set(TEST_IMAGE ${CMB_TEST_DATA_ROOT}/data/baseline/cmb_application)
 
-# Need path to python executable
-find_package(PythonInterp)
-if (PYTHONINTERP_FOUND)
-
-  set(PYTHON_DEFINES
-    CMAKE_PYTHON_EXECUTABLE="${PYTHON_EXECUTABLE}"
-    CMAKE_PYTHON_VERSION="${PYTHON_VERSION_STRING}"
-  )
-
-  set_property(
-    SOURCE export.cxx
-    APPEND PROPERTY COMPILE_DEFINITIONS ${PYTHON_DEFINES}
-  )
-endif()
-
   #Tests that don't work on Apple
 
   set (APPLE_EXCLUDE_TESTS
