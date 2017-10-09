@@ -34,13 +34,13 @@
 #include "../pqCMBModelBuilderOptions.h"
 #include "pqCMBRecentlyUsedResourceLoaderImplementatation.h"
 
-#include "smtk/common/ResourceSet.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
 #include "smtk/io/ResourceSetReader.h"
 #include "smtk/io/ResourceSetWriter.h"
+#include "smtk/resource/Set.h"
 
 #include "pqSimBuilderUIManager.h"
 
@@ -338,12 +338,12 @@ int SimBuilderCore::SaveSimulation(const char* filename, bool /*writeScenario*/)
   if ("crf" == finfo.suffix().toLower())
   {
     // Initialize ResourceSet
-    smtk::common::ResourceSet resources;
+    smtk::resource::Set resources;
     smtk::attribute::CollectionPtr simCollection = this->uiManager()->attributeCollection();
-    resources.addResource(simCollection, "simbuilder", "", smtk::common::ResourceSet::INSTANCE);
+    resources.add(simCollection, "simbuilder", "", smtk::resource::Set::INSTANCE);
     smtk::attribute::CollectionPtr expCollection =
       this->ExportDialog->exportAttCollection(true); // use baseline atts
-    resources.addResource(expCollection, "export", "", smtk::common::ResourceSet::TEMPLATE);
+    resources.add(expCollection, "export", "", smtk::resource::Set::TEMPLATE);
 
     // Serialize ResourceSet
     smtk::io::ResourceSetWriter resourceWriter;
@@ -440,13 +440,13 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   }
 
   // Instantiate and initialize ResourceSet
-  smtk::common::ResourceSet resources;
+  smtk::resource::Set resources;
   std::string linkStartDir = finfo.absoluteDir().path().toStdString();
   resources.setLinkStartPath(linkStartDir);
 
   // Instantiate reader and std::map for current attribute collections
   smtk::io::ResourceSetReader resourceReader;
-  std::map<std::string, smtk::common::ResourcePtr> resourceMap;
+  std::map<std::string, smtk::resource::ResourcePtr> resourceMap;
   resourceMap["simbuilder"] = this->uiManager()->attributeCollection();
   //resourceMap["export"] = this->GetExportPanel()->uiManager()->attributeCollection();
 
@@ -481,9 +481,9 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   //std::cout << "Number of resources loaded: " << numResources << std::endl;
 
   // If simulation attributes loaded, update ExportDialog
-  smtk::common::Resource::Type simType;
-  smtk::common::ResourceSet::ResourceRole simRole;
-  smtk::common::ResourceSet::ResourceState simState;
+  smtk::resource::Resource::Type simType;
+  smtk::resource::Set::Role simRole;
+  smtk::resource::Set::State simState;
   std::string simLink;
   if (resources.resourceInfo("simbuilder", simType, simRole, simState, simLink))
   {
@@ -493,13 +493,13 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   }
 
   // Check if export resource loaded, and if not, load default template
-  smtk::common::Resource::Type exportType;
-  smtk::common::ResourceSet::ResourceRole exportRole;
-  smtk::common::ResourceSet::ResourceState exportState;
+  smtk::resource::Resource::Type exportType;
+  smtk::resource::Set::Role exportRole;
+  smtk::resource::Set::State exportState;
   std::string exportLink;
   if (resources.resourceInfo("export", exportType, exportRole, exportState, exportLink))
   {
-    smtk::common::ResourcePtr expResource;
+    smtk::resource::ResourcePtr expResource;
     resources.get("export", expResource);
     smtk::attribute::CollectionPtr expCollection =
       smtk::dynamic_pointer_cast<smtk::attribute::Collection>(expResource);
