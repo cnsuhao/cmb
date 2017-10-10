@@ -230,6 +230,8 @@ protected:
   virtual void processModifiedMeshes(const smtk::attribute::MeshItemPtr& modifiedMeshes);
   virtual void processModifiedEntities(const smtk::attribute::ModelEntityItemPtr& resultEntities);
 
+  bool isOperatorPanelHidden();
+
   /**\brief Return true if the user wants to abort \a action, false if the application should continue.
     *
     * This checks for unsaved/unclean models and -- if any exist -- asks the user before continuing.
