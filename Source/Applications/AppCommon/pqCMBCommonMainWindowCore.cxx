@@ -55,7 +55,6 @@
 #include "pqObjectBuilder.h"
 #include "pqOptions.h"
 #include "pqOutputPort.h"
-#include "pqOutputWindow.h"
 #include "pqParaViewBehaviors.h"
 #include "pqPipelineContextMenuBehavior.h"
 #include "pqPipelineFilter.h"
@@ -98,7 +97,7 @@
 #include "pqCMBFileDialogEventPlayer.h"
 #include "pqCMBFileDialogEventTranslator.h"
 
-#include <QVTKWidget.h>
+#include <QVTKOpenGLWidget.h>
 
 #include "vtkCamera.h"
 #include "vtkDoubleArray.h"
@@ -148,10 +147,9 @@
 #include <vtksys/Process.h>
 #include <vtksys/SystemTools.hxx>
 
-#include "QVTKWidget.h"
+#include "QVTKOpenGLWidget.h"
 #include "pqCMBDisplayProxyEditor.h"
 #include "pqCMBPreviewDialog.h"
-#include "pqCMBProcessWidget.h"
 #include "pqImageUtil.h"
 #include "qtCMBApplicationOptions.h"
 #include "qtCMBContextMenuBehavior.h"
@@ -892,7 +890,7 @@ void pqCMBCommonMainWindowCore::onServerCreationFinished(pqServer* server)
 
 bool pqCMBCommonMainWindowCore::eventFilter(QObject* caller, QEvent* e)
 {
-  if (qobject_cast<QVTKWidget*>(caller) && e->type() == QEvent::Resize)
+  if (qobject_cast<QVTKOpenGLWidget*>(caller) && e->type() == QEvent::Resize)
   {
     // Update ViewPosition and GUISize properties on all view modules.
     this->updateViewPositions();

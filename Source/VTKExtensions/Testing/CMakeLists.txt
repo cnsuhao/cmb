@@ -33,13 +33,10 @@ include_directories(${vtkCMBGeneral_INCLUDE_DIRS}
                     ${vtkIOGDAL_INCLUDE_DIRS})
 
 add_executable(testDiscreteColorLookupTable testDiscreteColorLookupTable.cxx)
-add_executable(testVTKObjectMethods testVTKObjectMethods.cxx)
 
 add_executable( testMedialAxisFilter testMedialAxisFilter.cxx)
 
 target_link_libraries(testDiscreteColorLookupTable ${testing_libraries})
-
-target_link_libraries(testVTKObjectMethods ${testing_libraries})
 
 target_link_libraries(testMedialAxisFilter ${testing_libraries})
 
@@ -54,7 +51,6 @@ target_link_libraries(delosMeshReader ${testing_libraries})
 add_executable(testDataReader testDataReader.cxx)
 target_link_libraries(testDataReader ${testing_libraries})
 
-
 add_short_test(DiscreteColorLookupTableTest testDiscreteColorLookupTable)
 
 add_short_test(TestLIDARReaderPiece LIDARConverter
@@ -68,11 +64,6 @@ add_short_test(TestLIDARReaderAppend LIDARConverter
 add_short_test(TestLIDARReaderBinary LIDARConverter
         ${CMB_TEST_DATA_ROOT}/data/LIDAR/smooth_surface.bin
         ${CMB_TEST_DIR}/testBinary append 2)
-
-add_short_test(PrintAllExtensions
-  testVTKObjectMethods
-  ${EXT_CLASS}
-  )
 
 # Create a test list of all non graphical arc tests
 create_test_sourcelist(CmbArcTestSources

@@ -9,7 +9,7 @@
 //=========================================================================
 #include "pqGeneralTransferFunctionWidget.h"
 
-#include "QVTKWidget.h"
+#include "QVTKOpenGLWidget.h"
 #include "pqCoreUtilities.h"
 #include "pqTimer.h"
 #include "vtkAxis.h"
@@ -189,7 +189,7 @@ vtkStandardNewMacro(vtkTransferFunctionChartXY);
 class pqGeneralTransferFunctionWidget::pqInternals
 {
 public:
-  QPointer<QVTKWidget> Widget;
+  QPointer<QVTKOpenGLWidget> Widget;
   vtkNew<vtkTransferFunctionChartXY> ChartXY;
   vtkNew<vtkContextView> ContextView;
   vtkNew<vtkEventQtSlotConnect> VTKConnect;
@@ -204,7 +204,7 @@ public:
   unsigned long CurrentPointEditEventId;
 
   pqInternals(pqGeneralTransferFunctionWidget* editor)
-    : Widget(new QVTKWidget(editor))
+    : Widget(new QVTKOpenGLWidget(editor))
     , CurrentPointEditEventId(0)
   {
     this->UseSpline = false;

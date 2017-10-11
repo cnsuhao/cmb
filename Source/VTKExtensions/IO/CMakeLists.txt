@@ -18,7 +18,6 @@ set(CMB_IO_SRC
     vtkCMBPt123VelocityWriter.cxx
     vtkCMBPtsWriter.cxx
     vtkCMBSceneV2WriterHelper.cxx
-    vtkCMBWriter.cxx
     vtkDelosMeshReader.cxx
     vtkADHHotStartWriter.cxx
     vtkCMBMeshWriter.cxx

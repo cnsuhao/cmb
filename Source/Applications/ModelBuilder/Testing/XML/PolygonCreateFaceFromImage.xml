@@ -15,15 +15,15 @@
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/OpViewApplyButton" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QComboBox0" command="activated" arguments="Edge - Create from Image Surfaces" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/1QFrame0/surfaceExtractorView" command="activate" arguments="" />
- <pqevent object="imageFeatureExtractor/qvtkWidget" command="mousePress" arguments="1,1,0,585,348" />
-  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseMove" arguments="1,0,0,575,397" />
-  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseRelease" arguments="1,0,0,575,397" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mousePress" arguments="(0.608142,0.433548,1,1,0)" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseMove" arguments="(0.601494,0.463226,1,0,0)" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseRelease" arguments="(0.601494,0.463226,1,0,0)" />
   <pqevent object="imageFeatureExtractor/verticalWidget/DrawMode" command="activated" arguments="Land" />
-  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mousePress" arguments="1,1,0,229,218" />
-  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseMove" arguments="1,0,0,627,257" />
-  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseRelease" arguments="1,0,0,627,257" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mousePress" arguments="(0.404732,0.285161,1,1,0)" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseMove" arguments="(0.782067,0.322581,1,0,0)" />
+  <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseRelease" arguments="(0.782067,0.322581,1,0,0)" />
   <pqevent object="imageFeatureExtractor/verticalWidget/Run" command="activate" arguments="" />
-  <pqevent object="imageFeatureExtractor/verticalWidget/Accept" command="activate" arguments="" />
+  <pqevent object="imageFeatureExtractor/Accept" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QComboBox0" command="activated" arguments="Faces - Create All" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QFrame0/topLevelScrollArea/qt_scrollarea_viewport/OpViewFrame/OpViewApplyButton" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="expand" arguments="0.0.0.0.0.0" />
@@ -35,8 +35,8 @@
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,13,154" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.4.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/0:0/4:0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.5.0" />
-  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/0:0/5:0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.0.0.3.0" />
+  <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/0:0/3:0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mousePress" arguments="1,1,0,12,134" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseMove" arguments="1,0,0,13,150" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0/qt_scrollarea_vcontainer/1QScrollBar0" command="mouseRelease" arguments="1,0,0,13,150" />

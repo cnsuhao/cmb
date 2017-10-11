@@ -31,14 +31,9 @@ set(CMB_Filtering_SRC
     vtkCMBMeshSelectionConverter.cxx
     vtkCMBSmoothMeshFilter.cxx
     vtkCMBSubArcModifyOperator.cxx
-    vtkExtractModelFaceBlock.cxx
-    vtkFacesConnectivityFilter.cxx
     vtkGMSMeshSelectionRegionFilter.cxx
-    vtkHydroModelCreator.cxx
     vtkIdentifyNonManifoldPts.cxx
     vtkLIDARElevationFilter.cxx
-    vtkMergeFacesFilter.cxx
-    vtkOmicronMeshInputFilter.cxx
     vtkPointThresholdFilter.cxx
     vtkRegisterPlanarTextureMap.cxx
     vtkTerrainExtractionFilter.cxx

@@ -69,7 +69,6 @@
 #include "pqGeneralTransferFunctionWidget.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqOutputWindow.h"
 #include "smtk/extension/paraview/widgets/qtArcWidget.h"
 
 #include "pqCMBRubberBandHelper.h"
@@ -82,7 +81,6 @@
 #include "pqRenderView.h"
 
 #include "pqActiveObjects.h"
-#include "pqCMBProcessWidget.h"
 #include "pqSMAdaptor.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
@@ -107,8 +105,6 @@
 #include "pqCMBArc.h"
 #include <smtk/extension/paraview/widgets/qtArcWidget.h>
 
-#include <QVTKWidget.h>
-
 #include "vtkAbstractWidget.h"
 #include "vtkClientServerStream.h"
 #include "vtkDoubleArray.h"
@@ -121,7 +117,6 @@
 #include "vtkSMRepresentationProxy.h"
 #include "vtkWidgetEvent.h"
 #include "vtkWidgetEventTranslator.h"
-#include <vtkHydroModelCreator.h>
 #include <vtkImageData.h>
 #include <vtkMultiBlockWrapper.h>
 #include <vtkNew.h>
