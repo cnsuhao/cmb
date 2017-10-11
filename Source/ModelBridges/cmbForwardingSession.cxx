@@ -119,7 +119,7 @@ smtk::model::OperatorResult cmbForwardingSession::operateDelegate(smtk::model::R
   {
     if (resp)
       cJSON_Delete(resp);
-    return op->createResult(smtk::model::OPERATION_FAILED);
+    return op->createResult(smtk::operation::Operator::OPERATION_FAILED);
   }
 
   cJSON_Delete(resp);
