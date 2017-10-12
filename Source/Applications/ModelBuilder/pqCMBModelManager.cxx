@@ -1862,7 +1862,7 @@ bool pqCMBModelManager::startOperation(const smtk::model::OperatorPtr& brOp)
     return false;
   }
 
-  if (result->findInt("outcome")->value() != smtk::model::OPERATION_SUCCEEDED)
+  if (result->findInt("outcome")->value() != smtk::operation::Operator::OPERATION_SUCCEEDED)
   {
     std::cerr << "operator failed: " << brOp->name() << "\n";
     smtk::io::Logger log;
@@ -1948,7 +1948,7 @@ bool pqCMBModelManager::handleOperationResult(const smtk::model::OperatorResult&
   smtk::io::SaveJSON::forOperatorResult(result, json);
   std::cout << "Result " << cJSON_Print(json) << "\n";
 */
-  if (result->findInt("outcome")->value() != smtk::model::OPERATION_SUCCEEDED)
+  if (result->findInt("outcome")->value() != smtk::operation::Operator::OPERATION_SUCCEEDED)
   {
     std::cerr << "operator failed\n";
     return false;

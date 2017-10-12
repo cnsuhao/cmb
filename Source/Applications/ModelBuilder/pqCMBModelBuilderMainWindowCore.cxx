@@ -1576,7 +1576,7 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
   const smtk::model::OperatorResult& result, const smtk::model::SessionRef& sref, bool hasNewModels,
   bool bModelGeometryChanged, bool hasNewMeshes)
 {
-  if (result->findInt("outcome")->value() != smtk::model::OPERATION_SUCCEEDED)
+  if (result->findInt("outcome")->value() != smtk::operation::Operator::OPERATION_SUCCEEDED)
   {
     return false;
   }
