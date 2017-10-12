@@ -25,7 +25,7 @@
   <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseMove" arguments="(0.822196,0.351351,1,0,0)" />
   <pqevent object="imageFeatureExtractor/qvtkWidget" command="mouseRelease" arguments="(0.822196,0.351351,1,0,0)" />
   <pqevent object="imageFeatureExtractor/verticalWidget/Run" command="activate" arguments="" />
-  <pqevent object="imageFeatureExtractor/verticalWidget/Accept" command="activate" arguments="" />
+  <pqevent object="imageFeatureExtractor/Accept" command="activate" arguments="" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="setCurrent" arguments="0.0.0.0.1.0" />
   <pqevent object="qtCMBMainWindow/smtkModelDockWidget/qtModelPanel/1smtk::extension::qtModelView0" command="toggleVisibility" arguments="/0:0/0:0/1:0" />
   <pqevent object="qtCMBMainWindow/operatorsDockWidget/scrollArea/qt_scrollarea_viewport/modelOperationWidget/1QSplitter0/1QWidget0/1QComboBox0" command="activated" arguments="Faces - Create All" />
