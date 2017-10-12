@@ -95,10 +95,6 @@ vtkMultiBlockWrapper::vtkMultiBlockWrapper()
 
 vtkMultiBlockWrapper::~vtkMultiBlockWrapper()
 {
-  if (this->mb != 0)
-  {
-    this->SetMultiBlock(0);
-  }
   this->mb = 0;
 }
 
@@ -186,6 +182,8 @@ const char* vtkMultiBlockWrapper::GetModelFaceUse1String()
 {
   return "ModelFaceUse1";
 }
+
+#if (0)
 
 int vtkMultiBlockWrapper::GetModelFaceId(vtkPolyData* poly)
 {
@@ -2654,6 +2652,7 @@ void vtkMultiBlockWrapper::ChangeUserNameOfNodalGroup(int /*ngId*/, const char* 
 {
 }
 
+#endif
 void vtkMultiBlockWrapper::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);

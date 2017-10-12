@@ -57,7 +57,6 @@
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqOutputWindow.h"
 #include "pqServer.h"
 #include "qtCMBArcEditWidget.h"
 
@@ -71,7 +70,6 @@
 #include "pqRecentlyUsedResourcesList.h"
 #include "pqRenderView.h"
 
-#include "pqCMBProcessWidget.h"
 #include "pqSMAdaptor.h"
 #include "pqSelectReaderDialog.h"
 #include "pqServer.h"
@@ -92,8 +90,6 @@
 #include <pqWaitCursor.h>
 #include <qtCMBProgressWidget.h>
 
-#include <QVTKWidget.h>
-
 #include "pqOmicronModelWriter.h"
 #include "vtkBoxWidget2.h"
 #include "vtkEvent.h"
@@ -111,7 +107,6 @@
 #include <vtkDataObject.h>
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkDoubleArray.h>
-#include <vtkHydroModelCreator.h>
 #include <vtkIdList.h>
 #include <vtkIdTypeArray.h>
 #include <vtkImageData.h>
@@ -122,6 +117,7 @@
 #include <vtkPVXMLParser.h>
 #include <vtkPolyDataReader.h>
 #include <vtkProcessModule.h>
+#include <vtkRenderWindowInteractor.h>
 #include <vtkSMDoubleRangeDomain.h>
 #include <vtkSMDoubleVectorProperty.h>
 #include <vtkSMIdTypeVectorProperty.h>
@@ -183,7 +179,6 @@
 #include "vtkEventQtSlotConnect.h"
 #include "vtkGenericDataObjectWriter.h"
 #include "vtkHydroModelPolySource.h"
-#include "vtkOmicronMeshInputFilter.h"
 #include "vtkOmicronMeshInputWriter.h"
 #include "vtkOmicronModelInputReader.h"
 #include "vtkSMDataSourceProxy.h"

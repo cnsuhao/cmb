@@ -13,7 +13,6 @@
 
 #include "pqCMBDisplayProxyEditor.h"
 #include "pqCMBPreviewDialog.h"
-#include "pqCMBProcessWidget.h"
 #include "qtCMBApplicationOptions.h"
 #include "qtCMBProgressWidget.h"
 
@@ -57,7 +56,6 @@
 #include "pqFileDialogModel.h"
 #include "pqLinksManager.h"
 #include "pqObjectBuilder.h"
-#include "pqOutputWindow.h"
 #include "pqPVApplicationCore.h"
 
 #include "pqCMBRubberBandHelper.h"
@@ -90,8 +88,6 @@
 #include <pqSetName.h>
 #include <pqUndoStack.h>
 #include <pqWaitCursor.h>
-
-#include <QVTKWidget.h>
 
 #include "vtkBoxWidget2.h"
 #include "vtkEvent.h"
@@ -153,7 +149,6 @@
 #include "vtkEventQtSlotConnect.h"
 #include "vtkGenericDataObjectWriter.h"
 #include "vtkHydroModelPolySource.h"
-#include "vtkOmicronMeshInputFilter.h"
 #include "vtkOmicronMeshInputWriter.h"
 #include "vtkOmicronModelInputReader.h"
 #include "vtkRenderer.h"

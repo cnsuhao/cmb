@@ -135,8 +135,6 @@ add_library(cmbAppCommon
   pqCMBCommonMainWindowCore.h
   pqCMBPreviewDialog.cxx
   pqCMBPreviewDialog.h
-  pqCMBProcessWidget.cxx
-  pqCMBProcessWidget.h
   pqCMBRubberBandHelper.cxx
   pqCMBRubberBandHelper.h
   pqCMBRulerDialog.cxx

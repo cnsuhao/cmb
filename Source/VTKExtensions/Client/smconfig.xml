@@ -4286,70 +4286,6 @@ associates the containing cell ID to the point.
       <!-- End CmbExtractMapContour -->
     </SourceProxy>
 
-    <SourceProxy name="MergeFaces" class="vtkMergeFacesFilter"
-      label="Merge Faces">
-      <InputProperty name="Input"
-        command="SetInputConnection">
-      </InputProperty>
-      <ProxyGroupDomain name="groups">
-        <Group name="sources"/>
-        <Group name="filters"/>
-      </ProxyGroupDomain>
-      <DataTypeDomain name="input_type">
-        <DataType value="vtkMultiBlockDataSet"/>
-      </DataTypeDomain>
-
-      <IdTypeVectorProperty name="MergePairs"
-        command="Merge"
-        clean_command="RemoveAllMergedFaces"
-        repeat_command="1"
-        number_of_elements_per_command="2">
-      </IdTypeVectorProperty>
-      <!-- End of MergeFaces -->
-    </SourceProxy>
-
-    <SourceProxy name="FacesConnectivity" class="vtkFacesConnectivityFilter"
-      label="Connect Faces">
-      <InputProperty
-        name="Input"
-        command="SetInputConnection">
-        <ProxyGroupDomain name="groups">
-          <Group name="sources"/>
-          <Group name="filters"/>
-        </ProxyGroupDomain>
-        <DataTypeDomain name="input_type">
-          <DataType value="vtkMultiBlockDataSet"/>
-        </DataTypeDomain>
-        <Documentation>
-          This property specifies the input to the Connectivity filter.
-        </Documentation>
-      </InputProperty>
-
-      <IntVectorProperty
-        name="FaceID"
-        command="SetFaceID"
-        number_of_elements="1"
-        label="Face ID"
-        default_values="0">
-        <Documentation>
-          The index of the leaf block to extract from a multiblock dataset
-        </Documentation>
-      </IntVectorProperty>
-
-      <DoubleVectorProperty
-        name="FeatureAngle"
-        label="Feature Angle"
-        command="SetFeatureAngle"
-        number_of_elements="1"
-        default_values="70.0" >
-        <Documentation>
-          The feature angle that the connectivity filter is using to split model faces.
-        </Documentation>
-      </DoubleVectorProperty>
-
-      <!-- End of FacesConnectivity -->
-    </SourceProxy>
-
     <SourceProxy name="CreateModelFaces" class="vtkCreateModelFacesFilter"
       label="Create Model Faces">
       <InputProperty name="Input"
@@ -4420,14 +4356,6 @@ associates the containing cell ID to the point.
       </IntVectorProperty>
 
       <!-- End of CreateModelFaces -->
-    </SourceProxy>
-
-    <SourceProxy name="OmicronMeshInput" class="vtkOmicronMeshInputFilter"
-      label="Omicron Mesh Input Filter">
-      <InputProperty name="Input"
-        command="SetInputConnection">
-      </InputProperty>
-      <!-- End of OmicronMeshInput -->
     </SourceProxy>
 
     <SourceProxy name="CreateBCS" class="vtkCreateBCSFilter"
@@ -4869,30 +4797,6 @@ associates the containing cell ID to the point.
       <!-- End of AddPointData -->
     </SourceProxy>
 
-    <SourceProxy name="HydroModelCreator"
-      class="vtkHydroModelCreator"
-      label="Hydro Model Creator">
-      <Documentation
-        short_help="Separate a polydata input to a multiblock dataset."
-        long_help="Filter to output a vtkMultiBlockDataSet with the classification info from the incoming vtkPolyData in other vtkPolyDatas.">
-      </Documentation>
-      <InputProperty
-        name="Input"
-        command="SetInputConnection">
-        <ProxyGroupDomain name="groups">
-          <Group name="sources"/>
-          <Group name="filters"/>
-        </ProxyGroupDomain>
-        <DataTypeDomain name="input_type">
-          <DataType value="vtkDataSet"/>
-        </DataTypeDomain>
-        <Documentation>
-          This property specifies the input to the HydroModelCreator filter.
-        </Documentation>
-      </InputProperty>
-
-    </SourceProxy>
-
     <SourceProxy name="LoadBCSs" class="vtkLoadBCSsFilter"
       label="Load Model Faces">
       <InputProperty
@@ -4920,42 +4824,6 @@ associates the containing cell ID to the point.
         </Documentation>
       </StringVectorProperty>
       <!-- End of LoadModelFaces -->
-    </SourceProxy>
-
-
-    <SourceProxy name="ExtractModelFaceBlock" class="vtkExtractModelFaceBlock"
-      label="Extract Model Face Block">
-      <Documentation
-        long_help="This filter extracts a block (as polydata) from a multiblock dataset."
-        short_help="Extract a model face block.">
-        This filter extracts a block (as polydata) from a multiblock dataset.
-      </Documentation>
-      <InputProperty
-        name="Input"
-        command="SetInputConnection">
-        <ProxyGroupDomain name="groups">
-          <Group name="sources"/>
-          <Group name="filters"/>
-        </ProxyGroupDomain>
-        <DataTypeDomain name="input_type" composite_data_supported="1">
-          <DataType value="vtkMultiBlockDataSet"/>
-        </DataTypeDomain>
-        <Documentation>
-          This property specifies the input to the Extract model face Block filter.
-        </Documentation>
-      </InputProperty>
-
-      <IntVectorProperty
-        name="FaceId"
-        command="SetFaceId"
-        number_of_elements="1"
-        label="Face Id"
-        default_values="-1">
-        <Documentation>
-          The index of the model block to extract from a multiblock dataset
-        </Documentation>
-      </IntVectorProperty>
-      <!-- End ExtractModelFaceBlock -->
     </SourceProxy>
 
     <SourceProxy name="ExtractLeafBlock" class="vtkExtractLeafBlock"
@@ -7332,37 +7200,6 @@ The Posterize Polydata filter (via vtkBandedPolyDataContourFilter) computes isol
    <!-- ==================================================================== -->
 
   <ProxyGroup name="writers">
-    <WriterProxy name="CMBWriter"
-      class="vtkCMBWriter"
-      label="CMB data writer">
-      <Documentation
-        short_help="Write a CMB file."
-        long_help="Write a CMB file.">
-      </Documentation>
-      <InputProperty name="Input" command="SetInputConnection">
-        <DataTypeDomain name="input_type" composite_data_supported="1">
-          <DataType value="vtkMultiBlockDataSet" />
-        </DataTypeDomain>
-        <ProxyGroupDomain name="groups">
-          <Group name="sources"/>
-          <Group name="filters"/>
-        </ProxyGroupDomain>
-        <Documentation>
-          The input filter/source whose output dataset is to written to the
-          file.
-        </Documentation>
-      </InputProperty>
-      <StringVectorProperty
-        name="FileName"
-        command="SetFileName"
-        animateable="0"
-        number_of_elements="1">
-        <Documentation>
-          This property specifies the file name for the writer.
-        </Documentation>
-      </StringVectorProperty>
-
-    </WriterProxy>
     <WriterProxy name="GAMBITWriter"
       class="vtkGAMBITWriter"
       label="GAMBIT geometry writer">
