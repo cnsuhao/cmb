@@ -448,6 +448,7 @@ if(BUILD_TESTING)
     AuxGeoTif
     AuxGeoDEM
     DeleteAuxGeom
+    ZoomToImage
     ZoomToSelectionCMB
     ${CGM_SESSION_TESTS}
     ${SMTK_VXL_TESTS}

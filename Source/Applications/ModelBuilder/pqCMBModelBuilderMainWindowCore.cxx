@@ -434,7 +434,7 @@ bool pqCMBModelBuilderMainWindowCore::zoomToSelection()
   vtkSMRenderViewProxy* rm = this->activeRenderView()->getRenderViewProxy();
   rm->ResetCamera(
     finalBBox[0], finalBBox[1], finalBBox[2], finalBBox[3], finalBBox[4], finalBBox[5]);
-  this->activeRenderView()->render();
+  this->activeRenderView()->forceRender();
   return true;
 }
 
