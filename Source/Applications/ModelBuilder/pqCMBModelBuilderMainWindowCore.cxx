@@ -81,6 +81,7 @@
 #include "smtk/attribute/IntItem.h"
 #include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/StringItem.h"
+#include "smtk/attribute/VoidItem.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
 #include "smtk/extension/paraview/operators/smtkExportModelView.h"
 #include "smtk/extension/paraview/operators/smtkSaveModelView.h"
@@ -1447,7 +1448,6 @@ void pqCMBModelBuilderMainWindowCore::processModifiedEntities(
   if (colorEntities.count() > 0 && isAssigningColors)
   {
     this->modelPanel()->changeSelEntitiesBlockVisibility(false);
-    qtActiveObjects::instance().smtkSelectionManager()->clearAllSelections();
   }
 
   // update auxiliary visibility
@@ -1662,6 +1662,14 @@ bool pqCMBModelBuilderMainWindowCore::processOperatorResult(
         this->modelPanel()->update();
       }
     }
+  }
+
+  // Clear all selection when an operation finishes if needed
+  // For now only face - grow operator needs to show selection
+  smtk::attribute::VoidItemPtr showSelection = result->findVoid("show selection");
+  if (!showSelection)
+  {
+    qtActiveObjects::instance().smtkSelectionManager()->clearAllSelections();
   }
   return true;
 }

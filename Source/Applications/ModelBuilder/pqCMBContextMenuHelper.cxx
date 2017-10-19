@@ -141,17 +141,17 @@ bool pqCMBContextMenuHelper::getValidEntityColor(
     if (entref.isFace())
     {
       color = smtk::extension::QEntityItemModel::defaultEntityColor("Face");
-      return true;
+      return color.isValid() ? true : false;
     }
     else if (entref.isEdge())
     {
       color = smtk::extension::QEntityItemModel::defaultEntityColor("Edge");
-      return true;
+      return color.isValid() ? true : false;
     }
     else if (entref.isVertex())
     {
       color = smtk::extension::QEntityItemModel::defaultEntityColor("Vertex");
-      return true;
+      return color.isValid() ? true : false;
     }
   }
   return false;
