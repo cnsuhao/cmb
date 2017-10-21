@@ -30,13 +30,16 @@ class vtkPVInformation;
 
 namespace smtk
 {
+namespace resource
+{
+enum class SelectionAction;
+}
 namespace extension
 {
 class qtFileItem;
 class qtMeshSelectionItem;
 class qtModelEntityItem;
 class qtModelView;
-enum class SelectionModifier;
 }
 }
 
@@ -71,8 +74,7 @@ public:
 signals:
   void sendSelectionsFromRenderWindowToSelectionManager(const smtk::model::EntityRefs& selEntities,
     const smtk::mesh::MeshSets& selMeshes, const smtk::model::DescriptivePhrases& DesPhrases,
-    const smtk::extension::SelectionModifier modifierFlag,
-    const std::string& incomingSelectionSource);
+    const smtk::resource::SelectionAction modifierFlag, const std::string& incomingSelectionSource);
 
 public slots:
   /// Called if the user accepts pending modifications

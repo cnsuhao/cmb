@@ -274,7 +274,7 @@ bool pqCMBModelBuilderMainWindow::eventFilter(QObject* watched, QEvent* event)
       {
         if (mouseEvent->button() == Qt::LeftButton)
         {
-          this->getThisCore()->smtkSelectionManager()->setSelectionModifierToSubtraction();
+          this->getThisCore()->smtkSelectionManager()->setSelectionActionToSubtraction();
           this->getMainDialog()->action_Select->setChecked(true);
           this->onSurfaceRubberBandSelect(true);
         }
@@ -287,7 +287,7 @@ bool pqCMBModelBuilderMainWindow::eventFilter(QObject* watched, QEvent* event)
       {
         if (mouseEvent->button() == Qt::LeftButton)
         {
-          this->getThisCore()->smtkSelectionManager()->setSelectionModifierToAddition();
+          this->getThisCore()->smtkSelectionManager()->setSelectionActionToAddition();
           this->getMainDialog()->action_Select->setChecked(true);
           this->onSurfaceRubberBandSelect(true);
         }
