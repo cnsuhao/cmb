@@ -6,7 +6,6 @@ include(${VXL_CMAKE_DIR}/UseVXL.cmake)
 set(CMB_Filtering_SRC
     vtkAddCellDataFilter.cxx
     vtkAddMeshDataArrayFilter.cxx
-    vtkArcDepressFilter.cxx
     vtkClipPolygons.cxx
     vtkClosestPointFilter.cxx
     vtkCMBArcAutoConnectOperator.cxx
