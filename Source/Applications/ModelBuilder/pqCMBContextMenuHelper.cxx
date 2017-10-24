@@ -119,38 +119,12 @@ bool pqCMBContextMenuHelper::getValidEntityColor(
     colorName += " color";
     if (model.hasFloatProperty(colorName))
     {
-      smtk::model::FloatList rgbaModel = model.floatProperty(colorName);
-      // Check if user has invalidate the entity list color.
-      // Refer to qtModelView::changeEntityColor for detail
-      if (rgbaModel.size() == 4 && rgbaModel[3] != -2.0)
-      {
-        float alpha = rgbaModel.size() == 4 ? std::max(0., std::min(rgbaModel[3], 1.0)) : 1.;
-        // alpha can't be zero
-        alpha = alpha == 0. ? 1.0 : alpha;
-        color.setRgbF(rgbaModel[0], rgbaModel[1], rgbaModel[2], alpha);
-        return true;
-      }
-    }
-  }
-  // Use default color specified by user in the settings when entref does not
-  // have a color or user resets it to default color
-  // FIXME: For now there is no way to remove string property on the client side,
-  if (!entref.hasColor() || (rgba.size() == 4 && rgba[3] == -1))
-  {
-    if (entref.isFace())
-    {
-      color = smtk::extension::QEntityItemModel::defaultEntityColor("Face");
-      return color.isValid() ? true : false;
-    }
-    else if (entref.isEdge())
-    {
-      color = smtk::extension::QEntityItemModel::defaultEntityColor("Edge");
-      return color.isValid() ? true : false;
-    }
-    else if (entref.isVertex())
-    {
-      color = smtk::extension::QEntityItemModel::defaultEntityColor("Vertex");
-      return color.isValid() ? true : false;
+      rgba = model.floatProperty(colorName);
+      float alpha = rgba.size() == 4 ? std::max(0., std::min(rgba[3], 1.0)) : 1.;
+      // alpha can't be zero
+      alpha = alpha == 0. ? 1.0 : alpha;
+      color.setRgbF(rgba[0], rgba[1], rgba[2], alpha);
+      return true;
     }
   }
   return false;
