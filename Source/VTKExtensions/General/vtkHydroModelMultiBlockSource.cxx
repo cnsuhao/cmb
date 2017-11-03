@@ -30,7 +30,6 @@ vtkHydroModelMultiBlockSource::~vtkHydroModelMultiBlockSource()
 void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet* source)
 {
   this->Source->ShallowCopy(source);
-
   this->Modified();
 }
 

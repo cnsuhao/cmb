@@ -115,7 +115,6 @@ public:
 
   void changeName(pqCMBSceneNode* node, const char* newName);
 
-  void setApplyBathymetryAction(QAction* changeAction);
   void setArcActions(QAction* edit, QAction* mergeEndNodes, QAction* mergeArcs,
     QAction* growArcSelection, QAction* autoConnectArcs);
   void setChangeNumberOfPointsLoadedAction(QAction* action);
@@ -236,8 +235,6 @@ public slots:
   void updateSelectedColorMode();
   void updateSnapOptions();
   void updateTexturedObjectOptions();
-  void updateBathymetryOptions();
-  void editBathymetry();
   void updateTINStitchOptions();
   void updateTINStackOptions();
   void updateGenerateArcsOptions();
@@ -354,7 +351,6 @@ protected:
   QAction* SetNodeColorAction;
   QAction* UnsetNodeColorAction;
   QAction* ChangeTextureAction;
-  QAction* ApplyBathymetryAction;
   QAction* ChangeNumberOfPointsLoadedAction;
   QAction* TINStitchAction;
   QAction* TINStackAction;

@@ -174,7 +174,6 @@ void pqCMBSceneBuilderMainWindow::initializeApplication()
 
   this->Tree->setTextureAction(this->getMainDialog()->actionEditTextureMap);
   this->Tree->setElevationAction(this->getMainDialog()->actionShowElevation);
-  this->Tree->setApplyBathymetryAction(this->getMainDialog()->actionApplyBathymetry);
 
   this->Tree->setTINStackAction(this->getMainDialog()->actionCreateStackTIN);
   this->Tree->setTINStitchAction(this->getMainDialog()->actionCreate_Solid_from_TINs);
@@ -376,7 +375,6 @@ void pqCMBSceneBuilderMainWindow::setupMenuActions()
   propertiesMenu->addAction(this->getMainDialog()->actionChangeObjectsType);
   propertiesMenu->addAction(this->getMainDialog()->actionShowElevation);
   propertiesMenu->addAction(this->getMainDialog()->actionEditTextureMap);
-  propertiesMenu->addAction(this->getMainDialog()->actionApplyBathymetry);
 
   this->Internal->EditMenuActions.append(this->getMainDialog()->actionUndo);
   this->Internal->EditMenuActions.append(this->getMainDialog()->actionRedo);

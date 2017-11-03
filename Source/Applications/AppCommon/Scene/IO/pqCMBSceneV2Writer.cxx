@@ -922,13 +922,6 @@ void pqCMBSceneV2Writer::processGeometricProperties(pqCMBSceneNode* node, vtkXML
       elem->AddNestedElement(ce);
       ce->Delete();
     }
-    // Save BathymetryInfo
-    if (tobj->getBathymetrySource())
-    {
-      ce = this->addBathyMetryInfo(tobj);
-      elem->AddNestedElement(ce);
-      ce->Delete();
-    }
     // Save Elevation
     if (tobj->showingElevation())
     {
@@ -1053,25 +1046,6 @@ vtkXMLDataElement* pqCMBSceneV2Writer::addTextureInfo(pqCMBTexturedObject* obj)
 
   elem->SetIntAttribute("NumberOfRegistrationPoints", n);
   elem->SetVectorAttribute("Points", 4 * n, data);
-  return elem;
-}
-
-vtkXMLDataElement* pqCMBSceneV2Writer::addBathyMetryInfo(pqCMBTexturedObject* obj)
-{
-  pqCMBSceneNode* bathynode = this->Tree->getSceneObjectNode(obj->getBathymetrySource());
-  if (!bathynode)
-  {
-    return NULL;
-  }
-  vtkXMLDataElement* elem = vtkXMLDataElement::New();
-  elem->SetName("BathymetryInfo");
-  vtkXMLDataElement* bathyDE = vtkXMLDataElement::New();
-  bathyDE->SetName("BathymetrySource");
-  bathyDE->SetAttribute("Name", bathynode->getName());
-  // NOTE: Other bathymetry parameters (low and high limits) are not saved currently.
-  bathyDE->SetDoubleAttribute("ElevationRadius", obj->getBathymetryElevationRadious());
-  elem->AddNestedElement(bathyDE);
-  bathyDE->Delete();
   return elem;
 }
 

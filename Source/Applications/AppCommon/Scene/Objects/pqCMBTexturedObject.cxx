@@ -52,7 +52,6 @@ pqCMBTexturedObject::pqCMBTexturedObject()
   : pqCMBSceneObjectBase()
 {
   this->NumberOfRegistrationPoints = 0;
-  this->BathymetrySource = NULL;
   this->ShowElevation = false;
 }
 
@@ -62,7 +61,6 @@ pqCMBTexturedObject::pqCMBTexturedObject(
 {
   this->prepTexturedObject(server, view);
   this->NumberOfRegistrationPoints = 0;
-  this->BathymetrySource = NULL;
   this->ShowElevation = false;
 }
 
@@ -94,16 +92,6 @@ pqCMBTexturedObject::~pqCMBTexturedObject()
     builder->destroy(this->RegisterTextureFilter);
     this->RegisterTextureFilter = NULL;
   }
-
-  if (this->BathymetryFilter)
-  {
-    builder->destroy(this->BathymetryFilter);
-    this->BathymetryFilter = NULL;
-  }
-  if (this->BathymetrySource)
-  {
-    this->BathymetrySource = 0;
-  }
 }
 
 pqPipelineSource* pqCMBTexturedObject::getSelectionSource() const
@@ -127,7 +115,7 @@ void pqCMBTexturedObject::setSelectionInput(vtkSMSourceProxy* selectionInput)
 
 void pqCMBTexturedObject::getDataBounds(double bounds[6]) const
 {
-  vtkSMSourceProxy::SafeDownCast(this->BathymetryFilter->getProxy())
+  vtkSMSourceProxy::SafeDownCast(this->ElevationFilter->getProxy())
     ->GetDataInformation()
     ->GetBounds(bounds);
 }
@@ -149,20 +137,6 @@ void pqCMBTexturedObject::prepTexturedObject(pqServer* /*server*/, pqRenderView*
   pqApplicationCore* core = pqApplicationCore::instance();
   pqObjectBuilder* builder = core->getObjectBuilder();
   this->Source->getProxy()->UpdateVTKObjects();
-
-  // Add in the ApplyBathymetry Filter, by default it is just
-  // a ShallowCopy (NoOP)
-  this->BathymetryFilter = builder->createFilter("filters", "CmbApplyBathymetry", this->Source);
-  vtkSMPropertyHelper(this->BathymetryFilter->getProxy(), "NoOP").Set(1);
-  this->BathymetryFilter->getProxy()->UpdateVTKObjects();
-  this->ElevationRadious = 1.0;
-  // force pipeline update
-  vtkSMSourceProxy::SafeDownCast(this->BathymetryFilter->getProxy())->UpdatePipeline();
-
-  this->RegisterTextureFilter =
-    builder->createFilter("filters", "RegisterPlanarTextureMapFilter", this->BathymetryFilter);
-  vtkSMPropertyHelper(this->RegisterTextureFilter->getProxy(), "GenerateCoordinates").Set(0);
-  this->RegisterTextureFilter->getProxy()->UpdateVTKObjects();
 
   this->ElevationFilter =
     builder->createFilter("filters", "LIDARElevationFilter", this->RegisterTextureFilter);
@@ -366,59 +340,4 @@ double pqCMBTexturedObject::getTextureIntensityAtPoint(double pt[3])
   vtkSMSourceProxy::SafeDownCast(fproxy)->UpdatePipeline();
   fproxy->UpdatePropertyInformation();
   return vtkSMPropertyHelper(fproxy, "Intensity").GetAsDouble();
-}
-
-pqCMBSceneObjectBase* pqCMBTexturedObject::getBathymetrySource()
-{
-  return this->BathymetrySource;
-}
-
-void pqCMBTexturedObject::unApplyBathymetry()
-{
-  if (this->BathymetrySource)
-  {
-    this->BathymetrySource = 0;
-  }
-  vtkSMProxyProperty* pSource =
-    vtkSMProxyProperty::SafeDownCast(this->BathymetryFilter->getProxy()->GetProperty("Source"));
-  pSource->RemoveAllProxies();
-  vtkSMPropertyHelper(this->BathymetryFilter->getProxy(), "NoOP").Set(1);
-  this->ElevationRadious = 1.0;
-  this->BathymetryFilter->getProxy()->UpdateVTKObjects();
-  this->getRepresentation()->getProxy()->UpdateVTKObjects();
-}
-
-void pqCMBTexturedObject::applyBathymetry(pqCMBSceneObjectBase* bathymetrySource,
-  double elevationRadious, bool useHighLimit, double eleHigh, bool useLowLimit, double eleLow)
-{
-  if (this->BathymetrySource && this->BathymetrySource != bathymetrySource)
-  {
-    this->unApplyBathymetry();
-  }
-
-  if ((!this->BathymetrySource && bathymetrySource) || this->BathymetrySource)
-  /* (this->BathymetrySource && this->ElevationRadious != elevationRadious))*/
-  {
-    pqWaitCursor cursor;
-
-    this->BathymetrySource = bathymetrySource;
-    vtkSMSourceProxy::SafeDownCast(this->BathymetrySource->getSource()->getProxy())
-      ->UpdatePipeline();
-    vtkSMSourceProxy* smFilter = vtkSMSourceProxy::SafeDownCast(this->BathymetryFilter->getProxy());
-
-    vtkSMProxyProperty* pSource = vtkSMProxyProperty::SafeDownCast(smFilter->GetProperty("Source"));
-    pSource->RemoveAllProxies();
-    pSource->AddProxy(this->BathymetrySource->getSource()->getProxy());
-    vtkSMPropertyHelper(smFilter, "ElevationRadius").Set(elevationRadious);
-    this->ElevationRadious = elevationRadious;
-
-    vtkSMPropertyHelper(smFilter, "HighestZValue").Set(eleHigh);
-    vtkSMPropertyHelper(smFilter, "UseHighestZValue").Set(useHighLimit);
-    vtkSMPropertyHelper(smFilter, "LowestZValue").Set(eleLow);
-    vtkSMPropertyHelper(smFilter, "UseLowestZValue").Set(useLowLimit);
-    vtkSMPropertyHelper(smFilter, "NoOP").Set(0);
-    smFilter->UpdateVTKObjects();
-    smFilter->UpdatePipeline();
-    this->getRepresentation()->getProxy()->UpdateVTKObjects();
-  }
 }

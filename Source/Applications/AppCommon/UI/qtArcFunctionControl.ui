@@ -494,13 +494,6 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Bathymetry Radius</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_2">
              <property name="text">
@@ -524,8 +517,8 @@
            <item row="1" column="1" colspan="2">
             <widget class="QDoubleSpinBox" name="SearchRadius">
              <property name="toolTip">
-              <string>Controls the search radius for the data points used in computing the z value of the grid point. 
-Larger the radius, the more points used to compute z value.  More points result in smoothing 
+              <string>Controls the search radius for the data points used in computing the z value of the grid point.
+Larger the radius, the more points used to compute z value.  More points result in smoothing
 and slower runtimes.  Too few points result in gaps in the estimation of change.</string>
              </property>
             </widget>
@@ -533,7 +526,7 @@ and slower runtimes.  Too few points result in gaps in the estimation of change.
            <item row="0" column="1" colspan="2">
             <widget class="QDoubleSpinBox" name="SamplingSize">
              <property name="toolTip">
-              <string>The distance between grid points.  Smaller spacing results in more points.  
+              <string>The distance between grid points.  Smaller spacing results in more points.
 This results in more accurate estimation but slower run time.</string>
              </property>
             </widget>

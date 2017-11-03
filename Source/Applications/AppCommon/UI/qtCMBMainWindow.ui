@@ -1264,14 +1264,6 @@
     <string>Select Surface Cell with Contour Widget (2D Camera Mode)</string>
    </property>
   </action>
-  <action name="actionApplyBathymetry">
-   <property name="text">
-    <string>Edit Bathymetry</string>
-   </property>
-   <property name="toolTip">
-    <string>Apply or Remove Bathymetry</string>
-   </property>
-  </action>
   <action name="actionExportSelectedPolygons">
    <property name="text">
     <string>Export Selected Polygons</string>

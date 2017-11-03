@@ -64,7 +64,6 @@
 #include "pqCMBUniformGrid.h"
 #include "pqPlanarTextureRegistrationDialog.h"
 #include "qtCMBArcWidgetManager.h"
-#include "qtCMBBathymetryDialog.h"
 #include "qtCMBConeNodeDialog.h"
 #include "qtCMBGenerateContoursDialog.h"
 #include "qtCMBGroundPlaneDialog.h"
@@ -111,7 +110,6 @@ pqCMBSceneTree::pqCMBSceneTree(QPixmap* visPixMap, QPixmap* ivisPixMap, QPixmap*
   this->SetNodeColorAction = NULL;
   this->UnsetNodeColorAction = NULL;
   this->ChangeTextureAction = NULL;
-  this->ApplyBathymetryAction = NULL;
   this->VOIAction = NULL;
   this->LineAction = NULL;
   this->ArcAction = NULL;
@@ -373,22 +371,6 @@ void pqCMBSceneTree::empty()
   if (this->Selected.size())
   {
     this->nodesSelected(true);
-  }
-  // Need to delete those nodes that depending on other nodes
-  // For examples, polygons that have bathymetry applied to them.
-  std::vector<pqCMBSceneNode*> bathymetries;
-  SceneObjectNodeIterator iter(this->Root);
-  iter.addObjectTypeFilter(pqCMBSceneObjectBase::Polygon);
-  iter.addObjectTypeFilter(pqCMBSceneObjectBase::Faceted);
-  pqCMBSceneNode* node;
-  while ((node = iter.next()))
-  {
-    pqCMBTexturedObject* tobj = dynamic_cast<pqCMBTexturedObject*>(node->getDataObject());
-    if (tobj && tobj->getBathymetrySource())
-    {
-      tobj->unApplyBathymetry();
-      delete node;
-    }
   }
 
   if (this->Root)
@@ -775,7 +757,6 @@ void pqCMBSceneTree::nodesSelected(bool clearSelection /*=false*/)
   this->updateSnapOptions();
   this->updateSelectedColorMode();
   this->updateTexturedObjectOptions();
-  this->updateBathymetryOptions();
   this->updateTINStitchOptions();
   this->updateTINStackOptions();
   this->updateGenerateArcsOptions();
@@ -868,24 +849,6 @@ void pqCMBSceneTree::updateTexturedObjectOptions()
   {
     this->ElevationAction->setEnabled(enabled0);
     this->ElevationAction->setChecked(showingElevation);
-  }
-}
-
-void pqCMBSceneTree::updateBathymetryOptions()
-{
-  pqCMBTexturedObject* tobj = NULL;
-  bool enabled0 = false;
-  if ((this->Selected.size() == 1) && (!this->Selected[0]->isTypeNode()))
-  {
-    tobj = dynamic_cast<pqCMBTexturedObject*>(this->Selected[0]->getDataObject());
-    if (tobj)
-    {
-      enabled0 = true;
-    }
-  }
-  if (this->ApplyBathymetryAction)
-  {
-    this->ApplyBathymetryAction->setEnabled(enabled0);
   }
 }
 
@@ -2689,21 +2652,6 @@ void pqCMBSceneTree::setTextureAction(QAction* changeAction)
   this->updateTexturedObjectOptions();
 }
 
-void pqCMBSceneTree::setApplyBathymetryAction(QAction* changeAction)
-{
-  if (this->ApplyBathymetryAction)
-  {
-    this->PropertiesMenu->removeAction(this->ApplyBathymetryAction);
-  }
-  this->ApplyBathymetryAction = changeAction;
-  if (this->ApplyBathymetryAction)
-  {
-    this->PropertiesMenu->addAction(this->ApplyBathymetryAction);
-    QObject::connect(changeAction, SIGNAL(triggered()), this, SLOT(editBathymetry()));
-  }
-  this->updateBathymetryOptions();
-}
-
 void pqCMBSceneTree::setUndoRedoActions(QAction* undoAction, QAction* redoAction)
 {
   if (this->UndoAction)
@@ -3525,24 +3473,6 @@ void pqCMBSceneTree::updateElevation()
   {
     tobj->toggleElevation();
     this->sceneObjectChanged();
-  }
-}
-
-void pqCMBSceneTree::editBathymetry()
-{
-  if ((this->Selected.size() != 1) || (this->Selected[0]->isTypeNode()))
-  {
-    return;
-  }
-
-  pqCMBTexturedObject* tobj =
-    dynamic_cast<pqCMBTexturedObject*>(this->Selected[0]->getDataObject());
-  if (tobj)
-  {
-    if (qtCMBBathymetryDialog::manageBathymetry(this->Selected[0]))
-    {
-      this->sceneObjectChanged();
-    }
   }
 }
 
