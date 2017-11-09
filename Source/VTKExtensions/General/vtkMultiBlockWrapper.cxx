@@ -18,7 +18,6 @@
 #include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationIntegerKey.h"
-#include "vtkInstantiator.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
@@ -2285,8 +2284,7 @@ vtkAbstractArray* vtkMultiBlockWrapper::PerformNeededDeepCopy(
   if (array->GetReferenceCount() != 1)
   {
     // deep copy and replace...
-    vtkAbstractArray* copy =
-      vtkAbstractArray::SafeDownCast(vtkInstantiator::CreateInstance(array->GetClassName()));
+    auto copy = array->New();
     copy->DeepCopy(array);
     copy->SetName(array->GetName()); // this may not be necessary
     owner->AddArray(copy);
@@ -2309,8 +2307,7 @@ vtkDataObject* vtkMultiBlockWrapper::PerformNeededShallowCopy(
   if (data->GetReferenceCount() != 1)
   {
     // shallow copy and replace...
-    vtkDataObject* copy =
-      vtkDataObject::SafeDownCast(vtkInstantiator::CreateInstance(data->GetClassName()));
+    auto copy = data->New();
     copy->ShallowCopy(data);
     mbDataSet->SetBlock(blockIndex, copy);
     data = copy;
@@ -2337,8 +2334,7 @@ vtkDataObject* vtkMultiBlockWrapper::PerformNeededDeepCopy(
                    (polyCopy->GetPolys() && polyCopy->GetPolys()->GetReferenceCount() != 1) ||
                    (polyCopy->GetLines() && polyCopy->GetLines()->GetReferenceCount() != 1))))
   {
-    vtkDataObject* copy =
-      vtkDataObject::SafeDownCast(vtkInstantiator::CreateInstance(data->GetClassName()));
+    auto copy = data->New();
     /*
     // if this is a polydata, do not copy pointdata
     // Still has some problems with MergeFacesFilter test
