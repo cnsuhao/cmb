@@ -67,7 +67,6 @@
 
 #include "pqRepresentationHelperFunctions.h"
 
-#include <QVTKWidget.h>
 #include <vtkActor.h>
 #include <vtkGlyph3D.h>
 #include <vtkPoints.h>
