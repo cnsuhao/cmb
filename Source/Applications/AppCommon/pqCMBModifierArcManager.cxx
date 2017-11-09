@@ -46,6 +46,7 @@
 #include <vtksys/SystemTools.hxx>
 
 #include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
+#include "vtkCommand.h"
 #include "vtkContourWidget.h"
 #include "vtkNew.h"
 #include "vtkSMPropertyHelper.h"
