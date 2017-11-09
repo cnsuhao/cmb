@@ -16,7 +16,7 @@
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h"
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "smtk/model/DescriptivePhrase.h"
 #include "smtk/model/EntityRef.h"
 

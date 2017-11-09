@@ -16,7 +16,7 @@
 #define __vtkPVSMTKMeshInformation_h
 
 #include "ModelBridgeClientModule.h"
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "vtkPVInformation.h"
 #include <map>
 #include <string>

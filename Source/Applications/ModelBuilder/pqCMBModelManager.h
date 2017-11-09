@@ -15,7 +15,7 @@
 
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "smtk/model/StringData.h"
 #include "vtkNew.h"
 #include "vtkSmartPointer.h"
