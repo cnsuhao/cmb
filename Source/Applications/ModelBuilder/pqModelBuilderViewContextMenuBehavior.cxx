@@ -31,7 +31,7 @@
 #include "pqUndoStack.h"
 
 #include "smtk/extension/vtk/source/vtkModelMultiBlockSource.h"
-#include "smtk/mesh/Collection.h"
+#include "smtk/mesh/core/Collection.h"
 #include "smtk/model/Group.h"
 #include "vtkNew.h"
 #include "vtkPVCompositeDataInformation.h"

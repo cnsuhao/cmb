@@ -11,7 +11,6 @@
 
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkInstantiator.h"
 #include "vtkMultiBlockDataSet.h"
 #include "vtkObjectFactory.h"
 
@@ -31,17 +30,6 @@ vtkHydroModelMultiBlockSource::~vtkHydroModelMultiBlockSource()
 void vtkHydroModelMultiBlockSource::CopyData(vtkMultiBlockDataSet* source)
 {
   this->Source->ShallowCopy(source);
-
-  //for(unsigned int ui=0; ui<source->GetNumberOfBlocks(); ui++)
-  //  {
-  //  // shallow copy and replace...
-  //  vtkDataObject* copy = vtkDataObject::SafeDownCast(
-  //    vtkInstantiator::CreateInstance(source->GetBlock(ui)->GetClassName()));
-  //  copy->ShallowCopy(source->GetBlock(ui));
-  //  copy->Modified();
-  //  this->Source->SetBlock(ui, copy);
-  //  copy->Delete();
-  //  }
 
   this->Modified();
 }

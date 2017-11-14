@@ -46,6 +46,7 @@
 #include <vtksys/SystemTools.hxx>
 
 #include "smtk/extension/vtk/widgets/vtkSMTKArcRepresentation.h"
+#include "vtkCommand.h"
 #include "vtkContourWidget.h"
 #include "vtkNew.h"
 #include "vtkSMPropertyHelper.h"
@@ -67,7 +68,6 @@
 
 #include "pqRepresentationHelperFunctions.h"
 
-#include <QVTKWidget.h>
 #include <vtkActor.h>
 #include <vtkGlyph3D.h>
 #include <vtkPoints.h>

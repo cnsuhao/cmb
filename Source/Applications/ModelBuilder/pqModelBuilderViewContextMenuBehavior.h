@@ -12,7 +12,7 @@
 #define __pqModelBuilderViewContextMenuBehavior_h
 
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "vtkType.h"
 #include <QColor>
 #include <QList>

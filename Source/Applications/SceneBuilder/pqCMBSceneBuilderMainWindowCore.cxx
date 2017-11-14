@@ -111,7 +111,6 @@
 #include <vtkIdTypeArray.h>
 #include <vtkImageData.h>
 #include <vtkMultiBlockWrapper.h>
-#include <vtkPVDisplayInformation.h>
 #include <vtkPVOptions.h>
 #include <vtkPVXMLElement.h>
 #include <vtkPVXMLParser.h>

@@ -13,7 +13,7 @@
 
 #include "smtk/PublicPointerDefs.h"
 #include "smtk/extension/qt/qtMeshSelectionItem.h" // for qtMeshSelectionItem::MeshListUpdateType
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "smtk/model/DescriptivePhrase.h" // for selectPropertyRepresentations
 #include "smtk/model/EntityRef.h"
 

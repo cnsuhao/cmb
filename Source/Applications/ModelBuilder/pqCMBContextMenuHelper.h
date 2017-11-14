@@ -13,7 +13,7 @@
 
 #include "cmbSystemConfig.h"
 #include "smtk/PublicPointerDefs.h"
-#include "smtk/mesh/MeshSet.h"
+#include "smtk/mesh/core/MeshSet.h"
 #include "smtk/model/EntityRef.h"
 #include "vtkType.h"
 #include <QColor>

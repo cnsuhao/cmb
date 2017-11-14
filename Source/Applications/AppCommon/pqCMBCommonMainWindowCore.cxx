@@ -117,7 +117,6 @@
 #include "vtkStringArray.h"
 #include "vtkWidgetEvent.h"
 #include "vtkWidgetEventTranslator.h"
-#include <vtkPVDisplayInformation.h>
 #include <vtkPVOptions.h>
 #include <vtkPVXMLElement.h>
 #include <vtkPVXMLParser.h>
