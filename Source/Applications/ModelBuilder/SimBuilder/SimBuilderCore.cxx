@@ -481,11 +481,10 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   //std::cout << "Number of resources loaded: " << numResources << std::endl;
 
   // If simulation attributes loaded, update ExportDialog
-  smtk::resource::Resource::Type simType;
   smtk::resource::Set::Role simRole;
   smtk::resource::Set::State simState;
   std::string simLink;
-  if (resources.resourceInfo("simbuilder", simType, simRole, simState, simLink))
+  if (resources.resourceInfo("simbuilder", simRole, simState, simLink))
   {
     this->ExportDialog->setSimAttCollection(this->uiManager()->attributeCollection());
     this->IsSimModelLoaded = true;
@@ -493,11 +492,10 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   }
 
   // Check if export resource loaded, and if not, load default template
-  smtk::resource::Resource::Type exportType;
   smtk::resource::Set::Role exportRole;
   smtk::resource::Set::State exportState;
   std::string exportLink;
-  if (resources.resourceInfo("export", exportType, exportRole, exportState, exportLink))
+  if (resources.resourceInfo("export", exportRole, exportState, exportLink))
   {
     smtk::resource::ResourcePtr expResource;
     resources.get("export", expResource);
