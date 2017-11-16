@@ -82,6 +82,8 @@
 #include "smtk/attribute/MeshItem.h"
 #include "smtk/attribute/StringItem.h"
 #include "smtk/attribute/VoidItem.h"
+#include "smtk/common/Paths.h"
+#include "smtk/common/PythonInterpreter.h"
 #include "smtk/extension/paraview/appcomponents/pqPluginSMTKViewBehavior.h"
 #include "smtk/extension/paraview/operators/smtkExportModelView.h"
 #include "smtk/extension/paraview/operators/smtkSaveModelView.h"
@@ -274,6 +276,29 @@ pqCMBModelBuilderMainWindowCore::pqCMBModelBuilderMainWindowCore(QWidget* parent
   core->setUndoStack(NULL);
 
   this->Internal->smtkViewBehavior = new pqPluginSMTKViewBehavior(this);
+
+  // Set up smtk::common::PythonInterpreter's path for ModelBuilder to find SMTK.
+  {
+    std::string smtkLibDir = smtk::common::Paths::pathToThisLibrary();
+
+    // We first look for SMTK as run from the build tree.
+    bool smtkFound = smtk::common::PythonInterpreter::instance().addPathToBuildTree(
+      smtkLibDir + "/../ThirdParty/SMTK", "smtk");
+
+    // If we don't find it, then we look for SMTK as an installed module.
+    if (!smtkFound)
+    {
+      smtkFound =
+        smtk::common::PythonInterpreter::instance().addPathToInstalledModule(smtkLibDir, "smtk");
+    }
+
+    // If we don't find it, then we look for SMTK as a packaged module.
+    if (!smtkFound)
+    {
+      smtkFound =
+        smtk::common::PythonInterpreter::instance().addPathToPackagedModule(smtkLibDir, "smtk");
+    }
+  }
 }
 
 pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
@@ -688,6 +713,63 @@ void pqCMBModelBuilderMainWindowCore::onSaveSimulation()
 void pqCMBModelBuilderMainWindowCore::onExportSimFile()
 {
   this->getSimBuilder()->ExportSimFile(this->modelManager()->managerProxy());
+}
+
+void pqCMBModelBuilderMainWindowCore::onImportPythonOperator()
+{
+  // Open a file dialog for python files
+  pqFileDialog file_dialog(
+    this->getActiveServer(), NULL, tr("Open Python File:"), QString(), "Python Files (*.py)");
+  file_dialog.setObjectName("FileOpenDialog");
+  file_dialog.setFileMode(pqFileDialog::ExistingFile);
+  if (file_dialog.exec() == QDialog::Accepted)
+  {
+    QStringList files = file_dialog.getSelectedFiles();
+
+    smtk::extension::qtModelView* mv = this->modelPanel()->modelView();
+
+    smtk::model::ManagerPtr modelMgr = this->modelManager()->managerProxy()->modelManager();
+    smtk::model::SessionRefs sessions = modelMgr->sessions();
+
+    // For each python file selected...
+    for (std::size_t i = 0; i < files.size(); i++)
+    {
+      // ...if there are no sessions, we only need to read the python file
+      // TODO: this code breaks client/server separation!
+      if (sessions.empty())
+      {
+        smtk::common::PythonInterpreter::instance().loadPythonSourceFile(
+          files[i].toLatin1().constData());
+      }
+      else
+      {
+        // if there are open sessions, then we try to import the python
+        // operator in each session. The import operator reads the python
+        // file on the server, and also updates the active session to
+        // incorporate the new operator into its operator list.
+        smtk::extension::qtModelOperationWidget* mow =
+          this->Internal->ModelDock->modelView()->operatorsWidget();
+
+        for (auto& sref : sessions)
+        {
+          smtk::model::OperatorPtr opPtr = sref.session()->op("import python operator");
+          opPtr->findFile("filename")->setValue(files[i].toLatin1().constData());
+          opPtr->operate();
+
+          // Now that the operator is loaded and active on the server, we need
+          // to update the client-side manager.
+          this->modelManager()->managerProxy()->refreshSessionOperators(sref.entity());
+
+          // Additionally, we must manually update the ModelOperationWidget to
+          // reflect the potential changes in the operator list.
+          if (sref.session())
+          {
+            mow->refreshOperatorList();
+          }
+        }
+      }
+    }
+  }
 }
 
 void pqCMBModelBuilderMainWindowCore::zoomOnSelection()

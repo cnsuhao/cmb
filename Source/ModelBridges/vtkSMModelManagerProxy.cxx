@@ -195,6 +195,47 @@ bool vtkSMModelManagerProxy::endSession(const smtk::common::UUID& sessionId)
   return true;
 }
 
+bool vtkSMModelManagerProxy::refreshSessionOperators(const smtk::common::UUID& sessionId)
+{
+  if (m_remoteSessionIds.find(sessionId) == m_remoteSessionIds.end())
+  {
+    return false;
+  }
+
+  std::string reqStr =
+    "{\"jsonrpc\":\"2.0\", \"method\":\"refresh-operators\", \"params\":{\"session-id\":\"" +
+    sessionId.toString() + "\"}, \"id\":\"1\"}";
+
+  cJSON* result = this->jsonRPCRequest(reqStr);
+  cJSON* resObj;
+  cJSON* sessionIdObj;
+  cJSON* opsObj;
+  if (
+    // Was JSON parsable?
+    !result ||
+    // Is the result an Object (as required by JSON-RPC 2.0)?
+    result->type != cJSON_Object ||
+    // Does the result Object have a field named "result" (req'd by JSON-RPC)?
+    !(resObj = cJSON_GetObjectItem(result, "result")) || resObj->type != cJSON_Object ||
+    !(opsObj = resObj->child) || opsObj->type != cJSON_String || !opsObj->valuestring ||
+    !opsObj->valuestring[0])
+  {
+    if (result)
+      cJSON_Delete(result);
+    return false;
+  }
+
+  smtk::model::SessionRef sref(this->m_modelMgr, sessionId);
+
+  // OK, construct a special "forwarding" session locally.
+  bool success = LoadJSON::ofOperatorDefinitions(
+    opsObj, std::dynamic_pointer_cast<smtk::model::DefaultSession>(sref.session()));
+
+  cJSON_Delete(result);
+
+  return success;
+}
+
 smtk::model::StringData vtkSMModelManagerProxy::supportedFileTypes(const std::string& sessionName)
 {
   if (this->m_sessionFileTypes.find(sessionName) != this->m_sessionFileTypes.end())

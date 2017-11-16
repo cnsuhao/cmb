@@ -147,6 +147,8 @@ public slots:
   void clearpqCMBSceneTree();
   void onLoadScene();
 
+  void onImportPythonOperator();
+
   // Resets the center of rotation to the center of the active
   // source in the active view.
   void resetCenterOfRotationToCenterOfCurrentData() override;
