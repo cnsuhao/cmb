@@ -241,6 +241,8 @@ protected:
   bool abortActionForUnsavedWork(
     const std::string& action, const smtk::model::SessionRef& sref = smtk::model::SessionRef());
 
+  void initializeSMTKPythonEnvironment();
+
 private:
   // Description:
   // On successful completion of volume mesher, preview the mesh

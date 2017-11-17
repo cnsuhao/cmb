@@ -277,28 +277,7 @@ pqCMBModelBuilderMainWindowCore::pqCMBModelBuilderMainWindowCore(QWidget* parent
 
   this->Internal->smtkViewBehavior = new pqPluginSMTKViewBehavior(this);
 
-  // Set up smtk::common::PythonInterpreter's path for ModelBuilder to find SMTK.
-  {
-    std::string smtkLibDir = smtk::common::Paths::pathToThisLibrary();
-
-    // We first look for SMTK as run from the build tree.
-    bool smtkFound = smtk::common::PythonInterpreter::instance().addPathToBuildTree(
-      smtkLibDir + "/../ThirdParty/SMTK", "smtk");
-
-    // If we don't find it, then we look for SMTK as an installed module.
-    if (!smtkFound)
-    {
-      smtkFound =
-        smtk::common::PythonInterpreter::instance().addPathToInstalledModule(smtkLibDir, "smtk");
-    }
-
-    // If we don't find it, then we look for SMTK as a packaged module.
-    if (!smtkFound)
-    {
-      smtkFound =
-        smtk::common::PythonInterpreter::instance().addPathToPackagedModule(smtkLibDir, "smtk");
-    }
-  }
+  this->initializeSMTKPythonEnvironment();
 }
 
 pqCMBModelBuilderMainWindowCore::~pqCMBModelBuilderMainWindowCore()
@@ -738,8 +717,20 @@ void pqCMBModelBuilderMainWindowCore::onImportPythonOperator()
       // TODO: this code breaks client/server separation!
       if (sessions.empty())
       {
-        smtk::common::PythonInterpreter::instance().loadPythonSourceFile(
+        bool success = smtk::common::PythonInterpreter::instance().loadPythonSourceFile(
           files[i].toLatin1().constData());
+        if (success)
+        {
+          std::stringstream s;
+          s << "Loaded Python source file \"" << files[i].toLatin1().constData() << "\".";
+          vtkOutputWindowDisplayText(s.str().c_str());
+        }
+        else
+        {
+          std::stringstream s;
+          s << "Could not read Python source file \"" << files[i].toLatin1().constData() << "\".";
+          vtkGenericWarningMacro(<< s.str().c_str());
+        }
       }
       else
       {
@@ -750,11 +741,19 @@ void pqCMBModelBuilderMainWindowCore::onImportPythonOperator()
         smtk::extension::qtModelOperationWidget* mow =
           this->Internal->ModelDock->modelView()->operatorsWidget();
 
+        bool success = false;
+
         for (auto& sref : sessions)
         {
           smtk::model::OperatorPtr opPtr = sref.session()->op("import python operator");
           opPtr->findFile("filename")->setValue(files[i].toLatin1().constData());
-          opPtr->operate();
+          smtk::model::OperatorResult opResult = opPtr->operate();
+
+          if (opResult->findInt("outcome")->value() ==
+            smtk::operation::Operator::OPERATION_SUCCEEDED)
+          {
+            success = true;
+          }
 
           // Now that the operator is loaded and active on the server, we need
           // to update the client-side manager.
@@ -766,6 +765,21 @@ void pqCMBModelBuilderMainWindowCore::onImportPythonOperator()
           {
             mow->refreshOperatorList();
           }
+        }
+
+        if (success)
+        {
+          std::stringstream s;
+          s << "Loaded Python source file \"" << files[i].toLatin1().constData()
+            << "\" into active sessions.";
+          vtkOutputWindowDisplayText(s.str().c_str());
+        }
+        else
+        {
+          std::stringstream s;
+          s << "Could not read Python source file \"" << files[i].toLatin1().constData()
+            << "\" into any active sessions.";
+          vtkGenericWarningMacro(<< s.str().c_str());
         }
       }
     }
@@ -1953,4 +1967,30 @@ void pqCMBModelBuilderMainWindowCore::setSimBuilderModelManager()
     SLOT(onColorByAttribute()));
   QObject::connect(this->getSimBuilder()->uiManager(), SIGNAL(attAssociationChanged()), this,
     SLOT(onColorByAttribute()));
+}
+
+void pqCMBModelBuilderMainWindowCore::initializeSMTKPythonEnvironment()
+{
+  // Set up smtk::common::PythonInterpreter's path for ModelBuilder to find SMTK.
+  {
+    std::string smtkLibDir = smtk::common::Paths::pathToThisLibrary();
+
+    // We first look for SMTK as run from the build tree.
+    bool smtkFound = smtk::common::PythonInterpreter::instance().addPathToBuildTree(
+      smtkLibDir + "/../ThirdParty/SMTK", "smtk");
+
+    // If we don't find it, then we look for SMTK as an installed module.
+    if (!smtkFound)
+    {
+      smtkFound =
+        smtk::common::PythonInterpreter::instance().addPathToInstalledModule(smtkLibDir, "smtk");
+    }
+
+    // If we don't find it, then we look for SMTK as a packaged module.
+    if (!smtkFound)
+    {
+      smtkFound =
+        smtk::common::PythonInterpreter::instance().addPathToPackagedModule(smtkLibDir, "smtk");
+    }
+  }
 }
