@@ -30,6 +30,8 @@ public:
     const smtk::common::UUID& sessionId = smtk::common::UUID::null(), bool createNew = false);
   bool endSession(const smtk::common::UUID& sessionId);
 
+  bool refreshSessionOperators(const smtk::common::UUID& sessionId);
+
   smtk::model::StringData supportedFileTypes(const std::string& sessionName = std::string());
   smtk::model::OperatorPtr newFileOperator(const std::string& fileName,
     const std::string& sessionName = std::string(), const std::string& engineName = std::string());

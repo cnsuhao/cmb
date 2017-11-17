@@ -879,6 +879,11 @@
     <string>Load Simulation Template</string>
    </property>
   </action>
+  <action name="actionImport_Python_Operator">
+   <property name="text">
+    <string>Import Python Operator</string>
+   </property>
+  </action>
   <action name="actionChangeObjectsType">
    <property name="text">
     <string>Change Object's Type</string>

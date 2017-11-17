@@ -127,6 +127,10 @@ protected slots:
   void saveSimulationScenario();
   void onSimFileLoaded(const char* filename);
 
+  // Description
+  // Loading operators
+  void importPythonOperator();
+
 protected:
   using pqCMBCommonMainWindow::updateEnableState;
   // Description

@@ -345,6 +345,9 @@ void pqCMBModelBuilderMainWindow::initializeApplication()
     this->getThisCore(), SLOT(onExportSimFile()));
   this->getMainDialog()->actionExport_Simulation_File->setEnabled(false);
 
+  QObject::connect(this->getMainDialog()->actionImport_Python_Operator, SIGNAL(triggered()), this,
+    SLOT(importPythonOperator()));
+
   QObject::connect(this->getMainDialog()->action_Select, SIGNAL(triggered(bool)), this,
     SLOT(onSurfaceRubberBandSelect(bool)));
 
@@ -602,6 +605,11 @@ void pqCMBModelBuilderMainWindow::setupMenuActions()
     this->Internal->SaveScenarioAction, SIGNAL(triggered()), this, SLOT(saveSimulationScenario()));
   this->getMainDialog()->menu_File->insertAction(
     this->getMainDialog()->action_Exit, this->Internal->SaveScenarioAction);
+
+  this->getMainDialog()->menu_File->insertSeparator(this->getMainDialog()->action_Exit);
+
+  this->getMainDialog()->menu_File->insertAction(
+    this->getMainDialog()->action_Exit, this->getMainDialog()->actionImport_Python_Operator);
 
   this->getMainDialog()->menu_File->insertSeparator(this->getMainDialog()->action_Exit);
 
@@ -1107,6 +1115,11 @@ void pqCMBModelBuilderMainWindow::loadSimulationScenario()
 void pqCMBModelBuilderMainWindow::saveSimulationScenario()
 {
   this->getThisCore()->onSaveScenario();
+}
+
+void pqCMBModelBuilderMainWindow::importPythonOperator()
+{
+  this->getThisCore()->onImportPythonOperator();
 }
 
 void pqCMBModelBuilderMainWindow::onSimFileLoaded(const char* vtkNotUsed(filename))

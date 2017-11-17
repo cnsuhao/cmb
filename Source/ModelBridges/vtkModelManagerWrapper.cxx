@@ -168,6 +168,21 @@ void vtkModelManagerWrapper::ProcessJSONRequest(vtkSMTKOperator* vsOp)
           }
         }
       }
+      else if (methStr == "refresh-operators")
+      {
+        cJSON* sessId = cJSON_GetObjectItem(param, "session-id");
+        smtk::model::SessionRef sref(this->ModelMgr, smtk::common::UUID(sessId->valuestring));
+        if (!sref.isValid() || !sref.session())
+        {
+          this->GenerateError(result, "Unable to access session or got NULL session ID.", reqIdStr);
+        }
+        else
+        {
+          cJSON* opDefs = cJSON_CreateObject();
+          smtk::io::SaveJSON::forOperatorDefinitions(sref.session()->operatorCollection(), opDefs);
+          cJSON_AddItemToObject(result, "result", opDefs);
+        }
+      }
       else if (methStr == "fetch-model")
       {
         cJSON* model = cJSON_CreateObject();
