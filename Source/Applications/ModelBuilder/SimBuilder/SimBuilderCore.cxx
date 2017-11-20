@@ -238,7 +238,7 @@ int SimBuilderCore::LoadSimulation(pqPipelineSource* reader, pqCMBSceneTree* /*s
   }
 
   // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
+  smtk::view::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());
@@ -463,7 +463,7 @@ int SimBuilderCore::LoadResources(pqPipelineSource* reader, pqCMBSceneTree* /*sc
   }
 
   // Lets get the toplevel view
-  smtk::common::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
+  smtk::view::ViewPtr topView = this->uiManager()->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     vtkGenericWarningMacro("There is no TopLevel View in  " << info->GetFileName());

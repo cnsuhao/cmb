@@ -21,12 +21,12 @@
 #include "smtk/attribute/Item.h"
 #include "smtk/attribute/ItemDefinition.h"
 #include "smtk/attribute/StringItem.h"
-#include "smtk/common/View.h"
 #include "smtk/extension/qt/qtBaseView.h"
 #include "smtk/extension/qt/qtUIManager.h"
 #include "smtk/io/AttributeReader.h"
 #include "smtk/io/AttributeWriter.h"
 #include "smtk/io/Logger.h"
+#include "smtk/view/View.h"
 
 #include "pqApplicationCore.h"
 #include "pqServer.h"
@@ -391,7 +391,7 @@ void SimBuilderExportDialog::updatePanel()
   }
 
   // Get toplevel view
-  smtk::common::ViewPtr topView = this->ExportUIManager->attributeCollection()->findTopLevelView();
+  smtk::view::ViewPtr topView = this->ExportUIManager->attributeCollection()->findTopLevelView();
   if (!topView)
   {
     QMessageBox::critical(NULL, "Export Error", "There is no TopLevel View in Export Script!");
@@ -701,11 +701,11 @@ std::string SimBuilderExportDialog::findInstancedAttName(const std::string& attT
   //       <Att Name=  Type=>
   std::string thisAttName;
   std::string thisAttType;
-  const std::map<std::string, smtk::common::ViewPtr>& views = this->ExportAttCollection->views();
-  std::map<std::string, smtk::common::ViewPtr>::const_iterator viewIter = views.cbegin();
+  const std::map<std::string, smtk::view::ViewPtr>& views = this->ExportAttCollection->views();
+  std::map<std::string, smtk::view::ViewPtr>::const_iterator viewIter = views.cbegin();
   for (; viewIter != views.cend(); ++viewIter)
   {
-    const smtk::common::ViewPtr view = viewIter->second;
+    const smtk::view::ViewPtr view = viewIter->second;
     if (view->type() != "Instanced")
     {
       continue; // skip non-instance view
@@ -718,13 +718,13 @@ std::string SimBuilderExportDialog::findInstancedAttName(const std::string& attT
       qWarning() << "Instanced View missing InstancedAttributes";
       continue;
     }
-    smtk::common::View::Component& instancedAttsComp = view->details().child(index);
+    smtk::view::View::Component& instancedAttsComp = view->details().child(index);
 
     // Traverse <Att> elements
     std::size_t i, n = instancedAttsComp.numberOfChildren();
     for (i = 0; i < n; ++i)
     {
-      smtk::common::View::Component& attComp = instancedAttsComp.child(i);
+      smtk::view::View::Component& attComp = instancedAttsComp.child(i);
       if (attComp.name() != "Att")
       {
         continue;

@@ -50,7 +50,7 @@ public:
   pqRenderView* renderView() { return this->RenderView; }
 
   smtk::extension::qtBaseView* topView();
-  void setSMTKView(smtk::common::ViewPtr topView, QWidget* parentWidget);
+  void setSMTKView(smtk::view::ViewPtr topView, QWidget* parentWidget);
   smtk::model::ManagerPtr attModelManager() const;
   void setModelManager(smtk::model::ManagerPtr);
   void setModelPanel(pqSMTKModelPanel*);
