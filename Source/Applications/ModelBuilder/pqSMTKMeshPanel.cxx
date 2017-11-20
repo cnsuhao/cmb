@@ -27,10 +27,10 @@
 #include "smtk/io/Logger.h"
 #include "smtk/io/SaveJSON.h"
 
-#include "smtk/common/View.h"
 #include "smtk/extension/qt/qtActiveObjects.h"
 #include "smtk/extension/qt/qtCollapsibleGroupWidget.h"
 #include "smtk/extension/qt/qtUIManager.h"
+#include "smtk/view/View.h"
 
 #include "smtk/AutoInit.h" // for smtkComponentInitMacro
 
@@ -207,7 +207,7 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
       this->AttCollection, reqs.requirements(), reqs.requirementsSize(), inputLogger);
   }
 
-  smtk::common::ViewPtr root = this->AttCollection->findTopLevelView();
+  smtk::view::ViewPtr root = this->AttCollection->findTopLevelView();
   const bool useInternalFileBrowser = true;
   this->AttUIManager.reset(new smtk::extension::qtUIManager(this->AttCollection));
   this->AttUIManager->setSMTKView(root, this->RequirementsWidget.data(), useInternalFileBrowser);
