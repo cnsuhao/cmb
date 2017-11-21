@@ -176,16 +176,16 @@ void internal_addBlockAttributeFieldData(vtkDataObject* objBlock,
       // Figure out which variant of the item to use, if it exists
       if (attItemName && attItemName[0] != '\0' && (attitem = (*ait)->find(attItemName)))
       {
-        if (attitem->type() == smtk::attribute::Item::DOUBLE)
+        if (attitem->type() == smtk::attribute::Item::DoubleType)
         {
           valuestr =
             smtk::dynamic_pointer_cast<smtk::attribute::DoubleItem>(attitem)->valueAsString();
         }
-        else if (attitem->type() == smtk::attribute::Item::INT)
+        else if (attitem->type() == smtk::attribute::Item::IntType)
         {
           valuestr = smtk::dynamic_pointer_cast<smtk::attribute::IntItem>(attitem)->valueAsString();
         }
-        else if (attitem->type() == smtk::attribute::Item::STRING)
+        else if (attitem->type() == smtk::attribute::Item::StringType)
         {
           valuestr =
             smtk::dynamic_pointer_cast<smtk::attribute::StringItem>(attitem)->valueAsString();

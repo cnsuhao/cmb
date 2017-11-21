@@ -1655,17 +1655,17 @@ void pqCMBModelManager::colorRepresentationByAttribute(pqDataRepresentation* rep
       // Figure out which variant of the item to use, if it exists
       if (!attItemName.isEmpty() && (attitem = (*itAtt)->find(attItemName.toStdString())))
       {
-        if (attitem->type() == smtk::attribute::Item::DOUBLE)
+        if (attitem->type() == smtk::attribute::Item::DoubleType)
         {
           stritemval =
             smtk::dynamic_pointer_cast<smtk::attribute::DoubleItem>(attitem)->valueAsString();
         }
-        else if (attitem->type() == smtk::attribute::Item::INT)
+        else if (attitem->type() == smtk::attribute::Item::IntType)
         {
           stritemval =
             smtk::dynamic_pointer_cast<smtk::attribute::IntItem>(attitem)->valueAsString();
         }
-        else if (attitem->type() == smtk::attribute::Item::STRING)
+        else if (attitem->type() == smtk::attribute::Item::StringType)
         {
           stritemval = smtk::dynamic_pointer_cast<smtk::attribute::StringItem>(attitem)->value();
         }
