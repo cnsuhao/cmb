@@ -150,10 +150,10 @@ pqSMTKModelPanel::pqSMTKModelPanel(pqCMBModelManager* mmgr, QWidget* p)
   QObject::connect(this,
     SIGNAL(sendSelectionsFromRenderWindowToSelectionManager(const smtk::model::EntityRefs&,
       const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-      const smtk::resource::SelectionAction, const std::string&)),
+      const smtk::view::SelectionAction, const std::string&)),
     qtActiveObjects::instance().smtkSelectionManager().get(),
     SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-      const smtk::model::DescriptivePhrases&, const smtk::resource::SelectionAction,
+      const smtk::model::DescriptivePhrases&, const smtk::view::SelectionAction,
       const std::string&)));
 
   QObject::connect(qtActiveObjects::instance().smtkSelectionManager().get(),
@@ -298,10 +298,10 @@ void pqSMTKModelPanel::resetUI()
     QObject::connect(this->Internal->ModelPanel->getModelView(),
       SIGNAL(sendSelectionsFromModelViewToSelectionManager(const smtk::model::EntityRefs&,
         const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-        const smtk::resource::SelectionAction, const std::string&)),
+        const smtk::view::SelectionAction, const std::string&)),
       qtActiveObjects::instance().smtkSelectionManager().get(),
       SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-        const smtk::model::DescriptivePhrases&, const smtk::resource::SelectionAction,
+        const smtk::model::DescriptivePhrases&, const smtk::view::SelectionAction,
         const std::string&)));
     // select from attribute Panel
     // signal passing into qtSelectionManager is connected in
@@ -545,7 +545,7 @@ void pqSMTKModelPanel::updateTreeSelection()
   // select model entities, meshes and entity properties
   // skip render view since it's where the signal comes from
   emit sendSelectionsFromRenderWindowToSelectionManager(entityRefs, meshes,
-    smtk::model::DescriptivePhrases(), smtk::resource::SelectionAction::DEFAULT,
+    smtk::model::DescriptivePhrases(), smtk::view::SelectionAction::DEFAULT,
     this->m_selectionSourceName);
 }
 
@@ -580,10 +580,10 @@ void pqSMTKModelPanel::onModelEntityItemCreated(smtk::extension::qtModelEntityIt
     QObject::connect(entItem,
       SIGNAL(sendSelectionFromModelEntityToSelectionManager(const smtk::model::EntityRefs&,
         const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-        const smtk::resource::SelectionAction, const std::string)),
+        const smtk::view::SelectionAction, const std::string)),
       qtActiveObjects::instance().smtkSelectionManager().get(),
       SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-        const smtk::model::DescriptivePhrases&, const smtk::resource::SelectionAction,
+        const smtk::model::DescriptivePhrases&, const smtk::view::SelectionAction,
         const std::string)));
   }
 }
