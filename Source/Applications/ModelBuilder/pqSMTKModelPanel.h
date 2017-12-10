@@ -30,7 +30,7 @@ class vtkPVInformation;
 
 namespace smtk
 {
-namespace resource
+namespace view
 {
 enum class SelectionAction;
 }
@@ -74,7 +74,7 @@ public:
 signals:
   void sendSelectionsFromRenderWindowToSelectionManager(const smtk::model::EntityRefs& selEntities,
     const smtk::mesh::MeshSets& selMeshes, const smtk::model::DescriptivePhrases& DesPhrases,
-    const smtk::resource::SelectionAction modifierFlag, const std::string& incomingSelectionSource);
+    const smtk::view::SelectionAction modifierFlag, const std::string& incomingSelectionSource);
 
 public slots:
   /// Called if the user accepts pending modifications
