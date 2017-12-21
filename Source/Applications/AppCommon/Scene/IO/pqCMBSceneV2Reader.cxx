@@ -1059,24 +1059,6 @@ void pqCMBSceneV2Reader::processObject(vtkXMLDataElement* elem)
     }
   }
 
-  e = elem->FindNestedElementWithName("BathymetryInfo");
-  if (e)
-  {
-    int status = this->processBathymetryInfo(e, obj);
-    if (status == -1)
-    {
-      std::string estring = elem->GetAttribute("Name");
-      estring += " can not have a bathymetry source associated with it";
-      this->appendStatus(estring);
-    }
-    else if (status == -2)
-    {
-      std::string estring = elem->GetAttribute("Name");
-      estring += " does not have a valid bathymetry source associated with it";
-      this->appendStatus(estring);
-    }
-  }
-
   e = elem->FindNestedElementWithName("ShowElevation");
   if (e)
   {
@@ -1144,32 +1126,6 @@ int pqCMBSceneV2Reader::processTextureInfo(vtkXMLDataElement* elem, pqCMBSceneOb
 
   tobj->setTextureMap(this->TextureFileNames[index].c_str(), npoints, points);
   this->Tree->addTextureFileName(this->TextureFileNames[index].c_str());
-  return 0;
-}
-
-int pqCMBSceneV2Reader::processBathymetryInfo(vtkXMLDataElement* elem, pqCMBSceneObjectBase* obj)
-{
-  pqCMBTexturedObject* tobj = dynamic_cast<pqCMBTexturedObject*>(obj);
-  if (tobj == NULL)
-  {
-    return -1;
-  }
-  vtkXMLDataElement* bathyDE = elem->FindNestedElementWithName("BathymetrySource");
-  if (!bathyDE)
-  {
-    return -2;
-  }
-  std::string sourceObjName = bathyDE->GetAttribute("Name");
-  pqCMBSceneNode* node = this->Tree->getSceneNodeByName(sourceObjName.c_str());
-  if (!node)
-  {
-    return -2;
-  }
-  double radius;
-  // NOTE: Other bathymetry parameters (low and high limits) are not saved currently.
-  int numRead = bathyDE->GetScalarAttribute("ElevationRadius", radius);
-  radius = numRead > 0 ? radius : 1.0;
-  tobj->applyBathymetry(node->getDataObject(), radius);
   return 0;
 }
 

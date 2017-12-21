@@ -70,7 +70,6 @@
 #include "vtkVariant.h"
 
 #include "qtCMBAboutDialog.h"
-#include "qtCMBBathymetryDialog.h"
 #include "qtCMBCreateSimpleGeometry.h"
 #include "qtCMBHelpDialog.h"
 #include "qtCMBTreeWidget.h"

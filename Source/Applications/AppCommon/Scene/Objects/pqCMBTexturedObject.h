@@ -24,7 +24,7 @@ public:
   pqCMBTexturedObject(pqPipelineSource* source, pqRenderView* view, pqServer* server);
   ~pqCMBTexturedObject() override;
 
-  /// Returns the Bounds of the data. - Returns the output of the Bathymetry
+  /// Returns the Bounds of the data. - Returns the output of the Elevation
   void getDataBounds(double bounds[6]) const override;
   pqPipelineSource* getSelectionSource() const override;
   void setSelectionInput(vtkSMSourceProxy* selectionInput) override;
@@ -44,11 +44,6 @@ public:
   void getRegistrationPointPair(int i, double xy[2], double st[2]) const;
 
   double getTextureIntensityAtPoint(double pt[3]);
-  void applyBathymetry(pqCMBSceneObjectBase* bathymetrySource, double elevationRadious,
-    bool useHighLimit = false, double eleHigh = 0.0, bool useLowLimit = false, double eleLow = 0.0);
-  void unApplyBathymetry();
-  pqCMBSceneObjectBase* getBathymetrySource();
-  double getBathymetryElevationRadious() { return this->ElevationRadious; }
   pqServer* getTextureRegistrationServer(void);
 
   void setTextureMap(const char* filename, int numberOfRegistrationPoints, double* points);
@@ -63,9 +58,6 @@ protected:
   int NumberOfRegistrationPoints;
   double RegistrationPoints[12];
 
-  QPointer<pqPipelineSource> BathymetryFilter;
-  pqCMBSceneObjectBase* BathymetrySource;
-  double ElevationRadious;
   bool ShowElevation;
   void prepTexturedObject(pqServer* server, pqRenderView* view);
   void duplicateInternals(pqCMBSceneObjectBase* obj) override;

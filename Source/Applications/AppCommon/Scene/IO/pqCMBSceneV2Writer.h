@@ -53,7 +53,6 @@ protected:
   vtkXMLDataElement* getUserDefinedObjectTypes();
   vtkXMLDataElement* addConstraints(pqCMBSceneObjectBase* obj);
   vtkXMLDataElement* addTextureInfo(pqCMBTexturedObject* obj);
-  vtkXMLDataElement* addBathyMetryInfo(pqCMBTexturedObject* obj);
   void processVOI(pqCMBSceneNode* node, vtkXMLDataElement* elem);
   void processLine(pqCMBSceneNode* node, vtkXMLDataElement* elem);
   void processContour(pqCMBSceneNode* node, vtkXMLDataElement* elem);

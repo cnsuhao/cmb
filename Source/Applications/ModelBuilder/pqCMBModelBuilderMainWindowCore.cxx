@@ -919,8 +919,6 @@ void pqCMBModelBuilderMainWindowCore::onCloseData(bool modelOnly)
   }
   //  this->getCMBModel()->onCloseData();
 
-  // Some scene object source may be used by model bathymetry filter,
-  // so it should be cleaned after model.
   if (!modelOnly)
   {
     this->clearpqCMBSceneTree();

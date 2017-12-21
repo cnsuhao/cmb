@@ -16,7 +16,6 @@ set(UI_FORMS
     UI/qtArcFunctionControl.ui
     UI/qtCMBArcModifierInputDialog.ui
     UI/qtCMBApplicationOptions.ui
-    UI/qtCMBBathymetryDialog.ui
     UI/qtCMBConicalSourceDialog.ui
     UI/qtCMBCreateSimpleGeometry.ui
     UI/qtCMBOptionsDialog.ui
@@ -163,8 +162,6 @@ add_library(cmbAppCommon
   qtCMBApplicationOptions.h
   qtCMBApplicationOptionsDialog.cxx
   qtCMBApplicationOptionsDialog.h
-  qtCMBBathymetryDialog.cxx
-  qtCMBBathymetryDialog.h
   qtCMBColorDialog.cxx
   qtCMBColorDialog.h
   qtCMBConeDialog.cxx

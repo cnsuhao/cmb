@@ -84,7 +84,6 @@ protected:
   pqCMBSceneObjectBase* processUnknownObject(vtkXMLDataElement* elem);
   void processConstraints(vtkXMLDataElement*, pqCMBSceneObjectBase*);
   int processTextureInfo(vtkXMLDataElement*, pqCMBSceneObjectBase*);
-  int processBathymetryInfo(vtkXMLDataElement*, pqCMBSceneObjectBase*);
   void appendStatus(const std::string& newStatus);
 
   void createContour(vtkSMSourceProxy* proxy);
