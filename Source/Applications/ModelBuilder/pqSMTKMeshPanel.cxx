@@ -217,13 +217,9 @@ void pqSMTKMeshPanel::displayRequirements(const smtk::model::Model& modelToDispl
 
   // send signal from UIManager to selection manager
   QObject::connect(this->AttUIManager.get(),
-    SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
-      const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-      const smtk::resource::SelectionAction, const std::string&)),
+    &smtk::extension::qtUIManager::sendSelectionsFromAttributePanelToSelectionManager,
     qtActiveObjects::instance().smtkSelectionManager().get(),
-    SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-      const smtk::model::DescriptivePhrases&, const smtk::resource::SelectionAction,
-      const std::string&)));
+    &smtk::extension::qtSelectionManager::updateSelectedItems);
   // connect signal and slot for qtModelEntityItem
   QObject::connect(this->AttUIManager.get(),
     SIGNAL(modelEntityItemCreated(smtk::extension::qtModelEntityItem*)), this,

@@ -117,13 +117,9 @@ void pqSimBuilderUIManager::setSMTKView(smtk::view::ViewPtr view, QWidget* paren
     SLOT(onModelEntityItemCreated(smtk::extension::qtModelEntityItem*)));
   // send signal from UIManager to selection manager
   QObject::connect(this->m_attUIManager,
-    SIGNAL(sendSelectionsFromAttributePanelToSelectionManager(const smtk::model::EntityRefs&,
-      const smtk::mesh::MeshSets&, const smtk::model::DescriptivePhrases&,
-      const smtk::resource::SelectionAction, const std::string&)),
+    &smtk::extension::qtUIManager::sendSelectionsFromAttributePanelToSelectionManager,
     qtActiveObjects::instance().smtkSelectionManager().get(),
-    SLOT(updateSelectedItems(const smtk::model::EntityRefs&, const smtk::mesh::MeshSets&,
-      const smtk::model::DescriptivePhrases&, const smtk::resource::SelectionAction,
-      const std::string&)));
+    &smtk::extension::qtSelectionManager::updateSelectedItems);
 
   this->m_attUIManager->setSMTKView(view, parentWidget);
   if (!this->topView())
