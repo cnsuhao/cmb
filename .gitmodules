@@ -1,6 +1,7 @@
 [submodule "ThirdParty/SMTK"]
 	path = ThirdParty/SMTK
 	url = https://gitlab.kitware.com/cmb/smtk.git
+	branch = release
 [submodule "data/simulation-workflows"]
 	path = data/simulation-workflows
 	url = https://gitlab.kitware.com/cmb/simulation-workflows.git
