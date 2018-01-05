@@ -55,6 +55,8 @@ def verifyExport():
         return 0
     else:
         print("Output not the same!")
+        print('testfile: %s' % testfile)
+        print('basefile: %s' % basefile)
         return -3
 
 
