@@ -5893,6 +5893,212 @@ associates the containing cell ID to the point.
 
     </SourceProxy>
 
+    <SourceProxy name="ArcDepressFilter" class="vtkArcDepressFilter"
+      label="Depress PolyData">
+      <Documentation
+        long_help="Depresses the polydata based on arc">
+          write me.
+      </Documentation>
+      <InputProperty
+        name="Input"
+        command="SetInputConnection">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkPolyData"/>
+        </DataTypeDomain>
+        <Documentation>
+          Set the input to the Arc Depress PolyData filter.
+        </Documentation>
+      </InputProperty>
+
+      <DoubleVectorProperty
+        name="AddPoint"
+        label="Add Point"
+        command="AddPointToArc"
+        number_of_elements="3"
+        default_values="-1.0 0.0 0.0" >
+        <Documentation>
+          Point to be used in closest point calculation.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AmountRemoved"
+        label="Get Amount Removed"
+        command="GetAmountRemoved"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AmountAdded"
+        label="Get Amount Added"
+        command="GetAmountAdded"
+        number_of_elements="1"
+        information_only="1"
+        default_values="-1">
+        <SimpleDoubleInformationHelper/>
+      </DoubleVectorProperty>
+
+      <IntVectorProperty
+        name="AddArc"
+        command="AddArc"
+        number_of_elements="1"
+        default_values="-1">
+        <Documentation>
+          Adds a new arc.
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="ArcEnable"
+        command="SetArcEnable"
+        number_of_elements="2"
+        default_values="-1 1">
+        <Documentation>
+          Enable the line.
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="SetFunctionToPoint"
+        command="SetFunctionToPoint"
+        number_of_elements="3"
+        default_values="-1 -1 -1">
+        <Documentation>
+          Set a profile function to a point
+        </Documentation>
+      </IntVectorProperty>
+
+     <IntVectorProperty
+        name="UseNormalDirection"
+        command="setUseNormalDirection"
+        number_of_elements="1"
+        default_values="-1">
+        <Documentation>
+          use normal direction to displace points.
+        </Documentation>
+     </IntVectorProperty>
+
+      <IntVectorProperty
+        name="ClearArc"
+        command="ClearActiveArcPoints"
+        number_of_elements="1"
+        default_values="-1">
+        <Documentation>
+          Clears the arc points
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="SetArcAsClosed"
+        command="SetArcAsClosed"
+        number_of_elements="1"
+        default_values="-1">
+        <Documentation>
+          closes the arc
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="RemoveArc"
+        command="RemoveArc"
+        number_of_elements="1"
+        default_values="-1">
+        <Documentation>
+          Removes the arc from server
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+         name="ResizeOrder"
+         command="ResizeOrder"
+         number_of_elements="1"
+         default_values="-1">
+         <Documentation>
+           prepairs for modifing the order
+         </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+        name="SetOrderValue"
+        command="SetOrderValue"
+        number_of_elements="2"
+        default_values="-1 -1">
+        <Documentation>
+          Appends to the order a line id
+        </Documentation>
+      </IntVectorProperty>
+
+      <IntVectorProperty
+          name="CreateManualFunction"
+          command="CreateManualFunction"
+          number_of_elements="6"
+          default_values="-1 -1 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </IntVectorProperty>
+
+
+      <DoubleVectorProperty
+          name="CreateWedgeFunction"
+          command="CreateWedgeFunction"
+          number_of_elements="10"
+          default_values="-1 -1 0 0 0 0 0 0 0 0">
+          <Documentation>
+            Appends to the order a line id
+          </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AddWeightPoint"
+        label="Add Weighting Point"
+        command="AddWeightingFunPoint"
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
+        <Documentation>
+          Add point to wighting function.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="AddManualDespPoint"
+        label="Add Desp Point"
+        command="AddManualDispFunPoint"
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
+        <Documentation>
+          Point to be used in closest point calculation.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="SetManualControlVars"
+        label="Set the control Varables"
+        command="SetManualControlRanges"
+        number_of_elements="6"
+        default_values="-1.0 -1.0 0.0 0.0 0.0 0.0" >
+        <Documentation>
+          Point to be used in closest point calculation.
+        </Documentation>
+      </DoubleVectorProperty>
+
+      <DoubleVectorProperty
+        name="computeDisplacementChange"
+        command="computeDisplacementChangeOnPointsViaBathymetry"
+        number_of_elements="2"
+        default_values="-1.0 -1.0" >
+      </DoubleVectorProperty>
+
+      <!-- End of ArcDepressFilter -->
+    </SourceProxy>
+
     <SourceProxy name="ClipPolygons" class="vtkClipPolygons"
       label="Clip PolyData">
       <Documentation
@@ -6522,6 +6728,87 @@ associates the containing cell ID to the point.
       <Property name="RemoveSourceConnections" command="RemoveSourceConnections">
       </Property>
 
+    </SourceProxy>
+    <SourceProxy name="CmbApplyBathymetry"
+        class="vtkCMBApplyBathymetryFilter"
+        label="Apply bathymetry to input point sets">
+      <InputProperty
+         name="Input"
+         port_index="0"
+         command="AddInputConnection"
+         clean_command="RemoveInputConnections">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies the input data to apply bathymetry
+        </Documentation>
+      </InputProperty>
+
+      <InputProperty
+         name="Source"
+         port_index="1"
+         command="AddInputConnection"
+         clean_command="RemoveSourceConnections">
+        <ProxyGroupDomain name="groups">
+          <Group name="sources"/>
+          <Group name="filters"/>
+        </ProxyGroupDomain>
+        <DataTypeDomain name="input_type">
+          <DataType value="vtkDataSet"/>
+        </DataTypeDomain>
+        <Documentation>
+          This property specifies point sets that represent bathymetry info
+        </Documentation>
+      </InputProperty>
+
+      <DoubleVectorProperty
+        name="ElevationRadius"
+        command="SetElevationRadius"
+        number_of_elements="1"
+        default_values="1.0" >
+      </DoubleVectorProperty>
+      <DoubleVectorProperty
+        name="HighestZValue"
+        command="SetHighestZValue"
+        number_of_elements="1"
+        default_values="0.0" >
+      </DoubleVectorProperty>
+      <IntVectorProperty name="UseHighestZValue"
+        command="SetUseHighestZValue"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
+      <DoubleVectorProperty
+        name="LowestZValue"
+        command="SetLowestZValue"
+        number_of_elements="1"
+        default_values="0.0" >
+      </DoubleVectorProperty>
+      <IntVectorProperty name="UseLowestZValue"
+        command="SetUseLowestZValue"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
+      <IntVectorProperty name="NoOP"
+        command="SetNoOP"
+        number_of_elements="1"
+        default_values="0" >
+        <BooleanDomain name="bool"/>
+      </IntVectorProperty>
+
+      <Property name="RemoveInputConnections" command="RemoveInputConnections">
+      </Property>
+      <Property name="RemoveSourceConnections" command="RemoveSourceConnections">
+      </Property>
+
+      <!-- End of CmbApplyBathymetry -->
     </SourceProxy>
     <SourceProxy name="ShepardMethod" class="vtkShepardMethod"
       label="IDW Shepard Method">
