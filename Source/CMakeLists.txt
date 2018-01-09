@@ -151,6 +151,7 @@ include(CMBInstallRules)
 add_subdirectory(CMBMeshing)
 
 find_package(SMTK REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 #needs to be after CMBMeshing so that we can link to the MeshServer
 pv_process_modules()
